@@ -37,7 +37,7 @@ Future<void> downloadSampleData(List<String> portalItemIds) async {
   final appDirPath = (await getApplicationDocumentsDirectory()).absolute.path;
 
   for (var itemId in portalItemIds) {
-    // create a portal item to ensure it exists and load to acess data
+    // create a portal item to ensure it exists and load to access properties
     var portalItem =
         PortalItem.withUri(Uri.parse('$portal/home/item.html?id=$itemId'));
     if (portalItem != null) {
