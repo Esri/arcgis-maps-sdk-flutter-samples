@@ -87,7 +87,7 @@ class ServiceAreaSampleState extends State<ServiceAreaSample> {
             const SizedBox(
               height: 60,
               child: Center(
-                child: Text('Tap the map to calcualte a Service Area'),
+                child: Text('Tap the map to calculate a Service Area'),
               ),
             ),
           ],
