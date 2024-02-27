@@ -70,6 +70,7 @@ class FindAddressSampleState extends State<FindAddressSample> {
           ),
         ),
       ),
+      resizeToAvoidBottomInset: false,
       body: Stack(
         children: [
           ArcGISMapView(
@@ -172,7 +173,7 @@ class FindAddressSampleState extends State<FindAddressSample> {
 
     if (identifyGraphicsOverlayResult.graphics.isEmpty) return;
 
-    if (context.mounted) {
+    if (mounted) {
       final graphic = identifyGraphicsOverlayResult.graphics.first;
       final center = graphic.geometry!.extent.center;
       final x = center.x.toStringAsFixed(3);

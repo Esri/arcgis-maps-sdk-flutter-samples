@@ -59,7 +59,7 @@ class QueryFeatureTableSampleState extends State<QueryFeatureTableSample> {
       appBar: AppBar(
         title: Text(widget.title),
       ),
-      resizeToAvoidBottomInset: true,
+      resizeToAvoidBottomInset: false,
       body: Column(
         children: [
           TextField(
@@ -133,7 +133,7 @@ class QueryFeatureTableSampleState extends State<QueryFeatureTableSample> {
       }
       _featureLayer.selectFeature(feature: feature);
     } else {
-      if (context.mounted) {
+      if (mounted) {
         _mapViewController.setViewpoint(_initialViewpoint);
         showDialog(
           context: context,

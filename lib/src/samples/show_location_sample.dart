@@ -26,6 +26,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:arcgis_maps/arcgis_maps.dart';
+import 'dart:async';
 
 class ShowLocationSample extends StatefulWidget {
   const ShowLocationSample({
@@ -44,7 +45,17 @@ class ShowLocationSampleState extends State<ShowLocationSample> {
   double _longitude = 0.0;
   double _heading = 0.0;
   final _locationDataSource = SystemLocationDataSource();
+  StreamSubscription? _statusSubscription;
+  StreamSubscription? _locationSubscription;
   ArcGISException? _ldsException;
+
+  @override
+  void dispose() {
+    _locationSubscription?.cancel();
+    _statusSubscription?.cancel();
+
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -150,14 +161,15 @@ class ShowLocationSampleState extends State<ShowLocationSample> {
   }
 
   Future<void> _initLocationDataSource() async {
-    _locationDataSource.onStatusChanged.listen((_) {
+    _statusSubscription = _locationDataSource.onStatusChanged.listen((_) {
       // Redraw the screen when the LDS status changes
       setState(() {});
     });
 
     try {
       await _locationDataSource.start();
-      _locationDataSource.onLocationChanged.listen(_handleLdsLocationChange);
+      _locationSubscription = _locationDataSource.onLocationChanged
+          .listen(_handleLdsLocationChange);
     } on ArcGISException catch (e) {
       setState(() {
         _ldsException = e;

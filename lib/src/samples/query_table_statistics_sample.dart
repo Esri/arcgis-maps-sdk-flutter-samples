@@ -79,7 +79,7 @@ class QueryTableStatisticsSampleState
           ),
           Positioned(
             width: 350,
-            height: 160,
+            height: 180,
             bottom: 60,
             child: DecoratedBox(
               decoration: BoxDecoration(
@@ -144,7 +144,7 @@ class QueryTableStatisticsSampleState
       });
     }
 
-    if (context.mounted) {
+    if (mounted) {
       showDialog(
         context: context,
         builder: (BuildContext context) {
