@@ -1,27 +1,36 @@
 PODS:
-  - arcgis_maps (200.4.0.4153):
+  - arcgis_maps (200.4.0.4160):
     - arcgis_maps_ffi
     - Flutter
     - Runtimecore
-  - arcgis_maps_ffi (200.4.0.4153)
+  - arcgis_maps_ffi (200.4.0.4160)
   - Flutter (1.0.0)
+  - flutter_archive (0.0.1):
+    - Flutter
+    - ZIPFoundation (= 0.9.13)
   - location (0.0.1):
     - Flutter
   - path_provider_foundation (0.0.1):
     - Flutter
     - FlutterMacOS
-  - Runtimecore (200.4.0.4153)
+  - Runtimecore (200.4.0.4160)
   - url_launcher_ios (0.0.1):
     - Flutter
+  - ZIPFoundation (0.9.13)
 
 DEPENDENCIES:
   - arcgis_maps (from `.symlinks/plugins/arcgis_maps/ios`)
   - arcgis_maps_ffi (from `../arcgis_maps_core/ios/arcgis_maps_ffi.podspec`)
   - Flutter (from `Flutter`)
+  - flutter_archive (from `.symlinks/plugins/flutter_archive/ios`)
   - location (from `.symlinks/plugins/location/ios`)
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
   - Runtimecore (from `../arcgis_maps_core/ios/Runtimecore.podspec`)
   - url_launcher_ios (from `.symlinks/plugins/url_launcher_ios/ios`)
+
+SPEC REPOS:
+  trunk:
+    - ZIPFoundation
 
 EXTERNAL SOURCES:
   arcgis_maps:
@@ -30,6 +39,8 @@ EXTERNAL SOURCES:
     :podspec: "../arcgis_maps_core/ios/arcgis_maps_ffi.podspec"
   Flutter:
     :path: Flutter
+  flutter_archive:
+    :path: ".symlinks/plugins/flutter_archive/ios"
   location:
     :path: ".symlinks/plugins/location/ios"
   path_provider_foundation:
@@ -40,13 +51,15 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/url_launcher_ios/ios"
 
 SPEC CHECKSUMS:
-  arcgis_maps: 349f53d618b5073f87339fe6a63b4d333531d287
-  arcgis_maps_ffi: 1e7c6939f948d6edb44bfb29e28032d97cc19ad2
-  Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
+  arcgis_maps: 1dea7e9d28a6a357b0806ba74196244852cdc150
+  arcgis_maps_ffi: 382ac219834e7119ac7675683729ed02f5c35ad9
+  Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
+  flutter_archive: 1805fdd3a695fd284b43edb53dc35ca843fb761c
   location: d5cf8598915965547c3f36761ae9cc4f4e87d22e
   path_provider_foundation: 3784922295ac71e43754bd15e0653ccfd36a147c
-  Runtimecore: cc51b2651d201454a20996dca514e3101f6d83fa
+  Runtimecore: b7783a6c48c3741a33380488c1de3a1a4e780684
   url_launcher_ios: bbd758c6e7f9fd7b5b1d4cde34d2b95fcce5e812
+  ZIPFoundation: ae5b4b813d216d3bf0a148773267fff14bd51d37
 
 PODFILE CHECKSUM: 252e1cb0e37386a8b2805b22ba99750f76918564
 
