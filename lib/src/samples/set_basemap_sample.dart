@@ -38,7 +38,7 @@ class SetBasemapSampleState extends State<SetBasemapSample> {
   final _mapViewController = ArcGISMapView.createController();
   final _arcGISMap = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISNavigation);
   final _basemaps = <Basemap, Image>{};
-  final _defaultImage = Image.asset('assets/samples/basemap_default.png');
+  final _defaultImage = Image.asset('assets/basemap_default.png');
   final _sanFranciscoViewpoint = Viewpoint.fromCenter(
     ArcGISPoint(x: -13630206, y: 4546929),
     scale: 100000,

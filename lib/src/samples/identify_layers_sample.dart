@@ -77,7 +77,7 @@ class IdentifyLayersSampleState extends State<IdentifyLayersSample> {
       tolerance: 12.0,
     );
 
-    if (identifyLayerResults.isNotEmpty && context.mounted) {
+    if (identifyLayerResults.isNotEmpty && mounted) {
       int count = identifyLayerResults.length;
       showDialog(
         context: context,

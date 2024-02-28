@@ -129,8 +129,7 @@ class FindAddressSampleState extends State<FindAddressSample> {
   void onMapViewReady() async {
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISImagery);
 
-    final image =
-        await ArcGISImage.fromAsset('assets/samples/pin_circle_red.png');
+    final image = await ArcGISImage.fromAsset('assets/pin_circle_red.png');
     final pictureMarkerSymbol = PictureMarkerSymbol.withImage(image);
     pictureMarkerSymbol.width = 35;
     pictureMarkerSymbol.height = 35;

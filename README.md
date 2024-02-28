@@ -8,7 +8,7 @@ The app can be run on an iOS or Android simulator or device.
 
 - Open the flutter project in VSCode
 - Ensure a simulator is running or a device is connected to your development machine 
-- Open the "Run and Debug" sidebar.
+- Open the "Run and Debug" sidebar
 - Select which device or simulator you wish to use in the lower right corner of the VSCode window
 - Select "Samples (debug or release)"
   - Note that "Samples (release)" can only be run on a device
@@ -19,20 +19,20 @@ The app can be run on an iOS or Android simulator or device.
 Individual samples can also be run on an iOS or Android simulator or device.
 
 - Open the flutter project in VSCode
-- Ensure a simulator is running or a device is connected to your development machine.
+- Ensure a simulator is running or a device is connected to your development machine
 - Select which device or simulator you wish to use in the lower right corner of the VSCode window
-- To run from VSCode, open a sample file from `/lib/src/samples` e.g. `display_map.dart` and click `run` above the `main()` method.
+- To run from VSCode, open a sample file from `/lib/src/samples` e.g. `display_map.dart` and click `run` above the `main()` method
 - Or run from the command line with `flutter run lib/src/samples/display_map.dart`
 
 ## Configuring API Keys
 
 To fully take advantage of the samples in the app, you will need to generate an API Key.
 
-- Log into your developer account at the [ArcGIS Developers](https://developers.arcgis.com/).
-  - If you do not have an account, [create one](https://developers.arcgis.com/sign-up/).
-- Go to the "API keys" tab.
-- Click the "New API Key" button and provide a Title and Description.
-- Set Location Service scopes to add or remove key capabilities.
+- Log into your developer account at the [ArcGIS Developers](https://developers.arcgis.com/)
+  - If you do not have an account, [create one](https://developers.arcgis.com/sign-up/)
+- Go to the "API keys" tab
+- Click the "New API Key" button and provide a Title and Description
+- Set Location Service scopes to add or remove key capabilities
 
 Add the new API Key directly to [main.dart](lib/main.dart) or create an environment JSON file that can be loaded with the `--dart-define-from-file` `flutter run` command line argument. 
 

@@ -47,7 +47,7 @@ class MyApp extends StatelessWidget {
       ),
       home: Scaffold(
         appBar: AppBar(
-          title: const Text('ArcGIS Flutter SDK Samples'),
+          title: const Text('ArcGIS Maps SDK for Flutter Samples'),
         ),
         body: const SampleListView(),
       ),

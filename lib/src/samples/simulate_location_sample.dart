@@ -156,7 +156,7 @@ class SimulateLocationSampleState extends State<SimulateLocationSample> {
 
   Future<void> _initLocationDataSource() async {
     final routeLineJson =
-        await rootBundle.loadString('assets/samples/SimulatedRoute.json');
+        await rootBundle.loadString('assets/SimulatedRoute.json');
     final routeLine = Geometry.fromJsonString(routeLineJson) as Polyline;
     _locationDataSource.setLocationsWithPolyline(routeLine);
     _statusSubscription = _locationDataSource.onStatusChanged.listen((_) {

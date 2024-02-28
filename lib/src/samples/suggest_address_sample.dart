@@ -48,7 +48,7 @@ class SuggestAddressSampleState extends State<SuggestAddressSample> {
   void initState() {
     super.initState();
 
-    ArcGISImage.fromAsset('assets/samples/pin_circle_red.png').then((image) {
+    ArcGISImage.fromAsset('assets/pin_circle_red.png').then((image) {
       final pictureMarkerSymbol = PictureMarkerSymbol.withImage(image);
       pictureMarkerSymbol.width = 35;
       pictureMarkerSymbol.height = 35;

@@ -44,7 +44,7 @@ Future<void> downloadSampleData(List<String> portalItemIds) async {
         final nameWithoutExt = itemName.split('.zip')[0];
         final dir = Directory.fromUri(Uri.parse('$appDirPath/$nameWithoutExt'));
         await ZipFile.extractToDirectory(zipFile: file, destinationDir: dir);
-        // clean up the zip folder now the data has been extracted
+        // clean up the zip folder now that the data has been extracted
         await file.delete();
       }
     }
