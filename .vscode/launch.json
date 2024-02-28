@@ -1,0 +1,49 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Samples (debug)",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "debug"
+        },
+        {
+            "name": "Samples (release)",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release"
+        },
+        {
+            "name": "Samples with API Key (debug)",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "debug",
+            "toolArgs": [
+                "--dart-define-from-file=env.json"
+            ]
+        },
+        {
+            "name": "Samples with API Key (release)",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release",
+            "toolArgs": [
+                "--dart-define-from-file=env.json"
+            ]
+        },
+        {
+            "name": "Custom Sample with API Key (debug)",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "debug",
+            // replace display_map with another sample to run individually
+            "program": "lib/src/samples/display_map.dart",
+            "toolArgs": [
+                "--dart-define-from-file=env.json"
+            ]
+        },
+    ]
+}
