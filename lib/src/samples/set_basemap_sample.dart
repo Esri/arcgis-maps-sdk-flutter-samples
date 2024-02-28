@@ -1,27 +1,17 @@
 //
-// COPYRIGHT © 2023 Esri
+// Copyright 2024 Esri
 //
-// All rights reserved under the copyright laws of the United States
-// and applicable international laws, treaties, and conventions.
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
 //
-// This material is licensed for use under the Esri Master
-// Agreement (MA) and is bound by the terms and conditions
-// of that agreement.
+//   https://www.apache.org/licenses/LICENSE-2.0
 //
-// You may redistribute and use this code without modification,
-// provided you adhere to the terms and conditions of the MA
-// and include this copyright notice.
-//
-// See use restrictions at http://www.esri.com/legal/pdfs/mla_e204_e300/english
-//
-// For additional information, contact:
-// Environmental Systems Research Institute, Inc.
-// Attn: Contracts and Legal Department
-// 380 New York Street
-// Redlands, California 92373
-// USA
-//
-// email: legal@esri.com
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 //
 
 import 'dart:async';
