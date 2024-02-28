@@ -26,7 +26,7 @@ Future<void> downloadSampleData(List<String> portalItemIds) async {
   // location where files are saved to on the device. Persists while the app persists.
   final appDirPath = (await getApplicationDocumentsDirectory()).absolute.path;
 
-  for (var itemId in portalItemIds) {
+  for (final itemId in portalItemIds) {
     // create a portal item to ensure it exists and load to access properties
     var portalItem =
         PortalItem.withUri(Uri.parse('$portal/home/item.html?id=$itemId'));
@@ -41,7 +41,7 @@ Future<void> downloadSampleData(List<String> portalItemIds) async {
       if (itemName.contains('.zip')) {
         // if the data is a zip we need to extract it
         // save all files to the device app directory in a directory with the item name without the zip extension
-        final nameWithoutExt = itemName.split('.zip')[0];
+        final nameWithoutExt = itemName.replaceFirst(RegExp(r'.zip$'), '');
         final dir = Directory.fromUri(Uri.parse('$appDirPath/$nameWithoutExt'));
         await ZipFile.extractToDirectory(zipFile: file, destinationDir: dir);
         // clean up the zip folder now that the data has been extracted
