@@ -8,18 +8,25 @@ This repository contains Flutter sample code demonstrating the capabilities of A
 - Place the `arcgis_maps_package` directory next to your `arcgis-maps-sdk-flutter-samples` directory
 
 ```
-  |-- root-directory
-           |-- arcgis-maps-sdk-flutter-samples
-           |-- arcgis_maps_package
+parent_directory
+   |
+   |__ arcgis-maps-sdk-flutter-samples
+   |
+   |__ arcgis_maps_package
 ```
+
 - Use flutter pub upgrade to configure the dependencies
+
 ```
 flutter pub upgade
 ```
+
 - Configure arcgis_maps_core
+
 ```
 dart run arcgis_maps install
 ```
+
 - Now you are ready to run the samples app!
 
 ## Running the Samples app
