@@ -2,9 +2,29 @@
 
 This repository contains Flutter sample code demonstrating the capabilities of ArcGIS Maps SDK for Flutter and how to use them in your own app. This SDK enables development of cross-platform GIS apps for mobile devices running iOS and Android.
 
+## Configure to use the Beta release package of ArcGIS Maps SDK for Flutter
+- Visit [earlyadopter.esri.com](http://earlyadopter.esri.com/) and download the ArcGIS Maps SDK for Flutter package. Follow the instructions to unpackage
+- Clone or download this repository
+- Place the `arcgis_maps_package` directory next to your `arcgis-maps-sdk-flutter-samples` directory
+
+```
+  |-- root-directory
+           |-- arcgis-maps-sdk-flutter-samples
+           |-- arcgis_maps_package
+```
+- Use flutter pub upgrade to configure the dependencies
+```
+flutter pub upgade
+```
+- Configure arcgis_maps_core
+```
+dart run arcgis_maps install
+```
+- Now you are ready to run the samples app!
+
 ## Running the Samples app
 
-The app can be run on an iOS or Android simulator or device.
+The app can be run on an iOS or Android simulator or device. Note: you will need to configure an API key to take full advantage of the samples in the app. See [Configuring API Keys](#configuring-api-keys).
 
 - Open the flutter project in VSCode
 - Ensure a simulator is running or a device is connected to your development machine 
