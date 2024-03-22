@@ -18,7 +18,7 @@ parent_directory
 - Use flutter pub upgrade to configure the dependencies
 
 ```
-flutter pub upgade
+flutter pub upgrade
 ```
 
 - Configure arcgis_maps_core
