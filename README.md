@@ -2,10 +2,11 @@
 
 This repository contains Flutter sample code demonstrating the capabilities of ArcGIS Maps SDK for Flutter and how to use them in your own app. This SDK enables development of cross-platform GIS apps for mobile devices running iOS and Android.
 
-## Configure to use the Beta release package of ArcGIS Maps SDK for Flutter
-- Visit [earlyadopter.esri.com](http://earlyadopter.esri.com/) and download the ArcGIS Maps SDK for Flutter package. Follow the instructions to unpackage
-- Clone or download this repository
-- Place the `arcgis_maps_package` directory next to your `arcgis-maps-sdk-flutter-samples` directory
+## Run the samples using the Beta package of ArcGIS Maps SDK for Flutter
+
+Visit [earlyadopter.esri.com](http://earlyadopter.esri.com/) and download the ArcGIS Maps SDK for Flutter package. Follow the instructions to unpackage.
+
+Clone or download this repository into the same parent directory as the `arcgis_maps_package`. Your file structure should be:
 
 ```
 parent_directory
@@ -15,19 +16,19 @@ parent_directory
    |__ arcgis_maps_package
 ```
 
-- Use flutter pub upgrade to configure the dependencies
+Use `flutter pub upgrade` to configure the dependencies.
 
 ```
 flutter pub upgrade
 ```
 
-- Configure arcgis_maps_core
+Install arcgis_maps_core.
 
 ```
 dart run arcgis_maps install
 ```
 
-- Now you are ready to run the samples app!
+Now you are ready to run the samples app!
 
 ## Running the Samples app
 
@@ -53,9 +54,9 @@ Individual samples can also be run on an iOS or Android simulator or device.
 
 ## Configuring API Keys
 
-To fully take advantage of the samples in the app, you will need to generate an API Key.
+To take full advantage of the samples in the app, you will need to generate an API Key.
 
-- Log into your developer account at the [ArcGIS Developers](https://developers.arcgis.com/)
+- Log into your developer account at [ArcGIS Developers](https://developers.arcgis.com/)
   - If you do not have an account, [create one](https://developers.arcgis.com/sign-up/)
 - Go to the "API keys" tab
 - Click the "New API Key" button and provide a Title and Description
@@ -71,6 +72,14 @@ or to run an individual sample:
 
 ```
 flutter run  lib/src/samples/display_map.dart --dart-define-from-file=path/to/json/file.json
+```
+
+The JSON file itself should be of the format:
+
+```
+{
+    "API_KEY": "your_api_key_here"
+}
 ```
 
 ## Licensing
