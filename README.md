@@ -4,7 +4,7 @@ This repository contains Flutter sample code demonstrating the capabilities of A
 
 ## Run the samples using the Beta package of ArcGIS Maps SDK for Flutter
 
-Visit [earlyadopter.esri.com](http://earlyadopter.esri.com/) and download the ArcGIS Maps SDK for Flutter package. Follow the instructions to unpackage.
+Visit [earlyadopter.esri.com](https://earlyadopter.esri.com/) and download the ArcGIS Maps SDK for Flutter package. Follow the instructions to unpack it.
 
 Clone or download this repository into the same parent directory as the `arcgis_maps_package`. Your file structure should be:
 
@@ -68,17 +68,7 @@ To take full advantage of the samples in the app, you will need to generate an A
 - Click the "New API Key" button and provide a Title and Description
 - Set Location Service scopes to add or remove key capabilities
 
-Add the new API Key directly to [main.dart](lib/main.dart) or create an environment JSON file that can be loaded with the `--dart-define-from-file` `flutter run` command line argument. 
-
-```
-flutter run --dart-define-from-file=path/to/json/file.json
-```
-
-or to run an individual sample:
-
-```
-flutter run  lib/src/samples/display_map.dart --dart-define-from-file=path/to/json/file.json
-```
+Add the new API Key directly to [main.dart](lib/main.dart) or create an environment JSON file that can be loaded with the `--dart-define-from-file` `flutter run` command line argument.
 
 The JSON file itself should be of the format:
 
@@ -86,6 +76,18 @@ The JSON file itself should be of the format:
 {
     "API_KEY": "your_api_key_here"
 }
+```
+
+To run using the JSON file to define your API key:
+
+```
+flutter run --dart-define-from-file=path/to/json/file.json
+```
+
+Or to run an individual sample:
+
+```
+flutter run lib/src/samples/display_map.dart --dart-define-from-file=path/to/json/file.json
 ```
 
 ## Licensing
