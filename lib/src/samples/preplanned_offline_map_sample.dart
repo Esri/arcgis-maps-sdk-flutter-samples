@@ -53,7 +53,8 @@ class PreplannedOfflineMapState extends State<PreplannedOfflineMapSample> {
           children: [
             Expanded(
               child: ArcGISMapView(
-                controllerProvider: () => _mapViewController,
+                controllerProvider: () =>
+                    _mapViewController..arcGISMap = _sourceMap,
                 onMapViewReady: onMapViewReady,
               ),
             ),
@@ -73,7 +74,7 @@ class PreplannedOfflineMapState extends State<PreplannedOfflineMapSample> {
       padding: const EdgeInsets.all(8),
       itemCount: _preplannedAreas.length,
       itemBuilder: (context, index) {
-        final name = 'Map area $index';
+        final name = _preplannedAreas[index].portalItem.title;
         return Card(
           child: ListTile(
             trailing: Text((index == _selectedPreplannedAreaIndex && _isLoading)
@@ -93,9 +94,13 @@ class PreplannedOfflineMapState extends State<PreplannedOfflineMapSample> {
                 final map = await _downloadOfflineMap(index);
                 _mapViewController.arcGISMap = map;
               } catch (e) {
-                print(e);
+                if (mounted) {
+                  print(e);
+                }
               } finally {
-                setState(() => _isLoading = false);
+                if (mounted) {
+                  setState(() => _isLoading = false);
+                }
               }
             },
           ),
@@ -109,13 +114,17 @@ class PreplannedOfflineMapState extends State<PreplannedOfflineMapSample> {
   }
 
   Future<void> _initPreplannedMapTask(ArcGISMap map) async {
-    final offlineMapTask = OfflineMapTask.withOnlineMap(map);
+    final offlineMapTask = OfflineMapTask.withOnlineMap(_sourceMap);
     await offlineMapTask.load();
     final preplannedAreas = await offlineMapTask.getPreplannedMapAreas();
-    print('Number of preplanned maps: ${preplannedAreas.length}');
+    for (final preplannedArea in preplannedAreas) {
+      await preplannedArea.load();
+    }
 
     _offlineMapTask = offlineMapTask;
-    setState(() => _preplannedAreas = preplannedAreas);
+    if (mounted) {
+      setState(() => _preplannedAreas = preplannedAreas);
+    }
   }
 
   Future<ArcGISMap?> _downloadOfflineMap(int preplannedAreaIndex) async {
@@ -139,14 +148,10 @@ class PreplannedOfflineMapState extends State<PreplannedOfflineMapSample> {
             parameters: downloadParams,
             downloadDirectoryUri: mapDownloadDir.uri);
 
-    print('Starting download job');
     final downloadResult = await downloadMapJob.run();
 
     // Return downloaded map
-    print('Result job status: ${downloadMapJob.status}');
-    if (downloadResult.hasErrors) {
-      print('Downloading map failed with errors');
-    } else {
+    if (!downloadResult.hasErrors) {
       return downloadResult.offlineMap;
     }
 
