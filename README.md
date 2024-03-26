@@ -16,6 +16,12 @@ parent_directory
    |__ arcgis_maps_package
 ```
 
+Navigate to the `arcgis-maps-sdk-flutter-samples` directory.
+
+```
+cd arcgis-maps-sdk-flutter-samples
+```
+
 Use `flutter pub upgrade` to configure the dependencies.
 
 ```
