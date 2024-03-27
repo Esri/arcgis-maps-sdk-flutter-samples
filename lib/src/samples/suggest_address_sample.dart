@@ -172,8 +172,9 @@ class SuggestAddressSampleState extends State<SuggestAddressSample> {
 
     final suggestResults = await _suggestOperation!.value;
     _suggestOperation = null;
-
-    setState(() => _suggestResults = List.from(suggestResults));
+    if (mounted) {
+      setState(() => _suggestResults = List.from(suggestResults));
+    }
 
     if (_suggestAgain != null) {
       // start again with the latest input value
