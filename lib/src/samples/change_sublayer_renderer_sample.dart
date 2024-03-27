@@ -50,7 +50,7 @@ class ChangeSublayerRendererSampleState
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISStreets);
 
     final imageLayer = ArcGISMapImageLayer.withUri(Uri.parse(
-        "https://sampleserver6.arcgisonline.com/arcgis/rest/services/Census/MapServer"));
+        'https://sampleserver6.arcgisonline.com/arcgis/rest/services/Census/MapServer'));
     await imageLayer.load();
     final subLayers = imageLayer.arcGISMapImageSublayers;
     final countiesSublayer = subLayers.elementAt(2);

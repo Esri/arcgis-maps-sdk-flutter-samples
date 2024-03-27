@@ -92,7 +92,7 @@ class SetBasemapSampleState extends State<SetBasemapSample> {
                   );
                 default:
                   return const Center(
-                    child: Text("Loading basemaps..."),
+                    child: Text('Loading basemaps...'),
                   );
               }
             },
