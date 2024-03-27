@@ -14,36 +14,36 @@
 // limitations under the License.
 //
 
-import "sample_info.dart";
-import "samples/add_feature_collection_layer_from_table_sample.dart";
-import "samples/add_feature_layers_sample.dart";
-import "samples/add_tiled_layer_as_basemap_sample.dart";
-import "samples/add_tiled_layer_sample.dart";
-import "samples/add_vector_tiled_layer_sample.dart";
-import "samples/apply_scheduled_updates_to_preplanned_map_area_sample.dart";
-import "samples/apply_simple_renderer_to_feature_layer_sample.dart";
-import "samples/apply_unique_value_renderer_sample.dart";
-import "samples/change_sublayer_renderer_sample.dart";
-import "samples/display_map_sample.dart";
-import "samples/display_points_using_clustering_feature_reduction_sample.dart";
-import "samples/filter_by_definition_expression_or_display_filter_sample.dart";
-import "samples/find_address_sample.dart";
-import "samples/find_closest_facility_sample.dart";
-import "samples/generate_route_with_directions_sample.dart";
-import "samples/identify_layers_sample.dart";
-import "samples/open_mobile_map_sample.dart";
-import "samples/preplanned_offline_map_sample.dart";
-import "samples/query_feature_table_sample.dart";
-import "samples/query_table_statistics_sample.dart";
-import "samples/select_features_in_feature_layer_sample.dart";
-import "samples/serialize_feature_collection_sample.dart";
-import "samples/service_area_sample.dart";
-import "samples/set_basemap_sample.dart";
-import "samples/show_location_sample.dart";
-import "samples/show_magnifier_sample.dart";
-import "samples/simple_marker_symbol_sample.dart";
-import "samples/simulate_location_sample.dart";
-import "samples/suggest_address_sample.dart";
+import 'sample_info.dart';
+import 'samples/add_feature_collection_layer_from_table_sample.dart';
+import 'samples/add_feature_layers_sample.dart';
+import 'samples/add_tiled_layer_as_basemap_sample.dart';
+import 'samples/add_tiled_layer_sample.dart';
+import 'samples/add_vector_tiled_layer_sample.dart';
+import 'samples/apply_scheduled_updates_to_preplanned_map_area_sample.dart';
+import 'samples/apply_simple_renderer_to_feature_layer_sample.dart';
+import 'samples/apply_unique_value_renderer_sample.dart';
+import 'samples/change_sublayer_renderer_sample.dart';
+import 'samples/display_map_sample.dart';
+import 'samples/display_points_using_clustering_feature_reduction_sample.dart';
+import 'samples/filter_by_definition_expression_or_display_filter_sample.dart';
+import 'samples/find_address_sample.dart';
+import 'samples/find_closest_facility_sample.dart';
+import 'samples/generate_route_with_directions_sample.dart';
+import 'samples/identify_layers_sample.dart';
+import 'samples/open_mobile_map_sample.dart';
+import 'samples/preplanned_offline_map_sample.dart';
+import 'samples/query_feature_table_sample.dart';
+import 'samples/query_table_statistics_sample.dart';
+import 'samples/select_features_in_feature_layer_sample.dart';
+import 'samples/serialize_feature_collection_sample.dart';
+import 'samples/service_area_sample.dart';
+import 'samples/set_basemap_sample.dart';
+import 'samples/show_location_sample.dart';
+import 'samples/show_magnifier_sample.dart';
+import 'samples/simple_marker_symbol_sample.dart';
+import 'samples/simulate_location_sample.dart';
+import 'samples/suggest_address_sample.dart';
 
 final List<SampleInfo> sampleInfoList = [
   SampleInfo(
