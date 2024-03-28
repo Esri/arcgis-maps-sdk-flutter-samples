@@ -30,27 +30,25 @@ Future<void> downloadSampleData(List<String> portalItemIds) async {
     // create a portal item to ensure it exists and load to access properties
     final portalItem =
         PortalItem.withUri(Uri.parse('$portal/home/item.html?id=$itemId'));
-    if (portalItem != null) {
-      await portalItem.load();
-      final itemName = portalItem.name;
-      final filePath = '$appDirPath/$itemName';
+    if (portalItem == null) continue;
 
-      final file = await File(filePath).create(recursive: true);
-      final request = await _fetchData(portal, itemId);
-      file.writeAsBytesSync(request.bodyBytes, flush: true);
-      if (itemName.contains('.zip')) {
-        // if the data is a zip we need to extract it
-        // save all files to the device app directory in a directory with the item name without the zip extension
-        final nameWithoutExt = itemName.replaceFirst(RegExp(r'.zip$'), '');
-        if (!Directory.fromUri(Uri.parse('$appDirPath/$nameWithoutExt'))
-            .existsSync()) {
-          final dir =
-              Directory.fromUri(Uri.parse('$appDirPath/$nameWithoutExt'));
-          await ZipFile.extractToDirectory(zipFile: file, destinationDir: dir);
-          // clean up the zip folder now that the data has been extracted
-          await file.delete();
-        }
-      }
+    await portalItem.load();
+    final itemName = portalItem.name;
+    final filePath = '$appDirPath/$itemName';
+    final file = File(filePath);
+    if (file.existsSync()) continue;
+
+    final request = await _fetchData(portal, itemId);
+    file.createSync(recursive: true);
+    file.writeAsBytesSync(request.bodyBytes, flush: true);
+
+    if (itemName.contains('.zip')) {
+      // if the data is a zip we need to extract it
+      // save all files to the device app directory in a directory with the item name without the zip extension
+      final nameWithoutExt = itemName.replaceFirst(RegExp(r'.zip$'), '');
+      final dir = Directory.fromUri(Uri.parse('$appDirPath/$nameWithoutExt'));
+      if (dir.existsSync()) dir.deleteSync(recursive: true);
+      await ZipFile.extractToDirectory(zipFile: file, destinationDir: dir);
     }
   }
 }
