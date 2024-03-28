@@ -108,15 +108,19 @@ class ApplyScheduledUpdatesToPreplannedMapAreaState
     try {
       await _mobileMapPackage!.load();
     } catch (err) {
-      showAlertDialog(
-        'Mobile Map Package failed to load with error: {$err}',
-        title: 'Error',
-      );
+      if (mounted) {
+        showAlertDialog(
+          'Mobile Map Package failed to load with error: {$err}',
+          title: 'Error',
+        );
+      }
       return false;
     }
 
     if (_mobileMapPackage!.maps.isEmpty) {
-      showAlertDialog('Mobile map package contains no maps.');
+      if (mounted) {
+        showAlertDialog('Mobile map package contains no maps.');
+      }
       return false;
     }
 
@@ -138,13 +142,14 @@ class ApplyScheduledUpdatesToPreplannedMapAreaState
   Future<void> checkForUpdates() async {
     if (!_isInitialized) return;
     final updatesInfo = await _offlineMapSyncTask!.checkForUpdates();
-
-    setState(() {
-      _updateStatus = updatesInfo.downloadAvailability;
-      _updateSizeKB = updatesInfo.scheduledUpdatesDownloadSize / 1024;
-      _canUpdate = updatesInfo.downloadAvailability ==
-          OfflineUpdateAvailability.available;
-    });
+    if (mounted) {
+      setState(() {
+        _updateStatus = updatesInfo.downloadAvailability;
+        _updateSizeKB = updatesInfo.scheduledUpdatesDownloadSize / 1024;
+        _canUpdate = updatesInfo.downloadAvailability ==
+            OfflineUpdateAvailability.available;
+      });
+    }
   }
 
   void syncUpdates() {
@@ -164,10 +169,12 @@ class ApplyScheduledUpdatesToPreplannedMapAreaState
       // Refresh the update status
       checkForUpdates();
     }, onError: (err) {
-      showAlertDialog(
-        'The offline map sync failed with error: {$err}.',
-        title: 'Error',
-      );
+      if (mounted) {
+        showAlertDialog(
+          'The offline map sync failed with error: {$err}.',
+          title: 'Error',
+        );
+      }
     });
   }
 

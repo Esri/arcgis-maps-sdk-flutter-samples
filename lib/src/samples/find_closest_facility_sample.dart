@@ -119,7 +119,9 @@ class FindClosestFacilitySampleState extends State<FindClosestFacilitySample> {
     _closestFacilityParameters = await generateClosestFacilityParameters(
         facilitiesLayer, incidentsLayer);
 
-    setState(() => _isInitialized = true);
+    if (mounted) {
+      setState(() => _isInitialized = true);
+    }
   }
 
   FeatureLayer buildFeatureLayer(Uri tableUri, Uri imageUri) {
@@ -177,8 +179,9 @@ class FindClosestFacilitySampleState extends State<FindClosestFacilitySample> {
         _routeGraphicsOverlay.graphics.add(routeGraphic);
       }
     }
-
-    setState(() => _isRouteSolved = true);
+    if (mounted) {
+      setState(() => _isRouteSolved = true);
+    }
   }
 
   void resetRoutes() {

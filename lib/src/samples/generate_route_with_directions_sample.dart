@@ -97,10 +97,11 @@ class GenerateRouteWithDirectionsSampleState
     initMap();
     initStops();
     await initRouteParameters();
-
-    setState(() {
-      _isReady = true;
-    });
+    if (mounted) {
+      setState(() {
+        _isReady = true;
+      });
+    }
   }
 
   void initMap() {
@@ -176,7 +177,9 @@ class GenerateRouteWithDirectionsSampleState
     final routeResult =
         await _routeTask.solveRoute(routeParameters: _routeParameters);
     if (routeResult.routes.isEmpty) {
-      showAlertDialog('No routes have been generated.', title: 'Info');
+      if (mounted) {
+        showAlertDialog('No routes have been generated.', title: 'Info');
+      }
       return;
     }
 
@@ -188,10 +191,12 @@ class GenerateRouteWithDirectionsSampleState
       _routeGraphicsOverlay.graphics.add(routeGraphic);
     }
 
-    setState(() {
-      _directions = route.directionManeuvers;
-      _isRouteGenerated = true;
-    });
+    if (mounted) {
+      setState(() {
+        _directions = route.directionManeuvers;
+        _isRouteGenerated = true;
+      });
+    }
   }
 
   Dialog showDirections(BuildContext context) {

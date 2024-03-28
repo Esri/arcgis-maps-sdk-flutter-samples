@@ -70,7 +70,7 @@ class DisplayPointsUsingClusteringFeatureReductionSampleState
   void onMapViewReady() async {
     _mapViewController.arcGISMap = _map;
     await _map.load();
-    if (_map.loadStatus == LoadStatus.loaded) {
+    if (_map.loadStatus == LoadStatus.loaded && mounted) {
       setState(() => _ready = true);
     }
   }
