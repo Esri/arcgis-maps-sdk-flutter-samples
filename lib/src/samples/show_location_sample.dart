@@ -158,7 +158,7 @@ class ShowLocationSampleState extends State<ShowLocationSample> {
     });
 
     try {
-      // await _locationDataSource.start();
+      await _locationDataSource.start();
       _locationSubscription = _locationDataSource.onLocationChanged
           .listen(_handleLdsLocationChange);
     } on ArcGISException catch (e) {
