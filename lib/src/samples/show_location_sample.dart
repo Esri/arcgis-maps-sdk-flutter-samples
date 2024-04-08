@@ -41,6 +41,7 @@ class ShowLocationSampleState extends State<ShowLocationSample> {
 
   @override
   void dispose() {
+    _locationDataSource.stop();
     _locationSubscription?.cancel();
     _statusSubscription?.cancel();
 

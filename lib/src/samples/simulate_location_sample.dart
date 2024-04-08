@@ -42,12 +42,9 @@ class SimulateLocationSampleState extends State<SimulateLocationSample> {
 
   @override
   void dispose() {
+    _locationDataSource.stop();
     _locationSubscription?.cancel();
     _statusSubscription?.cancel();
-    if (_locationDataSource.status == LocationDataSourceStatus.starting ||
-        _locationDataSource.status == LocationDataSourceStatus.started) {
-      _locationDataSource.stop();
-    }
 
     super.dispose();
   }
