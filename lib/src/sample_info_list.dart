@@ -23,6 +23,7 @@ import 'samples/add_vector_tiled_layer_sample.dart';
 import 'samples/apply_scheduled_updates_to_preplanned_map_area_sample.dart';
 import 'samples/apply_simple_renderer_to_feature_layer_sample.dart';
 import 'samples/apply_unique_value_renderer_sample.dart';
+import 'samples/authenticate_with_oauth_sample.dart';
 import 'samples/change_sublayer_renderer_sample.dart';
 import 'samples/display_map_sample.dart';
 import 'samples/display_points_using_clustering_feature_reduction_sample.dart';
@@ -94,6 +95,13 @@ final List<SampleInfo> sampleInfoList = [
     title: 'Apply Unique Value Renderer',
     description: 'Apply a Unique Value Renderer to a Feature Layer.',
     builder: (title) => ApplyUniqueValueRendererSample(title: title),
+  ),
+  SampleInfo(
+    name: 'authenticate_with_oauth',
+    title: 'Authenticate with OAuth',
+    description:
+        'Authenticate with ArcGIS Online (or your own portal) using OAuth2 to access secured resources.',
+    builder: (title) => AuthenticateWithOAuthSample(title: title),
   ),
   SampleInfo(
     name: 'change_sublayer_renderer',
