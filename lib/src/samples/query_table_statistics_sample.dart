@@ -32,7 +32,7 @@ class QueryTableStatisticsSample extends StatefulWidget {
 class QueryTableStatisticsSampleState
     extends State<QueryTableStatisticsSample> {
   final _mapViewController = ArcGISMapView.createController();
-  final _serviceFeatureTable = ServiceFeatureTable.fromUri(Uri.parse(
+  final _serviceFeatureTable = ServiceFeatureTable.withUri(Uri.parse(
       'https://sampleserver6.arcgisonline.com/arcgis/rest/services/SampleWorldCities/MapServer/0'));
   bool _onlyCitiesInCurrentExtent = true;
   bool _onlyCitiesGreaterThan5M = true;

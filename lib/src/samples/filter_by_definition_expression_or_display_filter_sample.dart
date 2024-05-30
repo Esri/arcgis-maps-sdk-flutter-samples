@@ -33,7 +33,7 @@ class FilterByDefinitionExpressionOrDisplayFilterSampleState
     extends State<FilterByDefinitionExpressionOrDisplayFilterSample> {
   final _mapViewController = ArcGISMapView.createController();
   final _featureLayer = FeatureLayer.withFeatureTable(
-      ServiceFeatureTable.fromUri(Uri.parse(
+      ServiceFeatureTable.withUri(Uri.parse(
           'https://services2.arcgis.com/ZQgQTuoyBrtmoGdP/arcgis/rest/services/SF_311_Incidents/FeatureServer/0')));
 
   @override

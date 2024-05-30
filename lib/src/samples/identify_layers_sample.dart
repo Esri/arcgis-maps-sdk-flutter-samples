@@ -46,7 +46,7 @@ class IdentifyLayersSampleState extends State<IdentifyLayersSample> {
       scale: 68015210,
     );
 
-    final serviceFeatureTable = ServiceFeatureTable.fromUri(Uri.parse(
+    final serviceFeatureTable = ServiceFeatureTable.withUri(Uri.parse(
         'https://sampleserver6.arcgisonline.com/arcgis/rest/services/DamageAssessment/FeatureServer/0'));
     final featureLayer = FeatureLayer.withFeatureTable(serviceFeatureTable);
 
