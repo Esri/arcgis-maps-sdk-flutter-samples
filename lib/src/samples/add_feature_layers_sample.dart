@@ -103,7 +103,7 @@ class AddFeatureLayersSampleState extends State<AddFeatureLayersSample> {
   void loadFeatureServiceFromUri() {
     final uri = Uri.parse(
         'https://sampleserver6.arcgisonline.com/arcgis/rest/services/DamageAssessment/FeatureServer/0');
-    final serviceFeatureTable = ServiceFeatureTable.fromUri(uri);
+    final serviceFeatureTable = ServiceFeatureTable.withUri(uri);
     final featureLayer = FeatureLayer.withFeatureTable(serviceFeatureTable);
     _map.operationalLayers.clear();
     _map.operationalLayers.add(featureLayer);
