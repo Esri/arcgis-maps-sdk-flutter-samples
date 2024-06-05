@@ -1,0 +1,11 @@
+{
+    "category": "Search and Query",
+    "description": "Filter features displayed on a map using a definition expression or a display filter.",
+    "ignore": false,
+    "images": [],
+    "keywords": [],
+    "redirect_from": [],
+    "relevant_apis": [],
+    "snippets": [],
+    "title": "Filter by definition expression or display filter"
+}

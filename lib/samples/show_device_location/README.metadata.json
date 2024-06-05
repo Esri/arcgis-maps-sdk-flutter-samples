@@ -1,0 +1,11 @@
+{
+    "category": "Maps",
+    "description": "Display your current position on the map, as well as switch between different types of auto pan modes.",
+    "ignore": false,
+    "images": [],
+    "keywords": [],
+    "redirect_from": [],
+    "relevant_apis": [],
+    "snippets": [],
+    "title": "Show device location"
+}

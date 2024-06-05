@@ -1,0 +1,11 @@
+{
+    "category": "Routing and Logistics",
+    "description": "Find routes from several locations to the respective closest facility.",
+    "ignore": false,
+    "images": [],
+    "keywords": [],
+    "redirect_from": [],
+    "relevant_apis": [],
+    "snippets": [],
+    "title": "Find closest facility from point"
+}

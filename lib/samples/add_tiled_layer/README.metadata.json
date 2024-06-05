@@ -1,0 +1,11 @@
+{
+    "category": "Layers",
+    "description": "Load an ArcGIS tiled layer from a URL.",
+    "ignore": false,
+    "images": [],
+    "keywords": [],
+    "redirect_from": [],
+    "relevant_apis": [],
+    "snippets": [],
+    "title": "Add tiled layer"
+}

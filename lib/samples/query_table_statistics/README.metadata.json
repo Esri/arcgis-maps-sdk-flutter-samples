@@ -1,0 +1,11 @@
+{
+    "category": "Search and Query",
+    "description": "Query a table to get aggregated statistics back for a specific field.",
+    "ignore": false,
+    "images": [],
+    "keywords": [],
+    "redirect_from": [],
+    "relevant_apis": [],
+    "snippets": [],
+    "title": "Query table statistics"
+}

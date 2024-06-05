@@ -1,0 +1,11 @@
+{
+    "category": "Layers",
+    "description": "Load an ArcGIS Vector Tiled Layer from a URL.",
+    "ignore": false,
+    "images": [],
+    "keywords": [],
+    "redirect_from": [],
+    "relevant_apis": [],
+    "snippets": [],
+    "title": "Add vector tiled layer"
+}

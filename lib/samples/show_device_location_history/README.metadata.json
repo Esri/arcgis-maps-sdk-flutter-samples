@@ -1,0 +1,11 @@
+{
+    "category": "Maps",
+    "description": "Display your device's location history on the map.",
+    "ignore": false,
+    "images": [],
+    "keywords": [],
+    "redirect_from": [],
+    "relevant_apis": [],
+    "snippets": [],
+    "title": "Show device location history"
+}
