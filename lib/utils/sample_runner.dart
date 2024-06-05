@@ -33,9 +33,10 @@ void main() {
   // Supply the directory name of a sample via the --dart-define command line argument
   // e.g. --dart-define=SAMPLE=display_map
   const sample = String.fromEnvironment('SAMPLE');
+  // Alternatively, replace sample below with the directory name of the individual sample in snake case
+  // const sample = 'display_map';
   runApp(
     MaterialApp(
-      // Alternatively, replace sample below with the directory name of the individual sample e.g. 'display_map'
       home: sampleWidgets[sample],
     ),
   );
