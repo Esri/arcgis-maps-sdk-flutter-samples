@@ -29,7 +29,7 @@ class _SelectFeaturesInFeatureLayerSampleState
     extends State<SelectFeaturesInFeatureLayerSample> {
   final _mapViewController = ArcGISMapView.createController();
   final _featureLayer = FeatureLayer.withFeatureTable(
-      ServiceFeatureTable.fromUri(Uri.parse(
+      ServiceFeatureTable.withUri(Uri.parse(
           'https://services1.arcgis.com/4yjifSiIG17X0gW4/arcgis/rest/services/GDP_per_capita_1960_2016/FeatureServer/0')));
 
   @override

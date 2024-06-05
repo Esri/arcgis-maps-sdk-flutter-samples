@@ -119,7 +119,7 @@ class _FindClosestFacilityFromPointSampleState
   }
 
   FeatureLayer buildFeatureLayer(Uri tableUri, Uri imageUri) {
-    final featureTable = ServiceFeatureTable.fromUri(tableUri);
+    final featureTable = ServiceFeatureTable.withUri(tableUri);
     final featureLayer = FeatureLayer.withFeatureTable(featureTable);
     final markerSymbol = PictureMarkerSymbol.withUrl(imageUri);
     markerSymbol.width = 30;

@@ -37,7 +37,7 @@ class _ApplySimpleRendererToFeatureLayerSampleState
 
     final uri = Uri.parse(
         'https://services.arcgis.com/V6ZHFr6zdgNZuVG0/arcgis/rest/services/Landscape_Trees/FeatureServer/0');
-    final serviceFeatureTable = ServiceFeatureTable.fromUri(uri);
+    final serviceFeatureTable = ServiceFeatureTable.withUri(uri);
     _featureLayer = FeatureLayer.withFeatureTable(serviceFeatureTable);
     _map.operationalLayers.add(_featureLayer);
     _map.initialViewpoint = Viewpoint.fromCenter(

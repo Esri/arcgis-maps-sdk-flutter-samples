@@ -96,8 +96,7 @@ class _AuthenticateWithOAuthSampleState
     } on ArcGISException catch (error) {
       // Sign in was canceled, or there was some other error.
       final e = (error.wrappedException as ArcGISException?) ?? error;
-      if (e.domain == ArcGISExceptionDomain.arcGISRuntime &&
-          e.errorType == ArcGISExceptionType.commonUserCanceled) {
+      if (e.errorType == ArcGISExceptionType.commonUserCanceled) {
         challenge.cancel();
       } else {
         challenge.continueAndFail();

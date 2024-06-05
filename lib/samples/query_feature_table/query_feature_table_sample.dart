@@ -79,7 +79,7 @@ class _QueryFeatureTableSampleState extends State<QueryFeatureTableSample> {
   void onMapViewReady() async {
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic);
 
-    _featureTable = ServiceFeatureTable.fromUri(Uri.parse(
+    _featureTable = ServiceFeatureTable.withUri(Uri.parse(
         'https://services.arcgis.com/jIL9msH9OI208GCb/arcgis/rest/services/USA_Daytime_Population_2016/FeatureServer/0'));
     await _featureTable.load();
     _featureLayer = FeatureLayer.withFeatureTable(_featureTable);
