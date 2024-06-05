@@ -14,27 +14,31 @@
 // limitations under the License.
 //
 
+import 'package:arcgis_maps_sdk_flutter_samples/models/sample.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/widgets/sample_detail_page.dart';
 import 'package:flutter/material.dart';
-import 'sample_info_list.dart';
 
 class SampleListView extends StatelessWidget {
-  const SampleListView({super.key});
+  const SampleListView({super.key, required this.samples});
+
+  final List<Sample> samples;
 
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
       padding: const EdgeInsets.all(8),
-      itemCount: sampleInfoList.length,
+      itemCount: samples.length,
       itemBuilder: (context, index) {
-        final sampleInfo = sampleInfoList[index];
+        final sample = samples[index];
         return Card(
           child: ListTile(
-            title: Text(sampleInfo.title),
-            subtitle: Text(sampleInfo.description),
+            title: Text(sample.title),
+            subtitle: Text(sample.description),
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => sampleInfo.getSample()),
+                MaterialPageRoute(
+                    builder: (context) => SampleDetailPage(sample: sample)),
               );
             },
           ),
