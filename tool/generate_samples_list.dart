@@ -12,13 +12,15 @@ void main() {
 /// Compiles all of the individual sample README.metadata.json files into a single JSON asset to feed into the Sample Viewer application.
 /// The output is in assets/generated_samples_list.json
 void generateSamplesList() {
+  final pathSeparator = Platform.pathSeparator;
   final samples = <String, dynamic>{};
 
   print('Generating samples list....');
 
   // get the lib/samples directory
   final currentDirectory = Directory.current;
-  final samplesDirectory = Directory('${currentDirectory.path}/lib/samples');
+  final samplesDirectory = Directory(
+      '${currentDirectory.path}${pathSeparator}lib${pathSeparator}samples');
 
   if (!samplesDirectory.existsSync()) {
     throw FileSystemException(
@@ -32,7 +34,7 @@ void generateSamplesList() {
 
   // iterate through each directory and get the README.metadata.json file for each sample
   for (final directory in individualSampleDirectories) {
-    final directoryName = directory.path.split('/').last;
+    final directoryName = directory.path.split(pathSeparator).last;
     final metadataFile = (directory as Directory)
         .listSync()
         .firstWhere((file) => file.path.contains('metadata.json')) as File;
@@ -57,9 +59,10 @@ void generateSamplesList() {
   print('Total samples: ${sortedSamples.keys.length}');
 
   // write the list of sorted samples to the generated_samples_list.json file
-  final assetsDirectory = Directory('${currentDirectory.path}/assets');
-  final samplesJsonFile =
-      File('${assetsDirectory.path}/generated_samples_list.json');
+  final assetsDirectory =
+      Directory('${currentDirectory.path}${pathSeparator}assets');
+  final samplesJsonFile = File(
+      '${assetsDirectory.path}${pathSeparator}generated_samples_list.json');
   if (!samplesJsonFile.existsSync()) {
     throw FileSystemException(
       'Samples directory does not exist at the provided path',
