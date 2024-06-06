@@ -1,0 +1,11 @@
+{
+    "category": "Layers",
+    "description": "Load an offline copy of a tiled map service as a basemap.",
+    "ignore": false,
+    "images": [],
+    "keywords": [],
+    "redirect_from": [],
+    "relevant_apis": [],
+    "snippets": [],
+    "title": "Add tiled layer as basemap"
+}

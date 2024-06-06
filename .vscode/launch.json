@@ -5,19 +5,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Samples (debug)",
-            "request": "launch",
-            "type": "dart",
-            "flutterMode": "debug"
-        },
-        {
-            "name": "Samples (release)",
-            "request": "launch",
-            "type": "dart",
-            "flutterMode": "release"
-        },
-        {
-            "name": "Samples with API Key (debug)",
+            "name": "Sample Viewer App with API Key from env (debug)",
             "request": "launch",
             "type": "dart",
             "flutterMode": "debug",
@@ -26,7 +14,7 @@
             ]
         },
         {
-            "name": "Samples with API Key (release)",
+            "name": "Sample Viewer App with API Key from env (release)",
             "request": "launch",
             "type": "dart",
             "flutterMode": "release",
@@ -35,12 +23,24 @@
             ]
         },
         {
-            "name": "Custom Sample with API Key (debug)",
+            "name": "Sample Viewer App (debug)",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "debug"
+        },
+        {
+            "name": "Sample Viewer App (release)",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release"
+        },
+        {
+            "name": "Custom Sample with API Key from env (debug)",
             "request": "launch",
             "type": "dart",
             "flutterMode": "debug",
             // replace display_map with another sample to run individually
-            "program": "lib/src/samples/display_map.dart",
+            "program": "lib/samples/display_map/display_map.dart",
             "toolArgs": [
                 "--dart-define-from-file=env.json"
             ]

@@ -1,0 +1,11 @@
+{
+    "category": "Visualization",
+    "description": "Change the appearance of a feature layer with a renderer.",
+    "ignore": false,
+    "images": [],
+    "keywords": [],
+    "redirect_from": [],
+    "relevant_apis": [],
+    "snippets": [],
+    "title": "Apply simple renderer to feature layer"
+}

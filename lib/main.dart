@@ -14,9 +14,12 @@
 // limitations under the License.
 //
 
+import 'dart:convert';
 import 'package:arcgis_maps/arcgis_maps.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/models/sample.dart';
 import 'package:flutter/material.dart';
-import 'src/sample_list_view.dart';
+import 'package:flutter/services.dart';
+import 'widgets/sample_list_view.dart';
 
 void main() {
   // Supply your apiKey using the --dart-define-from-file command line argument
@@ -28,29 +31,56 @@ void main() {
   } else {
     ArcGISEnvironment.apiKey = apiKey;
   }
-  runApp(const MyApp());
+  runApp(const SampleViewerApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class SampleViewerApp extends StatefulWidget {
+  const SampleViewerApp({super.key});
+
+  @override
+  State<SampleViewerApp> createState() => _SampleViewerAppState();
+}
+
+class _SampleViewerAppState extends State<SampleViewerApp> {
+  final _samples = <Sample>[];
+  bool _ready = false;
+
+  @override
+  void initState() {
+    loadSamples();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     final ColorScheme colorScheme =
         ColorScheme.fromSeed(seedColor: Colors.deepPurple);
+    const title = 'ArcGIS Maps SDK for Flutter Samples';
 
     return MaterialApp(
-      title: 'ArcGIS Maps SDK for Flutter Samples',
+      title: title,
       theme: ThemeData(
         colorScheme: colorScheme,
         appBarTheme: AppBarTheme(backgroundColor: colorScheme.inversePrimary),
       ),
       home: Scaffold(
         appBar: AppBar(
-          title: const Text('ArcGIS Maps SDK for Flutter Samples'),
+          title: const Text(title),
         ),
-        body: const SampleListView(),
+        body: _ready
+            ? SampleListView(samples: _samples)
+            : const Center(child: Text('Loading samples...')),
       ),
     );
+  }
+
+  void loadSamples() async {
+    final jsonString =
+        await rootBundle.loadString('assets/generated_samples_list.json');
+    final sampleData = jsonDecode(jsonString);
+    for (final s in sampleData.entries) {
+      _samples.add(Sample.fromJson(s.value));
+    }
+    setState(() => _ready = true);
   }
 }

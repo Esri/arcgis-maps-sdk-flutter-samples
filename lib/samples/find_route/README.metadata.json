@@ -1,0 +1,11 @@
+{
+    "category": "Routing and Logistics",
+    "description": "Display directions for a route between two points.",
+    "ignore": false,
+    "images": [],
+    "keywords": [],
+    "redirect_from": [],
+    "relevant_apis": [],
+    "snippets": [],
+    "title": "Find route"
+}
