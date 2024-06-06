@@ -77,12 +77,10 @@ class _SampleViewerAppState extends State<SampleViewerApp> {
   void loadSamples() async {
     final jsonString =
         await rootBundle.loadString('assets/generated_samples_list.json');
-    Map<String, dynamic> sampleData = jsonDecode(jsonString);
+    final sampleData = jsonDecode(jsonString);
     for (final s in sampleData.entries) {
       _samples.add(Sample.fromJson(s.value));
     }
-    setState(() {
-      _ready = true;
-    });
+    setState(() => _ready = true);
   }
 }

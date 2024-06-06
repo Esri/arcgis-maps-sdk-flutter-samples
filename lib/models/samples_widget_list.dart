@@ -32,7 +32,7 @@ import 'package:flutter/material.dart';
 // A list of all the Widgets for individual Samples.
 // Used by the Sample Viewer App to display the Widget when a sample is selected.
 // The key is the directory name for the sample which is in snake case. E.g. display_map
-const Map<String, Widget> sampleWidgets = {
+const sampleWidgets = <String, Widget>{
   'add_feature_collection_layer_from_table':
       AddFeatureCollectionLayerFromTableSample(),
   'add_feature_layers': AddFeatureLayersSample(),
@@ -67,5 +67,5 @@ const Map<String, Widget> sampleWidgets = {
   'show_magnifier': ShowMagnifierSample(),
   'show_service_area': ShowServiceAreaSample(),
   'style_point_with_simple_marker_symbol':
-      StylePointWithSimpleMarkerSymbolSample()
+      StylePointWithSimpleMarkerSymbolSample(),
 };
