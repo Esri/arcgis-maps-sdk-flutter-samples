@@ -17,15 +17,24 @@ void generateSamplesList() {
 
   print('Generating samples list....');
 
-  // get the lib/samples directory
+  // check for the required directories
   final currentDirectory = Directory.current;
   final samplesDirectory = Directory(
       '${currentDirectory.path}${pathSeparator}lib${pathSeparator}samples');
+  final assetsDirectory =
+      Directory('${currentDirectory.path}${pathSeparator}assets');
 
   if (!samplesDirectory.existsSync()) {
     throw FileSystemException(
       'Samples directory does not exist at the provided path',
       samplesDirectory.path,
+    );
+  }
+
+  if (!assetsDirectory.existsSync()) {
+    throw FileSystemException(
+      'Assets directory does not exist at the provided path',
+      assetsDirectory.path,
     );
   }
 
@@ -59,15 +68,7 @@ void generateSamplesList() {
   print('Total samples: ${sortedSamples.keys.length}');
 
   // write the list of sorted samples to the generated_samples_list.json file
-  final assetsDirectory =
-      Directory('${currentDirectory.path}${pathSeparator}assets');
   final samplesJsonFile = File(
       '${assetsDirectory.path}${pathSeparator}generated_samples_list.json');
-  if (!samplesJsonFile.existsSync()) {
-    throw FileSystemException(
-      'Samples directory does not exist at the provided path',
-      samplesJsonFile.path,
-    );
-  }
   samplesJsonFile.writeAsStringSync(jsonEncode(sortedSamples));
 }
