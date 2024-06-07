@@ -8,7 +8,7 @@ Visit [earlyadopter.esri.com](https://earlyadopter.esri.com/) and download the A
 
 Clone or download this repository into the same parent directory as the `arcgis_maps_package`.
 
-Note on Windows: This repository uses symlinks. Git must be configured to use symlinks and have permission to create symlinks. To configure git, run `git config --system core.symlinks true`. To have permission to create symlinks, either clone the repository in an elevated "Administrator" command prompt, or go to "Settings > For developers" and turn on "Developer Mode".
+Note on Windows: This repository uses symlinks. Git must be configured to use symlinks and have permission to create symlinks. To configure git, run `git config --system core.symlinks true`. To have permission to create symlinks, either clone the repository in an elevated "Administrator" command prompt, or go to "Settings > Update & Security > For developers" and turn on "Developer Mode".
 
 Your file structure should be:
 
@@ -34,7 +34,7 @@ flutter pub upgrade
 
 Install arcgis_maps_core.
 
-Note on Windows: this step requires permission to create symlinks. Either run this step in an elevated "Administrator" command prompt, or go to "Settings > For developers" and turn on "Developer Mode".
+Note on Windows: this step requires permission to create symlinks. Either run this step in an elevated "Administrator" command prompt, or go to "Settings > Update & Security > For developers" and turn on "Developer Mode".
 
 ```
 dart run arcgis_maps install
