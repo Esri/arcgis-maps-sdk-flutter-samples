@@ -14,9 +14,9 @@
 // limitations under the License.
 //
 
-import 'package:flutter/material.dart';
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:async/async.dart';
+import 'package:flutter/material.dart';
 
 class SuggestAddressSample extends StatefulWidget {
   const SuggestAddressSample({

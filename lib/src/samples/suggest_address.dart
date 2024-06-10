@@ -14,8 +14,9 @@
 // limitations under the License.
 //
 
-import 'package:flutter/material.dart';
 import 'package:arcgis_maps/arcgis_maps.dart';
+import 'package:flutter/material.dart';
+
 import 'suggest_address_sample.dart';
 
 void main() {

@@ -15,9 +15,11 @@
 //
 
 import 'dart:io';
-import 'package:flutter/material.dart';
+
 import 'package:arcgis_maps/arcgis_maps.dart';
+import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
+
 import '../sample_data.dart';
 
 class AddFeatureLayersSample extends StatefulWidget {

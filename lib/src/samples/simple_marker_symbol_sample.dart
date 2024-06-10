@@ -14,9 +14,10 @@
 // limitations under the License.
 //
 
-import 'package:flutter/material.dart';
-import 'package:arcgis_maps/arcgis_maps.dart';
 import 'dart:ui' as ui;
+
+import 'package:arcgis_maps/arcgis_maps.dart';
+import 'package:flutter/material.dart';
 
 class SimpleMarkerSymbolSample extends StatefulWidget {
   const SimpleMarkerSymbolSample({

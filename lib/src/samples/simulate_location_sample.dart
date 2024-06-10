@@ -14,10 +14,11 @@
 // limitations under the License.
 //
 
-import 'package:flutter/material.dart';
-import 'package:arcgis_maps/arcgis_maps.dart';
-import 'package:flutter/services.dart';
 import 'dart:async';
+
+import 'package:arcgis_maps/arcgis_maps.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class SimulateLocationSample extends StatefulWidget {
   const SimulateLocationSample({

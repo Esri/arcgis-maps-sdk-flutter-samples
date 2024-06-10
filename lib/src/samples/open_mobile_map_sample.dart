@@ -14,10 +14,12 @@
 // limitations under the License.
 //
 
+import 'dart:io';
+
+import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:arcgis_maps/arcgis_maps.dart';
-import 'dart:io';
+
 import '../sample_data.dart';
 
 class OpenMobileMapSample extends StatefulWidget {

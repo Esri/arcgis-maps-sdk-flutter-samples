@@ -14,8 +14,9 @@
 // limitations under the License.
 //
 
-import 'package:flutter/material.dart';
 import 'package:arcgis_maps/arcgis_maps.dart';
+import 'package:flutter/material.dart';
+
 import 'filter_by_definition_expression_or_display_filter_sample.dart';
 
 void main() {
