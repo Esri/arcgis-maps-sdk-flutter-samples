@@ -16,10 +16,11 @@
 
 // ignore_for_file: avoid_print
 
-import 'package:flutter/material.dart';
-import 'package:arcgis_maps/arcgis_maps.dart';
-import 'package:path_provider/path_provider.dart';
 import 'dart:io';
+
+import 'package:arcgis_maps/arcgis_maps.dart';
+import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
 
 class DownloadPreplannedMapAreaSample extends StatefulWidget {
   const DownloadPreplannedMapAreaSample({super.key});
