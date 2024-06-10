@@ -14,8 +14,8 @@
 // limitations under the License.
 //
 
-import 'package:flutter/material.dart';
 import 'package:arcgis_maps/arcgis_maps.dart';
+import 'package:flutter/material.dart';
 
 class ShowServiceAreaSample extends StatefulWidget {
   const ShowServiceAreaSample({super.key});

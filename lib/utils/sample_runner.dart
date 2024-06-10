@@ -14,9 +14,9 @@
 // limitations under the License.
 //
 
+import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/models/samples_widget_list.dart';
 import 'package:flutter/material.dart';
-import 'package:arcgis_maps/arcgis_maps.dart';
 
 /// Run an individual sample outside of the Sample Viewer App
 void main() {
