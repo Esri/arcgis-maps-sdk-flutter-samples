@@ -3,9 +3,9 @@
     "description": "Use an online service to find the address for a tapped point.",
     "ignore": false,
     "images": [],
-    "keywords": [],
+    "keywords": ["address", "geocode", "locate", "reverse geocode", "search"],
     "redirect_from": [],
-    "relevant_apis": [],
+    "relevant_apis": ["GeocodeParameters", "LocatorTask", "ReverseGeocodeParameters"],
     "snippets": [],
     "title": "Find address with reverse geocode"
 }
