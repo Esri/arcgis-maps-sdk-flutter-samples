@@ -79,9 +79,7 @@ class _FindAddressWithReverseGeocodeSampleState
     _mapViewController.arcGISMap = map;
     _mapViewController.setViewpoint(_initialViewpoint);
 
-    await Future.wait([
-      _worldLocatorTask.load(),
-    ]);
+    await _worldLocatorTask.load();
 
     setState(() => _ready = true);
   }
@@ -105,17 +103,15 @@ class _FindAddressWithReverseGeocodeSampleState
     );
     if (reverseGeocodeResult.isEmpty) return;
 
-    try {
-      final firstResult = reverseGeocodeResult.first;
-      final address = firstResult.attributes['LongLabel'] as String;
+    final firstResult = reverseGeocodeResult.first;
+    final address = firstResult.attributes['LongLabel'] as String;
+    if (mounted) {
       showDialog(
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(content: Text(address));
         },
       );
-    } on StateError {
-      return;
     }
   }
 

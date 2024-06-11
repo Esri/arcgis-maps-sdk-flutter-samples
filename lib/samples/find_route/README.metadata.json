@@ -3,9 +3,9 @@
     "description": "Display directions for a route between two points.",
     "ignore": false,
     "images": [],
-    "keywords": [],
+    "keywords": ["directions", "driving", "navigation", "network", "network analysis", "route", "routing", "shortest path", "turn-by-turn"],
     "redirect_from": [],
-    "relevant_apis": [],
+    "relevant_apis": ["DirectionManeuver", "Route RouteParameters", "RouteResult", "RouteTask", "Stop"],
     "snippets": [],
     "title": "Find route"
 }
