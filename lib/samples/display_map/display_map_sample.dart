@@ -23,10 +23,10 @@ class DisplayMapSample extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // create an ArcGISMapView, assign a mapview controller and set a map with a basemap style
       body: ArcGISMapView(
         controllerProvider: () => ArcGISMapView.createController()
-          ..arcGISMap =
-              ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic),
+          ..arcGISMap = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISImagery),
       ),
     );
   }

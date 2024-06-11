@@ -2,10 +2,24 @@
     "category": "Maps",
     "description": "Display a map with an imagery basemap.",
     "ignore": false,
-    "images": [],
-    "keywords": [],
+    "images": [
+        "display_map.png"
+    ],
+    "keywords": [
+        "basemap style",
+        "map",
+        "ArcGISMap",
+        "BasemapStyle",
+        "MapView"
+    ],
     "redirect_from": [],
-    "relevant_apis": [],
-    "snippets": [],
+    "relevant_apis": [
+        "ArcGISMap",
+        "BasemapStyle",
+        "MapView"
+    ],
+    "snippets": [
+        "display_map_sample.dart"
+    ],
     "title": "Display map"
 }
