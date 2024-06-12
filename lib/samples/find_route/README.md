@@ -23,12 +23,12 @@ For simplicity, the sample comes loaded with a start and end stop. You can click
 
 ## Relevant API
 
-*   DirectionManeuver
-*   Route
-*   RouteParameters
-*   RouteResult
-*   RouteTask
-*   Stop
+* DirectionManeuver
+* Route
+* RouteParameters
+* RouteResult
+* RouteTask
+* Stop
 
 ## Tags
 
