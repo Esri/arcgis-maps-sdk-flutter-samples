@@ -27,7 +27,6 @@ class FindAddressWithReverseGeocodeSample extends StatefulWidget {
 
 class _FindAddressWithReverseGeocodeSampleState
     extends State<FindAddressWithReverseGeocodeSample> {
-  final GlobalKey<ScaffoldState> _scaffoldStateKey = GlobalKey();
   final _graphicsOverlay = GraphicsOverlay();
   final _worldLocatorTask = LocatorTask.withUri(Uri.parse(
       'https://geocode-api.arcgis.com/arcgis/rest/services/World/GeocodeServer'));
@@ -50,8 +49,6 @@ class _FindAddressWithReverseGeocodeSampleState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      key: _scaffoldStateKey,
-      resizeToAvoidBottomInset: false,
       body: Stack(
         children: [
           ArcGISMapView(
@@ -68,10 +65,10 @@ class _FindAddressWithReverseGeocodeSampleState
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic);
 
     final image = await ArcGISImage.fromAsset('assets/pin_circle_red.png');
-    final pictureMarkerSymbol = PictureMarkerSymbol.withImage(image);
-    pictureMarkerSymbol.width = 35;
-    pictureMarkerSymbol.height = 35;
-    pictureMarkerSymbol.offsetY = pictureMarkerSymbol.height / 2;
+    final pictureMarkerSymbol = PictureMarkerSymbol.withImage(image)
+    ..width = 35
+    ..height = 35
+    ..offsetY = pictureMarkerSymbol.height / 2;
 
     _graphicsOverlay.renderer = SimpleRenderer(symbol: pictureMarkerSymbol);
     _mapViewController.graphicsOverlays.add(_graphicsOverlay);
@@ -95,8 +92,8 @@ class _FindAddressWithReverseGeocodeSampleState
         GeometryEngine.normalizeCentralMeridian(geometry: mapTapPoint);
     displayTappedPoint(normalizedTapPoint!);
 
-    final reverseGeocodeParameters = ReverseGeocodeParameters();
-    reverseGeocodeParameters.maxResults = 1;
+    final reverseGeocodeParameters = ReverseGeocodeParameters()
+    ..maxResults = 1;
     final reverseGeocodeResult = await _locatorTask.reverseGeocode(
       location: normalizedTapPoint as ArcGISPoint,
       parameters: reverseGeocodeParameters,
