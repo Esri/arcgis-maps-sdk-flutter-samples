@@ -2,10 +2,27 @@
     "category": "Search and Query",
     "description": "Use an online service to find the address for a tapped point.",
     "ignore": false,
-    "images": [],
-    "keywords": ["address", "geocode", "locate", "reverse geocode", "search"],
+    "images": [
+        "find_address_with_reverse_geocode.png"
+    ],
+    "keywords": [
+        "address",
+        "geocode",
+        "locate",
+        "reverse geocode",
+        "search",
+        "GeocodeParameters",
+        "LocatorTask",
+        "ReverseGeocodeParameters"
+    ],
     "redirect_from": [],
-    "relevant_apis": ["GeocodeParameters", "LocatorTask", "ReverseGeocodeParameters"],
-    "snippets": [],
+    "relevant_apis": [
+        "GeocodeParameters",
+        "LocatorTask",
+        "ReverseGeocodeParameters"
+    ],
+    "snippets": [
+        "find_address_with_reverse_geocode_sample.dart"
+    ],
     "title": "Find address with reverse geocode"
 }
