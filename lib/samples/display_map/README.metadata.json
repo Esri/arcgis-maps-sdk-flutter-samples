@@ -9,14 +9,14 @@
         "basemap style",
         "map",
         "ArcGISMap",
-        "BasemapStyle",
-        "MapView"
+        "ArcGISMapView",
+        "BasemapStyle"
     ],
     "redirect_from": [],
     "relevant_apis": [
         "ArcGISMap",
-        "BasemapStyle",
-        "MapView"
+        "ArcGISMapView",
+        "BasemapStyle"
     ],
     "snippets": [
         "display_map_sample.dart"

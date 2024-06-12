@@ -20,8 +20,8 @@ When loaded, the sample will display a map. Pan and zoom to explore the map.
 ## Relevant API
 
 * ArcGISMap
+* ArcGISMapView
 * BasemapStyle
-* MapView
 
 ## Tags
 
