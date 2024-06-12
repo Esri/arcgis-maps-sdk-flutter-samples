@@ -14,8 +14,6 @@
 // limitations under the License.
 //
 
-import 'dart:ui' as ui;
-
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:flutter/material.dart';
 
@@ -35,36 +33,44 @@ class _StylePointWithSimpleMarkerSymbolSampleState
   void initState() {
     super.initState();
 
-    _mapViewController.wrapAroundMode = WrapAroundMode.disabled;
-
+    // create a map with a basemap style
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISImageryStandard);
 
+    // create a point using x and y coordinates
     final point = ArcGISPoint(
       x: -226773,
       y: 6550477,
       spatialReference: SpatialReference.webMercator,
     );
 
+    // set the initial viewpoint of the map to the point and provide a scale
     map.initialViewpoint = Viewpoint.fromCenter(point, scale: 7500);
 
+    // set the map to the mapview controller
     _mapViewController.arcGISMap = map;
 
+    // create a graphics overlay and add it to the mapview controller
+    final graphicsOverlay = GraphicsOverlay();
+    _mapViewController.graphicsOverlays.add(graphicsOverlay);
+
+    // create a simple marker symbol with a style, color and size
     final simpleMarkerSymbol = SimpleMarkerSymbol(
-      style: SimpleMarkerSymbolStyle.diamond,
-      color: const ui.Color.fromARGB(255, 255, 255, 0),
-      size: 12.0,
+      style: SimpleMarkerSymbolStyle.circle,
+      color: Color(Colors.red.value),
+      size: 10.0,
     );
+
+    // create a graphic using the point and simple marker symbol
     final graphic = Graphic(geometry: point, symbol: simpleMarkerSymbol);
 
-    final graphicsOverlay = GraphicsOverlay();
+    // add the graphic to the graphics overlay
     graphicsOverlay.graphics.add(graphic);
-
-    _mapViewController.graphicsOverlays.add(graphicsOverlay);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // create an ArcGISMapView and assign the mapview controller
       body: ArcGISMapView(
         controllerProvider: () => _mapViewController,
       ),
