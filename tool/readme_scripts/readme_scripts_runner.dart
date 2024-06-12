@@ -118,11 +118,7 @@ void main(List<String> args) {
     returnCode += runMetadataCheck(dirPath);
   }
 
-  if (returnCode != 0) {
-    exit(returnCode);
-  } else {
-    exit(0);
-  }
+  exit(returnCode);
 }
 
 int createMetadataFromReadme(String dirPath, String category) {
