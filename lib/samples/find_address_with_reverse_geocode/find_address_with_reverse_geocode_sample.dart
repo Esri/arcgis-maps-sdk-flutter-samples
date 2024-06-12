@@ -51,6 +51,7 @@ class _FindAddressWithReverseGeocodeSampleState
     return Scaffold(
       body: Stack(
         children: [
+          // Add a map view.
           ArcGISMapView(
             controllerProvider: () => _mapViewController,
             onMapViewReady: onMapViewReady,
@@ -62,19 +63,22 @@ class _FindAddressWithReverseGeocodeSampleState
   }
 
   void onMapViewReady() async {
+    // Create an instance of a map with ESRI topographic basemap.
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic);
+    _mapViewController.arcGISMap = map;
+
+    // Zoom to a specific extent.
+    _mapViewController.setViewpoint(_initialViewpoint);
 
     final image = await ArcGISImage.fromAsset('assets/pin_circle_red.png');
     final pictureMarkerSymbol = PictureMarkerSymbol.withImage(image)
-    ..width = 35
-    ..height = 35
-    ..offsetY = pictureMarkerSymbol.height / 2;
+      ..width = 35
+      ..height = 35;
+    pictureMarkerSymbol.offsetY = pictureMarkerSymbol.height / 2;
 
+    // Add the graphics overlay.
     _graphicsOverlay.renderer = SimpleRenderer(symbol: pictureMarkerSymbol);
     _mapViewController.graphicsOverlays.add(_graphicsOverlay);
-
-    _mapViewController.arcGISMap = map;
-    _mapViewController.setViewpoint(_initialViewpoint);
 
     await _worldLocatorTask.load();
 
@@ -82,24 +86,33 @@ class _FindAddressWithReverseGeocodeSampleState
   }
 
   void onTap(Offset localPosition) async {
+    // Remove already existing graphics.
     if (_graphicsOverlay.graphics.isNotEmpty) _graphicsOverlay.graphics.clear();
 
+    // Convert the screen point to a map point.
     final mapTapPoint =
         _mapViewController.screenToLocation(screen: localPosition);
     if (mapTapPoint == null) return;
 
+    // Normalize point.
     final normalizedTapPoint =
         GeometryEngine.normalizeCentralMeridian(geometry: mapTapPoint);
-    displayTappedPoint(normalizedTapPoint!);
+    if (normalizedTapPoint == null) return;
 
-    final reverseGeocodeParameters = ReverseGeocodeParameters()
-    ..maxResults = 1;
+    // Create a graphic object for the specified point.
+    _graphicsOverlay.graphics.add(Graphic(geometry: normalizedTapPoint));
+
+    // Initialize parameters.
+    final reverseGeocodeParameters = ReverseGeocodeParameters()..maxResults = 1;
+
+    // Reverse geocode.
     final reverseGeocodeResult = await _locatorTask.reverseGeocode(
       location: normalizedTapPoint as ArcGISPoint,
       parameters: reverseGeocodeParameters,
     );
     if (reverseGeocodeResult.isEmpty) return;
 
+    // Get and show the address.
     final firstResult = reverseGeocodeResult.first;
     final address = firstResult.attributes['LongLabel'] as String;
     if (mounted) {
@@ -110,12 +123,5 @@ class _FindAddressWithReverseGeocodeSampleState
         },
       );
     }
-  }
-
-  void displayTappedPoint(Geometry mapPoint) {
-    final pointGraphic = Graphic(
-      geometry: mapPoint,
-    );
-    _graphicsOverlay.graphics.add(pointGraphic);
   }
 }
