@@ -123,7 +123,7 @@ void main(List<String> args) {
 
 int createMetadataFromReadme(String dirPath, String category) {
   print('**** Creating README.metadata.json from README.md ****');
-  var result = Process.runSync('python3',
+  final result = Process.runSync('python3',
       ['create_metadata_from_README.py', '-s', dirPath, '-c', category]);
   printScriptOutput('create readme from metadata script', result);
   return result.exitCode;
@@ -156,7 +156,7 @@ void printScriptOutput(String name, ProcessResult result) {
 
 int runMdlStyleChecker(String dirPath) {
   print('**** Running mdl (markdown linter) style checker ****');
-  var result =
+  final result =
       Process.runSync('mdl', ['--style', 'style.rb', '$dirPath/README.md']);
 
   printScriptOutput('mdl style check', result);
@@ -166,14 +166,15 @@ int runMdlStyleChecker(String dirPath) {
 
 int runReadmeCheck(String dirPath) {
   print('**** README checker ****');
-  var result = Process.runSync('python3', ['readme_checker.py', '-s', dirPath]);
+  final result =
+      Process.runSync('python3', ['readme_checker.py', '-s', dirPath]);
   printScriptOutput('README checker', result);
   return result.exitCode;
 }
 
 int runMetadataCheck(String dirPath) {
   print('**** Metadata checker ****');
-  var result =
+  final result =
       Process.runSync('python3', ['metadata_checker.py', '-s', dirPath]);
   printScriptOutput('Metadata checker', result);
   return result.exitCode;
