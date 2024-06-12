@@ -30,6 +30,8 @@ flutter pub upgrade
 
 Install arcgis_maps_core.
 
+Note on Windows: this step requires permission to create symlinks. Either run this step in an elevated "Administrator" command prompt, or go to "Settings > Update & Security > For developers" and turn on "Developer Mode".
+
 ```
 dart run arcgis_maps install
 ```
