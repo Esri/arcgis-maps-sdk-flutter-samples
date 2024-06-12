@@ -130,14 +130,7 @@ int createMetadataFromReadme(String dirPath, String category) {
 }
 
 List<String> getFilePaths(Directory directory) {
-  final files = <String>[];
-  final directoryContents = directory.listSync();
-  for (final file in directoryContents) {
-    if (file is File) {
-      files.add(file.path);
-    }
-  }
-  return files;
+  return directory.listSync().whereType<File>().map((f) => f.path).toList();
 }
 
 void printScriptOutput(String name, ProcessResult result) {
