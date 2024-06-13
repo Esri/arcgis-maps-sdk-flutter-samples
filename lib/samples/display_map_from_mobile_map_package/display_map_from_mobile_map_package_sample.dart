@@ -10,7 +10,7 @@
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
+// See the License for the specific lafnguage governing permissions and
 // limitations under the License.
 //
 
@@ -32,10 +32,12 @@ class DisplayMapFromMobileMapPackageSample extends StatefulWidget {
 
 class _DisplayMapFromMobileMapPackageSampleState
     extends State<DisplayMapFromMobileMapPackageSample> {
+  // creates a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
 
   @override
   Widget build(BuildContext context) {
+    // creates a map view to display the map.
     return Scaffold(
       body: ArcGISMapView(
         controllerProvider: () => _mapViewController,
@@ -47,9 +49,13 @@ class _DisplayMapFromMobileMapPackageSampleState
   void onMapViewReady() async {
     await downloadSampleData(['e1f3a7254cb845b09450f54937c16061']);
     final appDir = await getApplicationDocumentsDirectory();
+
+    // loads the local mobile map package.
     final mmpkFile = File('${appDir.absolute.path}/Yellowstone.mmpk');
     final mmpk = MobileMapPackage.withFileUri(mmpkFile.uri);
     await mmpk.load();
+
+    // gets the first map in the mobile map package.
     if (mmpk.maps.isNotEmpty) {
       _mapViewController.arcGISMap = mmpk.maps.first;
     }
