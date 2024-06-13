@@ -31,22 +31,14 @@ class _FindRouteSampleState extends State<FindRouteSample> {
   final _stopsGraphicsOverlay = GraphicsOverlay();
   // the graphics overlay for the route.
   final _routeGraphicsOverlay = GraphicsOverlay();
-  // the symbol for the route line.
-  final _routeLineSymbol = SimpleLineSymbol(
-      style: SimpleLineSymbolStyle.solid, color: Colors.blue, width: 5.0);
-  // the symbol for the start and end stops.
-  final _routeStartSymbol = SimpleMarkerSymbol(
-      style: SimpleMarkerSymbolStyle.circle, color: Colors.green, size: 8.0);
-  final _routeEndSymbol = SimpleMarkerSymbol(
-      style: SimpleMarkerSymbolStyle.circle, color: Colors.red, size: 8.0);
   // the stops for the route.
-  final List<Stop> _stops = [];
+  final _stops = <Stop>[];
   // whether the route has been generated.
   var _isRouteGenerated = false;
   // whether the map is ready.
   var _isReady = false;
   // the directions for the route.
-  List<DirectionManeuver> _directions = [];
+  List _directions = <DirectionManeuver>[];
   // the parameters for the route.
   late final RouteParameters _routeParameters;
   // the route task.
@@ -125,6 +117,12 @@ class _FindRouteSampleState extends State<FindRouteSample> {
   }
 
   void initStops() {
+    // the symbol for the start and end stops.
+    final routeStartSymbol = SimpleMarkerSymbol(
+        style: SimpleMarkerSymbolStyle.circle, color: Colors.green, size: 8.0);
+    final routeEndSymbol = SimpleMarkerSymbol(
+        style: SimpleMarkerSymbolStyle.circle, color: Colors.red, size: 8.0);
+
     // the start and end points for the route.
     final startPoint = ArcGISPoint(
       x: -13041171.537945,
@@ -138,34 +136,30 @@ class _FindRouteSampleState extends State<FindRouteSample> {
       spatialReference: SpatialReference.webMercator,
     );
 
-    final originStop = Stop(point: startPoint);
-    originStop.name = 'Origin';
+    final originStop = Stop(point: startPoint)..name = 'Origin';
 
-    final destinationStop = Stop(point: endPoint);
-    destinationStop.name = 'Destination';
+    final destinationStop = Stop(point: endPoint)..name = 'Destination';
 
     _stops.add(originStop);
     _stops.add(destinationStop);
 
     // add the start and end points to the stops graphics overlay.
     _stopsGraphicsOverlay.graphics.add(
-      Graphic(geometry: startPoint, symbol: _routeStartSymbol),
+      Graphic(geometry: startPoint, symbol: routeStartSymbol),
     );
     _stopsGraphicsOverlay.graphics.add(
-      Graphic(geometry: endPoint, symbol: _routeEndSymbol),
+      Graphic(geometry: endPoint, symbol: routeEndSymbol),
     );
   }
 
   Future<void> initRouteParameters() async {
     // create default route parameters.
-    final parameters = await _routeTask.createDefaultParameters();
-    parameters.setStops(_stops);
-    parameters.returnDirections = true;
-    parameters.directionsDistanceUnits = UnitSystem.imperial;
-    parameters.returnRoutes = true;
-    parameters.returnStops = true;
-
-    _routeParameters = parameters;
+    _routeParameters = await _routeTask.createDefaultParameters()
+      ..setStops(_stops)
+      ..returnDirections = true
+      ..directionsDistanceUnits = UnitSystem.imperial
+      ..returnRoutes = true
+      ..returnStops = true;
   }
 
   void resetRoute() {
@@ -179,6 +173,10 @@ class _FindRouteSampleState extends State<FindRouteSample> {
   }
 
   Future<void> generateRoute() async {
+    // the symbol for the route line.
+    final routeLineSymbol = SimpleLineSymbol(
+        style: SimpleLineSymbolStyle.solid, color: Colors.blue, width: 5.0);
+
     // reset the route.
     resetRoute();
 
@@ -193,13 +191,13 @@ class _FindRouteSampleState extends State<FindRouteSample> {
     }
 
     // get the first route.
-    final route = routeResult.routes[0];
+    final route = routeResult.routes.first;
     final routeGeometry = route.routeGeometry;
 
     //  add the route to the route graphics overlay.
     if (routeGeometry != null) {
       final routeGraphic =
-          Graphic(geometry: routeGeometry, symbol: _routeLineSymbol);
+          Graphic(geometry: routeGeometry, symbol: routeLineSymbol);
       _routeGraphicsOverlay.graphics.add(routeGraphic);
     }
 
