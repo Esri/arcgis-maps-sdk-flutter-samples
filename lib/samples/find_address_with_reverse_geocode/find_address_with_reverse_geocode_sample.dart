@@ -63,7 +63,7 @@ class _FindAddressWithReverseGeocodeSampleState
   }
 
   void onMapViewReady() async {
-    // create an instance of a map with ESRI topographic basemap.
+    // create an instance of a map with Esri topographic basemap.
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic);
     _mapViewController.arcGISMap = map;
 
@@ -117,9 +117,9 @@ class _FindAddressWithReverseGeocodeSampleState
     final cityString = firstResult.attributes['City'] ?? "" as String;
     final addressString = firstResult.attributes['Address'] ?? "" as String;
     final stateString = firstResult.attributes['RegionAbbr'] ?? "" as String;
-    List<String> resultString = [addressString, cityString, stateString];
-    String combinedString =
-        resultString.where((str) => str.isNotEmpty).join(", ");
+    final resultStrings = [addressString, cityString, stateString];
+    final combinedString =
+        resultStrings.where((str) => str.isNotEmpty).join(", ");
 
     if (mounted) {
       showDialog(
