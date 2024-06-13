@@ -114,12 +114,18 @@ class _FindAddressWithReverseGeocodeSampleState
 
     // get and show the address.
     final firstResult = reverseGeocodeResult.first;
-    final address = firstResult.attributes['LongLabel'] as String;
+    final cityString = firstResult.attributes['City'] ?? "" as String;
+    final addressString = firstResult.attributes['Address'] ?? "" as String;
+    final stateString = firstResult.attributes['RegionAbbr'] ?? "" as String;
+    List<String> resultString = [addressString, cityString, stateString];
+    String combinedString =
+        resultString.where((str) => str.isNotEmpty).join(", ");
+
     if (mounted) {
       showDialog(
         context: context,
         builder: (BuildContext context) {
-          return AlertDialog(content: Text(address));
+          return AlertDialog(content: Text(combinedString));
         },
       );
     }
