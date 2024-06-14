@@ -49,8 +49,10 @@ class _FindRouteSampleState extends State<FindRouteSample> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
+        // create a column with buttons for generating the route and showing the directions.
         child: Column(
           children: [
+            // add the map view to the column.
             Expanded(
               child: ArcGISMapView(
                 controllerProvider: () => _mapViewController,
@@ -59,16 +61,19 @@ class _FindRouteSampleState extends State<FindRouteSample> {
             ),
             SizedBox(
               height: 60,
+              // add the buttons to the column.
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
+                  // create a button to generate the route.
                   ElevatedButton(
                     onPressed: _routeGenerated || !_ready
                         ? null
                         : () => generateRoute(),
                     child: const Text('Route'),
                   ),
+                  // create a button to show the directions.
                   ElevatedButton(
                     onPressed: _routeGenerated
                         ? () => showDialog(
