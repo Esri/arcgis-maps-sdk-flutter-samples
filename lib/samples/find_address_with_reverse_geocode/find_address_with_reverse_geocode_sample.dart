@@ -41,9 +41,6 @@ class _FindAddressWithReverseGeocodeSampleState
   );
   bool _ready = false;
 
-    _locatorTask = _worldLocatorTask;
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
