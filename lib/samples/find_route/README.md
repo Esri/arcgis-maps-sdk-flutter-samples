@@ -3,7 +3,7 @@
 Display directions for a route between two points.
 
 ![Image of find route](find_route.png)
-![Image of directions](find_route_2.png)
+![Image of directions](find_route_directions.png)
 
 ## Use case
 

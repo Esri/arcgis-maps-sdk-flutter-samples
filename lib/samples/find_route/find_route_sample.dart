@@ -34,11 +34,11 @@ class _FindRouteSampleState extends State<FindRouteSample> {
   // the stops for the route.
   final _stops = <Stop>[];
   // whether the route has been generated.
-  var _isRouteGenerated = false;
-  // whether the map is ready.
-  var _isReady = false;
+  var _routeGenerated = false;
+  // a flag for when the map view is ready used to control availability of parts of the UI.
+  var _ready = false;
   // the directions for the route.
-  List _directions = <DirectionManeuver>[];
+  var _directions = <DirectionManeuver>[];
   // the parameters for the route.
   late final RouteParameters _routeParameters;
   // the route task.
@@ -64,13 +64,13 @@ class _FindRouteSampleState extends State<FindRouteSample> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   ElevatedButton(
-                    onPressed: _isRouteGenerated || !_isReady
+                    onPressed: _routeGenerated || !_ready
                         ? null
                         : () => generateRoute(),
                     child: const Text('Route'),
                   ),
                   ElevatedButton(
-                    onPressed: _isRouteGenerated
+                    onPressed: _routeGenerated
                         ? () => showDialog(
                               context: context,
                               builder: (context) => showDirections(context),
@@ -87,19 +87,17 @@ class _FindRouteSampleState extends State<FindRouteSample> {
     );
   }
 
-  Future<void> onMapViewReady() async {
+  void onMapViewReady() async {
     initMap();
     initStops();
     await initRouteParameters();
     if (mounted) {
-      setState(() {
-        _isReady = true;
-      });
+      setState(() => _ready = true);
     }
   }
 
   void initMap() {
-    // a map with a topographic basemap style and an initial viewpoint.
+    // create a map with a topographic basemap style and an initial viewpoint.
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic);
 
     map.initialViewpoint = Viewpoint.fromCenter(
@@ -112,18 +110,19 @@ class _FindRouteSampleState extends State<FindRouteSample> {
     );
     // set the map on the map view controller.
     _mapViewController.arcGISMap = map;
+    // add the graphics overlays to the map view.
     _mapViewController.graphicsOverlays.add(_routeGraphicsOverlay);
     _mapViewController.graphicsOverlays.add(_stopsGraphicsOverlay);
   }
 
   void initStops() {
-    // the symbol for the start and end stops.
+    // create symbols to use for the start and end stops of the route.
     final routeStartSymbol = SimpleMarkerSymbol(
         style: SimpleMarkerSymbolStyle.circle, color: Colors.green, size: 8.0);
     final routeEndSymbol = SimpleMarkerSymbol(
         style: SimpleMarkerSymbolStyle.circle, color: Colors.red, size: 8.0);
 
-    // the start and end points for the route.
+    // configure pre-defined start and end points for the route.
     final startPoint = ArcGISPoint(
       x: -13041171.537945,
       y: 3860988.271378,
@@ -168,7 +167,7 @@ class _FindRouteSampleState extends State<FindRouteSample> {
 
     setState(() {
       _directions = [];
-      _isRouteGenerated = false;
+      _routeGenerated = false;
     });
   }
 
@@ -180,7 +179,7 @@ class _FindRouteSampleState extends State<FindRouteSample> {
     // reset the route.
     resetRoute();
 
-    // solve the route.
+    // solve the route using the route parameters.
     final routeResult =
         await _routeTask.solveRoute(routeParameters: _routeParameters);
     if (routeResult.routes.isEmpty) {
@@ -204,7 +203,7 @@ class _FindRouteSampleState extends State<FindRouteSample> {
     if (mounted) {
       setState(() {
         _directions = route.directionManeuvers;
-        _isRouteGenerated = true;
+        _routeGenerated = true;
       });
     }
   }
