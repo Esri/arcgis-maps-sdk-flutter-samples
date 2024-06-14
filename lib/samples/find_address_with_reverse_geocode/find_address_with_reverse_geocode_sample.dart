@@ -27,177 +27,103 @@ class FindAddressWithReverseGeocodeSample extends StatefulWidget {
 
 class _FindAddressWithReverseGeocodeSampleState
     extends State<FindAddressWithReverseGeocodeSample> {
-  final GlobalKey<ScaffoldState> _scaffoldStateKey = GlobalKey();
   final _graphicsOverlay = GraphicsOverlay();
-  final _graphic = Graphic();
   final _worldLocatorTask = LocatorTask.withUri(Uri.parse(
       'https://geocode-api.arcgis.com/arcgis/rest/services/World/GeocodeServer'));
-  final _sanDiegoLocatorTask = LocatorTask.withUri(Uri.parse(
-      'https://sampleserver6.arcgisonline.com/arcgis/rest/services/Locators/SanDiego/GeocodeServer'));
-  late LocatorTask _locatorTask;
-  final _geocodeParameters = GeocodeParameters();
   final _mapViewController = ArcGISMapView.createController();
+  final _initialViewpoint = Viewpoint.fromCenter(
+    ArcGISPoint(
+      x: -117.195,
+      y: 34.058,
+      spatialReference: SpatialReference.wgs84,
+    ),
+    scale: 5e4,
+  );
   bool _ready = false;
-
-  _FindAddressWithReverseGeocodeSampleState() {
-    _locatorTask = _worldLocatorTask;
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      key: _scaffoldStateKey,
-      endDrawer: Drawer(
-        child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(10),
-            child: buildServiceControls(context),
-          ),
-        ),
-      ),
-      resizeToAvoidBottomInset: false,
       body: Stack(
         children: [
+          // add a map view to the widget tree and set a controller.
           ArcGISMapView(
             controllerProvider: () => _mapViewController,
             onMapViewReady: onMapViewReady,
-            onTap: onTap,
-          ),
-          Visibility(
-            visible: _ready,
-            child: SafeArea(
-              child: Container(
-                margin: const EdgeInsets.all(10),
-                child: buildSearchControls(context),
-              ),
-            ),
+            onTap: _ready ? onTap : null,
           ),
         ],
       ),
     );
   }
 
-  Widget buildServiceControls(BuildContext context) {
-    return Column(children: [
-      const Text('Geocode Service'),
-      RadioListTile<LocatorTask>(
-        title: const Text('World'),
-        value: _worldLocatorTask,
-        groupValue: _locatorTask,
-        onChanged: onServiceChanged,
-      ),
-      RadioListTile<LocatorTask>(
-        title: const Text('San Diego'),
-        value: _sanDiegoLocatorTask,
-        groupValue: _locatorTask,
-        onChanged: onServiceChanged,
-      ),
-    ]);
-  }
-
-  Widget buildSearchControls(BuildContext context) {
-    return Row(
-      children: [
-        Expanded(
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10),
-            color: Colors.white,
-            child: TextField(
-              decoration: const InputDecoration(
-                hintText: 'Search...',
-              ),
-              onSubmitted: onSearchSubmitted,
-            ),
-          ),
-        ),
-        IconButton(
-          icon: const Icon(
-            Icons.list,
-            color: Colors.white,
-          ),
-          onPressed: () => _scaffoldStateKey.currentState!.openEndDrawer(),
-        ),
-      ],
-    );
-  }
-
   void onMapViewReady() async {
-    final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISImagery);
-
-    final image = await ArcGISImage.fromAsset('assets/pin_circle_red.png');
-    final pictureMarkerSymbol = PictureMarkerSymbol.withImage(image);
-    pictureMarkerSymbol.width = 35;
-    pictureMarkerSymbol.height = 35;
-    pictureMarkerSymbol.offsetY = pictureMarkerSymbol.height / 2;
-    _graphicsOverlay.renderer = SimpleRenderer(symbol: pictureMarkerSymbol);
-    _graphicsOverlay.graphics.add(_graphic);
-    _mapViewController.graphicsOverlays.add(_graphicsOverlay);
-
+    // create a map with the topographic basemap style and set to the map view.
+    final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic);
     _mapViewController.arcGISMap = map;
 
-    _geocodeParameters.minScore = 75;
-    _geocodeParameters.resultAttributeNames
-        .addAll(['Place_addr', 'Match_addr']);
+    // zoom to a specific extent.
+    _mapViewController.setViewpoint(_initialViewpoint);
 
-    await Future.wait([
-      _worldLocatorTask.load(),
-      _sanDiegoLocatorTask.load(),
-    ]);
+    // create a picture marker symbol using an image asset.
+    final image = await ArcGISImage.fromAsset('assets/pin_circle_red.png');
+    final pictureMarkerSymbol = PictureMarkerSymbol.withImage(image)
+      ..width = 35
+      ..height = 35;
+    pictureMarkerSymbol.offsetY = pictureMarkerSymbol.height / 2;
 
+    // create a renderer using the picture marker symbol and set to the graphics overlay.
+    _graphicsOverlay.renderer = SimpleRenderer(symbol: pictureMarkerSymbol);
+    // add the graphics overlay to the map view.
+    _mapViewController.graphicsOverlays.add(_graphicsOverlay);
+
+    // load the locator task and once loaded set the _ready flag to true to enable the UI.
+    await _worldLocatorTask.load();
     setState(() => _ready = true);
   }
 
   void onTap(Offset localPosition) async {
-    final identifyGraphicsOverlayResult =
-        await _mapViewController.identifyGraphicsOverlay(
-      _graphicsOverlay,
-      screenPoint: localPosition,
-      tolerance: 5,
-    );
+    // remove already existing graphics.
+    if (_graphicsOverlay.graphics.isNotEmpty) _graphicsOverlay.graphics.clear();
 
-    if (identifyGraphicsOverlayResult.graphics.isEmpty) return;
+    // convert the screen point to a map point.
+    final mapTapPoint =
+        _mapViewController.screenToLocation(screen: localPosition);
+    if (mapTapPoint == null) return;
+
+    // normalize the point incase the tapped location crosses the international date line.
+    final normalizedTapPoint =
+        GeometryEngine.normalizeCentralMeridian(geometry: mapTapPoint);
+    if (normalizedTapPoint == null) return;
+
+    // create a graphic object for the tapped point.
+    _graphicsOverlay.graphics.add(Graphic(geometry: normalizedTapPoint));
+
+    // initialize parameters.
+    final reverseGeocodeParameters = ReverseGeocodeParameters()..maxResults = 1;
+
+    // perform a reverse geocode using the tapped location and parameters.
+    final reverseGeocodeResult = await _worldLocatorTask.reverseGeocode(
+      location: normalizedTapPoint as ArcGISPoint,
+      parameters: reverseGeocodeParameters,
+    );
+    if (reverseGeocodeResult.isEmpty) return;
+
+    // get attributes from the first result and display a formatted address in a dialog.
+    final firstResult = reverseGeocodeResult.first;
+    final cityString = firstResult.attributes['City'] ?? '';
+    final addressString = firstResult.attributes['Address'] ?? '';
+    final stateString = firstResult.attributes['RegionAbbr'] ?? '';
+    final resultStrings = [addressString, cityString, stateString];
+    final combinedString =
+        resultStrings.where((str) => str.isNotEmpty).join(', ');
 
     if (mounted) {
-      final graphic = identifyGraphicsOverlayResult.graphics.first;
-      final center = graphic.geometry!.extent.center;
-      final x = center.x.toStringAsFixed(3);
-      final y = center.y.toStringAsFixed(3);
-      final matchAddr = graphic.attributes['Match_addr'];
       showDialog(
         context: context,
         builder: (BuildContext context) {
-          return AlertDialog(content: Text('$matchAddr\n($x, $y)'));
+          return AlertDialog(content: Text(combinedString));
         },
-      );
-    }
-  }
-
-  void onServiceChanged(LocatorTask? locatorTask) {
-    if (locatorTask == null) return;
-
-    setState(() => _locatorTask = locatorTask);
-    Future.delayed(
-      const Duration(milliseconds: 250),
-      () => _scaffoldStateKey.currentState!.closeEndDrawer(),
-    );
-  }
-
-  void onSearchSubmitted(String searchText) async {
-    final geocodeResults = await _locatorTask.geocode(
-      searchText: searchText,
-      parameters: _geocodeParameters,
-    );
-
-    if (geocodeResults.isEmpty) return;
-
-    final geocodeResult = geocodeResults.first;
-    if (geocodeResult.displayLocation != null) {
-      _graphic.geometry = geocodeResult.displayLocation!;
-    }
-    _graphic.attributes.addEntries(geocodeResult.attributes.entries);
-    if (geocodeResult.extent != null) {
-      _mapViewController.setViewpointAnimated(
-        Viewpoint.fromTargetExtent(geocodeResult.extent!),
       );
     }
   }
