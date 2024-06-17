@@ -26,11 +26,16 @@ class QueryFeatureTableSample extends StatefulWidget {
 }
 
 class _QueryFeatureTableSampleState extends State<QueryFeatureTableSample> {
+  // create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
+  // create a feature table and a feature layer.
   late ServiceFeatureTable _featureTable;
   late FeatureLayer _featureLayer;
+  // create a text editing controller.
   final _textEditingController = TextEditingController();
+  // create a focus node for the search text field.
   final _searchFocusNode = FocusNode();
+  // create an initial viewpoint.
   final _initialViewpoint = Viewpoint.fromCenter(
     ArcGISPoint(
       x: -11000000,
@@ -50,8 +55,10 @@ class _QueryFeatureTableSampleState extends State<QueryFeatureTableSample> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
+      // create a column with a text field and a map view.
       body: Column(
         children: [
+          // create a text field for searching states.
           TextField(
             focusNode: _searchFocusNode,
             controller: _textEditingController,
@@ -65,6 +72,7 @@ class _QueryFeatureTableSampleState extends State<QueryFeatureTableSample> {
             ),
             onSubmitted: onSearchSubmitted,
           ),
+          // add a map view to the widget tree and set a controller.
           Expanded(
             child: ArcGISMapView(
               controllerProvider: () => _mapViewController,
@@ -77,15 +85,18 @@ class _QueryFeatureTableSampleState extends State<QueryFeatureTableSample> {
   }
 
   void onMapViewReady() async {
+    // create a map with the topographic basemap style and set to the map view.
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic);
 
+    // create a feature table and a feature layer.
     _featureTable = ServiceFeatureTable.withUri(Uri.parse(
         'https://services.arcgis.com/jIL9msH9OI208GCb/arcgis/rest/services/USA_Daytime_Population_2016/FeatureServer/0'));
     await _featureTable.load();
-    _featureLayer = FeatureLayer.withFeatureTable(_featureTable);
-    _featureLayer.opacity = 0.8;
-    _featureLayer.maxScale = 10000;
+    _featureLayer = FeatureLayer.withFeatureTable(_featureTable)
+      ..opacity = 0.8
+      ..maxScale = 10000;
 
+    // create a renderer with a fill symbol.
     final lineSymbol = SimpleLineSymbol(
         style: SimpleLineSymbolStyle.solid, color: Colors.black, width: 1);
     final fillSymbol = SimpleFillSymbol(
@@ -98,24 +109,31 @@ class _QueryFeatureTableSampleState extends State<QueryFeatureTableSample> {
 
     map.operationalLayers.add(_featureLayer);
 
+    // set the map to the map view.
     _mapViewController.arcGISMap = map;
+    // zoom to a specific extent.
     _mapViewController.setViewpoint(_initialViewpoint);
   }
 
   void onSearchSubmitted(String value) async {
+    // clear the selection.
     _featureLayer.clearSelection();
 
+    // create query parameters and set the where clause.
     final queryParameters = QueryParameters();
     final stateName = value.trim().toUpperCase();
     queryParameters.whereClause = "upper(STATE_NAME) LIKE '$stateName'";
 
+    // query the feature table with the query parameters.
     final queryResult =
         await _featureTable.queryFeatures(parameters: queryParameters);
 
+    // get the first feature from the query result.
     final iterator = queryResult.features().iterator;
     if (iterator.moveNext()) {
       final feature = iterator.current;
       if (feature.geometry != null) {
+        // set the viewpoint to the feature's extent.
         _mapViewController.setViewpointGeometry(
           feature.geometry!.extent,
           paddingInDiPs: 20.0,
@@ -123,7 +141,9 @@ class _QueryFeatureTableSampleState extends State<QueryFeatureTableSample> {
       }
       _featureLayer.selectFeature(feature: feature);
     } else {
+      // show an alert dialog if no matching state is found.
       if (mounted) {
+        // set the viewpoint to the initial viewpoint.
         _mapViewController.setViewpoint(_initialViewpoint);
         showDialog(
           context: context,
@@ -138,6 +158,7 @@ class _QueryFeatureTableSampleState extends State<QueryFeatureTableSample> {
   }
 
   void dismissSearch() {
+    // clear the text field and dismiss the keyboard.
     setState(() => _textEditingController.clear());
     FocusManager.instance.primaryFocus?.unfocus();
   }

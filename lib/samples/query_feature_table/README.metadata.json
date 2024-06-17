@@ -2,10 +2,26 @@
     "category": "Search and Query",
     "description": "Find features in a feature table which match an SQL query.",
     "ignore": false,
-    "images": [],
-    "keywords": [],
+    "images": [
+        "query_feature_table.png"
+    ],
+    "keywords": [
+        "query",
+        "search",
+        "FeatureLayer",
+        "FeatureQueryResult",
+        "QueryParameters",
+        "ServiceFeatureTable"
+    ],
     "redirect_from": [],
-    "relevant_apis": [],
-    "snippets": [],
+    "relevant_apis": [
+        "FeatureLayer",
+        "FeatureQueryResult",
+        "QueryParameters",
+        "ServiceFeatureTable"
+    ],
+    "snippets": [
+        "query_feature_table_sample.dart"
+    ],
     "title": "Query feature table"
 }
