@@ -2,10 +2,29 @@
     "category": "Layers",
     "description": "Display feature layers from various data sources.",
     "ignore": false,
-    "images": [],
-    "keywords": [],
+    "images": [
+        "add_feature_layers.png"
+    ],
+    "keywords": [
+        "feature",
+        "geodatabase",
+        "geopackage",
+        "layers",
+        "service",
+        "shapefile",
+        "table",
+        "FeatureLayer",
+        "Geodatabase",
+        "ServiceFeatureTable"
+    ],
     "redirect_from": [],
-    "relevant_apis": [],
-    "snippets": [],
+    "relevant_apis": [
+        "FeatureLayer",
+        "Geodatabase",
+        "ServiceFeatureTable"
+    ],
+    "snippets": [
+        "add_feature_layers_sample.dart"
+    ],
     "title": "Add feature layers"
 }
