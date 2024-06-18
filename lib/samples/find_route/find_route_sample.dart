@@ -113,7 +113,7 @@ class _FindRouteSampleState extends State<FindRouteSample> {
       ),
       scale: 1e5,
     );
-    // set the map on the map view controller.
+    // set the map to the map view controller.
     _mapViewController.arcGISMap = map;
     // add the graphics overlays to the map view.
     _mapViewController.graphicsOverlays.add(_routeGraphicsOverlay);
