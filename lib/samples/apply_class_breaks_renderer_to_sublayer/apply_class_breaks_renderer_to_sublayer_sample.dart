@@ -28,42 +28,97 @@ class ApplyClassBreaksRendererToSublayerSample extends StatefulWidget {
 class _ApplyClassBreaksRendererToSublayerSampleState
     extends State<ApplyClassBreaksRendererToSublayerSample> {
   final _mapViewController = ArcGISMapView.createController();
+  // create a map with a basemap
+  final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISStreets);
+  // set the rendered state to false
+  bool _rendered = false;
+  // set the ready state to false
+  bool _ready = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: ArcGISMapView(
-        controllerProvider: () => _mapViewController,
-        onMapViewReady: onMapViewReady,
+      body: SafeArea(
+        child: Column(
+          // add the map view and buttons to a column.
+          children: [
+            Expanded(
+              // add the map view to the column.
+              child: ArcGISMapView(
+                controllerProvider: () => _mapViewController,
+                onMapViewReady: onMapViewReady,
+              ),
+            ),
+            SizedBox(
+              height: 60,
+              // add the buttons to the column.
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  // apply renderer button
+                  ElevatedButton(
+                    onPressed: !_rendered && _ready ? renderLayer : null,
+                    child: const Text('Apply Renderer'),
+                  ),
+                  // reset button
+                  ElevatedButton(
+                    onPressed: _rendered ? resetRoutes : null,
+                    child: const Text('Reset'),
+                  ),
+                ],
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
 
-  void onMapViewReady() async {
-    final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISStreets);
-
+  void renderLayer() async {
+    // create an image layer
     final imageLayer = ArcGISMapImageLayer.withUri(Uri.parse(
         'https://sampleserver6.arcgisonline.com/arcgis/rest/services/Census/MapServer'));
     await imageLayer.load();
-    final subLayers = imageLayer.arcGISMapImageSublayers;
-    final countiesSublayer = subLayers.elementAt(2);
 
-    final classBreaksRenderer = createPopulationClassBreaksRenderer();
-    countiesSublayer.renderer = classBreaksRenderer;
+    // retrieve counties sublayer and apply class breaks renderer
+    imageLayer.arcGISMapImageSublayers.elementAt(2).renderer =
+        createPopulationClassBreaksRenderer();
 
+    // add the image layer to the map
     map.operationalLayers.add(imageLayer);
+
+    // set the rendered state
+    if (mounted) {
+      setState(() => _rendered = true);
+    }
+  }
+
+  void onMapViewReady() async {
+    // set the map to the map view controller.
     _mapViewController.arcGISMap = map;
+    // set the initial viewpoint
     _mapViewController.setViewpoint(Viewpoint.withLatLongScale(
         latitude: 48.354406, longitude: -99.998267, scale: 147914382));
+    // set the ready state
+    setState(() => _ready = true);
+  }
+
+  void resetRoutes() {
+    // clear the map
+    map.operationalLayers.clear();
+    setState(() => _rendered = false);
   }
 
   ClassBreaksRenderer createPopulationClassBreaksRenderer() {
+    // create coors for the class breaks
     var blue1 = const Color.fromARGB(255, 153, 206, 231);
     var blue2 = const Color.fromARGB(255, 108, 192, 232);
     var blue3 = const Color.fromARGB(255, 77, 173, 218);
     var blue4 = const Color.fromARGB(255, 28, 130, 178);
     var blue5 = const Color.fromARGB(255, 2, 75, 109);
 
+    // create symbols for the class breaks
     final outline = SimpleLineSymbol(
         style: SimpleLineSymbolStyle.solid, color: Colors.grey, width: 1);
     final classSymbol1 = SimpleFillSymbol(
@@ -77,6 +132,7 @@ class _ApplyClassBreaksRendererToSublayerSampleState
     final classSymbol5 = SimpleFillSymbol(
         style: SimpleFillSymbolStyle.solid, color: blue5, outline: outline);
 
+    // create class breaks
     final classBreak1 = ClassBreak(
         description: '-99 to 8560',
         label: '-99 to 8560',
@@ -108,6 +164,7 @@ class _ApplyClassBreaksRendererToSublayerSampleState
         maxValue: 10110975,
         symbol: classSymbol5);
 
+    // create and return a class breaks renderer
     return ClassBreaksRenderer(
       fieldName: 'POP2007',
       classBreaks: [
