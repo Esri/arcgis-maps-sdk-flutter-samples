@@ -56,30 +56,32 @@ class _QueryFeatureTableSampleState extends State<QueryFeatureTableSample> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       // create a column with a text field and a map view.
-      body: Column(
-        children: [
-          // create a text field for searching states.
-          TextField(
-            focusNode: _searchFocusNode,
-            controller: _textEditingController,
-            decoration: InputDecoration(
-              hintText: 'Enter a State...',
-              prefixIcon: const Icon(Icons.search),
-              suffixIcon: IconButton(
-                onPressed: dismissSearch,
-                icon: const Icon(Icons.clear),
+      body: SafeArea(
+        child: Column(
+          children: [
+            // create a text field for searching states.
+            TextField(
+              focusNode: _searchFocusNode,
+              controller: _textEditingController,
+              decoration: InputDecoration(
+                hintText: 'Enter a State...',
+                prefixIcon: const Icon(Icons.search),
+                suffixIcon: IconButton(
+                  onPressed: dismissSearch,
+                  icon: const Icon(Icons.clear),
+                ),
+              ),
+              onSubmitted: onSearchSubmitted,
+            ),
+            // add a map view to the widget tree and set a controller.
+            Expanded(
+              child: ArcGISMapView(
+                controllerProvider: () => _mapViewController,
+                onMapViewReady: onMapViewReady,
               ),
             ),
-            onSubmitted: onSearchSubmitted,
-          ),
-          // add a map view to the widget tree and set a controller.
-          Expanded(
-            child: ArcGISMapView(
-              controllerProvider: () => _mapViewController,
-              onMapViewReady: onMapViewReady,
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
