@@ -59,7 +59,7 @@ class _ApplyClassBreaksRendererToSublayerSampleState
                   // apply renderer button
                   ElevatedButton(
                     onPressed: !_rendered && _ready ? renderLayer : null,
-                    child: const Text('Apply Renderer'),
+                    child: const Text('Change Sublayer Renderer'),
                   ),
                   // reset button
                   ElevatedButton(

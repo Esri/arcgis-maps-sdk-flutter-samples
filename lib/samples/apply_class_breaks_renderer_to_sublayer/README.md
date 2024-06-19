@@ -16,7 +16,7 @@ Wait for the map image layer to load. Click the 'Change Sublayer Renderer' butto
 
 1. Create an `ArcGISMapImageLayer` from its URL.
 2. After it is done loading, get its list of `ArcGISMapImageSublayer` objects with `imageLayer.arcGISMapImageSublayers`.
-3. Cast the sublayer you want to change to the appropriate type: `(ArcGISMapImageSublayer) sublayers.get(0)`.
+3. Access the sublayer you want: `imageLayer.arcGISMapImageSublayers.elementAt(2)`.
 4. Create a `ClassBreaksRenderer` with a collection of `ClassBreak`s for different population ranges.
 5. Set the renderer of the sublayer with `sublayer.renderer = renderer`.
 
@@ -25,7 +25,7 @@ Wait for the map image layer to load. Click the 'Change Sublayer Renderer' butto
 * ArcGISMapImageLayer
 * ArcGISMapImageSublayer
 * ClassBreaksRenderer
-* ClassBreaksRenderer.ClassBreak
+* ClassBreaksRenderer.ClassBreak  
 
 ## About the data
 
