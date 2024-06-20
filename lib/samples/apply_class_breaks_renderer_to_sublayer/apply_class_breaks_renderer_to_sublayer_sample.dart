@@ -43,7 +43,7 @@ class _ApplyClassBreaksRendererToSublayerSampleState
           // add the map view and buttons to a column.
           children: [
             Expanded(
-              // add the map view to the column.
+              // add a map view to the widget tree and set a controller.
               child: ArcGISMapView(
                 controllerProvider: () => _mapViewController,
                 onMapViewReady: onMapViewReady,
