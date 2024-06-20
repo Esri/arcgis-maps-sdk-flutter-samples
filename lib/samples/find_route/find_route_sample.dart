@@ -49,6 +49,7 @@ class _FindRouteSampleState extends State<FindRouteSample> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
+        top: false,
         // create a column with buttons for generating the route and showing the directions.
         child: Column(
           children: [
