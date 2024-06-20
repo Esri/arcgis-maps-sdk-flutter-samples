@@ -32,11 +32,13 @@ class DisplayMapFromMobileMapPackageSample extends StatefulWidget {
 
 class _DisplayMapFromMobileMapPackageSampleState
     extends State<DisplayMapFromMobileMapPackageSample> {
+  // create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // add a map view to the widget tree and set a controller.
       body: ArcGISMapView(
         controllerProvider: () => _mapViewController,
         onMapViewReady: onMapViewReady,
@@ -47,10 +49,14 @@ class _DisplayMapFromMobileMapPackageSampleState
   void onMapViewReady() async {
     await downloadSampleData(['e1f3a7254cb845b09450f54937c16061']);
     final appDir = await getApplicationDocumentsDirectory();
+
+    // load the local mobile map package.
     final mmpkFile = File('${appDir.absolute.path}/Yellowstone.mmpk');
     final mmpk = MobileMapPackage.withFileUri(mmpkFile.uri);
     await mmpk.load();
+
     if (mmpk.maps.isNotEmpty) {
+      // get the first map in the mobile map package and set to the map view.
       _mapViewController.arcGISMap = mmpk.maps.first;
     }
   }

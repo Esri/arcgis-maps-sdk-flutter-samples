@@ -2,10 +2,23 @@
     "category": "Maps",
     "description": "Display a map from a mobile map package.",
     "ignore": false,
-    "images": [],
-    "keywords": [],
+    "images": [
+        "display_map_from_mobile_map_package.png"
+    ],
+    "keywords": [
+        "mmpk",
+        "mobile map package",
+        "offline",
+        "ArcGISMapView",
+        "MobileMapPackage"
+    ],
     "redirect_from": [],
-    "relevant_apis": [],
-    "snippets": [],
+    "relevant_apis": [
+        "ArcGISMapView",
+        "MobileMapPackage"
+    ],
+    "snippets": [
+        "display_map_from_mobile_map_package_sample.dart"
+    ],
     "title": "Display map from mobile map package"
 }
