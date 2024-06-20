@@ -68,6 +68,7 @@ class _AddFeatureLayersSampleState extends State<AddFeatureLayersSample> {
         // create a column with a map view and a dropdown button.
         child: Column(
           children: [
+            // add a map view to the widget tree and set a controller.
             Expanded(
               child: ArcGISMapView(
                 controllerProvider: () => _mapViewController,
