@@ -43,7 +43,7 @@ class _DisplayClustersSampleState extends State<DisplayClustersSample> {
         child: Column(
           children: [
             Expanded(
-              // create an map view
+              // add a map view to the widget tree and set a controller.
               child: ArcGISMapView(
                 controllerProvider: () => _mapViewController,
                 onMapViewReady: onMapViewReady,
