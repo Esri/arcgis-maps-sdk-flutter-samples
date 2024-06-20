@@ -53,8 +53,8 @@ class _FindRouteSampleState extends State<FindRouteSample> {
         // create a column with buttons for generating the route and showing the directions.
         child: Column(
           children: [
-            // add the map view to the column.
             Expanded(
+              // add a map view to the widget tree and set a controller.
               child: ArcGISMapView(
                 controllerProvider: () => _mapViewController,
                 onMapViewReady: onMapViewReady,
