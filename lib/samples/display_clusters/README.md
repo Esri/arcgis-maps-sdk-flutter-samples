@@ -14,7 +14,7 @@ Pan and zoom the map to view how clustering is dynamically updated. Toggle clust
 
 ## How it works
 
-1. Create a map from a web map. (PortalItem reference in common design README doesn't apply?)
+1. Create a map from a web map.
 2. Get the cluster enabled layer from the map's operational layers.
 3. Get the `FeatureReduction` from the feature layer and set the `enabled` bool to enable or disable clustering on the feature layer.
 4. When the user clicks on the map, call your custom function that checks if there are any operational layers on the map with `isNotEmpty` attribute.
@@ -32,7 +32,7 @@ This sample uses a [web map](https://www.arcgis.com/home/item.html?id=8916d50c44
 
 ## Additional information
 
-Graphics in a graphics overlay can also be aggregated into clusters. To do this, set the `FeatureReduction` property on the `GraphicsOverlay` to a new `ClusteringFeatureReduction`. (I checked in Flutter we have this property, so we keep it?)
+Graphics in a graphics overlay can also be aggregated into clusters. To do this, set the `FeatureReduction` property on the `GraphicsOverlay` to a new `ClusteringFeatureReduction`.
 
 ## Tags
 
