@@ -56,7 +56,7 @@ class _StylePointWithSimpleMarkerSymbolSampleState
     // create a simple marker symbol with a style, color and size
     final simpleMarkerSymbol = SimpleMarkerSymbol(
       style: SimpleMarkerSymbolStyle.circle,
-      color: Color(Colors.red.value),
+      color: Colors.red,
       size: 10.0,
     );
 
