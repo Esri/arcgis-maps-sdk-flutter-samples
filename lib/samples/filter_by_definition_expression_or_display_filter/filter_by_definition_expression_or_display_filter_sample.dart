@@ -36,7 +36,7 @@ class _FilterByDefinitionExpressionOrDisplayFilterSampleState
   @override
   void initState() {
     super.initState();
-    // create a map with a basemap style
+    // create a map with a topographic basemap style
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic);
     // add the feature layer to the map
     map.operationalLayers.add(_featureLayer);
@@ -49,19 +49,16 @@ class _FilterByDefinitionExpressionOrDisplayFilterSampleState
 
     // set the map to the map view.
     _mapViewController.arcGISMap = map;
-
-    calculateFeatureCount();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        // add a column to the scaffold
         child: Column(
           children: [
             Expanded(
-              // add the map view to the column
+              // add a map view to the widget tree and set a controller.
               child: ArcGISMapView(
                 controllerProvider: () => _mapViewController,
               ),
@@ -130,15 +127,18 @@ class _FilterByDefinitionExpressionOrDisplayFilterSampleState
   void calculateFeatureCount() async {
     // count the number of features
     final queryParameters = QueryParameters();
+    // get the current extent of the map view
     queryParameters.geometry = _mapViewController
         .getCurrentViewpoint(viewpointType: ViewpointType.boundingGeometry)
         ?.targetGeometry
         .extent;
     queryParameters.whereClause = '1=1';
 
+    // query the feature count
     final featureCount = await _featureLayer.featureTable!
         .queryFeatureCount(queryParameters: queryParameters);
 
+    // show the feature count in an alert dialog
     if (mounted) {
       showDialog(
         context: context,
