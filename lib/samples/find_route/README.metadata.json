@@ -2,10 +2,38 @@
     "category": "Routing and Logistics",
     "description": "Display directions for a route between two points.",
     "ignore": false,
-    "images": [],
-    "keywords": [],
+    "images": [
+        "find_route.png",
+        "find_route_directions.png"
+    ],
+    "keywords": [
+        "directions",
+        "driving",
+        "navigation",
+        "network",
+        "network analysis",
+        "route",
+        "routing",
+        "shortest path",
+        "turn-by-turn",
+        "DirectionManeuver",
+        "Route",
+        "RouteParameters",
+        "RouteResult",
+        "RouteTask",
+        "Stop"
+    ],
     "redirect_from": [],
-    "relevant_apis": [],
-    "snippets": [],
+    "relevant_apis": [
+        "DirectionManeuver",
+        "Route",
+        "RouteParameters",
+        "RouteResult",
+        "RouteTask",
+        "Stop"
+    ],
+    "snippets": [
+        "find_route_sample.dart"
+    ],
     "title": "Find route"
 }
