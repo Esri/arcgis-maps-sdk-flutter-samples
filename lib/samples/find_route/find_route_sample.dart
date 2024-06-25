@@ -124,9 +124,9 @@ class _FindRouteSampleState extends State<FindRouteSample> {
   void initStops() {
     // create symbols to use for the start and end stops of the route.
     final routeStartSymbol = SimpleMarkerSymbol(
-        style: SimpleMarkerSymbolStyle.circle, color: Colors.green, size: 8.0);
+        style: SimpleMarkerSymbolStyle.circle, color: Colors.blue, size: 15.0);
     final routeEndSymbol = SimpleMarkerSymbol(
-        style: SimpleMarkerSymbolStyle.circle, color: Colors.red, size: 8.0);
+        style: SimpleMarkerSymbolStyle.circle, color: Colors.blue, size: 15.0);
 
     // configure pre-defined start and end points for the route.
     final startPoint = ArcGISPoint(
