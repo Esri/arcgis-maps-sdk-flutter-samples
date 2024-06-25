@@ -94,11 +94,12 @@ class _QueryFeatureTableSampleState extends State<QueryFeatureTableSample> {
     _featureTable = ServiceFeatureTable.withUri(Uri.parse(
         'https://services.arcgis.com/jIL9msH9OI208GCb/arcgis/rest/services/USA_Daytime_Population_2016/FeatureServer/0'));
     await _featureTable.load();
+    // create a feature layer and amend the opacity and max scale properties.
     _featureLayer = FeatureLayer.withFeatureTable(_featureTable)
       ..opacity = 0.8
       ..maxScale = 10000;
 
-    // create a renderer with a fill symbol.
+    // create a renderer with a fill symbol and apply to the feature layer.
     final lineSymbol = SimpleLineSymbol(
         style: SimpleLineSymbolStyle.solid, color: Colors.black, width: 1);
     final fillSymbol = SimpleFillSymbol(

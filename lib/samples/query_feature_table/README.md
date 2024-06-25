@@ -10,13 +10,13 @@ Query expressions can be used in ArcGIS to select a subset of features from a fe
 
 ## How to use the sample
 
-Input the name of a U.S. state into the text field. When you click "search", a query is performed and the matching features are highlighted or an error is returned.
+Input the name of a U.S. state into the text field. When you tap "search", a query is performed and the matching features are highlighted or an error is returned.
 
 ## How it works
 
 1. Create a `ServiceFeatureTable` using the URL of a feature service.
-2. Create a `QueryParameters` with a where clause specified using `whereClause()`.
-3. Perform the query using `queryFeatures(query)` on the service feature table.
+2. Create a `QueryParameters` with a where clause specified using `queryParameters.whereClause`.
+3. Perform the query using `queryFeatures(queryParameters)` on the service feature table.
 4. When complete, the query will return a `FeatureQueryResult` which can be iterated over to get the matching features.
 
 ## Relevant API
