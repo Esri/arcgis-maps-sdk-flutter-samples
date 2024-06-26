@@ -133,7 +133,7 @@ class _ShowServiceAreaSampleState extends State<ShowServiceAreaSample> {
     );
   }
 
-  Future<void> onMapViewReady() async {
+  void onMapViewReady() async {
     // create a map with the light gray basemap style and an initial viewpoint.
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISLightGray)
       ..initialViewpoint = Viewpoint.withLatLongScale(
