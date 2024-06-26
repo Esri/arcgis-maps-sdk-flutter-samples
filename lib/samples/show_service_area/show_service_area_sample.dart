@@ -80,7 +80,7 @@ class _ShowServiceAreaSampleState extends State<ShowServiceAreaSample> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       // create segmented buttons for toggling adding a facility or barrier to the map.
-                      SegmentedButton<Selection>(
+                      SegmentedButton(
                         segments: [
                           ButtonSegment(
                             value: Selection.facility,
