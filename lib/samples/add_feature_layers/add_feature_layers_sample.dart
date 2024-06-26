@@ -54,9 +54,19 @@ class _AddFeatureLayersSampleState extends State<AddFeatureLayersSample> {
         child: const Text('URL'),
       ),
       DropdownMenuItem(
+        onTap: loadPortalItem,
+        value: 'PortalItem',
+        child: const Text('Portal Item'),
+      ),
+      DropdownMenuItem(
         onTap: loadGeodatabase,
         value: 'Geodatabase',
         child: const Text('Geodatabase'),
+      ),
+      DropdownMenuItem(
+        onTap: loadGeopackage,
+        value: 'Geopackage',
+        child: const Text('Geopackage'),
       )
     ]);
   }
@@ -117,11 +127,13 @@ class _AddFeatureLayersSampleState extends State<AddFeatureLayersSample> {
     _map.operationalLayers.clear();
     _map.operationalLayers.add(featureLayer);
     // set the viewpoint to the feature layer.
-    _mapViewController.setViewpoint(Viewpoint.withLatLongScale(
-      latitude: 41.773519,
-      longitude: -88.153104,
-      scale: 6000,
-    ));
+    _mapViewController.setViewpoint(
+      Viewpoint.withLatLongScale(
+        latitude: 41.773519,
+        longitude: -88.153104,
+        scale: 6000,
+      ),
+    );
   }
 
   void loadGeodatabase() async {
@@ -159,5 +171,39 @@ class _AddFeatureLayersSampleState extends State<AddFeatureLayersSample> {
         ),
       );
     }
+  }
+
+  void loadPortalItem() async {
+    // Set the portal.
+    final portal = Portal.arcGISOnline();
+    // Create the portal item with the item ID for the Portland tree service data.
+    const itemId = '1759fd3e8a324358a0c58d9a687a8578';
+    final portalItem =
+        PortalItem.withPortalAndItemId(portal: portal, itemId: itemId);
+    // load the portal item.
+    await portalItem.load();
+    // create a feature layer with the portal item and layer ID
+    final featureLayer = FeatureLayer.withItem(
+      featureServiceItem: portalItem,
+      layerId: 0,
+    );
+
+    // clear the operational layers and add the feature layer to the map.
+    _map.operationalLayers.clear();
+    _map.operationalLayers.add(featureLayer);
+
+    // Set the viewpoint to Portland, Oregon.
+    _mapViewController.setViewpoint(
+      Viewpoint.withLatLongScale(
+        latitude: 45.5266,
+        longitude: -122.6219,
+        scale: 6000,
+      ),
+    );
+  }
+
+  void loadGeopackage() async {
+    final geopackage = GeoPackage.withFileUri(Uri.parse(
+        'https://www.arcgis.com/home/item.html?id=9b7a7c6d9b234a3f8d3b5c4e67f9f9b9'));
   }
 }
