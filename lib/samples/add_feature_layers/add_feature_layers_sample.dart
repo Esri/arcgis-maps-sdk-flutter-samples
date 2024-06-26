@@ -45,7 +45,6 @@ class _AddFeatureLayersSampleState extends State<AddFeatureLayersSample> {
     super.initState();
     // set the map on the map view controller.
     _mapViewController.arcGISMap = _map;
-
     // add feature layer sources to the list.
     _featureLayerSources.addAll([
       // add a dropdown menu item to load a feature service from a uri.
@@ -79,6 +78,7 @@ class _AddFeatureLayersSampleState extends State<AddFeatureLayersSample> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
+        top: false,
         // create a column with a map view and a dropdown button.
         child: Column(
           children: [
@@ -143,7 +143,6 @@ class _AddFeatureLayersSampleState extends State<AddFeatureLayersSample> {
   void loadGeodatabase() async {
     // download the sample data.
     await downloadSampleData(['cb1b20748a9f4d128dad8a87244e3e37']);
-
     // get the application documents directory.
     final appDir = await getApplicationDocumentsDirectory();
     // create a file to the geodatabase.
