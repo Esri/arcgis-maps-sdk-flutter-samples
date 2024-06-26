@@ -62,8 +62,8 @@ class _ShowServiceAreaSampleState extends State<ShowServiceAreaSample> {
       'https://route-api.arcgis.com/arcgis/rest/services/World/ServiceAreas/NAServer/ServiceArea_World'));
   late final ServiceAreaParameters _serviceAreaParameters;
 
-  bool _ready = false;
-  Selection _segmentedButtonSelection = Selection.facility;
+  var _ready = false;
+  var _segmentedButtonSelection = Selection.facility;
 
   @override
   Widget build(BuildContext context) {
