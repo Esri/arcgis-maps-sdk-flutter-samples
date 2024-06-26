@@ -123,10 +123,14 @@ class _FindRouteSampleState extends State<FindRouteSample> {
 
   void initStops() {
     // create symbols to use for the start and end stops of the route.
-    final routeStartSymbol = SimpleMarkerSymbol(
+    final routeStartCircleSymbol = SimpleMarkerSymbol(
         style: SimpleMarkerSymbolStyle.circle, color: Colors.blue, size: 15.0);
-    final routeEndSymbol = SimpleMarkerSymbol(
+    final routeEndCircleSymbol = SimpleMarkerSymbol(
         style: SimpleMarkerSymbolStyle.circle, color: Colors.blue, size: 15.0);
+    final routeStartNumberSymbol =
+        TextSymbol(text: '1', color: Colors.white, size: 10.0);
+    final routeEndNumberSymbol =
+        TextSymbol(text: '2', color: Colors.white, size: 10.0);
 
     // configure pre-defined start and end points for the route.
     final startPoint = ArcGISPoint(
@@ -149,12 +153,12 @@ class _FindRouteSampleState extends State<FindRouteSample> {
     _stops.add(destinationStop);
 
     // add the start and end points to the stops graphics overlay.
-    _stopsGraphicsOverlay.graphics.add(
-      Graphic(geometry: startPoint, symbol: routeStartSymbol),
-    );
-    _stopsGraphicsOverlay.graphics.add(
-      Graphic(geometry: endPoint, symbol: routeEndSymbol),
-    );
+    _stopsGraphicsOverlay.graphics.addAll([
+      Graphic(geometry: startPoint, symbol: routeStartCircleSymbol),
+      Graphic(geometry: endPoint, symbol: routeEndCircleSymbol),
+      Graphic(geometry: startPoint, symbol: routeStartNumberSymbol),
+      Graphic(geometry: endPoint, symbol: routeEndNumberSymbol),
+    ]);
   }
 
   Future<void> initRouteParameters() async {
