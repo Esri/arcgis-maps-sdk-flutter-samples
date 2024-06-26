@@ -1,4 +1,4 @@
-# Apply Simple Renderer to Feature Layer
+# Apply simple renderer to feature layer
 
 Change the appearance of a feature layer with a renderer.
 

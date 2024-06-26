@@ -2,10 +2,22 @@
     "category": "Visualization",
     "description": "Change the appearance of a feature layer with a renderer.",
     "ignore": false,
-    "images": [],
-    "keywords": [],
-    "redirect_from": [],
-    "relevant_apis": [],
-    "snippets": [],
+    "images": [
+        "apply_simple_renderer_to_feature_layer.png"
+    ],
+    "keywords": [
+        "feature layer",
+        "renderer",
+        "visualization"
+    ],
+    "redirect_from": [ ],
+    "relevant_apis": [
+        "FeatureLayer.setRenderer",
+        "ServiceFeatureTable",
+        "SimpleRenderer"
+    ],
+    "snippets": [
+        "apply_simple_renderer_to_feature_layer.dart"
+    ],
     "title": "Apply simple renderer to feature layer"
 }
