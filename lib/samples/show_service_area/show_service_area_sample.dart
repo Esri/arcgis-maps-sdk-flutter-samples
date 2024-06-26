@@ -28,17 +28,9 @@ class _ShowServiceAreaSampleState extends State<ShowServiceAreaSample> {
   // create a map view controller
   final _mapViewController = ArcGISMapView.createController();
 
-  // create graphics overlays for displaying facilities and barriers and apply renderers for the symbology.
-  final _facilityGraphicsOverlay = GraphicsOverlay()
-    ..renderer = SimpleRenderer(
-      symbol: PictureMarkerSymbol.withUrl(Uri.parse(
-          'https://static.arcgis.com/images/Symbols/SafetyHealth/Hospital.png')),
-    );
-  final _barrierGraphicsOverlay = GraphicsOverlay()
-    ..renderer = SimpleRenderer(
-      symbol: SimpleFillSymbol(
-          style: SimpleFillSymbolStyle.diagonalCross, color: Colors.red),
-    );
+  // create graphics overlays for displaying facilities and barriers.
+  final _facilityGraphicsOverlay = GraphicsOverlay();
+  final _barrierGraphicsOverlay = GraphicsOverlay();
 
   // create a graphics overlay for displays service area results and a list of symbols applied for each impedence cutoff added to the service area parameters.
   final _serviceAreaGraphicsOverlay = GraphicsOverlay();
@@ -140,6 +132,18 @@ class _ShowServiceAreaSampleState extends State<ShowServiceAreaSample> {
           latitude: 32.73, longitude: -117.16, scale: 25000);
     // set the map to the map view.
     _mapViewController.arcGISMap = map;
+
+    // apply a renderer to the barrier graphics overlay.
+    _barrierGraphicsOverlay.renderer = SimpleRenderer(
+      symbol: SimpleFillSymbol(
+          style: SimpleFillSymbolStyle.diagonalCross, color: Colors.red),
+    );
+
+    // apply a renderer to the facility graphics overlay.
+    _facilityGraphicsOverlay.renderer = SimpleRenderer(
+      symbol: PictureMarkerSymbol.withUrl(Uri.parse(
+          'https://static.arcgis.com/images/Symbols/SafetyHealth/Hospital.png')),
+    );
 
     // add the graphics overlays to the map view.
     _mapViewController.graphicsOverlays.addAll([
