@@ -184,9 +184,7 @@ class _ShowServiceAreaSampleState extends State<ShowServiceAreaSample> {
     // require at least 1 facility to perform a service area calculation.
     if (_facilityGraphicsOverlay.graphics.isNotEmpty) {
       // disable the UI while the service area is calculated.
-      setState(() {
-        _ready = false;
-      });
+      setState(() => _ready = false);
       // clear previous calculations
       _serviceAreaGraphicsOverlay.graphics.clear();
 
@@ -224,9 +222,7 @@ class _ShowServiceAreaSampleState extends State<ShowServiceAreaSample> {
       }
 
       // re-enable the UI once the service area task is finished.
-      setState(() {
-        _ready = true;
-      });
+      setState(() => _ready = true);
     } else {
       if (mounted) {
         showDialog(
