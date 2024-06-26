@@ -30,6 +30,7 @@ class _ApplySimpleRendererToFeatureLayerSampleState
   final _mapViewController = ArcGISMapView.createController();
   late FeatureLayer _featureLayer;
   final _map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic);
+  var _usingDefaultRenderer = true;
 
   @override
   void initState() {
@@ -42,11 +43,11 @@ class _ApplySimpleRendererToFeatureLayerSampleState
     _map.operationalLayers.add(_featureLayer);
     _map.initialViewpoint = Viewpoint.fromCenter(
       ArcGISPoint(
-        x: -9177250,
-        y: 4247200,
+        x: -9177343,
+        y: 4247283,
         spatialReference: SpatialReference.webMercator,
       ),
-      scale: 9500,
+      scale: 4750,
     );
     _mapViewController.arcGISMap = _map;
   }
@@ -62,20 +63,17 @@ class _ApplySimpleRendererToFeatureLayerSampleState
                 controllerProvider: () => _mapViewController,
               ),
             ),
-            Row(
-              children: [
-                const Spacer(),
-                TextButton(
-                  onPressed: resetRenderer,
-                  child: const Text('Reset'),
+            SizedBox(
+              height: 50,
+              child: Center(
+                child: TextButton(
+                  onPressed:
+                      _usingDefaultRenderer ? overrideRenderer : resetRenderer,
+                  child: _usingDefaultRenderer
+                      ? const Text('Blue Renderer')
+                      : const Text('Orange Renderer'),
                 ),
-                const Spacer(),
-                TextButton(
-                  onPressed: overrideRenderer,
-                  child: const Text('Override'),
-                ),
-                const Spacer(),
-              ],
+              ),
             )
           ],
         ),
@@ -85,11 +83,13 @@ class _ApplySimpleRendererToFeatureLayerSampleState
 
   void resetRenderer() {
     _featureLayer.resetRenderer();
+    setState(() => _usingDefaultRenderer = true);
   }
 
   void overrideRenderer() {
     final markerSymbol = SimpleMarkerSymbol(
         style: SimpleMarkerSymbolStyle.circle, color: Colors.blue, size: 5);
     _featureLayer.renderer = SimpleRenderer(symbol: markerSymbol);
+    setState(() => _usingDefaultRenderer = false);
   }
 }
