@@ -48,21 +48,25 @@ class _AddFeatureLayersSampleState extends State<AddFeatureLayersSample> {
 
     // add feature layer sources to the list.
     _featureLayerSources.addAll([
+      // add a dropdown menu item to load a feature service from a uri.
       DropdownMenuItem(
         onTap: loadFeatureServiceFromUri,
         value: 'URL',
         child: const Text('URL'),
       ),
+      // add a dropdown menu item to load a feature service from a portal item.
       DropdownMenuItem(
         onTap: loadPortalItem,
         value: 'PortalItem',
         child: const Text('Portal Item'),
       ),
+      // add a dropdown menu item to load a feature service from a geodatabase.
       DropdownMenuItem(
         onTap: loadGeodatabase,
         value: 'Geodatabase',
         child: const Text('Geodatabase'),
       ),
+      // add a dropdown menu item to load a feature service from a geopackage.
       DropdownMenuItem(
         onTap: loadGeopackage,
         value: 'Geopackage',
@@ -187,11 +191,9 @@ class _AddFeatureLayersSampleState extends State<AddFeatureLayersSample> {
       featureServiceItem: portalItem,
       layerId: 0,
     );
-
     // clear the operational layers and add the feature layer to the map.
     _map.operationalLayers.clear();
     _map.operationalLayers.add(featureLayer);
-
     // Set the viewpoint to Portland, Oregon.
     _mapViewController.setViewpoint(
       Viewpoint.withLatLongScale(
@@ -203,7 +205,31 @@ class _AddFeatureLayersSampleState extends State<AddFeatureLayersSample> {
   }
 
   void loadGeopackage() async {
-    final geopackage = GeoPackage.withFileUri(Uri.parse(
-        'https://www.arcgis.com/home/item.html?id=9b7a7c6d9b234a3f8d3b5c4e67f9f9b9'));
+    // download the sample data.
+    await downloadSampleData(['68ec42517cdd439e81b036210483e8e7']);
+    // get the application documents directory.
+    final appDir = await getApplicationDocumentsDirectory();
+    // create a file to the geopackage.
+    final geopackageFile =
+        File('${appDir.absolute.path}/AuroraCO/AuroraCO.gpkg');
+    // create a geopackage with the file uri.
+    final geopackage = GeoPackage.withFileUri(geopackageFile.uri);
+    // load the geopackage.
+    await geopackage.load();
+    // get the feature table with the table name.
+    final featureTable = geopackage.geoPackageFeatureTables;
+    // create a feature layer with the feature table.
+    final featureLayer = FeatureLayer.withFeatureTable(featureTable.first);
+    // clear the operational layers and add the feature layer to the map.
+    _map.operationalLayers.clear();
+    _map.operationalLayers.add(featureLayer);
+    // set the viewpoint to the feature layer.
+    _mapViewController.setViewpoint(
+      Viewpoint.withLatLongScale(
+        latitude: 39.7294,
+        longitude: -104.8319,
+        scale: 577790.554289,
+      ),
+    );
   }
 }

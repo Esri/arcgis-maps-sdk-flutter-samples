@@ -14,13 +14,17 @@
         "shapefile",
         "table",
         "FeatureLayer",
+        "GeoPackage",
         "Geodatabase",
+        "Portal",
         "ServiceFeatureTable"
     ],
     "redirect_from": [],
     "relevant_apis": [
         "FeatureLayer",
+        "GeoPackage",
         "Geodatabase",
+        "Portal",
         "ServiceFeatureTable"
     ],
     "snippets": [

@@ -20,19 +20,24 @@ Tap the button on the toolbar to add feature layers, from different sources, to 
 2. Load a feature layer with a URL.  
     i. Create a `ServiceFeatureTable` from a URL.  
     ii. Create a `FeatureLayer` with the feature table.
-3. Load a feature layer with a portal item.  
-    i. Create a `PortalItem` with the portal and item ID.  
-    ii. Create a `FeatureLayer` with the portal item and layer ID. 
+3. Load a feature layer with a portal item.
+    i. Create a `PortalItem` with the portal and item ID.
+    ii. Create a `FeatureLayer` with the portal item and layer ID.
 4. Load a feature layer with a geodatabase.  
     i. Instantiate and load a `Geodatabase` using the file name.  
     ii. Get the feature table from the geodatabase with the feature table's name.  
     iii. Create a `FeatureLayer` from the feature table.
-5. Add the feature layer to the map's `operationalLayers`.
+5. Load a feature layer with a geopackage.
+    i. Instantiate and load a geopackage using its file name.
+    ii. Get the first `GeoPackageFeatureTable` from the `GeoPackageFeatureTablel` list.
+    iii. Create a `FeatureLayer` from the feature table.
+6. Add the feature layer to the map's `operationalLayers`.
 
 ## Relevant API
 
 * FeatureLayer
 * Geodatabase
+* GeoPackage
 * Portal
 * ServiceFeatureTable
 
