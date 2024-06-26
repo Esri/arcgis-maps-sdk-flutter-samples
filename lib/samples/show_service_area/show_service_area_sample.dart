@@ -224,21 +224,19 @@ class _ShowServiceAreaSampleState extends State<ShowServiceAreaSample> {
       // re-enable the UI once the service area task is finished.
       setState(() => _ready = true);
     } else {
-      if (mounted) {
-        showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            content: const Text(
-                'At least 1 facility is required to perform a service area calculation.'),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context, 'OK'),
-                child: const Text('OK'),
-              )
-            ],
-          ),
-        );
-      }
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          content: const Text(
+              'At least 1 facility is required to perform a service area calculation.'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, 'OK'),
+              child: const Text('OK'),
+            )
+          ],
+        ),
+      );
     }
   }
 
