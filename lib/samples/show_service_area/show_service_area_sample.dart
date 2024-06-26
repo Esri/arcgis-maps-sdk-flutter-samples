@@ -246,9 +246,9 @@ class _ShowServiceAreaSampleState extends State<ShowServiceAreaSample> {
     _serviceAreaParameters.clearFacilities();
     _serviceAreaParameters.clearPolygonBarriers();
     // clear all the graphics from the map.
-    for (final overlay in _mapViewController.graphicsOverlays) {
-      overlay.graphics.clear();
-    }
+    _mapViewController.graphicsOverlays
+        .map((overlay) => overlay.graphics.clear())
+        .toList();
   }
 }
 
