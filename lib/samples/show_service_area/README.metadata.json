@@ -2,10 +2,33 @@
     "category": "Routing and Logistics",
     "description": "Find the service area within a network from a given point.",
     "ignore": false,
-    "images": [],
-    "keywords": [],
+    "images": [
+        "show_service_area.png"
+    ],
+    "keywords": [
+        "barriers",
+        "facilities",
+        "impedance",
+        "logistics",
+        "routing",
+        "PolylineBarrier",
+        "ServiceAreaFacility",
+        "ServiceAreaParameters",
+        "ServiceAreaPolygon",
+        "ServiceAreaResult",
+        "ServiceAreaTask"
+    ],
     "redirect_from": [],
-    "relevant_apis": [],
-    "snippets": [],
+    "relevant_apis": [
+        "PolylineBarrier",
+        "ServiceAreaFacility",
+        "ServiceAreaParameters",
+        "ServiceAreaPolygon",
+        "ServiceAreaResult",
+        "ServiceAreaTask"
+    ],
+    "snippets": [
+        "show_service_area_sample.dart"
+    ],
     "title": "Show service area"
 }
