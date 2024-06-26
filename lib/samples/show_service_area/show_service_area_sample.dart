@@ -25,6 +25,7 @@ class ShowServiceAreaSample extends StatefulWidget {
 }
 
 class _ShowServiceAreaSampleState extends State<ShowServiceAreaSample> {
+  // create a map view controller
   final _mapViewController = ArcGISMapView.createController();
 
   // create graphics overlays for displaying facilities and barriers and apply renderers for the symbology.
