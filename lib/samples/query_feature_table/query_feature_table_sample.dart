@@ -42,7 +42,7 @@ class _QueryFeatureTableSampleState extends State<QueryFeatureTableSample> {
     scale: 100000000,
   );
   // create a feature table and a feature layer.
-  final ServiceFeatureTable _featureTable = ServiceFeatureTable.withUri(Uri.parse(
+  final _featureTable = ServiceFeatureTable.withUri(Uri.parse(
       'https://services.arcgis.com/jIL9msH9OI208GCb/arcgis/rest/services/USA_Daytime_Population_2016/FeatureServer/0'));
   late FeatureLayer _featureLayer;
 
