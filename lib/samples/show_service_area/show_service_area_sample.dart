@@ -25,9 +25,6 @@ class ShowServiceAreaSample extends StatefulWidget {
 }
 
 class _ShowServiceAreaSampleState extends State<ShowServiceAreaSample> {
-  static const _facilityStr = 'Facility';
-  static const _barrierStr = 'Barrier';
-
   final _mapViewController = ArcGISMapView.createController();
 
   // create graphics overlays for displaying facilities and barriers and apply renderers for the symbology.
@@ -65,7 +62,7 @@ class _ShowServiceAreaSampleState extends State<ShowServiceAreaSample> {
   late final ServiceAreaParameters _serviceAreaParameters;
 
   bool _ready = false;
-  String _segmentedButtonSelection = _facilityStr;
+  Selection _segmentedButtonSelection = Selection.facility;
 
   @override
   Widget build(BuildContext context) {
@@ -90,15 +87,15 @@ class _ShowServiceAreaSampleState extends State<ShowServiceAreaSample> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       // create segmented buttons for toggling adding a facility or barrier to the map.
-                      SegmentedButton<String>(
-                        segments: const [
+                      SegmentedButton<Selection>(
+                        segments: [
                           ButtonSegment(
-                            value: _facilityStr,
-                            label: Text(_facilityStr),
+                            value: Selection.facility,
+                            label: Text(Selection.facility.name),
                           ),
                           ButtonSegment(
-                            value: _barrierStr,
-                            label: Text(_barrierStr),
+                            value: Selection.barrier,
+                            label: Text(Selection.barrier.name),
                           ),
                         ],
                         selected: {_segmentedButtonSelection},
@@ -172,7 +169,7 @@ class _ShowServiceAreaSampleState extends State<ShowServiceAreaSample> {
     if (mapTapPoint == null) return;
 
     // add a facility or barrier to the map depending on the current toggle button selection.
-    if (_segmentedButtonSelection == _facilityStr) {
+    if (_segmentedButtonSelection == Selection.facility) {
       _facilityGraphicsOverlay.graphics.add(Graphic(geometry: mapTapPoint));
     } else {
       // create a buffer around the tapped point to create a barrier.
@@ -257,3 +254,5 @@ class _ShowServiceAreaSampleState extends State<ShowServiceAreaSample> {
     }
   }
 }
+
+enum Selection { facility, barrier }
