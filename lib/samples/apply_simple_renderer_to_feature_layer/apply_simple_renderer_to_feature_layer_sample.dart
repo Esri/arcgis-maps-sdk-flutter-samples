@@ -62,6 +62,7 @@ class _ApplySimpleRendererToFeatureLayerSampleState
                 )
               ],
             ),
+            // Overlay controls to prevent interaction before state is ready
             Visibility(
               visible: !_ready,
               child: SizedBox.expand(
