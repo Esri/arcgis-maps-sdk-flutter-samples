@@ -2,7 +2,7 @@
 
 Change the appearance of a feature layer with a renderer.
 
-![Image of map with features](apply_simple_renderer_to_feature_layer.png)
+![Image of apply simple renderer to feature layer](apply_simple_renderer_to_feature_layer.png)
 
 ## Use case
 
