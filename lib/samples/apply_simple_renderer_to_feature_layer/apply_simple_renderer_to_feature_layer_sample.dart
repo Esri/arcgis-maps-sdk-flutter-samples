@@ -47,16 +47,14 @@ class _ApplySimpleRendererToFeatureLayerSampleState
                     onMapViewReady: onMapViewReady,
                   ),
                 ),
-                SizedBox(
-                  child: Center(
-                    child: TextButton(
-                      onPressed: _usingDefaultRenderer
-                          ? overrideRenderer
-                          : resetRenderer,
-                      child: _usingDefaultRenderer
-                          ? const Text('Blue Renderer')
-                          : const Text('Orange Renderer'),
-                    ),
+                Center(
+                  child: TextButton(
+                    onPressed: _usingDefaultRenderer
+                        ? overrideRenderer
+                        : resetRenderer,
+                    child: _usingDefaultRenderer
+                        ? const Text('Blue Renderer')
+                        : const Text('Orange Renderer'),
                   ),
                 )
               ],
