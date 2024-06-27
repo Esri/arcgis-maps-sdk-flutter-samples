@@ -22,6 +22,9 @@ import 'package:path_provider/path_provider.dart';
 
 import '../../utils/sample_data.dart';
 
+// create an enumeration to define the feature layer sources.
+enum Source { URL, PortalItem, Geodatabase, Geopackage }
+
 class AddFeatureLayersSample extends StatefulWidget {
   const AddFeatureLayersSample({super.key});
 
@@ -36,38 +39,38 @@ class _AddFeatureLayersSampleState extends State<AddFeatureLayersSample> {
   final _mapViewController = ArcGISMapView.createController();
   // create a list of feature layer sources.
   final _featureLayerSources =
-      List<DropdownMenuItem<String>>.empty(growable: true);
+      List<DropdownMenuItem<Source>>.empty(growable: true);
   // create a variable to store the selected feature layer source.
-  String? _selectedFeatureLayerSource;
+  Source? _selectedFeatureLayerSource;
 
   @override
   void initState() {
     super.initState();
-    
+
     // add feature layer sources to the list.
     _featureLayerSources.addAll([
       // add a dropdown menu item to load a feature service from a uri.
       DropdownMenuItem(
         onTap: loadFeatureServiceFromUri,
-        value: 'URL',
+        value: Source.URL,
         child: const Text('URL'),
       ),
       // add a dropdown menu item to load a feature service from a portal item.
       DropdownMenuItem(
         onTap: loadPortalItem,
-        value: 'PortalItem',
+        value: Source.PortalItem,
         child: const Text('Portal Item'),
       ),
       // add a dropdown menu item to load a feature service from a geodatabase.
       DropdownMenuItem(
         onTap: loadGeodatabase,
-        value: 'Geodatabase',
+        value: Source.Geodatabase,
         child: const Text('Geodatabase'),
       ),
       // add a dropdown menu item to load a feature service from a geopackage.
       DropdownMenuItem(
         onTap: loadGeopackage,
-        value: 'Geopackage',
+        value: Source.Geopackage,
         child: const Text('Geopackage'),
       )
     ]);
@@ -89,7 +92,7 @@ class _AddFeatureLayersSampleState extends State<AddFeatureLayersSample> {
               ),
             ),
             // create a dropdown button to select a feature layer source.
-            DropdownButton<String>(
+            DropdownButton(
               alignment: Alignment.center,
               hint: const Text(
                 'Select a feature layer source',
@@ -106,9 +109,9 @@ class _AddFeatureLayersSampleState extends State<AddFeatureLayersSample> {
               elevation: 16,
               style: const TextStyle(color: Colors.deepPurple),
               // set the onChanged callback to update the selected feature layer source.
-              onChanged: (String? featureLayerSource) {
+              onChanged: (Source? featureLayerSource) {
                 setState(() {
-                  _selectedFeatureLayerSource = featureLayerSource!;
+                  _selectedFeatureLayerSource = featureLayerSource;
                 });
               },
               items: _featureLayerSources,
@@ -129,10 +132,10 @@ class _AddFeatureLayersSampleState extends State<AddFeatureLayersSample> {
     final uri = Uri.parse(
         'https://sampleserver6.arcgisonline.com/arcgis/rest/services/DamageAssessment/FeatureServer/0');
     // create a service feature table with the uri.
-    final serviceFeatureTable = ServiceFeatureTable.withUri(uri);
+    final serviceFeatureTables = ServiceFeatureTable.withUri(uri);
     // create a feature layer with the service feature table.
     final serviceFeatureLayer =
-        FeatureLayer.withFeatureTable(serviceFeatureTable);
+        FeatureLayer.withFeatureTable(serviceFeatureTables);
     // clear the operational layers and add the feature layer to the map.
     _map.operationalLayers.clear();
     _map.operationalLayers.add(serviceFeatureLayer);
@@ -159,13 +162,13 @@ class _AddFeatureLayersSampleState extends State<AddFeatureLayersSample> {
     // load the geodatabase.
     await geodatabase.load();
     // get the feature table with the table name.
-    final geodatabaseFeatureTable =
+    final geodatabaseFeatureTables =
         geodatabase.getGeodatabaseFeatureTable(tableName: 'Trailheads');
     // check if the feature table is not null.
-    if (geodatabaseFeatureTable != null) {
+    if (geodatabaseFeatureTables != null) {
       // create a feature layer with the feature table.
       final geodatabaseFeatureLayer =
-          FeatureLayer.withFeatureTable(geodatabaseFeatureTable);
+          FeatureLayer.withFeatureTable(geodatabaseFeatureTables);
       // clear the operational layers and add the feature layer to the map.
       _map.operationalLayers.clear();
       _map.operationalLayers.add(geodatabaseFeatureLayer);
@@ -223,10 +226,10 @@ class _AddFeatureLayersSampleState extends State<AddFeatureLayersSample> {
     // load the geopackage.
     await geopackage.load();
     // get the feature table with the table name.
-    final geopackageFeatureTable = geopackage.geoPackageFeatureTables;
+    final geopackageFeatureTables = geopackage.geoPackageFeatureTables;
     // create a feature layer with the feature table.
     final geopackageFeatureLayer =
-        FeatureLayer.withFeatureTable(geopackageFeatureTable.first);
+        FeatureLayer.withFeatureTable(geopackageFeatureTables.first);
     // clear the operational layers and add the feature layer to the map.
     _map.operationalLayers.clear();
     _map.operationalLayers.add(geopackageFeatureLayer);
