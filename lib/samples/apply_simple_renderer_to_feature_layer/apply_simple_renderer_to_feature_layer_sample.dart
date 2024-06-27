@@ -48,7 +48,6 @@ class _ApplySimpleRendererToFeatureLayerSampleState
                   ),
                 ),
                 SizedBox(
-                  height: 50,
                   child: Center(
                     child: TextButton(
                       onPressed: _usingDefaultRenderer
