@@ -27,11 +27,8 @@ class DisplayClustersSample extends StatefulWidget {
 class _DisplayClustersSampleState extends State<DisplayClustersSample> {
   // create a map view controller
   final _mapViewController = ArcGISMapView.createController();
-  // creates a map with the URL to a web map.
-  final _map = ArcGISMap.withUri(
-    Uri.parse(
-        'https://www.arcgis.com/home/item.html?id=8916d50c44c746c1aafae001552bad23'),
-  )!;
+  // creates a map
+  late ArcGISMap _map;
   // create a flag to check if the map is ready
   bool _ready = false;
 
@@ -39,6 +36,7 @@ class _DisplayClustersSampleState extends State<DisplayClustersSample> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
+        top: false,
         // create a column widget
         child: Column(
           children: [
@@ -63,6 +61,14 @@ class _DisplayClustersSampleState extends State<DisplayClustersSample> {
   }
 
   void onMapViewReady() async {
+    // Get the power plants web map from the default portal.
+    final portal = Portal.arcGISOnline();
+    final portalItem = PortalItem.withPortalAndItemId(
+        portal: portal, itemId: '8916d50c44c746c1aafae001552bad23');
+    // load the portal item.
+    await portalItem.load();
+    // create a map from the portal item
+    _map = ArcGISMap.withItem(portalItem);
     // set the map to the map view controller
     _mapViewController.arcGISMap = _map;
     // load the map

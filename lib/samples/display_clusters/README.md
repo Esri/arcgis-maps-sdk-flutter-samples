@@ -14,7 +14,7 @@ Pan and zoom the map to view how clustering is dynamically updated. Toggle clust
 
 ## How it works
 
-1. Create a map from a web map.
+1. Create a map from a web map `PortalItem`.
 2. Get the cluster enabled layer from the map's operational layers.
 3. Get the `FeatureReduction` from the feature layer and set the `enabled` bool to enable or disable clustering on the feature layer.
 4. When the user clicks on the map, call your custom function that checks if there are any operational layers on the map with `isNotEmpty` attribute.
