@@ -27,9 +27,13 @@ class ApplySimpleRendererToFeatureLayerSample extends StatefulWidget {
 
 class _ApplySimpleRendererToFeatureLayerSampleState
     extends State<ApplySimpleRendererToFeatureLayerSample> {
+  // The feature layer that will host the symbolized features
   late FeatureLayer _featureLayer;
+  // Create the map view controller
   final _mapViewController = ArcGISMapView.createController();
+  // State variable indicating if all state has been initialized
   var _ready = false;
+  // State variable indicating if the default renderer is currently being used.
   var _usingDefaultRenderer = true;
 
   @override
