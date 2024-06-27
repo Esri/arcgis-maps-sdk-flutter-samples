@@ -43,6 +43,7 @@ class _AddFeatureLayersSampleState extends State<AddFeatureLayersSample> {
   @override
   void initState() {
     super.initState();
+    
     // add feature layer sources to the list.
     _featureLayerSources.addAll([
       // add a dropdown menu item to load a feature service from a uri.
