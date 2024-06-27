@@ -27,10 +27,10 @@ class ApplySimpleRendererToFeatureLayerSample extends StatefulWidget {
 
 class _ApplySimpleRendererToFeatureLayerSampleState
     extends State<ApplySimpleRendererToFeatureLayerSample> {
-  final _mapViewController = ArcGISMapView.createController();
   late FeatureLayer _featureLayer;
-  var _usingDefaultRenderer = true;
+  final _mapViewController = ArcGISMapView.createController();
   var _ready = false;
+  var _usingDefaultRenderer = true;
 
   @override
   Widget build(BuildContext context) {
@@ -103,15 +103,17 @@ class _ApplySimpleRendererToFeatureLayerSampleState
     setState(() => _ready = true);
   }
 
-  void resetRenderer() {
-    _featureLayer.resetRenderer();
-    setState(() => _usingDefaultRenderer = true);
-  }
-
   void overrideRenderer() {
+    // Set a new renderer for the feature layer
     final markerSymbol = SimpleMarkerSymbol(
         style: SimpleMarkerSymbolStyle.circle, color: Colors.blue, size: 5);
     _featureLayer.renderer = SimpleRenderer(symbol: markerSymbol);
     setState(() => _usingDefaultRenderer = false);
+  }
+
+  void resetRenderer() {
+    // Reset the feature layer renderer
+    _featureLayer.resetRenderer();
+    setState(() => _usingDefaultRenderer = true);
   }
 }
