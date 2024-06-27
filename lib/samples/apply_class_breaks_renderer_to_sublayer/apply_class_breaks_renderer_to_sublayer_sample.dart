@@ -28,22 +28,27 @@ class ApplyClassBreaksRendererToSublayerSample extends StatefulWidget {
 class _ApplyClassBreaksRendererToSublayerSampleState
     extends State<ApplyClassBreaksRendererToSublayerSample> {
   final _mapViewController = ArcGISMapView.createController();
-  // create a map with a basemap
+  // create a map with a basemap style
   final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISStreets);
   // set the rendered state to false
   bool _rendered = false;
   // set the ready state to false
   bool _ready = false;
+  // create an image sublayer
+  late ArcGISMapImageSublayer countiesSublayer;
+  // create an renderer
+  late Renderer defaultRenderer;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
+        top: false,
         child: Column(
           // add the map view and buttons to a column.
           children: [
             Expanded(
-              // add the map view to the column.
+              // add a map view to the widget tree and set a controller.
               child: ArcGISMapView(
                 controllerProvider: () => _mapViewController,
                 onMapViewReady: onMapViewReady,
@@ -75,43 +80,50 @@ class _ApplyClassBreaksRendererToSublayerSampleState
     );
   }
 
-  void renderLayer() async {
+  void onMapViewReady() async {
     // create an image layer
-    final imageLayer = ArcGISMapImageLayer.withUri(Uri.parse(
-        'https://sampleserver6.arcgisonline.com/arcgis/rest/services/Census/MapServer'));
-    await imageLayer.load();
-
-    // retrieve counties sublayer and apply class breaks renderer
-    imageLayer.arcGISMapImageSublayers.elementAt(2).renderer =
-        createPopulationClassBreaksRenderer();
-
+    final imageLayer = ArcGISMapImageLayer.withUri(
+      Uri.parse(
+          'https://sampleserver6.arcgisonline.com/arcgis/rest/services/Census/MapServer'),
+    );
+    // set the map to the map view controller.
+    _mapViewController.arcGISMap = map;
+    // set the initial viewpoint
+    _mapViewController.setViewpoint(
+      Viewpoint.withLatLongScale(
+          latitude: 48.354406, longitude: -99.998267, scale: 147914382),
+    );
     // add the image layer to the map
     map.operationalLayers.add(imageLayer);
 
+    // load the image layer and counties sublayer
+    await imageLayer.load();
+    countiesSublayer = imageLayer.arcGISMapImageSublayers.elementAt(2);
+    await countiesSublayer.load();
+    defaultRenderer = countiesSublayer.renderer!;
+
+    // set the ready state
+    setState(() => _ready = true);
+  }
+
+  void renderLayer() async {
+    // apply class breaks renderer
+    countiesSublayer.renderer = createPopulationClassBreaksRenderer();
     // set the rendered state
     if (mounted) {
       setState(() => _rendered = true);
     }
   }
 
-  void onMapViewReady() async {
-    // set the map to the map view controller.
-    _mapViewController.arcGISMap = map;
-    // set the initial viewpoint
-    _mapViewController.setViewpoint(Viewpoint.withLatLongScale(
-        latitude: 48.354406, longitude: -99.998267, scale: 147914382));
-    // set the ready state
-    setState(() => _ready = true);
-  }
-
-  void resetRoutes() {
-    // clear the map
-    map.operationalLayers.clear();
+  void resetRoutes() async {
+    // reset the renderer to the default renderer
+    countiesSublayer.renderer = defaultRenderer;
+    // set the rendered state
     setState(() => _rendered = false);
   }
 
   ClassBreaksRenderer createPopulationClassBreaksRenderer() {
-    // create coors for the class breaks
+    // create colors for the class breaks
     var blue1 = const Color.fromARGB(255, 153, 206, 231);
     var blue2 = const Color.fromARGB(255, 108, 192, 232);
     var blue3 = const Color.fromARGB(255, 77, 173, 218);
@@ -134,35 +146,40 @@ class _ApplyClassBreaksRendererToSublayerSampleState
 
     // create class breaks
     final classBreak1 = ClassBreak(
-        description: '-99 to 8560',
-        label: '-99 to 8560',
-        minValue: -99,
-        maxValue: 8560,
-        symbol: classSymbol1);
+      description: '-99 to 8560',
+      label: '-99 to 8560',
+      minValue: -99,
+      maxValue: 8560,
+      symbol: classSymbol1,
+    );
     final classBreak2 = ClassBreak(
-        description: '> 8,560 to 18,109',
-        label: '> 8,560 to 18,109',
-        minValue: 8560,
-        maxValue: 18109,
-        symbol: classSymbol2);
+      description: '> 8,560 to 18,109',
+      label: '> 8,560 to 18,109',
+      minValue: 8560,
+      maxValue: 18109,
+      symbol: classSymbol2,
+    );
     final classBreak3 = ClassBreak(
-        description: '> 18,109 to 35,501',
-        label: '> 18,109 to 35,501',
-        minValue: 18109,
-        maxValue: 35501,
-        symbol: classSymbol3);
+      description: '> 18,109 to 35,501',
+      label: '> 18,109 to 35,501',
+      minValue: 18109,
+      maxValue: 35501,
+      symbol: classSymbol3,
+    );
     final classBreak4 = ClassBreak(
-        description: '> 35,501 to 86,100',
-        label: '> 35,501 to 86,100',
-        minValue: 35501,
-        maxValue: 86100,
-        symbol: classSymbol4);
+      description: '> 35,501 to 86,100',
+      label: '> 35,501 to 86,100',
+      minValue: 35501,
+      maxValue: 86100,
+      symbol: classSymbol4,
+    );
     final classBreak5 = ClassBreak(
-        description: '> 86,100 to 10,110,975',
-        label: '> 86,100 to 10,110,975',
-        minValue: 86100,
-        maxValue: 10110975,
-        symbol: classSymbol5);
+      description: '> 86,100 to 10,110,975',
+      label: '> 86,100 to 10,110,975',
+      minValue: 86100,
+      maxValue: 10110975,
+      symbol: classSymbol5,
+    );
 
     // create and return a class breaks renderer
     return ClassBreaksRenderer(
@@ -172,7 +189,7 @@ class _ApplyClassBreaksRendererToSublayerSampleState
         classBreak2,
         classBreak3,
         classBreak4,
-        classBreak5
+        classBreak5,
       ],
     );
   }
