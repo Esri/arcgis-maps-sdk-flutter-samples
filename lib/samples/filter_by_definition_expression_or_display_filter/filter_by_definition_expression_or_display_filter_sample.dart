@@ -29,38 +29,24 @@ class _FilterByDefinitionExpressionOrDisplayFilterSampleState
     extends State<FilterByDefinitionExpressionOrDisplayFilterSample> {
   // create a map view controller
   final _mapViewController = ArcGISMapView.createController();
-  final FeatureLayer _featureLayer = FeatureLayer.withFeatureTable(
+  final _featureLayer = FeatureLayer.withFeatureTable(
       ServiceFeatureTable.withUri(Uri.parse(
           'https://services2.arcgis.com/ZQgQTuoyBrtmoGdP/arcgis/rest/services/SF_311_Incidents/FeatureServer/0')));
-
-  @override
-  void initState() {
-    super.initState();
-    // create a map with a topographic basemap style
-    final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic);
-    // add the feature layer to the map
-    map.operationalLayers.add(_featureLayer);
-    // set the initial viewpoint
-    map.initialViewpoint = Viewpoint.withLatLongScale(
-      latitude: 37.7759,
-      longitude: -122.45044,
-      scale: 100000,
-    );
-
-    // set the map to the map view.
-    _mapViewController.arcGISMap = map;
-  }
+  var displayFilterDefinition;
+  var definitionExpression = '';
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
+        top: false,
         child: Column(
           children: [
             Expanded(
               // add a map view to the widget tree and set a controller.
               child: ArcGISMapView(
                 controllerProvider: () => _mapViewController,
+                onMapViewReady: onMapViewReady,
               ),
             ),
             // add a text widget to display the feature count
@@ -90,19 +76,34 @@ class _FilterByDefinitionExpressionOrDisplayFilterSampleState
     );
   }
 
-  void applyDefinitionExpression() {
-    // remove the display filter
-    _featureLayer.displayFilterDefinition = null;
-    // apply a definition expression to the feature layer
-    _featureLayer.definitionExpression =
-        "req_Type = 'Tree Maintenance or Damage'";
-    // count the number of features
-    calculateFeatureCount();
+  void onMapViewReady() {
+    // create a map with a topographic basemap style
+    final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic);
+    // add the feature layer to the map
+    map.operationalLayers.add(_featureLayer);
+    // set the initial viewpoint
+    map.initialViewpoint = Viewpoint.withLatLongScale(
+      latitude: 37.7759,
+      longitude: -122.45044,
+      scale: 100000,
+    );
+
+    // set the map to the map view.
+    _mapViewController.arcGISMap = map;
   }
 
-  void applyDisplayFilter() {
+  void applyDefinitionExpression() async {
+    // remove the display filter
+    displayFilterDefinition = null;
+    // apply a definition expression to the feature layer
+    definitionExpression = "req_Type = 'Tree Maintenance or Damage'";
+    // count the number of features
+    await calculateFeatureCount();
+  }
+
+  void applyDisplayFilter() async {
     // remove the definition expression
-    _featureLayer.definitionExpression = '';
+    definitionExpression = '';
     // apply a display filter to the feature layer
     final displayFilter = DisplayFilter.withWhereClause(
         name: 'Damaged Trees',
@@ -111,28 +112,30 @@ class _FilterByDefinitionExpressionOrDisplayFilterSampleState
     final manualDisplayFilterDefinition =
         ManualDisplayFilterDefinition.withFilters(
             activeFilter: displayFilter, availableFilters: [displayFilter]);
-    _featureLayer.displayFilterDefinition = manualDisplayFilterDefinition;
+    displayFilterDefinition = manualDisplayFilterDefinition;
     // count the number of features
-    calculateFeatureCount();
+    await calculateFeatureCount();
   }
 
-  void reset() {
+  void reset() async {
     // remove the definition expression and display filter
-    _featureLayer.displayFilterDefinition = null;
-    _featureLayer.definitionExpression = '';
+    displayFilterDefinition = null;
+    definitionExpression = '';
     // count the number of features
-    calculateFeatureCount();
+    await calculateFeatureCount();
   }
 
-  void calculateFeatureCount() async {
-    // count the number of features
-    final queryParameters = QueryParameters();
+  Future<void> calculateFeatureCount() async {
+    _featureLayer.displayFilterDefinition = displayFilterDefinition;
+    _featureLayer.definitionExpression = definitionExpression;
     // get the current extent of the map view
-    queryParameters.geometry = _mapViewController
+    final extent = _mapViewController
         .getCurrentViewpoint(viewpointType: ViewpointType.boundingGeometry)
         ?.targetGeometry
         .extent;
-    queryParameters.whereClause = '1=1';
+
+    final queryParameters = QueryParameters();
+    queryParameters.geometry = extent;
 
     // query the feature count
     final featureCount = await _featureLayer.featureTable!
@@ -142,8 +145,18 @@ class _FilterByDefinitionExpressionOrDisplayFilterSampleState
     if (mounted) {
       showDialog(
         context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(content: Text('$featureCount features found.'));
+        builder: (context) {
+          return AlertDialog(
+            title: const Text(
+              'Current Feature Count',
+              style: TextStyle(fontSize: 20),
+              textAlign: TextAlign.center,
+            ),
+            content: Text(
+              '$featureCount features',
+              textAlign: TextAlign.center,
+            ),
+          );
         },
       );
     }
