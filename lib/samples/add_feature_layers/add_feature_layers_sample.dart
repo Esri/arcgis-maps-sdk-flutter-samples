@@ -30,10 +30,10 @@ class AddFeatureLayersSample extends StatefulWidget {
 }
 
 class _AddFeatureLayersSampleState extends State<AddFeatureLayersSample> {
-  // create a map view conroller.
-  final _mapViewController = ArcGISMapView.createController();
   // create a map with a topographic basemap style.
   final _map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic);
+  // create a map view conroller.
+  final _mapViewController = ArcGISMapView.createController();
   // create a list of feature layer sources.
   final _featureLayerSources =
       List<DropdownMenuItem<String>>.empty(growable: true);
@@ -43,8 +43,6 @@ class _AddFeatureLayersSampleState extends State<AddFeatureLayersSample> {
   @override
   void initState() {
     super.initState();
-    // set the map on the map view controller.
-    _mapViewController.arcGISMap = _map;
     // add feature layer sources to the list.
     _featureLayerSources.addAll([
       // add a dropdown menu item to load a feature service from a uri.
@@ -86,6 +84,7 @@ class _AddFeatureLayersSampleState extends State<AddFeatureLayersSample> {
             Expanded(
               child: ArcGISMapView(
                 controllerProvider: () => _mapViewController,
+                onMapViewReady: _onMapViewReady,
               ),
             ),
             // create a dropdown button to select a feature layer source.
@@ -119,6 +118,11 @@ class _AddFeatureLayersSampleState extends State<AddFeatureLayersSample> {
     );
   }
 
+  void _onMapViewReady() async {
+    // set the map on the map view controller.
+    _mapViewController.arcGISMap = _map;
+  }
+
   void loadFeatureServiceFromUri() {
     // create a uri to a feature service.
     final uri = Uri.parse(
@@ -126,10 +130,11 @@ class _AddFeatureLayersSampleState extends State<AddFeatureLayersSample> {
     // create a service feature table with the uri.
     final serviceFeatureTable = ServiceFeatureTable.withUri(uri);
     // create a feature layer with the service feature table.
-    final featureLayer = FeatureLayer.withFeatureTable(serviceFeatureTable);
+    final serviceFeatureLayer =
+        FeatureLayer.withFeatureTable(serviceFeatureTable);
     // clear the operational layers and add the feature layer to the map.
     _map.operationalLayers.clear();
-    _map.operationalLayers.add(featureLayer);
+    _map.operationalLayers.add(serviceFeatureLayer);
     // set the viewpoint to the feature layer.
     _mapViewController.setViewpoint(
       Viewpoint.withLatLongScale(
@@ -153,15 +158,16 @@ class _AddFeatureLayersSampleState extends State<AddFeatureLayersSample> {
     // load the geodatabase.
     await geodatabase.load();
     // get the feature table with the table name.
-    final featureTable =
+    final geodatabaseFeatureTable =
         geodatabase.getGeodatabaseFeatureTable(tableName: 'Trailheads');
     // check if the feature table is not null.
-    if (featureTable != null) {
+    if (geodatabaseFeatureTable != null) {
       // create a feature layer with the feature table.
-      final featureLayer = FeatureLayer.withFeatureTable(featureTable);
+      final geodatabaseFeatureLayer =
+          FeatureLayer.withFeatureTable(geodatabaseFeatureTable);
       // clear the operational layers and add the feature layer to the map.
       _map.operationalLayers.clear();
-      _map.operationalLayers.add(featureLayer);
+      _map.operationalLayers.add(geodatabaseFeatureLayer);
       // set the viewpoint to the feature layer.
       _mapViewController.setViewpoint(
         Viewpoint.fromCenter(
@@ -186,13 +192,13 @@ class _AddFeatureLayersSampleState extends State<AddFeatureLayersSample> {
     // load the portal item.
     await portalItem.load();
     // create a feature layer with the portal item and layer ID
-    final featureLayer = FeatureLayer.withItem(
+    final portalItemFeatureLayer = FeatureLayer.withItem(
       featureServiceItem: portalItem,
       layerId: 0,
     );
     // clear the operational layers and add the feature layer to the map.
     _map.operationalLayers.clear();
-    _map.operationalLayers.add(featureLayer);
+    _map.operationalLayers.add(portalItemFeatureLayer);
     // Set the viewpoint to Portland, Oregon.
     _mapViewController.setViewpoint(
       Viewpoint.withLatLongScale(
@@ -216,12 +222,13 @@ class _AddFeatureLayersSampleState extends State<AddFeatureLayersSample> {
     // load the geopackage.
     await geopackage.load();
     // get the feature table with the table name.
-    final featureTable = geopackage.geoPackageFeatureTables;
+    final geopackageFeatureTable = geopackage.geoPackageFeatureTables;
     // create a feature layer with the feature table.
-    final featureLayer = FeatureLayer.withFeatureTable(featureTable.first);
+    final geopackageFeatureLayer =
+        FeatureLayer.withFeatureTable(geopackageFeatureTable.first);
     // clear the operational layers and add the feature layer to the map.
     _map.operationalLayers.clear();
-    _map.operationalLayers.add(featureLayer);
+    _map.operationalLayers.add(geopackageFeatureLayer);
     // set the viewpoint to the feature layer.
     _mapViewController.setViewpoint(
       Viewpoint.withLatLongScale(
