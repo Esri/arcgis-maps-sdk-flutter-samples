@@ -23,7 +23,7 @@ import 'package:path_provider/path_provider.dart';
 import '../../utils/sample_data.dart';
 
 // create an enumeration to define the feature layer sources.
-enum Source { URL, PortalItem, Geodatabase, Geopackage }
+enum Source { url, portalItem, geodatabase, geopackage }
 
 class AddFeatureLayersSample extends StatefulWidget {
   const AddFeatureLayersSample({super.key});
@@ -35,11 +35,10 @@ class AddFeatureLayersSample extends StatefulWidget {
 class _AddFeatureLayersSampleState extends State<AddFeatureLayersSample> {
   // create a map with a topographic basemap style.
   final _map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic);
-  // create a map view conroller.
+  // create a map view controller.
   final _mapViewController = ArcGISMapView.createController();
   // create a list of feature layer sources.
-  final _featureLayerSources =
-      List<DropdownMenuItem<Source>>.empty(growable: true);
+  final _featureLayerSources = <DropdownMenuItem<Source>>[];
   // create a variable to store the selected feature layer source.
   Source? _selectedFeatureLayerSource;
 
@@ -52,25 +51,25 @@ class _AddFeatureLayersSampleState extends State<AddFeatureLayersSample> {
       // add a dropdown menu item to load a feature service from a uri.
       DropdownMenuItem(
         onTap: loadFeatureServiceFromUri,
-        value: Source.URL,
+        value: Source.url,
         child: const Text('URL'),
       ),
       // add a dropdown menu item to load a feature service from a portal item.
       DropdownMenuItem(
         onTap: loadPortalItem,
-        value: Source.PortalItem,
+        value: Source.portalItem,
         child: const Text('Portal Item'),
       ),
       // add a dropdown menu item to load a feature service from a geodatabase.
       DropdownMenuItem(
         onTap: loadGeodatabase,
-        value: Source.Geodatabase,
+        value: Source.geodatabase,
         child: const Text('Geodatabase'),
       ),
       // add a dropdown menu item to load a feature service from a geopackage.
       DropdownMenuItem(
         onTap: loadGeopackage,
-        value: Source.Geopackage,
+        value: Source.geopackage,
         child: const Text('Geopackage'),
       )
     ]);
@@ -109,7 +108,7 @@ class _AddFeatureLayersSampleState extends State<AddFeatureLayersSample> {
               elevation: 16,
               style: const TextStyle(color: Colors.deepPurple),
               // set the onChanged callback to update the selected feature layer source.
-              onChanged: (Source? featureLayerSource) {
+              onChanged: (featureLayerSource) {
                 setState(() {
                   _selectedFeatureLayerSource = featureLayerSource;
                 });
