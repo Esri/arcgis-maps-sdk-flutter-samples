@@ -28,7 +28,7 @@ class ApplySimpleRendererToFeatureLayerSample extends StatefulWidget {
 class _ApplySimpleRendererToFeatureLayerSampleState
     extends State<ApplySimpleRendererToFeatureLayerSample> {
   // The feature layer that will host the symbolized features
-  final FeatureLayer _featureLayer = () {
+  final _featureLayer = () {
     final uri = Uri.parse(
         'https://services.arcgis.com/V6ZHFr6zdgNZuVG0/arcgis/rest/services/Landscape_Trees/FeatureServer/0');
     final serviceFeatureTable = ServiceFeatureTable.withUri(uri);
