@@ -52,7 +52,7 @@ class _ApplySimpleRendererToFeatureLayerSampleState
                   ),
                 ),
                 Center(
-                  child: TextButton(
+                  child: ElevatedButton(
                     onPressed: _usingDefaultRenderer
                         ? overrideRenderer
                         : resetRenderer,
