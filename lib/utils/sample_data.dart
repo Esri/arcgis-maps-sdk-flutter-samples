@@ -21,7 +21,10 @@ import 'package:http/http.dart';
 import 'package:path_provider/path_provider.dart';
 
 /// Download sample data for the provided list of Portal Item IDs.
-Future<void> downloadSampleData(List<String> portalItemIds) async {
+/// If replaceExisting is false, the file will not be redownloaded if it exists,
+/// otherwize, the existing file will be deleted and redownloaded.
+Future<void> downloadSampleData(List<String> portalItemIds,
+    {bool replaceExisting = false}) async {
   const portal = 'https://arcgis.com';
   // location where files are saved to on the device. Persists while the app persists.
   final appDirPath = (await getApplicationDocumentsDirectory()).absolute.path;
@@ -36,7 +39,13 @@ Future<void> downloadSampleData(List<String> portalItemIds) async {
     final itemName = portalItem.name;
     final filePath = '$appDirPath/$itemName';
     final file = File(filePath);
-    if (file.existsSync()) continue;
+    if (file.existsSync()) {
+      if (replaceExisting) {
+        file.deleteSync();
+      } else {
+        continue;
+      }
+    }
 
     final request = await _fetchData(portal, itemId);
     file.createSync(recursive: true);
@@ -44,13 +53,17 @@ Future<void> downloadSampleData(List<String> portalItemIds) async {
 
     if (itemName.contains('.zip')) {
       // if the data is a zip we need to extract it
-      // save all files to the device app directory in a directory with the item name without the zip extension
-      final nameWithoutExt = itemName.replaceFirst(RegExp(r'.zip$'), '');
-      final dir = Directory.fromUri(Uri.parse('$appDirPath/$nameWithoutExt'));
-      if (dir.existsSync()) dir.deleteSync(recursive: true);
-      await ZipFile.extractToDirectory(zipFile: file, destinationDir: dir);
+      await extractZipArchive(file);
     }
   }
+}
+
+Future<void> extractZipArchive(File archiveFile) async {
+  // save all files to a directory with the filename without the zip extension in the same directory as the zip file
+  final pathWithoutExt = archiveFile.path.replaceFirst(RegExp(r'.zip$'), '');
+  final dir = Directory.fromUri(Uri.parse(pathWithoutExt));
+  if (dir.existsSync()) dir.deleteSync(recursive: true);
+  await ZipFile.extractToDirectory(zipFile: archiveFile, destinationDir: dir);
 }
 
 /// Fetch data from the provided Portal and PortalItem ID and return the response.
