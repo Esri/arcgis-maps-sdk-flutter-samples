@@ -34,7 +34,7 @@ class _ApplyClassBreaksRendererToSublayerSampleState
   // set the ready state to false
   var _ready = false;
   // create an image sublayer
-  late ArcGISMapImageSublayer _countiesSublayer; 
+  late ArcGISMapImageSublayer _countiesSublayer;
 
   @override
   Widget build(BuildContext context) {
@@ -51,19 +51,11 @@ class _ApplyClassBreaksRendererToSublayerSampleState
                 onMapViewReady: onMapViewReady,
               ),
             ),
-            SizedBox(
-              height: 60,
-              // add the button to the column.
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  // apply renderer button
-                  ElevatedButton(
-                    onPressed: _ready ? renderLayer : null,
-                    child: const Text('Change Sublayer Renderer'),
-                  ),
-                ],
+            Center(
+              // apply renderer button
+              child: ElevatedButton(
+                onPressed: _ready ? renderLayer : null,
+                child: const Text('Change Sublayer Renderer'),
               ),
             )
           ],
