@@ -28,12 +28,7 @@ class ApplySimpleRendererToFeatureLayerSample extends StatefulWidget {
 class _ApplySimpleRendererToFeatureLayerSampleState
     extends State<ApplySimpleRendererToFeatureLayerSample> {
   // The feature layer that will host the symbolized features
-  final _featureLayer = () {
-    final uri = Uri.parse(
-        'https://services.arcgis.com/V6ZHFr6zdgNZuVG0/arcgis/rest/services/Landscape_Trees/FeatureServer/0');
-    final serviceFeatureTable = ServiceFeatureTable.withUri(uri);
-    return FeatureLayer.withFeatureTable(serviceFeatureTable);
-  }();
+  late final FeatureLayer _featureLayer;
   // Create the map view controller
   final _mapViewController = ArcGISMapView.createController();
   // State variable indicating if all state has been initialized
@@ -85,6 +80,11 @@ class _ApplySimpleRendererToFeatureLayerSampleState
   }
 
   void onMapViewReady() {
+    final uri = Uri.parse(
+        'https://services.arcgis.com/V6ZHFr6zdgNZuVG0/arcgis/rest/services/Landscape_Trees/FeatureServer/0');
+    final serviceFeatureTable = ServiceFeatureTable.withUri(uri);
+    _featureLayer = FeatureLayer.withFeatureTable(serviceFeatureTable);
+
     // Initialize the ArcGISMap
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic)
       ..operationalLayers.add(_featureLayer)
