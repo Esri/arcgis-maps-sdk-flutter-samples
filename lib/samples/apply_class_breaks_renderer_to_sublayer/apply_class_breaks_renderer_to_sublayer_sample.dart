@@ -30,13 +30,11 @@ class _ApplyClassBreaksRendererToSublayerSampleState
   final _mapViewController = ArcGISMapView.createController();
   // create a map with a basemap style
   final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISStreets);
-  // set the rendered state to false
-  bool _rendered = false;
   // set the ready state to false
-  bool _ready = false;
+  var _ready = false;
   // create an image sublayer
   late ArcGISMapImageSublayer countiesSublayer;
-  // create an renderer
+  // create a renderer
   late Renderer defaultRenderer;
 
   @override
