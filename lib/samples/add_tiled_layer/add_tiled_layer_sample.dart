@@ -41,7 +41,7 @@ class _AddTiledLayerSampleState extends State<AddTiledLayerSample> {
 
   void onMapViewReady() {
     // create a tiled layer with a URL to a tiled map service.
-    var tiledLayer = ArcGISTiledLayer.withUri(
+    final tiledLayer = ArcGISTiledLayer.withUri(
       Uri.parse(
           'http://services.arcgisonline.com/arcgis/rest/services/World_Topo_Map/MapServer'),
     );
