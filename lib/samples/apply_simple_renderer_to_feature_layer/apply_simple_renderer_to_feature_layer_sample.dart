@@ -80,6 +80,7 @@ class _ApplySimpleRendererToFeatureLayerSampleState
   }
 
   void onMapViewReady() {
+    // Initialize the feature layer with a feature table web service
     final uri = Uri.parse(
         'https://services.arcgis.com/V6ZHFr6zdgNZuVG0/arcgis/rest/services/Landscape_Trees/FeatureServer/0');
     final serviceFeatureTable = ServiceFeatureTable.withUri(uri);
