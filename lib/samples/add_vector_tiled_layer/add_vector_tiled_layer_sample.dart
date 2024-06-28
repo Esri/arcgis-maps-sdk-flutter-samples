@@ -26,26 +26,31 @@ class AddVectorTiledLayerSample extends StatefulWidget {
 }
 
 class _AddVectorTiledLayerSampleState extends State<AddVectorTiledLayerSample> {
+  // create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
-
-  @override
-  void initState() {
-    super.initState();
-
-    final uri = Uri.parse(
-        'https://www.arcgis.com/home/item.html?id=7675d44bb1e4428aa2c30a9b68f97822');
-    var vectorTiledLayer = ArcGISVectorTiledLayer.withUri(uri);
-    final basemap = Basemap.withBaseLayer(vectorTiledLayer);
-    final map = ArcGISMap.withBasemap(basemap);
-    _mapViewController.arcGISMap = map;
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // add a map view to the widget tree and set a controller.
       body: ArcGISMapView(
         controllerProvider: () => _mapViewController,
+        onMapViewReady: onMapViewReady,
       ),
     );
+  }
+
+  void onMapViewReady() {
+    // create a vector tiled layer with a URL to the vector tile service.
+    final vectorTiledLayer = ArcGISVectorTiledLayer.withUri(
+      Uri.parse(
+          'https://www.arcgis.com/home/item.html?id=7675d44bb1e4428aa2c30a9b68f97822'),
+    );
+    // create a basemap with the vector tiled layer.
+    final basemap = Basemap.withBaseLayer(vectorTiledLayer);
+    // create a map with the basemap.
+    final map = ArcGISMap.withBasemap(basemap);
+    // set the map to the map view.
+    _mapViewController.arcGISMap = map;
   }
 }
