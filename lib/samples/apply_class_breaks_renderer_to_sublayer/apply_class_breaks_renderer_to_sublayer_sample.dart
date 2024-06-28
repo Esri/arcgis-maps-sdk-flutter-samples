@@ -27,15 +27,14 @@ class ApplyClassBreaksRendererToSublayerSample extends StatefulWidget {
 
 class _ApplyClassBreaksRendererToSublayerSampleState
     extends State<ApplyClassBreaksRendererToSublayerSample> {
+  // create a map view controller
   final _mapViewController = ArcGISMapView.createController();
   // create a map with a basemap style
-  final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISStreets);
+  final _map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISStreets);
   // set the ready state to false
   var _ready = false;
   // create an image sublayer
-  late ArcGISMapImageSublayer countiesSublayer;
-  // create a renderer
-  late Renderer defaultRenderer;
+  late ArcGISMapImageSublayer _countiesSublayer; 
 
   @override
   Widget build(BuildContext context) {
@@ -54,20 +53,15 @@ class _ApplyClassBreaksRendererToSublayerSampleState
             ),
             SizedBox(
               height: 60,
-              // add the buttons to the column.
+              // add the button to the column.
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   // apply renderer button
                   ElevatedButton(
-                    onPressed: !_rendered && _ready ? renderLayer : null,
+                    onPressed: _ready ? renderLayer : null,
                     child: const Text('Change Sublayer Renderer'),
-                  ),
-                  // reset button
-                  ElevatedButton(
-                    onPressed: _rendered ? resetRoutes : null,
-                    child: const Text('Reset'),
                   ),
                 ],
               ),
@@ -85,20 +79,19 @@ class _ApplyClassBreaksRendererToSublayerSampleState
           'https://sampleserver6.arcgisonline.com/arcgis/rest/services/Census/MapServer'),
     );
     // set the map to the map view controller.
-    _mapViewController.arcGISMap = map;
+    _mapViewController.arcGISMap = _map;
     // set the initial viewpoint
     _mapViewController.setViewpoint(
       Viewpoint.withLatLongScale(
           latitude: 48.354406, longitude: -99.998267, scale: 147914382),
     );
     // add the image layer to the map
-    map.operationalLayers.add(imageLayer);
+    _map.operationalLayers.add(imageLayer);
 
     // load the image layer and counties sublayer
     await imageLayer.load();
-    countiesSublayer = imageLayer.arcGISMapImageSublayers.elementAt(2);
-    await countiesSublayer.load();
-    defaultRenderer = countiesSublayer.renderer!;
+    _countiesSublayer = imageLayer.arcGISMapImageSublayers.elementAt(2);
+    await _countiesSublayer.load();
 
     // set the ready state
     setState(() => _ready = true);
@@ -106,18 +99,7 @@ class _ApplyClassBreaksRendererToSublayerSampleState
 
   void renderLayer() async {
     // apply class breaks renderer
-    countiesSublayer.renderer = createPopulationClassBreaksRenderer();
-    // set the rendered state
-    if (mounted) {
-      setState(() => _rendered = true);
-    }
-  }
-
-  void resetRoutes() async {
-    // reset the renderer to the default renderer
-    countiesSublayer.renderer = defaultRenderer;
-    // set the rendered state
-    setState(() => _rendered = false);
+    _countiesSublayer.renderer = createPopulationClassBreaksRenderer();
   }
 
   ClassBreaksRenderer createPopulationClassBreaksRenderer() {
