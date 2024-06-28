@@ -14,6 +14,7 @@
 // limitations under the License.
 //
 
+import 'dart:io';
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
@@ -31,7 +32,7 @@ class ApplyScheduledUpdatesToPreplannedMapAreaSample extends StatefulWidget {
 class _ApplyScheduledUpdatesToPreplannedMapAreaSampleState
     extends State<ApplyScheduledUpdatesToPreplannedMapAreaSample> {
   final _mapViewController = ArcGISMapView.createController();
-  var _isInitialized = false;
+  var _ready = false;
   var _canUpdate = false;
   var _updateStatus = OfflineUpdateAvailability.indeterminate;
   var _updateSizeKB = 0.0;
@@ -44,38 +45,52 @@ class _ApplyScheduledUpdatesToPreplannedMapAreaSampleState
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
+        top: false,
+        child: Stack(
           children: [
-            Expanded(
-              child: ArcGISMapView(
-                controllerProvider: () => _mapViewController,
-                onMapViewReady: onMapViewReady,
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Expanded(
+                  child: ArcGISMapView(
+                    controllerProvider: () => _mapViewController,
+                    onMapViewReady: onMapViewReady,
+                  ),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Text('Updates: ${_updateStatus.name.toUpperCase()}'),
+                        Text('Update Size: ${_updateSizeKB}KB'),
+                      ],
+                    ),
+                    Center(
+                      child: ElevatedButton(
+                        onPressed: _canUpdate ? syncUpdates : resetMapPackage,
+                        child: _canUpdate
+                            ? const Text('Update')
+                            : const Text('Reset'),
+                      ),
+                    ),
+                  ],
+                )
+              ],
+            ),
+            // Display a progress indicator and prevent interaction before state is ready
+            Visibility(
+              visible: !_ready,
+              child: SizedBox.expand(
+                child: Container(
+                  color: Colors.white30,
+                  child: const Center(child: CircularProgressIndicator()),
+                ),
               ),
             ),
-            SizedBox(
-              height: 75,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      Text('Updates: ${_updateStatus.name.toUpperCase()}'),
-                      Text('Update Size: ${_updateSizeKB}KB'),
-                    ],
-                  ),
-                  Center(
-                    child: ElevatedButton(
-                      onPressed: _canUpdate ? syncUpdates : null,
-                      child: const Text('Update'),
-                    ),
-                  ),
-                ],
-              ),
-            )
           ],
         ),
       ),
@@ -84,13 +99,15 @@ class _ApplyScheduledUpdatesToPreplannedMapAreaSampleState
 
   Future<void> onMapViewReady() async {
     await prepareData();
-    _isInitialized = await loadMapPackageMap();
+    await loadMapPackageMap();
+    setState(() => _ready = true);
 
     checkForUpdates();
   }
 
   Future<void> prepareData() async {
-    await downloadSampleData(['740b663bff5e4198b9b6674af93f638a']);
+    await downloadSampleData(['740b663bff5e4198b9b6674af93f638a'],
+        replaceExisting: true);
     final appDir = await getApplicationDocumentsDirectory();
     _dataUri = Uri.parse('${appDir.absolute.path}/canyonlands');
   }
@@ -134,7 +151,7 @@ class _ApplyScheduledUpdatesToPreplannedMapAreaSampleState
   }
 
   Future<void> checkForUpdates() async {
-    if (!_isInitialized) return;
+    if (!_ready) return;
     final updatesInfo = await _offlineMapSyncTask!.checkForUpdates();
     if (mounted) {
       setState(() {
@@ -146,19 +163,35 @@ class _ApplyScheduledUpdatesToPreplannedMapAreaSampleState
     }
   }
 
+  Future<void> resetMapPackage() async {
+    setState(() => _ready = false);
+    _mobileMapPackage?.close();
+    _mobileMapPackage = null;
+
+    final archivePath = '${_dataUri.path}.zip';
+    final archiveFile = File.fromUri(Uri.parse(archivePath));
+    await extractZipArchive(archiveFile);
+    await loadMapPackageMap();
+
+    await checkForUpdates();
+    setState(() => _ready = true);
+  }
+
   void syncUpdates() {
-    if (!_isInitialized) return;
+    if (!_ready) return;
     setState(() => _canUpdate = false);
 
     final mapSyncJob =
         _offlineMapSyncTask!.syncOfflineMap(parameters: _mapSyncParameters!);
 
     mapSyncJob.run().then((value) async {
+      setState(() => _ready = false);
       final result = mapSyncJob.result!;
       if (result.isMobileMapPackageReopenRequired) {
         _mobileMapPackage?.close();
         _mobileMapPackage = null;
-        _isInitialized = await loadMapPackageMap();
+        await loadMapPackageMap();
+        setState(() => _ready = true);
       }
       // Refresh the update status
       checkForUpdates();
