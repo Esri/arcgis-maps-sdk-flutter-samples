@@ -29,11 +29,14 @@ class _FilterByDefinitionExpressionOrDisplayFilterSampleState
     extends State<FilterByDefinitionExpressionOrDisplayFilterSample> {
   // create a map view controller
   final _mapViewController = ArcGISMapView.createController();
+  // create a feature layer
   final _featureLayer = FeatureLayer.withFeatureTable(
       ServiceFeatureTable.withUri(Uri.parse(
           'https://services2.arcgis.com/ZQgQTuoyBrtmoGdP/arcgis/rest/services/SF_311_Incidents/FeatureServer/0')));
-  var displayFilterDefinition;
-  var definitionExpression = '';
+  // create a display filter definition
+  ManualDisplayFilterDefinition? _displayFilterDefinition;
+  // create a definition expression
+  var _definitionExpression = '';
 
   @override
   Widget build(BuildContext context) {
@@ -94,16 +97,16 @@ class _FilterByDefinitionExpressionOrDisplayFilterSampleState
 
   void applyDefinitionExpression() async {
     // remove the display filter
-    displayFilterDefinition = null;
+    _displayFilterDefinition = null;
     // apply a definition expression to the feature layer
-    definitionExpression = "req_Type = 'Tree Maintenance or Damage'";
+    _definitionExpression = "req_Type = 'Tree Maintenance or Damage'";
     // count the number of features
     await calculateFeatureCount();
   }
 
   void applyDisplayFilter() async {
     // remove the definition expression
-    definitionExpression = '';
+    _definitionExpression = '';
     // apply a display filter to the feature layer
     final displayFilter = DisplayFilter.withWhereClause(
         name: 'Damaged Trees',
@@ -112,28 +115,29 @@ class _FilterByDefinitionExpressionOrDisplayFilterSampleState
     final manualDisplayFilterDefinition =
         ManualDisplayFilterDefinition.withFilters(
             activeFilter: displayFilter, availableFilters: [displayFilter]);
-    displayFilterDefinition = manualDisplayFilterDefinition;
+    _displayFilterDefinition = manualDisplayFilterDefinition;
     // count the number of features
     await calculateFeatureCount();
   }
 
   void reset() async {
     // remove the definition expression and display filter
-    displayFilterDefinition = null;
-    definitionExpression = '';
+    _displayFilterDefinition = null;
+    _definitionExpression = '';
     // count the number of features
     await calculateFeatureCount();
   }
 
   Future<void> calculateFeatureCount() async {
-    _featureLayer.displayFilterDefinition = displayFilterDefinition;
-    _featureLayer.definitionExpression = definitionExpression;
+    _featureLayer.displayFilterDefinition = _displayFilterDefinition;
+    _featureLayer.definitionExpression = _definitionExpression;
     // get the current extent of the map view
     final extent = _mapViewController
         .getCurrentViewpoint(viewpointType: ViewpointType.boundingGeometry)
         ?.targetGeometry
         .extent;
 
+    // create query parameters
     final queryParameters = QueryParameters();
     queryParameters.geometry = extent;
 
@@ -146,6 +150,7 @@ class _FilterByDefinitionExpressionOrDisplayFilterSampleState
       showDialog(
         context: context,
         builder: (context) {
+          // create an alert dialog
           return AlertDialog(
             title: const Text(
               'Current Feature Count',
