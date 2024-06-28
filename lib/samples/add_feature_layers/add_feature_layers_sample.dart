@@ -22,6 +22,9 @@ import 'package:path_provider/path_provider.dart';
 
 import '../../utils/sample_data.dart';
 
+// create an enumeration to define the feature layer sources.
+enum Source { url, portalItem, geodatabase, geopackage }
+
 class AddFeatureLayersSample extends StatefulWidget {
   const AddFeatureLayersSample({super.key});
 
@@ -30,28 +33,44 @@ class AddFeatureLayersSample extends StatefulWidget {
 }
 
 class _AddFeatureLayersSampleState extends State<AddFeatureLayersSample> {
-  final _mapViewController = ArcGISMapView.createController();
+  // create a map with a topographic basemap style.
   final _map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic);
-  final _featureLayerSources =
-      List<DropdownMenuItem<String>>.empty(growable: true);
-  String? _selectedFeatureLayerSource;
+  // create a map view controller.
+  final _mapViewController = ArcGISMapView.createController();
+  // create a list of feature layer sources.
+  final _featureLayerSources = <DropdownMenuItem<Source>>[];
+  // create a variable to store the selected feature layer source.
+  Source? _selectedFeatureLayerSource;
 
   @override
   void initState() {
     super.initState();
 
-    _mapViewController.arcGISMap = _map;
-
+    // add feature layer sources to the list.
     _featureLayerSources.addAll([
+      // add a dropdown menu item to load a feature service from a uri.
       DropdownMenuItem(
         onTap: loadFeatureServiceFromUri,
-        value: 'URL',
+        value: Source.url,
         child: const Text('URL'),
       ),
+      // add a dropdown menu item to load a feature service from a portal item.
+      DropdownMenuItem(
+        onTap: loadPortalItem,
+        value: Source.portalItem,
+        child: const Text('Portal Item'),
+      ),
+      // add a dropdown menu item to load a feature service from a geodatabase.
       DropdownMenuItem(
         onTap: loadGeodatabase,
-        value: 'Geodatabase',
+        value: Source.geodatabase,
         child: const Text('Geodatabase'),
+      ),
+      // add a dropdown menu item to load a feature service from a geopackage.
+      DropdownMenuItem(
+        onTap: loadGeopackage,
+        value: Source.geopackage,
+        child: const Text('Geopackage'),
       )
     ]);
   }
@@ -60,14 +79,19 @@ class _AddFeatureLayersSampleState extends State<AddFeatureLayersSample> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
+        top: false,
+        // create a column with a map view and a dropdown button.
         child: Column(
           children: [
+            // add a map view to the widget tree and set a controller.
             Expanded(
               child: ArcGISMapView(
                 controllerProvider: () => _mapViewController,
+                onMapViewReady: _onMapViewReady,
               ),
             ),
-            DropdownButton<String>(
+            // create a dropdown button to select a feature layer source.
+            DropdownButton(
               alignment: Alignment.center,
               hint: const Text(
                 'Select a feature layer source',
@@ -75,6 +99,7 @@ class _AddFeatureLayersSampleState extends State<AddFeatureLayersSample> {
                   color: Colors.deepPurple,
                 ),
               ),
+              // set the selected feature layer source.
               value: _selectedFeatureLayerSource,
               icon: const Icon(
                 Icons.arrow_drop_down,
@@ -82,9 +107,10 @@ class _AddFeatureLayersSampleState extends State<AddFeatureLayersSample> {
               ),
               elevation: 16,
               style: const TextStyle(color: Colors.deepPurple),
-              onChanged: (String? featureLayerSource) {
+              // set the onChanged callback to update the selected feature layer source.
+              onChanged: (featureLayerSource) {
                 setState(() {
-                  _selectedFeatureLayerSource = featureLayerSource!;
+                  _selectedFeatureLayerSource = featureLayerSource;
                 });
               },
               items: _featureLayerSources,
@@ -95,34 +121,57 @@ class _AddFeatureLayersSampleState extends State<AddFeatureLayersSample> {
     );
   }
 
+  void _onMapViewReady() async {
+    // set the map on the map view controller.
+    _mapViewController.arcGISMap = _map;
+  }
+
   void loadFeatureServiceFromUri() {
+    // create a uri to a feature service.
     final uri = Uri.parse(
         'https://sampleserver6.arcgisonline.com/arcgis/rest/services/DamageAssessment/FeatureServer/0');
-    final serviceFeatureTable = ServiceFeatureTable.withUri(uri);
-    final featureLayer = FeatureLayer.withFeatureTable(serviceFeatureTable);
+    // create a service feature table with the uri.
+    final serviceFeatureTables = ServiceFeatureTable.withUri(uri);
+    // create a feature layer with the service feature table.
+    final serviceFeatureLayer =
+        FeatureLayer.withFeatureTable(serviceFeatureTables);
+    // clear the operational layers and add the feature layer to the map.
     _map.operationalLayers.clear();
-    _map.operationalLayers.add(featureLayer);
-    _mapViewController.setViewpoint(Viewpoint.withLatLongScale(
-      latitude: 41.773519,
-      longitude: -88.153104,
-      scale: 6000,
-    ));
+    _map.operationalLayers.add(serviceFeatureLayer);
+    // set the viewpoint to the feature layer.
+    _mapViewController.setViewpoint(
+      Viewpoint.withLatLongScale(
+        latitude: 41.773519,
+        longitude: -88.153104,
+        scale: 6000,
+      ),
+    );
   }
 
   void loadGeodatabase() async {
+    // download the sample data.
     await downloadSampleData(['cb1b20748a9f4d128dad8a87244e3e37']);
-
+    // get the application documents directory.
     final appDir = await getApplicationDocumentsDirectory();
+    // create a file to the geodatabase.
     final geodatabaseFile =
         File('${appDir.absolute.path}/LA_Trails/LA_Trails.geodatabase');
+    // create a geodatabase with the file uri.
     final geodatabase = Geodatabase.withFileUri(geodatabaseFile.uri);
+    // load the geodatabase.
     await geodatabase.load();
-    final featureTable =
+    // get the feature table with the table name.
+    final geodatabaseFeatureTables =
         geodatabase.getGeodatabaseFeatureTable(tableName: 'Trailheads');
-    if (featureTable != null) {
-      final featureLayer = FeatureLayer.withFeatureTable(featureTable);
+    // check if the feature table is not null.
+    if (geodatabaseFeatureTables != null) {
+      // create a feature layer with the feature table.
+      final geodatabaseFeatureLayer =
+          FeatureLayer.withFeatureTable(geodatabaseFeatureTables);
+      // clear the operational layers and add the feature layer to the map.
       _map.operationalLayers.clear();
-      _map.operationalLayers.add(featureLayer);
+      _map.operationalLayers.add(geodatabaseFeatureLayer);
+      // set the viewpoint to the feature layer.
       _mapViewController.setViewpoint(
         Viewpoint.fromCenter(
           ArcGISPoint(
@@ -134,5 +183,62 @@ class _AddFeatureLayersSampleState extends State<AddFeatureLayersSample> {
         ),
       );
     }
+  }
+
+  void loadPortalItem() async {
+    // Set the portal.
+    final portal = Portal.arcGISOnline();
+    // Create the portal item with the item ID for the Portland tree service data.
+    const itemId = '1759fd3e8a324358a0c58d9a687a8578';
+    final portalItem =
+        PortalItem.withPortalAndItemId(portal: portal, itemId: itemId);
+    // load the portal item.
+    await portalItem.load();
+    // create a feature layer with the portal item and layer ID
+    final portalItemFeatureLayer = FeatureLayer.withItem(
+      featureServiceItem: portalItem,
+      layerId: 0,
+    );
+    // clear the operational layers and add the feature layer to the map.
+    _map.operationalLayers.clear();
+    _map.operationalLayers.add(portalItemFeatureLayer);
+    // Set the viewpoint to Portland, Oregon.
+    _mapViewController.setViewpoint(
+      Viewpoint.withLatLongScale(
+        latitude: 45.5266,
+        longitude: -122.6219,
+        scale: 6000,
+      ),
+    );
+  }
+
+  void loadGeopackage() async {
+    // download the sample data.
+    await downloadSampleData(['68ec42517cdd439e81b036210483e8e7']);
+    // get the application documents directory.
+    final appDir = await getApplicationDocumentsDirectory();
+    // create a file to the geopackage.
+    final geopackageFile =
+        File('${appDir.absolute.path}/AuroraCO/AuroraCO.gpkg');
+    // create a geopackage with the file uri.
+    final geopackage = GeoPackage.withFileUri(geopackageFile.uri);
+    // load the geopackage.
+    await geopackage.load();
+    // get the feature table with the table name.
+    final geopackageFeatureTables = geopackage.geoPackageFeatureTables;
+    // create a feature layer with the feature table.
+    final geopackageFeatureLayer =
+        FeatureLayer.withFeatureTable(geopackageFeatureTables.first);
+    // clear the operational layers and add the feature layer to the map.
+    _map.operationalLayers.clear();
+    _map.operationalLayers.add(geopackageFeatureLayer);
+    // set the viewpoint to the feature layer.
+    _mapViewController.setViewpoint(
+      Viewpoint.withLatLongScale(
+        latitude: 39.7294,
+        longitude: -104.8319,
+        scale: 577790.554289,
+      ),
+    );
   }
 }
