@@ -46,6 +46,7 @@ class _ApplySimpleRendererToFeatureLayerSampleState
             Column(
               children: [
                 Expanded(
+                  // Add a map view to the widget tree and set a controller
                   child: ArcGISMapView(
                     controllerProvider: () => _mapViewController,
                     onMapViewReady: onMapViewReady,
@@ -63,12 +64,12 @@ class _ApplySimpleRendererToFeatureLayerSampleState
                 )
               ],
             ),
-            // Overlay controls to prevent interaction before state is ready
+            // Display a progress indicator and prevent interaction before state is ready
             Visibility(
               visible: !_ready,
               child: SizedBox.expand(
                 child: Container(
-                  color: const Color.fromARGB(77, 255, 255, 255),
+                  color: Colors.white30,
                   child: const Center(child: CircularProgressIndicator()),
                 ),
               ),
