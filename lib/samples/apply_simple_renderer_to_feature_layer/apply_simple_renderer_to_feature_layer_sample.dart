@@ -27,69 +27,96 @@ class ApplySimpleRendererToFeatureLayerSample extends StatefulWidget {
 
 class _ApplySimpleRendererToFeatureLayerSampleState
     extends State<ApplySimpleRendererToFeatureLayerSample> {
+  // The feature layer that will host the symbolized features
+  late final FeatureLayer _featureLayer;
+  // Create the map view controller
   final _mapViewController = ArcGISMapView.createController();
-  late FeatureLayer _featureLayer;
-  final _map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic);
-
-  @override
-  void initState() {
-    super.initState();
-
-    final uri = Uri.parse(
-        'https://services.arcgis.com/V6ZHFr6zdgNZuVG0/arcgis/rest/services/Landscape_Trees/FeatureServer/0');
-    final serviceFeatureTable = ServiceFeatureTable.withUri(uri);
-    _featureLayer = FeatureLayer.withFeatureTable(serviceFeatureTable);
-    _map.operationalLayers.add(_featureLayer);
-    _map.initialViewpoint = Viewpoint.fromCenter(
-      ArcGISPoint(
-        x: -9177250,
-        y: 4247200,
-        spatialReference: SpatialReference.webMercator,
-      ),
-      scale: 9500,
-    );
-    _mapViewController.arcGISMap = _map;
-  }
+  // State variable indicating if all state has been initialized
+  var _ready = false;
+  // State variable indicating if the default renderer is currently being used.
+  var _usingDefaultRenderer = true;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: Column(
+        top: false,
+        child: Stack(
           children: [
-            Expanded(
-              child: ArcGISMapView(
-                controllerProvider: () => _mapViewController,
+            Column(
+              children: [
+                Expanded(
+                  // Add a map view to the widget tree and set a controller
+                  child: ArcGISMapView(
+                    controllerProvider: () => _mapViewController,
+                    onMapViewReady: onMapViewReady,
+                  ),
+                ),
+                Center(
+                  child: ElevatedButton(
+                    onPressed: _usingDefaultRenderer
+                        ? overrideRenderer
+                        : resetRenderer,
+                    child: _usingDefaultRenderer
+                        ? const Text('Blue Renderer')
+                        : const Text('Orange Renderer'),
+                  ),
+                )
+              ],
+            ),
+            // Display a progress indicator and prevent interaction before state is ready
+            Visibility(
+              visible: !_ready,
+              child: SizedBox.expand(
+                child: Container(
+                  color: Colors.white30,
+                  child: const Center(child: CircularProgressIndicator()),
+                ),
               ),
             ),
-            Row(
-              children: [
-                const Spacer(),
-                TextButton(
-                  onPressed: resetRenderer,
-                  child: const Text('Reset'),
-                ),
-                const Spacer(),
-                TextButton(
-                  onPressed: overrideRenderer,
-                  child: const Text('Override'),
-                ),
-                const Spacer(),
-              ],
-            )
           ],
         ),
       ),
     );
   }
 
-  void resetRenderer() {
-    _featureLayer.resetRenderer();
+  void onMapViewReady() {
+    // Initialize the feature layer with a feature table web service
+    final uri = Uri.parse(
+        'https://services.arcgis.com/V6ZHFr6zdgNZuVG0/arcgis/rest/services/Landscape_Trees/FeatureServer/0');
+    final serviceFeatureTable = ServiceFeatureTable.withUri(uri);
+    _featureLayer = FeatureLayer.withFeatureTable(serviceFeatureTable);
+
+    // Initialize the ArcGISMap
+    final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic)
+      ..operationalLayers.add(_featureLayer)
+      ..initialViewpoint = Viewpoint.fromCenter(
+        ArcGISPoint(
+          x: -9177343,
+          y: 4247283,
+          spatialReference: SpatialReference.webMercator,
+        ),
+        scale: 4750,
+      );
+
+    // Add the map to the MapViewController
+    _mapViewController.arcGISMap = map;
+
+    // Set the _ready state to true. This will hide the overlay controls.
+    setState(() => _ready = true);
   }
 
   void overrideRenderer() {
+    // Set a new renderer for the feature layer
     final markerSymbol = SimpleMarkerSymbol(
         style: SimpleMarkerSymbolStyle.circle, color: Colors.blue, size: 5);
     _featureLayer.renderer = SimpleRenderer(symbol: markerSymbol);
+    setState(() => _usingDefaultRenderer = false);
+  }
+
+  void resetRenderer() {
+    // Reset the feature layer renderer
+    _featureLayer.resetRenderer();
+    setState(() => _usingDefaultRenderer = true);
   }
 }
