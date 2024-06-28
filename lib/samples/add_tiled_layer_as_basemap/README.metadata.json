@@ -2,10 +2,28 @@
     "category": "Layers",
     "description": "Load an offline copy of a tiled map service as a basemap.",
     "ignore": false,
-    "images": [],
-    "keywords": [],
+    "images": [
+        "add_tiled_layer_as_basemap.png"
+    ],
+    "keywords": [
+        "cache",
+        "layers",
+        "offline",
+        "tile",
+        "ArcGISMap",
+        "ArcGISTiledLayer",
+        "Basemap",
+        "TileCache"
+    ],
     "redirect_from": [],
-    "relevant_apis": [],
-    "snippets": [],
+    "relevant_apis": [
+        "ArcGISMap",
+        "ArcGISTiledLayer",
+        "Basemap",
+        "TileCache"
+    ],
+    "snippets": [
+        "add_tiled_layer_as_basemap_sample.dart"
+    ],
     "title": "Add tiled layer as basemap"
 }
