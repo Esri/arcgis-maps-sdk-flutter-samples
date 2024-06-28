@@ -49,7 +49,7 @@ class _DisplayClustersSampleState extends State<DisplayClustersSample> {
             ),
             Center(
               // create a button to toggle feature clustering
-              child: TextButton(
+              child: ElevatedButton(
                 onPressed: _ready ? toggleFeatureClustering : null,
                 child: const Text('Toggle feature clustering'),
               ),
@@ -73,10 +73,8 @@ class _DisplayClustersSampleState extends State<DisplayClustersSample> {
     _mapViewController.arcGISMap = _map;
     // load the map
     await _map.load();
-    // check if the map is loaded
-    if (_map.loadStatus == LoadStatus.loaded && mounted) {
-      setState(() => _ready = true);
-    }
+    // set the flag to true
+    setState(() => _ready = true);
   }
 
   void toggleFeatureClustering() {
