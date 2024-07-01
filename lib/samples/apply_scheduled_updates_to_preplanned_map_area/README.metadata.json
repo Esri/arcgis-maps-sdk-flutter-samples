@@ -2,10 +2,33 @@
     "category": "Edit and Manage Data",
     "description": "Apply scheduled updates to a downloaded preplanned map area.",
     "ignore": false,
-    "images": [],
-    "keywords": [],
+    "images": [
+        "apply_scheduled_updates_to_preplanned_map_Area.png"
+    ],
+    "keywords": [
+        "offline",
+        "pre-planned",
+        "preplanned",
+        "synchronize",
+        "update",
+        "MobileMapPackage",
+        "OfflineMapSyncJob",
+        "OfflineMapSyncParameters",
+        "OfflineMapSyncResult",
+        "OfflineMapSyncTask",
+        "OfflineMapUpdatesInfo"
+    ],
     "redirect_from": [],
-    "relevant_apis": [],
-    "snippets": [],
+    "relevant_apis": [
+        "MobileMapPackage",
+        "OfflineMapSyncJob",
+        "OfflineMapSyncParameters",
+        "OfflineMapSyncResult",
+        "OfflineMapSyncTask",
+        "OfflineMapUpdatesInfo"
+    ],
+    "snippets": [
+        "apply_scheduled_updates_to_preplanned_map_area_sample.dart"
+    ],
     "title": "Apply scheduled updates to preplanned map area"
 }
