@@ -2,10 +2,28 @@
     "category": "Layers",
     "description": "Display a web map with a point feature layer that has feature reduction enabled to aggregate points into clusters.",
     "ignore": false,
-    "images": [],
-    "keywords": [],
+    "images": [
+        "display_clusters_sample.png"
+    ],
+    "keywords": [
+        "aggregate",
+        "bin",
+        "cluster",
+        "group",
+        "merge",
+        "normalize",
+        "reduce",
+        "summarize",
+        "FeatureLayer",
+        "FeatureReduction"
+    ],
     "redirect_from": [],
-    "relevant_apis": [],
-    "snippets": [],
+    "relevant_apis": [
+        "FeatureLayer",
+        "FeatureReduction"
+    ],
+    "snippets": [
+        "display_clusters_sample.dart"
+    ],
     "title": "Display clusters"
 }
