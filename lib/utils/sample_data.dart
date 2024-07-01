@@ -23,8 +23,7 @@ import 'package:path_provider/path_provider.dart';
 /// Download sample data for the provided list of Portal Item IDs.
 /// If replaceExisting is false, the file will not be redownloaded if it exists,
 /// otherwize, the existing file will be deleted and redownloaded.
-Future<void> downloadSampleData(List<String> portalItemIds,
-    {bool replaceExisting = false}) async {
+Future<void> downloadSampleData(List<String> portalItemIds) async {
   const portal = 'https://arcgis.com';
   // location where files are saved to on the device. Persists while the app persists.
   final appDirPath = (await getApplicationDocumentsDirectory()).absolute.path;
@@ -39,13 +38,7 @@ Future<void> downloadSampleData(List<String> portalItemIds,
     final itemName = portalItem.name;
     final filePath = '$appDirPath/$itemName';
     final file = File(filePath);
-    if (file.existsSync()) {
-      if (replaceExisting) {
-        file.deleteSync();
-      } else {
-        continue;
-      }
-    }
+    if (file.existsSync()) continue;
 
     final request = await _fetchData(portal, itemId);
     file.createSync(recursive: true);
