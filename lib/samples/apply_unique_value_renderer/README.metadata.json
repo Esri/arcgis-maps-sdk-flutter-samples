@@ -2,9 +2,21 @@
     "category": "Visualization",
     "description": "Render features in a layer using a distinct symbol for each unique attribute value.",
     "ignore": false,
-    "images": ["apply_unique_value_renderer.png"],
+    "images": [
+        "apply_unique_value_renderer.png"
+    ],
     "keywords": [
-        "draw", "renderer", "symbol", "symbology", "values"
+        "draw",
+        "renderer",
+        "symbol",
+        "symbology",
+        "values",
+        "FeatureLayer",
+        "ServiceFeatureTable",
+        "SimpleFillSymbol",
+        "SimpleLineSymbol",
+        "UniqueValue",
+        "UniqueValueRenderer"
     ],
     "redirect_from": [],
     "relevant_apis": [
@@ -16,7 +28,7 @@
         "UniqueValueRenderer"
     ],
     "snippets": [
-        "apply_unique_value_renderer.dart"
+        "apply_unique_value_renderer_sample.dart"
     ],
     "title": "Apply unique value renderer"
 }
