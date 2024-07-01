@@ -31,14 +31,24 @@ class ApplyScheduledUpdatesToPreplannedMapAreaSample extends StatefulWidget {
 
 class _ApplyScheduledUpdatesToPreplannedMapAreaSampleState
     extends State<ApplyScheduledUpdatesToPreplannedMapAreaSample> {
+  // Create the map controller
   final _mapViewController = ArcGISMapView.createController();
+  // Flag that will be set to true when all properties have been initialized
   var _ready = false;
+  // Flag that indicates if the map package is actively being updated
+  var _updating = false;
+  // Flag indicating if an update is avalable for the map package
   var _canUpdate = false;
+  // Status of the update availability
   var _updateStatus = OfflineUpdateAvailability.indeterminate;
+  // Size in KB of the available update
   var _updateSizeKB = 0.0;
-  OfflineMapSyncTask? _offlineMapSyncTask;
+  // The Active mobile map package
   MobileMapPackage? _mobileMapPackage;
+  // Offline task and parameters used for updating the map package
+  OfflineMapSyncTask? _offlineMapSyncTask;
   OfflineMapSyncParameters? _mapSyncParameters;
+  // The location of the map package on the device
   late final Uri _dataUri;
 
   @override
@@ -71,7 +81,11 @@ class _ApplyScheduledUpdatesToPreplannedMapAreaSampleState
                     ),
                     Center(
                       child: ElevatedButton(
-                        onPressed: _canUpdate ? syncUpdates : resetMapPackage,
+                        onPressed: _updating
+                            ? null
+                            : _canUpdate
+                                ? syncUpdates
+                                : resetMapPackage,
                         child: _canUpdate
                             ? const Text('Update')
                             : const Text('Reset'),
@@ -102,7 +116,7 @@ class _ApplyScheduledUpdatesToPreplannedMapAreaSampleState
     await loadMapPackageMap();
     setState(() => _ready = true);
 
-    checkForUpdates();
+    await checkForUpdates();
   }
 
   Future<void> prepareData() async {
@@ -151,7 +165,6 @@ class _ApplyScheduledUpdatesToPreplannedMapAreaSampleState
   }
 
   Future<void> checkForUpdates() async {
-    if (!_ready) return;
     final updatesInfo = await _offlineMapSyncTask!.checkForUpdates();
     if (mounted) {
       setState(() {
@@ -164,45 +177,49 @@ class _ApplyScheduledUpdatesToPreplannedMapAreaSampleState
   }
 
   Future<void> resetMapPackage() async {
-    setState(() => _ready = false);
+    setState(() => _updating = true);
+    // Reload the map package from the original zip file
     _mobileMapPackage?.close();
     _mobileMapPackage = null;
-
     final archivePath = '${_dataUri.path}.zip';
     final archiveFile = File.fromUri(Uri.parse(archivePath));
-    await extractZipArchive(archiveFile);
-    await loadMapPackageMap();
+    if (archiveFile.existsSync()) {
+      await extractZipArchive(archiveFile);
+      await loadMapPackageMap();
 
-    await checkForUpdates();
-    setState(() => _ready = true);
+      // Check for updates based on the reloaded package
+      await checkForUpdates();
+    }
+
+    setState(() => _updating = false);
   }
 
-  void syncUpdates() {
-    if (!_ready) return;
-    setState(() => _canUpdate = false);
+  Future<void> syncUpdates() async {
+    setState(() => _updating = true);
 
     final mapSyncJob =
         _offlineMapSyncTask!.syncOfflineMap(parameters: _mapSyncParameters!);
 
-    mapSyncJob.run().then((value) async {
-      setState(() => _ready = false);
-      final result = mapSyncJob.result!;
-      if (result.isMobileMapPackageReopenRequired) {
+    try {
+      await mapSyncJob.run();
+      final result = mapSyncJob.result;
+      if (result != null && result.isMobileMapPackageReopenRequired) {
         _mobileMapPackage?.close();
         _mobileMapPackage = null;
         await loadMapPackageMap();
-        setState(() => _ready = true);
       }
       // Refresh the update status
-      checkForUpdates();
-    }, onError: (err) {
+      await checkForUpdates();
+    } catch (err) {
       if (mounted) {
         showAlertDialog(
           'The offline map sync failed with error: {$err}.',
           title: 'Error',
         );
       }
-    });
+    } finally {
+      setState(() => _updating = false);
+    }
   }
 
   Future<void> showAlertDialog(String message, {String title = 'Alert'}) {
