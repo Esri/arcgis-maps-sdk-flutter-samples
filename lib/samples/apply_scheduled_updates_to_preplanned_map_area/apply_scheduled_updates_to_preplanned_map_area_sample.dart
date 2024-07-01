@@ -112,59 +112,58 @@ class _ApplyScheduledUpdatesToPreplannedMapAreaSampleState
   }
 
   Future<void> onMapViewReady() async {
-    await prepareData();
-    await loadMapPackageMap();
-    setState(() => _ready = true);
-
-    await checkForUpdates();
-  }
-
-  Future<void> prepareData() async {
-    await downloadSampleData(['740b663bff5e4198b9b6674af93f638a'],
-        replaceExisting: true);
+    // Setting the path to the map package data
     final appDir = await getApplicationDocumentsDirectory();
     _dataUri = Uri.parse('${appDir.absolute.path}/canyonlands');
+
+    // Prepare (download and extract) the map package data
+    await _prepareData();
+
+    // Check if there is an update for the map package
+    await _checkForUpdates();
+
+    setState(() => _ready = true);
   }
 
-  Future<bool> loadMapPackageMap() async {
-    _offlineMapSyncTask = null;
+  // Reset the updated map pacakge to the original state
+  Future<void> resetMapPackage() async {
+    setState(() => _updating = true);
+    // Reset the map package data
+    await _prepareData();
+    // Check for updates based on the reloaded package
+    await _checkForUpdates();
+    setState(() => _updating = false);
+  }
 
-    _mobileMapPackage = MobileMapPackage.withFileUri(_dataUri);
+  // Perform the map data update
+  Future<void> syncUpdates() async {
+    setState(() => _updating = true);
+
+    final mapSyncJob =
+        _offlineMapSyncTask!.syncOfflineMap(parameters: _mapSyncParameters!);
+
     try {
-      await _mobileMapPackage!.load();
+      await mapSyncJob.run();
+      final result = mapSyncJob.result;
+      if (result != null && result.isMobileMapPackageReopenRequired) {
+        await _loadMapPackageMap();
+      }
+      // Refresh the update status
+      await _checkForUpdates();
     } catch (err) {
       if (mounted) {
-        showAlertDialog(
-          'Mobile Map Package failed to load with error: {$err}',
+        _showAlertDialog(
+          'The offline map sync failed with error: {$err}.',
           title: 'Error',
         );
       }
-      return false;
+    } finally {
+      setState(() => _updating = false);
     }
-
-    if (_mobileMapPackage!.maps.isEmpty) {
-      if (mounted) {
-        showAlertDialog('Mobile map package contains no maps.');
-      }
-      return false;
-    }
-
-    _mapViewController.arcGISMap = _mobileMapPackage!.maps.first;
-
-    _offlineMapSyncTask =
-        OfflineMapSyncTask.withMap(_mapViewController.arcGISMap!);
-
-    _mapSyncParameters =
-        await _offlineMapSyncTask!.createDefaultOfflineMapSyncParameters()
-          ..syncDirection = SyncDirection.none
-          ..preplannedScheduledUpdatesOption =
-              PreplannedScheduledUpdatesOption.downloadAllUpdates
-          ..rollbackOnFailure = true;
-
-    return true;
   }
 
-  Future<void> checkForUpdates() async {
+  // Function to check for map package updates
+  Future<void> _checkForUpdates() async {
     final updatesInfo = await _offlineMapSyncTask!.checkForUpdates();
     if (mounted) {
       setState(() {
@@ -176,53 +175,69 @@ class _ApplyScheduledUpdatesToPreplannedMapAreaSampleState
     }
   }
 
-  Future<void> resetMapPackage() async {
-    setState(() => _updating = true);
-    // Reload the map package from the original zip file
+  // Function to load the map package into the map
+  Future<bool> _loadMapPackageMap() async {
+    // Reset the map package
     _mobileMapPackage?.close();
     _mobileMapPackage = null;
-    final archivePath = '${_dataUri.path}.zip';
-    final archiveFile = File.fromUri(Uri.parse(archivePath));
-    if (archiveFile.existsSync()) {
-      await extractZipArchive(archiveFile);
-      await loadMapPackageMap();
+    _mobileMapPackage = MobileMapPackage.withFileUri(_dataUri);
 
-      // Check for updates based on the reloaded package
-      await checkForUpdates();
-    }
-
-    setState(() => _updating = false);
-  }
-
-  Future<void> syncUpdates() async {
-    setState(() => _updating = true);
-
-    final mapSyncJob =
-        _offlineMapSyncTask!.syncOfflineMap(parameters: _mapSyncParameters!);
-
+    // Try to load the map package
     try {
-      await mapSyncJob.run();
-      final result = mapSyncJob.result;
-      if (result != null && result.isMobileMapPackageReopenRequired) {
-        _mobileMapPackage?.close();
-        _mobileMapPackage = null;
-        await loadMapPackageMap();
-      }
-      // Refresh the update status
-      await checkForUpdates();
+      await _mobileMapPackage!.load();
     } catch (err) {
       if (mounted) {
-        showAlertDialog(
-          'The offline map sync failed with error: {$err}.',
+        _showAlertDialog(
+          'Mobile Map Package failed to load with error: {$err}',
           title: 'Error',
         );
       }
-    } finally {
-      setState(() => _updating = false);
+      return false;
     }
+
+    if (_mobileMapPackage!.maps.isEmpty) {
+      if (mounted) {
+        _showAlertDialog('Mobile map package contains no maps.');
+      }
+      return false;
+    }
+
+    // Load the first map in the package
+    _mapViewController.arcGISMap = _mobileMapPackage!.maps.first;
+
+    // Set the offline map sync task
+    _offlineMapSyncTask =
+        OfflineMapSyncTask.withMap(_mapViewController.arcGISMap!);
+
+    // Set the map sync parameters
+    _mapSyncParameters =
+        await _offlineMapSyncTask!.createDefaultOfflineMapSyncParameters()
+          ..syncDirection = SyncDirection.none
+          ..preplannedScheduledUpdatesOption =
+              PreplannedScheduledUpdatesOption.downloadAllUpdates
+          ..rollbackOnFailure = true;
+
+    return true;
   }
 
-  Future<void> showAlertDialog(String message, {String title = 'Alert'}) {
+  // Function that extracts the map package archive to restore the original map data.
+  // Downloads and extracts the map package archive if the file is not currently on the device.
+  Future<void> _prepareData() async {
+    final archiveFile = File.fromUri(Uri.parse('${_dataUri.path}.zip'));
+    if (archiveFile.existsSync()) {
+      // The map package is already downladed. Extract it
+      await extractZipArchive(archiveFile);
+    } else {
+      // The map pacakge must be downloaded. The package will be extracted after downloading
+      await downloadSampleData(['740b663bff5e4198b9b6674af93f638a']);
+    }
+
+    // Load the map package from the extracted map package
+    await _loadMapPackageMap();
+  }
+
+  // Utility function to show an alert dialog with a provided message.
+  Future<void> _showAlertDialog(String message, {String title = 'Alert'}) {
     return showDialog(
       context: context,
       builder: (context) => AlertDialog(
