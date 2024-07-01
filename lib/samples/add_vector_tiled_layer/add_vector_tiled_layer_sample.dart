@@ -17,6 +17,27 @@
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:flutter/material.dart';
 
+// An enumeration of vector tiled layers to choose from.
+enum VectorTiledItem {
+  midCentury('Mid-Century', '7675d44bb1e4428aa2c30a9b68f97822'),
+  coloredPencil('Colored Pencil', '4cf7e1fb9f254dcda9c8fbadb15cf0f8'),
+  newspaper('Newspaper', 'dfb04de5f3144a80bc3f9f336228d24a'),
+  nova('Nova', '75f4dfdff19e445395653121a95a85db'),
+  worldStreetMapNight(
+      'World Street Map (Night)', '86f556a2d1fd468181855a35e344567f');
+
+  final String label;
+  final String itemId;
+  const VectorTiledItem(this.label, this.itemId);
+
+  // a menu item for this selection.
+  DropdownMenuItem<VectorTiledItem> get menuItem =>
+      DropdownMenuItem(value: this, child: Text(label));
+
+  // the service URL for this selection.
+  Uri get uri => Uri.parse('https://www.arcgis.com/home/item.html?id=$itemId');
+}
+
 class AddVectorTiledLayerSample extends StatefulWidget {
   const AddVectorTiledLayerSample({super.key});
 
@@ -26,26 +47,66 @@ class AddVectorTiledLayerSample extends StatefulWidget {
 }
 
 class _AddVectorTiledLayerSampleState extends State<AddVectorTiledLayerSample> {
+  // create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
-
-  @override
-  void initState() {
-    super.initState();
-
-    final uri = Uri.parse(
-        'https://www.arcgis.com/home/item.html?id=7675d44bb1e4428aa2c30a9b68f97822');
-    var vectorTiledLayer = ArcGISVectorTiledLayer.withUri(uri);
-    final basemap = Basemap.withBaseLayer(vectorTiledLayer);
-    final map = ArcGISMap.withBasemap(basemap);
-    _mapViewController.arcGISMap = map;
-  }
+  // prepare menu items for the selection of vector tiled layers.
+  final _selectionMenuItems =
+      VectorTiledItem.values.map((selection) => selection.menuItem).toList();
+  VectorTiledItem? _selection;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: ArcGISMapView(
-        controllerProvider: () => _mapViewController,
+      body: SafeArea(
+        top: false,
+        child: Column(
+          children: [
+            Expanded(
+              // add a map view to the widget tree and set a controller.
+              child: ArcGISMapView(
+                controllerProvider: () => _mapViewController,
+                onMapViewReady: onMapViewReady,
+              ),
+            ),
+            Center(
+              // add a dropdown button to select a vector tiled layer.
+              child: DropdownButton(
+                icon: const Icon(
+                  Icons.arrow_drop_down,
+                  color: Colors.deepPurple,
+                ),
+                style: const TextStyle(color: Colors.deepPurple),
+                alignment: Alignment.center,
+                value: _selection,
+                items: _selectionMenuItems,
+                onChanged: loadSelection,
+              ),
+            ),
+          ],
+        ),
       ),
     );
+  }
+
+  void onMapViewReady() {
+    // initially load the Mid-Century vector tiled layer.
+    loadSelection(VectorTiledItem.midCentury);
+  }
+
+  void loadSelection(VectorTiledItem? selection) {
+    if (selection != null) {
+      // create a vector tiled layer with a URL to the vector tile service.
+      final vectorTiledLayer = ArcGISVectorTiledLayer.withUri(selection.uri);
+      // create a basemap with the vector tiled layer.
+      final basemap = Basemap.withBaseLayer(vectorTiledLayer);
+      // create a map with the basemap.
+      final map = ArcGISMap.withBasemap(basemap);
+      // set the map to the map view.
+      _mapViewController.arcGISMap = map;
+    } else {
+      _mapViewController.arcGISMap = null;
+    }
+
+    setState(() => _selection = selection);
   }
 }
