@@ -18,7 +18,7 @@ import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:flutter/material.dart';
 
 // An enumeration of vector tiled layers to choose from.
-enum Selection {
+enum VectorTiledItem {
   midCentury('Mid-Century', '7675d44bb1e4428aa2c30a9b68f97822'),
   coloredPencil('Colored Pencil', '4cf7e1fb9f254dcda9c8fbadb15cf0f8'),
   newspaper('Newspaper', 'dfb04de5f3144a80bc3f9f336228d24a'),
@@ -28,10 +28,10 @@ enum Selection {
 
   final String label;
   final String itemId;
-  const Selection(this.label, this.itemId);
+  const VectorTiledItem(this.label, this.itemId);
 
   // a menu item for this selection.
-  DropdownMenuItem<Selection> get menuItem =>
+  DropdownMenuItem<VectorTiledItem> get menuItem =>
       DropdownMenuItem(value: this, child: Text(label));
 
   // the service URL for this selection.
@@ -51,8 +51,8 @@ class _AddVectorTiledLayerSampleState extends State<AddVectorTiledLayerSample> {
   final _mapViewController = ArcGISMapView.createController();
   // prepare menu items for the selection of vector tiled layers.
   final _selectionMenuItems =
-      Selection.values.map((selection) => selection.menuItem).toList();
-  Selection? _selection;
+      VectorTiledItem.values.map((selection) => selection.menuItem).toList();
+  VectorTiledItem? _selection;
 
   @override
   Widget build(BuildContext context) {
@@ -90,10 +90,10 @@ class _AddVectorTiledLayerSampleState extends State<AddVectorTiledLayerSample> {
 
   void onMapViewReady() {
     // initially load the Mid-Century vector tiled layer.
-    loadSelection(Selection.midCentury);
+    loadSelection(VectorTiledItem.midCentury);
   }
 
-  void loadSelection(Selection? selection) {
+  void loadSelection(VectorTiledItem? selection) {
     if (selection != null) {
       // create a vector tiled layer with a URL to the vector tile service.
       final vectorTiledLayer = ArcGISVectorTiledLayer.withUri(selection.uri);
