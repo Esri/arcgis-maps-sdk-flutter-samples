@@ -17,7 +17,7 @@ Launch the app to view the "World Topographic Map" tile layer as the basemap.
 1. Create an `ArcGISTiledLayer` object from a URL.
 2. Create a `Basemap` passing in the tiled layer.
 3. Create an `ArcGISMap` with the basemap.
-4. Set the map on the `ArcGISMapViewController`.
+4. Set the map on the `ArcGISMapView`.
 
 ## Relevant API
 
