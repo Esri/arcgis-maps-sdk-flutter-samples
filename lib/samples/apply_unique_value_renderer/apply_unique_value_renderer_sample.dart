@@ -31,17 +31,26 @@ class _ApplyUniqueValueRendererSampleState
   final _mapViewController = ArcGISMapView.createController();
 
   @override
-  void initState() {
-    super.initState();
-    // create a map with a basemap style and an initial viewpoint.
+  Widget build(BuildContext context) {
+    return Scaffold(
+      // add a map view to the widget tree and set a controller.
+      body: ArcGISMapView(
+        controllerProvider: () => _mapViewController,
+        onMapViewReady: onMapViewReady,
+      ),
+    );
+  }
+
+  void onMapViewReady() {
+    // create a map with a Basemap style and an initial viewpoint.
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic);
     map.initialViewpoint = Viewpoint.fromCenter(
       ArcGISPoint(x: -12356253.6, y: 3842795.4),
       scale: 52681563.2,
     );
 
-    // create a feature layer from a service feature table and
-    // set a unique value renderer.
+    // create a feature layer from a service feature table
+    // and set a unique value renderer.
     final uri = Uri.parse(
         'https://sampleserver6.arcgisonline.com/arcgis/rest/services/Census/MapServer/3');
     final serviceFeatureTable = ServiceFeatureTable.withUri(uri);
@@ -50,17 +59,8 @@ class _ApplyUniqueValueRendererSampleState
 
     // add the feature layer to the map.
     map.operationalLayers.add(featureLayer);
+    // set the map to the MapViewController.
     _mapViewController.arcGISMap = map;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      // add a map view to the widget tree and set a controller.
-      body: ArcGISMapView(
-        controllerProvider: () => _mapViewController,
-      ),
-    );
   }
 
   /// Configure a unique value renderer.
@@ -79,7 +79,7 @@ class _ApplyUniqueValueRendererSampleState
         outline: stateOutlineSymbol);
     final westSouthCentralFillSymbol = SimpleFillSymbol(
         style: SimpleFillSymbolStyle.solid,
-        color: Color.fromARGB(255, 250, 125, 0),
+        color: const Color.fromARGB(255, 250, 125, 0),
         outline: stateOutlineSymbol);
 
     // create unique values for each region.
