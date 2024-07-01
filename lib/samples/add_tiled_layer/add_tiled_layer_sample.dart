@@ -25,26 +25,31 @@ class AddTiledLayerSample extends StatefulWidget {
 }
 
 class _AddTiledLayerSampleState extends State<AddTiledLayerSample> {
+  // create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
-
-  @override
-  void initState() {
-    super.initState();
-
-    final uri = Uri.parse(
-        'http://services.arcgisonline.com/arcgis/rest/services/World_Topo_Map/MapServer');
-    var tiledLayer = ArcGISTiledLayer.withUri(uri);
-    final basemap = Basemap.withBaseLayer(tiledLayer);
-    final map = ArcGISMap.withBasemap(basemap);
-    _mapViewController.arcGISMap = map;
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // add a map view to the widget tree and set a controller.
       body: ArcGISMapView(
         controllerProvider: () => _mapViewController,
+        onMapViewReady: onMapViewReady,
       ),
     );
+  }
+
+  void onMapViewReady() {
+    // create a tiled layer with a URL to a tiled map service.
+    final tiledLayer = ArcGISTiledLayer.withUri(
+      Uri.parse(
+          'http://services.arcgisonline.com/arcgis/rest/services/World_Topo_Map/MapServer'),
+    );
+    // create a basemap with the tiled layer.
+    final basemap = Basemap.withBaseLayer(tiledLayer);
+    // create a map with the basemap.
+    final map = ArcGISMap.withBasemap(basemap);
+    // set the map to the map view.
+    _mapViewController.arcGISMap = map;
   }
 }
