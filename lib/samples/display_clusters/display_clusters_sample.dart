@@ -72,7 +72,7 @@ class _DisplayClustersSampleState extends State<DisplayClustersSample> {
     _mapViewController.arcGISMap = _map;
     // load the map
     await _map.load();
-    // set the flag to true
+    // set the flag to true to enable the UI
     setState(() => _ready = true);
   }
 
