@@ -14,6 +14,7 @@
 // limitations under the License.
 //
 
+import 'dart:io';
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
@@ -30,111 +31,119 @@ class ApplyScheduledUpdatesToPreplannedMapAreaSample extends StatefulWidget {
 
 class _ApplyScheduledUpdatesToPreplannedMapAreaSampleState
     extends State<ApplyScheduledUpdatesToPreplannedMapAreaSample> {
+  // Create the map controller
   final _mapViewController = ArcGISMapView.createController();
-  var _isInitialized = false;
+  // Flag indicating if an update is avalable for the map package
   var _canUpdate = false;
+  // Flag that will be set to true when all properties have been initialized
+  var _ready = false;
+  // Status of the update availability
   var _updateStatus = OfflineUpdateAvailability.indeterminate;
+  // Size in KB of the available update
   var _updateSizeKB = 0.0;
-  OfflineMapSyncTask? _offlineMapSyncTask;
+  // The Active mobile map package
   MobileMapPackage? _mobileMapPackage;
+  // Offline task and parameters used for updating the map package
+  OfflineMapSyncTask? _offlineMapSyncTask;
   OfflineMapSyncParameters? _mapSyncParameters;
+  // The location of the map package on the device
   late final Uri _dataUri;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
+        top: false,
+        child: Stack(
           children: [
-            Expanded(
-              child: ArcGISMapView(
-                controllerProvider: () => _mapViewController,
-                onMapViewReady: onMapViewReady,
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Expanded(
+                  // Add a map view to the widget tree and set a controller
+                  child: ArcGISMapView(
+                    controllerProvider: () => _mapViewController,
+                    onMapViewReady: onMapViewReady,
+                  ),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Text('Updates: ${_updateStatus.name.toUpperCase()}'),
+                        Text('Update Size: ${_updateSizeKB}KB'),
+                      ],
+                    ),
+                    Center(
+                      child: ElevatedButton(
+                          // Disable the button if no update is available
+                          onPressed: _canUpdate ? syncUpdates : null,
+                          child: const Text('Apply Updates')),
+                    ),
+                  ],
+                )
+              ],
+            ),
+            // Display a progress indicator and prevent interaction before state is ready
+            Visibility(
+              visible: !_ready,
+              child: SizedBox.expand(
+                child: Container(
+                  color: Colors.white30,
+                  child: const Center(child: CircularProgressIndicator()),
+                ),
               ),
             ),
-            SizedBox(
-              height: 75,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      Text('Updates: ${_updateStatus.name.toUpperCase()}'),
-                      Text('Update Size: ${_updateSizeKB}KB'),
-                    ],
-                  ),
-                  Center(
-                    child: ElevatedButton(
-                      onPressed: _canUpdate ? syncUpdates : null,
-                      child: const Text('Update'),
-                    ),
-                  ),
-                ],
-              ),
-            )
           ],
         ),
       ),
     );
   }
 
-  Future<void> onMapViewReady() async {
-    await prepareData();
-    _isInitialized = await loadMapPackageMap();
-
-    checkForUpdates();
-  }
-
-  Future<void> prepareData() async {
-    await downloadSampleData(['740b663bff5e4198b9b6674af93f638a']);
+  void onMapViewReady() async {
+    // Setting the path to the map package data
     final appDir = await getApplicationDocumentsDirectory();
     _dataUri = Uri.parse('${appDir.absolute.path}/canyonlands');
+
+    // Prepare (download and extract) the map package data
+    await _prepareData();
+
+    // Check if there is an update for the map package
+    await _checkForUpdates();
+
+    setState(() => _ready = true);
   }
 
-  Future<bool> loadMapPackageMap() async {
-    _offlineMapSyncTask = null;
+  // Perform the map data update
+  Future<void> syncUpdates() async {
+    setState(() => _canUpdate = false);
 
-    _mobileMapPackage = MobileMapPackage.withFileUri(_dataUri);
+    final mapSyncJob =
+        _offlineMapSyncTask!.syncOfflineMap(parameters: _mapSyncParameters!);
     try {
-      await _mobileMapPackage!.load();
+      await mapSyncJob.run();
+      final result = mapSyncJob.result;
+      if (result != null && result.isMobileMapPackageReopenRequired) {
+        await _loadMapPackageMap();
+      }
     } catch (err) {
       if (mounted) {
-        showAlertDialog(
-          'Mobile Map Package failed to load with error: {$err}',
+        _showAlertDialog(
+          'The offline map sync failed with error: {$err}.',
           title: 'Error',
         );
       }
-      return false;
+    } finally {
+      // Refresh the update status
+      await _checkForUpdates();
     }
-
-    if (_mobileMapPackage!.maps.isEmpty) {
-      if (mounted) {
-        showAlertDialog('Mobile map package contains no maps.');
-      }
-      return false;
-    }
-
-    _mapViewController.arcGISMap = _mobileMapPackage!.maps.first;
-
-    _offlineMapSyncTask =
-        OfflineMapSyncTask.withMap(_mapViewController.arcGISMap!);
-
-    _mapSyncParameters =
-        await _offlineMapSyncTask!.createDefaultOfflineMapSyncParameters()
-          ..syncDirection = SyncDirection.none
-          ..preplannedScheduledUpdatesOption =
-              PreplannedScheduledUpdatesOption.downloadAllUpdates
-          ..rollbackOnFailure = true;
-
-    return true;
   }
 
-  Future<void> checkForUpdates() async {
-    if (!_isInitialized) return;
+  // Function to check for map package updates
+  Future<void> _checkForUpdates() async {
     final updatesInfo = await _offlineMapSyncTask!.checkForUpdates();
     if (mounted) {
       setState(() {
@@ -146,33 +155,69 @@ class _ApplyScheduledUpdatesToPreplannedMapAreaSampleState
     }
   }
 
-  void syncUpdates() {
-    if (!_isInitialized) return;
-    setState(() => _canUpdate = false);
+  // Function to load the map package into the map
+  Future<bool> _loadMapPackageMap() async {
+    // Reset the map package
+    _mobileMapPackage?.close();
+    _mobileMapPackage = null;
+    _mobileMapPackage = MobileMapPackage.withFileUri(_dataUri);
 
-    final mapSyncJob =
-        _offlineMapSyncTask!.syncOfflineMap(parameters: _mapSyncParameters!);
-
-    mapSyncJob.run().then((value) async {
-      final result = mapSyncJob.result!;
-      if (result.isMobileMapPackageReopenRequired) {
-        _mobileMapPackage?.close();
-        _mobileMapPackage = null;
-        _isInitialized = await loadMapPackageMap();
-      }
-      // Refresh the update status
-      checkForUpdates();
-    }, onError: (err) {
+    // Try to load the map package
+    try {
+      await _mobileMapPackage!.load();
+    } catch (err) {
       if (mounted) {
-        showAlertDialog(
-          'The offline map sync failed with error: {$err}.',
+        _showAlertDialog(
+          'Mobile Map Package failed to load with error: {$err}',
           title: 'Error',
         );
       }
-    });
+      return false;
+    }
+
+    if (_mobileMapPackage!.maps.isEmpty) {
+      if (mounted) {
+        _showAlertDialog('Mobile map package contains no maps.');
+      }
+      return false;
+    }
+
+    // Load the first map in the package
+    _mapViewController.arcGISMap = _mobileMapPackage!.maps.first;
+
+    // Set the offline map sync task
+    _offlineMapSyncTask =
+        OfflineMapSyncTask.withMap(_mapViewController.arcGISMap!);
+
+    // Set the map sync parameters
+    _mapSyncParameters =
+        await _offlineMapSyncTask!.createDefaultOfflineMapSyncParameters()
+          ..syncDirection = SyncDirection.none
+          ..preplannedScheduledUpdatesOption =
+              PreplannedScheduledUpdatesOption.downloadAllUpdates
+          ..rollbackOnFailure = true;
+
+    return true;
   }
 
-  Future<void> showAlertDialog(String message, {String title = 'Alert'}) {
+  // Function that extracts the map package archive to restore the original map data.
+  // Downloads and extracts the map package archive if the file is not currently on the device.
+  Future<void> _prepareData() async {
+    final archiveFile = File.fromUri(Uri.parse('${_dataUri.path}.zip'));
+    if (archiveFile.existsSync()) {
+      // The map package is already downladed. Extract it
+      await extractZipArchive(archiveFile);
+    } else {
+      // The map package must be downloaded. The package will be extracted after downloading
+      await downloadSampleData(['740b663bff5e4198b9b6674af93f638a']);
+    }
+
+    // Load the map package from the extracted map package
+    await _loadMapPackageMap();
+  }
+
+  // Utility function to show an alert dialog with a provided message.
+  Future<void> _showAlertDialog(String message, {String title = 'Alert'}) {
     return showDialog(
       context: context,
       builder: (context) => AlertDialog(
