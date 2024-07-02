@@ -92,13 +92,9 @@ class _DownloadPreplannedMapAreaSampleState
                 final map = await _downloadOfflineMap(index);
                 _mapViewController.arcGISMap = map;
               } catch (e) {
-                if (mounted) {
-                  print(e);
-                }
+                print(e);
               } finally {
-                if (mounted) {
-                  setState(() => _isLoading = false);
-                }
+                setState(() => _isLoading = false);
               }
             },
           ),
@@ -120,9 +116,7 @@ class _DownloadPreplannedMapAreaSampleState
     }
 
     _offlineMapTask = offlineMapTask;
-    if (mounted) {
-      setState(() => _preplannedAreas = preplannedAreas);
-    }
+    setState(() => _preplannedAreas = preplannedAreas);
   }
 
   Future<ArcGISMap?> _downloadOfflineMap(int preplannedAreaIndex) async {

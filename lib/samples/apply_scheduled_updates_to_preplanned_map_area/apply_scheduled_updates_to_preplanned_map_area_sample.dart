@@ -147,14 +147,12 @@ class _ApplyScheduledUpdatesToPreplannedMapAreaSampleState
   // Function to check for map package updates
   Future<void> _checkForUpdates() async {
     final updatesInfo = await _offlineMapSyncTask!.checkForUpdates();
-    if (mounted) {
-      setState(() {
-        _updateStatus = updatesInfo.downloadAvailability;
-        _updateSizeKB = updatesInfo.scheduledUpdatesDownloadSize / 1024;
-        _canUpdate = updatesInfo.downloadAvailability ==
-            OfflineUpdateAvailability.available;
-      });
-    }
+    setState(() {
+      _updateStatus = updatesInfo.downloadAvailability;
+      _updateSizeKB = updatesInfo.scheduledUpdatesDownloadSize / 1024;
+      _canUpdate = updatesInfo.downloadAvailability ==
+          OfflineUpdateAvailability.available;
+    });
   }
 
   // Function to load the map package into the map

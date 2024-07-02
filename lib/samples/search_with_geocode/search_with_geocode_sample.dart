@@ -169,9 +169,7 @@ class _SearchWithGeocodeSampleState extends State<SearchWithGeocodeSample>
 
     final suggestResults = await _suggestOperation!.value;
     _suggestOperation = null;
-    if (mounted) {
-      setState(() => _suggestResults = List.from(suggestResults));
-    }
+    setState(() => _suggestResults = List.from(suggestResults));
 
     if (_suggestAgain != null) {
       // start again with the latest input value

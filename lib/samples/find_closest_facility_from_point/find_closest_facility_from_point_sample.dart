@@ -115,9 +115,7 @@ class _FindClosestFacilityFromPointSampleState
     _closestFacilityParameters = await generateClosestFacilityParameters(
         facilitiesLayer, incidentsLayer);
 
-    if (mounted) {
-      setState(() => _isInitialized = true);
-    }
+    setState(() => _isInitialized = true);
   }
 
   FeatureLayer buildFeatureLayer(Uri tableUri, Uri imageUri) {
@@ -175,9 +173,7 @@ class _FindClosestFacilityFromPointSampleState
         _routeGraphicsOverlay.graphics.add(routeGraphic);
       }
     }
-    if (mounted) {
-      setState(() => _isRouteSolved = true);
-    }
+    setState(() => _isRouteSolved = true);
   }
 
   void resetRoutes() {

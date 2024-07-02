@@ -100,10 +100,7 @@ class _FindRouteSampleState extends State<FindRouteSample>
     initMap();
     initStops();
     await initRouteParameters();
-    if (mounted) {
-      //fixme
-      setState(() => _ready = true);
-    }
+    setState(() => _ready = true);
   }
 
   void initMap() {
@@ -214,12 +211,10 @@ class _FindRouteSampleState extends State<FindRouteSample>
       _routeGraphicsOverlay.graphics.add(routeGraphic);
     }
 
-    if (mounted) {
-      setState(() {
-        _directions = route.directionManeuvers;
-        _routeGenerated = true;
-      });
-    }
+    setState(() {
+      _directions = route.directionManeuvers;
+      _routeGenerated = true;
+    });
   }
 
   Dialog showDirections(BuildContext context) {

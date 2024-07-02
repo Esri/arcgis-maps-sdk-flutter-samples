@@ -16,6 +16,8 @@
 
 import 'package:flutter/material.dart';
 
+/// A mixin that overrides `setState` to first check if the widget is mounted.
+/// (Calling `setState` on an unmounted widget causes an exception.)
 mixin SampleStateSupport<T extends StatefulWidget> on State<T> {
   @override
   void setState(VoidCallback fn) {
