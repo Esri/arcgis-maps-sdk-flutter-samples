@@ -33,12 +33,12 @@ class _ApplyScheduledUpdatesToPreplannedMapAreaSampleState
     extends State<ApplyScheduledUpdatesToPreplannedMapAreaSample> {
   // Create the map controller
   final _mapViewController = ArcGISMapView.createController();
+  // Flag indicating if an update is avalable for the map package
+  var _canUpdate = false;
   // Flag that will be set to true when all properties have been initialized
   var _ready = false;
   // Flag that indicates if the map package is actively being updated
   var _updating = false;
-  // Flag indicating if an update is avalable for the map package
-  var _canUpdate = false;
   // Status of the update availability
   var _updateStatus = OfflineUpdateAvailability.indeterminate;
   // Size in KB of the available update
@@ -62,6 +62,7 @@ class _ApplyScheduledUpdatesToPreplannedMapAreaSampleState
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Expanded(
+                  // Add a map view to the widget tree and set a controller
                   child: ArcGISMapView(
                     controllerProvider: () => _mapViewController,
                     onMapViewReady: onMapViewReady,
@@ -87,7 +88,7 @@ class _ApplyScheduledUpdatesToPreplannedMapAreaSampleState
                                 ? syncUpdates
                                 : resetMapPackage,
                         child: _canUpdate
-                            ? const Text('Update')
+                            ? const Text('Apply Updates')
                             : const Text('Reset'),
                       ),
                     ),
@@ -125,7 +126,7 @@ class _ApplyScheduledUpdatesToPreplannedMapAreaSampleState
     setState(() => _ready = true);
   }
 
-  // Reset the updated map pacakge to the original state
+  // Reset the updated map package to the original state
   Future<void> resetMapPackage() async {
     setState(() => _updating = true);
     // Reset the map package data
@@ -228,7 +229,7 @@ class _ApplyScheduledUpdatesToPreplannedMapAreaSampleState
       // The map package is already downladed. Extract it
       await extractZipArchive(archiveFile);
     } else {
-      // The map pacakge must be downloaded. The package will be extracted after downloading
+      // The map package must be downloaded. The package will be extracted after downloading
       await downloadSampleData(['740b663bff5e4198b9b6674af93f638a']);
     }
 
