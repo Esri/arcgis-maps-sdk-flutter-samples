@@ -33,6 +33,8 @@ class _ApplyClassBreaksRendererToSublayerSampleState
   final _map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISStreets);
   // set the ready state to false
   var _ready = false;
+  // set the rendered state to false
+  var _rendered = false;
   // create an image sublayer
   late ArcGISMapImageSublayer _countiesSublayer;
 
@@ -54,7 +56,7 @@ class _ApplyClassBreaksRendererToSublayerSampleState
             Center(
               // apply renderer button
               child: ElevatedButton(
-                onPressed: _ready ? renderLayer : null,
+                onPressed: _ready && !_rendered ? renderLayer : null,
                 child: const Text('Change Sublayer Renderer'),
               ),
             )
@@ -92,6 +94,8 @@ class _ApplyClassBreaksRendererToSublayerSampleState
   void renderLayer() async {
     // apply class breaks renderer
     _countiesSublayer.renderer = createPopulationClassBreaksRenderer();
+    // update the rendered state
+    setState(() => _rendered = true);
   }
 
   ClassBreaksRenderer createPopulationClassBreaksRenderer() {
