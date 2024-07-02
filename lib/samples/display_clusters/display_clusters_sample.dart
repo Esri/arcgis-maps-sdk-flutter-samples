@@ -27,7 +27,6 @@ class DisplayClustersSample extends StatefulWidget {
 class _DisplayClustersSampleState extends State<DisplayClustersSample> {
   // create a map view controller
   final _mapViewController = ArcGISMapView.createController();
-  // creates a map
   late ArcGISMap _map;
   // create a flag to check if the map is ready
   bool _ready = false;
