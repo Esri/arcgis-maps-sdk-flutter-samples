@@ -21,6 +21,7 @@ import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../../utils/sample_data.dart';
+import '../../utils/sample_state_support.dart';
 
 // create an enumeration to define the feature layer sources.
 enum Source { url, portalItem, geodatabase, geopackage }
@@ -32,7 +33,8 @@ class AddFeatureLayersSample extends StatefulWidget {
   State<AddFeatureLayersSample> createState() => _AddFeatureLayersSampleState();
 }
 
-class _AddFeatureLayersSampleState extends State<AddFeatureLayersSample> {
+class _AddFeatureLayersSampleState extends State<AddFeatureLayersSample>
+    with SampleStateSupport {
   // create a map with a topographic basemap style.
   final _map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic);
   // create a map view controller.

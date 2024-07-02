@@ -17,6 +17,8 @@
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:flutter/material.dart';
 
+import '../../utils/sample_state_support.dart';
+
 class FilterByDefinitionExpressionOrDisplayFilterSample extends StatefulWidget {
   const FilterByDefinitionExpressionOrDisplayFilterSample({super.key});
 
@@ -26,7 +28,8 @@ class FilterByDefinitionExpressionOrDisplayFilterSample extends StatefulWidget {
 }
 
 class _FilterByDefinitionExpressionOrDisplayFilterSampleState
-    extends State<FilterByDefinitionExpressionOrDisplayFilterSample> {
+    extends State<FilterByDefinitionExpressionOrDisplayFilterSample>
+    with SampleStateSupport {
   // create a map view controller
   final _mapViewController = ArcGISMapView.createController();
   // create a feature layer

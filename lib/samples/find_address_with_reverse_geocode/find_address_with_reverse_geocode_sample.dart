@@ -17,6 +17,8 @@
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:flutter/material.dart';
 
+import '../../utils/sample_state_support.dart';
+
 class FindAddressWithReverseGeocodeSample extends StatefulWidget {
   const FindAddressWithReverseGeocodeSample({super.key});
 
@@ -26,7 +28,7 @@ class FindAddressWithReverseGeocodeSample extends StatefulWidget {
 }
 
 class _FindAddressWithReverseGeocodeSampleState
-    extends State<FindAddressWithReverseGeocodeSample> {
+    extends State<FindAddressWithReverseGeocodeSample> with SampleStateSupport {
   final _graphicsOverlay = GraphicsOverlay();
   final _worldLocatorTask = LocatorTask.withUri(Uri.parse(
       'https://geocode-api.arcgis.com/arcgis/rest/services/World/GeocodeServer'));

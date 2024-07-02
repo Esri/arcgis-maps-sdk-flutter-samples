@@ -17,6 +17,8 @@
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:flutter/material.dart';
 
+import '../../utils/sample_state_support.dart';
+
 class IdentifyLayerFeaturesSample extends StatefulWidget {
   const IdentifyLayerFeaturesSample({super.key});
 
@@ -26,7 +28,7 @@ class IdentifyLayerFeaturesSample extends StatefulWidget {
 }
 
 class _IdentifyLayerFeaturesSampleState
-    extends State<IdentifyLayerFeaturesSample> {
+    extends State<IdentifyLayerFeaturesSample> with SampleStateSupport {
   final _mapViewController = ArcGISMapView.createController();
 
   @override

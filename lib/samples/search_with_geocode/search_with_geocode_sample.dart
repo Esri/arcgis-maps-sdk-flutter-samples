@@ -18,6 +18,8 @@ import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:async/async.dart';
 import 'package:flutter/material.dart';
 
+import '../../utils/sample_state_support.dart';
+
 class SearchWithGeocodeSample extends StatefulWidget {
   const SearchWithGeocodeSample({super.key});
 
@@ -26,7 +28,8 @@ class SearchWithGeocodeSample extends StatefulWidget {
       _SearchWithGeocodeSampleState();
 }
 
-class _SearchWithGeocodeSampleState extends State<SearchWithGeocodeSample> {
+class _SearchWithGeocodeSampleState extends State<SearchWithGeocodeSample>
+    with SampleStateSupport {
   final _mapViewController = ArcGISMapView.createController()
     ..arcGISMap = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISImagery);
 

@@ -20,6 +20,7 @@ import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../../utils/sample_data.dart';
+import '../../utils/sample_state_support.dart';
 
 class ApplyScheduledUpdatesToPreplannedMapAreaSample extends StatefulWidget {
   const ApplyScheduledUpdatesToPreplannedMapAreaSample({super.key});
@@ -30,7 +31,8 @@ class ApplyScheduledUpdatesToPreplannedMapAreaSample extends StatefulWidget {
 }
 
 class _ApplyScheduledUpdatesToPreplannedMapAreaSampleState
-    extends State<ApplyScheduledUpdatesToPreplannedMapAreaSample> {
+    extends State<ApplyScheduledUpdatesToPreplannedMapAreaSample>
+    with SampleStateSupport {
   // Create the map controller
   final _mapViewController = ArcGISMapView.createController();
   // Flag indicating if an update is avalable for the map package

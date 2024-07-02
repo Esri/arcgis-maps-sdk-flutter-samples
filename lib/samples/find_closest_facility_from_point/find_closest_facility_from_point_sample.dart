@@ -17,6 +17,8 @@
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:flutter/material.dart';
 
+import '../../utils/sample_state_support.dart';
+
 class FindClosestFacilityFromPointSample extends StatefulWidget {
   const FindClosestFacilityFromPointSample({super.key});
 
@@ -26,7 +28,7 @@ class FindClosestFacilityFromPointSample extends StatefulWidget {
 }
 
 class _FindClosestFacilityFromPointSampleState
-    extends State<FindClosestFacilityFromPointSample> {
+    extends State<FindClosestFacilityFromPointSample> with SampleStateSupport {
   static final _fireStationImageUri = Uri.parse(
       'https://static.arcgis.com/images/Symbols/SafetyHealth/FireStation.png');
   static final _fireImageUri = Uri.parse(
