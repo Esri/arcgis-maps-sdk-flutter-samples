@@ -68,7 +68,6 @@ class _ApplyScheduledUpdatesToPreplannedMapAreaSampleState
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -104,7 +103,7 @@ class _ApplyScheduledUpdatesToPreplannedMapAreaSampleState
     );
   }
 
-  Future<void> onMapViewReady() async {
+  void onMapViewReady() async {
     // Setting the path to the map package data
     final appDir = await getApplicationDocumentsDirectory();
     _dataUri = Uri.parse('${appDir.absolute.path}/canyonlands');

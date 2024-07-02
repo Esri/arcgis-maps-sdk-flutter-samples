@@ -21,8 +21,6 @@ import 'package:http/http.dart';
 import 'package:path_provider/path_provider.dart';
 
 /// Download sample data for the provided list of Portal Item IDs.
-/// If replaceExisting is false, the file will not be redownloaded if it exists,
-/// otherwise, the existing file will be deleted and redownloaded.
 Future<void> downloadSampleData(List<String> portalItemIds) async {
   const portal = 'https://arcgis.com';
   // location where files are saved to on the device. Persists while the app persists.
