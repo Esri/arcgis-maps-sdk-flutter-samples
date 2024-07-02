@@ -25,28 +25,30 @@ class DisplayClustersSample extends StatefulWidget {
 }
 
 class _DisplayClustersSampleState extends State<DisplayClustersSample> {
+  // create a map view controller
   final _mapViewController = ArcGISMapView.createController();
-  final _map = ArcGISMap.withUri(
-    Uri.parse(
-        'https://www.arcgis.com/home/item.html?id=8916d50c44c746c1aafae001552bad23'),
-  )!;
-
+  late ArcGISMap _map;
+  // create a flag to check if the map is ready
   bool _ready = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
+        top: false,
+        // create a column widget
         child: Column(
           children: [
             Expanded(
+              // add a map view to the widget tree and set a controller.
               child: ArcGISMapView(
                 controllerProvider: () => _mapViewController,
                 onMapViewReady: onMapViewReady,
               ),
             ),
             Center(
-              child: TextButton(
+              // create a button to toggle feature clustering
+              child: ElevatedButton(
                 onPressed: _ready ? toggleFeatureClustering : null,
                 child: const Text('Toggle feature clustering'),
               ),
@@ -58,18 +60,31 @@ class _DisplayClustersSampleState extends State<DisplayClustersSample> {
   }
 
   void onMapViewReady() async {
+    // Get the power plants web map from the default portal.
+    final portal = Portal.arcGISOnline();
+    final portalItem = PortalItem.withPortalAndItemId(
+        portal: portal, itemId: '8916d50c44c746c1aafae001552bad23');
+    // load the portal item.
+    await portalItem.load();
+    // create a map from the portal item
+    _map = ArcGISMap.withItem(portalItem);
+    // set the map to the map view controller
     _mapViewController.arcGISMap = _map;
+    // load the map
     await _map.load();
-    if (_map.loadStatus == LoadStatus.loaded && mounted) {
-      setState(() => _ready = true);
-    }
+    // set the flag to true to enable the UI
+    setState(() => _ready = true);
   }
 
   void toggleFeatureClustering() {
+    // check if the map has operational layers and the first layer is a feature layer
     if (_map.operationalLayers.isNotEmpty &&
         _map.operationalLayers.first is FeatureLayer) {
+      // get the first layer as a feature layer
       final featureLayer = _map.operationalLayers.first as FeatureLayer;
+      // check if the feature layer has feature reduction
       if (featureLayer.featureReduction != null) {
+        // toggle the feature reduction
         featureLayer.featureReduction!.enabled =
             !featureLayer.featureReduction!.enabled;
       }
