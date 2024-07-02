@@ -80,6 +80,7 @@ class _ApplyScheduledUpdatesToPreplannedMapAreaSampleState
                     ),
                     Center(
                       child: ElevatedButton(
+                          // Disable the button if no update is avalable
                           onPressed: _canUpdate ? syncUpdates : null,
                           child: const Text('Apply Updates')),
                     ),
