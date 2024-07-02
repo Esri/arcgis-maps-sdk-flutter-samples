@@ -3,6 +3,7 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <application
+        android:enableOnBackInvokedCallback="true"
         android:label="arcgis_maps_sdk_flutter_samples"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
