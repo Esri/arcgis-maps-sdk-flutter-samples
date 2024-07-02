@@ -37,8 +37,6 @@ class _ApplyScheduledUpdatesToPreplannedMapAreaSampleState
   var _canUpdate = false;
   // Flag that will be set to true when all properties have been initialized
   var _ready = false;
-  // Flag that indicates if the map package is actively being updated
-  var _updating = false;
   // Status of the update availability
   var _updateStatus = OfflineUpdateAvailability.indeterminate;
   // Size in KB of the available update
@@ -82,15 +80,8 @@ class _ApplyScheduledUpdatesToPreplannedMapAreaSampleState
                     ),
                     Center(
                       child: ElevatedButton(
-                        onPressed: _updating
-                            ? null
-                            : _canUpdate
-                                ? syncUpdates
-                                : resetMapPackage,
-                        child: _canUpdate
-                            ? const Text('Apply Updates')
-                            : const Text('Reset'),
-                      ),
+                          onPressed: _canUpdate ? syncUpdates : null,
+                          child: const Text('Apply Updates')),
                     ),
                   ],
                 )
@@ -126,31 +117,18 @@ class _ApplyScheduledUpdatesToPreplannedMapAreaSampleState
     setState(() => _ready = true);
   }
 
-  // Reset the updated map package to the original state
-  Future<void> resetMapPackage() async {
-    setState(() => _updating = true);
-    // Reset the map package data
-    await _prepareData();
-    // Check for updates based on the reloaded package
-    await _checkForUpdates();
-    setState(() => _updating = false);
-  }
-
   // Perform the map data update
   Future<void> syncUpdates() async {
-    setState(() => _updating = true);
+    setState(() => _canUpdate = false);
 
     final mapSyncJob =
         _offlineMapSyncTask!.syncOfflineMap(parameters: _mapSyncParameters!);
-
     try {
       await mapSyncJob.run();
       final result = mapSyncJob.result;
       if (result != null && result.isMobileMapPackageReopenRequired) {
         await _loadMapPackageMap();
       }
-      // Refresh the update status
-      await _checkForUpdates();
     } catch (err) {
       if (mounted) {
         _showAlertDialog(
@@ -159,7 +137,8 @@ class _ApplyScheduledUpdatesToPreplannedMapAreaSampleState
         );
       }
     } finally {
-      setState(() => _updating = false);
+      // Refresh the update status
+      await _checkForUpdates();
     }
   }
 
