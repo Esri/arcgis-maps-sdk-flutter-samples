@@ -38,6 +38,10 @@ Start the app. It will display an offline map, check for available updates, and 
 
 The data in this sample shows the roads and trails in the Canyonlands National Park, Utah. Data by [U.S. National Parks Service](https://public-nps.opendata.arcgis.com/). No claim to original U.S. Government works.
 
+## Additional information
+
+**Note:** preplanned areas using the Scheduled Updates workflow are read-only. For preplanned areas that can be edited on the end-user device, see the Download preplanned map area sample. For more information about offline workflows, see [Offline maps, scenes, and data](https://developers.arcgis.com/documentation/mapping-apis-and-location-services/offline/) in the *ArcGIS Developers* guide.
+
 ## Tags
 
 offline, pre-planned, preplanned, synchronize, update
