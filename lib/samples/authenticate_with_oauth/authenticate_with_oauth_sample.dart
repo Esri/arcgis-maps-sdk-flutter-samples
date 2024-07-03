@@ -17,6 +17,8 @@
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:flutter/material.dart';
 
+import '../../utils/sample_state_support.dart';
+
 class AuthenticateWithOAuthSample extends StatefulWidget {
   const AuthenticateWithOAuthSample({super.key});
 
@@ -27,6 +29,7 @@ class AuthenticateWithOAuthSample extends StatefulWidget {
 
 class _AuthenticateWithOAuthSampleState
     extends State<AuthenticateWithOAuthSample>
+    with SampleStateSupport
     implements ArcGISAuthenticationChallengeHandler {
   // This document describes the steps to configure OAuth for your app:
   // https://developers.arcgis.com/documentation/mapping-apis-and-services/security/user-authentication/serverless-native-flow/

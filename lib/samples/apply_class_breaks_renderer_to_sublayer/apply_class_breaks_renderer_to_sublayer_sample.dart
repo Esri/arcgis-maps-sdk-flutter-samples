@@ -17,6 +17,8 @@
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:flutter/material.dart';
 
+import '../../utils/sample_state_support.dart';
+
 class ApplyClassBreaksRendererToSublayerSample extends StatefulWidget {
   const ApplyClassBreaksRendererToSublayerSample({super.key});
 
@@ -26,13 +28,16 @@ class ApplyClassBreaksRendererToSublayerSample extends StatefulWidget {
 }
 
 class _ApplyClassBreaksRendererToSublayerSampleState
-    extends State<ApplyClassBreaksRendererToSublayerSample> {
+    extends State<ApplyClassBreaksRendererToSublayerSample>
+    with SampleStateSupport {
   // create a map view controller
   final _mapViewController = ArcGISMapView.createController();
   // create a map with a basemap style
   final _map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISStreets);
   // set the ready state to false
   var _ready = false;
+  // set the rendered state to false
+  var _rendered = false;
   // create an image sublayer
   late ArcGISMapImageSublayer _countiesSublayer;
 
@@ -54,7 +59,7 @@ class _ApplyClassBreaksRendererToSublayerSampleState
             Center(
               // apply renderer button
               child: ElevatedButton(
-                onPressed: _ready ? renderLayer : null,
+                onPressed: _ready && !_rendered ? renderLayer : null,
                 child: const Text('Change Sublayer Renderer'),
               ),
             )
@@ -92,6 +97,8 @@ class _ApplyClassBreaksRendererToSublayerSampleState
   void renderLayer() async {
     // apply class breaks renderer
     _countiesSublayer.renderer = createPopulationClassBreaksRenderer();
+    // update the rendered state
+    setState(() => _rendered = true);
   }
 
   ClassBreaksRenderer createPopulationClassBreaksRenderer() {

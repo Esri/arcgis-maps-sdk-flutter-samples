@@ -17,6 +17,8 @@
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:flutter/material.dart';
 
+import '../../utils/sample_state_support.dart';
+
 class ShowServiceAreaSample extends StatefulWidget {
   const ShowServiceAreaSample({super.key});
 
@@ -24,7 +26,8 @@ class ShowServiceAreaSample extends StatefulWidget {
   State<ShowServiceAreaSample> createState() => _ShowServiceAreaSampleState();
 }
 
-class _ShowServiceAreaSampleState extends State<ShowServiceAreaSample> {
+class _ShowServiceAreaSampleState extends State<ShowServiceAreaSample>
+    with SampleStateSupport {
   // create a map view controller
   final _mapViewController = ArcGISMapView.createController();
 
