@@ -32,25 +32,6 @@ class _ShowGridSampleState extends State<ShowGridSample> {
       y: 6217972.345771,
       spatialReference: SpatialReference.webMercator);
 
-  final gridTypes = ['Latitude & Longitude', 'MGRS', 'UTM', 'USNG'];
-  final colorTypes = ['Red', 'Blue', 'Green', 'Yellow'];
-  final labelPositionTypes = [
-    'AllSides',
-    'BottomLeft',
-    'BottomRight',
-    'Center',
-    'Geographic',
-    'TopLeft',
-    'TopRight'
-  ];
-
-  // stateful variables
-  late String gridType = gridTypes[0];
-  late String gridColorType = colorTypes[0];
-  late String labelColorType = colorTypes[0];
-  late String labelPositionType = labelPositionTypes[0];
-  bool labelVisible = true;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -89,43 +70,33 @@ class _ShowGridSampleState extends State<ShowGridSample> {
     _mapViewController.arcGISMap = map;
 
     // Set the initial grid type.
-    _onGridTypeChanged(gridType);
-    _onGridColorTypeChanged(gridColorType);
-    _onLabelColorTypeChanged(labelColorType);
-    _onLabelPositionTypeChanged(labelPositionType);
-    _onLabelVisibilityChanged(labelVisible);
+    _onGridTypeChanged(LatitudeLongitudeGrid());
+    _onGridColorTypeChanged(Colors.red);
+    _onLabelColorTypeChanged(Colors.red);
+    _onLabelPositionTypeChanged(GridLabelPosition.allSides);
+    _onLabelVisibilityChanged(true);
   }
 
   // Change the grid type based on the given value.
-  void _onGridTypeChanged(String gridType) {
-    switch (gridType) {
-      case 'Latitude & Longitude':
-        _mapViewController.grid = LatitudeLongitudeGrid()
-          ..labelFormat = LatitudeLongitudeGridLabelFormat.decimalDegrees;
-        _mapViewController.setViewpointCenter(_center, scale: 23227.0);
-        break;
-      case 'MGRS':
-        _mapViewController.grid = MgrsGrid();
-        _mapViewController.setViewpointCenter(_center, scale: 23227.0);
-        break;
-      case 'UTM':
-        _mapViewController.grid = UtmGrid();
-        _mapViewController.setViewpointCenter(_center, scale: 10000000.0);
-        break;
-      case 'USNG':
-        _mapViewController.grid = UsngGrid();
-        _mapViewController.setViewpointCenter(_center, scale: 23227.0);
-        break;
+  void _onGridTypeChanged(Grid grid) {
+    _mapViewController.grid = grid;
+    if (grid is LatitudeLongitudeGrid) {
+      grid.labelFormat = LatitudeLongitudeGridLabelFormat.decimalDegrees;
+      _mapViewController.setViewpointCenter(_center, scale: 23227.0);
+    } else if (grid is UtmGrid) {
+      _mapViewController.setViewpointCenter(_center, scale: 10000000.0);
+    } else if (grid is UsngGrid || grid is MgrsGrid) {
+      _mapViewController.setViewpointCenter(_center, scale: 23227.0);
     }
   }
 
   // change the grid color based on the given value.
-  void _onGridColorTypeChanged(String colorType) {
+  void _onGridColorTypeChanged(Color color) {
     if (_mapViewController.grid != null) {
       final grid = _mapViewController.grid!;
       for (int i = 0; i < grid.levelCount; i++) {
         final lineSymbol = SimpleLineSymbol(
-          color: _getSelectedColor(colorType),
+          color: color,
           width: 1.0,
           style: SimpleLineSymbolStyle.solid,
         );
@@ -142,12 +113,12 @@ class _ShowGridSampleState extends State<ShowGridSample> {
   }
 
   // change the label color based on the given value.
-  void _onLabelColorTypeChanged(String colorType) {
+  void _onLabelColorTypeChanged(Color color) {
     if (_mapViewController.grid != null) {
       final grid = _mapViewController.grid!;
       for (int i = 0; i < grid.levelCount; i++) {
         final textSymbol = TextSymbol(
-          color: _getSelectedColor(colorType),
+          color: color,
           size: 14.0,
           horizontalAlignment: HorizontalAlignment.left,
           verticalAlignment: VerticalAlignment.bottom,
@@ -160,10 +131,10 @@ class _ShowGridSampleState extends State<ShowGridSample> {
   }
 
   // change the label position based on the given value.
-  void _onLabelPositionTypeChanged(String labelPositionType) {
+  void _onLabelPositionTypeChanged(GridLabelPosition labelPosition) {
     if (_mapViewController.grid != null) {
       final grid = _mapViewController.grid!;
-      grid.labelPosition = _getLabelPosition(labelPositionType);
+      grid.labelPosition = labelPosition;
     }
   }
 
@@ -174,16 +145,12 @@ class _ShowGridSampleState extends State<ShowGridSample> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Grid Options'),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: <Widget>[
-                _buildGridTypeDropdown(),
-                _buildGridColorTypeDropdown(),
-                _buildLabelColorTypeDropdown(),
-                _buildLabelPositionTypeDropdown(),
-                _buildLabelVisibilityCheckbox(),
-              ],
-            ),
+          content: GridOptions(
+            onGridTypeChanged: _onGridTypeChanged,
+            onGridColorTypeChanged: _onGridColorTypeChanged,
+            onLabelColorTypeChanged: _onLabelColorTypeChanged,
+            onLabelPositionTypeChanged: _onLabelPositionTypeChanged,
+            onLabelVisibilityChanged: _onLabelVisibilityChanged,
           ),
           actions: <Widget>[
             TextButton(
@@ -195,6 +162,65 @@ class _ShowGridSampleState extends State<ShowGridSample> {
           ],
         );
       },
+    );
+  }
+}
+
+///
+/// a widget that displays grid options.
+///
+class GridOptions extends StatefulWidget {
+  final Function(Grid) onGridTypeChanged;
+  final Function(Color) onGridColorTypeChanged;
+  final Function(Color) onLabelColorTypeChanged;
+  final Function(GridLabelPosition) onLabelPositionTypeChanged;
+  final Function(bool) onLabelVisibilityChanged;
+
+  GridOptions({
+    Key? key,
+    required this.onGridTypeChanged,
+    required this.onGridColorTypeChanged,
+    required this.onLabelColorTypeChanged,
+    required this.onLabelPositionTypeChanged,
+    required this.onLabelVisibilityChanged,
+  }) : super(key: key);
+
+  @override
+  State<GridOptions> createState() => _GridOptionsState();
+}
+
+class _GridOptionsState extends State<GridOptions> {
+  final gridTypes = ['Latitude & Longitude', 'MGRS', 'UTM', 'USNG'];
+  final colorTypes = ['Red', 'Blue', 'Green', 'Yellow'];
+  final labelPositionTypes = [
+    'AllSides',
+    'BottomLeft',
+    'BottomRight',
+    'Center',
+    'Geographic',
+    'TopLeft',
+    'TopRight'
+  ];
+
+  // stateful variables
+  String? gridType;
+  String? gridColorType;
+  String? labelColorType;
+  String? labelPositionType;
+  bool labelVisible = true;
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      child: ListBody(
+        children: <Widget>[
+          _buildGridTypeDropdown(),
+          _buildGridColorTypeDropdown(),
+          _buildLabelColorTypeDropdown(),
+          _buildLabelPositionTypeDropdown(),
+          _buildLabelVisibilityCheckbox(),
+        ],
+      ),
     );
   }
 
@@ -224,11 +250,11 @@ class _ShowGridSampleState extends State<ShowGridSample> {
 
   DropdownButtonFormField _buildGridTypeDropdown() {
     return _createDropdownButtonFormField(
-      value: gridType,
+      value: gridTypes[0],
       labelText: 'Grid Type',
       items: gridTypes,
       onChanged: (String? newValue) {
-        _onGridTypeChanged(newValue!);
+        widget.onGridTypeChanged(_getGrid(newValue!));
         setState(() => gridType = newValue);
       },
     );
@@ -236,11 +262,11 @@ class _ShowGridSampleState extends State<ShowGridSample> {
 
   DropdownButtonFormField _buildGridColorTypeDropdown() {
     return _createDropdownButtonFormField(
-      value: gridColorType,
+      value: colorTypes[0],
       labelText: 'Grid Color',
       items: colorTypes,
       onChanged: (String? newValue) {
-        _onGridColorTypeChanged(newValue!);
+        widget.onGridColorTypeChanged(_getSelectedColor(newValue!));
         setState(() => gridColorType = newValue);
       },
     );
@@ -248,11 +274,11 @@ class _ShowGridSampleState extends State<ShowGridSample> {
 
   DropdownButtonFormField _buildLabelColorTypeDropdown() {
     return _createDropdownButtonFormField(
-      value: labelColorType,
+      value: colorTypes[0],
       labelText: 'Label Color',
       items: colorTypes,
       onChanged: (String? newValue) {
-        _onLabelColorTypeChanged(newValue!);
+        widget.onLabelColorTypeChanged(_getSelectedColor(newValue!));
         setState(() => labelColorType = newValue);
       },
     );
@@ -260,11 +286,11 @@ class _ShowGridSampleState extends State<ShowGridSample> {
 
   DropdownButtonFormField _buildLabelPositionTypeDropdown() {
     return _createDropdownButtonFormField(
-      value: labelPositionType,
+      value: labelPositionTypes[0],
       labelText: 'Label Position',
       items: labelPositionTypes,
       onChanged: (String? newValue) {
-        _onLabelPositionTypeChanged(newValue!);
+        widget.onLabelPositionTypeChanged(_getLabelPosition(newValue!));
         setState(() => labelPositionType = newValue);
       },
     );
@@ -277,7 +303,7 @@ class _ShowGridSampleState extends State<ShowGridSample> {
         Checkbox(
           value: labelVisible,
           onChanged: (bool? value) {
-            _onLabelVisibilityChanged(value!);
+            widget.onLabelVisibilityChanged(value!);
             setState(
               () => labelVisible = value,
             );
@@ -321,6 +347,22 @@ class _ShowGridSampleState extends State<ShowGridSample> {
         return Colors.yellow;
       default:
         return Colors.red;
+    }
+  }
+
+  Grid _getGrid(String gridType) {
+    switch (gridType) {
+      case 'Latitude & Longitude':
+        return LatitudeLongitudeGrid()
+          ..labelFormat = LatitudeLongitudeGridLabelFormat.decimalDegrees;
+      case 'MGRS':
+        return MgrsGrid();
+      case 'UTM':
+        return UtmGrid();
+      case 'USNG':
+        return UsngGrid();
+      default:
+        throw Exception('Invalid grid type');
     }
   }
 }
