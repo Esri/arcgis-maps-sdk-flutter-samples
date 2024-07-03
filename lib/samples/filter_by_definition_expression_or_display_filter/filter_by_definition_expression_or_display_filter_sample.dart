@@ -62,12 +62,12 @@ class _FilterByDefinitionExpressionOrDisplayFilterSampleState
                 // add a button to apply a definition expression
                 TextButton(
                   onPressed: applyDefinitionExpression,
-                  child: const Text('Definition Expression'),
+                  child: const Text('Apply Expression'),
                 ),
                 // add a button to apply a display filter
                 TextButton(
                   onPressed: applyDisplayFilter,
-                  child: const Text('Display Filter'),
+                  child: const Text('Apply Filter'),
                 ),
                 // add a button to reset the definition expression and display filter
                 TextButton(
