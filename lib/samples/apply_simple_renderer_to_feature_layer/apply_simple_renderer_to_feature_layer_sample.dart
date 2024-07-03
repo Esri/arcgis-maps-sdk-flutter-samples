@@ -17,6 +17,8 @@
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:flutter/material.dart';
 
+import '../../utils/sample_state_support.dart';
+
 class ApplySimpleRendererToFeatureLayerSample extends StatefulWidget {
   const ApplySimpleRendererToFeatureLayerSample({super.key});
 
@@ -26,7 +28,8 @@ class ApplySimpleRendererToFeatureLayerSample extends StatefulWidget {
 }
 
 class _ApplySimpleRendererToFeatureLayerSampleState
-    extends State<ApplySimpleRendererToFeatureLayerSample> {
+    extends State<ApplySimpleRendererToFeatureLayerSample>
+    with SampleStateSupport {
   // The feature layer that will host the symbolized features
   late final FeatureLayer _featureLayer;
   // Create the map view controller

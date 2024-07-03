@@ -17,6 +17,8 @@
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:flutter/material.dart';
 
+import '../../utils/sample_state_support.dart';
+
 class SelectFeaturesInFeatureLayerSample extends StatefulWidget {
   const SelectFeaturesInFeatureLayerSample({super.key});
 
@@ -26,7 +28,7 @@ class SelectFeaturesInFeatureLayerSample extends StatefulWidget {
 }
 
 class _SelectFeaturesInFeatureLayerSampleState
-    extends State<SelectFeaturesInFeatureLayerSample> {
+    extends State<SelectFeaturesInFeatureLayerSample> with SampleStateSupport {
   final _mapViewController = ArcGISMapView.createController();
   final _featureLayer = FeatureLayer.withFeatureTable(
       ServiceFeatureTable.withUri(Uri.parse(

@@ -17,6 +17,8 @@
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:flutter/material.dart';
 
+import '../../utils/sample_state_support.dart';
+
 class DisplayClustersSample extends StatefulWidget {
   const DisplayClustersSample({super.key});
 
@@ -24,7 +26,8 @@ class DisplayClustersSample extends StatefulWidget {
   State<DisplayClustersSample> createState() => _DisplayClustersSampleState();
 }
 
-class _DisplayClustersSampleState extends State<DisplayClustersSample> {
+class _DisplayClustersSampleState extends State<DisplayClustersSample>
+    with SampleStateSupport {
   // create a map view controller
   final _mapViewController = ArcGISMapView.createController();
   late ArcGISMap _map;

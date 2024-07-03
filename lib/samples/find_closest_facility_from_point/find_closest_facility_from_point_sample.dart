@@ -17,6 +17,8 @@
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:flutter/material.dart';
 
+import '../../utils/sample_state_support.dart';
+
 class FindClosestFacilityFromPointSample extends StatefulWidget {
   const FindClosestFacilityFromPointSample({super.key});
 
@@ -26,7 +28,7 @@ class FindClosestFacilityFromPointSample extends StatefulWidget {
 }
 
 class _FindClosestFacilityFromPointSampleState
-    extends State<FindClosestFacilityFromPointSample> {
+    extends State<FindClosestFacilityFromPointSample> with SampleStateSupport {
   static final _fireStationImageUri = Uri.parse(
       'https://static.arcgis.com/images/Symbols/SafetyHealth/FireStation.png');
   static final _fireImageUri = Uri.parse(
@@ -113,9 +115,7 @@ class _FindClosestFacilityFromPointSampleState
     _closestFacilityParameters = await generateClosestFacilityParameters(
         facilitiesLayer, incidentsLayer);
 
-    if (mounted) {
-      setState(() => _isInitialized = true);
-    }
+    setState(() => _isInitialized = true);
   }
 
   FeatureLayer buildFeatureLayer(Uri tableUri, Uri imageUri) {
@@ -173,9 +173,7 @@ class _FindClosestFacilityFromPointSampleState
         _routeGraphicsOverlay.graphics.add(routeGraphic);
       }
     }
-    if (mounted) {
-      setState(() => _isRouteSolved = true);
-    }
+    setState(() => _isRouteSolved = true);
   }
 
   void resetRoutes() {

@@ -17,6 +17,8 @@
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:flutter/material.dart';
 
+import '../../utils/sample_state_support.dart';
+
 class FindRouteSample extends StatefulWidget {
   const FindRouteSample({super.key});
 
@@ -24,7 +26,8 @@ class FindRouteSample extends StatefulWidget {
   State<FindRouteSample> createState() => _FindRouteSampleState();
 }
 
-class _FindRouteSampleState extends State<FindRouteSample> {
+class _FindRouteSampleState extends State<FindRouteSample>
+    with SampleStateSupport {
   // the map view controller.
   final _mapViewController = ArcGISMapView.createController();
   // the graphics overlay for the stops.
@@ -97,9 +100,7 @@ class _FindRouteSampleState extends State<FindRouteSample> {
     initMap();
     initStops();
     await initRouteParameters();
-    if (mounted) {
-      setState(() => _ready = true);
-    }
+    setState(() => _ready = true);
   }
 
   void initMap() {
@@ -210,12 +211,10 @@ class _FindRouteSampleState extends State<FindRouteSample> {
       _routeGraphicsOverlay.graphics.add(routeGraphic);
     }
 
-    if (mounted) {
-      setState(() {
-        _directions = route.directionManeuvers;
-        _routeGenerated = true;
-      });
-    }
+    setState(() {
+      _directions = route.directionManeuvers;
+      _routeGenerated = true;
+    });
   }
 
   Dialog showDirections(BuildContext context) {

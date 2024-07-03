@@ -17,6 +17,8 @@
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:flutter/material.dart';
 
+import '../../utils/sample_state_support.dart';
+
 class ApplyUniqueValueRendererSample extends StatefulWidget {
   const ApplyUniqueValueRendererSample({super.key});
 
@@ -26,7 +28,7 @@ class ApplyUniqueValueRendererSample extends StatefulWidget {
 }
 
 class _ApplyUniqueValueRendererSampleState
-    extends State<ApplyUniqueValueRendererSample> {
+    extends State<ApplyUniqueValueRendererSample> with SampleStateSupport {
   // create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
 

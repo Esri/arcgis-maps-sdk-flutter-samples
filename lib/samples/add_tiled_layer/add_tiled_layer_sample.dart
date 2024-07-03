@@ -17,6 +17,8 @@
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:flutter/material.dart';
 
+import '../../utils/sample_state_support.dart';
+
 class AddTiledLayerSample extends StatefulWidget {
   const AddTiledLayerSample({super.key});
 
@@ -24,7 +26,8 @@ class AddTiledLayerSample extends StatefulWidget {
   State<AddTiledLayerSample> createState() => _AddTiledLayerSampleState();
 }
 
-class _AddTiledLayerSampleState extends State<AddTiledLayerSample> {
+class _AddTiledLayerSampleState extends State<AddTiledLayerSample>
+    with SampleStateSupport {
   // create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
 

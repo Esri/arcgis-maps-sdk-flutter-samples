@@ -17,6 +17,8 @@
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:flutter/material.dart';
 
+import '../../utils/sample_state_support.dart';
+
 class ApplyClassBreaksRendererToSublayerSample extends StatefulWidget {
   const ApplyClassBreaksRendererToSublayerSample({super.key});
 
@@ -26,7 +28,8 @@ class ApplyClassBreaksRendererToSublayerSample extends StatefulWidget {
 }
 
 class _ApplyClassBreaksRendererToSublayerSampleState
-    extends State<ApplyClassBreaksRendererToSublayerSample> {
+    extends State<ApplyClassBreaksRendererToSublayerSample>
+    with SampleStateSupport {
   // create a map view controller
   final _mapViewController = ArcGISMapView.createController();
   // create a map with a basemap style

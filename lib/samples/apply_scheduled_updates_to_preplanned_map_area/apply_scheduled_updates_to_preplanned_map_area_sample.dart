@@ -20,6 +20,7 @@ import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../../utils/sample_data.dart';
+import '../../utils/sample_state_support.dart';
 
 class ApplyScheduledUpdatesToPreplannedMapAreaSample extends StatefulWidget {
   const ApplyScheduledUpdatesToPreplannedMapAreaSample({super.key});
@@ -30,7 +31,8 @@ class ApplyScheduledUpdatesToPreplannedMapAreaSample extends StatefulWidget {
 }
 
 class _ApplyScheduledUpdatesToPreplannedMapAreaSampleState
-    extends State<ApplyScheduledUpdatesToPreplannedMapAreaSample> {
+    extends State<ApplyScheduledUpdatesToPreplannedMapAreaSample>
+    with SampleStateSupport {
   // Create the map controller
   final _mapViewController = ArcGISMapView.createController();
   // Flag indicating if an update is avalable for the map package
@@ -145,14 +147,12 @@ class _ApplyScheduledUpdatesToPreplannedMapAreaSampleState
   // Function to check for map package updates
   Future<void> _checkForUpdates() async {
     final updatesInfo = await _offlineMapSyncTask!.checkForUpdates();
-    if (mounted) {
-      setState(() {
-        _updateStatus = updatesInfo.downloadAvailability;
-        _updateSizeKB = updatesInfo.scheduledUpdatesDownloadSize / 1024;
-        _canUpdate = updatesInfo.downloadAvailability ==
-            OfflineUpdateAvailability.available;
-      });
-    }
+    setState(() {
+      _updateStatus = updatesInfo.downloadAvailability;
+      _updateSizeKB = updatesInfo.scheduledUpdatesDownloadSize / 1024;
+      _canUpdate = updatesInfo.downloadAvailability ==
+          OfflineUpdateAvailability.available;
+    });
   }
 
   // Function to load the map package into the map

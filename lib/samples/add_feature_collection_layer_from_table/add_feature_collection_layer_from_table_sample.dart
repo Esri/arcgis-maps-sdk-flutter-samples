@@ -17,6 +17,8 @@
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:flutter/material.dart';
 
+import '../../utils/sample_state_support.dart';
+
 class AddFeatureCollectionLayerFromTableSample extends StatefulWidget {
   const AddFeatureCollectionLayerFromTableSample({super.key});
   @override
@@ -25,7 +27,8 @@ class AddFeatureCollectionLayerFromTableSample extends StatefulWidget {
 }
 
 class _AddFeatureCollectionLayerFromTableSampleState
-    extends State<AddFeatureCollectionLayerFromTableSample> {
+    extends State<AddFeatureCollectionLayerFromTableSample>
+    with SampleStateSupport {
   final _featureCollection = FeatureCollection();
   final _mapViewController = ArcGISMapView.createController();
 
