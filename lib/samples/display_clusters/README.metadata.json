@@ -3,7 +3,7 @@
     "description": "Display a web map with a point feature layer that has feature reduction enabled to aggregate points into clusters.",
     "ignore": false,
     "images": [
-        "display_clusters_sample.png"
+        "display_clusters.png"
     ],
     "keywords": [
         "aggregate",
