@@ -105,7 +105,7 @@ class _ShowGridSampleState extends State<ShowGridSample> {
     }
   }
 
-  // change the label color based on the given value.
+  // change the label visibility based on the given value.
   void _onLabelVisibilityChanged(bool value) {
     if (_mapViewController.grid != null) {
       _mapViewController.grid!.labelVisibility = value;
