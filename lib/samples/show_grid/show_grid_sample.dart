@@ -168,9 +168,7 @@ class _ShowGridSampleState extends State<ShowGridSample>
           actions: [
             TextButton(
               child: const Text('Close'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
+              onPressed: () => Navigator.of(context).pop(),
             ),
           ],
         );
