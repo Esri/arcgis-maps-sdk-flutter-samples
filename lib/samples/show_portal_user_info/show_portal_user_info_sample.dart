@@ -81,6 +81,7 @@ class _ShowPortalUserInfoSampleState extends State<ShowPortalUserInfoSample>
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
+        minimum: const EdgeInsets.symmetric(horizontal: 10),
         child: FutureBuilder(
             future: _loadFuture,
             builder: (context, snapshot) {
@@ -89,17 +90,28 @@ class _ShowPortalUserInfoSampleState extends State<ShowPortalUserInfoSample>
               }
 
               if (snapshot.hasError) {
-                return Center(
-                  //fixme
-                  child: Text('Error: ${snapshot.error}'),
-                );
+                return Text('Error: ${snapshot.error}');
               }
 
               return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  //fixme
-                  Text('User: ${_portal.user?.fullName}'),
+                  //fixme style
+
+                  //fixme user thumbnail LoadableImage.image.getEncodedBuffer() ???
+                  Text('Full name: ${_portal.user?.fullName}'),
+                  Text('Username: ${_portal.user?.username}'),
+                  Text('Email: ${_portal.user?.email}'),
+                  Text('Description: ${_portal.user?.userDescription}'),
                   Text('Access: ${_portal.user?.access}'),
+                  //fixme divider
+                  Text('Organization: ${_portal.portalInfo?.organizationName}'),
+                  Text(
+                      'Organization description: ${_portal.portalInfo?.organizationDescription}'), //fixme HTML??
+                  //fixme
+                  // thumbnailUrl (portalThumbnail)
+                  // canSearchPublic
+                  // canSharePublic
                 ],
               );
             }),
