@@ -22,6 +22,8 @@ import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 
+import '../../utils/sample_state_support.dart';
+
 class DownloadPreplannedMapAreaSample extends StatefulWidget {
   const DownloadPreplannedMapAreaSample({super.key});
 
@@ -31,7 +33,7 @@ class DownloadPreplannedMapAreaSample extends StatefulWidget {
 }
 
 class _DownloadPreplannedMapAreaSampleState
-    extends State<DownloadPreplannedMapAreaSample> {
+    extends State<DownloadPreplannedMapAreaSample> with SampleStateSupport {
   final _mapViewController = ArcGISMapView.createController();
   var _preplannedAreas = <PreplannedMapArea>[];
   var _selectedPreplannedAreaIndex = -1;
@@ -90,13 +92,9 @@ class _DownloadPreplannedMapAreaSampleState
                 final map = await _downloadOfflineMap(index);
                 _mapViewController.arcGISMap = map;
               } catch (e) {
-                if (mounted) {
-                  print(e);
-                }
+                print(e);
               } finally {
-                if (mounted) {
-                  setState(() => _isLoading = false);
-                }
+                setState(() => _isLoading = false);
               }
             },
           ),
@@ -118,9 +116,7 @@ class _DownloadPreplannedMapAreaSampleState
     }
 
     _offlineMapTask = offlineMapTask;
-    if (mounted) {
-      setState(() => _preplannedAreas = preplannedAreas);
-    }
+    setState(() => _preplannedAreas = preplannedAreas);
   }
 
   Future<ArcGISMap?> _downloadOfflineMap(int preplannedAreaIndex) async {

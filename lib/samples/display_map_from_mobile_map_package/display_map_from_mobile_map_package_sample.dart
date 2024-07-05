@@ -21,6 +21,7 @@ import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../../utils/sample_data.dart';
+import '../../utils/sample_state_support.dart';
 
 class DisplayMapFromMobileMapPackageSample extends StatefulWidget {
   const DisplayMapFromMobileMapPackageSample({super.key});
@@ -31,7 +32,8 @@ class DisplayMapFromMobileMapPackageSample extends StatefulWidget {
 }
 
 class _DisplayMapFromMobileMapPackageSampleState
-    extends State<DisplayMapFromMobileMapPackageSample> {
+    extends State<DisplayMapFromMobileMapPackageSample>
+    with SampleStateSupport {
   // create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
 

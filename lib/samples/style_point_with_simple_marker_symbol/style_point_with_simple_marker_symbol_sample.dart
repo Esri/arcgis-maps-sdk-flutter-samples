@@ -17,6 +17,8 @@
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:flutter/material.dart';
 
+import '../../utils/sample_state_support.dart';
+
 class StylePointWithSimpleMarkerSymbolSample extends StatefulWidget {
   const StylePointWithSimpleMarkerSymbolSample({super.key});
 
@@ -26,7 +28,8 @@ class StylePointWithSimpleMarkerSymbolSample extends StatefulWidget {
 }
 
 class _StylePointWithSimpleMarkerSymbolSampleState
-    extends State<StylePointWithSimpleMarkerSymbolSample> {
+    extends State<StylePointWithSimpleMarkerSymbolSample>
+    with SampleStateSupport {
   final _mapViewController = ArcGISMapView.createController();
 
   @override

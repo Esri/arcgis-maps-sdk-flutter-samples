@@ -17,6 +17,8 @@
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:flutter/material.dart';
 
+import '../../utils/sample_state_support.dart';
+
 // An enumeration of vector tiled layers to choose from.
 enum VectorTiledItem {
   midCentury('Mid-Century', '7675d44bb1e4428aa2c30a9b68f97822'),
@@ -46,7 +48,8 @@ class AddVectorTiledLayerSample extends StatefulWidget {
       _AddVectorTiledLayerSampleState();
 }
 
-class _AddVectorTiledLayerSampleState extends State<AddVectorTiledLayerSample> {
+class _AddVectorTiledLayerSampleState extends State<AddVectorTiledLayerSample>
+    with SampleStateSupport {
   // create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
   // prepare menu items for the selection of vector tiled layers.

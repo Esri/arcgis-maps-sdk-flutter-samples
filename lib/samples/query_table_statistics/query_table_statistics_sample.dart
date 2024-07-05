@@ -17,6 +17,8 @@
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:flutter/material.dart';
 
+import '../../utils/sample_state_support.dart';
+
 class QueryTableStatisticsSample extends StatefulWidget {
   const QueryTableStatisticsSample({super.key});
 
@@ -25,8 +27,8 @@ class QueryTableStatisticsSample extends StatefulWidget {
       _QueryTableStatisticsSampleState();
 }
 
-class _QueryTableStatisticsSampleState
-    extends State<QueryTableStatisticsSample> {
+class _QueryTableStatisticsSampleState extends State<QueryTableStatisticsSample>
+    with SampleStateSupport {
   final _mapViewController = ArcGISMapView.createController();
   final _serviceFeatureTable = ServiceFeatureTable.withUri(Uri.parse(
       'https://sampleserver6.arcgisonline.com/arcgis/rest/services/SampleWorldCities/MapServer/0'));

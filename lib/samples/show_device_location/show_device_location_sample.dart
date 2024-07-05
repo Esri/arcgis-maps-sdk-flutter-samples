@@ -19,6 +19,8 @@ import 'dart:async';
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:flutter/material.dart';
 
+import '../../utils/sample_state_support.dart';
+
 class ShowDeviceLocationSample extends StatefulWidget {
   const ShowDeviceLocationSample({super.key});
 
@@ -27,7 +29,8 @@ class ShowDeviceLocationSample extends StatefulWidget {
       _ShowDeviceLocationSampleState();
 }
 
-class _ShowDeviceLocationSampleState extends State<ShowDeviceLocationSample> {
+class _ShowDeviceLocationSampleState extends State<ShowDeviceLocationSample>
+    with SampleStateSupport {
   final _mapViewController = ArcGISMapView.createController();
   double _latitude = 0.0;
   double _longitude = 0.0;

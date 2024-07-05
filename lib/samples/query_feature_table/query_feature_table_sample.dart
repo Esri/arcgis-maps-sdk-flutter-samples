@@ -17,6 +17,8 @@
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:flutter/material.dart';
 
+import '../../utils/sample_state_support.dart';
+
 class QueryFeatureTableSample extends StatefulWidget {
   const QueryFeatureTableSample({super.key});
 
@@ -25,7 +27,8 @@ class QueryFeatureTableSample extends StatefulWidget {
       _QueryFeatureTableSampleState();
 }
 
-class _QueryFeatureTableSampleState extends State<QueryFeatureTableSample> {
+class _QueryFeatureTableSampleState extends State<QueryFeatureTableSample>
+    with SampleStateSupport {
   // create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
   // create a text editing controller.
