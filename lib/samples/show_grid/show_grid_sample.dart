@@ -253,7 +253,7 @@ class _GridOptionsState extends State<GridOptions> with SampleStateSupport {
     required List<String> items,
     required Function onChanged,
   }) {
-    return DropdownButtonFormField<String>(
+    return DropdownButtonFormField(
       value: value,
       onChanged: (newValue) {
         onChanged(newValue!);
@@ -261,7 +261,7 @@ class _GridOptionsState extends State<GridOptions> with SampleStateSupport {
       decoration: InputDecoration(
         labelText: labelText,
       ),
-      items: items.map<DropdownMenuItem<String>>((value) {
+      items: items.map((value) {
         return DropdownMenuItem<String>(
           value: value,
           child: Text(value),
