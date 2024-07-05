@@ -134,6 +134,14 @@ class _ShowGridSampleState extends State<ShowGridSample>
     }
   }
 
+  // change the label format if the grid is LatitudeLongitudeGrid.
+  _onLabelFormatChanged(LatitudeLongitudeGridLabelFormat labelFormat) {
+    if (_mapViewController.grid is LatitudeLongitudeGrid) {
+      final grid = _mapViewController.grid! as LatitudeLongitudeGrid;
+      grid.labelFormat = labelFormat;
+    }
+  }
+
   // change the label position based on the given value.
   void _onLabelPositionChanged(GridLabelPosition labelPosition) {
     if (_mapViewController.grid != null) {
@@ -154,6 +162,7 @@ class _ShowGridSampleState extends State<ShowGridSample>
             onGridColorChanged: _onGridColorChanged,
             onLabelColorChanged: _onLabelColorChanged,
             onLabelPositionChanged: _onLabelPositionChanged,
+            onLabelFormatChanged: _onLabelFormatChanged,
             onLabelVisibilityChanged: _onLabelVisibilityChanged,
           ),
           actions: [
@@ -178,6 +187,7 @@ class GridOptions extends StatefulWidget {
   final Function(Color) onGridColorChanged;
   final Function(Color) onLabelColorChanged;
   final Function(GridLabelPosition) onLabelPositionChanged;
+  final Function(LatitudeLongitudeGridLabelFormat) onLabelFormatChanged;
   final Function(bool) onLabelVisibilityChanged;
 
   const GridOptions({
@@ -186,6 +196,7 @@ class GridOptions extends StatefulWidget {
     required this.onGridColorChanged,
     required this.onLabelColorChanged,
     required this.onLabelPositionChanged,
+    required this.onLabelFormatChanged,
     required this.onLabelVisibilityChanged,
   });
 
@@ -205,12 +216,18 @@ class _GridOptionsState extends State<GridOptions> with SampleStateSupport {
     'TopLeft',
     'TopRight'
   ];
+  final latitudeLongitudeGridLabelFormats = [
+    'Decimal Degrees',
+    'Degrees Minutes Seconds'
+  ];
 
   // stateful variables
   String? grid;
   String? gridColor;
   String? labelColor;
   String? labelPosition;
+  String? labelFormat;
+  var isLabelFormatVisible = true;
   var labelVisible = true;
 
   @override
@@ -219,6 +236,9 @@ class _GridOptionsState extends State<GridOptions> with SampleStateSupport {
       child: ListBody(
         children: [
           _buildGridDropdown(),
+          isLabelFormatVisible
+              ? _buildLatLongLabelFormatDropdown()
+              : Container(),
           _buildGridColorDropdown(),
           _buildLabelColorDropdown(),
           _buildLabelPositionDropdown(),
@@ -254,19 +274,39 @@ class _GridOptionsState extends State<GridOptions> with SampleStateSupport {
 
   DropdownButtonFormField _buildGridDropdown() {
     return _createDropdownButtonFormField(
-      value: grids[0],
+      value: grid ?? grids[0],
       labelText: 'Grid Type',
       items: grids,
       onChanged: (newGrid) {
-        widget.onGridChanged(_getGrid(newGrid!));
-        setState(() => grid = newGrid);
+        _changeGrid(newGrid!);
+        setState(() {
+          grid = newGrid;
+          if (grid == grids[0]) {
+            isLabelFormatVisible = true;
+          } else {
+            isLabelFormatVisible = false;
+          }
+        });
       },
     );
   }
 
+  DropdownButtonFormField _buildLatLongLabelFormatDropdown() {
+    final formField = _createDropdownButtonFormField(
+      value: labelFormat ?? latitudeLongitudeGridLabelFormats[0],
+      labelText: 'Label Format',
+      items: latitudeLongitudeGridLabelFormats,
+      onChanged: (newFormat) {
+        widget.onLabelFormatChanged(_getLabelFormat(newFormat));
+        setState(() => labelFormat = newFormat);
+      },
+    );
+    return formField;
+  }
+
   DropdownButtonFormField _buildGridColorDropdown() {
     return _createDropdownButtonFormField(
-      value: colors[0],
+      value: gridColor ?? colors[0],
       labelText: 'Grid Color',
       items: colors,
       onChanged: (newColor) {
@@ -278,7 +318,7 @@ class _GridOptionsState extends State<GridOptions> with SampleStateSupport {
 
   DropdownButtonFormField _buildLabelColorDropdown() {
     return _createDropdownButtonFormField(
-      value: colors[0],
+      value: labelColor ?? colors[0],
       labelText: 'Label Color',
       items: colors,
       onChanged: (newColor) {
@@ -290,7 +330,7 @@ class _GridOptionsState extends State<GridOptions> with SampleStateSupport {
 
   DropdownButtonFormField _buildLabelPositionDropdown() {
     return _createDropdownButtonFormField(
-      value: labelPositions[0],
+      value: labelPosition ?? labelPositions[0],
       labelText: 'Label Position',
       items: labelPositions,
       onChanged: (newLabelPosition) {
@@ -349,19 +389,44 @@ class _GridOptionsState extends State<GridOptions> with SampleStateSupport {
     }
   }
 
-  Grid _getGrid(String grid) {
-    switch (grid) {
+  void _changeGrid(String gridType) {
+    Grid? grid;
+    switch (gridType) {
       case 'Latitude & Longitude':
-        return LatitudeLongitudeGrid()
-          ..labelFormat = LatitudeLongitudeGridLabelFormat.decimalDegrees;
+        grid = LatitudeLongitudeGrid();
       case 'MGRS':
-        return MgrsGrid();
+        grid = MgrsGrid();
       case 'UTM':
-        return UtmGrid();
+        grid = UtmGrid();
       case 'USNG':
-        return UsngGrid();
+        grid = UsngGrid();
       default:
         throw Exception('Invalid grid type');
+    }
+
+    // apply the current settings to the grid.
+    widget.onGridChanged(grid);
+    widget.onLabelFormatChanged(labelFormat != null
+        ? _getLabelFormat(labelFormat!)
+        : LatitudeLongitudeGridLabelFormat.decimalDegrees);
+    widget.onGridColorChanged(
+        gridColor != null ? _getSelectedColor(gridColor!) : Colors.red);
+    widget.onLabelColorChanged(
+        labelColor != null ? _getSelectedColor(labelColor!) : Colors.red);
+    widget.onLabelPositionChanged(labelPosition != null
+        ? _getLabelPosition(labelPosition!)
+        : GridLabelPosition.allSides);
+    widget.onLabelVisibilityChanged(labelVisible);
+  }
+
+  LatitudeLongitudeGridLabelFormat _getLabelFormat(String labelFormat) {
+    switch (labelFormat) {
+      case 'Decimal Degrees':
+        return LatitudeLongitudeGridLabelFormat.decimalDegrees;
+      case 'Degrees Minutes Seconds':
+        return LatitudeLongitudeGridLabelFormat.degreesMinutesSeconds;
+      default:
+        return LatitudeLongitudeGridLabelFormat.decimalDegrees;
     }
   }
 }
