@@ -22,7 +22,7 @@ Tap on the `Change Grid` button in the toolbar to open a settings view. You can 
 
 ## Relevant API
 
-* ArcGISGrid
+* Grid
 * LatitudeLongitudeGrid
 * ArcGISMapView
 * MGRSGrid
