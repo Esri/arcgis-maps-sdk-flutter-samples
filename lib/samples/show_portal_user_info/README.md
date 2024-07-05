@@ -38,8 +38,8 @@ Similarly, the `portalInfo` property is used to populate:
 
 * AuthenticationManager
 * AuthenticationView
-* Credential
-* DefaultAuthenticationChallengeHandler
+* OAuthUserCredential
+* ArcGISAuthenticationChallengeHandler
 * PortalInfo
 * PortalUser
 
