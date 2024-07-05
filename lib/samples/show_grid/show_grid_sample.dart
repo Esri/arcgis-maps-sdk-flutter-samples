@@ -176,14 +176,14 @@ class GridOptions extends StatefulWidget {
   final Function(GridLabelPosition) onLabelPositionTypeChanged;
   final Function(bool) onLabelVisibilityChanged;
 
-  GridOptions({
-    Key? key,
+  const GridOptions({
+    super.key,
     required this.onGridTypeChanged,
     required this.onGridColorTypeChanged,
     required this.onLabelColorTypeChanged,
     required this.onLabelPositionTypeChanged,
     required this.onLabelVisibilityChanged,
-  }) : super(key: key);
+  });
 
   @override
   State<GridOptions> createState() => _GridOptionsState();
