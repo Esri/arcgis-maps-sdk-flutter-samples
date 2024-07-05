@@ -17,6 +17,8 @@
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:flutter/material.dart';
 
+import '../../utils/sample_state_support.dart';
+
 class ShowGridSample extends StatefulWidget {
   const ShowGridSample({super.key});
 
@@ -24,7 +26,8 @@ class ShowGridSample extends StatefulWidget {
   State<ShowGridSample> createState() => _ShowGridSampleState();
 }
 
-class _ShowGridSampleState extends State<ShowGridSample> {
+class _ShowGridSampleState extends State<ShowGridSample>
+    with SampleStateSupport {
   // create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
   final _center = ArcGISPoint(
@@ -153,7 +156,7 @@ class _ShowGridSampleState extends State<ShowGridSample> {
             onLabelPositionChanged: _onLabelPositionChanged,
             onLabelVisibilityChanged: _onLabelVisibilityChanged,
           ),
-          actions: <Widget>[
+          actions: [
             TextButton(
               child: const Text('Close'),
               onPressed: () {
@@ -190,7 +193,7 @@ class GridOptions extends StatefulWidget {
   State<GridOptions> createState() => _GridOptionsState();
 }
 
-class _GridOptionsState extends State<GridOptions> {
+class _GridOptionsState extends State<GridOptions> with SampleStateSupport {
   final grids = ['Latitude & Longitude', 'MGRS', 'UTM', 'USNG'];
   final colors = ['Red', 'Blue', 'Green', 'Yellow'];
   final labelPositions = [
@@ -208,13 +211,13 @@ class _GridOptionsState extends State<GridOptions> {
   String? gridColor;
   String? labelColor;
   String? labelPosition;
-  bool labelVisible = true;
+  var labelVisible = true;
 
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: ListBody(
-        children: <Widget>[
+        children: [
           _buildGridDropdown(),
           _buildGridColorDropdown(),
           _buildLabelColorDropdown(),
@@ -298,20 +301,15 @@ class _GridOptionsState extends State<GridOptions> {
   }
 
   Widget _buildLabelVisibilityCheckbox() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Checkbox(
-          value: labelVisible,
-          onChanged: (newVisible) {
-            widget.onLabelVisibilityChanged(newVisible!);
-            setState(
-              () => labelVisible = newVisible,
-            );
-          },
-        ),
-        const Text('Labels Visible')
-      ],
+    return Center(
+      child: CheckboxListTile(
+        title: const Text('Label Visible'),
+        value: labelVisible,
+        onChanged: (newVisible) {
+          widget.onLabelVisibilityChanged(newVisible!);
+          setState(() => labelVisible = newVisible);
+        },
+      ),
     );
   }
 
