@@ -240,7 +240,7 @@ class _GridOptionsState extends State<GridOptions> {
       decoration: InputDecoration(
         labelText: labelText,
       ),
-      items: items.map<DropdownMenuItem<String>>((String value) {
+      items: items.map<DropdownMenuItem<String>>((value) {
         return DropdownMenuItem<String>(
           value: value,
           child: Text(value),
@@ -254,9 +254,9 @@ class _GridOptionsState extends State<GridOptions> {
       value: grids[0],
       labelText: 'Grid Type',
       items: grids,
-      onChanged: (String? newValue) {
-        widget.onGridChanged(_getGrid(newValue!));
-        setState(() => grid = newValue);
+      onChanged: (newGrid) {
+        widget.onGridChanged(_getGrid(newGrid!));
+        setState(() => grid = newGrid);
       },
     );
   }
@@ -266,9 +266,9 @@ class _GridOptionsState extends State<GridOptions> {
       value: colors[0],
       labelText: 'Grid Color',
       items: colors,
-      onChanged: (String? newValue) {
-        widget.onGridColorChanged(_getSelectedColor(newValue!));
-        setState(() => gridColor = newValue);
+      onChanged: (newColor) {
+        widget.onGridColorChanged(_getSelectedColor(newColor!));
+        setState(() => gridColor = newColor);
       },
     );
   }
@@ -278,9 +278,9 @@ class _GridOptionsState extends State<GridOptions> {
       value: colors[0],
       labelText: 'Label Color',
       items: colors,
-      onChanged: (String? newValue) {
-        widget.onLabelColorChanged(_getSelectedColor(newValue!));
-        setState(() => labelColor = newValue);
+      onChanged: (newColor) {
+        widget.onLabelColorChanged(_getSelectedColor(newColor!));
+        setState(() => labelColor = newColor);
       },
     );
   }
@@ -290,9 +290,9 @@ class _GridOptionsState extends State<GridOptions> {
       value: labelPositions[0],
       labelText: 'Label Position',
       items: labelPositions,
-      onChanged: (String? newValue) {
-        widget.onLabelPositionChanged(_getLabelPosition(newValue!));
-        setState(() => labelPosition = newValue);
+      onChanged: (newLabelPosition) {
+        widget.onLabelPositionChanged(_getLabelPosition(newLabelPosition!));
+        setState(() => labelPosition = newLabelPosition);
       },
     );
   }
@@ -303,10 +303,10 @@ class _GridOptionsState extends State<GridOptions> {
       children: [
         Checkbox(
           value: labelVisible,
-          onChanged: (bool? value) {
-            widget.onLabelVisibilityChanged(value!);
+          onChanged: (newVisible) {
+            widget.onLabelVisibilityChanged(newVisible!);
             setState(
-              () => labelVisible = value,
+              () => labelVisible = newVisible,
             );
           },
         ),
