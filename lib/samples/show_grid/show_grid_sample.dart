@@ -262,7 +262,7 @@ class _GridOptionsState extends State<GridOptions> with SampleStateSupport {
         labelText: labelText,
       ),
       items: items.map((value) {
-        return DropdownMenuItem<String>(
+        return DropdownMenuItem(
           value: value,
           child: Text(value),
         );
