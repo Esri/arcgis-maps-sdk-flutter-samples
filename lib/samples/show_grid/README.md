@@ -24,7 +24,7 @@ Tap on the `Change Grid` button in the toolbar to open a settings view. You can 
 
 * ArcGISGrid
 * LatitudeLongitudeGrid
-* MapView
+* ArcGISMapView
 * MGRSGrid
 * SimpleLineSymbol
 * TextSymbol
