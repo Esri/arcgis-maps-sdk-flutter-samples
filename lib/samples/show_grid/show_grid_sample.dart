@@ -234,7 +234,7 @@ class _GridOptionsState extends State<GridOptions> {
   }) {
     return DropdownButtonFormField<String>(
       value: value,
-      onChanged: (String? newValue) {
+      onChanged: (newValue) {
         onChanged(newValue!);
       },
       decoration: InputDecoration(
