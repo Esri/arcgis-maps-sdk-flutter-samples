@@ -143,10 +143,10 @@ class _ShowGridSampleState extends State<ShowGridSample>
   }
 
   /// Show the grid options dialog.
-  void _showGridOptions() async {
-    showDialog(
+  Future<void> _showGridOptions() async {
+    return showDialog(
       context: context,
-      builder: (BuildContext context) {
+      builder: (context) {
         return AlertDialog(
           title: const Text('Grid Options'),
           content: GridOptions(
