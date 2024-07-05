@@ -53,7 +53,7 @@ class _ShowGridSampleState extends State<ShowGridSample> {
                   children: [
                     ElevatedButton(
                       onPressed: _showGridOptions,
-                      child: const Text('Grid Options'),
+                      child: const Text('Change Grid'),
                     ),
                   ],
                 ),
