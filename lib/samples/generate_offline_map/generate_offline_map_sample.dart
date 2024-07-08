@@ -80,10 +80,13 @@ class _GenerateOfflineMapSampleState extends State<GenerateOfflineMapSample>
   }
 
   void onMapViewReady() async {
-    final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic);
+    //fixme comments
+    final portalItem = PortalItem.withPortalAndItemId(
+      portal: Portal.arcGISOnline(),
+      itemId: 'acc027394bc84c2fb04d1ed317aac674',
+    );
+    final map = ArcGISMap.withItem(portalItem);
     _mapViewController.arcGISMap = map;
-    // Perform some long-running setup task.
-    await Future.delayed(const Duration(seconds: 10));
     setState(() => _ready = true);
   }
 
