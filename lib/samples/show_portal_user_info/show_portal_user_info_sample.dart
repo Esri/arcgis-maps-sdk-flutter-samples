@@ -1,3 +1,6 @@
+import 'dart:ffi';
+import 'dart:typed_data';
+
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:flutter/material.dart';
 
@@ -24,6 +27,8 @@ class _ShowPortalUserInfoSampleState extends State<ShowPortalUserInfoSample>
   final _portal =
       Portal.arcGISOnline(connection: PortalConnection.authenticated);
   Future<void>? _loadFuture;
+  Uint8List? _userThumbnail;
+  Uint8List? _organizationThumbnail;
 
   @override
   void initState() {
@@ -35,7 +40,7 @@ class _ShowPortalUserInfoSampleState extends State<ShowPortalUserInfoSample>
     ArcGISEnvironment
         .authenticationManager.arcGISAuthenticationChallengeHandler = this;
 
-    _loadFuture = _portal.load();
+    _loadFuture = _portal.load().then((_) => loadThumbnails());
   }
 
   @override
@@ -98,18 +103,22 @@ class _ShowPortalUserInfoSampleState extends State<ShowPortalUserInfoSample>
                 children: [
                   //fixme style
 
-                  //fixme user thumbnail LoadableImage.image.getEncodedBuffer() ???
+                  _userThumbnail != null
+                      ? Image.memory(_userThumbnail!)
+                      : const Icon(Icons.person),
                   Text('Full name: ${_portal.user?.fullName}'),
                   Text('Username: ${_portal.user?.username}'),
                   Text('Email: ${_portal.user?.email}'),
                   Text('Description: ${_portal.user?.userDescription}'),
                   Text('Access: ${_portal.user?.access}'),
-                  //fixme divider
+                  const Divider(),
+                  _organizationThumbnail != null
+                      ? Image.memory(_organizationThumbnail!)
+                      : const Icon(Icons.domain),
                   Text('Organization: ${_portal.portalInfo?.organizationName}'),
                   Text(
                       'Organization description: ${_portal.portalInfo?.organizationDescription}'), //fixme HTML??
                   //fixme
-                  // thumbnailUrl (portalThumbnail)
                   // canSearchPublic
                   // canSharePublic
                 ],
@@ -117,5 +126,21 @@ class _ShowPortalUserInfoSampleState extends State<ShowPortalUserInfoSample>
             }),
       ),
     );
+  }
+
+  void loadThumbnails() {
+    _portal.user?.thumbnail?.loadBytes().then((bytes) {
+      setState(() => _userThumbnail = bytes);
+    });
+    _portal.portalInfo?.thumbnail?.loadBytes().then((bytes) {
+      setState(() => _organizationThumbnail = bytes);
+    });
+  }
+}
+
+extension on LoadableImage {
+  Future<Uint8List> loadBytes() async {
+    await load();
+    return image!.getEncodedBuffer();
   }
 }
