@@ -16,19 +16,17 @@
         "profile",
         "user",
         "username",
+        "ArcGISAuthenticationChallengeHandler",
         "AuthenticationManager",
-        "AuthenticationView",
-        "Credential",
-        "DefaultAuthenticationChallengeHandler",
+        "OAuthUserCredential",
         "PortalInfo",
         "PortalUser"
     ],
     "redirect_from": [],
     "relevant_apis": [
+        "ArcGISAuthenticationChallengeHandler",
         "AuthenticationManager",
-        "AuthenticationView",
-        "Credential",
-        "DefaultAuthenticationChallengeHandler",
+        "OAuthUserCredential",
         "PortalInfo",
         "PortalUser"
     ],
