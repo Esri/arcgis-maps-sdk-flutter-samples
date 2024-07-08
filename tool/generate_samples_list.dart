@@ -70,5 +70,6 @@ void generateSamplesList() {
   // write the list of sorted samples to the generated_samples_list.json file
   final samplesJsonFile = File(
       '${assetsDirectory.path}${pathSeparator}generated_samples_list.json');
-  samplesJsonFile.writeAsStringSync(jsonEncode(sortedSamples));
+  const encoder = JsonEncoder.withIndent('  ');
+  samplesJsonFile.writeAsStringSync(encoder.convert(sortedSamples));
 }
