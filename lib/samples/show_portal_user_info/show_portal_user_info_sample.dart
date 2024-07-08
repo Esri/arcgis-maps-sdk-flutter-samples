@@ -23,9 +23,12 @@ class _ShowPortalUserInfoSampleState extends State<ShowPortalUserInfoSample>
     clientId: 'lgAdHkYZYlwwfAhC',
     redirectUri: Uri.parse('my-ags-app://auth'),
   );
+  // Create a Portal that requires authentication.
   final _portal =
       Portal.arcGISOnline(connection: PortalConnection.authenticated);
-  Future<void>? _loadFuture;
+  // Create a Future that tracks the loading of the portal.
+  Future<void>? _portalLoadFuture;
+  // Create variables to store the user and organization thumbnails.
   Uint8List? _userThumbnail;
   Uint8List? _organizationThumbnail;
 
@@ -39,7 +42,8 @@ class _ShowPortalUserInfoSampleState extends State<ShowPortalUserInfoSample>
     ArcGISEnvironment
         .authenticationManager.arcGISAuthenticationChallengeHandler = this;
 
-    _loadFuture = _portal.load().then((_) => loadThumbnails());
+    // Load the portal (which will trigger an authentication challenge), and then load the thumbnails.
+    _portalLoadFuture = _portal.load().then((_) => loadThumbnails());
   }
 
   @override
@@ -86,17 +90,21 @@ class _ShowPortalUserInfoSampleState extends State<ShowPortalUserInfoSample>
     return Scaffold(
       body: SafeArea(
         minimum: const EdgeInsets.symmetric(horizontal: 10),
+        // Create a FutureBuilder to respond to the loading of the portal.
         child: FutureBuilder(
-            future: _loadFuture,
+            future: _portalLoadFuture,
             builder: (context, snapshot) {
+              // If the portal is still loading, display a message.
               if (snapshot.connectionState != ConnectionState.done) {
                 return const Text('Authenticating...');
               }
 
+              // If the portal load failed with an error, display the error.
               if (snapshot.hasError) {
                 return Text('Error: ${snapshot.error}');
               }
 
+              // If the portal load succeeded, display the portal information.
               final titleStyle = Theme.of(context).textTheme.titleMedium;
               return SingleChildScrollView(
                 child: Column(
@@ -126,12 +134,12 @@ class _ShowPortalUserInfoSampleState extends State<ShowPortalUserInfoSample>
                         : const Icon(Icons.domain),
                     Text('Organization', style: titleStyle),
                     Text(_portal.portalInfo?.organizationName ?? ''),
-                    Text('Description', style: titleStyle),
-                    Text(_portal.portalInfo?.organizationDescription ?? ''),
                     Text('Can find external content', style: titleStyle),
                     Text('${_portal.portalInfo?.canSearchPublic}'),
                     Text('Can share items externally', style: titleStyle),
                     Text('${_portal.portalInfo?.canSharePublic}'),
+                    Text('Description', style: titleStyle),
+                    Text(_portal.portalInfo?.organizationDescription ?? ''),
                   ],
                 ),
               );
@@ -140,6 +148,7 @@ class _ShowPortalUserInfoSampleState extends State<ShowPortalUserInfoSample>
     );
   }
 
+  // Load the user and organization thumbnails.
   void loadThumbnails() {
     _portal.user?.thumbnail?.loadBytes().then((bytes) {
       setState(() => _userThumbnail = bytes);
@@ -151,6 +160,7 @@ class _ShowPortalUserInfoSampleState extends State<ShowPortalUserInfoSample>
 }
 
 extension on LoadableImage {
+  // A helper method to load the image bytes.
   Future<Uint8List> loadBytes() async {
     await load();
     return image!.getEncodedBuffer();
