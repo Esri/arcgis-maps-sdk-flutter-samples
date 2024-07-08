@@ -1,4 +1,3 @@
-import 'dart:ffi';
 import 'dart:typed_data';
 
 import 'package:arcgis_maps/arcgis_maps.dart';
@@ -98,30 +97,43 @@ class _ShowPortalUserInfoSampleState extends State<ShowPortalUserInfoSample>
                 return Text('Error: ${snapshot.error}');
               }
 
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  //fixme style
-
-                  _userThumbnail != null
-                      ? Image.memory(_userThumbnail!)
-                      : const Icon(Icons.person),
-                  Text('Full name: ${_portal.user?.fullName}'),
-                  Text('Username: ${_portal.user?.username}'),
-                  Text('Email: ${_portal.user?.email}'),
-                  Text('Description: ${_portal.user?.userDescription}'),
-                  Text('Access: ${_portal.user?.access}'),
-                  const Divider(),
-                  _organizationThumbnail != null
-                      ? Image.memory(_organizationThumbnail!)
-                      : const Icon(Icons.domain),
-                  Text('Organization: ${_portal.portalInfo?.organizationName}'),
-                  Text(
-                      'Organization description: ${_portal.portalInfo?.organizationDescription}'), //fixme HTML??
-                  //fixme
-                  // canSearchPublic
-                  // canSharePublic
-                ],
+              final titleStyle = Theme.of(context).textTheme.titleMedium;
+              return SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '${_portal.user?.fullName} Profile',
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
+                    const SizedBox(height: 20.0),
+                    _userThumbnail != null
+                        ? Image.memory(_userThumbnail!)
+                        : const Icon(Icons.person),
+                    Text('Full name', style: titleStyle),
+                    Text(_portal.user?.fullName ?? ''),
+                    Text('Username', style: titleStyle),
+                    Text(_portal.user?.username ?? ''),
+                    Text('Email', style: titleStyle),
+                    Text(_portal.user?.email ?? ''),
+                    Text('Description', style: titleStyle),
+                    Text(_portal.user?.userDescription ?? ''),
+                    Text('Access', style: titleStyle),
+                    Text(_portal.user?.access.name ?? ''),
+                    const Divider(),
+                    _organizationThumbnail != null
+                        ? Image.memory(_organizationThumbnail!)
+                        : const Icon(Icons.domain),
+                    Text('Organization', style: titleStyle),
+                    Text(_portal.portalInfo?.organizationName ?? ''),
+                    Text('Description', style: titleStyle),
+                    Text(_portal.portalInfo?.organizationDescription ?? ''),
+                    Text('Can find external content', style: titleStyle),
+                    Text('${_portal.portalInfo?.canSearchPublic}'),
+                    Text('Can share items externally', style: titleStyle),
+                    Text('${_portal.portalInfo?.canSharePublic}'),
+                  ],
+                ),
               );
             }),
       ),
