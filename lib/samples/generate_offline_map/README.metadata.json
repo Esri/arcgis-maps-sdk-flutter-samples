@@ -1,0 +1,31 @@
+{
+    "category": "Edit and Manage Data",
+    "description": "Take a web map offline.",
+    "ignore": false,
+    "images": [
+        "generate_offline_map.png"
+    ],
+    "keywords": [
+        "download",
+        "offline",
+        "save",
+        "web map",
+        "GenerateOfflineMapJob",
+        "GenerateOfflineMapParameters",
+        "GenerateOfflineMapResult",
+        "OfflineMapTask",
+        "Portal"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+        "GenerateOfflineMapJob",
+        "GenerateOfflineMapParameters",
+        "GenerateOfflineMapResult",
+        "OfflineMapTask",
+        "Portal"
+    ],
+    "snippets": [
+        "generate_offline_map_sample.dart"
+    ],
+    "title": "Generate offline map"
+}
