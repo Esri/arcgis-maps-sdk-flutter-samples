@@ -14,9 +14,11 @@ When prompted, enter your ArcGIS Online credentials.
 
 ## How it works
 
-1. A `Portal` is created, and supplied an `OAuthUserCredential` which uses OAuth in user mode.
-2. When the app launches, the portal is loaded, which triggers an authentication challenge.
-3. An `AuthenticationView` listens to the challenge and displays a login screen to allow user credentials to be entered.
+1. An authentication challenge handler is set on `ArcGISEnvironment.authenticationManager`.
+2. A `Portal` is created, using `PortalConnection.authenticated` to require authentication.
+3. The portal is loaded, which triggers an authentication challenge.
+4. The `ArcGISAuthenticationChallengeHandler` callback is called to handle the authentication challenge.
+5. The OAuth login process is triggered using `OAuthUserCredential.create()`.
 
 If the portal is successfully loaded, the `portalUser` property is used to populate a series of fields including:
 
@@ -36,10 +38,9 @@ Similarly, the `portalInfo` property is used to populate:
 
 ## Relevant API
 
-* AuthenticationManager
-* AuthenticationView
-* OAuthUserCredential
 * ArcGISAuthenticationChallengeHandler
+* AuthenticationManager
+* OAuthUserCredential
 * PortalInfo
 * PortalUser
 
