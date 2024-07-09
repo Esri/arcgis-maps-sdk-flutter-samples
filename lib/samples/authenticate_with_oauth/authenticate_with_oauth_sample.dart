@@ -61,8 +61,6 @@ class _AuthenticateWithOAuthSampleState
 
   @override
   void dispose() async {
-    super.dispose();
-
     // We do not want to handle authentication challenges outside of this sample,
     // so we remove this as the challenge handler.
     ArcGISEnvironment
@@ -75,6 +73,8 @@ class _AuthenticateWithOAuthSampleState
         .whereType<OAuthUserCredential>()
         .map((credential) => credential.revokeToken()));
     ArcGISEnvironment.authenticationManager.arcGISCredentialStore.removeAll();
+
+    super.dispose();
   }
 
   @override
