@@ -64,7 +64,9 @@ class _GenerateOfflineMapSampleState extends State<GenerateOfflineMapSample>
                   children: [
                     ElevatedButton(
                       onPressed: _offline ? null : takeOffline,
-                      child: const Text('Take Offline'),
+                      child: _progress == null
+                          ? const Text('Take Offline')
+                          : Text('${(_progress! * 100).round()}%'),
                     ),
                     ElevatedButton(
                       onPressed: _offline ? reset : null,
@@ -80,8 +82,8 @@ class _GenerateOfflineMapSampleState extends State<GenerateOfflineMapSample>
               child: SizedBox.expand(
                 child: Container(
                   color: Colors.white30,
-                  child: Center(
-                    child: CircularProgressIndicator(value: _progress),
+                  child: const Center(
+                    child: CircularProgressIndicator(),
                   ),
                 ),
               ),
@@ -94,6 +96,7 @@ class _GenerateOfflineMapSampleState extends State<GenerateOfflineMapSample>
 
   void onMapViewReady() async {
     //fixme comments
+    //fixme README/metadata
 
     final portalItem = PortalItem.withPortalAndItemId(
       portal: Portal.arcGISOnline(),
@@ -122,11 +125,7 @@ class _GenerateOfflineMapSampleState extends State<GenerateOfflineMapSample>
     setState(() => _ready = true);
   }
 
-  void takeOffline() async {
-    if (_regionGraphic.geometry == null) return;
-
-    setState(() => _ready = false);
-
+  Future<Uri> prepareEmptyDownloadDirectory() async {
     final documentsUri = (await getApplicationDocumentsDirectory()).uri;
     final downloadDirectoryUri = documentsUri.resolve('offline_map');
     final downloadDirectory = Directory.fromUri(downloadDirectoryUri);
@@ -134,6 +133,13 @@ class _GenerateOfflineMapSampleState extends State<GenerateOfflineMapSample>
       downloadDirectory.deleteSync(recursive: true);
     }
     downloadDirectory.createSync();
+    return downloadDirectoryUri;
+  }
+
+  void takeOffline() async {
+    if (_regionGraphic.geometry == null) return;
+
+    setState(() => _ready = false);
 
     final minScale = _mapViewController.scale;
     final maxScale = _mapViewController.arcGISMap?.maxScale ?? minScale + 1;
@@ -145,15 +151,13 @@ class _GenerateOfflineMapSampleState extends State<GenerateOfflineMapSample>
       maxScale: maxScale,
     );
     parameters.continueOnErrors = false;
+    final downloadDirectoryUri = await prepareEmptyDownloadDirectory();
     final generateOfflineJob = _offlineMapTask.generateOfflineMap(
       downloadDirectoryUri: downloadDirectoryUri,
       parameters: parameters,
     );
     generateOfflineJob.onProgressChanged.listen((progress) {
       setState(() => _progress = progress / 100.0);
-    });
-    generateOfflineJob.onMessageAdded.listen((message) {
-      print('Message: ${message.message}');
     });
 
     final result = await generateOfflineJob.run();
@@ -168,10 +172,10 @@ class _GenerateOfflineMapSampleState extends State<GenerateOfflineMapSample>
     });
   }
 
-  void reset() {
+  void reset() async {
     _mapViewController.arcGISMap = _map;
     _graphicsOverlay.graphics.add(_regionGraphic);
-    //fixme delete directory
+    await prepareEmptyDownloadDirectory();
     setState(() => _offline = false);
   }
 }
