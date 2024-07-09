@@ -10,15 +10,15 @@ Taking a web map offline allows users continued productivity when their network 
 
 ## How to use the sample
 
-When the app starts, you will be prompted to sign in using a free ArcGIS Online account. Once the map loads, zoom to the extent you want to take offline. The red border shows the extent that will be downloaded. Click the "Take Map Offline" button to start the offline map job. The progress bar will show the job's progress. When complete, the offline map will replace the online map in the map view.
+Once the map loads, zoom to the extent you want to take offline. The red border shows the extent that will be downloaded. Click the "Take Map Offline" button to start the offline map job. The progress indicator will show the job's progress. When complete, the offline map will replace the online map in the map view.
 
 ## How it works
 
-Create an `ArcGISMap` with a `Portal` item pointing to the web map.
-Create `GenerateOfflineMapParameters` specifying the download area geometry, minimum scale, and maximum scale.
-Create an `OfflineMapTask` with the map.
-Create the `OfflineMapJob` with `OfflineMapTask.generateOfflineMap(params, downloadDirectoryPath)` and start it with `OfflineMapJob.start()`.
-When the job is done, get the offline map with `OfflineMapJob.getResult().getOfflineMap()`.
+1. Create an `ArcGISMap` with a `PortalItem` pointing to the web map.
+2. Create `GenerateOfflineMapParameters` specifying the download area geometry, minimum scale, and maximum scale.
+3. Create an `OfflineMapTask` with the map.
+4. Create the `OfflineMapJob` with `OfflineMapTask.generateOfflineMap()` and start it with `OfflineMapJob.run()`.
+5. When the job is done, get the offline map with `GenerateOfflineMapResult.offlineMap`.
 
 ## Relevant API
 
@@ -26,7 +26,7 @@ When the job is done, get the offline map with `OfflineMapJob.getResult().getOff
 * GenerateOfflineMapParameters
 * GenerateOfflineMapResult
 * OfflineMapTask
-* Portal
+* PortalItem
 
 ## About the data
 

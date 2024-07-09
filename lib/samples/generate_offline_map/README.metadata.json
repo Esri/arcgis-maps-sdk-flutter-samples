@@ -14,7 +14,7 @@
         "GenerateOfflineMapParameters",
         "GenerateOfflineMapResult",
         "OfflineMapTask",
-        "Portal"
+        "PortalItem"
     ],
     "redirect_from": [],
     "relevant_apis": [
@@ -22,7 +22,7 @@
         "GenerateOfflineMapParameters",
         "GenerateOfflineMapResult",
         "OfflineMapTask",
-        "Portal"
+        "PortalItem"
     ],
     "snippets": [
         "generate_offline_map_sample.dart"

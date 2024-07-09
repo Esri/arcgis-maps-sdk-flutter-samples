@@ -72,7 +72,7 @@ class _GenerateOfflineMapSampleState extends State<GenerateOfflineMapSample>
                     ElevatedButton(
                       onPressed: _offline ? null : takeOffline,
                       child: _progress == null
-                          ? const Text('Take Offline')
+                          ? const Text('Take Map Offline')
                           : Text('$_progress%'),
                     ),
                     // Add a button to reset the map to its original state.
@@ -102,7 +102,6 @@ class _GenerateOfflineMapSampleState extends State<GenerateOfflineMapSample>
     );
   }
 
-  //fixme README/metadata
   void onMapViewReady() async {
     // Create the map from a portal item.
     final portalItem = PortalItem.withPortalAndItemId(
@@ -153,9 +152,6 @@ class _GenerateOfflineMapSampleState extends State<GenerateOfflineMapSample>
 
     setState(() => _ready = false);
 
-    // Prepare an empty directory to store the offline map.
-    final downloadDirectoryUri = await prepareEmptyDownloadDirectory();
-
     // Create parameters specifying the region to take offline.
     final minScale = _mapViewController.scale;
     final maxScale = _mapViewController.arcGISMap?.maxScale ?? minScale + 1;
@@ -167,19 +163,22 @@ class _GenerateOfflineMapSampleState extends State<GenerateOfflineMapSample>
     );
     parameters.continueOnErrors = false;
 
+    // Prepare an empty directory to store the offline map.
+    final downloadDirectoryUri = await prepareEmptyDownloadDirectory();
+
     // Create a job to generate the offline map.
-    final generateOfflineJob = _offlineMapTask.generateOfflineMap(
-      downloadDirectoryUri: downloadDirectoryUri,
+    final generateOfflineMapJob = _offlineMapTask.generateOfflineMap(
       parameters: parameters,
+      downloadDirectoryUri: downloadDirectoryUri,
     );
 
     // Listen for progress updates.
-    generateOfflineJob.onProgressChanged.listen((progress) {
+    generateOfflineMapJob.onProgressChanged.listen((progress) {
       setState(() => _progress = progress);
     });
 
     // Run the job.
-    final result = await generateOfflineJob.run();
+    final result = await generateOfflineMapJob.run();
 
     // Get the offline map and display it.
     _mapViewController.arcGISMap = result.offlineMap;
