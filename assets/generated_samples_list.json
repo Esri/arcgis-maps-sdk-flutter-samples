@@ -481,6 +481,38 @@
     "title": "Find route",
     "key": "find_route"
   },
+  "generate_offline_map": {
+    "category": "Edit and Manage Data",
+    "description": "Take a web map offline.",
+    "ignore": false,
+    "images": [
+      "generate_offline_map.png"
+    ],
+    "keywords": [
+      "download",
+      "offline",
+      "save",
+      "web map",
+      "GenerateOfflineMapJob",
+      "GenerateOfflineMapParameters",
+      "GenerateOfflineMapResult",
+      "OfflineMapTask",
+      "PortalItem"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+      "GenerateOfflineMapJob",
+      "GenerateOfflineMapParameters",
+      "GenerateOfflineMapResult",
+      "OfflineMapTask",
+      "PortalItem"
+    ],
+    "snippets": [
+      "generate_offline_map_sample.dart"
+    ],
+    "title": "Generate offline map",
+    "key": "generate_offline_map"
+  },
   "identify_layer_features": {
     "category": "Search and Query",
     "description": "Identify features in all layers in a map.",
