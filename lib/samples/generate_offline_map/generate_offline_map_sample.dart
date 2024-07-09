@@ -34,11 +34,17 @@ class _GenerateOfflineMapSampleState extends State<GenerateOfflineMapSample>
     with SampleStateSupport {
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
+  // Create a Graphic to show the area to be taken offline.
   final _regionGraphic = Graphic();
+  // Create a GraphicsOverlay to display the Graphic.
   final _graphicsOverlay = GraphicsOverlay();
+  // Declare a map to be loaded later.
   late final ArcGISMap _map;
+  // Declare the OfflineMapTask.
   late final OfflineMapTask _offlineMapTask;
-  double? _progress;
+  // Progress of the OfflineMapTask.
+  int? _progress;
+  // A flag for when the map is viewing offline data.
   var _offline = false;
   // A flag for when the map view is ready and controls can be used.
   var _ready = false;
@@ -62,12 +68,14 @@ class _GenerateOfflineMapSampleState extends State<GenerateOfflineMapSample>
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
+                    // Add a button to take the outlined region offline.
                     ElevatedButton(
                       onPressed: _offline ? null : takeOffline,
                       child: _progress == null
                           ? const Text('Take Offline')
-                          : Text('${(_progress! * 100).round()}%'),
+                          : Text('$_progress%'),
                     ),
+                    // Add a button to reset the map to its original state.
                     ElevatedButton(
                       onPressed: _offline ? reset : null,
                       child: const Text('Reset'),
@@ -94,10 +102,9 @@ class _GenerateOfflineMapSampleState extends State<GenerateOfflineMapSample>
     );
   }
 
+  //fixme README/metadata
   void onMapViewReady() async {
-    //fixme comments
-    //fixme README/metadata
-
+    // Create the map from a portal item.
     final portalItem = PortalItem.withPortalAndItemId(
       portal: Portal.arcGISOnline(),
       itemId: 'acc027394bc84c2fb04d1ed317aac674',
@@ -105,12 +112,15 @@ class _GenerateOfflineMapSampleState extends State<GenerateOfflineMapSample>
     _map = ArcGISMap.withItem(portalItem);
     _mapViewController.arcGISMap = _map;
 
+    // Prepare a Graphic to outline the region to be taken offline.
     _regionGraphic.symbol = SimpleLineSymbol(color: Colors.red, width: 2.0);
     _graphicsOverlay.graphics.add(_regionGraphic);
     _mapViewController.graphicsOverlays.add(_graphicsOverlay);
+    // As the viewpoint changes, update the Graphic's new geometry.
     _mapViewController.onViewpointChanged.listen((_) {
       if (_mapViewController.visibleArea == null) return;
 
+      // The region to take offline is the center 90% of the visible area.
       final regionGeometry = GeometryEngine.scale(
         geometry: _mapViewController.visibleArea!.extent,
         scaleX: 0.9,
@@ -120,11 +130,13 @@ class _GenerateOfflineMapSampleState extends State<GenerateOfflineMapSample>
       _regionGraphic.geometry = regionGeometry;
     });
 
+    // Create an OfflineMapTask for the map.
     _offlineMapTask = OfflineMapTask.withOnlineMap(_map);
 
     setState(() => _ready = true);
   }
 
+  // Create an empty directory to store the offline map.
   Future<Uri> prepareEmptyDownloadDirectory() async {
     final documentsUri = (await getApplicationDocumentsDirectory()).uri;
     final downloadDirectoryUri = documentsUri.resolve('offline_map');
@@ -141,9 +153,12 @@ class _GenerateOfflineMapSampleState extends State<GenerateOfflineMapSample>
 
     setState(() => _ready = false);
 
+    // Prepare an empty directory to store the offline map.
+    final downloadDirectoryUri = await prepareEmptyDownloadDirectory();
+
+    // Create parameters specifying the region to take offline.
     final minScale = _mapViewController.scale;
     final maxScale = _mapViewController.arcGISMap?.maxScale ?? minScale + 1;
-
     final parameters =
         await _offlineMapTask.createDefaultGenerateOfflineMapParameters(
       areaOfInterest: _regionGraphic.geometry!,
@@ -151,18 +166,25 @@ class _GenerateOfflineMapSampleState extends State<GenerateOfflineMapSample>
       maxScale: maxScale,
     );
     parameters.continueOnErrors = false;
-    final downloadDirectoryUri = await prepareEmptyDownloadDirectory();
+
+    // Create a job to generate the offline map.
     final generateOfflineJob = _offlineMapTask.generateOfflineMap(
       downloadDirectoryUri: downloadDirectoryUri,
       parameters: parameters,
     );
+
+    // Listen for progress updates.
     generateOfflineJob.onProgressChanged.listen((progress) {
-      setState(() => _progress = progress / 100.0);
+      setState(() => _progress = progress);
     });
 
+    // Run the job.
     final result = await generateOfflineJob.run();
+
+    // Get the offline map and display it.
     _mapViewController.arcGISMap = result.offlineMap;
 
+    // Remove the graphic that specified the region to take offline.
     _graphicsOverlay.graphics.clear();
 
     setState(() {
@@ -173,6 +195,7 @@ class _GenerateOfflineMapSampleState extends State<GenerateOfflineMapSample>
   }
 
   void reset() async {
+    // Reset the map to its original state and delete the offline map.
     _mapViewController.arcGISMap = _map;
     _graphicsOverlay.graphics.add(_regionGraphic);
     await prepareEmptyDownloadDirectory();
