@@ -53,6 +53,8 @@ class _ShowPortalUserInfoSampleState extends State<ShowPortalUserInfoSample>
     ArcGISEnvironment
         .authenticationManager.arcGISAuthenticationChallengeHandler = null;
 
+    super.dispose();
+
     // Revoke OAuth tokens and remove all credentials to log out.
     await Future.wait(ArcGISEnvironment
         .authenticationManager.arcGISCredentialStore
@@ -60,8 +62,6 @@ class _ShowPortalUserInfoSampleState extends State<ShowPortalUserInfoSample>
         .whereType<OAuthUserCredential>()
         .map((credential) => credential.revokeToken()));
     ArcGISEnvironment.authenticationManager.arcGISCredentialStore.removeAll();
-
-    super.dispose();
   }
 
   @override

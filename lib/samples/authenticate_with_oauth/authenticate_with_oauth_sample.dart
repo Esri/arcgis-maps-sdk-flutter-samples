@@ -66,6 +66,8 @@ class _AuthenticateWithOAuthSampleState
     ArcGISEnvironment
         .authenticationManager.arcGISAuthenticationChallengeHandler = null;
 
+    super.dispose();
+
     // Revoke OAuth tokens and remove all credentials to log out.
     await Future.wait(ArcGISEnvironment
         .authenticationManager.arcGISCredentialStore
@@ -73,8 +75,6 @@ class _AuthenticateWithOAuthSampleState
         .whereType<OAuthUserCredential>()
         .map((credential) => credential.revokeToken()));
     ArcGISEnvironment.authenticationManager.arcGISCredentialStore.removeAll();
-
-    super.dispose();
   }
 
   @override
