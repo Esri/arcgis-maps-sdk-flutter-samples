@@ -14,8 +14,11 @@
 // limitations under the License.
 //
 
+import 'dart:io';
+
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
 
 import '../../utils/sample_state_support.dart';
 
@@ -31,6 +34,12 @@ class _GenerateOfflineMapSampleState extends State<GenerateOfflineMapSample>
     with SampleStateSupport {
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
+  final _regionGraphic = Graphic();
+  final _graphicsOverlay = GraphicsOverlay();
+  late final ArcGISMap _map;
+  late final OfflineMapTask _offlineMapTask;
+  double? _progress;
+  var _offline = false;
   // A flag for when the map view is ready and controls can be used.
   var _ready = false;
 
@@ -48,16 +57,18 @@ class _GenerateOfflineMapSampleState extends State<GenerateOfflineMapSample>
                   child: ArcGISMapView(
                     controllerProvider: () => _mapViewController,
                     onMapViewReady: onMapViewReady,
-                    onTap: onTap,
                   ),
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    // A button to perform a task.
                     ElevatedButton(
-                      onPressed: performTask,
-                      child: const Text('Perform Task'),
+                      onPressed: _offline ? null : takeOffline,
+                      child: const Text('Take Offline'),
+                    ),
+                    ElevatedButton(
+                      onPressed: _offline ? reset : null,
+                      child: const Text('Reset'),
                     ),
                   ],
                 ),
@@ -69,7 +80,9 @@ class _GenerateOfflineMapSampleState extends State<GenerateOfflineMapSample>
               child: SizedBox.expand(
                 child: Container(
                   color: Colors.white30,
-                  child: const Center(child: CircularProgressIndicator()),
+                  child: Center(
+                    child: CircularProgressIndicator(value: _progress),
+                  ),
                 ),
               ),
             ),
@@ -81,24 +94,84 @@ class _GenerateOfflineMapSampleState extends State<GenerateOfflineMapSample>
 
   void onMapViewReady() async {
     //fixme comments
+
     final portalItem = PortalItem.withPortalAndItemId(
       portal: Portal.arcGISOnline(),
       itemId: 'acc027394bc84c2fb04d1ed317aac674',
     );
-    final map = ArcGISMap.withItem(portalItem);
-    _mapViewController.arcGISMap = map;
+    _map = ArcGISMap.withItem(portalItem);
+    _mapViewController.arcGISMap = _map;
+
+    _regionGraphic.symbol = SimpleLineSymbol(color: Colors.red, width: 2.0);
+    _graphicsOverlay.graphics.add(_regionGraphic);
+    _mapViewController.graphicsOverlays.add(_graphicsOverlay);
+    _mapViewController.onViewpointChanged.listen((_) {
+      if (_mapViewController.visibleArea == null) return;
+
+      final regionGeometry = GeometryEngine.scale(
+        geometry: _mapViewController.visibleArea!.extent,
+        scaleX: 0.9,
+        scaleY: 0.9,
+        origin: null,
+      );
+      _regionGraphic.geometry = regionGeometry;
+    });
+
+    _offlineMapTask = OfflineMapTask.withOnlineMap(_map);
+
     setState(() => _ready = true);
   }
 
-  void onTap(Offset offset) {
-    print('Tapped at $offset');
-  }
+  void takeOffline() async {
+    if (_regionGraphic.geometry == null) return;
 
-  void performTask() async {
     setState(() => _ready = false);
-    // Perform some task.
-    print('Perform task');
-    await Future.delayed(const Duration(seconds: 5));
-    setState(() => _ready = true);
+
+    final documentsUri = (await getApplicationDocumentsDirectory()).uri;
+    final downloadDirectoryUri = documentsUri.resolve('offline_map');
+    final downloadDirectory = Directory.fromUri(downloadDirectoryUri);
+    if (downloadDirectory.existsSync()) {
+      downloadDirectory.deleteSync(recursive: true);
+    }
+    downloadDirectory.createSync();
+
+    final minScale = _mapViewController.scale;
+    final maxScale = _mapViewController.arcGISMap?.maxScale ?? minScale + 1;
+
+    final parameters =
+        await _offlineMapTask.createDefaultGenerateOfflineMapParameters(
+      areaOfInterest: _regionGraphic.geometry!,
+      minScale: minScale,
+      maxScale: maxScale,
+    );
+    parameters.continueOnErrors = false;
+    final generateOfflineJob = _offlineMapTask.generateOfflineMap(
+      downloadDirectoryUri: downloadDirectoryUri,
+      parameters: parameters,
+    );
+    generateOfflineJob.onProgressChanged.listen((progress) {
+      setState(() => _progress = progress / 100.0);
+    });
+    generateOfflineJob.onMessageAdded.listen((message) {
+      print('Message: ${message.message}');
+    });
+
+    final result = await generateOfflineJob.run();
+    _mapViewController.arcGISMap = result.offlineMap;
+
+    _graphicsOverlay.graphics.clear();
+
+    setState(() {
+      _progress = null;
+      _offline = true;
+      _ready = true;
+    });
+  }
+
+  void reset() {
+    _mapViewController.arcGISMap = _map;
+    _graphicsOverlay.graphics.add(_regionGraphic);
+    //fixme delete directory
+    setState(() => _offline = false);
   }
 }
