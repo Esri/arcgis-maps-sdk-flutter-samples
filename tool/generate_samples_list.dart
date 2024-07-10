@@ -38,36 +38,36 @@ void generateSamplesList() {
     );
   }
 
-  // get all the individual sample directories
+  // Get all the individual sample directories.
   final individualSampleDirectories = samplesDirectory.listSync();
 
-  // iterate through each directory and get the README.metadata.json file for each sample
+  // Iterate through each directory and get the README.metadata.json file for each sample.
   for (final directory in individualSampleDirectories) {
     final directoryName = directory.path.split(pathSeparator).last;
     final metadataFile = (directory as Directory)
         .listSync()
         .firstWhere((file) => file.path.contains('metadata.json')) as File;
-    // get the json string for the sample
+    // Get the json string for the sample.
     Map<String, dynamic> sampleJsonContent =
         jsonDecode(metadataFile.readAsStringSync());
-    // add a key/value pair that is used by the Sample Viewer app
+    // Add a key/value pair that is used by the Sample Viewer app.
     sampleJsonContent['key'] = directoryName;
-    // add the sample to the list of samples, using the directory name as the key
+    // Add the sample to the list of samples, using the directory name as the key.
     samples[directoryName] = sampleJsonContent;
   }
 
-  // sort alphabetically
+  // Sort alphabetically.
   final sortedSamples = {
     for (var k in samples.keys.toList()..sort()) k: samples[k]
   };
 
-  // print list of samples to console
+  // Print list of samples to console.
   for (var key in sortedSamples.keys) {
     print(key);
   }
   print('Total samples: ${sortedSamples.keys.length}');
 
-  // write the list of sorted samples to the generated_samples_list.json file
+  // Write the list of sorted samples to the generated_samples_list.json file.
   final samplesJsonFile = File(
       '${assetsDirectory.path}${pathSeparator}generated_samples_list.json');
   const encoder = JsonEncoder.withIndent('  ');

@@ -28,7 +28,7 @@ class ShowGridSample extends StatefulWidget {
 
 class _ShowGridSampleState extends State<ShowGridSample>
     with SampleStateSupport {
-  // create a controller for the map view.
+  // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
   final _center = ArcGISPoint(
     x: -7702852.905619,
@@ -94,7 +94,7 @@ class _ShowGridSampleState extends State<ShowGridSample>
     }
   }
 
-  // change the grid color based on the given value.
+  // Change the grid color based on the given value.
   void _onGridColorChanged(Color color) {
     if (_mapViewController.grid != null) {
       final grid = _mapViewController.grid!;
@@ -109,14 +109,14 @@ class _ShowGridSampleState extends State<ShowGridSample>
     }
   }
 
-  // change the label visibility based on the given value.
+  // Change the label visibility based on the given value.
   void _onLabelVisibilityChanged(bool value) {
     if (_mapViewController.grid != null) {
       _mapViewController.grid!.labelVisibility = value;
     }
   }
 
-  // change the label color based on the given value.
+  // Change the label color based on the given value.
   void _onLabelColorChanged(Color color) {
     if (_mapViewController.grid != null) {
       final grid = _mapViewController.grid!;
@@ -134,7 +134,7 @@ class _ShowGridSampleState extends State<ShowGridSample>
     }
   }
 
-  // change the label format if the grid is LatitudeLongitudeGrid.
+  // Change the label format if the grid is LatitudeLongitudeGrid.
   _onLabelFormatChanged(LatitudeLongitudeGridLabelFormat labelFormat) {
     if (_mapViewController.grid is LatitudeLongitudeGrid) {
       final grid = _mapViewController.grid! as LatitudeLongitudeGrid;
@@ -142,7 +142,7 @@ class _ShowGridSampleState extends State<ShowGridSample>
     }
   }
 
-  // change the label position based on the given value.
+  // Change the label position based on the given value.
   void _onLabelPositionChanged(GridLabelPosition labelPosition) {
     if (_mapViewController.grid != null) {
       final grid = _mapViewController.grid!;
@@ -178,7 +178,7 @@ class _ShowGridSampleState extends State<ShowGridSample>
 }
 
 ///
-/// a widget that displays grid options.
+/// A widget that displays grid options.
 ///
 class GridOptions extends StatefulWidget {
   final Function(Grid) onGridChanged;
@@ -219,7 +219,7 @@ class _GridOptionsState extends State<GridOptions> with SampleStateSupport {
     'Degrees Minutes Seconds'
   ];
 
-  // stateful variables
+  // Stateful variables.
   String? grid;
   String? gridColor;
   String? labelColor;
@@ -402,7 +402,7 @@ class _GridOptionsState extends State<GridOptions> with SampleStateSupport {
         throw Exception('Invalid grid type');
     }
 
-    // apply the current settings to the grid.
+    // Apply the current settings to the grid.
     widget.onGridChanged(grid);
     widget.onLabelFormatChanged(labelFormat != null
         ? _getLabelFormat(labelFormat!)

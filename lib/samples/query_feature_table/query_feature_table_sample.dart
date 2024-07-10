@@ -29,13 +29,13 @@ class QueryFeatureTableSample extends StatefulWidget {
 
 class _QueryFeatureTableSampleState extends State<QueryFeatureTableSample>
     with SampleStateSupport {
-  // create a controller for the map view.
+  // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
-  // create a text editing controller.
+  // Create a text editing controller.
   final _textEditingController = TextEditingController();
-  // create a focus node for the search text field.
+  // Create a focus node for the search text field.
   final _searchFocusNode = FocusNode();
-  // create an initial viewpoint.
+  // Create an initial viewpoint.
   final _initialViewpoint = Viewpoint.fromCenter(
     ArcGISPoint(
       x: -11000000,
@@ -44,7 +44,7 @@ class _QueryFeatureTableSampleState extends State<QueryFeatureTableSample>
     ),
     scale: 100000000,
   );
-  // create a feature table and a feature layer.
+  // Create a feature table and a feature layer.
   final _featureTable = ServiceFeatureTable.withUri(Uri.parse(
       'https://services.arcgis.com/jIL9msH9OI208GCb/arcgis/rest/services/USA_Daytime_Population_2016/FeatureServer/0'));
   late FeatureLayer _featureLayer;
@@ -59,11 +59,11 @@ class _QueryFeatureTableSampleState extends State<QueryFeatureTableSample>
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      // create a column with a text field and a map view.
+      // Create a column with a text field and a map view.
       body: SafeArea(
         child: Column(
           children: [
-            // create a text field for searching states.
+            // Create a text field for searching states.
             TextField(
               focusNode: _searchFocusNode,
               controller: _textEditingController,
@@ -77,7 +77,7 @@ class _QueryFeatureTableSampleState extends State<QueryFeatureTableSample>
               ),
               onSubmitted: onSearchSubmitted,
             ),
-            // add a map view to the widget tree and set a controller.
+            // Add a map view to the widget tree and set a controller.
             Expanded(
               child: ArcGISMapView(
                 controllerProvider: () => _mapViewController,
@@ -91,15 +91,15 @@ class _QueryFeatureTableSampleState extends State<QueryFeatureTableSample>
   }
 
   void onMapViewReady() async {
-    // create a map with the topographic basemap style and set to the map view.
+    // Create a map with the topographic basemap style and set to the map view.
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic);
 
-    // create a feature layer and amend the opacity and max scale properties.
+    // Create a feature layer and amend the opacity and max scale properties.
     _featureLayer = FeatureLayer.withFeatureTable(_featureTable)
       ..opacity = 0.8
       ..maxScale = 10000;
 
-    // create a renderer with a fill symbol and apply to the feature layer.
+    // Create a renderer with a fill symbol and apply to the feature layer.
     final lineSymbol = SimpleLineSymbol(
         style: SimpleLineSymbolStyle.solid, color: Colors.black, width: 1);
     final fillSymbol = SimpleFillSymbol(
@@ -110,32 +110,32 @@ class _QueryFeatureTableSampleState extends State<QueryFeatureTableSample>
     final renderer = SimpleRenderer(symbol: fillSymbol);
     _featureLayer.renderer = renderer;
 
-    // add the feature layer to the map and define an initial viewpoint.
+    // Add the feature layer to the map and define an initial viewpoint.
     map.operationalLayers.add(_featureLayer);
     map.initialViewpoint = _initialViewpoint;
-    // set the map to the map view.
+    // Set the map to the map view.
     _mapViewController.arcGISMap = map;
   }
 
   void onSearchSubmitted(String value) async {
-    // clear the selection.
+    // Clear the selection.
     _featureLayer.clearSelection();
 
-    // create query parameters and set the where clause.
+    // Create query parameters and set the where clause.
     final queryParameters = QueryParameters();
     final stateName = value.trim().toUpperCase();
     queryParameters.whereClause = "upper(STATE_NAME) LIKE '$stateName'";
 
-    // query the feature table with the query parameters.
+    // Query the feature table with the query parameters.
     final queryResult =
         await _featureTable.queryFeatures(parameters: queryParameters);
 
-    // get the first feature from the query result.
+    // Get the first feature from the query result.
     final iterator = queryResult.features().iterator;
     if (iterator.moveNext()) {
       final feature = iterator.current;
       if (feature.geometry != null) {
-        // set the viewpoint to the feature's extent.
+        // Set the viewpoint to the feature's extent.
         _mapViewController.setViewpointGeometry(
           feature.geometry!.extent,
           paddingInDiPs: 20.0,
@@ -143,9 +143,9 @@ class _QueryFeatureTableSampleState extends State<QueryFeatureTableSample>
       }
       _featureLayer.selectFeature(feature: feature);
     } else {
-      // show an alert dialog if no matching state is found.
+      // Show an alert dialog if no matching state is found.
       if (mounted) {
-        // set the viewpoint to the initial viewpoint.
+        // Set the viewpoint to the initial viewpoint.
         _mapViewController.setViewpoint(_initialViewpoint);
         showDialog(
           context: context,
@@ -160,7 +160,7 @@ class _QueryFeatureTableSampleState extends State<QueryFeatureTableSample>
   }
 
   void dismissSearch() {
-    // clear the text field and dismiss the keyboard.
+    // Clear the text field and dismiss the keyboard.
     setState(() => _textEditingController.clear());
     FocusManager.instance.primaryFocus?.unfocus();
   }

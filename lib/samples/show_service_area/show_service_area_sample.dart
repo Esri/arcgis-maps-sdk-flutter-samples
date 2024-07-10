@@ -28,14 +28,14 @@ class ShowServiceAreaSample extends StatefulWidget {
 
 class _ShowServiceAreaSampleState extends State<ShowServiceAreaSample>
     with SampleStateSupport {
-  // create a map view controller
+  // Create a map view controller.
   final _mapViewController = ArcGISMapView.createController();
 
-  // create graphics overlays for displaying facilities and barriers.
+  // Create graphics overlays for displaying facilities and barriers.
   final _facilityGraphicsOverlay = GraphicsOverlay();
   final _barrierGraphicsOverlay = GraphicsOverlay();
 
-  // create a graphics overlay for displays service area results and a list of symbols applied for each impedence cutoff added to the service area parameters.
+  // Create a graphics overlay for displays service area results and a list of symbols applied for each impedence cutoff added to the service area parameters.
   final _serviceAreaGraphicsOverlay = GraphicsOverlay();
   final _serviceAreaSymbols = [
     SimpleFillSymbol(
@@ -52,11 +52,12 @@ class _ShowServiceAreaSampleState extends State<ShowServiceAreaSample>
     ),
   ];
 
-  // create a service area task used to find service areas around a facility.
+  // Create a service area task used to find service areas around a facility.
   final _serviceAreaTask = ServiceAreaTask.withUrl(Uri.parse(
       'https://route-api.arcgis.com/arcgis/rest/services/World/ServiceAreas/NAServer/ServiceArea_World'));
   late final ServiceAreaParameters _serviceAreaParameters;
 
+  // A flag for when the map view is ready and controls can be used.
   var _ready = false;
   var _segmentedButtonSelection = Selection.facility;
 
@@ -70,7 +71,7 @@ class _ShowServiceAreaSampleState extends State<ShowServiceAreaSample>
             Column(
               children: [
                 Expanded(
-                  // add a map view to the widget tree and set a controller.
+                  // Add a map view to the widget tree and set a controller.
                   child: ArcGISMapView(
                     controllerProvider: () => _mapViewController,
                     onMapViewReady: onMapViewReady,
@@ -82,7 +83,7 @@ class _ShowServiceAreaSampleState extends State<ShowServiceAreaSample>
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      // create segmented buttons for toggling adding a facility or barrier to the map.
+                      // Create segmented buttons for toggling adding a facility or barrier to the map.
                       SegmentedButton(
                         segments: [
                           ButtonSegment(
@@ -103,7 +104,7 @@ class _ShowServiceAreaSampleState extends State<ShowServiceAreaSample>
                         multiSelectionEnabled: false,
                         showSelectedIcon: false,
                       ),
-                      // create buttons for calculating the service area and resetting.
+                      // Create buttons for calculating the service area and resetting.
                       TextButton(
                         onPressed: _ready ? solveServiceArea : null,
                         child: const Text('Service Areas'),
@@ -117,7 +118,7 @@ class _ShowServiceAreaSampleState extends State<ShowServiceAreaSample>
                 ),
               ],
             ),
-            // display a progress indicator when the ready flag is false - this will indicate the map is loading or the service area task is in progress.
+            // Display a progress indicator when the ready flag is false - this will indicate the map is loading or the service area task is in progress.
             Visibility(
               visible: !_ready,
               child: const Center(child: CircularProgressIndicator()),
@@ -129,58 +130,58 @@ class _ShowServiceAreaSampleState extends State<ShowServiceAreaSample>
   }
 
   void onMapViewReady() async {
-    // create a map with the light gray basemap style and an initial viewpoint.
+    // Create a map with the light gray basemap style and an initial viewpoint.
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISLightGray)
       ..initialViewpoint = Viewpoint.withLatLongScale(
           latitude: 32.73, longitude: -117.16, scale: 25000);
-    // set the map to the map view.
+    // Set the map to the map view.
     _mapViewController.arcGISMap = map;
 
-    // apply a renderer to the barrier graphics overlay.
+    // Apply a renderer to the barrier graphics overlay.
     _barrierGraphicsOverlay.renderer = SimpleRenderer(
       symbol: SimpleFillSymbol(
           style: SimpleFillSymbolStyle.diagonalCross, color: Colors.red),
     );
 
-    // apply a renderer to the facility graphics overlay.
+    // Apply a renderer to the facility graphics overlay.
     _facilityGraphicsOverlay.renderer = SimpleRenderer(
       symbol: PictureMarkerSymbol.withUrl(Uri.parse(
           'https://static.arcgis.com/images/Symbols/SafetyHealth/Hospital.png')),
     );
 
-    // add the graphics overlays to the map view.
+    // Add the graphics overlays to the map view.
     _mapViewController.graphicsOverlays.addAll([
       _serviceAreaGraphicsOverlay,
       _facilityGraphicsOverlay,
       _barrierGraphicsOverlay,
     ]);
 
-    // create default service area parameters for using to solve a service area task.
+    // Create default service area parameters for using to solve a service area task.
     _serviceAreaParameters = await _serviceAreaTask.createDefaultParameters();
-    // returnPolygons defaults to true to return all service areas.
-    // set the overlap behavior when there are results for multiple facilities.
+    // Note: returnPolygons defaults to true to return all service areas.
+    // Set the overlap behavior when there are results for multiple facilities.
     _serviceAreaParameters.geometryAtOverlap =
         ServiceAreaOverlapGeometry.dissolve;
-    // customize impedance cutoffs for facilities (drive time minutes).
-    // Note the defaults are initially set as 5, 10 and 15.
+    // Customize impedance cutoffs for facilities (drive time minutes).
+    // Note: the defaults are initially set as 5, 10 and 15.
     _serviceAreaParameters.defaultImpedanceCutoffs.clear();
     _serviceAreaParameters.defaultImpedanceCutoffs.addAll([3, 8, 12]);
 
-    // toggle the _ready flag to enable the UI.
+    // Toggle the _ready flag to enable the UI.
     setState(() => _ready = true);
   }
 
   void onTap(Offset screenPoint) {
-    // capture the tapped point and convert it to a map point.
+    // Capture the tapped point and convert it to a map point.
     final mapTapPoint =
         _mapViewController.screenToLocation(screen: screenPoint);
     if (mapTapPoint == null) return;
 
-    // add a facility or barrier to the map depending on the current toggle button selection.
+    // Add a facility or barrier to the map depending on the current toggle button selection.
     if (_segmentedButtonSelection == Selection.facility) {
       _facilityGraphicsOverlay.graphics.add(Graphic(geometry: mapTapPoint));
     } else {
-      // create a buffer around the tapped point to create a barrier.
+      // Create a buffer around the tapped point to create a barrier.
       final barrierGeometry =
           GeometryEngine.buffer(geometry: mapTapPoint, distance: 200);
       _barrierGraphicsOverlay.graphics.add(Graphic(geometry: barrierGeometry));
@@ -188,33 +189,33 @@ class _ShowServiceAreaSampleState extends State<ShowServiceAreaSample>
   }
 
   void solveServiceArea() async {
-    // require at least 1 facility to perform a service area calculation.
+    // Require at least 1 facility to perform a service area calculation.
     if (_facilityGraphicsOverlay.graphics.isNotEmpty) {
-      // disable the UI while the service area is calculated.
+      // Disable the UI while the service area is calculated.
       setState(() => _ready = false);
-      // clear previous calculations
+      // Clear previous calculations
       _serviceAreaGraphicsOverlay.graphics.clear();
 
-      // for each graphic in the facilities graphics overlay, add a facility to the parameters.
+      // For each graphic in the facilities graphics overlay, add a facility to the parameters.
       final facilities = _facilityGraphicsOverlay.graphics
           .map((graphic) =>
               ServiceAreaFacility(point: graphic.geometry as ArcGISPoint))
           .toList();
       _serviceAreaParameters.setFacilities(facilities);
 
-      // for each graphic in the barriers graphics overlay, add a polygon barrier to the parameters.
+      // For each graphic in the barriers graphics overlay, add a polygon barrier to the parameters.
       final barriers = _barrierGraphicsOverlay.graphics
           .map(
               (graphic) => PolygonBarrier(polygon: graphic.geometry as Polygon))
           .toList();
       _serviceAreaParameters.setPolygonBarriers(barriers);
 
-      // solve the service area using the parameters.
+      // Solve the service area using the parameters.
       final serviceAreaResult = await _serviceAreaTask.solveServiceArea(
         serviceAreaParameters: _serviceAreaParameters,
       );
 
-      // display service area polygons for each facility - since the service area parameters have
+      // Display service area polygons for each facility - since the service area parameters have
       // geometryAtOverlap set to dissolve and the impedence cutoff values are the same across facilities,
       // we only need to draw the joined polygons for one of the facilities.
       final serviceAreaPolygons =
@@ -228,7 +229,7 @@ class _ShowServiceAreaSampleState extends State<ShowServiceAreaSample>
         );
       }
 
-      // re-enable the UI once the service area task is finished.
+      // Re-enable the UI once the service area task is finished.
       setState(() => _ready = true);
     } else {
       showDialog(
@@ -248,10 +249,10 @@ class _ShowServiceAreaSampleState extends State<ShowServiceAreaSample>
   }
 
   void resetServiceArea() {
-    // clear the facilities and polygon barriers from the service area parameters.
+    // Clear the facilities and polygon barriers from the service area parameters.
     _serviceAreaParameters.clearFacilities();
     _serviceAreaParameters.clearPolygonBarriers();
-    // clear all the graphics from the map.
+    // Clear all the graphics from the map.
     _mapViewController.graphicsOverlays
         .map((overlay) => overlay.graphics.clear())
         .toList();

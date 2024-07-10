@@ -36,44 +36,44 @@ class _StylePointWithSimpleMarkerSymbolSampleState
   void initState() {
     super.initState();
 
-    // create a map with a basemap style
+    // Create a map with a basemap style
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISImageryStandard);
 
-    // create a point using x and y coordinates
+    // Create a point using x and y coordinates
     final point = ArcGISPoint(
       x: -226773,
       y: 6550477,
       spatialReference: SpatialReference.webMercator,
     );
 
-    // set the initial viewpoint of the map to the point and provide a scale
+    // Set the initial viewpoint of the map to the point and provide a scale.
     map.initialViewpoint = Viewpoint.fromCenter(point, scale: 7500);
 
-    // set the map to the mapview controller
+    // Set the map to the mapview controller.
     _mapViewController.arcGISMap = map;
 
-    // create a graphics overlay and add it to the mapview controller
+    // Create a graphics overlay and add it to the mapview controller.
     final graphicsOverlay = GraphicsOverlay();
     _mapViewController.graphicsOverlays.add(graphicsOverlay);
 
-    // create a simple marker symbol with a style, color and size
+    // Create a simple marker symbol with a style, color and size.
     final simpleMarkerSymbol = SimpleMarkerSymbol(
       style: SimpleMarkerSymbolStyle.circle,
       color: Colors.red,
       size: 10.0,
     );
 
-    // create a graphic using the point and simple marker symbol
+    // Create a graphic using the point and simple marker symbol.
     final graphic = Graphic(geometry: point, symbol: simpleMarkerSymbol);
 
-    // add the graphic to the graphics overlay
+    // Add the graphic to the graphics overlay.
     graphicsOverlay.graphics.add(graphic);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // create an ArcGISMapView and assign the mapview controller
+      // Add a map view to the widget tree and set a controller.
       body: ArcGISMapView(
         controllerProvider: () => _mapViewController,
       ),
