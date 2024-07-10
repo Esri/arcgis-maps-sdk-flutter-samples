@@ -203,15 +203,15 @@ class _GenerateOfflineMapSampleState extends State<GenerateOfflineMapSample>
     try {
       // Run the job.
       final result = await _generateOfflineMapJob!.run();
-      _generateOfflineMapJob = null;
 
       // Get the offline map and display it.
       _mapViewController.arcGISMap = result.offlineMap;
+      _generateOfflineMapJob = null;
     } catch (e) {
       // If an error happens (such as cancellation), reset state.
       _generateOfflineMapJob = null;
-      updateRegionGeometry();
       setState(() => _progress = null);
+      updateRegionGeometry();
       return;
     }
 
