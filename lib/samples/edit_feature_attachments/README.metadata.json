@@ -13,27 +13,26 @@
         "TXT",
         "image",
         "picture",
-        "ApplyEditsAsync",
-        "DeleteAttachmentAsync",
+        "ArcGISFeature",
         "FeatureLayer",
-        "FetchAttachmentsAsync",
-        "FetchDataAsync",
         "ServiceFeatureTable",
-        "UpdateFeatureAsync"
+        "addAttachment",
+        "applyEdits",
+        "deleteAttachment",
+        "fetchAttachments"
     ],
     "redirect_from": [],
     "relevant_apis": [
-        "ApplyEditsAsync",
-        "DeleteAttachmentAsync",
+        "ArcGISFeature",
         "FeatureLayer",
-        "FetchAttachmentsAsync",
-        "FetchDataAsync",
         "ServiceFeatureTable",
-        "UpdateFeatureAsync"
+        "addAttachment",
+        "applyEdits",
+        "deleteAttachment",
+        "fetchAttachments"
     ],
     "snippets": [
-        "edit_feature_attachments_sample.dart",
-        "sample.dart"
+        "edit_feature_attachments_sample.dart"
     ],
     "title": "Edit feature attachments"
 }
