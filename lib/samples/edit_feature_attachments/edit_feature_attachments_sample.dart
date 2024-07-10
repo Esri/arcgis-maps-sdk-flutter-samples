@@ -102,13 +102,26 @@ class _EditFeatureAttachmentsSampleState
     ); // end of showModalBottomSheet
   }
 
+  // apply the changes to the feature table.
   void _commitChanges() {
     final serviceFeatureTable =
         _featureLayer.featureTable! as ServiceFeatureTable;
     try {
       serviceFeatureTable.applyEdits();
     } catch (e) {
-      print('Error applying edits: $e');
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Error'),
+          content: Text(e.toString()),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Error'),
+            ),
+          ],
+        ),
+      );
     }
   }
 }
@@ -265,7 +278,20 @@ class _AttachmentsOptionsState extends State<AttachmentsOptions>
                 height: 300,
                 child: Image.memory(data),
               ),
-              actions: <Widget>[
+              actions: [
+                IconButton(
+                  icon: const Icon(Icons.save),
+                  tooltip: 'Save',
+                  onPressed: () {
+                    // save the attachment to the device.
+                    FilePicker.platform.saveFile(
+                      dialogTitle: 'Save Attachment',
+                      fileName: attachment.name,
+                      bytes: data,
+                      lockParentWindow: true,
+                    );
+                  },
+                ),
                 IconButton(
                   icon: const Icon(Icons.close),
                   tooltip: 'Close',
@@ -285,16 +311,37 @@ class _AttachmentsOptionsState extends State<AttachmentsOptions>
   void addAttachment() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
-      allowedExtensions: ['png', 'jpg', 'jpeg', 'pdf'],
+      allowedExtensions: ['png', 'jpg', 'jpeg', 'pdf', 'txt'],
     );
 
     if (result != null) {
       File file = File(result.files.single.path!);
       setState(() => isLoading = true);
 
+      // Get the file extension
+      String fileExtension = file.path.split('.').last.toLowerCase();
+
+      // Use the file extension for determining the content type
+      String contentType = 'application/octet-stream'; // Default content type
+      switch (fileExtension.toLowerCase()) {
+        case '.jpg':
+        case '.jpeg':
+          contentType = 'image/jpeg';
+          break;
+        case '.png':
+          contentType = 'image/png';
+          break;
+        case '.pdf':
+          contentType = 'application/pdf';
+          break;
+        case '.txt':
+          contentType = 'text/plain';
+          break;
+      }
+
       await widget.arcGISFeature
           .addAttachment(
-        contentType: 'image/jpeg',
+        contentType: contentType,
         data: file.readAsBytesSync(),
         name: file.path.split('/').last,
       )
