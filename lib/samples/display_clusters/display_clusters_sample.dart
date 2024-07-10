@@ -39,7 +39,6 @@ class _DisplayClustersSampleState extends State<DisplayClustersSample>
     return Scaffold(
       body: SafeArea(
         top: false,
-        // create a column widget
         child: Column(
           children: [
             Expanded(
