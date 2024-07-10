@@ -46,23 +46,37 @@ class _ApplyClassBreaksRendererToSublayerSampleState
     return Scaffold(
       body: SafeArea(
         top: false,
-        child: Column(
-          // Add the map view and buttons to a column.
+        child: Stack(
           children: [
-            Expanded(
-              // Add a map view to the widget tree and set a controller.
-              child: ArcGISMapView(
-                controllerProvider: () => _mapViewController,
-                onMapViewReady: onMapViewReady,
+            Column(
+              // Add the map view and buttons to a column.
+              children: [
+                Expanded(
+                  // Add a map view to the widget tree and set a controller.
+                  child: ArcGISMapView(
+                    controllerProvider: () => _mapViewController,
+                    onMapViewReady: onMapViewReady,
+                  ),
+                ),
+                Center(
+                  // Apply renderer button.
+                  child: ElevatedButton(
+                    onPressed: !_rendered ? renderLayer : null,
+                    child: const Text('Change Sublayer Renderer'),
+                  ),
+                )
+              ],
+            ),
+            // Display a progress indicator and prevent interaction until state is ready.
+            Visibility(
+              visible: !_ready,
+              child: SizedBox.expand(
+                child: Container(
+                  color: Colors.white30,
+                  child: const Center(child: CircularProgressIndicator()),
+                ),
               ),
             ),
-            Center(
-              // Apply renderer button.
-              child: ElevatedButton(
-                onPressed: _ready && !_rendered ? renderLayer : null,
-                child: const Text('Change Sublayer Renderer'),
-              ),
-            )
           ],
         ),
       ),
