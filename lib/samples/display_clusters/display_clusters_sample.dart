@@ -32,7 +32,7 @@ class _DisplayClustersSampleState extends State<DisplayClustersSample>
   final _mapViewController = ArcGISMapView.createController();
   late ArcGISMap _map;
   // A flag for when the map view is ready and controls can be used.
-  bool _ready = false;
+  var _ready = false;
 
   @override
   Widget build(BuildContext context) {
