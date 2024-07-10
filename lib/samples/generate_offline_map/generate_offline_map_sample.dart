@@ -67,21 +67,13 @@ class _GenerateOfflineMapSampleState extends State<GenerateOfflineMapSample>
                     onMapViewReady: onMapViewReady,
                   ),
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    // Add a button to take the outlined region offline.
-                    ElevatedButton(
-                      onPressed:
-                          _progress != null || _offline ? null : takeOffline,
-                      child: const Text('Take Map Offline'),
-                    ),
-                    // Add a button to reset the map to its original state.
-                    ElevatedButton(
-                      onPressed: _offline ? reset : null,
-                      child: const Text('Reset'),
-                    ),
-                  ],
+                Center(
+                  // Add a button to take the outlined region offline.
+                  child: ElevatedButton(
+                    onPressed:
+                        _progress != null || _offline ? null : takeOffline,
+                    child: const Text('Take Map Offline'),
+                  ),
                 ),
               ],
             ),
@@ -144,25 +136,27 @@ class _GenerateOfflineMapSampleState extends State<GenerateOfflineMapSample>
     _regionGraphic.symbol = SimpleLineSymbol(color: Colors.red, width: 2.0);
     _graphicsOverlay.graphics.add(_regionGraphic);
     _mapViewController.graphicsOverlays.add(_graphicsOverlay);
-    // As the viewpoint changes, update the Graphic's new geometry.
-    _mapViewController.onViewpointChanged.listen((_) {
-      if (_mapViewController.visibleArea == null) return;
-      if (_progress != null) return; //fixme refresh if cancelled
-
-      // The region to take offline is the center 90% of the visible area.
-      final regionGeometry = GeometryEngine.scale(
-        geometry: _mapViewController.visibleArea!.extent,
-        scaleX: 0.9,
-        scaleY: 0.9,
-        origin: null,
-      );
-      _regionGraphic.geometry = regionGeometry;
-    });
+    // As the viewpoint changes, update the region's geometry.
+    _mapViewController.onViewpointChanged.listen((_) => updateRegionGeometry());
 
     // Create an OfflineMapTask for the map.
     _offlineMapTask = OfflineMapTask.withOnlineMap(_map);
 
     setState(() => _ready = true);
+  }
+
+  void updateRegionGeometry() {
+    if (_progress != null) return;
+    if (_mapViewController.visibleArea == null) return;
+
+    // The region to take offline is the center 90% of the visible area.
+    final regionGeometry = GeometryEngine.scale(
+      geometry: _mapViewController.visibleArea!.extent,
+      scaleX: 0.9,
+      scaleY: 0.9,
+      origin: null,
+    );
+    _regionGraphic.geometry = regionGeometry;
   }
 
   // Create an empty directory to store the offline map.
@@ -215,7 +209,8 @@ class _GenerateOfflineMapSampleState extends State<GenerateOfflineMapSample>
       _mapViewController.arcGISMap = result.offlineMap;
       _generateOfflineMapJob = null;
     } catch (e) {
-      _progress = null;
+      setState(() => _progress = null);
+      updateRegionGeometry();
       return;
     }
 
@@ -226,13 +221,5 @@ class _GenerateOfflineMapSampleState extends State<GenerateOfflineMapSample>
       _progress = null;
       _offline = true;
     });
-  }
-
-  void reset() async {
-    // Reset the map to its original state and delete the offline map.
-    _mapViewController.arcGISMap = _map;
-    _graphicsOverlay.graphics.add(_regionGraphic);
-    await prepareEmptyDownloadDirectory();
-    setState(() => _offline = false);
   }
 }
