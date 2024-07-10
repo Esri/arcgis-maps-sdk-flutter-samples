@@ -30,12 +30,21 @@ class StylePointWithSimpleMarkerSymbolSample extends StatefulWidget {
 class _StylePointWithSimpleMarkerSymbolSampleState
     extends State<StylePointWithSimpleMarkerSymbolSample>
     with SampleStateSupport {
+  // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
 
   @override
-  void initState() {
-    super.initState();
+  Widget build(BuildContext context) {
+    return Scaffold(
+      // Add a map view to the widget tree and set a controller.
+      body: ArcGISMapView(
+        controllerProvider: () => _mapViewController,
+        onMapViewReady: _onMapViewReady,
+      ),
+    );
+  }
 
+  void _onMapViewReady() {
     // Create a map with a basemap style.
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISImageryStandard);
 
@@ -68,15 +77,5 @@ class _StylePointWithSimpleMarkerSymbolSampleState
 
     // Add the graphic to the graphics overlay.
     graphicsOverlay.graphics.add(graphic);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      // Add a map view to the widget tree and set a controller.
-      body: ArcGISMapView(
-        controllerProvider: () => _mapViewController,
-      ),
-    );
   }
 }
