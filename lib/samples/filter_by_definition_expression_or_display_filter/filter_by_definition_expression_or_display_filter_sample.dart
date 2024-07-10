@@ -57,20 +57,26 @@ class _FilterByDefinitionExpressionOrDisplayFilterSampleState
             ),
             // Add a text widget to display the feature count.
             Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 // Add a button to apply a definition expression.
-                TextButton(
+                ElevatedButton(
                   onPressed: applyDefinitionExpression,
-                  child: const Text('Apply Expression'),
+                  child: const Text(
+                    'Apply \nExpression',
+                    textAlign: TextAlign.center,
+                  ),
                 ),
                 // Add a button to apply a display filter.
-                TextButton(
+                ElevatedButton(
                   onPressed: applyDisplayFilter,
-                  child: const Text('Apply Filter'),
+                  child: const Text(
+                    'Apply \nFilter',
+                    textAlign: TextAlign.center,
+                  ),
                 ),
                 // Add a button to reset the definition expression and display filter.
-                TextButton(
+                ElevatedButton(
                   onPressed: reset,
                   child: const Text('Reset'),
                 ),
