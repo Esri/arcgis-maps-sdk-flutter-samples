@@ -51,8 +51,7 @@ class _ApplyUniqueValueRendererSampleState
       scale: 52681563.2,
     );
 
-    // Create a feature layer from a service feature table
-    // and set a unique value renderer.
+    // Create a feature layer from a service feature table and set a unique value renderer.
     final uri = Uri.parse(
         'https://sampleserver6.arcgisonline.com/arcgis/rest/services/Census/MapServer/3');
     final serviceFeatureTable = ServiceFeatureTable.withUri(uri);

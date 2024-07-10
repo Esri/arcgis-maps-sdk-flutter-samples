@@ -193,7 +193,7 @@ class _ShowServiceAreaSampleState extends State<ShowServiceAreaSample>
     if (_facilityGraphicsOverlay.graphics.isNotEmpty) {
       // Disable the UI while the service area is calculated.
       setState(() => _ready = false);
-      // Clear previous calculations
+      // Clear previous calculations.
       _serviceAreaGraphicsOverlay.graphics.clear();
 
       // For each graphic in the facilities graphics overlay, add a facility to the parameters.

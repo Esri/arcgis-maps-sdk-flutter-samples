@@ -196,7 +196,7 @@ class _AddFeatureLayersSampleState extends State<AddFeatureLayersSample>
         PortalItem.withPortalAndItemId(portal: portal, itemId: itemId);
     // Load the portal item.
     await portalItem.load();
-    // Create a feature layer with the portal item and layer ID
+    // Create a feature layer with the portal item and layer ID.
     final portalItemFeatureLayer = FeatureLayer.withItem(
       featureServiceItem: portalItem,
       layerId: 0,

@@ -36,10 +36,10 @@ class _StylePointWithSimpleMarkerSymbolSampleState
   void initState() {
     super.initState();
 
-    // Create a map with a basemap style
+    // Create a map with a basemap style.
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISImageryStandard);
 
-    // Create a point using x and y coordinates
+    // Create a point using x and y coordinates.
     final point = ArcGISPoint(
       x: -226773,
       y: 6550477,
