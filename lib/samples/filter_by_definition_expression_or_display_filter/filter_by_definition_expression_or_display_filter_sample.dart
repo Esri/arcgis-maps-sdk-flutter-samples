@@ -30,15 +30,15 @@ class FilterByDefinitionExpressionOrDisplayFilterSample extends StatefulWidget {
 class _FilterByDefinitionExpressionOrDisplayFilterSampleState
     extends State<FilterByDefinitionExpressionOrDisplayFilterSample>
     with SampleStateSupport {
-  // create a map view controller
+  // Create a map view controller.
   final _mapViewController = ArcGISMapView.createController();
-  // create a feature layer
+  // Create a feature layer.
   final _featureLayer = FeatureLayer.withFeatureTable(
       ServiceFeatureTable.withUri(Uri.parse(
           'https://services2.arcgis.com/ZQgQTuoyBrtmoGdP/arcgis/rest/services/SF_311_Incidents/FeatureServer/0')));
-  // create a display filter definition
+  // Create a display filter definition.
   ManualDisplayFilterDefinition? _displayFilterDefinition;
-  // create a definition expression
+  // Create a definition expression.
   var _definitionExpression = '';
 
   @override
@@ -49,27 +49,27 @@ class _FilterByDefinitionExpressionOrDisplayFilterSampleState
         child: Column(
           children: [
             Expanded(
-              // add a map view to the widget tree and set a controller.
+              // Add a map view to the widget tree and set a controller.
               child: ArcGISMapView(
                 controllerProvider: () => _mapViewController,
                 onMapViewReady: onMapViewReady,
               ),
             ),
-            // add a text widget to display the feature count
+            // Add a text widget to display the feature count.
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // add a button to apply a definition expression
+                // Add a button to apply a definition expression.
                 TextButton(
                   onPressed: applyDefinitionExpression,
                   child: const Text('Apply Expression'),
                 ),
-                // add a button to apply a display filter
+                // Add a button to apply a display filter.
                 TextButton(
                   onPressed: applyDisplayFilter,
                   child: const Text('Apply Filter'),
                 ),
-                // add a button to reset the definition expression and display filter
+                // Add a button to reset the definition expression and display filter.
                 TextButton(
                   onPressed: reset,
                   child: const Text('Reset'),
@@ -83,77 +83,76 @@ class _FilterByDefinitionExpressionOrDisplayFilterSampleState
   }
 
   void onMapViewReady() {
-    // create a map with a topographic basemap style
+    // Create a map with a topographic basemap style.
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic);
-    // add the feature layer to the map
+    // Add the feature layer to the map.
     map.operationalLayers.add(_featureLayer);
-    // set the initial viewpoint
+    // Set the initial viewpoint.
     map.initialViewpoint = Viewpoint.withLatLongScale(
       latitude: 37.7759,
       longitude: -122.45044,
       scale: 100000,
     );
 
-    // set the map to the map view.
+    // Set the map to the map view.
     _mapViewController.arcGISMap = map;
   }
 
   void applyDefinitionExpression() async {
-    // remove the display filter
+    // Remove the display filter.
     _displayFilterDefinition = null;
-    // apply a definition expression to the feature layer
+    // Apply a definition expression to the feature layer.
     _definitionExpression = "req_Type = 'Tree Maintenance or Damage'";
-    // count the number of features
+    // Count the number of features.
     await calculateFeatureCount();
   }
 
   void applyDisplayFilter() async {
-    // remove the definition expression
+    // Remove the definition expression.
     _definitionExpression = '';
-    // apply a display filter to the feature layer
+    // Apply a display filter to the feature layer.
     final displayFilter = DisplayFilter.withWhereClause(
         name: 'Damaged Trees',
         whereClause: "req_type LIKE '%Tree Maintenance%'");
-    // create a manual display filter definition
+    // Create a manual display filter definition.
     final manualDisplayFilterDefinition =
         ManualDisplayFilterDefinition.withFilters(
             activeFilter: displayFilter, availableFilters: [displayFilter]);
     _displayFilterDefinition = manualDisplayFilterDefinition;
-    // count the number of features
+    // Count the number of features.
     await calculateFeatureCount();
   }
 
   void reset() async {
-    // remove the definition expression and display filter
+    // Remove the definition expression and display filter.
     _displayFilterDefinition = null;
     _definitionExpression = '';
-    // count the number of features
+    // Count the number of features.
     await calculateFeatureCount();
   }
 
   Future<void> calculateFeatureCount() async {
     _featureLayer.displayFilterDefinition = _displayFilterDefinition;
     _featureLayer.definitionExpression = _definitionExpression;
-    // get the current extent of the map view
+    // Get the current extent of the map view.
     final extent = _mapViewController
         .getCurrentViewpoint(viewpointType: ViewpointType.boundingGeometry)
         ?.targetGeometry
         .extent;
 
-    // create query parameters
+    // Create query parameters.
     final queryParameters = QueryParameters();
     queryParameters.geometry = extent;
 
-    // query the feature count
+    // Query the feature count.
     final featureCount = await _featureLayer.featureTable!
         .queryFeatureCount(queryParameters: queryParameters);
 
-    // show the feature count in an alert dialog
+    // Show the feature count in an alert dialog.
     if (mounted) {
       showDialog(
         context: context,
         builder: (context) {
-          // create an alert dialog
           return AlertDialog(
             title: const Text(
               'Current Feature Count',

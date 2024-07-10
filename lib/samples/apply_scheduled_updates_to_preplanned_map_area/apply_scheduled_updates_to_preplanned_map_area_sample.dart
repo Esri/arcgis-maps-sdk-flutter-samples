@@ -33,22 +33,22 @@ class ApplyScheduledUpdatesToPreplannedMapAreaSample extends StatefulWidget {
 class _ApplyScheduledUpdatesToPreplannedMapAreaSampleState
     extends State<ApplyScheduledUpdatesToPreplannedMapAreaSample>
     with SampleStateSupport {
-  // Create the map controller
+  // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
-  // Flag indicating if an update is avalable for the map package
+  // Flag indicating if an update is avalable for the map package.
   var _canUpdate = false;
-  // Flag that will be set to true when all properties have been initialized
+  // Flag that will be set to true when all properties have been initialized.
   var _ready = false;
-  // Status of the update availability
+  // Status of the update availability.
   var _updateStatus = OfflineUpdateAvailability.indeterminate;
-  // Size in KB of the available update
+  // Size in KB of the available update.
   var _updateSizeKB = 0.0;
-  // The Active mobile map package
+  // The Active mobile map package.
   MobileMapPackage? _mobileMapPackage;
-  // Offline task and parameters used for updating the map package
+  // Offline task and parameters used for updating the map package.
   OfflineMapSyncTask? _offlineMapSyncTask;
   OfflineMapSyncParameters? _mapSyncParameters;
-  // The location of the map package on the device
+  // The location of the map package on the device.
   late final Uri _dataUri;
 
   @override
@@ -62,7 +62,7 @@ class _ApplyScheduledUpdatesToPreplannedMapAreaSampleState
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Expanded(
-                  // Add a map view to the widget tree and set a controller
+                  // Add a map view to the widget tree and set a controller.
                   child: ArcGISMapView(
                     controllerProvider: () => _mapViewController,
                     onMapViewReady: onMapViewReady,
@@ -81,7 +81,7 @@ class _ApplyScheduledUpdatesToPreplannedMapAreaSampleState
                     ),
                     Center(
                       child: ElevatedButton(
-                          // Disable the button if no update is available
+                          // Disable the button if no update is available.
                           onPressed: _canUpdate ? syncUpdates : null,
                           child: const Text('Apply Updates')),
                     ),
@@ -89,7 +89,7 @@ class _ApplyScheduledUpdatesToPreplannedMapAreaSampleState
                 )
               ],
             ),
-            // Display a progress indicator and prevent interaction before state is ready
+            // Display a progress indicator and prevent interaction before state is ready.
             Visibility(
               visible: !_ready,
               child: SizedBox.expand(
@@ -106,20 +106,20 @@ class _ApplyScheduledUpdatesToPreplannedMapAreaSampleState
   }
 
   void onMapViewReady() async {
-    // Setting the path to the map package data
+    // Set the path to the map package data.
     final appDir = await getApplicationDocumentsDirectory();
     _dataUri = Uri.parse('${appDir.absolute.path}/canyonlands');
 
-    // Prepare (download and extract) the map package data
+    // Prepare (download and extract) the map package data.
     await _prepareData();
 
-    // Check if there is an update for the map package
+    // Check if there is an update for the map package.
     await _checkForUpdates();
 
     setState(() => _ready = true);
   }
 
-  // Perform the map data update
+  // Perform the map data update.
   Future<void> syncUpdates() async {
     setState(() => _canUpdate = false);
 
@@ -139,12 +139,12 @@ class _ApplyScheduledUpdatesToPreplannedMapAreaSampleState
         );
       }
     } finally {
-      // Refresh the update status
+      // Refresh the update status.
       await _checkForUpdates();
     }
   }
 
-  // Function to check for map package updates
+  // Function to check for map package updates.
   Future<void> _checkForUpdates() async {
     final updatesInfo = await _offlineMapSyncTask!.checkForUpdates();
     setState(() {
@@ -155,14 +155,14 @@ class _ApplyScheduledUpdatesToPreplannedMapAreaSampleState
     });
   }
 
-  // Function to load the map package into the map
+  // Load the map package into the map.
   Future<bool> _loadMapPackageMap() async {
-    // Reset the map package
+    // Reset the map package.
     _mobileMapPackage?.close();
     _mobileMapPackage = null;
     _mobileMapPackage = MobileMapPackage.withFileUri(_dataUri);
 
-    // Try to load the map package
+    // Try to load the map package.
     try {
       await _mobileMapPackage!.load();
     } catch (err) {
@@ -182,14 +182,14 @@ class _ApplyScheduledUpdatesToPreplannedMapAreaSampleState
       return false;
     }
 
-    // Load the first map in the package
+    // Load the first map in the package.
     _mapViewController.arcGISMap = _mobileMapPackage!.maps.first;
 
-    // Set the offline map sync task
+    // Set the offline map sync task.
     _offlineMapSyncTask =
         OfflineMapSyncTask.withMap(_mapViewController.arcGISMap!);
 
-    // Set the map sync parameters
+    // Set the map sync parameters.
     _mapSyncParameters =
         await _offlineMapSyncTask!.createDefaultOfflineMapSyncParameters()
           ..syncDirection = SyncDirection.none
@@ -205,14 +205,14 @@ class _ApplyScheduledUpdatesToPreplannedMapAreaSampleState
   Future<void> _prepareData() async {
     final archiveFile = File.fromUri(Uri.parse('${_dataUri.path}.zip'));
     if (archiveFile.existsSync()) {
-      // The map package is already downladed. Extract it
+      // The map package is already downladed. Extract it.
       await extractZipArchive(archiveFile);
     } else {
-      // The map package must be downloaded. The package will be extracted after downloading
+      // Download the map package and extract it.
       await downloadSampleData(['740b663bff5e4198b9b6674af93f638a']);
     }
 
-    // Load the map package from the extracted map package
+    // Load the map package from the extracted map package.
     await _loadMapPackageMap();
   }
 
