@@ -12,6 +12,7 @@ import 'package:arcgis_maps_sdk_flutter_samples/samples/display_clusters/display
 import 'package:arcgis_maps_sdk_flutter_samples/samples/display_map/display_map_sample.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/display_map_from_mobile_map_package/display_map_from_mobile_map_package_sample.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/download_preplanned_map_area/download_preplanned_map_area_sample.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/samples/edit_feature_attachments/edit_feature_attachments_sample.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/filter_by_definition_expression_or_display_filter/filter_by_definition_expression_or_display_filter_sample.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/find_address_with_reverse_geocode/find_address_with_reverse_geocode_sample.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/find_closest_facility_from_point/find_closest_facility_from_point_sample.dart';
@@ -53,6 +54,7 @@ const sampleWidgets = <String, Widget>{
   'display_map': DisplayMapSample(),
   'display_map_from_mobile_map_package': DisplayMapFromMobileMapPackageSample(),
   'download_preplanned_map_area': DownloadPreplannedMapAreaSample(),
+  'edit_feature_attachments': EditFeatureAttachmentsSample(),
   'filter_by_definition_expression_or_display_filter':
       FilterByDefinitionExpressionOrDisplayFilterSample(),
   'find_address_with_reverse_geocode': FindAddressWithReverseGeocodeSample(),
