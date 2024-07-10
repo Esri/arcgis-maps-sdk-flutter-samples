@@ -53,43 +53,56 @@ class _FindRouteSampleState extends State<FindRouteSample>
     return Scaffold(
       body: SafeArea(
         top: false,
-        // Create a column with buttons for generating the route and showing the directions.
-        child: Column(
+        child: Stack(
           children: [
-            Expanded(
-              // Add a map view to the widget tree and set a controller.
-              child: ArcGISMapView(
-                controllerProvider: () => _mapViewController,
-                onMapViewReady: onMapViewReady,
+            // Create a column with buttons for generating the route and showing the directions.
+            Column(
+              children: [
+                Expanded(
+                  // Add a map view to the widget tree and set a controller.
+                  child: ArcGISMapView(
+                    controllerProvider: () => _mapViewController,
+                    onMapViewReady: onMapViewReady,
+                  ),
+                ),
+                SizedBox(
+                  height: 60,
+                  // Add the buttons to the column.
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      // Create a button to generate the route.
+                      ElevatedButton(
+                        onPressed:
+                            _routeGenerated ? null : () => generateRoute(),
+                        child: const Text('Route'),
+                      ),
+                      // Create a button to show the directions.
+                      ElevatedButton(
+                        onPressed: _routeGenerated
+                            ? () => showDialog(
+                                  context: context,
+                                  builder: (context) => showDirections(context),
+                                )
+                            : null,
+                        child: const Text('Directions'),
+                      ),
+                    ],
+                  ),
+                )
+              ],
+            ),
+            // Display a progress indicator and prevent interaction until state is ready.
+            Visibility(
+              visible: !_ready,
+              child: SizedBox.expand(
+                child: Container(
+                  color: Colors.white30,
+                  child: const Center(child: CircularProgressIndicator()),
+                ),
               ),
             ),
-            SizedBox(
-              height: 60,
-              // Add the buttons to the column.
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  // Create a button to generate the route.
-                  ElevatedButton(
-                    onPressed: _routeGenerated || !_ready
-                        ? null
-                        : () => generateRoute(),
-                    child: const Text('Route'),
-                  ),
-                  // Create a button to show the directions.
-                  ElevatedButton(
-                    onPressed: _routeGenerated
-                        ? () => showDialog(
-                              context: context,
-                              builder: (context) => showDirections(context),
-                            )
-                        : null,
-                    child: const Text('Directions'),
-                  ),
-                ],
-              ),
-            )
           ],
         ),
       ),
