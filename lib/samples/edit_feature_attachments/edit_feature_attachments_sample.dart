@@ -95,8 +95,21 @@ class _EditFeatureAttachmentsSampleState
 
     showModalBottomSheet(
       context: context,
-      builder: (context) => AttachmentsOptions(arcGISFeature: feature),
+      builder: (context) => AttachmentsOptions(
+        arcGISFeature: feature,
+        commitChanges: _commitChanges,
+      ),
     ); // end of showModalBottomSheet
+  }
+
+  void _commitChanges() {
+    final serviceFeatureTable =
+        _featureLayer.featureTable! as ServiceFeatureTable;
+    try {
+      serviceFeatureTable.applyEdits();
+    } catch (e) {
+      print('Error applying edits: $e');
+    }
   }
 }
 
@@ -105,10 +118,12 @@ class _EditFeatureAttachmentsSampleState
 //
 class AttachmentsOptions extends StatefulWidget {
   final ArcGISFeature arcGISFeature;
+  final Function() commitChanges;
 
   const AttachmentsOptions({
     super.key,
     required this.arcGISFeature,
+    required this.commitChanges,
   });
 
   @override
@@ -223,7 +238,10 @@ class _AttachmentsOptionsState extends State<AttachmentsOptions>
   void deleteAttachment(Attachment attachment) async {
     setState(() => isLoading = true);
 
-    await widget.arcGISFeature.deleteAttachment(attachment);
+    await widget.arcGISFeature.deleteAttachment(attachment).then((_) {
+      widget.commitChanges();
+    });
+
     _loadAttachments();
 
     setState(() => isLoading = false);
@@ -274,11 +292,16 @@ class _AttachmentsOptionsState extends State<AttachmentsOptions>
       File file = File(result.files.single.path!);
       setState(() => isLoading = true);
 
-      await widget.arcGISFeature.addAttachment(
+      await widget.arcGISFeature
+          .addAttachment(
         contentType: 'image/jpeg',
         data: file.readAsBytesSync(),
         name: file.path.split('/').last,
-      );
+      )
+          .then((_) {
+        widget.commitChanges();
+      });
+
       _loadAttachments();
 
       setState(() => isLoading = false);
