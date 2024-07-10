@@ -103,11 +103,11 @@ class _ApplyClassBreaksRendererToSublayerSampleState
 
   ClassBreaksRenderer createPopulationClassBreaksRenderer() {
     // Create colors for the class breaks.
-    var blue1 = const Color.fromARGB(255, 153, 206, 231);
-    var blue2 = const Color.fromARGB(255, 108, 192, 232);
-    var blue3 = const Color.fromARGB(255, 77, 173, 218);
-    var blue4 = const Color.fromARGB(255, 28, 130, 178);
-    var blue5 = const Color.fromARGB(255, 2, 75, 109);
+    const blue1 = Color.fromARGB(255, 153, 206, 231);
+    const blue2 = Color.fromARGB(255, 108, 192, 232);
+    const blue3 = Color.fromARGB(255, 77, 173, 218);
+    const blue4 = Color.fromARGB(255, 28, 130, 178);
+    const blue5 = Color.fromARGB(255, 2, 75, 109);
 
     // Create symbols for the class breaks.
     final outline = SimpleLineSymbol(
