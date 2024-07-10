@@ -42,9 +42,9 @@ class _GenerateOfflineMapSampleState extends State<GenerateOfflineMapSample>
   late final ArcGISMap _map;
   // Declare the OfflineMapTask.
   late final OfflineMapTask _offlineMapTask;
-  //fixme comment
+  // Declare the GenerateOfflineMapJob.
   GenerateOfflineMapJob? _generateOfflineMapJob;
-  // Progress of the OfflineMapTask.
+  // Progress of the GenerateOfflineMapJob.
   int? _progress;
   // A flag for when the map is viewing offline data.
   var _offline = false;
@@ -89,7 +89,7 @@ class _GenerateOfflineMapSampleState extends State<GenerateOfflineMapSample>
                 ),
               ),
             ),
-            //fixme comments
+            // Display a progress indicator and a cancel button during the offline map generation.
             Visibility(
               visible: _progress != null,
               child: Center(
@@ -103,11 +103,13 @@ class _GenerateOfflineMapSampleState extends State<GenerateOfflineMapSample>
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
+                      // Add a progress indicator.
                       Text('$_progress%'),
                       LinearProgressIndicator(
                         value: _progress != null ? _progress! / 100.0 : 0.0,
                       ),
                       const SizedBox(height: 20.0),
+                      // Add a button to cancel the job.
                       ElevatedButton(
                         onPressed: () => _generateOfflineMapJob?.cancel(),
                         child: const Text('Cancel'),
@@ -145,6 +147,7 @@ class _GenerateOfflineMapSampleState extends State<GenerateOfflineMapSample>
     setState(() => _ready = true);
   }
 
+  // Update the region to be taken offline.
   void updateRegionGeometry() {
     if (_progress != null) return;
     if (_mapViewController.visibleArea == null) return;
@@ -159,21 +162,11 @@ class _GenerateOfflineMapSampleState extends State<GenerateOfflineMapSample>
     _regionGraphic.geometry = regionGeometry;
   }
 
-  // Create an empty directory to store the offline map.
-  Future<Uri> prepareEmptyDownloadDirectory() async {
-    final documentsUri = (await getApplicationDocumentsDirectory()).uri;
-    final downloadDirectoryUri = documentsUri.resolve('offline_map');
-    final downloadDirectory = Directory.fromUri(downloadDirectoryUri);
-    if (downloadDirectory.existsSync()) {
-      downloadDirectory.deleteSync(recursive: true);
-    }
-    downloadDirectory.createSync();
-    return downloadDirectoryUri;
-  }
-
+  // Take the selected region offline.
   void takeOffline() async {
     if (_regionGraphic.geometry == null) return;
 
+    // Cause the progress indicator to appear.
     setState(() => _progress = 0);
 
     // Create parameters specifying the region to take offline.
@@ -188,7 +181,13 @@ class _GenerateOfflineMapSampleState extends State<GenerateOfflineMapSample>
     parameters.continueOnErrors = false;
 
     // Prepare an empty directory to store the offline map.
-    final downloadDirectoryUri = await prepareEmptyDownloadDirectory();
+    final documentsUri = (await getApplicationDocumentsDirectory()).uri;
+    final downloadDirectoryUri = documentsUri.resolve('offline_map');
+    final downloadDirectory = Directory.fromUri(downloadDirectoryUri);
+    if (downloadDirectory.existsSync()) {
+      downloadDirectory.deleteSync(recursive: true);
+    }
+    downloadDirectory.createSync();
 
     // Create a job to generate the offline map.
     _generateOfflineMapJob = _offlineMapTask.generateOfflineMap(
@@ -204,19 +203,22 @@ class _GenerateOfflineMapSampleState extends State<GenerateOfflineMapSample>
     try {
       // Run the job.
       final result = await _generateOfflineMapJob!.run();
+      _generateOfflineMapJob = null;
 
       // Get the offline map and display it.
       _mapViewController.arcGISMap = result.offlineMap;
-      _generateOfflineMapJob = null;
     } catch (e) {
-      setState(() => _progress = null);
+      // If an error happens (such as cancellation), reset state.
+      _generateOfflineMapJob = null;
       updateRegionGeometry();
+      setState(() => _progress = null);
       return;
     }
 
     // Remove the graphic that specified the region to take offline.
     _graphicsOverlay.graphics.clear();
 
+    // The job was successful and we are now viewing the offline amp.
     setState(() {
       _progress = null;
       _offline = true;
