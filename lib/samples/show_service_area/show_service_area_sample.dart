@@ -57,9 +57,13 @@ class _ShowServiceAreaSampleState extends State<ShowServiceAreaSample>
       'https://route-api.arcgis.com/arcgis/rest/services/World/ServiceAreas/NAServer/ServiceArea_World'));
   late final ServiceAreaParameters _serviceAreaParameters;
 
+  // A state variable for controlling the segmented button selection.
+  var _segmentedButtonSelection = Selection.facility;
+
   // A flag for when the map view is ready and controls can be used.
   var _ready = false;
-  var _segmentedButtonSelection = Selection.facility;
+  // A flag for when the service area task is in progress.
+  var _taskInProgress = false;
 
   @override
   Widget build(BuildContext context) {
@@ -75,7 +79,7 @@ class _ShowServiceAreaSampleState extends State<ShowServiceAreaSample>
                   child: ArcGISMapView(
                     controllerProvider: () => _mapViewController,
                     onMapViewReady: onMapViewReady,
-                    onTap: _ready ? onTap : null,
+                    onTap: onTap,
                   ),
                 ),
                 SizedBox(
@@ -106,11 +110,11 @@ class _ShowServiceAreaSampleState extends State<ShowServiceAreaSample>
                       ),
                       // Create buttons for calculating the service area and resetting.
                       TextButton(
-                        onPressed: _ready ? solveServiceArea : null,
+                        onPressed: solveServiceArea,
                         child: const Text('Service Areas'),
                       ),
                       TextButton(
-                        onPressed: _ready ? resetServiceArea : null,
+                        onPressed: resetServiceArea,
                         child: const Text('Reset'),
                       ),
                     ],
@@ -120,8 +124,13 @@ class _ShowServiceAreaSampleState extends State<ShowServiceAreaSample>
             ),
             // Display a progress indicator when the ready flag is false - this will indicate the map is loading or the service area task is in progress.
             Visibility(
-              visible: !_ready,
-              child: const Center(child: CircularProgressIndicator()),
+              visible: !_ready || _taskInProgress,
+              child: SizedBox.expand(
+                child: Container(
+                  color: Colors.white30,
+                  child: const Center(child: CircularProgressIndicator()),
+                ),
+              ),
             ),
           ],
         ),
@@ -192,7 +201,7 @@ class _ShowServiceAreaSampleState extends State<ShowServiceAreaSample>
     // Require at least 1 facility to perform a service area calculation.
     if (_facilityGraphicsOverlay.graphics.isNotEmpty) {
       // Disable the UI while the service area is calculated.
-      setState(() => _ready = false);
+      setState(() => _taskInProgress = true);
       // Clear previous calculations.
       _serviceAreaGraphicsOverlay.graphics.clear();
 
@@ -230,7 +239,7 @@ class _ShowServiceAreaSampleState extends State<ShowServiceAreaSample>
       }
 
       // Re-enable the UI once the service area task is finished.
-      setState(() => _ready = true);
+      setState(() => _taskInProgress = false);
     } else {
       showDialog(
         context: context,
