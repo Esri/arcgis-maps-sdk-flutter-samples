@@ -20,21 +20,22 @@ When prompted, enter your ArcGIS Online credentials.
 4. The `ArcGISAuthenticationChallengeHandler` callback is called to handle the authentication challenge.
 5. The OAuth login process is triggered using `OAuthUserCredential.create()`.
 
-If the portal is successfully loaded, the `portalUser` property is used to populate a series of fields including:
+If the portal is successfully loaded, the `user` property is used to populate a series of fields including:
 
-* fullName
-* username
-* email
-* description
-* access
+* `fullName`
+* `username`
+* `email`
+* `thumbnail`
+* `userDescription`
+* `access`
 
 Similarly, the `portalInfo` property is used to populate:
 
-* organizationName
-* organizationDescription
-* thumbnailUrl
-* canSearchPublic
-* canSharePublic
+* `organizationName`
+* `organizationDescription`
+* `thumbnail`
+* `canSearchPublic`
+* `canSharePublic`
 
 ## Relevant API
 
