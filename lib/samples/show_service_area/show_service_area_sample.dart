@@ -85,18 +85,18 @@ class _ShowServiceAreaSampleState extends State<ShowServiceAreaSample>
                 SizedBox(
                   height: 60,
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       // Create segmented buttons for toggling adding a facility or barrier to the map.
                       SegmentedButton(
-                        segments: [
+                        segments: const [
                           ButtonSegment(
                             value: Selection.facility,
-                            label: Text(Selection.facility.name),
+                            label: Text('Facility'),
                           ),
                           ButtonSegment(
                             value: Selection.barrier,
-                            label: Text(Selection.barrier.name),
+                            label: Text('Barrier'),
                           ),
                         ],
                         selected: {_segmentedButtonSelection},
@@ -109,11 +109,11 @@ class _ShowServiceAreaSampleState extends State<ShowServiceAreaSample>
                         showSelectedIcon: false,
                       ),
                       // Create buttons for calculating the service area and resetting.
-                      TextButton(
+                      ElevatedButton(
                         onPressed: solveServiceArea,
                         child: const Text('Service Areas'),
                       ),
-                      TextButton(
+                      ElevatedButton(
                         onPressed: resetServiceArea,
                         child: const Text('Reset'),
                       ),
