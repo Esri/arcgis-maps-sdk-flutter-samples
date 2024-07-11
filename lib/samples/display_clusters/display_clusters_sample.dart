@@ -39,20 +39,34 @@ class _DisplayClustersSampleState extends State<DisplayClustersSample>
     return Scaffold(
       body: SafeArea(
         top: false,
-        child: Column(
+        child: Stack(
           children: [
-            Expanded(
-              // Add a map view to the widget tree and set a controller.
-              child: ArcGISMapView(
-                controllerProvider: () => _mapViewController,
-                onMapViewReady: onMapViewReady,
-              ),
+            Column(
+              children: [
+                Expanded(
+                  // Add a map view to the widget tree and set a controller.
+                  child: ArcGISMapView(
+                    controllerProvider: () => _mapViewController,
+                    onMapViewReady: onMapViewReady,
+                  ),
+                ),
+                Center(
+                  // Create a button to toggle feature clustering.
+                  child: ElevatedButton(
+                    onPressed: toggleFeatureClustering,
+                    child: const Text('Toggle feature clustering'),
+                  ),
+                ),
+              ],
             ),
-            Center(
-              // Create a button to toggle feature clustering.
-              child: ElevatedButton(
-                onPressed: _ready ? toggleFeatureClustering : null,
-                child: const Text('Toggle feature clustering'),
+            // Display a progress indicator and prevent interaction until state is ready.
+            Visibility(
+              visible: !_ready,
+              child: SizedBox.expand(
+                child: Container(
+                  color: Colors.white30,
+                  child: const Center(child: CircularProgressIndicator()),
+                ),
               ),
             ),
           ],

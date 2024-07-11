@@ -54,7 +54,17 @@ class _FindAddressWithReverseGeocodeSampleState
           ArcGISMapView(
             controllerProvider: () => _mapViewController,
             onMapViewReady: onMapViewReady,
-            onTap: _ready ? onTap : null,
+            onTap: onTap,
+          ),
+          // Display a progress indicator and prevent interaction until state is ready.
+          Visibility(
+            visible: !_ready,
+            child: SizedBox.expand(
+              child: Container(
+                color: Colors.white30,
+                child: const Center(child: CircularProgressIndicator()),
+              ),
+            ),
           ),
         ],
       ),
@@ -83,8 +93,6 @@ class _FindAddressWithReverseGeocodeSampleState
 
     // Load the locator task and once loaded set the _ready flag to true to enable the UI.
     await _worldLocatorTask.load();
-
-    // Set the ready state variable to true to enable the sample UI.
     setState(() => _ready = true);
   }
 

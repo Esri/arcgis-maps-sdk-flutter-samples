@@ -36,14 +36,30 @@ class _DisplayMapFromMobileMapPackageSampleState
     with SampleStateSupport {
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
+  // A flag for when the map view is ready.
+  var _ready = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       // Add a map view to the widget tree and set a controller.
-      body: ArcGISMapView(
-        controllerProvider: () => _mapViewController,
-        onMapViewReady: onMapViewReady,
+      body: Stack(
+        children: [
+          ArcGISMapView(
+            controllerProvider: () => _mapViewController,
+            onMapViewReady: onMapViewReady,
+          ),
+          // Display a progress indicator and prevent interaction until state is ready.
+          Visibility(
+            visible: !_ready,
+            child: SizedBox.expand(
+              child: Container(
+                color: Colors.white30,
+                child: const Center(child: CircularProgressIndicator()),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -61,5 +77,8 @@ class _DisplayMapFromMobileMapPackageSampleState
       // Get the first map in the mobile map package and set to the map view.
       _mapViewController.arcGISMap = mmpk.maps.first;
     }
+
+    // Set the ready state variable to true to enable the sample UI.
+    setState(() => _ready = true);
   }
 }
