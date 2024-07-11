@@ -20,8 +20,8 @@ class _ShowPortalUserInfoSampleState extends State<ShowPortalUserInfoSample>
   // https://developers.arcgis.com/documentation/mapping-apis-and-services/security/user-authentication/serverless-native-flow/
   final _oauthUserConfiguration = OAuthUserConfiguration(
     portalUri: Uri.parse('https://www.arcgis.com'),
-    clientId: 'lgAdHkYZYlwwfAhC',
-    redirectUri: Uri.parse('my-ags-app://auth'),
+    clientId: 'T0A3SudETrIQndd2',
+    redirectUri: Uri.parse('my-ags-flutter-app://auth'),
   );
   // Create a Portal that requires authentication.
   final _portal =
