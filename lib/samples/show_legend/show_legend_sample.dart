@@ -51,8 +51,7 @@ class _ShowLegendSampleState extends State<ShowLegendSample>
             ),
             // Add a dropdown button to the widget tree.
             DropdownButtonHideUnderline(
-              child: DropdownButton(
-                // value: _selectedLegend,
+              child: DropdownButton( 
                 menuMaxHeight: 200,
                 alignment: Alignment.center,
                 hint: const Text(
