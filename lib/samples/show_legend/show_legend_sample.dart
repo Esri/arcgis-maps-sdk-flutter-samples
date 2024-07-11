@@ -27,15 +27,11 @@ class ShowLegendSample extends StatefulWidget {
 
 class _ShowLegendSampleState extends State<ShowLegendSample>
     with SampleStateSupport {
-  // create a map view controller
+  // Create a map view controller.
   final _mapViewController = ArcGISMapView.createController();
-  // create a map with a basemap style
+  // Create a map with a basemap style.
   final _map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic);
-  // create a variable to store the selected legend
-  LegendInfo? _selectedLegend;
-  // create a variable to store the legend image
-  ArcGISImage? _arcGISImage; 
-  // create a list to store dropdown items
+  // Create a list to store dropdown items.
   final _legendsDropDown = <DropdownMenuItem<LegendInfo>>[];
 
   @override
@@ -44,19 +40,19 @@ class _ShowLegendSampleState extends State<ShowLegendSample>
       body: SafeArea(
         top: false,
         child: Column(
-          // add the map view and dropdown button to a column.
+          // Add the map view and dropdown button to a column.
           children: [
             Expanded(
-              // add a map view to the widget tree and set a controller.
+              // Add a map view to the widget tree and set a controller.
               child: ArcGISMapView(
                 controllerProvider: () => _mapViewController,
                 onMapViewReady: onMapViewReady,
               ),
             ),
-            // add a dropdown button to the widget tree.
+            // Add a dropdown button to the widget tree.
             DropdownButtonHideUnderline(
               child: DropdownButton(
-                value: _selectedLegend,
+                // value: _selectedLegend,
                 menuMaxHeight: 200,
                 alignment: Alignment.center,
                 hint: const Text(
@@ -67,8 +63,8 @@ class _ShowLegendSampleState extends State<ShowLegendSample>
                 ),
                 elevation: 16,
                 style: const TextStyle(color: Colors.deepPurple),
-                // no need to set up onChanged callback
-                onChanged: (n) {},
+                // No need to set up onChanged callback.
+                onChanged: (_) {},
                 items: _legendsDropDown,
               ),
             ),
@@ -79,38 +75,38 @@ class _ShowLegendSampleState extends State<ShowLegendSample>
   }
 
   void onMapViewReady() async {
-    // get the screen scale
+    // Get the screen scale.
     final screenScale = MediaQuery.of(context).devicePixelRatio;
-    // create an image layer
+    // Create an image layer.
     final imageLayer = ArcGISMapImageLayer.withUri(
       Uri.parse(
           'https://sampleserver6.arcgisonline.com/arcgis/rest/services/Census/MapServer'),
     );
-    // create a feature table
+    // Create a feature table.
     final featureTable = ServiceFeatureTable.withUri(
       Uri.parse(
           'https://sampleserver6.arcgisonline.com/arcgis/rest/services/Recreation/FeatureServer/0'),
     );
-    // create a feature layer
+    // Create a feature layer.
     final featureLayer = FeatureLayer.withFeatureTable(featureTable);
-    // add image and feature layers to the opertaional layers list of the map
+    // Add image and feature layers to the operational layers list of the map.
     _map
       ..operationalLayers.add(imageLayer)
       ..operationalLayers.add(featureLayer);
-    // load the image and feature layers
+    // Load the image and feature layers.
     await featureLayer.load();
     await imageLayer.load();
-    // create a list to store operational layers and populate it with image and feature layers
+    // Create a list to store operational layers and populate it with image and feature layers.
     final operationalLayersList = <LayerContent>[
       ...imageLayer.subLayerContents,
       featureLayer
     ];
 
-    // get the legend info for each layer and add it to the legends dropdown list
-    for (var layer in operationalLayersList) {
-      // get the legend info for the current layer
+    // Get the legend info for each layer and add it to the legends dropdown list.
+    for (final layer in operationalLayersList) {
+      // Get the legend info for the current layer.
       final layerLegends = await layer.fetchLegendInfos();
-      // add the name of the current layer
+      // Add the name of the current layer.
       _legendsDropDown.add(
         DropdownMenuItem(
           value: layerLegends.first,
@@ -124,28 +120,34 @@ class _ShowLegendSampleState extends State<ShowLegendSample>
         ),
       );
 
-      // add current layer's legends to the dropdown list
-      for (var legend in layerLegends) {
-        try {
-          // create a swatch for the legend
-          _arcGISImage = await legend.symbol!.createSwatch(
+      // Add current layer's legends to the dropdown list.
+      for (final legend in layerLegends) {
+        final ArcGISImage? arcGISImage;
+        // Create a swatch for the legend if the legend exists.
+        if (legend.symbol != null) {
+          arcGISImage = await legend.symbol!.createSwatch(
             screenScale: screenScale,
             backgroundColor: Colors.transparent,
             size: const Size.square(6),
           );
-        } catch (e) {}
-        // add the legend to the legends list
+        } else {
+          arcGISImage = null;
+        }
+
+        // Add the legend to the legends list.
         _legendsDropDown.add(
           DropdownMenuItem(
             value: legend,
             child: Row(
               children: [
-                // add the legend image to the dropdown list
-                Image.memory(
-                  _arcGISImage!.getEncodedBuffer(),
-                ),
+                // Add the legend image to the dropdown list if the image exists.
+                arcGISImage != null
+                    ? Image.memory(
+                        arcGISImage.getEncodedBuffer(),
+                      )
+                    : Container(),
                 const SizedBox(width: 8),
-                // add the legend name to the dropdown list
+                // Add the legend name to the dropdown list.
                 Text(
                   legend.name,
                   style: const TextStyle(fontSize: 12),
@@ -157,9 +159,9 @@ class _ShowLegendSampleState extends State<ShowLegendSample>
       }
     }
 
-    // set the map to the map view controller
+    // Set the map to the map view controller.
     _mapViewController.arcGISMap = _map;
-    // set the initial viewpoint of the map
+    // Set the initial viewpoint of the map.
     _map.initialViewpoint = Viewpoint.fromCenter(
       ArcGISPoint(
         x: -11e6,
@@ -168,7 +170,7 @@ class _ShowLegendSampleState extends State<ShowLegendSample>
       ),
       scale: 9e7,
     );
-    // reset the state once the dropdown list is updated
+    // Reset the state once the dropdown list is updated.
     setState(() {});
   }
 }

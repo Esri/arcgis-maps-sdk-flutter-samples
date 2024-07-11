@@ -24,10 +24,6 @@ Legends are used to describe what each symbol on a map represents. A common form
 * LayerContent
 * LegendInfo
 
-## Additional information
-
-This sample uses the legend toolkit component, which requires the toolkit to be cloned and set up locally. Visit the repository for information about setting up the toolkit, platform availabilty, as well as code for the underlying component.
-
 ## Tags
 
 legend, legend info, symbol swatch, toolkit
