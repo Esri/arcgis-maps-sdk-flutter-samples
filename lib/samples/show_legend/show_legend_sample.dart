@@ -110,7 +110,7 @@ class _ShowLegendSampleState extends State<ShowLegendSample>
     for (var layer in operationalLayersList) {
       // get the legend info for the current layer
       final layerLegends = await layer.fetchLegendInfos();
-      // add the group name of current layer's legends the to the dropdown list
+      // add the name of the current layer
       _legendsDropDown.add(
         DropdownMenuItem(
           value: layerLegends.first,
@@ -124,7 +124,7 @@ class _ShowLegendSampleState extends State<ShowLegendSample>
         ),
       );
 
-      // add the each legend for the current layer to the dropdown list
+      // add current layer's legends to the dropdown list
       for (var legend in layerLegends) {
         try {
           // create a swatch for the legend
