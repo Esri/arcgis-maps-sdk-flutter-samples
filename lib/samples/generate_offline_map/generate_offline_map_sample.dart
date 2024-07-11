@@ -83,9 +83,7 @@ class _GenerateOfflineMapSampleState extends State<GenerateOfflineMapSample>
               child: SizedBox.expand(
                 child: Container(
                   color: Colors.white30,
-                  child: const Center(
-                    child: CircularProgressIndicator(),
-                  ),
+                  child: const Center(child: CircularProgressIndicator()),
                 ),
               ),
             ),
