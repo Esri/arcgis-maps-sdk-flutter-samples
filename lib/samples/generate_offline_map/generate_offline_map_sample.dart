@@ -34,10 +34,6 @@ class _GenerateOfflineMapSampleState extends State<GenerateOfflineMapSample>
     with SampleStateSupport {
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
-  // Create a Graphic to show the area to be taken offline.
-  final _regionGraphic = Graphic();
-  // Create a GraphicsOverlay to display the Graphic.
-  final _graphicsOverlay = GraphicsOverlay();
   // Declare a map to be loaded later.
   late final ArcGISMap _map;
   // Declare the OfflineMapTask.
@@ -50,6 +46,9 @@ class _GenerateOfflineMapSampleState extends State<GenerateOfflineMapSample>
   var _offline = false;
   // A flag for when the map view is ready and controls can be used.
   var _ready = false;
+  // Declare global keys to be used when converting screen locations to map coordinates.
+  final _mapKey = GlobalKey();
+  final _outlineKey = GlobalKey();
 
   @override
   Widget build(BuildContext context) {
@@ -61,10 +60,35 @@ class _GenerateOfflineMapSampleState extends State<GenerateOfflineMapSample>
             Column(
               children: [
                 Expanded(
-                  // Add a map view to the widget tree and set a controller.
-                  child: ArcGISMapView(
-                    controllerProvider: () => _mapViewController,
-                    onMapViewReady: onMapViewReady,
+                  child: Stack(
+                    children: [
+                      // Add a map view to the widget tree and set a controller.
+                      ArcGISMapView(
+                        key: _mapKey,
+                        controllerProvider: () => _mapViewController,
+                        onMapViewReady: onMapViewReady,
+                      ),
+                      // Add a red outline that marks the region to be taken offline.
+                      Visibility(
+                        visible: _progress == null && !_offline,
+                        child: IgnorePointer(
+                          child: SafeArea(
+                            child: Container(
+                              margin: const EdgeInsets.all(30.0),
+                              child: Container(
+                                key: _outlineKey,
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                    color: Colors.red,
+                                    width: 2.0,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 Center(
@@ -132,37 +156,44 @@ class _GenerateOfflineMapSampleState extends State<GenerateOfflineMapSample>
     _map = ArcGISMap.withItem(portalItem);
     _mapViewController.arcGISMap = _map;
 
-    // Prepare a Graphic to outline the region to be taken offline.
-    _regionGraphic.symbol = SimpleLineSymbol(color: Colors.red, width: 2.0);
-    _graphicsOverlay.graphics.add(_regionGraphic);
-    _mapViewController.graphicsOverlays.add(_graphicsOverlay);
-    // As the viewpoint changes, update the region's geometry.
-    _mapViewController.onViewpointChanged.listen((_) => updateRegionGeometry());
-
     // Create an OfflineMapTask for the map.
     _offlineMapTask = OfflineMapTask.withOnlineMap(_map);
 
     setState(() => _ready = true);
   }
 
-  // Update the region to be taken offline.
-  void updateRegionGeometry() {
-    if (_progress != null) return;
-    if (_mapViewController.visibleArea == null) return;
+  // Calculate the Envelope of the outlined region.
+  Envelope? outlineEnvelope() {
+    final outlineContext = _outlineKey.currentContext;
+    final mapContext = _mapKey.currentContext;
+    if (outlineContext == null || mapContext == null) return null;
 
-    // The region to take offline is the center 90% of the visible area.
-    final regionGeometry = GeometryEngine.scale(
-      geometry: _mapViewController.visibleArea!.extent,
-      scaleX: 0.9,
-      scaleY: 0.9,
-      origin: null,
-    );
-    _regionGraphic.geometry = regionGeometry;
+    // Get the global screen rect of the outlined region.
+    final outlineRenderBox = outlineContext.findRenderObject() as RenderBox;
+    final outlineGlobalScreenRect =
+        outlineRenderBox.localToGlobal(Offset.zero) & outlineRenderBox.size;
+
+    // Convert the global screen rect to a rect local to the map view.
+    final mapRenderBox = mapContext.findRenderObject() as RenderBox;
+    final mapLocalScreenRect =
+        outlineGlobalScreenRect.shift(-mapRenderBox.localToGlobal(Offset.zero));
+
+    // Convert the local screen rect to map coordinates.
+    final locationTopLeft =
+        _mapViewController.screenToLocation(screen: mapLocalScreenRect.topLeft);
+    final locationBottomRight = _mapViewController.screenToLocation(
+        screen: mapLocalScreenRect.bottomRight);
+    if (locationTopLeft == null || locationBottomRight == null) return null;
+
+    // Create an Envelope from the map coordinates.
+    return Envelope.fromPoints(locationTopLeft, locationBottomRight);
   }
 
   // Take the selected region offline.
   void takeOffline() async {
-    if (_regionGraphic.geometry == null) return;
+    // Get the Envelope of the outlined region.
+    final envelope = outlineEnvelope();
+    if (envelope == null) return;
 
     // Cause the progress indicator to appear.
     setState(() => _progress = 0);
@@ -172,7 +203,7 @@ class _GenerateOfflineMapSampleState extends State<GenerateOfflineMapSample>
     final maxScale = _mapViewController.arcGISMap?.maxScale ?? minScale + 1;
     final parameters =
         await _offlineMapTask.createDefaultGenerateOfflineMapParameters(
-      areaOfInterest: _regionGraphic.geometry!,
+      areaOfInterest: envelope,
       minScale: minScale,
       maxScale: maxScale,
     );
@@ -209,12 +240,8 @@ class _GenerateOfflineMapSampleState extends State<GenerateOfflineMapSample>
       // If an error happens (such as cancellation), reset state.
       _generateOfflineMapJob = null;
       setState(() => _progress = null);
-      updateRegionGeometry();
       return;
     }
-
-    // Remove the graphic that specified the region to take offline.
-    _graphicsOverlay.graphics.clear();
 
     // The job was successful and we are now viewing the offline amp.
     setState(() {
