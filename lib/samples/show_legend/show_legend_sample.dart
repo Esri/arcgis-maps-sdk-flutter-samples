@@ -32,7 +32,7 @@ class _ShowLegendSampleState extends State<ShowLegendSample>
   // Create a map with a basemap style.
   final _map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic);
   // Create a list to store dropdown items.
-  final _legendsDropDown = <DropdownMenuItem<LegendInfo>>[];
+  var _legendsDropDown = <DropdownMenuItem<LegendInfo>>[];
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +51,7 @@ class _ShowLegendSampleState extends State<ShowLegendSample>
             ),
             // Add a dropdown button to the widget tree.
             DropdownButtonHideUnderline(
-              child: DropdownButton( 
+              child: DropdownButton(
                 menuMaxHeight: 200,
                 alignment: Alignment.center,
                 hint: const Text(
@@ -101,12 +101,14 @@ class _ShowLegendSampleState extends State<ShowLegendSample>
       featureLayer
     ];
 
+    // Create a list to store dropdown items.
+    final legendsDropDown = <DropdownMenuItem<LegendInfo>>[];
     // Get the legend info for each layer and add it to the legends dropdown list.
     for (final layer in operationalLayersList) {
       // Get the legend info for the current layer.
       final layerLegends = await layer.fetchLegendInfos();
       // Add the name of the current layer.
-      _legendsDropDown.add(
+      legendsDropDown.add(
         DropdownMenuItem(
           value: layerLegends.first,
           child: Text(
@@ -121,7 +123,7 @@ class _ShowLegendSampleState extends State<ShowLegendSample>
 
       // Add current layer's legends to the dropdown list.
       for (final legend in layerLegends) {
-        final ArcGISImage? arcGISImage;
+        ArcGISImage? arcGISImage;
         // Create a swatch for the legend if the legend exists.
         if (legend.symbol != null) {
           arcGISImage = await legend.symbol!.createSwatch(
@@ -129,12 +131,9 @@ class _ShowLegendSampleState extends State<ShowLegendSample>
             backgroundColor: Colors.transparent,
             size: const Size.square(6),
           );
-        } else {
-          arcGISImage = null;
         }
-
         // Add the legend to the legends list.
-        _legendsDropDown.add(
+        legendsDropDown.add(
           DropdownMenuItem(
             value: legend,
             child: Row(
@@ -157,6 +156,8 @@ class _ShowLegendSampleState extends State<ShowLegendSample>
         );
       }
     }
+    // Reset the state once the dropdown list is updated.
+    setState(() => _legendsDropDown = legendsDropDown);
 
     // Set the map to the map view controller.
     _mapViewController.arcGISMap = _map;
@@ -169,7 +170,5 @@ class _ShowLegendSampleState extends State<ShowLegendSample>
       ),
       scale: 9e7,
     );
-    // Reset the state once the dropdown list is updated.
-    setState(() {});
   }
 }
