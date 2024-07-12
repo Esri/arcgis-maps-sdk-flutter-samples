@@ -158,11 +158,3 @@ class _ShowPortalUserInfoSampleState extends State<ShowPortalUserInfoSample>
     });
   }
 }
-
-extension on LoadableImage {
-  // A helper method to load the image bytes.
-  Future<Uint8List> loadBytes() async {
-    await load();
-    return image!.getEncodedBuffer();
-  }
-}
