@@ -105,13 +105,13 @@ class _ShowGridSampleState extends State<ShowGridSample>
   }
 
   // Change the grid color based on the given value.
-  void _onGridColorChanged(GridColorType color) {
-    _gridColorType = color;
+  void _onGridColorChanged(GridColorType colorType) {
+    _gridColorType = colorType;
     if (_mapViewController.grid != null) {
       final grid = _mapViewController.grid!;
       for (int i = 0; i < grid.levelCount; i++) {
         final lineSymbol = SimpleLineSymbol(
-          color: color.value,
+          color: colorType.value,
           width: 1.0,
           style: SimpleLineSymbolStyle.solid,
         );
@@ -129,13 +129,13 @@ class _ShowGridSampleState extends State<ShowGridSample>
   }
 
   // Change the label color based on the given value.
-  void _onLabelColorChanged(GridColorType color) {
-    _gridLabelColorType = color;
+  void _onLabelColorChanged(GridColorType colorType) {
+    _gridLabelColorType = colorType;
     if (_mapViewController.grid != null) {
       final grid = _mapViewController.grid!;
       for (int i = 0; i < grid.levelCount; i++) {
         final textSymbol = TextSymbol(
-          color: color.value,
+          color: colorType.value,
           size: 14.0,
           horizontalAlignment: HorizontalAlignment.left,
           verticalAlignment: VerticalAlignment.bottom,
@@ -148,50 +148,24 @@ class _ShowGridSampleState extends State<ShowGridSample>
   }
 
   // Change the label format if the grid is LatitudeLongitudeGrid.
-  _onLabelFormatChanged(LatLongLabelFormatType labelFormat) {
-    _labelFormatType = labelFormat;
+  _onLabelFormatChanged(LatLongLabelFormatType labelFormatType) {
+    _labelFormatType = labelFormatType;
     if (_mapViewController.grid is LatitudeLongitudeGrid) {
       final grid = _mapViewController.grid! as LatitudeLongitudeGrid;
-      grid.labelFormat = labelFormat.value;
+      grid.labelFormat = labelFormatType.value;
     }
   }
 
   // Change the label position based on the given value.
-  void _onLabelPositionChanged(GridLabelPositionType labelPosition) {
-    _labelPositionType = labelPosition;
+  void _onLabelPositionChanged(GridLabelPositionType labelPositionType) {
+    _labelPositionType = labelPositionType;
     if (_mapViewController.grid != null) {
       final grid = _mapViewController.grid!;
-      grid.labelPosition = labelPosition.value;
+      grid.labelPosition = labelPositionType.value;
     }
   }
 
   /// Show the grid options dialog.
-  Future<void> _showGridOptions1() async {
-    return showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text('Grid Options'),
-          content: GridOptions(
-            grids: MapViewGrids(
-              gridType: _gridType,
-              gridColorType: _gridColorType,
-              labelColorType: _gridLabelColorType,
-              labelPositionType: _labelPositionType,
-              labelFormatType: _labelFormatType,
-            ),
-            onGridChanged: _onGridChanged,
-            onGridColorChanged: _onGridColorChanged,
-            onLabelColorChanged: _onLabelColorChanged,
-            onLabelPositionChanged: _onLabelPositionChanged,
-            onLabelFormatChanged: _onLabelFormatChanged,
-            onLabelVisibilityChanged: _onLabelVisibilityChanged,
-          ),
-        );
-      },
-    );
-  }
-
   Future<void> _showGridOptions() async {
     return showDialog(
       context: context,
@@ -224,6 +198,7 @@ class _ShowGridSampleState extends State<ShowGridSample>
                       labelColorType: _gridLabelColorType,
                       labelPositionType: _labelPositionType,
                       labelFormatType: _labelFormatType,
+                      labelVisible: _labelVisibility,
                     ),
                     onGridChanged: _onGridChanged,
                     onGridColorChanged: _onGridColorChanged,
@@ -428,7 +403,7 @@ class _GridOptionsState extends State<GridOptions> with SampleStateSupport {
 }
 
 //
-// A class that holds the grid options.
+// A data class that holds the grid options.
 //
 class MapViewGrids {
   final GridType gridType;
@@ -436,13 +411,14 @@ class MapViewGrids {
   final GridColorType labelColorType;
   final GridLabelPositionType labelPositionType;
   final LatLongLabelFormatType labelFormatType;
-  var labelVisible = true;
+  final bool labelVisible;
   MapViewGrids({
     required this.gridType,
     required this.gridColorType,
     required this.labelColorType,
     required this.labelPositionType,
     required this.labelFormatType,
+    required this.labelVisible,
   });
 }
 
