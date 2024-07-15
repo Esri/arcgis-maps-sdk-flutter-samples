@@ -45,12 +45,26 @@ class _SampleViewerAppState extends State<SampleViewerApp> {
   final _allSamples = <Sample>[];
   var _filteredSamples = <Sample>[];
   bool _ready = false;
-  final TextEditingController _searchFieldController = TextEditingController();
+  bool _searchHasFocus = false;
+  final _searchFocusNode = FocusNode();
+  final _textEditingController = TextEditingController();
 
   @override
   void initState() {
-    loadSamples();
     super.initState();
+    loadSamples();
+    _searchFocusNode.addListener(() {
+      if (_searchFocusNode.hasFocus != _searchHasFocus) {
+        setState(() => _searchHasFocus = _searchFocusNode.hasFocus);
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _textEditingController.dispose();
+    _searchFocusNode.dispose();
+    super.dispose();
   }
 
   @override
@@ -74,42 +88,46 @@ class _SampleViewerAppState extends State<SampleViewerApp> {
           child: Column(
             children: [
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: TextField(
-                        controller: _searchFieldController,
-                        onChanged: (value) {
-                          filter(value);
-                        },
-                        decoration: const InputDecoration(
-                          icon: Icon(Icons.search),
-                          hintText: 'Search',
-                          hintStyle: TextStyle(color: Colors.grey),
-                        ),
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: TextField(
+                  focusNode: _searchFocusNode,
+                  controller: _textEditingController,
+                  onChanged: onSearchChanged,
+                  autocorrect: false,
+                  decoration: InputDecoration(
+                    hintText: 'Search...',
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _searchFocusNode.hasFocus ? Icons.cancel : Icons.search,
                       ),
+                      onPressed: onSearchSuffixPressed,
                     ),
-                    IconButton(
-                      onPressed: () {
-                        _searchFieldController.clear();
-                        filter(_searchFieldController.text);
-                      },
-                      icon: const Icon(Icons.cancel),
-                    )
-                  ],
+                  ),
                 ),
               ),
               _ready
                   ? Expanded(
-                      flex: 1, child: SampleListView(samples: _filteredSamples))
-                  : const Center(child: Text('Loading samples...')),
+                      flex: 1,
+                      child: SampleListView(samples: _filteredSamples),
+                    )
+                  : const Center(
+                      child: Text('Loading samples...'),
+                    ),
             ],
           ),
         ),
       ),
     );
+  }
+
+  void onSearchSuffixPressed() {
+    if (!_searchHasFocus) {
+      _textEditingController.clear();
+      FocusManager.instance.primaryFocus?.unfocus();
+      onSearchChanged('');
+    } else {
+      _searchFocusNode.requestFocus();
+    }
   }
 
   void loadSamples() async {
@@ -123,24 +141,31 @@ class _SampleViewerAppState extends State<SampleViewerApp> {
     setState(() => _ready = true);
   }
 
-  void filter(String searchText) {
-    var results = <Sample>[];
+  void onSearchChanged(String searchText) {
+    List<Sample> results = [];
     if (searchText.isEmpty) {
       results = _allSamples;
     } else {
-      results.addAll(_allSamples
-          .where((sample) =>
-              sample.title.toLowerCase().contains(searchText.toLowerCase()))
-          .toList());
+      Set<Sample> uniqueResults = {};
+      uniqueResults.addAll(
+        _allSamples.where(
+          (sample) {
+            final lowerSearchText = searchText.toLowerCase();
+            return sample.title.toLowerCase().contains(lowerSearchText) ||
+                sample.category.toLowerCase().contains(lowerSearchText) ||
+                sample.keywords.any(
+                  (keyword) => keyword.toLowerCase().contains(lowerSearchText),
+                ) ||
+                sample.relevantApis.any(
+                  (keyword) => keyword.toLowerCase().contains(lowerSearchText),
+                );
+          },
+        ).toList(),
+      );
 
-      results.addAll(_allSamples
-          .where((sample) =>
-              sample.category.toLowerCase().contains(searchText.toLowerCase()))
-          .toList());
+      results.addAll(uniqueResults.toList());
     }
 
-    setState(() {
-      _filteredSamples = results.toSet().toList();
-    });
+    setState(() => _filteredSamples = results);
   }
 }
