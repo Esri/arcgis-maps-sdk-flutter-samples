@@ -2,7 +2,7 @@
 
 Build a legend for all the operational layers in the map.
 
-![Image of build legend](show_legend.png)
+![Image of show legend](show_legend.png)
 
 ## Use case
 
@@ -26,4 +26,4 @@ Legends are used to describe what each symbol on a map represents. A common form
 
 ## Tags
 
-legend, legend info, symbol swatch, toolkit
+legend, legend info, symbol swatch

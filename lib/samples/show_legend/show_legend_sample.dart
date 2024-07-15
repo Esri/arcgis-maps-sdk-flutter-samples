@@ -89,9 +89,7 @@ class _ShowLegendSampleState extends State<ShowLegendSample>
     // Create a feature layer.
     final featureLayer = FeatureLayer.withFeatureTable(featureTable);
     // Add image and feature layers to the operational layers list of the map.
-    _map
-      ..operationalLayers.add(imageLayer)
-      ..operationalLayers.add(featureLayer);
+    _map.operationalLayers.addAll([imageLayer, featureLayer]);
     // Load the image and feature layers.
     await featureLayer.load();
     await imageLayer.load();
