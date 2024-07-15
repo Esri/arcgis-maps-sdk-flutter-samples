@@ -26,6 +26,7 @@ import 'package:arcgis_maps_sdk_flutter_samples/samples/set_basemap/set_basemap_
 import 'package:arcgis_maps_sdk_flutter_samples/samples/show_device_location/show_device_location_sample.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/show_device_location_history/show_device_location_history_sample.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/show_grid/show_grid_sample.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/samples/show_legend/show_legend_sample.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/show_magnifier/show_magnifier_sample.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/show_portal_user_info/show_portal_user_info_sample.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/show_service_area/show_service_area_sample.dart';
@@ -74,4 +75,5 @@ const sampleWidgets = <String, Widget>{
   'show_service_area': ShowServiceAreaSample(),
   'style_point_with_simple_marker_symbol':
       StylePointWithSimpleMarkerSymbolSample(),
+  'show_legend': ShowLegendSample(),
 };
