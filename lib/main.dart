@@ -45,6 +45,7 @@ class _SampleViewerAppState extends State<SampleViewerApp> {
   final _allSamples = <Sample>[];
   var _filteredSamples = <Sample>[];
   bool _ready = false;
+  final TextEditingController _searchFieldController = TextEditingController();
 
   @override
   void initState() {
@@ -68,25 +69,44 @@ class _SampleViewerAppState extends State<SampleViewerApp> {
         appBar: AppBar(
           title: const Text(title),
         ),
-        body: Column(
-          children: [
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-              child: TextField(
-                onChanged: (value) {
-                  filter(value);
-                },
-                decoration: InputDecoration( 
-                    icon: Icon(Icons.search),
-                    hintText: "Search",
-                    hintStyle: TextStyle(color: Colors.grey)),
+        body: Listener(
+          onPointerDown: (_) => FocusManager.instance.primaryFocus?.unfocus(),
+          child: Column(
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        controller: _searchFieldController,
+                        onChanged: (value) {
+                          filter(value);
+                        },
+                        decoration: const InputDecoration(
+                          icon: Icon(Icons.search),
+                          hintText: 'Search',
+                          hintStyle: TextStyle(color: Colors.grey),
+                        ),
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: () {
+                        _searchFieldController.clear();
+                        filter(_searchFieldController.text);
+                      },
+                      icon: const Icon(Icons.cancel),
+                    )
+                  ],
+                ),
               ),
-            ),
-            _ready
-                ? Expanded(
-                    flex: 1, child: SampleListView(samples: _filteredSamples))
-                : const Center(child: Text('Loading samples...')),
-          ],
+              _ready
+                  ? Expanded(
+                      flex: 1, child: SampleListView(samples: _filteredSamples))
+                  : const Center(child: Text('Loading samples...')),
+            ],
+          ),
         ),
       ),
     );
