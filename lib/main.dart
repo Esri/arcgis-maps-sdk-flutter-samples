@@ -42,7 +42,8 @@ class SampleViewerApp extends StatefulWidget {
 }
 
 class _SampleViewerAppState extends State<SampleViewerApp> {
-  final _samples = <Sample>[];
+  final _allSamples = <Sample>[];
+  var _filteredSamples = <Sample>[];
   bool _ready = false;
 
   @override
@@ -67,9 +68,26 @@ class _SampleViewerAppState extends State<SampleViewerApp> {
         appBar: AppBar(
           title: const Text(title),
         ),
-        body: _ready
-            ? SampleListView(samples: _samples)
-            : const Center(child: Text('Loading samples...')),
+        body: Column(
+          children: [
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+              child: TextField(
+                onChanged: (value) {
+                  filter(value);
+                },
+                decoration: InputDecoration( 
+                    icon: Icon(Icons.search),
+                    hintText: "Search",
+                    hintStyle: TextStyle(color: Colors.grey)),
+              ),
+            ),
+            _ready
+                ? Expanded(
+                    flex: 1, child: SampleListView(samples: _filteredSamples))
+                : const Center(child: Text('Loading samples...')),
+          ],
+        ),
       ),
     );
   }
@@ -79,8 +97,30 @@ class _SampleViewerAppState extends State<SampleViewerApp> {
         await rootBundle.loadString('assets/generated_samples_list.json');
     final sampleData = jsonDecode(jsonString);
     for (final s in sampleData.entries) {
-      _samples.add(Sample.fromJson(s.value));
+      _allSamples.add(Sample.fromJson(s.value));
     }
+    _filteredSamples = _allSamples;
     setState(() => _ready = true);
+  }
+
+  void filter(String searchText) {
+    var results = <Sample>[];
+    if (searchText.isEmpty) {
+      results = _allSamples;
+    } else {
+      results.addAll(_allSamples
+          .where((sample) =>
+              sample.title.toLowerCase().contains(searchText.toLowerCase()))
+          .toList());
+
+      results.addAll(_allSamples
+          .where((sample) =>
+              sample.category.toLowerCase().contains(searchText.toLowerCase()))
+          .toList());
+    }
+
+    setState(() {
+      _filteredSamples = results.toSet().toList();
+    });
   }
 }
