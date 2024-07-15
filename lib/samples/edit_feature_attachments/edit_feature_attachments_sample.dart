@@ -110,19 +110,7 @@ class _EditFeatureAttachmentsSampleState
       await serviceFeatureTable.applyEdits();
     } catch (e) {
       setState(() {
-        showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: const Text('Error'),
-            content: Text(e.toString()),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text('OK'),
-              ),
-            ],
-          ),
-        );
+        _showErrorDialog(context, e);
       });
     }
     return Future.value();
