@@ -397,9 +397,8 @@ class _GridOptionsState extends State<GridOptions> with SampleStateSupport {
   }
 
   // Set the visibility of the label format dropdown based on the grid type.
-  bool _shouldShowLabelFormat(GridType grid) {
-    return (grid == GridType.latitudeLongitude) ? true : false;
-  }
+  bool _shouldShowLabelFormat(GridType grid) =>
+      grid == GridType.latitudeLongitude;
 }
 
 //
