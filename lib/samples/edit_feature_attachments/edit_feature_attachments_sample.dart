@@ -34,9 +34,12 @@ class _EditFeatureAttachmentsSampleState
     extends State<EditFeatureAttachmentsSample> with SampleStateSupport {
   final _mapViewController = ArcGISMapView.createController();
   final _featureLayer = FeatureLayer.withFeatureTable(
-      ServiceFeatureTable.withUri(Uri.parse(
-          'https://sampleserver6.arcgisonline.com/arcgis/rest/services/DamageAssessment/FeatureServer/0')));
-  var _selectedFeature;
+    ServiceFeatureTable.withUri(
+      Uri.parse(
+        'https://sampleserver6.arcgisonline.com/arcgis/rest/services/DamageAssessment/FeatureServer/0',
+      ),
+    ),
+  );
 
   @override
   void initState() {
@@ -82,28 +85,28 @@ class _EditFeatureAttachmentsSampleState
         identifyLayerResult.geoElements.whereType<Feature>().toList();
     if (features.isNotEmpty) {
       _featureLayer.selectFeatures(features: features);
-      _selectedFeature = features.first as ArcGISFeature;
-      _showBottomSheet();
+      final selectedFeature = features.first as ArcGISFeature;
+      _showBottomSheet(selectedFeature);
     }
   }
 
   // show the bottom sheet to display the attachment information.
-  void _showBottomSheet() async {
+  void _showBottomSheet(ArcGISFeature selectedFeature) async {
     showModalBottomSheet(
       context: context,
       builder: (context) => AttachmentsOptions(
-        arcGISFeature: _selectedFeature,
+        arcGISFeature: selectedFeature,
         applyEdits: _applyEdits,
       ),
     ); // end of showModalBottomSheet
   }
 
   // apply the changes to the feature table.
-  Future<void> _applyEdits() async {
+  Future<void> _applyEdits(ArcGISFeature selectedFeature) async {
     final serviceFeatureTable =
         _featureLayer.featureTable! as ServiceFeatureTable;
     try {
-      await serviceFeatureTable.updateFeature(_selectedFeature);
+      await serviceFeatureTable.updateFeature(selectedFeature);
       await serviceFeatureTable.applyEdits();
     } catch (e) {
       setState(() {
@@ -131,7 +134,7 @@ class _EditFeatureAttachmentsSampleState
 //
 class AttachmentsOptions extends StatefulWidget {
   final ArcGISFeature arcGISFeature;
-  final Function() applyEdits;
+  final Function(ArcGISFeature) applyEdits;
 
   const AttachmentsOptions({
     super.key,
@@ -143,7 +146,7 @@ class AttachmentsOptions extends StatefulWidget {
   State<AttachmentsOptions> createState() => _AttachmentsOptionsState();
 }
 
-// State class for the AttachmentsOptions .
+// State class for the AttachmentsOptions.
 class _AttachmentsOptionsState extends State<AttachmentsOptions>
     with SampleStateSupport {
   late final String damageType;
@@ -166,10 +169,11 @@ class _AttachmentsOptionsState extends State<AttachmentsOptions>
             // display the damage type and a close button
             Container(
               color: Colors.purple,
+              padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('  Damage Type:  $damageType',
+                  Text('Damage Type: $damageType',
                       style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -182,8 +186,8 @@ class _AttachmentsOptionsState extends State<AttachmentsOptions>
                   Visibility(
                     visible: isLoading,
                     child: const SizedBox(
-                        height: 20,
-                        width: 20,
+                        height: 18,
+                        width: 18,
                         child: CircularProgressIndicator(
                           color: Colors.white,
                         )),
@@ -193,17 +197,19 @@ class _AttachmentsOptionsState extends State<AttachmentsOptions>
             ),
 
             // display the number of attachments
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text('  Number of Attachments: ${attachments.length}'),
-                ElevatedButton(
-                  onPressed: addAttachment,
-                  child: const Text('Add Attachment'),
-                )
-              ],
+            Padding(
+              padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text('Number of Attachments: ${attachments.length}'),
+                  ElevatedButton(
+                    onPressed: addAttachment,
+                    child: const Text('Add Attachment'),
+                  )
+                ],
+              ),
             ),
-
             const Divider(
               color: Colors.purple,
             ),
@@ -250,9 +256,8 @@ class _AttachmentsOptionsState extends State<AttachmentsOptions>
     setState(() => isLoading = true);
 
     await widget.arcGISFeature.deleteAttachment(attachment).then((_) {
-      widget.applyEdits();
+      widget.applyEdits(widget.arcGISFeature);
     });
-
     _loadAttachments();
 
     setState(() => isLoading = false);
@@ -304,7 +309,7 @@ class _AttachmentsOptionsState extends State<AttachmentsOptions>
     });
   }
 
-  // add an attachment to the selected feature
+  // add an attachment to the selected feature by FilePicker.
   void addAttachment() async {
     var status = false;
     final result = await FilePicker.platform.pickFiles(
@@ -314,13 +319,13 @@ class _AttachmentsOptionsState extends State<AttachmentsOptions>
         if (filePickerStatus == FilePickerStatus.done) {
           status = true;
         }
-        print(filePickerStatus);
       },
       allowedExtensions: ['png', 'jpg', 'jpeg', 'pdf', 'txt'],
     );
 
     if (result != null && status) {
       setState(() => isLoading = true);
+
       final platformFile = result.files.single;
       final file = File(platformFile.path!);
 
@@ -329,18 +334,14 @@ class _AttachmentsOptionsState extends State<AttachmentsOptions>
       final contentType = getContextType(fileExtension ?? 'default');
       final fileBytes = await file.readAsBytes();
 
-      final attachment = await widget.arcGISFeature.addAttachment(
+      await widget.arcGISFeature.addAttachment(
         name: platformFile.name,
         contentType: contentType,
         data: fileBytes,
       );
-      if (attachment != null) {
-        print(attachment.name);
-        //A resource failed to call close. error is thrown when applyEdits is called
-        await widget.applyEdits();
-      }
-
+      await widget.applyEdits(widget.arcGISFeature);
       _loadAttachments();
+
       setState(() => isLoading = false);
     }
   }
@@ -355,6 +356,7 @@ class _AttachmentsOptionsState extends State<AttachmentsOptions>
       });
     } catch (e) {
       setState(() {
+        _showErrorDialog(context, e);
         isLoading = false;
       });
     }
@@ -375,4 +377,20 @@ class _AttachmentsOptionsState extends State<AttachmentsOptions>
         return 'application/octet-stream';
     }
   }
+}
+
+void _showErrorDialog(BuildContext context, dynamic error) {
+  showDialog(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: const Text('Error'),
+      content: Text(error.toString()),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('OK'),
+        ),
+      ],
+    ),
+  );
 }
