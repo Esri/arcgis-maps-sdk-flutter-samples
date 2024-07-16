@@ -32,7 +32,9 @@ class EditFeatureAttachmentsSample extends StatefulWidget {
 
 class _EditFeatureAttachmentsSampleState
     extends State<EditFeatureAttachmentsSample> with SampleStateSupport {
+  // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
+  // Create a feature layer with a feature table.
   final _featureLayer = FeatureLayer.withFeatureTable(
     ServiceFeatureTable.withUri(
       Uri.parse(
@@ -42,10 +44,20 @@ class _EditFeatureAttachmentsSampleState
   );
 
   @override
-  void initState() {
-    super.initState();
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: ArcGISMapView(
+        controllerProvider: () => _mapViewController,
+        onMapViewReady: onMapViewReady,
+        onTap: onTap,
+      ),
+    );
+  }
 
+  void onMapViewReady() {
+    // Create a map with a basemap style and add the feature layer to the map.
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISStreets);
+    // Set the initial viewpoint for the map.
     map.initialViewpoint = Viewpoint.fromCenter(
       ArcGISPoint(
         x: -95.0,
@@ -54,24 +66,15 @@ class _EditFeatureAttachmentsSampleState
       ),
       scale: 1e8,
     );
+
     map.operationalLayers.add(_featureLayer);
     _mapViewController.arcGISMap = map;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: ArcGISMapView(
-        controllerProvider: () => _mapViewController,
-        onTap: onTap,
-      ),
-    );
   }
 
   void onTap(Offset localPosition) async {
     _featureLayer.clearSelection();
 
-    // do a identify on the feature layer and select a feature
+    // Do a identify on the feature layer and select a feature.
     final identifyLayerResult = await _mapViewController.identifyLayer(
       _featureLayer,
       screenPoint: localPosition,
@@ -79,7 +82,7 @@ class _EditFeatureAttachmentsSampleState
       maximumResults: 1,
     );
 
-    // if there are features identified, show the bottom sheet to display the
+    // If there are features identified, show the bottom sheet to display the
     // attachment information for the selected feature.
     final features =
         identifyLayerResult.geoElements.whereType<Feature>().toList();
@@ -90,7 +93,7 @@ class _EditFeatureAttachmentsSampleState
     }
   }
 
-  // show the bottom sheet to display the attachment information.
+  // Show the bottom sheet to display the attachment information.
   void _showBottomSheet(ArcGISFeature selectedFeature) async {
     showModalBottomSheet(
       context: context,
@@ -98,10 +101,10 @@ class _EditFeatureAttachmentsSampleState
         arcGISFeature: selectedFeature,
         applyEdits: _applyEdits,
       ),
-    ); // end of showModalBottomSheet
+    );
   }
 
-  // apply the changes to the feature table.
+  // Apply the changes to the feature table.
   Future<void> _applyEdits(ArcGISFeature selectedFeature) async {
     final serviceFeatureTable =
         _featureLayer.featureTable! as ServiceFeatureTable;
@@ -154,7 +157,7 @@ class _AttachmentsOptionsState extends State<AttachmentsOptions>
       children: [
         Column(
           children: [
-            // display the damage type and a close button
+            // Display the damage type and a close button.
             Container(
               color: Colors.purple,
               padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
@@ -184,7 +187,7 @@ class _AttachmentsOptionsState extends State<AttachmentsOptions>
               ),
             ),
 
-            // display the number of attachments
+            // Display the number of attachments.
             Padding(
               padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
               child: Row(
@@ -202,7 +205,7 @@ class _AttachmentsOptionsState extends State<AttachmentsOptions>
               color: Colors.purple,
             ),
 
-            // display each attachment with view and delete buttons
+            // Display each attachment with view and delete buttons.
             SingleChildScrollView(
               child: Column(children: [
                 ListView.builder(
@@ -239,7 +242,7 @@ class _AttachmentsOptionsState extends State<AttachmentsOptions>
     );
   }
 
-  // delete an attachment from the selected feature.
+  // Delete an attachment from the selected feature.
   void deleteAttachment(Attachment attachment) async {
     setState(() => isLoading = true);
 
@@ -251,14 +254,14 @@ class _AttachmentsOptionsState extends State<AttachmentsOptions>
     setState(() => isLoading = false);
   }
 
-  // view an attachment from the selected feature in a dialog.
+  // View an attachment from the selected feature in a dialog.
   void viewAttachment(Attachment attachment) async {
     setState(() => isLoading = true);
 
     final data = await attachment.fetchData();
     setState(() => isLoading = false);
 
-    // display the attachment image/pdf file in a dialog.
+    // Display the attachment image/pdf file in a dialog.
     setState(() {
       showDialog(
         context: context,
@@ -274,7 +277,7 @@ class _AttachmentsOptionsState extends State<AttachmentsOptions>
                 icon: const Icon(Icons.save),
                 tooltip: 'Save',
                 onPressed: () {
-                  // save the attachment to the device.
+                  // Save the attachment to the device.
                   FilePicker.platform.saveFile(
                     dialogTitle: 'Save Attachment',
                     fileName: attachment.name,
@@ -297,7 +300,7 @@ class _AttachmentsOptionsState extends State<AttachmentsOptions>
     });
   }
 
-  // add an attachment to the selected feature by FilePicker.
+  // Add an attachment to the selected feature by FilePicker.
   void addAttachment() async {
     var status = false;
     final result = await FilePicker.platform.pickFiles(
@@ -317,7 +320,7 @@ class _AttachmentsOptionsState extends State<AttachmentsOptions>
       final platformFile = result.files.single;
       final file = File(platformFile.path!);
 
-      // Get the context type for the file
+      // Get the context type for the file.
       final fileExtension = platformFile.extension?.toLowerCase();
       final contentType = getContextType(fileExtension ?? 'default');
       final fileBytes = await file.readAsBytes();
@@ -334,7 +337,7 @@ class _AttachmentsOptionsState extends State<AttachmentsOptions>
     }
   }
 
-  // load and update the attachments for the selected feature
+  // Load and update the attachments for the selected feature.
   Future<void> _loadAttachments() async {
     try {
       var fetchedAttachments = await widget.arcGISFeature.fetchAttachments();
