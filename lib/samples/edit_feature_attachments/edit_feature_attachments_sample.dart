@@ -55,7 +55,7 @@ class _EditFeatureAttachmentsSampleState
   }
 
   void onMapViewReady() {
-    // Create a map with a basemap style and add the feature layer to the map.
+    // Create a map with an ArcGISStreet basemap style.
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISStreets);
     // Set the initial viewpoint for the map.
     map.initialViewpoint = Viewpoint.fromCenter(
@@ -67,11 +67,13 @@ class _EditFeatureAttachmentsSampleState
       scale: 1e8,
     );
 
+    // Add the feature layer to the map.
     map.operationalLayers.add(_featureLayer);
     _mapViewController.arcGISMap = map;
   }
 
   void onTap(Offset localPosition) async {
+    // Clear the selection on the feature layer.
     _featureLayer.clearSelection();
 
     // Do a identify on the feature layer and select a feature.
@@ -109,7 +111,9 @@ class _EditFeatureAttachmentsSampleState
     final serviceFeatureTable =
         _featureLayer.featureTable! as ServiceFeatureTable;
     try {
+      // Update the selected feature locally.
       await serviceFeatureTable.updateFeature(selectedFeature);
+      // Apply the edits to the service.
       await serviceFeatureTable.applyEdits();
     } catch (e) {
       if (mounted) _showErrorDialog(context, e);
@@ -357,6 +361,7 @@ class _AttachmentsOptionsState extends State<AttachmentsOptions>
   }
 }
 
+// Show an error dialog.
 void _showErrorDialog(BuildContext context, dynamic error) {
   showDialog(
     context: context,
