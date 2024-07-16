@@ -89,21 +89,19 @@ class _EditFeatureAttachmentsSampleState
     if (features.isNotEmpty) {
       _featureLayer.selectFeatures(features: features);
       final selectedFeature = features.first as ArcGISFeature;
-      _showBottomSheet(selectedFeature);
+      if (mounted) _showBottomSheet(selectedFeature);
     }
   }
 
   // Show the bottom sheet to display the attachment information.
   void _showBottomSheet(ArcGISFeature selectedFeature) {
-    if (mounted) {
-      showModalBottomSheet(
-        context: context,
-        builder: (context) => AttachmentsOptions(
-          arcGISFeature: selectedFeature,
-          applyEdits: _applyEdits,
-        ),
-      );
-    }
+    showModalBottomSheet(
+      context: context,
+      builder: (context) => AttachmentsOptions(
+        arcGISFeature: selectedFeature,
+        applyEdits: _applyEdits,
+      ),
+    );
   }
 
   // Apply the changes to the feature table.
@@ -114,7 +112,7 @@ class _EditFeatureAttachmentsSampleState
       await serviceFeatureTable.updateFeature(selectedFeature);
       await serviceFeatureTable.applyEdits();
     } catch (e) {
-      _showErrorDialog(context, e);
+      if (mounted) _showErrorDialog(context, e);
     }
     return Future.value();
   }
@@ -343,8 +341,8 @@ class _AttachmentsOptionsState extends State<AttachmentsOptions>
         isLoading = false;
       });
     } catch (e) {
+      if (mounted) _showErrorDialog(context, e);
       setState(() {
-        _showErrorDialog(context, e);
         isLoading = false;
       });
     }
