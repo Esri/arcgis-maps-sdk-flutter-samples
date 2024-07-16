@@ -262,7 +262,7 @@ class _AttachmentsOptionsState extends State<AttachmentsOptions>
     setState(() {
       showDialog(
         context: context,
-        builder: (BuildContext context) {
+        builder: (context) {
           return AlertDialog(
             title: Text(attachment.name),
             content: SizedBox(
@@ -297,19 +297,13 @@ class _AttachmentsOptionsState extends State<AttachmentsOptions>
 
   // Add an attachment to the selected feature by FilePicker.
   void addAttachment() async {
-    var status = false;
     final result = await FilePicker.platform.pickFiles(
       allowMultiple: false,
       type: FileType.custom,
-      onFileLoading: (filePickerStatus) {
-        if (filePickerStatus == FilePickerStatus.done) {
-          status = true;
-        }
-      },
       allowedExtensions: ['png', 'jpg', 'jpeg', 'pdf', 'txt'],
     );
 
-    if (result != null && status) {
+    if (result != null) {
       setState(() => isLoading = true);
 
       final platformFile = result.files.single;
@@ -342,9 +336,7 @@ class _AttachmentsOptionsState extends State<AttachmentsOptions>
       });
     } catch (e) {
       if (mounted) _showErrorDialog(context, e);
-      setState(() {
-        isLoading = false;
-      });
+      setState(() => isLoading = false);
     }
   }
 
