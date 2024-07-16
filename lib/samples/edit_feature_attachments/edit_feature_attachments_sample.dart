@@ -76,7 +76,7 @@ class _EditFeatureAttachmentsSampleState
     // Clear the selection on the feature layer.
     _featureLayer.clearSelection();
 
-    // Do a identify on the feature layer and select a feature.
+    // Do an identify on the feature layer and select a feature.
     final identifyLayerResult = await _mapViewController.identifyLayer(
       _featureLayer,
       screenPoint: localPosition,
@@ -169,9 +169,10 @@ class _AttachmentsOptionsState extends State<AttachmentsOptions>
                   Text(
                     'Damage Type: $damageType',
                     style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white),
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
                   ),
                   IconButton(
                     icon: const Icon(Icons.close),
