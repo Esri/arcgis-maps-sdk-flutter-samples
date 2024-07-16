@@ -211,7 +211,6 @@ class _AttachmentsOptionsState extends State<AttachmentsOptions>
                 ListView.builder(
                   itemCount: attachments.length,
                   shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
                   padding: const EdgeInsets.all(2),
                   itemBuilder: (context, index) {
                     return ListTile(
