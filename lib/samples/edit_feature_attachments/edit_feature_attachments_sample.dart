@@ -162,11 +162,13 @@ class _AttachmentsOptionsState extends State<AttachmentsOptions>
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('Damage Type: $damageType',
-                      style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white)),
+                  Text(
+                    'Damage Type: $damageType',
+                    style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white),
+                  ),
                   IconButton(
                     icon: const Icon(Icons.close),
                     onPressed: () => Navigator.pop(context),
@@ -174,11 +176,12 @@ class _AttachmentsOptionsState extends State<AttachmentsOptions>
                   Visibility(
                     visible: isLoading,
                     child: const SizedBox(
-                        height: 18,
-                        width: 18,
-                        child: CircularProgressIndicator(
-                          color: Colors.white,
-                        )),
+                      height: 18,
+                      width: 18,
+                      child: CircularProgressIndicator(
+                        color: Colors.white,
+                      ),
+                    ),
                   ),
                 ],
               ),
@@ -242,12 +245,10 @@ class _AttachmentsOptionsState extends State<AttachmentsOptions>
   // Delete an attachment from the selected feature.
   void deleteAttachment(Attachment attachment) async {
     setState(() => isLoading = true);
+    await widget.arcGISFeature.deleteAttachment(attachment);
+    await widget.applyEdits(widget.arcGISFeature);
 
-    await widget.arcGISFeature.deleteAttachment(attachment).then((_) {
-      widget.applyEdits(widget.arcGISFeature);
-    });
     _loadAttachments();
-
     setState(() => isLoading = false);
   }
 
@@ -259,7 +260,7 @@ class _AttachmentsOptionsState extends State<AttachmentsOptions>
     setState(() => isLoading = false);
 
     // Display the attachment image/pdf file in a dialog.
-    setState(() {
+    if (mounted) {
       showDialog(
         context: context,
         builder: (context) {
@@ -292,7 +293,7 @@ class _AttachmentsOptionsState extends State<AttachmentsOptions>
           );
         },
       );
-    });
+    }
   }
 
   // Add an attachment to the selected feature by FilePicker.
