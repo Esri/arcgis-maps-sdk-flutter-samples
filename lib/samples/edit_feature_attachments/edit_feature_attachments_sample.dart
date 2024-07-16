@@ -94,14 +94,16 @@ class _EditFeatureAttachmentsSampleState
   }
 
   // Show the bottom sheet to display the attachment information.
-  void _showBottomSheet(ArcGISFeature selectedFeature) async {
-    showModalBottomSheet(
-      context: context,
-      builder: (context) => AttachmentsOptions(
-        arcGISFeature: selectedFeature,
-        applyEdits: _applyEdits,
-      ),
-    );
+  void _showBottomSheet(ArcGISFeature selectedFeature) {
+    if (mounted) {
+      showModalBottomSheet(
+        context: context,
+        builder: (context) => AttachmentsOptions(
+          arcGISFeature: selectedFeature,
+          applyEdits: _applyEdits,
+        ),
+      );
+    }
   }
 
   // Apply the changes to the feature table.
@@ -112,9 +114,7 @@ class _EditFeatureAttachmentsSampleState
       await serviceFeatureTable.updateFeature(selectedFeature);
       await serviceFeatureTable.applyEdits();
     } catch (e) {
-      setState(() {
-        _showErrorDialog(context, e);
-      });
+      _showErrorDialog(context, e);
     }
     return Future.value();
   }
@@ -171,7 +171,6 @@ class _AttachmentsOptionsState extends State<AttachmentsOptions>
                           color: Colors.white)),
                   IconButton(
                     icon: const Icon(Icons.close),
-                    tooltip: 'Close BottomSheet',
                     onPressed: () => Navigator.pop(context),
                   ),
                   Visibility(
@@ -275,7 +274,6 @@ class _AttachmentsOptionsState extends State<AttachmentsOptions>
             actions: [
               IconButton(
                 icon: const Icon(Icons.save),
-                tooltip: 'Save',
                 onPressed: () {
                   // Save the attachment to the device.
                   FilePicker.platform.saveFile(
@@ -288,7 +286,6 @@ class _AttachmentsOptionsState extends State<AttachmentsOptions>
               ),
               IconButton(
                 icon: const Icon(Icons.close),
-                tooltip: 'Close',
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
