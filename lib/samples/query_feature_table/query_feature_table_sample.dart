@@ -123,8 +123,8 @@ class _QueryFeatureTableSampleState extends State<QueryFeatureTableSample>
 
     // Create query parameters and set the where clause.
     final queryParameters = QueryParameters();
-    final stateName = value.trim().toUpperCase();
-    queryParameters.whereClause = "upper(STATE_NAME) LIKE '$stateName'";
+    final stateName = value.trim().toUpperCase().replaceAll("'", "''");
+    queryParameters.whereClause = "UPPER(STATE_NAME) LIKE '$stateName%'";
 
     // Query the feature table with the query parameters.
     final queryResult =
