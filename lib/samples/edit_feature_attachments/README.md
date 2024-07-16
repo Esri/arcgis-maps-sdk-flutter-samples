@@ -18,8 +18,8 @@ Tap a feature on the map to open a bottom sheet displaying the number of attachm
 2. Create a `FeatureLayer` object from the service feature table.
 3. Select features from the feature layer with `selectFeatures()`.
 4. To fetch the feature's attachments, cast to an `ArcGISFeature` and use`ArcGISFeature.fetchAttachments()`.
-5. To add an attachment to the selected ArcGISFeature, create an attachment and use `ArcGISFeature.addAttachment()`.
-6. To delete an attachment from the selected ArcGISFeature, use the `ArcGISFeature.deleteAttachment()`.
+5. To add an attachment to the selected `ArcGISFeature`, create an attachment and use `ArcGISFeature.addAttachment()`.
+6. To delete an attachment from the selected `ArcGISFeature`, use the `ArcGISFeature.deleteAttachment()`.
 7. After a change, apply the changes to the server using `ServiceFeatureTable.applyEdits()`.
 
 ## Relevant API
