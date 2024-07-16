@@ -23,11 +23,11 @@ import 'package:path_provider/path_provider.dart';
 /// Download sample data for the provided list of Portal Item IDs.
 Future<void> downloadSampleData(List<String> portalItemIds) async {
   const portal = 'https://arcgis.com';
-  // location where files are saved to on the device. Persists while the app persists.
+  // Location where files are saved to on the device. Persists while the app persists.
   final appDirPath = (await getApplicationDocumentsDirectory()).absolute.path;
 
   for (final itemId in portalItemIds) {
-    // create a portal item to ensure it exists and load to access properties
+    // Create a portal item to ensure it exists and load to access properties.
     final portalItem =
         PortalItem.withUri(Uri.parse('$portal/home/item.html?id=$itemId'));
     if (portalItem == null) continue;
@@ -43,14 +43,14 @@ Future<void> downloadSampleData(List<String> portalItemIds) async {
     file.writeAsBytesSync(request.bodyBytes, flush: true);
 
     if (itemName.contains('.zip')) {
-      // if the data is a zip we need to extract it
+      // If the data is a zip we need to extract it.
       await extractZipArchive(file);
     }
   }
 }
 
 Future<void> extractZipArchive(File archiveFile) async {
-  // save all files to a directory with the filename without the zip extension in the same directory as the zip file
+  // Save all files to a directory with the filename without the zip extension in the same directory as the zip file.
   final pathWithoutExt = archiveFile.path.replaceFirst(RegExp(r'.zip$'), '');
   final dir = Directory.fromUri(Uri.parse(pathWithoutExt));
   if (dir.existsSync()) dir.deleteSync(recursive: true);

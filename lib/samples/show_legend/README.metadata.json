@@ -1,0 +1,24 @@
+{
+    "category": "Visualization",
+    "description": "Build a legend for all the operational layers in the map.",
+    "ignore": false,
+    "images": [
+        "show_legend.png"
+    ],
+    "keywords": [
+        "legend",
+        "legend info",
+        "symbol swatch",
+        "LayerContent",
+        "LegendInfo"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+        "LayerContent",
+        "LegendInfo"
+    ],
+    "snippets": [
+        "show_legend_sample.dart"
+    ],
+    "title": "Show legend"
+}

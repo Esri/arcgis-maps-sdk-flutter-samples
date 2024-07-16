@@ -31,16 +31,32 @@ class AddTiledLayerAsBasemapSample extends StatefulWidget {
 
 class AddTiledLayerAsBasemapSampleState
     extends State<AddTiledLayerAsBasemapSample> with SampleStateSupport {
-  // create a controller for the map view.
+  // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
+  // A flag for when the map view is ready.
+  var _ready = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // add a map view to the widget tree and set a controller.
-      body: ArcGISMapView(
-        controllerProvider: () => _mapViewController,
-        onMapViewReady: onMapViewReady,
+      // Add a map view to the widget tree and set a controller.
+      body: Stack(
+        children: [
+          ArcGISMapView(
+            controllerProvider: () => _mapViewController,
+            onMapViewReady: onMapViewReady,
+          ),
+          // Display a progress indicator and prevent interaction until state is ready.
+          Visibility(
+            visible: !_ready,
+            child: SizedBox.expand(
+              child: Container(
+                color: Colors.white30,
+                child: const Center(child: CircularProgressIndicator()),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -49,18 +65,20 @@ class AddTiledLayerAsBasemapSampleState
     await downloadSampleData(['e4a398afe9a945f3b0f4dca1e4faccb5']);
     final appDir = await getApplicationDocumentsDirectory();
 
-    // create a tile cache, specifying the path to the local tile package.
+    // Create a tile cache, specifying the path to the local tile package.
     const tilePackageName = 'SanFrancisco.tpkx';
     final pathToFile = '${appDir.absolute.path}/$tilePackageName';
     final tileCache = TileCache.withFileUri(Uri.parse(pathToFile));
 
-    // create a tiled layer with the tile cache.
+    // Create a tiled layer with the tile cache.
     final tiledLayer = ArcGISTiledLayer.withTileCache(tileCache);
-    // create a basemap with the tiled layer.
+    // Create a basemap with the tiled layer.
     final basemap = Basemap.withBaseLayer(tiledLayer);
-    // create a map with the basemap.
+    // Create a map with the basemap.
     final map = ArcGISMap.withBasemap(basemap);
-    // set the map to the map view.
+    // Set the map to the map view.
     _mapViewController.arcGISMap = map;
+    // Set the ready state variable to true to enable the UI.
+    setState(() => _ready = true);
   }
 }

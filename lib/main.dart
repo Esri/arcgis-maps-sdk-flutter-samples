@@ -22,7 +22,7 @@ import 'package:flutter/services.dart';
 import 'widgets/sample_list_view.dart';
 
 void main() {
-  // Supply your apiKey using the --dart-define-from-file command line argument
+  // Supply your apiKey using the --dart-define-from-file command line argument.
   const apiKey = String.fromEnvironment('API_KEY');
   // Alternatively, replace the above line with the following and hard-code your apiKey here:
   // const apiKey = 'your_api_key_here';

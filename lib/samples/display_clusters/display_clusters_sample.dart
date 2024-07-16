@@ -28,32 +28,45 @@ class DisplayClustersSample extends StatefulWidget {
 
 class _DisplayClustersSampleState extends State<DisplayClustersSample>
     with SampleStateSupport {
-  // create a map view controller
+  // Create a map view controller.
   final _mapViewController = ArcGISMapView.createController();
   late ArcGISMap _map;
-  // create a flag to check if the map is ready
-  bool _ready = false;
+  // A flag for when the map view is ready and controls can be used.
+  var _ready = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
         top: false,
-        // create a column widget
-        child: Column(
+        child: Stack(
           children: [
-            Expanded(
-              // add a map view to the widget tree and set a controller.
-              child: ArcGISMapView(
-                controllerProvider: () => _mapViewController,
-                onMapViewReady: onMapViewReady,
-              ),
+            Column(
+              children: [
+                Expanded(
+                  // Add a map view to the widget tree and set a controller.
+                  child: ArcGISMapView(
+                    controllerProvider: () => _mapViewController,
+                    onMapViewReady: onMapViewReady,
+                  ),
+                ),
+                Center(
+                  // Create a button to toggle feature clustering.
+                  child: ElevatedButton(
+                    onPressed: toggleFeatureClustering,
+                    child: const Text('Toggle feature clustering'),
+                  ),
+                ),
+              ],
             ),
-            Center(
-              // create a button to toggle feature clustering
-              child: ElevatedButton(
-                onPressed: _ready ? toggleFeatureClustering : null,
-                child: const Text('Toggle feature clustering'),
+            // Display a progress indicator and prevent interaction until state is ready.
+            Visibility(
+              visible: !_ready,
+              child: SizedBox.expand(
+                child: Container(
+                  color: Colors.white30,
+                  child: const Center(child: CircularProgressIndicator()),
+                ),
               ),
             ),
           ],
@@ -67,27 +80,27 @@ class _DisplayClustersSampleState extends State<DisplayClustersSample>
     final portal = Portal.arcGISOnline();
     final portalItem = PortalItem.withPortalAndItemId(
         portal: portal, itemId: '8916d50c44c746c1aafae001552bad23');
-    // load the portal item.
+    // Load the portal item.
     await portalItem.load();
-    // create a map from the portal item
+    // Create a map from the portal item.
     _map = ArcGISMap.withItem(portalItem);
-    // set the map to the map view controller
+    // Set the map to the map view controller.
     _mapViewController.arcGISMap = _map;
-    // load the map
+    // Load the map.
     await _map.load();
-    // set the flag to true to enable the UI
+    // Set the ready state variable to true to enable the sample UI.
     setState(() => _ready = true);
   }
 
   void toggleFeatureClustering() {
-    // check if the map has operational layers and the first layer is a feature layer
+    // Check if the map has operational layers and the first layer is a feature layer.
     if (_map.operationalLayers.isNotEmpty &&
         _map.operationalLayers.first is FeatureLayer) {
-      // get the first layer as a feature layer
+      // Get the first layer as a feature layer.
       final featureLayer = _map.operationalLayers.first as FeatureLayer;
-      // check if the feature layer has feature reduction
+      // Check if the feature layer has feature reduction.
       if (featureLayer.featureReduction != null) {
-        // toggle the feature reduction
+        // Toggle the feature reduction.
         featureLayer.featureReduction!.enabled =
             !featureLayer.featureReduction!.enabled;
       }

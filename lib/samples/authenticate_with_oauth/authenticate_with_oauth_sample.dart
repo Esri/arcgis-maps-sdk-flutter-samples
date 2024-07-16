@@ -35,8 +35,8 @@ class _AuthenticateWithOAuthSampleState
   // https://developers.arcgis.com/documentation/mapping-apis-and-services/security/user-authentication/serverless-native-flow/
   final _oauthUserConfiguration = OAuthUserConfiguration(
     portalUri: Uri.parse('https://www.arcgis.com'),
-    clientId: 'lgAdHkYZYlwwfAhC',
-    redirectUri: Uri.parse('my-ags-app://auth'),
+    clientId: 'T0A3SudETrIQndd2',
+    redirectUri: Uri.parse('my-ags-flutter-app://auth'),
   );
   final _mapViewController = ArcGISMapView.createController();
 
@@ -66,6 +66,8 @@ class _AuthenticateWithOAuthSampleState
     ArcGISEnvironment
         .authenticationManager.arcGISAuthenticationChallengeHandler = null;
 
+    super.dispose();
+
     // Revoke OAuth tokens and remove all credentials to log out.
     await Future.wait(ArcGISEnvironment
         .authenticationManager.arcGISCredentialStore
@@ -73,8 +75,6 @@ class _AuthenticateWithOAuthSampleState
         .whereType<OAuthUserCredential>()
         .map((credential) => credential.revokeToken()));
     ArcGISEnvironment.authenticationManager.arcGISCredentialStore.removeAll();
-
-    super.dispose();
   }
 
   @override

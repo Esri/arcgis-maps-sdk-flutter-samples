@@ -30,11 +30,11 @@ class ApplySimpleRendererToFeatureLayerSample extends StatefulWidget {
 class _ApplySimpleRendererToFeatureLayerSampleState
     extends State<ApplySimpleRendererToFeatureLayerSample>
     with SampleStateSupport {
-  // The feature layer that will host the symbolized features
+  // The feature layer that will host the symbolized features.
   late final FeatureLayer _featureLayer;
-  // Create the map view controller
+  // Create the map view controller.
   final _mapViewController = ArcGISMapView.createController();
-  // State variable indicating if all state has been initialized
+  // A flag for when the map view is ready and controls can be used.
   var _ready = false;
   // State variable indicating if the default renderer is currently being used.
   var _usingDefaultRenderer = true;
@@ -49,7 +49,7 @@ class _ApplySimpleRendererToFeatureLayerSampleState
             Column(
               children: [
                 Expanded(
-                  // Add a map view to the widget tree and set a controller
+                  // Add a map view to the widget tree and set a controller.
                   child: ArcGISMapView(
                     controllerProvider: () => _mapViewController,
                     onMapViewReady: onMapViewReady,
@@ -67,7 +67,7 @@ class _ApplySimpleRendererToFeatureLayerSampleState
                 )
               ],
             ),
-            // Display a progress indicator and prevent interaction before state is ready
+            // Display a progress indicator and prevent interaction before state is ready.
             Visibility(
               visible: !_ready,
               child: SizedBox.expand(
@@ -84,13 +84,13 @@ class _ApplySimpleRendererToFeatureLayerSampleState
   }
 
   void onMapViewReady() {
-    // Initialize the feature layer with a feature table web service
+    // Initialize the feature layer with a feature table web service.
     final uri = Uri.parse(
         'https://services.arcgis.com/V6ZHFr6zdgNZuVG0/arcgis/rest/services/Landscape_Trees/FeatureServer/0');
     final serviceFeatureTable = ServiceFeatureTable.withUri(uri);
     _featureLayer = FeatureLayer.withFeatureTable(serviceFeatureTable);
 
-    // Initialize the ArcGISMap
+    // Initialize the ArcGISMap.
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic)
       ..operationalLayers.add(_featureLayer)
       ..initialViewpoint = Viewpoint.fromCenter(
@@ -102,10 +102,10 @@ class _ApplySimpleRendererToFeatureLayerSampleState
         scale: 4750,
       );
 
-    // Add the map to the MapViewController
+    // Add the map to the MapViewController.
     _mapViewController.arcGISMap = map;
 
-    // Set the _ready state to true. This will hide the overlay controls.
+    // Set the ready state variable to true to enable the sample UI.
     setState(() => _ready = true);
   }
 

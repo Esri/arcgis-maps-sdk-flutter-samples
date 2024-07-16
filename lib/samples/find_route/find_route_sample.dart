@@ -28,23 +28,23 @@ class FindRouteSample extends StatefulWidget {
 
 class _FindRouteSampleState extends State<FindRouteSample>
     with SampleStateSupport {
-  // the map view controller.
+  // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
-  // the graphics overlay for the stops.
+  // Create a graphics overlay for the stops.
   final _stopsGraphicsOverlay = GraphicsOverlay();
-  // the graphics overlay for the route.
+  // Create a graphics overlay for the route.
   final _routeGraphicsOverlay = GraphicsOverlay();
-  // the stops for the route.
+  // Create a list of stops.
   final _stops = <Stop>[];
-  // whether the route has been generated.
+  // A flag to indicate whether the route is generated.
   var _routeGenerated = false;
-  // a flag for when the map view is ready used to control availability of parts of the UI.
+  // A flag for when the map view is ready and controls can be used.
   var _ready = false;
-  // the directions for the route.
+  // Create a list of directions for the route.
   var _directions = <DirectionManeuver>[];
-  // the parameters for the route.
+  // Define route parameters for the route.
   late final RouteParameters _routeParameters;
-  // the route task.
+  // Create a route task.
   final _routeTask = RouteTask.withUrl(Uri.parse(
       'https://sampleserver6.arcgisonline.com/arcgis/rest/services/NetworkAnalysis/SanDiego/NAServer/Route'));
 
@@ -53,43 +53,56 @@ class _FindRouteSampleState extends State<FindRouteSample>
     return Scaffold(
       body: SafeArea(
         top: false,
-        // create a column with buttons for generating the route and showing the directions.
-        child: Column(
+        child: Stack(
           children: [
-            Expanded(
-              // add a map view to the widget tree and set a controller.
-              child: ArcGISMapView(
-                controllerProvider: () => _mapViewController,
-                onMapViewReady: onMapViewReady,
+            // Create a column with buttons for generating the route and showing the directions.
+            Column(
+              children: [
+                Expanded(
+                  // Add a map view to the widget tree and set a controller.
+                  child: ArcGISMapView(
+                    controllerProvider: () => _mapViewController,
+                    onMapViewReady: onMapViewReady,
+                  ),
+                ),
+                SizedBox(
+                  height: 60,
+                  // Add the buttons to the column.
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      // Create a button to generate the route.
+                      ElevatedButton(
+                        onPressed:
+                            _routeGenerated ? null : () => generateRoute(),
+                        child: const Text('Route'),
+                      ),
+                      // Create a button to show the directions.
+                      ElevatedButton(
+                        onPressed: _routeGenerated
+                            ? () => showDialog(
+                                  context: context,
+                                  builder: (context) => showDirections(context),
+                                )
+                            : null,
+                        child: const Text('Directions'),
+                      ),
+                    ],
+                  ),
+                )
+              ],
+            ),
+            // Display a progress indicator and prevent interaction until state is ready.
+            Visibility(
+              visible: !_ready,
+              child: SizedBox.expand(
+                child: Container(
+                  color: Colors.white30,
+                  child: const Center(child: CircularProgressIndicator()),
+                ),
               ),
             ),
-            SizedBox(
-              height: 60,
-              // add the buttons to the column.
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  // create a button to generate the route.
-                  ElevatedButton(
-                    onPressed: _routeGenerated || !_ready
-                        ? null
-                        : () => generateRoute(),
-                    child: const Text('Route'),
-                  ),
-                  // create a button to show the directions.
-                  ElevatedButton(
-                    onPressed: _routeGenerated
-                        ? () => showDialog(
-                              context: context,
-                              builder: (context) => showDirections(context),
-                            )
-                        : null,
-                    child: const Text('Directions'),
-                  ),
-                ],
-              ),
-            )
           ],
         ),
       ),
@@ -100,11 +113,12 @@ class _FindRouteSampleState extends State<FindRouteSample>
     initMap();
     initStops();
     await initRouteParameters();
+    // Set the ready state variable to true to enable the sample UI.
     setState(() => _ready = true);
   }
 
   void initMap() {
-    // create a map with a topographic basemap style and an initial viewpoint.
+    // Create a map with a topographic basemap style and an initial viewpoint.
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic);
 
     map.initialViewpoint = Viewpoint.fromCenter(
@@ -115,15 +129,15 @@ class _FindRouteSampleState extends State<FindRouteSample>
       ),
       scale: 1e5,
     );
-    // set the map to the map view controller.
+    // Set the map to the map view controller.
     _mapViewController.arcGISMap = map;
-    // add the graphics overlays to the map view.
+    // Add the graphics overlays to the map view.
     _mapViewController.graphicsOverlays.add(_routeGraphicsOverlay);
     _mapViewController.graphicsOverlays.add(_stopsGraphicsOverlay);
   }
 
   void initStops() {
-    // create symbols to use for the start and end stops of the route.
+    // Create symbols to use for the start and end stops of the route.
     final routeStartCircleSymbol = SimpleMarkerSymbol(
         style: SimpleMarkerSymbolStyle.circle, color: Colors.blue, size: 15.0);
     final routeEndCircleSymbol = SimpleMarkerSymbol(
@@ -133,7 +147,7 @@ class _FindRouteSampleState extends State<FindRouteSample>
     final routeEndNumberSymbol =
         TextSymbol(text: '2', color: Colors.white, size: 10.0);
 
-    // configure pre-defined start and end points for the route.
+    // Configure pre-defined start and end points for the route.
     final startPoint = ArcGISPoint(
       x: -13041171.537945,
       y: 3860988.271378,
@@ -153,7 +167,7 @@ class _FindRouteSampleState extends State<FindRouteSample>
     _stops.add(originStop);
     _stops.add(destinationStop);
 
-    // add the start and end points to the stops graphics overlay.
+    // Add the start and end points to the stops graphics overlay.
     _stopsGraphicsOverlay.graphics.addAll([
       Graphic(geometry: startPoint, symbol: routeStartCircleSymbol),
       Graphic(geometry: endPoint, symbol: routeEndCircleSymbol),
@@ -163,7 +177,7 @@ class _FindRouteSampleState extends State<FindRouteSample>
   }
 
   Future<void> initRouteParameters() async {
-    // create default route parameters.
+    // Create default route parameters.
     _routeParameters = await _routeTask.createDefaultParameters()
       ..setStops(_stops)
       ..returnDirections = true
@@ -173,7 +187,7 @@ class _FindRouteSampleState extends State<FindRouteSample>
   }
 
   void resetRoute() {
-    // clear the route graphics overlay.
+    // Clear the route graphics overlay.
     _routeGraphicsOverlay.graphics.clear();
 
     setState(() {
@@ -183,14 +197,14 @@ class _FindRouteSampleState extends State<FindRouteSample>
   }
 
   Future<void> generateRoute() async {
-    // the symbol for the route line.
+    // Create the symbol for the route line.
     final routeLineSymbol = SimpleLineSymbol(
         style: SimpleLineSymbolStyle.solid, color: Colors.blue, width: 5.0);
 
-    // reset the route.
+    // Reset the route.
     resetRoute();
 
-    // solve the route using the route parameters.
+    // Solve the route using the route parameters.
     final routeResult =
         await _routeTask.solveRoute(routeParameters: _routeParameters);
     if (routeResult.routes.isEmpty) {
@@ -200,11 +214,11 @@ class _FindRouteSampleState extends State<FindRouteSample>
       return;
     }
 
-    // get the first route.
+    // Get the first route.
     final route = routeResult.routes.first;
     final routeGeometry = route.routeGeometry;
 
-    //  add the route to the route graphics overlay.
+    // Add the route to the route graphics overlay.
     if (routeGeometry != null) {
       final routeGraphic =
           Graphic(geometry: routeGeometry, symbol: routeLineSymbol);
@@ -218,7 +232,7 @@ class _FindRouteSampleState extends State<FindRouteSample>
   }
 
   Dialog showDirections(BuildContext context) {
-    // show the directions in a dialog.
+    // Show the directions in a dialog.
     return Dialog(
       child: Padding(
         padding: const EdgeInsets.all(8),
@@ -245,7 +259,7 @@ class _FindRouteSampleState extends State<FindRouteSample>
   }
 
   ListView buildDirectionsListView() {
-    // build a list view of the directions.
+    // Build a list view of the directions.
     return ListView.separated(
       padding: const EdgeInsets.all(8),
       itemCount: _directions.length,
@@ -257,7 +271,7 @@ class _FindRouteSampleState extends State<FindRouteSample>
   }
 
   Future<void> showAlertDialog(String message, {String title = 'Alert'}) {
-    // show an alert dialog.
+    // Show an alert dialog.
     return showDialog(
       context: context,
       builder: (context) => AlertDialog(

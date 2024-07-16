@@ -34,16 +34,32 @@ class DisplayMapFromMobileMapPackageSample extends StatefulWidget {
 class _DisplayMapFromMobileMapPackageSampleState
     extends State<DisplayMapFromMobileMapPackageSample>
     with SampleStateSupport {
-  // create a controller for the map view.
+  // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
+  // A flag for when the map view is ready.
+  var _ready = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // add a map view to the widget tree and set a controller.
-      body: ArcGISMapView(
-        controllerProvider: () => _mapViewController,
-        onMapViewReady: onMapViewReady,
+      // Add a map view to the widget tree and set a controller.
+      body: Stack(
+        children: [
+          ArcGISMapView(
+            controllerProvider: () => _mapViewController,
+            onMapViewReady: onMapViewReady,
+          ),
+          // Display a progress indicator and prevent interaction until state is ready.
+          Visibility(
+            visible: !_ready,
+            child: SizedBox.expand(
+              child: Container(
+                color: Colors.white30,
+                child: const Center(child: CircularProgressIndicator()),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -52,14 +68,17 @@ class _DisplayMapFromMobileMapPackageSampleState
     await downloadSampleData(['e1f3a7254cb845b09450f54937c16061']);
     final appDir = await getApplicationDocumentsDirectory();
 
-    // load the local mobile map package.
+    // Load the local mobile map package.
     final mmpkFile = File('${appDir.absolute.path}/Yellowstone.mmpk');
     final mmpk = MobileMapPackage.withFileUri(mmpkFile.uri);
     await mmpk.load();
 
     if (mmpk.maps.isNotEmpty) {
-      // get the first map in the mobile map package and set to the map view.
+      // Get the first map in the mobile map package and set to the map view.
       _mapViewController.arcGISMap = mmpk.maps.first;
     }
+
+    // Set the ready state variable to true to enable the sample UI.
+    setState(() => _ready = true);
   }
 }

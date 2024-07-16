@@ -20,8 +20,8 @@ class _ShowPortalUserInfoSampleState extends State<ShowPortalUserInfoSample>
   // https://developers.arcgis.com/documentation/mapping-apis-and-services/security/user-authentication/serverless-native-flow/
   final _oauthUserConfiguration = OAuthUserConfiguration(
     portalUri: Uri.parse('https://www.arcgis.com'),
-    clientId: 'lgAdHkYZYlwwfAhC',
-    redirectUri: Uri.parse('my-ags-app://auth'),
+    clientId: 'T0A3SudETrIQndd2',
+    redirectUri: Uri.parse('my-ags-flutter-app://auth'),
   );
   // Create a Portal that requires authentication.
   final _portal =
@@ -53,6 +53,8 @@ class _ShowPortalUserInfoSampleState extends State<ShowPortalUserInfoSample>
     ArcGISEnvironment
         .authenticationManager.arcGISAuthenticationChallengeHandler = null;
 
+    super.dispose();
+
     // Revoke OAuth tokens and remove all credentials to log out.
     await Future.wait(ArcGISEnvironment
         .authenticationManager.arcGISCredentialStore
@@ -60,8 +62,6 @@ class _ShowPortalUserInfoSampleState extends State<ShowPortalUserInfoSample>
         .whereType<OAuthUserCredential>()
         .map((credential) => credential.revokeToken()));
     ArcGISEnvironment.authenticationManager.arcGISCredentialStore.removeAll();
-
-    super.dispose();
   }
 
   @override
@@ -156,13 +156,5 @@ class _ShowPortalUserInfoSampleState extends State<ShowPortalUserInfoSample>
     _portal.portalInfo?.thumbnail?.loadBytes().then((bytes) {
       setState(() => _organizationThumbnail = bytes);
     });
-  }
-}
-
-extension on LoadableImage {
-  // A helper method to load the image bytes.
-  Future<Uint8List> loadBytes() async {
-    await load();
-    return image!.getEncodedBuffer();
   }
 }

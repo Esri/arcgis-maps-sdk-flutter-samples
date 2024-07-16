@@ -29,13 +29,13 @@ class ApplyUniqueValueRendererSample extends StatefulWidget {
 
 class _ApplyUniqueValueRendererSampleState
     extends State<ApplyUniqueValueRendererSample> with SampleStateSupport {
-  // create a controller for the map view.
+  // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // add a map view to the widget tree and set a controller.
+      // Add a map view to the widget tree and set a controller.
       body: ArcGISMapView(
         controllerProvider: () => _mapViewController,
         onMapViewReady: onMapViewReady,
@@ -44,24 +44,23 @@ class _ApplyUniqueValueRendererSampleState
   }
 
   void onMapViewReady() {
-    // create a map with a Basemap style and an initial viewpoint.
+    // Create a map with a Basemap style and an initial viewpoint.
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic);
     map.initialViewpoint = Viewpoint.fromCenter(
       ArcGISPoint(x: -12356253.6, y: 3842795.4),
       scale: 52681563.2,
     );
 
-    // create a feature layer from a service feature table
-    // and set a unique value renderer.
+    // Create a feature layer from a service feature table and set a unique value renderer.
     final uri = Uri.parse(
         'https://sampleserver6.arcgisonline.com/arcgis/rest/services/Census/MapServer/3');
     final serviceFeatureTable = ServiceFeatureTable.withUri(uri);
     final featureLayer = FeatureLayer.withFeatureTable(serviceFeatureTable);
     featureLayer.renderer = _configureUniqueValueRenderer();
 
-    // add the feature layer to the map.
+    // Add the feature layer to the map.
     map.operationalLayers.add(featureLayer);
-    // set the map to the MapViewController.
+    // Set the map to the MapViewController.
     _mapViewController.arcGISMap = map;
   }
 
@@ -70,7 +69,7 @@ class _ApplyUniqueValueRendererSampleState
     final stateOutlineSymbol = SimpleLineSymbol(
         style: SimpleLineSymbolStyle.solid, color: Colors.white, width: 0.7);
 
-    // create fill symbols for each region.
+    // Create fill symbols for each region.
     final pacificFillSymbol = SimpleFillSymbol(
         style: SimpleFillSymbolStyle.solid,
         color: const Color.fromARGB(255, 0, 0, 255),
@@ -84,7 +83,7 @@ class _ApplyUniqueValueRendererSampleState
         color: const Color.fromARGB(255, 250, 125, 0),
         outline: stateOutlineSymbol);
 
-    // create unique values for each region.
+    // Create unique values for each region.
     final pacificValue = UniqueValue(
         description: 'Pacific Region',
         label: 'Pacific',
@@ -104,7 +103,7 @@ class _ApplyUniqueValueRendererSampleState
     final defaultFillSymbol = SimpleFillSymbol(
         style: SimpleFillSymbolStyle.cross, color: Colors.grey, outline: null);
 
-    // create a unique value renderer with the unique values.
+    // Create a unique value renderer with the unique values.
     return UniqueValueRenderer(
       fieldNames: ['SUB_REGION'],
       uniqueValues: [

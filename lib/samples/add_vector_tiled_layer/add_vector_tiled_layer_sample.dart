@@ -32,11 +32,11 @@ enum VectorTiledItem {
   final String itemId;
   const VectorTiledItem(this.label, this.itemId);
 
-  // a menu item for this selection.
+  // A menu item for this selection.
   DropdownMenuItem<VectorTiledItem> get menuItem =>
       DropdownMenuItem(value: this, child: Text(label));
 
-  // the service URL for this selection.
+  // The service URL for this selection.
   Uri get uri => Uri.parse('https://www.arcgis.com/home/item.html?id=$itemId');
 }
 
@@ -50,9 +50,9 @@ class AddVectorTiledLayerSample extends StatefulWidget {
 
 class _AddVectorTiledLayerSampleState extends State<AddVectorTiledLayerSample>
     with SampleStateSupport {
-  // create a controller for the map view.
+  // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
-  // prepare menu items for the selection of vector tiled layers.
+  // Prepare menu items for the selection of vector tiled layers.
   final _selectionMenuItems =
       VectorTiledItem.values.map((selection) => selection.menuItem).toList();
   VectorTiledItem? _selection;
@@ -65,14 +65,14 @@ class _AddVectorTiledLayerSampleState extends State<AddVectorTiledLayerSample>
         child: Column(
           children: [
             Expanded(
-              // add a map view to the widget tree and set a controller.
+              // Add a map view to the widget tree and set a controller.
               child: ArcGISMapView(
                 controllerProvider: () => _mapViewController,
                 onMapViewReady: onMapViewReady,
               ),
             ),
             Center(
-              // add a dropdown button to select a vector tiled layer.
+              // Add a dropdown button to select a vector tiled layer.
               child: DropdownButton(
                 icon: const Icon(
                   Icons.arrow_drop_down,
@@ -92,19 +92,19 @@ class _AddVectorTiledLayerSampleState extends State<AddVectorTiledLayerSample>
   }
 
   void onMapViewReady() {
-    // initially load the Mid-Century vector tiled layer.
+    // Initially load the Mid-Century vector tiled layer.
     loadSelection(VectorTiledItem.midCentury);
   }
 
   void loadSelection(VectorTiledItem? selection) {
     if (selection != null) {
-      // create a vector tiled layer with a URL to the vector tile service.
+      // Create a vector tiled layer with a URL to the vector tile service.
       final vectorTiledLayer = ArcGISVectorTiledLayer.withUri(selection.uri);
-      // create a basemap with the vector tiled layer.
+      // Create a basemap with the vector tiled layer.
       final basemap = Basemap.withBaseLayer(vectorTiledLayer);
-      // create a map with the basemap.
+      // Create a map with the basemap.
       final map = ArcGISMap.withBasemap(basemap);
-      // set the map to the map view.
+      // Set the map to the map view.
       _mapViewController.arcGISMap = map;
     } else {
       _mapViewController.arcGISMap = null;

@@ -34,7 +34,7 @@ void main(List<String> args) {
   String? category;
   print('** Checking for sample files **');
 
-  // get all the files in the provided path
+  // Get all the files in the provided path.
   if (args.isNotEmpty) {
     dirPath = args[0];
     if (args.length == 2) {
@@ -65,25 +65,25 @@ void main(List<String> args) {
     final filename = pathParts.last;
     final lFilename = filename.toLowerCase();
 
-    // skip any files that aren't the readme or metadata files
+    // Skip any files that aren't the readme or metadata files.
     if (lFilename != lReadme && lFilename != lMetadata) {
       continue;
     }
 
     if (lFilename == lReadme) {
-      // exit if readme filename capitalization is incorrect
+      // Exit if readme filename capitalization is incorrect.
       if (filename != 'README.md') {
         print(
             'Error: readme file has wrong capitalization in filename. Should be: README.md');
         returnCode++;
       }
-      // get the readme file
+      // Get the readme file.
       readmeFile = filename;
     }
 
-    // get the metadata file
+    // Get the metadata file.
     if (lFilename == lMetadata) {
-      // exit if metadata filename capitalization is incorrect
+      // Exit if metadata filename capitalization is incorrect.
       if (filename != 'README.metadata.json') {
         print(
             'Error: metadata file has wrong capitalization in filename. Should be: README.metadata.json');
@@ -93,28 +93,28 @@ void main(List<String> args) {
     }
   }
 
-  // check the readme exists
+  // Check the readme exists.
   if (readmeFile == null) {
     print(
         'Error: README.md does not exist. Please create and re-run the script.');
     returnCode++;
   }
 
-  // Run readme checks
-  // check filename capitalization
-  // run the markdown linter style checker on the readme
+  // Run readme checks.
+  // Check filename capitalization.
+  // Run the markdown linter style checker on the readme.
   returnCode += runMdlStyleChecker(dirPath);
 
-  // run the readme content check
+  // Run the readme content check.
   returnCode += runReadmeCheck(dirPath);
 
-  // if the metadata file doesn't exist, create it from the readme
+  // If the metadata file doesn't exist, create it from the readme.
   if (metadataFile == null) {
     returnCode += createMetadataFromReadme(dirPath, category);
-    // run the metadata content check
+    // Run the metadata content check.
     returnCode += runMetadataCheck(dirPath);
   } else {
-    // run the metadata content check
+    // Run the metadata content check.
     returnCode += runMetadataCheck(dirPath);
   }
 

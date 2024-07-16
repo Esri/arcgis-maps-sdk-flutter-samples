@@ -30,15 +30,15 @@ class ApplyClassBreaksRendererToSublayerSample extends StatefulWidget {
 class _ApplyClassBreaksRendererToSublayerSampleState
     extends State<ApplyClassBreaksRendererToSublayerSample>
     with SampleStateSupport {
-  // create a map view controller
+  // Create a map view controller.
   final _mapViewController = ArcGISMapView.createController();
-  // create a map with a basemap style
+  // Create a map with a basemap style.
   final _map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISStreets);
-  // set the ready state to false
+  // A flag for when the map view is ready and controls can be used.
   var _ready = false;
-  // set the rendered state to false
+  // A flag for when the renderer has been updated.
   var _rendered = false;
-  // create an image sublayer
+  // Create an image sublayer.
   late ArcGISMapImageSublayer _countiesSublayer;
 
   @override
@@ -46,23 +46,37 @@ class _ApplyClassBreaksRendererToSublayerSampleState
     return Scaffold(
       body: SafeArea(
         top: false,
-        child: Column(
-          // add the map view and buttons to a column.
+        child: Stack(
           children: [
-            Expanded(
-              // add a map view to the widget tree and set a controller.
-              child: ArcGISMapView(
-                controllerProvider: () => _mapViewController,
-                onMapViewReady: onMapViewReady,
+            Column(
+              // Add the map view and buttons to a column.
+              children: [
+                Expanded(
+                  // Add a map view to the widget tree and set a controller.
+                  child: ArcGISMapView(
+                    controllerProvider: () => _mapViewController,
+                    onMapViewReady: onMapViewReady,
+                  ),
+                ),
+                Center(
+                  // Apply renderer button.
+                  child: ElevatedButton(
+                    onPressed: !_rendered ? renderLayer : null,
+                    child: const Text('Change Sublayer Renderer'),
+                  ),
+                )
+              ],
+            ),
+            // Display a progress indicator and prevent interaction until state is ready.
+            Visibility(
+              visible: !_ready,
+              child: SizedBox.expand(
+                child: Container(
+                  color: Colors.white30,
+                  child: const Center(child: CircularProgressIndicator()),
+                ),
               ),
             ),
-            Center(
-              // apply renderer button
-              child: ElevatedButton(
-                onPressed: _ready && !_rendered ? renderLayer : null,
-                child: const Text('Change Sublayer Renderer'),
-              ),
-            )
           ],
         ),
       ),
@@ -70,46 +84,46 @@ class _ApplyClassBreaksRendererToSublayerSampleState
   }
 
   void onMapViewReady() async {
-    // create an image layer
+    // Create an image layer.
     final imageLayer = ArcGISMapImageLayer.withUri(
       Uri.parse(
           'https://sampleserver6.arcgisonline.com/arcgis/rest/services/Census/MapServer'),
     );
-    // set the map to the map view controller.
+    // Set the map to the map view controller.
     _mapViewController.arcGISMap = _map;
-    // set the initial viewpoint
+    // Set the initial viewpoint.
     _mapViewController.setViewpoint(
       Viewpoint.withLatLongScale(
           latitude: 48.354406, longitude: -99.998267, scale: 147914382),
     );
-    // add the image layer to the map
+    // Add the image layer to the map.
     _map.operationalLayers.add(imageLayer);
 
-    // load the image layer and counties sublayer
+    // Load the image layer and counties sublayer.
     await imageLayer.load();
     _countiesSublayer = imageLayer.arcGISMapImageSublayers.elementAt(2);
     await _countiesSublayer.load();
 
-    // set the ready state
+    // Set the ready state variable to true to enable the sample UI.
     setState(() => _ready = true);
   }
 
   void renderLayer() async {
-    // apply class breaks renderer
+    // Apply class breaks renderer.
     _countiesSublayer.renderer = createPopulationClassBreaksRenderer();
-    // update the rendered state
+    // Update the rendered state.
     setState(() => _rendered = true);
   }
 
   ClassBreaksRenderer createPopulationClassBreaksRenderer() {
-    // create colors for the class breaks
-    var blue1 = const Color.fromARGB(255, 153, 206, 231);
-    var blue2 = const Color.fromARGB(255, 108, 192, 232);
-    var blue3 = const Color.fromARGB(255, 77, 173, 218);
-    var blue4 = const Color.fromARGB(255, 28, 130, 178);
-    var blue5 = const Color.fromARGB(255, 2, 75, 109);
+    // Create colors for the class breaks.
+    const blue1 = Color.fromARGB(255, 153, 206, 231);
+    const blue2 = Color.fromARGB(255, 108, 192, 232);
+    const blue3 = Color.fromARGB(255, 77, 173, 218);
+    const blue4 = Color.fromARGB(255, 28, 130, 178);
+    const blue5 = Color.fromARGB(255, 2, 75, 109);
 
-    // create symbols for the class breaks
+    // Create symbols for the class breaks.
     final outline = SimpleLineSymbol(
         style: SimpleLineSymbolStyle.solid, color: Colors.grey, width: 1);
     final classSymbol1 = SimpleFillSymbol(
@@ -123,7 +137,7 @@ class _ApplyClassBreaksRendererToSublayerSampleState
     final classSymbol5 = SimpleFillSymbol(
         style: SimpleFillSymbolStyle.solid, color: blue5, outline: outline);
 
-    // create class breaks
+    // Create class breaks.
     final classBreak1 = ClassBreak(
       description: '-99 to 8560',
       label: '-99 to 8560',
@@ -160,7 +174,7 @@ class _ApplyClassBreaksRendererToSublayerSampleState
       symbol: classSymbol5,
     );
 
-    // create and return a class breaks renderer
+    // Create and return a class breaks renderer.
     return ClassBreaksRenderer(
       fieldName: 'POP2007',
       classBreaks: [
