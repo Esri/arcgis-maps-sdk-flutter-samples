@@ -1,0 +1,38 @@
+{
+    "category": "Edit and Manage Data",
+    "description": "Add, delete, and download attachments for features from a service.",
+    "ignore": false,
+    "images": [
+        "edit_feature_attachments.png"
+    ],
+    "keywords": [
+        "Edit and manage data",
+        "JPEG",
+        "PDF",
+        "PNG",
+        "TXT",
+        "image",
+        "picture",
+        "ArcGISFeature",
+        "FeatureLayer",
+        "ServiceFeatureTable",
+        "addAttachment",
+        "applyEdits",
+        "deleteAttachment",
+        "fetchAttachments"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+        "ArcGISFeature",
+        "FeatureLayer",
+        "ServiceFeatureTable",
+        "addAttachment",
+        "applyEdits",
+        "deleteAttachment",
+        "fetchAttachments"
+    ],
+    "snippets": [
+        "edit_feature_attachments_sample.dart"
+    ],
+    "title": "Edit feature attachments"
+}
