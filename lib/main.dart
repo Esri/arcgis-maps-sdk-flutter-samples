@@ -43,21 +43,23 @@ class SampleViewerApp extends StatefulWidget {
 
 class _SampleViewerAppState extends State<SampleViewerApp> {
   final _allSamples = <Sample>[];
+  final _searchFocusNode = FocusNode();
+  final _textEditingController = TextEditingController();
   var _filteredSamples = <Sample>[];
   bool _ready = false;
   bool _searchHasFocus = false;
-  final _searchFocusNode = FocusNode();
-  final _textEditingController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     loadSamples();
-    _searchFocusNode.addListener(() {
-      if (_searchFocusNode.hasFocus != _searchHasFocus) {
-        setState(() => _searchHasFocus = _searchFocusNode.hasFocus);
-      }
-    });
+    _searchFocusNode.addListener(
+      () {
+        if (_searchFocusNode.hasFocus != _searchHasFocus) {
+          setState(() => _searchHasFocus = _searchFocusNode.hasFocus);
+        }
+      },
+    );
   }
 
   @override
@@ -83,45 +85,45 @@ class _SampleViewerAppState extends State<SampleViewerApp> {
         appBar: AppBar(
           title: const Text(title),
         ),
-        body: Listener(
-          onPointerDown: (_) => FocusManager.instance.primaryFocus?.unfocus(),
-          child: Column(
-            children: [
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8),
-                child: TextField(
-                  focusNode: _searchFocusNode,
-                  controller: _textEditingController,
-                  onChanged: onSearchChanged,
-                  autocorrect: false,
-                  decoration: InputDecoration(
-                    hintText: 'Search...',
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        _searchFocusNode.hasFocus ? Icons.cancel : Icons.search,
-                      ),
-                      onPressed: onSearchSuffixPressed,
+        body: Column(
+          children: [
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              child: TextField(
+                focusNode: _searchFocusNode,
+                controller: _textEditingController,
+                onChanged: onSearchChanged,
+                autocorrect: false,
+                decoration: InputDecoration(
+                  hintText: 'Search...',
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _searchHasFocus ? Icons.cancel : Icons.search,
                     ),
+                    onPressed: onSearchSuffixPressed,
                   ),
                 ),
               ),
-              _ready
-                  ? Expanded(
-                      flex: 1,
+            ),
+            _ready
+                ? Expanded(
+                    child: Listener(
+                      onPointerDown: (_) =>
+                          FocusManager.instance.primaryFocus?.unfocus(),
                       child: SampleListView(samples: _filteredSamples),
-                    )
-                  : const Center(
-                      child: Text('Loading samples...'),
                     ),
-            ],
-          ),
+                  )
+                : const Center(
+                    child: Text('Loading samples...'),
+                  ),
+          ],
         ),
       ),
     );
   }
 
   void onSearchSuffixPressed() {
-    if (!_searchHasFocus) {
+    if (_searchHasFocus) {
       _textEditingController.clear();
       FocusManager.instance.primaryFocus?.unfocus();
       onSearchChanged('');
@@ -142,28 +144,20 @@ class _SampleViewerAppState extends State<SampleViewerApp> {
   }
 
   void onSearchChanged(String searchText) {
-    List<Sample> results = [];
+    final List<Sample> results;
     if (searchText.isEmpty) {
       results = _allSamples;
     } else {
-      Set<Sample> uniqueResults = {};
-      uniqueResults.addAll(
-        _allSamples.where(
-          (sample) {
-            final lowerSearchText = searchText.toLowerCase();
-            return sample.title.toLowerCase().contains(lowerSearchText) ||
-                sample.category.toLowerCase().contains(lowerSearchText) ||
-                sample.keywords.any(
-                  (keyword) => keyword.toLowerCase().contains(lowerSearchText),
-                ) ||
-                sample.relevantApis.any(
-                  (keyword) => keyword.toLowerCase().contains(lowerSearchText),
-                );
-          },
-        ).toList(),
-      );
-
-      results.addAll(uniqueResults.toList());
+      results = _allSamples.where(
+        (sample) {
+          final lowerSearchText = searchText.toLowerCase();
+          return sample.title.toLowerCase().contains(lowerSearchText) ||
+              sample.category.toLowerCase().contains(lowerSearchText) ||
+              sample.keywords.any(
+                (keyword) => keyword.toLowerCase().contains(lowerSearchText),
+              );
+        },
+      ).toList();
     }
 
     setState(() => _filteredSamples = results);

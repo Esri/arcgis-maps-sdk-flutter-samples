@@ -25,18 +25,16 @@ class Sample {
   final String _description;
   final List<String> _snippets;
   final String _title;
-  final Widget _sampleWidget;
   final List<String> _keywords;
-  final List<String> _relevantApis;
+  final Widget _sampleWidget;
 
   Sample.fromJson(Map<String, dynamic> json)
       : _category = json['category'],
         _description = json['description'],
         _snippets = List<String>.from(json['snippets']),
         _title = json['title'],
-        _sampleWidget = sampleWidgets[json['key']] ?? const Placeholder(),
         _keywords = List<String>.from(json['keywords']),
-        _relevantApis = List<String>.from(json['relevant_apis']);
+        _sampleWidget = sampleWidgets[json['key']] ?? const Placeholder();
 
   String get title => _title;
 
@@ -46,9 +44,7 @@ class Sample {
 
   List<String> get snippets => _snippets;
 
-  Widget getSampleWidget() => _sampleWidget;
-
   List<String> get keywords => _keywords;
 
-  List<String> get relevantApis => _relevantApis;
+  Widget getSampleWidget() => _sampleWidget;
 }
