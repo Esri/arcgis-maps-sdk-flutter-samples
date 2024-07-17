@@ -123,8 +123,9 @@ class _QueryFeatureTableSampleState extends State<QueryFeatureTableSample>
 
     // Create query parameters and set the where clause.
     final queryParameters = QueryParameters();
-    final stateName = value.trim().toUpperCase();
-    queryParameters.whereClause = "upper(STATE_NAME) LIKE '$stateName'";
+    final stateName = value.trim();
+    queryParameters.whereClause =
+        "upper(STATE_NAME) LIKE '${stateName.toUpperCase().sqlEscape()}%'";
 
     // Query the feature table with the query parameters.
     final queryResult =
@@ -164,4 +165,10 @@ class _QueryFeatureTableSampleState extends State<QueryFeatureTableSample>
     setState(() => _textEditingController.clear());
     FocusManager.instance.primaryFocus?.unfocus();
   }
+}
+
+extension on String {
+  // Prepare a string so that it can be used as input in a whereClause, which must
+  // be valid SQL.
+  String sqlEscape() => replaceAll("'", "''");
 }
