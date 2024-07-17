@@ -33,15 +33,25 @@ class _DensifyAndGeneralizeGeometrySampleState
   final _mapViewController = ArcGISMapView.createController();
   // Declare a polyline geometry representing the ship's route.
   late final Polyline _originalPolyline;
+  // Declare a graphic for displaying the points of the resultant geometry.
+  late final Graphic _resultPointsGraphic;
+  // Declare a graphic for displaying the lines of the resultant geometry.
+  late final Graphic _resultPolylineGraphic;
   // A flag for when the map view is ready and controls can be used.
   var _ready = false;
+  //fixme comments
+  var _settingsVisible = false;
+  var _generalize = false;
+  var _maxDeviation = 10.0;
+  var _densify = false;
+  var _maxSegmentLength = 100.0;
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        top: false,
-        child: Stack(
+    return SafeArea(
+      top: false,
+      child: Scaffold(
+        body: Stack(
           children: [
             Column(
               children: [
@@ -55,10 +65,10 @@ class _DensifyAndGeneralizeGeometrySampleState
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    // A button to perform a task.
+                    // A button to show the Geometry Settings bottom sheet.
                     ElevatedButton(
-                      onPressed: performTask,
-                      child: const Text('Perform Task'),
+                      onPressed: () => setState(() => _settingsVisible = true),
+                      child: const Text('Geometry Settings'),
                     ),
                   ],
                 ),
@@ -76,6 +86,63 @@ class _DensifyAndGeneralizeGeometrySampleState
             ),
           ],
         ),
+        //fixme comment
+        bottomSheet: _settingsVisible ? buildSettings(context) : null,
+      ),
+    );
+  }
+
+  Widget buildSettings(BuildContext context) {
+    return Container(
+      color: Colors.white,
+      padding: const EdgeInsets.symmetric(horizontal: 20.0),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
+            children: [
+              Text(
+                'Geometry Settings',
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
+              const Spacer(),
+              IconButton(
+                icon: const Icon(Icons.close),
+                onPressed: () => setState(() => _settingsVisible = false),
+              ),
+            ],
+          ),
+          Row(
+            children: [
+              const Text('Generalize'),
+              const Spacer(),
+              Switch(
+                value: _generalize,
+                onChanged: (value) {
+                  setState(() => _generalize = value);
+                  updateGraphics();
+                },
+              ),
+            ],
+          ),
+          Row(
+            children: [
+              const Text('Densify'),
+              const Spacer(),
+              Switch(
+                value: _densify,
+                onChanged: (value) {
+                  setState(() => _densify = value);
+                  updateGraphics();
+                },
+              ),
+            ],
+          ),
+          ElevatedButton(
+            onPressed: reset,
+            child: const Text('Reset'),
+          ),
+        ],
       ),
     );
   }
@@ -104,21 +171,8 @@ class _DensifyAndGeneralizeGeometrySampleState
           ..addPointXY(x: 2330485.861737, y: 207742.298501);
     _originalPolyline = polylineBuilder.toGeometry() as Polyline;
 
-    // Create graphics for displaying the base points and lines.
-    final mutablePointCollection = MutablePointCollection.withSpatialReference(
-        _originalPolyline.spatialReference);
-    //fixme simplify this
-    for (var i = 0; i < _originalPolyline.parts.size; i++) {
-      final part = _originalPolyline.parts.getPart(index: i);
-      for (var j = 0; j < part.pointCount; j++) {
-        final point = part.getPoint(pointIndex: j);
-        mutablePointCollection.addPoint(point);
-      }
-    }
-    final multipointBuilder = MultipointBuilder.fromSpatialReference(
-        _originalPolyline.spatialReference)
-      ..points = mutablePointCollection;
-    final multipoint = multipointBuilder.toGeometry() as Multipoint;
+    // Create graphics for displaying the original base points and lines.
+    final multipoint = multipointFromPolyline(_originalPolyline);
     final originalPointGraphic = Graphic(
       geometry: multipoint,
       symbol: SimpleMarkerSymbol(
@@ -136,12 +190,30 @@ class _DensifyAndGeneralizeGeometrySampleState
       ),
     );
 
+    // Create graphics for displaying the resultant points and lines.
+    _resultPointsGraphic = Graphic(
+      symbol: SimpleMarkerSymbol(
+        style: SimpleMarkerSymbolStyle.circle,
+        color: Colors.purple,
+        size: 7.0,
+      ),
+    );
+    _resultPolylineGraphic = Graphic(
+      symbol: SimpleLineSymbol(
+        style: SimpleLineSymbolStyle.solid,
+        color: Colors.purple,
+        width: 3.0,
+      ),
+    );
+
     // Add the graphics to a graphics overlay, and add the overlay to the map view.
     final graphicsOverlay = GraphicsOverlay()
       ..graphics.addAll(
         [
           originalPointGraphic,
           originalPolylineGraphic,
+          _resultPointsGraphic,
+          _resultPolylineGraphic
         ],
       );
     _mapViewController.graphicsOverlays.add(graphicsOverlay);
@@ -159,11 +231,66 @@ class _DensifyAndGeneralizeGeometrySampleState
     setState(() => _ready = true);
   }
 
-  void performTask() async {
-    setState(() => _ready = false);
-    // Perform some task.
-    print('Perform task');
-    await Future.delayed(const Duration(seconds: 5));
-    setState(() => _ready = true);
+  //fixme comment
+  void updateGraphics() {
+    //fixme comment
+    if (!_generalize && !_densify) {
+      _resultPointsGraphic.geometry = null;
+      _resultPolylineGraphic.geometry = null;
+      return;
+    }
+
+    //fixme comment
+    var resultPolyline = _originalPolyline;
+
+    //fixme comment
+    if (_generalize) {
+      resultPolyline = GeometryEngine.generalize(
+        geometry: resultPolyline,
+        maxDeviation: _maxDeviation,
+        removeDegenerateParts: true,
+      ) as Polyline;
+    }
+
+    //fixme comment
+    if (_densify) {
+      resultPolyline = GeometryEngine.densify(
+        geometry: resultPolyline,
+        maxSegmentLength: _maxSegmentLength,
+      ) as Polyline;
+    }
+
+    //fixme comment
+    _resultPolylineGraphic.geometry = resultPolyline;
+    _resultPointsGraphic.geometry = multipointFromPolyline(resultPolyline);
+  }
+
+  //fixme comment
+  void reset() {
+    setState(() {
+      _generalize = false;
+      _maxDeviation = 10.0;
+      _densify = false;
+      _maxSegmentLength = 100.0;
+    });
+    updateGraphics();
+  }
+
+  //fixme comment
+  Multipoint multipointFromPolyline(Polyline polyline) {
+    //fixme simplify this
+    final mutablePointCollection =
+        MutablePointCollection.withSpatialReference(polyline.spatialReference);
+    for (var i = 0; i < polyline.parts.size; i++) {
+      final part = polyline.parts.getPart(index: i);
+      for (var j = 0; j < part.pointCount; j++) {
+        final point = part.getPoint(pointIndex: j);
+        mutablePointCollection.addPoint(point);
+      }
+    }
+    final multipointBuilder = MultipointBuilder.fromSpatialReference(
+        mutablePointCollection.spatialReference);
+    multipointBuilder.points = mutablePointCollection;
+    return multipointBuilder.toGeometry() as Multipoint;
   }
 }
