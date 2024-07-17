@@ -74,7 +74,8 @@ class _GenerateOfflineMapSampleState extends State<GenerateOfflineMapSample>
                         child: IgnorePointer(
                           child: SafeArea(
                             child: Container(
-                              margin: const EdgeInsets.all(30.0),
+                              margin: const EdgeInsets.fromLTRB(
+                                  30.0, 30.0, 30.0, 50.0),
                               child: Container(
                                 key: _outlineKey,
                                 decoration: BoxDecoration(
