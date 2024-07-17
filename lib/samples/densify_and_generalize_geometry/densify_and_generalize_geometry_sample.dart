@@ -48,10 +48,10 @@ class _DensifyAndGeneralizeGeometrySampleState
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      top: false,
-      child: Scaffold(
-        body: Stack(
+    return Scaffold(
+      body: SafeArea(
+        top: false,
+        child: Stack(
           children: [
             Column(
               children: [
@@ -86,16 +86,21 @@ class _DensifyAndGeneralizeGeometrySampleState
             ),
           ],
         ),
-        //fixme comment
-        bottomSheet: _settingsVisible ? buildSettings(context) : null,
       ),
+      //fixme comment
+      bottomSheet: _settingsVisible ? buildSettings(context) : null,
     );
   }
 
   Widget buildSettings(BuildContext context) {
     return Container(
       color: Colors.white,
-      padding: const EdgeInsets.symmetric(horizontal: 20.0),
+      padding: EdgeInsets.fromLTRB(
+        20.0,
+        0.0,
+        20.0,
+        View.of(context).viewPadding.bottom / View.of(context).devicePixelRatio,
+      ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -127,6 +132,34 @@ class _DensifyAndGeneralizeGeometrySampleState
           ),
           Row(
             children: [
+              const Text('Max Deviation'),
+              const Spacer(),
+              Text(
+                _maxDeviation.round().toString(),
+                textAlign: TextAlign.right,
+              ),
+            ],
+          ),
+          Row(
+            children: [
+              Expanded(
+                child: Slider(
+                  value: _maxDeviation,
+                  min: 1.0,
+                  max: 250.0,
+                  onChanged: _generalize
+                      ? (value) {
+                          setState(() => _maxDeviation = value);
+                          updateGraphics();
+                        }
+                      : null,
+                ),
+              ),
+            ],
+          ),
+          const Divider(),
+          Row(
+            children: [
               const Text('Densify'),
               const Spacer(),
               Switch(
@@ -138,6 +171,34 @@ class _DensifyAndGeneralizeGeometrySampleState
               ),
             ],
           ),
+          Row(
+            children: [
+              const Text('Max Segment Length'),
+              const Spacer(),
+              Text(
+                _maxSegmentLength.round().toString(),
+                textAlign: TextAlign.right,
+              ),
+            ],
+          ),
+          Row(
+            children: [
+              Expanded(
+                child: Slider(
+                  value: _maxSegmentLength,
+                  min: 50.0,
+                  max: 500.0,
+                  onChanged: _densify
+                      ? (value) {
+                          setState(() => _maxSegmentLength = value);
+                          updateGraphics();
+                        }
+                      : null,
+                ),
+              ),
+            ],
+          ),
+          const Divider(),
           ElevatedButton(
             onPressed: reset,
             child: const Text('Reset'),
