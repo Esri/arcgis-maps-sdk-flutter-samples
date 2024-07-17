@@ -42,13 +42,31 @@ class SampleViewerApp extends StatefulWidget {
 }
 
 class _SampleViewerAppState extends State<SampleViewerApp> {
-  final _samples = <Sample>[];
+  final _allSamples = <Sample>[];
+  final _searchFocusNode = FocusNode();
+  final _textEditingController = TextEditingController();
+  var _filteredSamples = <Sample>[];
   bool _ready = false;
+  bool _searchHasFocus = false;
 
   @override
   void initState() {
-    loadSamples();
     super.initState();
+    loadSamples();
+    _searchFocusNode.addListener(
+      () {
+        if (_searchFocusNode.hasFocus != _searchHasFocus) {
+          setState(() => _searchHasFocus = _searchFocusNode.hasFocus);
+        }
+      },
+    );
+  }
+
+  @override
+  void dispose() {
+    _textEditingController.dispose();
+    _searchFocusNode.dispose();
+    super.dispose();
   }
 
   @override
@@ -67,11 +85,51 @@ class _SampleViewerAppState extends State<SampleViewerApp> {
         appBar: AppBar(
           title: const Text(title),
         ),
-        body: _ready
-            ? SampleListView(samples: _samples)
-            : const Center(child: Text('Loading samples...')),
+        body: Column(
+          children: [
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              child: TextField(
+                focusNode: _searchFocusNode,
+                controller: _textEditingController,
+                onChanged: onSearchChanged,
+                autocorrect: false,
+                decoration: InputDecoration(
+                  hintText: 'Search...',
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _searchHasFocus ? Icons.cancel : Icons.search,
+                    ),
+                    onPressed: onSearchSuffixPressed,
+                  ),
+                ),
+              ),
+            ),
+            _ready
+                ? Expanded(
+                    child: Listener(
+                      onPointerDown: (_) =>
+                          FocusManager.instance.primaryFocus?.unfocus(),
+                      child: SampleListView(samples: _filteredSamples),
+                    ),
+                  )
+                : const Center(
+                    child: Text('Loading samples...'),
+                  ),
+          ],
+        ),
       ),
     );
+  }
+
+  void onSearchSuffixPressed() {
+    if (_searchHasFocus) {
+      _textEditingController.clear();
+      FocusManager.instance.primaryFocus?.unfocus();
+      onSearchChanged('');
+    } else {
+      _searchFocusNode.requestFocus();
+    }
   }
 
   void loadSamples() async {
@@ -79,8 +137,29 @@ class _SampleViewerAppState extends State<SampleViewerApp> {
         await rootBundle.loadString('assets/generated_samples_list.json');
     final sampleData = jsonDecode(jsonString);
     for (final s in sampleData.entries) {
-      _samples.add(Sample.fromJson(s.value));
+      _allSamples.add(Sample.fromJson(s.value));
     }
+    _filteredSamples = _allSamples;
     setState(() => _ready = true);
+  }
+
+  void onSearchChanged(String searchText) {
+    final List<Sample> results;
+    if (searchText.isEmpty) {
+      results = _allSamples;
+    } else {
+      results = _allSamples.where(
+        (sample) {
+          final lowerSearchText = searchText.toLowerCase();
+          return sample.title.toLowerCase().contains(lowerSearchText) ||
+              sample.category.toLowerCase().contains(lowerSearchText) ||
+              sample.keywords.any(
+                (keyword) => keyword.toLowerCase().contains(lowerSearchText),
+              );
+        },
+      ).toList();
+    }
+
+    setState(() => _filteredSamples = results);
   }
 }
