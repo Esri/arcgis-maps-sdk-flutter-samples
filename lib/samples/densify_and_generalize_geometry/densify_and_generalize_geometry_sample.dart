@@ -39,11 +39,15 @@ class _DensifyAndGeneralizeGeometrySampleState
   late final Graphic _resultPolylineGraphic;
   // A flag for when the map view is ready and controls can be used.
   var _ready = false;
-  //fixme comments
+  // A flag for when the settings bottom sheet is visible.
   var _settingsVisible = false;
+  // A flag for whether to generalize the geometry.
   var _generalize = false;
+  // The maximum deviation for the generalization.
   var _maxDeviation = 10.0;
+  // A flag for whether to densify the geometry.
   var _densify = false;
+  // The maximum segment length for the densification.
   var _maxSegmentLength = 100.0;
 
   @override
@@ -87,11 +91,12 @@ class _DensifyAndGeneralizeGeometrySampleState
           ],
         ),
       ),
-      //fixme comment
+      // The Geometry Settings bottom sheet.
       bottomSheet: _settingsVisible ? buildSettings(context) : null,
     );
   }
 
+  // The build method for the Geometry Settings bottom sheet.
   Widget buildSettings(BuildContext context) {
     return Container(
       color: Colors.white,
@@ -232,7 +237,7 @@ class _DensifyAndGeneralizeGeometrySampleState
           ..addPointXY(x: 2330485.861737, y: 207742.298501);
     _originalPolyline = polylineBuilder.toGeometry() as Polyline;
 
-    // Create graphics for displaying the original base points and lines.
+    // Create graphics for displaying the original points and lines.
     final multipoint = multipointFromPolyline(_originalPolyline);
     final originalPointGraphic = Graphic(
       geometry: multipoint,
@@ -292,19 +297,19 @@ class _DensifyAndGeneralizeGeometrySampleState
     setState(() => _ready = true);
   }
 
-  //fixme comment
+  // Updates the resultant lines and points based on the settings.
   void updateGraphics() {
-    //fixme comment
+    // Reset the resultant graphics if there are no operations to perform.
     if (!_generalize && !_densify) {
       _resultPointsGraphic.geometry = null;
       _resultPolylineGraphic.geometry = null;
       return;
     }
 
-    //fixme comment
+    // Start with the original polyline.
     var resultPolyline = _originalPolyline;
 
-    //fixme comment
+    // Generalize the polyline with the specified max deviation.
     if (_generalize) {
       resultPolyline = GeometryEngine.generalize(
         geometry: resultPolyline,
@@ -313,7 +318,7 @@ class _DensifyAndGeneralizeGeometrySampleState
       ) as Polyline;
     }
 
-    //fixme comment
+    // Densify the points of the polyline with the specified max segment length.
     if (_densify) {
       resultPolyline = GeometryEngine.densify(
         geometry: resultPolyline,
@@ -321,12 +326,12 @@ class _DensifyAndGeneralizeGeometrySampleState
       ) as Polyline;
     }
 
-    //fixme comment
+    // Update the result graphics with the calculated geometries.
     _resultPolylineGraphic.geometry = resultPolyline;
     _resultPointsGraphic.geometry = multipointFromPolyline(resultPolyline);
   }
 
-  //fixme comment
+  // Resets the settings to their original values.
   void reset() {
     setState(() {
       _generalize = false;
@@ -337,9 +342,9 @@ class _DensifyAndGeneralizeGeometrySampleState
     updateGraphics();
   }
 
-  //fixme comment
+  // Creates a Multipoint geometry composed of all the points of a polyline.
   Multipoint multipointFromPolyline(Polyline polyline) {
-    //fixme simplify this
+    // Create a MutablePointCollection and add all the points of the polyline.
     final mutablePointCollection =
         MutablePointCollection.withSpatialReference(polyline.spatialReference);
     for (var i = 0; i < polyline.parts.size; i++) {
@@ -349,6 +354,8 @@ class _DensifyAndGeneralizeGeometrySampleState
         mutablePointCollection.addPoint(point);
       }
     }
+
+    // Use a MultipointBuilder to create a Multipoint geometry from the points.
     final multipointBuilder = MultipointBuilder.fromSpatialReference(
         mutablePointCollection.spatialReference);
     multipointBuilder.points = mutablePointCollection;
