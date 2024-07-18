@@ -1,0 +1,29 @@
+{
+    "category": "Analysis",
+    "description": "Create a buffer around a map point and display the results as a graphic.",
+    "ignore": false,
+    "images": [
+        "create_planar_and_geodetic_buffers.png"
+    ],
+    "keywords": [
+        "analysis",
+        "buffer",
+        "euclidean",
+        "geodetic",
+        "geometry",
+        "planar",
+        "GeometryEngine.buffer",
+        "GeometryEngine.bufferGeodetic",
+        "GraphicsOverlay"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+        "GeometryEngine.buffer",
+        "GeometryEngine.bufferGeodetic",
+        "GraphicsOverlay"
+    ],
+    "snippets": [
+        "create_planar_and_geodetic_buffers_sample.dart"
+    ],
+    "title": "Create planar and geodetic buffers"
+}
