@@ -2,7 +2,7 @@
 
 Create and share a mobile geodatabase.
 
-![Create mobile geodatabase](create_mobile_geodatabase.png)
+![Image of create mobile geodatabase](create_mobile_geodatabase.png)
 
 ## Use case
 
@@ -12,7 +12,7 @@ For example, a user would like to track the location of their device at various 
 
 ## How to use the sample
 
-Tap on the map to add a feature symbolizing the user's location. Tap "View table" to view the contents of the geodatabase feature table. Once you have added the location points to the map, click on "Create and share mobile geodatabase" to retrieve the `.geodatabase` file which can then be imported into ArcGIS Pro or opened in an ArcGIS Runtime application.
+Tap on the map to add a feature symbolizing the user's location. Tap "View table" to view the contents of the geodatabase feature table. Once you have added the location points to the map, click on "Create and share mobile geodatabase" to retrieve the `.geodatabase` file which can then be imported into ArcGIS Pro or opened in an ArcGIS Maps SDK application.
 
 ## How it works
 
@@ -22,7 +22,7 @@ Tap on the map to add a feature symbolizing the user's location. Tap "View table
 4. Create a feature on the selected map point using `GeodatabaseFeatureTable.createFeature(featureAttributes, mapPoint)`.
 5. Add the feature to the table using `GeodatabaseFeatureTable.addFeature(feature)`.
 6. Each feature added to the `GeodatabaseFeatureTable` is committed to the mobile geodatabase file.
-7. Close the mobile geodatabase to safely share the ".geodatabase" file using `Geodatabase.close()`
+7. Close the mobile geodatabase to safely share the ".geodatabase" file using `Geodatabase.close()`.
 
 ## Relevant API
 
