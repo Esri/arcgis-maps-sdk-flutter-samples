@@ -40,9 +40,9 @@ class _CreateMobileGeodatabaseSampleState
   // A flag for when the map view is ready and controls can be used.
   var _ready = false;
   // A mobile Geodatabase to be created and shared.
-  late Geodatabase? _geodatabase;
+  Geodatabase? _geodatabase;
   // A feature table to store the location history.
-  late GeodatabaseFeatureTable? _featureTable;
+  GeodatabaseFeatureTable? _featureTable;
   // A counter to keep track of the number of features added.
   var _featureCount = 0;
 
