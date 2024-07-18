@@ -284,10 +284,9 @@ class _DensifyAndGeneralizeGeometrySampleState
       );
     _mapViewController.graphicsOverlays.add(graphicsOverlay);
 
-    // Create a map with a basemap style and an initial viewpoint.
-    final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISStreetsNight);
-    // Set the initial viewpoint to show the extent of the polyline.
-    map.initialViewpoint = Viewpoint.fromCenter(
+    // Create a map with a basemap style and an initial viewpoint to show the extent of the polyline.
+    final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISStreetsNight)
+    ..initialViewpoint = Viewpoint.fromCenter(
       _originalPolyline.extent.center,
       scale: 65907,
     );
