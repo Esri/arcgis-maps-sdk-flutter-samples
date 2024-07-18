@@ -275,6 +275,45 @@
     "title": "Authenticate with OAuth",
     "key": "authenticate_with_oauth"
   },
+  "create_mobile_geodatabase": {
+    "category": "Edit and Manage Data",
+    "description": "Create and share a mobile geodatabase.",
+    "ignore": false,
+    "images": [
+      "create_mobile_geodatabase.png"
+    ],
+    "keywords": [
+      "arcgis pro",
+      "database",
+      "feature",
+      "feature table",
+      "geodatabase",
+      "mobile geodatabase",
+      "sqlite",
+      "ArcGISFeature",
+      "FeatureLayer",
+      "FeatureTable",
+      "FieldDescription",
+      "Geodatabase",
+      "GeodatabaseFeatureTable",
+      "TableDescription"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+      "ArcGISFeature",
+      "FeatureLayer",
+      "FeatureTable",
+      "FieldDescription",
+      "Geodatabase",
+      "GeodatabaseFeatureTable",
+      "TableDescription"
+    ],
+    "snippets": [
+      "create_mobile_geodatabase_sample.dart"
+    ],
+    "title": "Create mobile geodatabase",
+    "key": "create_mobile_geodatabase"
+  },
   "display_clusters": {
     "category": "Layers",
     "description": "Display a web map with a point feature layer that has feature reduction enabled to aggregate points into clusters.",
