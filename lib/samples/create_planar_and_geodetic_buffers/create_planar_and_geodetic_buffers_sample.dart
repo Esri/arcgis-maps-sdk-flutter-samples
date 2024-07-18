@@ -131,6 +131,7 @@ class _CreatePlanarAndGeodeticBuffersSampleState
           Row(
             children: [
               Expanded(
+                // A slider to adjust the buffer radius.
                 child: Slider(
                   value: _bufferRadius,
                   min: 200.0,
