@@ -40,6 +40,10 @@ class _CreatePlanarAndGeodeticBuffersSampleState
   final _pointOverlay = GraphicsOverlay();
   // A flag for when the map view is ready and controls can be used.
   var _ready = false;
+  // A flag for when the settings bottom sheet is visible.
+  var _settingsVisible = false;
+  // The buffer radius in miles.
+  var _bufferRadius = 500.0;
 
   @override
   Widget build(BuildContext context) {
@@ -61,10 +65,10 @@ class _CreatePlanarAndGeodeticBuffersSampleState
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    // A button to clear the buffers.
+                    // A button to show the Settings bottom sheet.
                     ElevatedButton(
-                      onPressed: clear,
-                      child: const Text('Clear'),
+                      onPressed: () => setState(() => _settingsVisible = true),
+                      child: const Text('Settings'),
                     ),
                   ],
                 ),
@@ -82,6 +86,66 @@ class _CreatePlanarAndGeodeticBuffersSampleState
             ),
           ],
         ),
+      ),
+      // The Settings bottom sheet.
+      bottomSheet: _settingsVisible ? buildSettings(context) : null,
+    );
+  }
+
+  // The build method for the Settings bottom sheet.
+  Widget buildSettings(BuildContext context) {
+    return Container(
+      color: Colors.white,
+      padding: EdgeInsets.fromLTRB(
+        20.0,
+        0.0,
+        20.0,
+        View.of(context).viewPadding.bottom / View.of(context).devicePixelRatio,
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
+            children: [
+              Text(
+                'Settings',
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
+              const Spacer(),
+              IconButton(
+                icon: const Icon(Icons.close),
+                onPressed: () => setState(() => _settingsVisible = false),
+              ),
+            ],
+          ),
+          Row(
+            children: [
+              const Text('Buffer Radius (miles)'),
+              const Spacer(),
+              Text(
+                _bufferRadius.round().toString(),
+                textAlign: TextAlign.right,
+              ),
+            ],
+          ),
+          Row(
+            children: [
+              Expanded(
+                child: Slider(
+                  value: _bufferRadius,
+                  min: 200.0,
+                  max: 2000.0,
+                  onChanged: (value) => setState(() => _bufferRadius = value),
+                ),
+              ),
+            ],
+          ),
+          // A button to clear the buffers.
+          ElevatedButton(
+            onPressed: clear,
+            child: const Text('Clear'),
+          ),
+        ],
       ),
     );
   }
@@ -149,8 +213,8 @@ class _CreatePlanarAndGeodeticBuffersSampleState
     // Create a geodetic buffer around the tapped point at the specified distance.
     final geodeticGeometry = GeometryEngine.bufferGeodetic(
       geometry: mapPoint,
-      distance: 1000000.0, //fixme
-      distanceUnit: LinearUnit(unitId: LinearUnitId.meters),
+      distance: _bufferRadius,
+      distanceUnit: LinearUnit(unitId: LinearUnitId.miles),
       maxDeviation: double.nan,
       curveType: GeodeticCurveType.geodesic,
     );
@@ -161,7 +225,7 @@ class _CreatePlanarAndGeodeticBuffersSampleState
     // Create a planar buffer around the tapped point at the specified distance.
     final planarGeometry = GeometryEngine.buffer(
       geometry: mapPoint,
-      distance: 1000000.0, //fixme
+      distance: _bufferRadius * 1609.344, // Convert miles to meters.
     );
     // Create and add a graphic to the planar overlay.
     final planarGraphic = Graphic(geometry: planarGeometry);
