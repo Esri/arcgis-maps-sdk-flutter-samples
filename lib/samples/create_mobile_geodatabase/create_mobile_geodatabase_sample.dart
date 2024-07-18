@@ -156,11 +156,15 @@ class _CreateMobileGeodatabaseSampleState
 
   // When the map is tapped, add a feature to the feature table.
   void onTap(Offset localPosition) {
-    _addFeature(
-      _mapViewController.screenToLocation(
-        screen: localPosition,
-      )!,
+    if (_ready == false) {
+      return;
+    }
+    final mapPoint = _mapViewController.screenToLocation(
+      screen: localPosition,
     );
+    if (mapPoint != null) {
+      _addFeature(mapPoint);
+    }
   }
 
   // Create a mobile geodatabase and a feature table to store location history.
