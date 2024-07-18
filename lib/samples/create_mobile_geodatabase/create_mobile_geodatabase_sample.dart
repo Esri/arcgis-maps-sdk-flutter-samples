@@ -35,22 +35,14 @@ class _CreateMobileGeodatabaseSampleState
     extends State<CreateMobileGeodatabaseSample> with SampleStateSupport {
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
-
   // Declare a map to be loaded later.
   late final ArcGISMap _map;
-
   // A flag for when the map view is ready and controls can be used.
   var _ready = false;
-
-  // Declare global keys to be used when converting screen locations to map coordinates.
-  final _mapKey = GlobalKey();
-
   // A mobile Geodatabase to be created and shared.
   Geodatabase? _geodatabase;
-
   // A feature table to store the location history.
   GeodatabaseFeatureTable? _featureTable;
-
   // A counter to keep track of the number of features added.
   int _featureCount = 0;
 
@@ -68,7 +60,6 @@ class _CreateMobileGeodatabaseSampleState
                     children: [
                       // Add a map view to the widget tree and set a controller.
                       ArcGISMapView(
-                        key: _mapKey,
                         controllerProvider: () => _mapViewController,
                         onMapViewReady: onMapViewReady,
                         onTap: onTap,
