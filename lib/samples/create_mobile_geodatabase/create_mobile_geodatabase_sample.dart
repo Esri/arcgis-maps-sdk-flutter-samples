@@ -69,7 +69,12 @@ class _CreateMobileGeodatabaseSampleState
                 ),
                 // Display the number of features added and a button to view the table.
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+                  padding: const EdgeInsets.fromLTRB(
+                    10,
+                    0,
+                    10,
+                    0,
+                  ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -77,14 +82,6 @@ class _CreateMobileGeodatabaseSampleState
                         'Number of features added: $_featureCount',
                       ),
                       ElevatedButton(
-                        style: OutlinedButton.styleFrom(
-                          shape: const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.zero,
-                          ),
-                          side: const BorderSide(
-                            color: Colors.grey,
-                          ),
-                        ),
                         onPressed: _displayTable,
                         child: const Text(
                           'View table',
@@ -95,7 +92,12 @@ class _CreateMobileGeodatabaseSampleState
                 ),
                 // Display a button to create and share the mobile geodatabase.
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+                  padding: const EdgeInsets.fromLTRB(
+                    0,
+                    10,
+                    0,
+                    10,
+                  ),
                   child: ElevatedButton.icon(
                     onPressed: _shareGeodatabaseUri,
                     icon: const Icon(
