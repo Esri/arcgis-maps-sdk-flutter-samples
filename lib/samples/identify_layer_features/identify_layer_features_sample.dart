@@ -124,7 +124,7 @@ class _IdentifyLayerFeaturesSampleState
 
     // Count the number of identified features.
     var identifyTotal = 0;
-    var layerCounts = <String>[];
+    final layerCounts = <String>[];
     for (final result in identifyLayerResults) {
       final layerTotal = result.totalCount;
       identifyTotal += layerTotal;
