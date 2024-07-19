@@ -31,19 +31,20 @@ class ShowDeviceLocationSample extends StatefulWidget {
 
 class _ShowDeviceLocationSampleState extends State<ShowDeviceLocationSample>
     with SampleStateSupport {
+  // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
-  double _latitude = 0.0;
-  double _longitude = 0.0;
-  double _heading = 0.0;
+  //fixme comments
   final _locationDataSource = SystemLocationDataSource();
   StreamSubscription? _statusSubscription;
-  StreamSubscription? _locationSubscription;
+  var _status = LocationDataSourceStatus.stopped;
   ArcGISException? _ldsException;
+  // A flag for when the map view is ready and controls can be used.
+  var _ready = false;
 
   @override
   void dispose() {
+    //fixme comment
     _locationDataSource.stop();
-    _locationSubscription?.cancel();
     _statusSubscription?.cancel();
 
     super.dispose();
@@ -53,71 +54,50 @@ class _ShowDeviceLocationSampleState extends State<ShowDeviceLocationSample>
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
+        top: false,
+        child: Stack(
           children: [
-            Expanded(
-              child: Stack(
-                alignment: Alignment.bottomRight,
-                children: [
-                  ArcGISMapView(
+            Column(
+              children: [
+                Expanded(
+                  // Add a map view to the widget tree and set a controller.
+                  child: ArcGISMapView(
                     controllerProvider: () => _mapViewController,
                     onMapViewReady: onMapViewReady,
                   ),
-                  Positioned(
-                    bottom: 60.0,
-                    right: 10.0,
-                    child: Container(
-                      color: Colors.white,
-                      padding: const EdgeInsets.all(5.0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            'Device Location:',
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          Text('Latitude: $_latitude'),
-                          Text('Longitude: $_longitude'),
-                          Text('Heading: $_heading')
-                        ],
-                      ),
-                    ),
-                  )
-                ],
+                ),
+                //fixme comments
+                Visibility(
+                  visible: _ldsException == null,
+                  child: ElevatedButton(
+                    child: Text(_status == LocationDataSourceStatus.started
+                        ? 'Stop'
+                        : 'Start'),
+                    onPressed: () {
+                      if (_status == LocationDataSourceStatus.started) {
+                        _mapViewController.locationDisplay.stop();
+                      } else {
+                        _mapViewController.locationDisplay.start();
+                      }
+                    },
+                  ),
+                ),
+                Visibility(
+                  visible: _ldsException != null,
+                  child: Text('Exception: ${_ldsException?.message}'),
+                ),
+              ],
+            ),
+            // Display a progress indicator and prevent interaction until state is ready.
+            Visibility(
+              visible: !_ready,
+              child: SizedBox.expand(
+                child: Container(
+                  color: Colors.white30,
+                  child: const Center(child: CircularProgressIndicator()),
+                ),
               ),
             ),
-            SizedBox(
-              height: 90,
-              width: double.infinity,
-              child: Column(
-                children: [
-                  const Text('Location Data Source'),
-                  Visibility(
-                    visible: _ldsException == null,
-                    child: ElevatedButton(
-                      child: Text(_locationDataSource.status ==
-                              LocationDataSourceStatus.started
-                          ? 'Stop'
-                          : 'Start'),
-                      onPressed: () {
-                        if (_locationDataSource.status ==
-                            LocationDataSourceStatus.started) {
-                          _mapViewController.locationDisplay.stop();
-                        } else {
-                          _mapViewController.locationDisplay.start();
-                        }
-                      },
-                    ),
-                  ),
-                  Visibility(
-                    visible: _ldsException != null,
-                    child: Text('Exception: ${_ldsException?.message}'),
-                  ),
-                ],
-              ),
-            )
           ],
         ),
       ),
@@ -125,6 +105,7 @@ class _ShowDeviceLocationSampleState extends State<ShowDeviceLocationSample>
   }
 
   void onMapViewReady() async {
+    //fixme comments
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISImageryStandard);
 
     map.initialViewpoint = Viewpoint.fromCenter(
@@ -138,6 +119,7 @@ class _ShowDeviceLocationSampleState extends State<ShowDeviceLocationSample>
 
     _mapViewController.arcGISMap = map;
     await _initLocationDisplay();
+    setState(() => _ready = true);
   }
 
   Future<void> _initLocationDisplay() async {
@@ -150,27 +132,15 @@ class _ShowDeviceLocationSampleState extends State<ShowDeviceLocationSample>
   }
 
   Future<void> _initLocationDataSource() async {
-    _statusSubscription = _locationDataSource.onStatusChanged.listen((_) {
-      // Redraw the screen when the LDS status changes
-      setState(() {});
-    });
-
     try {
       await _locationDataSource.start();
-      _locationSubscription = _locationDataSource.onLocationChanged
-          .listen(_handleLdsLocationChange);
-    } on ArcGISException catch (e) {
-      setState(() {
-        _ldsException = e;
+      _statusSubscription =
+          _locationDataSource.onStatusChanged.listen((status) {
+        setState(() => _status = status);
       });
+      setState(() => _status = _locationDataSource.status);
+    } on ArcGISException catch (e) {
+      setState(() => _ldsException = e);
     }
-  }
-
-  void _handleLdsLocationChange(ArcGISLocation location) {
-    setState(() {
-      _latitude = location.position.y;
-      _longitude = location.position.x;
-      _heading = location.course;
-    });
   }
 }
