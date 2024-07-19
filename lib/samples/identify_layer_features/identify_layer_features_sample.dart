@@ -29,14 +29,53 @@ class IdentifyLayerFeaturesSample extends StatefulWidget {
 
 class _IdentifyLayerFeaturesSampleState
     extends State<IdentifyLayerFeaturesSample> with SampleStateSupport {
+  // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
+  // A flag for when the map view is ready and controls can be used.
+  var _ready = false;
 
   @override
-  void initState() {
-    super.initState();
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Stack(
+        children: [
+          // Add a map view to the widget tree and set a controller.
+          ArcGISMapView(
+            controllerProvider: () => _mapViewController,
+            onMapViewReady: onMapViewReady,
+            onTap: onTap,
+          ),
+          // Display a progress indicator and prevent interaction until state is ready.
+          Visibility(
+            visible: !_ready,
+            child: SizedBox.expand(
+              child: Container(
+                color: Colors.white30,
+                child: const Center(child: CircularProgressIndicator()),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
+  void onMapViewReady() async {
+    // Create a feature layer of damaged property data.
+    final serviceFeatureTable = ServiceFeatureTable.withUri(Uri.parse(
+        'https://sampleserver6.arcgisonline.com/arcgis/rest/services/DamageAssessment/FeatureServer/0'));
+    final featureLayer = FeatureLayer.withFeatureTable(serviceFeatureTable);
+
+    // Create a layer with world cities data.
+    final mapImageLayer = ArcGISMapImageLayer.withUri(Uri.parse(
+        'https://sampleserver6.arcgisonline.com/arcgis/rest/services/SampleWorldCities/MapServer'));
+    await mapImageLayer.load();
+    // Hide continent and world layers.
+    mapImageLayer.subLayerContents[1].isVisible = false;
+    mapImageLayer.subLayerContents[2].isVisible = false;
+
+    // Create a map with a basemap style and an initial viewpoint.
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic);
-
     map.initialViewpoint = Viewpoint.fromCenter(
       ArcGISPoint(
         x: -10977012.785807,
@@ -46,36 +85,27 @@ class _IdentifyLayerFeaturesSampleState
       scale: 68015210,
     );
 
-    final serviceFeatureTable = ServiceFeatureTable.withUri(Uri.parse(
-        'https://sampleserver6.arcgisonline.com/arcgis/rest/services/DamageAssessment/FeatureServer/0'));
-    final featureLayer = FeatureLayer.withFeatureTable(serviceFeatureTable);
+    // Add the layers to the map.
+    map.operationalLayers.addAll([featureLayer, mapImageLayer]);
 
-    map.operationalLayers.add(featureLayer);
-
+    // Add the map to the map view.
     _mapViewController.arcGISMap = map;
 
-    _mapViewController.magnifierEnabled = true;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: ArcGISMapView(
-        controllerProvider: () => _mapViewController,
-        onTap: onTap,
-        onLongPressEnd: onTap,
-      ),
-    );
+    // Set the ready state variable to true to enable the sample UI.
+    setState(() => _ready = true);
   }
 
   void onTap(Offset localPosition) async {
+    // Identify features at the tapped location.
     final identifyLayerResults = await _mapViewController.identifyLayers(
       screenPoint: localPosition,
       tolerance: 12.0,
     );
+    if (identifyLayerResults.isEmpty) return;
 
-    if (identifyLayerResults.isNotEmpty && mounted) {
-      int count = identifyLayerResults.length;
+    if (mounted) {
+      //fixme
+      final count = identifyLayerResults.length;
       showDialog(
         context: context,
         builder: (BuildContext context) {
