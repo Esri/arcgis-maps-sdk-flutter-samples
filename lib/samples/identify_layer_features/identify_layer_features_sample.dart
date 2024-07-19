@@ -39,38 +39,39 @@ class _IdentifyLayerFeaturesSampleState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        top: false,
-        child: Stack(
-          children: [
-            // Add a map view to the widget tree and set a controller.
-            ArcGISMapView(
-              controllerProvider: () => _mapViewController,
-              onMapViewReady: onMapViewReady,
-              onTap: onTap,
-            ),
-            // Add a banner to show the results of the identify operation.
-            Container(
-              color: Colors.white.withAlpha(230),
-              padding: const EdgeInsets.all(10),
-              child: Row(
-                children: [
-                  Text(_message),
-                ],
-              ),
-            ),
-            // Display a progress indicator and prevent interaction until state is ready.
-            Visibility(
-              visible: !_ready,
-              child: SizedBox.expand(
-                child: Container(
-                  color: Colors.white30,
-                  child: const Center(child: CircularProgressIndicator()),
+      body: Stack(
+        children: [
+          // Add a map view to the widget tree and set a controller.
+          ArcGISMapView(
+            controllerProvider: () => _mapViewController,
+            onMapViewReady: onMapViewReady,
+            onTap: onTap,
+          ),
+          // Add a banner to show the results of the identify operation.
+          SafeArea(
+            child: IgnorePointer(
+              child: Container(
+                color: Colors.white.withAlpha(230),
+                padding: const EdgeInsets.all(10),
+                child: Row(
+                  children: [
+                    Text(_message),
+                  ],
                 ),
               ),
             ),
-          ],
-        ),
+          ),
+          // Display a progress indicator and prevent interaction until state is ready.
+          Visibility(
+            visible: !_ready,
+            child: SizedBox.expand(
+              child: Container(
+                color: Colors.white30,
+                child: const Center(child: CircularProgressIndicator()),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
