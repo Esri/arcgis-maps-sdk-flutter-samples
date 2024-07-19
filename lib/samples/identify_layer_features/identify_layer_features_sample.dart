@@ -34,7 +34,7 @@ class _IdentifyLayerFeaturesSampleState
   // A flag for when the map view is ready and controls can be used.
   var _ready = false;
   // The message to display in the result banner.
-  var _message = 'Tap on the map to identify layer features.';
+  var _message = '';
 
   @override
   Widget build(BuildContext context) {
@@ -108,7 +108,10 @@ class _IdentifyLayerFeaturesSampleState
     _mapViewController.arcGISMap = map;
 
     // Set the ready state variable to true to enable the sample UI.
-    setState(() => _ready = true);
+    setState(() {
+      _message = 'Tap on the map to identify layer features.';
+      _ready = true;
+    });
   }
 
   void onTap(Offset localPosition) async {
