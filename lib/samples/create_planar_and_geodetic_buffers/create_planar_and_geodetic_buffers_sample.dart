@@ -70,6 +70,11 @@ class _CreatePlanarAndGeodeticBuffersSampleState
                       onPressed: () => setState(() => _settingsVisible = true),
                       child: const Text('Settings'),
                     ),
+                    // A button to clear the buffers.
+                    ElevatedButton(
+                      onPressed: clear,
+                      child: const Text('Clear'),
+                    ),
                   ],
                 ),
               ],
@@ -141,10 +146,46 @@ class _CreatePlanarAndGeodeticBuffersSampleState
               ),
             ],
           ),
-          // A button to clear the buffers.
-          ElevatedButton(
-            onPressed: clear,
-            child: const Text('Clear'),
+          Row(
+            children: [
+              SizedBox(
+                width: 30.0,
+                height: 30.0,
+                child: Container(
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.green,
+                  ),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(color: Colors.black, width: 2.0),
+                      color: Colors.red.withAlpha(127),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 10.0),
+              const Text('Planar Buffer'),
+            ],
+          ),
+          const SizedBox(height: 10.0),
+          Row(
+            children: [
+              SizedBox(
+                width: 30.0,
+                height: 30.0,
+                child: Container(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(color: Colors.black, width: 2.0),
+                    color: Colors.green,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 10.0),
+              const Text('Geodetic Buffer'),
+            ],
           ),
         ],
       ),
