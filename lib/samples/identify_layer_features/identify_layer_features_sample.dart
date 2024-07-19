@@ -33,29 +33,44 @@ class _IdentifyLayerFeaturesSampleState
   final _mapViewController = ArcGISMapView.createController();
   // A flag for when the map view is ready and controls can be used.
   var _ready = false;
+  // The message to display in the result banner.
+  var _message = 'Tap on the map to identify layer features.';
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: [
-          // Add a map view to the widget tree and set a controller.
-          ArcGISMapView(
-            controllerProvider: () => _mapViewController,
-            onMapViewReady: onMapViewReady,
-            onTap: onTap,
-          ),
-          // Display a progress indicator and prevent interaction until state is ready.
-          Visibility(
-            visible: !_ready,
-            child: SizedBox.expand(
-              child: Container(
-                color: Colors.white30,
-                child: const Center(child: CircularProgressIndicator()),
+      body: SafeArea(
+        top: false,
+        child: Stack(
+          children: [
+            // Add a map view to the widget tree and set a controller.
+            ArcGISMapView(
+              controllerProvider: () => _mapViewController,
+              onMapViewReady: onMapViewReady,
+              onTap: onTap,
+            ),
+            // Add a banner to show the results of the identify operation.
+            Container(
+              color: Colors.white.withAlpha(230),
+              padding: const EdgeInsets.all(10),
+              child: Row(
+                children: [
+                  Text(_message),
+                ],
               ),
             ),
-          ),
-        ],
+            // Display a progress indicator and prevent interaction until state is ready.
+            Visibility(
+              visible: !_ready,
+              child: SizedBox.expand(
+                child: Container(
+                  color: Colors.white30,
+                  child: const Center(child: CircularProgressIndicator()),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -100,18 +115,31 @@ class _IdentifyLayerFeaturesSampleState
     final identifyLayerResults = await _mapViewController.identifyLayers(
       screenPoint: localPosition,
       tolerance: 12.0,
+      maximumResultsPerLayer: 10,
     );
-    if (identifyLayerResults.isEmpty) return;
 
-    if (mounted) {
-      //fixme
-      final count = identifyLayerResults.length;
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(content: Text('Found $count'));
-        },
-      );
+    // Count the number of identified features.
+    var identifyTotal = 0;
+    var layerCounts = <String>[];
+    for (final result in identifyLayerResults) {
+      final layerTotal = result.totalCount;
+      identifyTotal += layerTotal;
+      layerCounts.add('${result.layerContent.name}: $layerTotal');
     }
+
+    // Display the results in the banner.
+    setState(() {
+      _message = identifyTotal == 0
+          ? 'No features identified.'
+          : layerCounts.join('\n');
+    });
+  }
+}
+
+extension on IdentifyLayerResult {
+  // The total count of features, recursively including all sublayers.
+  int get totalCount {
+    return sublayerResults.fold(geoElements.length,
+        (previous, element) => previous + element.totalCount);
   }
 }
