@@ -10,7 +10,7 @@ Attachments provide a flexible way to manage additional information that is rela
 
 ## How to use the sample
 
-Tap a feature on the map to open a bottom sheet displaying the number of attachments. Tap on the view icon button to view the attachments. Tap the delete button to remove the attachments. The top Add Attachment button to add attachments to the feature.
+Tap a feature on the map to open a bottom sheet displaying the number of attachments. Tap on the view icon button to view the attachments. Tap the delete button to remove the attachments. Tap the Add Attachment button to add attachments to the feature.
 
 ## How it works
 
