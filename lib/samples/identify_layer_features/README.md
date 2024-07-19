@@ -10,7 +10,7 @@ Identify features in all layers in a map.
 
 ## How to use the sample
 
-Tap to identify features. An alert will show all layers with features under the cursor, as well as a layer count.
+Tap to identify features. A banner will show layers with features under the tapped location, as well as a layer count.
 
 ## How it works
 
