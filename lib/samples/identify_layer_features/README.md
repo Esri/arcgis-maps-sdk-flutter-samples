@@ -6,11 +6,11 @@ Identify features in all layers in a map.
 
 ## Use case
 
-`IdentifyLayers` allows users to tap on a map, returning features at that location across multiple layers. Because some layer types have sublayers, the sample recursively counts results for sublayers within each layer.
+`identifyLayers` allows users to tap on a map, returning features at that location across multiple layers. Because some layer types have sublayers, the sample recursively counts results for sublayers within each layer.
 
 ## How to use the sample
 
-Tap to identify features. A banner will show layers with features under the tapped location, as well as a layer count.
+Tap to identify features. A banner will list layers with features under the tapped location, as well as a layer count.
 
 ## How it works
 
@@ -28,7 +28,7 @@ Note: there is one identify result per layer with matching features; if the feat
 
 ## Additional information
 
-The GeoView supports two methods of identify: `identifyLayer()`, which identifies features within a specific layer, and `identifyLayers()`, which identifies features for all layers in the current view.
+The `GeoViewController` supports two methods of identify: `identifyLayer()`, which identifies features within a specific layer, and `identifyLayers()`, which identifies features for all layers in the current view.
 
 ## Tags
 
