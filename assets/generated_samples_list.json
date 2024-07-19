@@ -275,6 +275,45 @@
     "title": "Authenticate with OAuth",
     "key": "authenticate_with_oauth"
   },
+  "create_mobile_geodatabase": {
+    "category": "Edit and Manage Data",
+    "description": "Create and share a mobile geodatabase.",
+    "ignore": false,
+    "images": [
+      "create_mobile_geodatabase.png"
+    ],
+    "keywords": [
+      "arcgis pro",
+      "database",
+      "feature",
+      "feature table",
+      "geodatabase",
+      "mobile geodatabase",
+      "sqlite",
+      "ArcGISFeature",
+      "FeatureLayer",
+      "FeatureTable",
+      "FieldDescription",
+      "Geodatabase",
+      "GeodatabaseFeatureTable",
+      "TableDescription"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+      "ArcGISFeature",
+      "FeatureLayer",
+      "FeatureTable",
+      "FieldDescription",
+      "Geodatabase",
+      "GeodatabaseFeatureTable",
+      "TableDescription"
+    ],
+    "snippets": [
+      "create_mobile_geodatabase_sample.dart"
+    ],
+    "title": "Create mobile geodatabase",
+    "key": "create_mobile_geodatabase"
+  },
   "densify_and_generalize_geometry": {
     "category": "Edit and Manage Data",
     "description": "A multipart geometry can be densified by adding interpolated points at regular intervals. Generalizing multipart geometry simplifies it while preserving its general shape. Densifying a multipart geometry adds more vertices at regular intervals.",
@@ -286,20 +325,20 @@
       "densify",
       "generalize",
       "simplify",
+      "ArcGISPoint",
       "GeometryEngine",
       "Multipoint",
-      "Point",
-      "PointCollection",
+      "MutablePointCollection",
       "Polyline",
       "SimpleLineSymbol",
       "SpatialReference"
     ],
     "redirect_from": [],
     "relevant_apis": [
+      "ArcGISPoint",
       "GeometryEngine",
       "Multipoint",
-      "Point",
-      "PointCollection",
+      "MutablePointCollection",
       "Polyline",
       "SimpleLineSymbol",
       "SpatialReference"
