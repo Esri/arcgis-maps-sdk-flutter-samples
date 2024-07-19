@@ -16,7 +16,7 @@ Tap on a feature in the map. All features within a given tolerance (in pixels) o
 
 1. Create a `ServiceFeatureTable` from a feature service URL.
 2. Create a `FeatureLayer` from the service feature table.
-3. Identify nearby features at the clicked location using `identifyLayer(featureLayer, screenPoint, tolerance, maximumResults)` on the map view.
+3. Identify nearby features at the tapped location using `identifyLayer(featureLayer, screenPoint, tolerance, maximumResults)` on the map view.
 4. Select all identified features in the feature layer with `selectFeatures(features)`.
 
 ## Relevant API
