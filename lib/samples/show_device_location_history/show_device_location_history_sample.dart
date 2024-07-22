@@ -26,26 +26,39 @@ class ShowDeviceLocationHistorySample extends StatefulWidget {
   const ShowDeviceLocationHistorySample({super.key});
 
   @override
-  State<ShowDeviceLocationHistorySample> createState() =>
-      _ShowDeviceLocationHistorySampleState();
+  State<ShowDeviceLocationHistorySample> createState() => Configure();
 }
 
-class _ShowDeviceLocationHistorySampleState
-    extends State<ShowDeviceLocationHistorySample> with SampleStateSupport {
+class Configure extends State<ShowDeviceLocationHistorySample>
+    with SampleStateSupport {
+  // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
-  double _latitude = 0.0;
-  double _longitude = 0.0;
-  double _heading = 0.0;
+  // A location data source to simulate location updates.
   final _locationDataSource = SimulatedLocationDataSource();
+  // Subscriptions to listen for location status changes.
   StreamSubscription? _statusSubscription;
+  // Subscriptions to listen for location changes.
   StreamSubscription? _locationSubscription;
-  ArcGISException? _ldsException;
+  // A GraphicsOverlay to display the location history polyline.
+  final _locationHistoryLineOverlay = GraphicsOverlay();
+  // A GraphicsOverlay to display the location history points.
+  final _locationHistoryPointOverlay = GraphicsOverlay();
+  // A PolylineBuilder to build the location history polyline.
+  final _polylineBuilder = PolylineBuilder.fromSpatialReference(
+    SpatialReference.wgs84,
+  );
+  // A flag for when the map view is ready and controls can be used.
+  var _ready = false;
+  // A flag for toggling location tracking.
+  var _enableTracking = false;
 
   @override
   void dispose() {
     _locationDataSource.stop();
     _locationSubscription?.cancel();
     _statusSubscription?.cancel();
+    _locationHistoryLineOverlay.graphics.clear();
+    _locationHistoryPointOverlay.graphics.clear();
 
     super.dispose();
   }
@@ -54,80 +67,59 @@ class _ShowDeviceLocationHistorySampleState
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
+        top: false,
+        child: Stack(
           children: [
-            Expanded(
-              child: Stack(
-                alignment: Alignment.bottomRight,
-                children: [
-                  ArcGISMapView(
+            Column(
+              children: [
+                Expanded(
+                  // Add a map view to the widget tree and set a controller.
+                  child: ArcGISMapView(
                     controllerProvider: () => _mapViewController,
                     onMapViewReady: onMapViewReady,
                   ),
-                  Positioned(
-                    bottom: 60.0,
-                    right: 10.0,
-                    child: Container(
-                      color: Colors.white,
-                      padding: const EdgeInsets.all(5.0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            'Device Location:',
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          Text('Latitude: $_latitude'),
-                          Text('Longitude: $_longitude'),
-                          Text('Heading: $_heading')
-                        ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    // A button to enable or disable location tracking.
+                    ElevatedButton(
+                      onPressed: () {
+                        setState(() {
+                          _enableTracking = !_enableTracking;
+                        });
+                      },
+                      child: Text(
+                        _enableTracking ? 'Stop Tracking' : 'Start Tracking',
                       ),
                     ),
-                  )
-                ],
+                  ],
+                ),
+              ],
+            ),
+            // Display a progress indicator and prevent interaction until state is ready.
+            Visibility(
+              visible: !_ready,
+              child: SizedBox.expand(
+                child: Container(
+                  color: Colors.white30,
+                  child: const Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                ),
               ),
             ),
-            SizedBox(
-              height: 90,
-              width: double.infinity,
-              child: Column(
-                children: [
-                  const Text('Location Data Source'),
-                  Visibility(
-                    visible: _ldsException == null,
-                    child: ElevatedButton(
-                      child: Text(_locationDataSource.status ==
-                              LocationDataSourceStatus.started
-                          ? 'Stop'
-                          : 'Start'),
-                      onPressed: () {
-                        if (_locationDataSource.status ==
-                            LocationDataSourceStatus.started) {
-                          _mapViewController.locationDisplay.stop();
-                        } else {
-                          _mapViewController.locationDisplay.start();
-                        }
-                      },
-                    ),
-                  ),
-                  Visibility(
-                    visible: _ldsException != null,
-                    child: Text('Exception: ${_ldsException?.message}'),
-                  ),
-                ],
-              ),
-            )
           ],
         ),
       ),
     );
   }
 
+  // The method is called when the map view is ready to be used.
   void onMapViewReady() async {
-    final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISImageryStandard);
-
+    // Create a map with the ArcGIS Navigation basemap style.
+    final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISNavigation);
+    // Set the initial viewpoint.
     map.initialViewpoint = Viewpoint.fromCenter(
       ArcGISPoint(
         x: -110.8258,
@@ -136,20 +128,48 @@ class _ShowDeviceLocationHistorySampleState
       ),
       scale: 2e4,
     );
-
+    // Add the map to the map view controller.
     _mapViewController.arcGISMap = map;
-    await _initLocationDisplay();
+    // Add the graphics overlays to the map view.
+    _mapViewController.graphicsOverlays.addAll([
+      _locationHistoryLineOverlay,
+      _locationHistoryPointOverlay,
+    ]);
+    // Set the renderers for the graphics overlays.
+    _locationHistoryLineOverlay.renderer = SimpleRenderer(
+      symbol: SimpleLineSymbol(
+        color: Colors.red[100]!,
+        width: 2.0,
+      ),
+    );
+    _locationHistoryPointOverlay.renderer = SimpleRenderer(
+      symbol: SimpleMarkerSymbol(
+        color: Colors.red,
+        size: 10.0,
+      ),
+    );
+    // Wait for the map to be displayed before starting the location display.
+    _mapViewController.onDrawStatusChanged.listen((status) async {
+      if (status == DrawStatus.completed &&
+          _locationDataSource.status == LocationDataSourceStatus.stopped) {
+        await _initLocationDisplay();
+      }
+    });
+    // Set the ready state variable to true to enable the sample UI.
+    setState(() => _ready = true);
   }
 
+  // Initialize the location display with the location data source.
   Future<void> _initLocationDisplay() async {
     final locationDisplay = _mapViewController.locationDisplay;
     locationDisplay.dataSource = _locationDataSource;
     locationDisplay.autoPanMode = LocationDisplayAutoPanMode.recenter;
     locationDisplay.useCourseSymbolOnMovement = true;
-    await _initLocationDataSource();
+    await _startLocationDataSource();
   }
 
-  Future<void> _initLocationDataSource() async {
+  // Start the location data source and listen for location changes.
+  Future<void> _startLocationDataSource() async {
     final routeLineJson =
         await rootBundle.loadString('assets/SimulatedRoute.json');
     final routeLine = Geometry.fromJsonString(routeLineJson) as Polyline;
@@ -160,19 +180,44 @@ class _ShowDeviceLocationHistorySampleState
     });
 
     try {
+      // Start the location data source.
       await _locationDataSource.start();
-      _locationSubscription = _locationDataSource.onLocationChanged
-          .listen(_handleLdsLocationChange);
+      // Listen for location changes.
+      _locationSubscription = _locationDataSource.onLocationChanged.listen(
+        _handleLdsLocationChange,
+      );
     } on ArcGISException catch (e) {
-      setState(() => _ldsException = e);
+      if (mounted) {
+        showDialog(
+          context: context,
+          builder: (_) => AlertDialog(
+            content: Text(
+              e.message,
+            ),
+          ),
+        );
+      }
     }
   }
 
+  // Handle location changes from the location data source.
   void _handleLdsLocationChange(ArcGISLocation location) {
-    setState(() {
-      _latitude = location.position.y;
-      _longitude = location.position.x;
-      _heading = location.course;
-    });
+    if (!_enableTracking) return;
+    // Add the location to the location history as a graphic point.
+    final point = location.position;
+    _locationHistoryPointOverlay.graphics.add(
+      Graphic(
+        geometry: point,
+      ),
+    );
+    // Add the location to the location history as a polyline.
+    _polylineBuilder.addPoint(point);
+    // Visualize the location history polyline on the map.
+    _locationHistoryLineOverlay.graphics.clear();
+    _locationHistoryLineOverlay.graphics.add(
+      Graphic(
+        geometry: _polylineBuilder.toGeometry() as Polyline,
+      ),
+    );
   }
 }
