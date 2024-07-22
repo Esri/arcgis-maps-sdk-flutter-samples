@@ -275,6 +275,41 @@
     "title": "Authenticate with OAuth",
     "key": "authenticate_with_oauth"
   },
+  "authenticate_with_token": {
+    "category": "Cloud and Portal",
+    "description": "Access a web map that is secured with ArcGIS token-based authentication.",
+    "ignore": false,
+    "images": [
+      "authenticate_with_token.png"
+    ],
+    "keywords": [
+      "authentication",
+      "cloud",
+      "portal",
+      "remember",
+      "security",
+      "ArcGISAuthenticationChallengeHandler",
+      "ArcGISMap",
+      "ArcGISMapView",
+      "AuthenticationManager",
+      "Portal",
+      "PortalItem"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+      "ArcGISAuthenticationChallengeHandler",
+      "ArcGISMap",
+      "ArcGISMapView",
+      "AuthenticationManager",
+      "Portal",
+      "PortalItem"
+    ],
+    "snippets": [
+      "authenticate_with_token_sample.dart"
+    ],
+    "title": "Authenticate with token",
+    "key": "authenticate_with_token"
+  },
   "create_mobile_geodatabase": {
     "category": "Edit and Manage Data",
     "description": "Create and share a mobile geodatabase.",
@@ -718,11 +753,45 @@
     "category": "Search and Query",
     "description": "Query a table to get aggregated statistics back for a specific field.",
     "ignore": false,
-    "images": [],
-    "keywords": [],
+    "images": [
+      "query_table_statistics.png"
+    ],
+    "keywords": [
+      "analysis",
+      "average",
+      "bounding geometry",
+      "filter",
+      "intersect",
+      "maximum",
+      "mean",
+      "minimum",
+      "query",
+      "spatial query",
+      "standard deviation",
+      "statistics",
+      "sum",
+      "variance",
+      "QueryParameters",
+      "ServiceFeatureTable",
+      "StatisticDefinition",
+      "StatisticRecord",
+      "StatisticType",
+      "StatisticsQueryParameters",
+      "StatisticsQueryResult"
+    ],
     "redirect_from": [],
-    "relevant_apis": [],
-    "snippets": [],
+    "relevant_apis": [
+      "QueryParameters",
+      "ServiceFeatureTable",
+      "StatisticDefinition",
+      "StatisticRecord",
+      "StatisticType",
+      "StatisticsQueryParameters",
+      "StatisticsQueryResult"
+    ],
+    "snippets": [
+      "query_table_statistics_sample.dart"
+    ],
     "title": "Query table statistics",
     "key": "query_table_statistics"
   },
