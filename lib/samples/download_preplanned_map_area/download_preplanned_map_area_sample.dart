@@ -91,8 +91,7 @@ class _DownloadPreplannedMapAreaSampleState
               child: Center(
                 // Use the name of the item, or display a default.
                 child: _mapViewController.arcGISMap?.item?.title == null
-                    ? const Text('Unknown Map',
-                        style: TextStyle(color: Colors.white))
+                    ? null
                     : Text(_mapViewController.arcGISMap!.item!.title,
                         style: const TextStyle(color: Colors.white)),
               ),
@@ -178,7 +177,7 @@ class _DownloadPreplannedMapAreaSampleState
               style: Theme.of(context).textTheme.titleMedium),
           const SizedBox(height: 20),
           SizedBox(
-            height: 300,
+            height: 250,
             // Create a series of list tiles for the offline map areas.
             child: ListView.builder(
                 itemCount: _preplannedMapAreas.length,
