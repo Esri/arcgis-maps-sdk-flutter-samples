@@ -54,9 +54,7 @@ class _IdentifyLayerFeaturesSampleState
                 color: Colors.white.withAlpha(230),
                 padding: const EdgeInsets.all(10),
                 child: Row(
-                  children: [
-                    Text(_message),
-                  ],
+                  children: [Text(_message)],
                 ),
               ),
             ),
