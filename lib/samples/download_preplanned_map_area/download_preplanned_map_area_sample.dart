@@ -171,7 +171,7 @@ class _DownloadPreplannedMapAreaSampleState
             trailing: _mapViewController.arcGISMap == _webMap
                 ? const Icon(Icons.check)
                 : null,
-            onTap: () => setMap(_webMap),
+            onTap: () => setMapAndViewpoint(_webMap),
           ),
           const SizedBox(height: 20),
           Text('Preplanned Map Areas:',
@@ -224,7 +224,7 @@ class _DownloadPreplannedMapAreaSampleState
           trailing: _mapViewController.arcGISMap == map
               ? const Icon(Icons.check)
               : null,
-          onTap: () => setMap(map),
+          onTap: () => setMapAndViewpoint(map),
         );
       } else if (job.status == JobStatus.failed) {
         return ListTile(
@@ -283,7 +283,7 @@ class _DownloadPreplannedMapAreaSampleState
   }
 
   // Sets the provided map to the map view and updates the viewpoint.
-  void setMap(ArcGISMap map) {
+  void setMapAndViewpoint(ArcGISMap map) {
     // Set the map to the map view and update the UI to reflect the newly selected map.
     setState(() => _mapViewController.arcGISMap = map);
 
