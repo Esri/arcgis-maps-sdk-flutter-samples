@@ -40,6 +40,8 @@ class _ShowDeviceLocationSampleState extends State<ShowDeviceLocationSample>
   final _locationDataSource = SystemLocationDataSource();
   StreamSubscription? _statusSubscription;
   var _status = LocationDataSourceStatus.stopped;
+  StreamSubscription? _autoPanModeSubscription;
+  var _autoPanMode = LocationDisplayAutoPanMode.off;
   ArcGISException? _ldsException;
   // A flag for when the map view is ready and controls can be used.
   var _ready = false;
@@ -49,6 +51,7 @@ class _ShowDeviceLocationSampleState extends State<ShowDeviceLocationSample>
     //fixme comment
     _locationDataSource.stop();
     _statusSubscription?.cancel();
+    _autoPanModeSubscription?.cancel();
 
     super.dispose();
   }
@@ -145,6 +148,36 @@ class _ShowDeviceLocationSampleState extends State<ShowDeviceLocationSample>
               ),
             ],
           ),
+          Row(
+            children: [
+              const Text('Auto-Pan Mode'),
+              const Spacer(),
+              DropdownButton(
+                value: _autoPanMode,
+                onChanged: (value) {
+                  _mapViewController.locationDisplay.autoPanMode = value!;
+                },
+                items: const [
+                  DropdownMenuItem(
+                    value: LocationDisplayAutoPanMode.off,
+                    child: Text('Off'),
+                  ),
+                  DropdownMenuItem(
+                    value: LocationDisplayAutoPanMode.recenter,
+                    child: Text('Recenter'),
+                  ),
+                  DropdownMenuItem(
+                    value: LocationDisplayAutoPanMode.navigation,
+                    child: Text('Navigation'),
+                  ),
+                  DropdownMenuItem(
+                    value: LocationDisplayAutoPanMode.compassNavigation,
+                    child: Text('Compass Navigation'),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ],
       ),
     );
@@ -171,8 +204,7 @@ class _ShowDeviceLocationSampleState extends State<ShowDeviceLocationSample>
   Future<void> _initLocationDisplay() async {
     final locationDisplay = _mapViewController.locationDisplay;
     locationDisplay.dataSource = _locationDataSource;
-    locationDisplay.useCourseSymbolOnMovement = true;
-    locationDisplay.autoPanMode = LocationDisplayAutoPanMode.compassNavigation;
+    locationDisplay.autoPanMode = LocationDisplayAutoPanMode.recenter;
 
     await _initLocationDataSource();
   }
@@ -182,6 +214,12 @@ class _ShowDeviceLocationSampleState extends State<ShowDeviceLocationSample>
       setState(() => _status = status);
     });
     setState(() => _status = _locationDataSource.status);
+
+    _autoPanModeSubscription =
+        _mapViewController.locationDisplay.onAutoPanModeChanged.listen((mode) {
+      setState(() => _autoPanMode = mode);
+    });
+    _autoPanMode = _mapViewController.locationDisplay.autoPanMode;
 
     try {
       await _locationDataSource.start();
