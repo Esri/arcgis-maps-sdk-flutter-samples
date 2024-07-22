@@ -630,11 +630,29 @@
     "category": "Search and Query",
     "description": "Identify features in all layers in a map.",
     "ignore": false,
-    "images": [],
-    "keywords": [],
+    "images": [
+      "identify_layer_features.png"
+    ],
+    "keywords": [
+      "identify",
+      "recursion",
+      "recursive",
+      "sublayers",
+      "ArcGISMapViewController.identifyLayers",
+      "IdentifyLayerResult",
+      "IdentifyLayerResult.layerContent.name",
+      "IdentifyLayerResult.sublayerResults"
+    ],
     "redirect_from": [],
-    "relevant_apis": [],
-    "snippets": [],
+    "relevant_apis": [
+      "ArcGISMapViewController.identifyLayers",
+      "IdentifyLayerResult",
+      "IdentifyLayerResult.layerContent.name",
+      "IdentifyLayerResult.sublayerResults"
+    ],
+    "snippets": [
+      "identify_layer_features_sample.dart"
+    ],
     "title": "Identify layer features",
     "key": "identify_layer_features"
   },
