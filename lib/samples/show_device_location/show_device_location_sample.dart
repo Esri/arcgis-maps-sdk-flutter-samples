@@ -208,7 +208,8 @@ class _ShowDeviceLocationSampleState extends State<ShowDeviceLocationSample>
         _mapViewController.locationDisplay.onAutoPanModeChanged.listen((mode) {
       setState(() => _autoPanMode = mode);
     });
-    _autoPanMode = _mapViewController.locationDisplay.autoPanMode;
+    setState(
+        () => _autoPanMode = _mapViewController.locationDisplay.autoPanMode);
 
     // Attempt to start the location data source (this will prompt the user for permission).
     await _locationDataSource.start().onError((e, _) {
