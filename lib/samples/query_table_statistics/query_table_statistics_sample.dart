@@ -41,11 +41,11 @@ class _QueryTableStatisticsSampleState extends State<QueryTableStatisticsSample>
   );
   // A flag for when the map view is ready and controls can be used.
   var _ready = false;
-  // A flag to limit the query to the current display extent..
+  // A flag for whether to limit the query to cities within the current extent.
   var _onlyCitiesInCurrentExtent = true;
   // A flag for whether to limit the query to cities with population greater than 5 million.
   var _onlyCitiesGreaterThan5M = true;
-  // A flag for whether to limit the query to cities within the current extent.
+  // A list of statistic definitions to apply to the query.
   final _statisticDefinitions = <StatisticDefinition>[];
   // A flag to display the query settings.
   var _settingsVisible = false;
@@ -74,7 +74,7 @@ class _QueryTableStatisticsSampleState extends State<QueryTableStatisticsSample>
                       onPressed: () => setState(() => _settingsVisible = true),
                       child: const Text('Settings'),
                     ),
-                    // A button to clear the buffers.
+                    // A button to calculate the statistics.
                     ElevatedButton(
                       onPressed: queryStatistics,
                       child: const Text('Get statistics'),
