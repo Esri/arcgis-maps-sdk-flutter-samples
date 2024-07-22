@@ -16,6 +16,7 @@
 
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:flutter/material.dart';
+import 'dart:math';
 
 import '../../utils/sample_state_support.dart';
 
@@ -105,7 +106,11 @@ class _CreatePlanarAndGeodeticBuffersSampleState
         20.0,
         0.0,
         20.0,
-        View.of(context).viewPadding.bottom / View.of(context).devicePixelRatio,
+        max(
+          20.0,
+          View.of(context).viewPadding.bottom /
+              View.of(context).devicePixelRatio,
+        ),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
