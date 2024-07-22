@@ -129,7 +129,7 @@ class _SetBasemapSampleState extends State<SetBasemapSample>
     );
   }
 
-  void updateMap(Basemap basemap) async {
+  void updateMap(Basemap basemap) {
     // Update the map view with the selected basemap.
     _arcGISMap.basemap = basemap;
     // Set the viewpoint to San Francisco.
@@ -140,9 +140,9 @@ class _SetBasemapSampleState extends State<SetBasemapSample>
 
   Future loadBasemaps() async {
     // Create a portal to access online items.
-    final portal = Portal.arcGISOnline(); 
+    final portal = Portal.arcGISOnline();
     // Load basemaps from portal.
-    List<Basemap> basemaps = await portal.developerBasemaps(); 
+    List<Basemap> basemaps = await portal.developerBasemaps();
 
     // Load each basemap to access and display attribute data in the UI.
     for (var basemap in basemaps) {
