@@ -274,12 +274,12 @@ class _DownloadPreplannedMapAreaSampleState
   // Create the directory for downloading offline map areas into.
   Future<Directory> createDownloadDirectory() async {
     final documentDir = await getApplicationDocumentsDirectory();
-    final parentDir = Directory('${documentDir.path}/preplanned_map_sample');
-    if (parentDir.existsSync()) {
-      parentDir.deleteSync(recursive: true);
+    final downloadDir = Directory('${documentDir.path}/preplanned_map_sample');
+    if (downloadDir.existsSync()) {
+      downloadDir.deleteSync(recursive: true);
     }
-    parentDir.createSync();
-    return parentDir;
+    downloadDir.createSync();
+    return downloadDir;
   }
 
   // Sets the provided map to the map view and updates the viewpoint.
