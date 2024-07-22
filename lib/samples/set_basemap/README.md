@@ -2,7 +2,7 @@
 
 Change a map's basemap. A basemap is beneath all layers on an `ArcGISMap` and is used to provide visual reference for the operational layers.
 
-![Image of change basemap](set_basemap.png)
+![Image of set basemap](set_basemap.png)
 
 ## Use case
 
@@ -10,18 +10,18 @@ Basemaps should be selected contextually. For example, in maritime applications,
 
 ## How to use the sample
 
-Use the drop down menu to select the active basemap from the list of available basemaps.
+Use the drawer to select the active basemap from the list of available basemaps.
 
 ## How it works
 
 1. Create an `ArcGISMap` object.
-2. Set the map to the `ArcGISMapView` object.
+2. Set the map to the `ArcGISMapViewController` object.
 3. Choose a new basemap type and set it on the map.
 
 ## Relevant API
 
 * ArcGISMap
-* ArcGISMapView
+* ArcGISMapViewController
 * Basemap
 
 ## Tags

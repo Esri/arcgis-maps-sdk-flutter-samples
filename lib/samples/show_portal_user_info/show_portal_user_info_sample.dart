@@ -43,7 +43,7 @@ class _ShowPortalUserInfoSampleState extends State<ShowPortalUserInfoSample>
         .authenticationManager.arcGISAuthenticationChallengeHandler = this;
 
     // Load the portal (which will trigger an authentication challenge), and then load the thumbnails.
-    _portalLoadFuture = _portal.load().then((_) => loadThumbnails());
+    // _portalLoadFuture = _portal.load().then((_) => loadThumbnails());
   }
 
   @override
@@ -149,12 +149,12 @@ class _ShowPortalUserInfoSampleState extends State<ShowPortalUserInfoSample>
   }
 
   // Load the user and organization thumbnails.
-  void loadThumbnails() {
-    _portal.user?.thumbnail?.loadBytes().then((bytes) {
-      setState(() => _userThumbnail = bytes);
-    });
-    _portal.portalInfo?.thumbnail?.loadBytes().then((bytes) {
-      setState(() => _organizationThumbnail = bytes);
-    });
-  }
+  // void loadThumbnails() {
+  //   _portal.user?.thumbnail?.loadBytes().then((bytes) {
+  //     setState(() => _userThumbnail = bytes);
+  //   });
+  //   _portal.portalInfo?.thumbnail?.loadBytes().then((bytes) {
+  //     setState(() => _organizationThumbnail = bytes);
+  //   });
+  // }
 }

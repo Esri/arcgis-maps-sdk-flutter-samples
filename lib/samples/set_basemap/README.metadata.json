@@ -9,13 +9,13 @@
         "basemap",
         "map",
         "ArcGISMap",
-        "ArcGISMapView",
+        "ArcGISMapViewController",
         "Basemap"
     ],
     "redirect_from": [],
     "relevant_apis": [
         "ArcGISMap",
-        "ArcGISMapView",
+        "ArcGISMapViewController",
         "Basemap"
     ],
     "snippets": [

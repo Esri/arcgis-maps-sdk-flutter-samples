@@ -129,7 +129,7 @@ class _SetBasemapSampleState extends State<SetBasemapSample>
     );
   }
 
-  void updateMap(Basemap basemap) {
+  void updateMap(Basemap basemap) async {
     // Update the map view with the selected basemap.
     _arcGISMap.basemap = basemap;
     // Set the viewpoint to San Francisco.
@@ -139,32 +139,10 @@ class _SetBasemapSampleState extends State<SetBasemapSample>
   }
 
   Future loadBasemaps() async {
-    // Load basemaps from online items.
-    List<Basemap> basemaps = List.from([
-      // Newspaper style basemap.
-      Basemap.withUri(Uri.parse(
-          'https://runtime.maps.arcgis.com/home/item.html?id=9b39104916614f0899993934d2f1d375')),
-      // Dark gray canvas style basemap.
-      Basemap.withUri(Uri.parse(
-          'https://www.arcgis.com/home/item.html?id=358ec1e175ea41c3bf5c68f0da11ae2b')),
-      // Light gray canvas style basemap.
-      Basemap.withUri(Uri.parse(
-          'https://www.arcgis.com/home/item.html?id=979c6cc89af9449cbeb5342a439c6a76')),
-      // Open Street Map style basemap.
-      Basemap.withUri(Uri.parse(
-          'https://www.arcgis.com/home/item.html?id=fae788aa91e54244b161b59725dcbb2a')),
-      // Imagery Hybrid style basemap.
-      Basemap.withUri(Uri.parse(
-          'https://www.arcgis.com/home/item.html?id=28f49811a6974659988fd279de5ce39f')),
-      // Outdoor style basemap.
-      Basemap.withUri(Uri.parse(
-          'https://www.arcgis.com/home/item.html?id=2e8a3ccdfd6d42a995b79812b3b0ebc6')),
-      // Streets Night style basemap.
-      Basemap.withUri(Uri.parse(
-          'https://www.arcgis.com/home/item.html?id=7e2b9be8a9c94e45b7f87857d8d168d6')),
-      // No thumbnail.
-      Basemap.withStyle(BasemapStyle.arcGISNavigation),
-    ]);
+    // Create a portal to access online items.
+    final portal = Portal.arcGISOnline(); 
+    // Load basemaps from portal.
+    List<Basemap> basemaps = await portal.developerBasemaps(); 
 
     // Load each basemap to access and display attribute data in the UI.
     for (var basemap in basemaps) {
