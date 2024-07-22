@@ -36,19 +36,22 @@ class _ShowDeviceLocationSampleState extends State<ShowDeviceLocationSample>
   final _mapViewController = ArcGISMapView.createController();
   // A flag for when the settings bottom sheet is visible.
   var _settingsVisible = false;
-  //fixme comments
+  // Create the system location data source.
   final _locationDataSource = SystemLocationDataSource();
+  // A subscription to receive status changes of the location data source.
   StreamSubscription? _statusSubscription;
   var _status = LocationDataSourceStatus.stopped;
+  // A subscription to receive changes to the auto-pan mode.
   StreamSubscription? _autoPanModeSubscription;
-  var _autoPanMode = LocationDisplayAutoPanMode.off;
-  ArcGISException? _ldsException;
+  var _autoPanMode = LocationDisplayAutoPanMode.recenter;
+  // Declare an exception for if the data source fails to start.
+  ArcGISException? _dataSourceException;
   // A flag for when the map view is ready and controls can be used.
   var _ready = false;
 
   @override
   void dispose() {
-    //fixme comment
+    // When exiting, stop the location data source and cancel subscriptions.
     _locationDataSource.stop();
     _statusSubscription?.cancel();
     _autoPanModeSubscription?.cancel();
@@ -73,9 +76,10 @@ class _ShowDeviceLocationSampleState extends State<ShowDeviceLocationSample>
                   ),
                 ),
                 Visibility(
-                  visible: _ldsException == null,
+                  visible: _dataSourceException == null,
                   // An error message if the location data source fails to start.
-                  replacement: Text('Exception: ${_ldsException?.message}'),
+                  replacement:
+                      Text('Exception: ${_dataSourceException?.message}'),
                   // A button to show the Settings bottom sheet.
                   child: ElevatedButton(
                     onPressed: () => setState(() => _settingsVisible = true),
@@ -136,6 +140,7 @@ class _ShowDeviceLocationSampleState extends State<ShowDeviceLocationSample>
             children: [
               const Text('Show Location'),
               const Spacer(),
+              // A switch to start and stop the location data source.
               Switch(
                 value: (_status == LocationDataSourceStatus.started),
                 onChanged: (_) {
@@ -152,6 +157,7 @@ class _ShowDeviceLocationSampleState extends State<ShowDeviceLocationSample>
             children: [
               const Text('Auto-Pan Mode'),
               const Spacer(),
+              // A dropdown button to select the auto-pan mode.
               DropdownButton(
                 value: _autoPanMode,
                 onChanged: (value) {
@@ -172,7 +178,7 @@ class _ShowDeviceLocationSampleState extends State<ShowDeviceLocationSample>
                   ),
                   DropdownMenuItem(
                     value: LocationDisplayAutoPanMode.compassNavigation,
-                    child: Text('Compass Navigation'),
+                    child: Text('Compass'),
                   ),
                 ],
               ),
@@ -184,47 +190,32 @@ class _ShowDeviceLocationSampleState extends State<ShowDeviceLocationSample>
   }
 
   void onMapViewReady() async {
-    //fixme comments
-    final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISImageryStandard);
+    // Create a map with the Navigation Night basemap style.
+    _mapViewController.arcGISMap =
+        ArcGISMap.withBasemapStyle(BasemapStyle.arcGISNavigationNight);
 
-    map.initialViewpoint = Viewpoint.fromCenter(
-      ArcGISPoint(
-        x: -110.8258,
-        y: 32.154089,
-        spatialReference: SpatialReference.wgs84,
-      ),
-      scale: 2e4,
-    );
+    // Set the initial system location data source and auto-pan mode.
+    _mapViewController.locationDisplay.dataSource = _locationDataSource;
+    _mapViewController.locationDisplay.autoPanMode =
+        LocationDisplayAutoPanMode.recenter;
 
-    _mapViewController.arcGISMap = map;
-    await _initLocationDisplay();
-    setState(() => _ready = true);
-  }
-
-  Future<void> _initLocationDisplay() async {
-    final locationDisplay = _mapViewController.locationDisplay;
-    locationDisplay.dataSource = _locationDataSource;
-    locationDisplay.autoPanMode = LocationDisplayAutoPanMode.recenter;
-
-    await _initLocationDataSource();
-  }
-
-  Future<void> _initLocationDataSource() async {
+    // Subscribe to status changes and changes to the auto-pan mode.
     _statusSubscription = _locationDataSource.onStatusChanged.listen((status) {
       setState(() => _status = status);
     });
     setState(() => _status = _locationDataSource.status);
-
     _autoPanModeSubscription =
         _mapViewController.locationDisplay.onAutoPanModeChanged.listen((mode) {
       setState(() => _autoPanMode = mode);
     });
     _autoPanMode = _mapViewController.locationDisplay.autoPanMode;
 
-    try {
-      await _locationDataSource.start();
-    } on ArcGISException catch (e) {
-      setState(() => _ldsException = e);
-    }
+    // Attempt to start the location data source (this will prompt the user for permission).
+    await _locationDataSource.start().onError((e, _) {
+      setState(() => _dataSourceException = e as ArcGISException);
+    });
+
+    // Set the ready state variable to true to enable the UI.
+    setState(() => _ready = true);
   }
 }

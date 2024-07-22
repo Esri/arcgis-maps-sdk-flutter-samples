@@ -10,13 +10,12 @@ When using a map within a GIS, it may be helpful for a user to know their own lo
 
 ## How to use the sample
 
-Tap the button in the lower right (which starts in Stop mode). A menu will appear with the following options:
+Tap the "Location Settings" button to open the settings. Toggle "Show Location" to turn on or off the location display. The "Auto-Pan Mode" menu has the following options to control how the viewpoint changes as the location changes:
 
-* Stop - Stops the location display.
-* On - Starts the location display with no AutoPanMode mode set.
-* Re-Center - Starts the location display with `autoPanMode` set to `recenter`.
-* Navigation - Starts the location display with `autoPanMode` set to `navigation`.
-* Compass - Starts the location display with `autoPanMode` set to `compassNavigation`.
+* Off - Turns off `autoPanMode`.
+* Re-Center - Sets the `autoPanMode` to `recenter`.
+* Navigation - Sets the `autoPanMode` to `navigation`.
+* Compass - Sets the `autoPanMode` to `compassNavigation`.
 
 ## How it works
 
