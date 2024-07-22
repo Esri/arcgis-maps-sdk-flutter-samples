@@ -15,6 +15,7 @@
 //
 
 import 'dart:async';
+import 'dart:math';
 
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:flutter/material.dart';
@@ -33,6 +34,8 @@ class _ShowDeviceLocationSampleState extends State<ShowDeviceLocationSample>
     with SampleStateSupport {
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
+  // A flag for when the settings bottom sheet is visible.
+  var _settingsVisible = false;
   //fixme comments
   final _locationDataSource = SystemLocationDataSource();
   StreamSubscription? _statusSubscription;
@@ -66,25 +69,15 @@ class _ShowDeviceLocationSampleState extends State<ShowDeviceLocationSample>
                     onMapViewReady: onMapViewReady,
                   ),
                 ),
-                //fixme comments
                 Visibility(
                   visible: _ldsException == null,
+                  // An error message if the location data source fails to start.
+                  replacement: Text('Exception: ${_ldsException?.message}'),
+                  // A button to show the Settings bottom sheet.
                   child: ElevatedButton(
-                    child: Text(_status == LocationDataSourceStatus.started
-                        ? 'Stop'
-                        : 'Start'),
-                    onPressed: () {
-                      if (_status == LocationDataSourceStatus.started) {
-                        _mapViewController.locationDisplay.stop();
-                      } else {
-                        _mapViewController.locationDisplay.start();
-                      }
-                    },
+                    onPressed: () => setState(() => _settingsVisible = true),
+                    child: const Text('Location Settings'),
                   ),
-                ),
-                Visibility(
-                  visible: _ldsException != null,
-                  child: Text('Exception: ${_ldsException?.message}'),
                 ),
               ],
             ),
@@ -100,6 +93,59 @@ class _ShowDeviceLocationSampleState extends State<ShowDeviceLocationSample>
             ),
           ],
         ),
+      ),
+      // The Settings bottom sheet.
+      bottomSheet: _settingsVisible ? buildSettings(context) : null,
+    );
+  }
+
+  // The build method for the Geometry Settings bottom sheet.
+  Widget buildSettings(BuildContext context) {
+    return Container(
+      color: Colors.white,
+      padding: EdgeInsets.fromLTRB(
+        20.0,
+        0.0,
+        20.0,
+        max(
+          20.0,
+          View.of(context).viewPadding.bottom /
+              View.of(context).devicePixelRatio,
+        ),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
+            children: [
+              Text(
+                'Location Settings',
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
+              const Spacer(),
+              IconButton(
+                icon: const Icon(Icons.close),
+                onPressed: () => setState(() => _settingsVisible = false),
+              ),
+            ],
+          ),
+          Row(
+            children: [
+              const Text('Show Location'),
+              const Spacer(),
+              Switch(
+                value: (_status == LocationDataSourceStatus.started),
+                onChanged: (_) {
+                  if (_status == LocationDataSourceStatus.started) {
+                    _mapViewController.locationDisplay.stop();
+                  } else {
+                    _mapViewController.locationDisplay.start();
+                  }
+                },
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
@@ -132,13 +178,13 @@ class _ShowDeviceLocationSampleState extends State<ShowDeviceLocationSample>
   }
 
   Future<void> _initLocationDataSource() async {
+    _statusSubscription = _locationDataSource.onStatusChanged.listen((status) {
+      setState(() => _status = status);
+    });
+    setState(() => _status = _locationDataSource.status);
+
     try {
       await _locationDataSource.start();
-      _statusSubscription =
-          _locationDataSource.onStatusChanged.listen((status) {
-        setState(() => _status = status);
-      });
-      setState(() => _status = _locationDataSource.status);
     } on ArcGISException catch (e) {
       setState(() => _ldsException = e);
     }

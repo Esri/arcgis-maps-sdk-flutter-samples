@@ -14,6 +14,7 @@
 // limitations under the License.
 //
 
+import 'dart:math';
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:flutter/material.dart';
 
@@ -104,7 +105,11 @@ class _DensifyAndGeneralizeGeometrySampleState
         20.0,
         0.0,
         20.0,
-        View.of(context).viewPadding.bottom / View.of(context).devicePixelRatio,
+        max(
+          20.0,
+          View.of(context).viewPadding.bottom /
+              View.of(context).devicePixelRatio,
+        ),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -286,10 +291,10 @@ class _DensifyAndGeneralizeGeometrySampleState
 
     // Create a map with a basemap style and an initial viewpoint to show the extent of the polyline.
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISStreetsNight)
-    ..initialViewpoint = Viewpoint.fromCenter(
-      _originalPolyline.extent.center,
-      scale: 65907,
-    );
+      ..initialViewpoint = Viewpoint.fromCenter(
+        _originalPolyline.extent.center,
+        scale: 65907,
+      );
     _mapViewController.arcGISMap = map;
 
     // Set the ready state variable to true to enable the sample UI.
