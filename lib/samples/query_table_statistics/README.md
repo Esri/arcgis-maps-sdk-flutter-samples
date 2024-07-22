@@ -10,7 +10,7 @@ For example, a county boundaries table with population information can be querie
 
 ## How to use the sample
 
-Pan and zoom to define the extent for the query. In the Settings panel, use the 'Cities in current extent' checkbox to control whether the query includes only features in the visible extent, or use the 'Cities greater than 5M' checkbox to filter the results to only those cities with a population greater than 5 million people. Tap the 'Get statistics' to perform the query. The query will return population-based statistics from the combined results of all features matching the query criteria.
+Pan and zoom to define the extent for the query. In the Settings panel, use the 'Only cities in current extent' checkbox to control whether the query includes only features in the visible extent, or use the 'Only cities greater than 5M' checkbox to filter the results to only those cities with a population greater than 5 million people. Tap the 'Get statistics' to perform the query. The query will return population-based statistics from the combined results of all features matching the query criteria.
 
 ## How it works
 
