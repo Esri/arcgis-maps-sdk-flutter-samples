@@ -8,6 +8,7 @@ import 'package:arcgis_maps_sdk_flutter_samples/samples/apply_scheduled_updates_
 import 'package:arcgis_maps_sdk_flutter_samples/samples/apply_simple_renderer_to_feature_layer/apply_simple_renderer_to_feature_layer_sample.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/apply_unique_value_renderer/apply_unique_value_renderer_sample.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/authenticate_with_oauth/authenticate_with_oauth_sample.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/samples/create_mobile_geodatabase/create_mobile_geodatabase_sample.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/create_planar_and_geodetic_buffers/create_planar_and_geodetic_buffers_sample.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/densify_and_generalize_geometry/densify_and_generalize_geometry_sample.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/display_clusters/display_clusters_sample.dart';
@@ -54,6 +55,7 @@ const sampleWidgets = <String, Widget>{
       ApplySimpleRendererToFeatureLayerSample(),
   'apply_unique_value_renderer': ApplyUniqueValueRendererSample(),
   'authenticate_with_oauth': AuthenticateWithOAuthSample(),
+  'create_mobile_geodatabase': CreateMobileGeodatabaseSample(),
   'create_planar_and_geodetic_buffers': CreatePlanarAndGeodeticBuffersSample(),
   'densify_and_generalize_geometry': DensifyAndGeneralizeGeometrySample(),
   'display_clusters': DisplayClustersSample(),
