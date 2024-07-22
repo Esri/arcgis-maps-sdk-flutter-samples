@@ -14,6 +14,8 @@
 // limitations under the License.
 //
 
+import 'dart:math';
+
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:flutter/material.dart';
 
@@ -39,14 +41,14 @@ class _QueryTableStatisticsSampleState extends State<QueryTableStatisticsSample>
   );
   // A flag for when the map view is ready and controls can be used.
   var _ready = false;
-  // A flag for querying statistics.
+  // A flag to limit the query to the current display extent..
   var _onlyCitiesInCurrentExtent = true;
-  // A flag for querying statistics.
+  // A flag for whether to limit the query to cities with population greater than 5 million.
   var _onlyCitiesGreaterThan5M = true;
-  // A list of statistic definitions.
-  final _statisticDefinitions = List<StatisticDefinition>.empty(growable: true);
+  // A flag for whether to limit the query to cities within the current extent.
+  final _statisticDefinitions = <StatisticDefinition>[];
   // A flag to display the query settings.
-  var _toggleQuerySettings = true;
+  var _settingsVisible = false;
 
   @override
   Widget build(BuildContext context) {
@@ -64,6 +66,21 @@ class _QueryTableStatisticsSampleState extends State<QueryTableStatisticsSample>
                     onMapViewReady: onMapViewReady,
                   ),
                 ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    // A button to show the Settings bottom sheet.
+                    ElevatedButton(
+                      onPressed: () => setState(() => _settingsVisible = true),
+                      child: const Text('Settings'),
+                    ),
+                    // A button to clear the buffers.
+                    ElevatedButton(
+                      onPressed: queryStatistics,
+                      child: const Text('Get statistics'),
+                    ),
+                  ],
+                ),
               ],
             ),
             // Display a progress indicator and prevent interaction until state is ready.
@@ -76,29 +93,45 @@ class _QueryTableStatisticsSampleState extends State<QueryTableStatisticsSample>
                 ),
               ),
             ),
-
-            Visibility(
-              visible: _toggleQuerySettings,
-              child: querySettings(context),
-            ),
           ],
         ),
       ),
-      bottomSheet: null, //querySettings(context),
+      bottomSheet: _settingsVisible ? querySettings(context) : null,
     );
   }
 
-  // Display the query options to query statistics.
+  // The build method for the query options shown in the bottom sheet.
   Widget querySettings(BuildContext context) {
-    return Positioned(
-      bottom: 50,
-      left: 50,
-      width: MediaQuery.of(context).size.width * 0.75,
+    return Container(
+      color: Colors.white,
+      padding: EdgeInsets.fromLTRB(
+        20.0,
+        0.0,
+        20.0,
+        max(
+          20.0,
+          View.of(context).viewPadding.bottom /
+              View.of(context).devicePixelRatio,
+        ),
+      ),
       child: Container(
         color: Colors.white,
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
           children: [
+            Row(
+              children: [
+                Text(
+                  'Query Settings',
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+                const Spacer(),
+                IconButton(
+                  icon: const Icon(Icons.close),
+                  onPressed: () => setState(() => _settingsVisible = false),
+                ),
+              ],
+            ),
             Row(
               children: [
                 Checkbox(
@@ -121,12 +154,6 @@ class _QueryTableStatisticsSampleState extends State<QueryTableStatisticsSample>
                 const Text('Only cities greater than 5M'),
               ],
             ),
-            ElevatedButton(
-              onPressed: queryStatistics,
-              child: const Text(
-                'Get statistics',
-              ),
-            ),
           ],
         ),
       ),
@@ -135,6 +162,7 @@ class _QueryTableStatisticsSampleState extends State<QueryTableStatisticsSample>
 
   // Called when the map view is ready.
   void onMapViewReady() {
+    // Add the statistic definitions for the 'POP' (Population) field.
     for (final type in StatisticType.values) {
       _statisticDefinitions.add(
         StatisticDefinition(
@@ -143,22 +171,25 @@ class _QueryTableStatisticsSampleState extends State<QueryTableStatisticsSample>
         ),
       );
     }
+    // Create a map with a topographic basemap.
     final map = ArcGISMap.withBasemapStyle(
       BasemapStyle.arcGISTopographic,
     );
+    // Create a feature layer from the service feature table.
     final featureLayer = FeatureLayer.withFeatureTable(
       _serviceFeatureTable,
     );
+    // Add the feature layer to the map.
     map.operationalLayers.add(
       featureLayer,
     );
+    // Set the map to the map view.
     _mapViewController.arcGISMap = map;
     setState(() => _ready = true);
   }
 
   // Query statistics from the service feature table.
   void queryStatistics() async {
-    setState(() => _toggleQuerySettings = false);
     // Create a statistics query parameters object.
     final statisticsQueryParameters = StatisticsQueryParameters(
       statisticDefinitions: _statisticDefinitions,
@@ -198,20 +229,14 @@ class _QueryTableStatisticsSampleState extends State<QueryTableStatisticsSample>
         context: context,
         builder: (context) {
           return AlertDialog(
-            title: const Text(
+            title: Text(
               'Statistical Query Results',
-              style: TextStyle(
-                fontSize: 14,
-              ),
+              style: Theme.of(context).textTheme.titleMedium,
             ),
             content: Text(
               statistics.join('\n').toString(),
             ),
           );
-        },
-      ).then(
-        (_) {
-          setState(() => _toggleQuerySettings = true);
         },
       );
     }
