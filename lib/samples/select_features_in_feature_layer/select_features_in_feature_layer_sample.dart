@@ -37,8 +37,19 @@ class _SelectFeaturesInFeatureLayerSampleState
           'https://services1.arcgis.com/4yjifSiIG17X0gW4/arcgis/rest/services/GDP_per_capita_1960_2016/FeatureServer/0')));
 
   @override
-  void initState() {
-    super.initState();
+  Widget build(BuildContext context) {
+    return Scaffold(
+      // Add a map view to the widget tree and set a controller.
+      body: ArcGISMapView(
+        controllerProvider: () => _mapViewController,
+        // Add a callback to the onTap event.
+        onTap: onTap,
+        onMapViewReady: onMapViewReady,
+      ),
+    );
+  }
+
+  void onMapViewReady() {
     // Create a map with a light gray canvas basemap.
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISLightGray);
     // Set the initial viewpoint to a specific location and scale.
@@ -54,18 +65,6 @@ class _SelectFeaturesInFeatureLayerSampleState
     map.operationalLayers.add(_featureLayer);
     // Set the map to the map view controller.
     _mapViewController.arcGISMap = map;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      // Add a map view to the widget tree and set a controller.
-      body: ArcGISMapView(
-        controllerProvider: () => _mapViewController,
-        // Add a callback to the onTap event.
-        onTap: onTap,
-      ),
-    );
   }
 
   void onTap(Offset localPosition) async {
