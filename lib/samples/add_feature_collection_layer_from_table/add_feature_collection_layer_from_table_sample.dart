@@ -29,55 +29,64 @@ class AddFeatureCollectionLayerFromTableSample extends StatefulWidget {
 class _AddFeatureCollectionLayerFromTableSampleState
     extends State<AddFeatureCollectionLayerFromTableSample>
     with SampleStateSupport {
-  final _featureCollection = FeatureCollection();
+  // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
-
-  _AddFeatureCollectionLayerFromTableSampleState() {
-    createPointTable();
-    createPolylineTable();
-    createPolygonTable();
-  }
-
-  @override
-  void initState() {
-    super.initState();
-
-    final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISOceans);
-
-    map.initialViewpoint = Viewpoint.fromTargetExtent(
-      Envelope.fromXY(
-        xMin: -8917856.590171767,
-        yMin: 903277.583136797,
-        xMax: -8800611.655131537,
-        yMax: 1100327.8941287803,
-        spatialReference: SpatialReference(wkid: 102100),
-      ),
-    );
-
-    map.operationalLayers
-        .add(FeatureCollectionLayer.withFeatureCollection(_featureCollection));
-
-    _mapViewController.arcGISMap = map;
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // Add a map view to the widget tree and set a controller.
       body: ArcGISMapView(
         controllerProvider: () => _mapViewController,
+        onMapViewReady: onMapViewReady,
       ),
     );
   }
 
-  void createPointTable() {
+  void onMapViewReady() {
+    // Create a feature collection table for each of the geometry types Point, Polyline, and Polygon.
+    final pointTable = createPointTable();
+    final polylineTable = createPolylineTable();
+    final polygonTable = createPolygonTable();
+
+    // Create a new feature collection.
+    final featureCollection = FeatureCollection();
+    // Add the feature collection tables to the feature collection.
+    featureCollection.tables.addAll([pointTable, polylineTable, polygonTable]);
+
+    // Create a feature collection layer from the feature collection.
+    final featureCollectionLayer =
+        FeatureCollectionLayer.withFeatureCollection(featureCollection);
+
+    // Create a map with a basemap style and initial viewpoint.
+    final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISOceans)
+      ..initialViewpoint = Viewpoint.fromTargetExtent(
+        Envelope.fromXY(
+          xMin: -8917856.590171767,
+          yMin: 903277.583136797,
+          xMax: -8800611.655131537,
+          yMax: 1100327.8941287803,
+          spatialReference: SpatialReference(wkid: 102100),
+        ),
+      );
+
+    // Add the feature collection layer to the map's operational layers.
+    map.operationalLayers.add(featureCollectionLayer);
+
+    // Set the map to the map view controller.
+    _mapViewController.arcGISMap = map;
+  }
+
+  // Create a feature collection table using a point geometry.
+  FeatureCollectionTable createPointTable() {
+    // Create a feature collection table for the geometry type with a list of fields and a spatial reference.
     final pointTable = FeatureCollectionTable(
-      fields: [
-        Field.text(name: 'Place', alias: 'Place Name', length: 50),
-      ],
+      fields: [Field.text(name: 'Place', alias: 'Place Name', length: 50)],
       geometryType: GeometryType.point,
       spatialReference: SpatialReference(wkid: 4326),
     );
 
+    // Set a simple renderer to style features from the table.
     pointTable.renderer = SimpleRenderer(
       symbol: SimpleMarkerSymbol(
         style: SimpleMarkerSymbolStyle.triangle,
@@ -86,31 +95,36 @@ class _AddFeatureCollectionLayerFromTableSampleState
       ),
     );
 
+    // Create a point.
+    final point = ArcGISPoint(
+      x: -79.497238,
+      y: 8.849289,
+      spatialReference: SpatialReference.wgs84,
+    );
+
+    // Create a feature with the point and add it to the table.
     final feature = pointTable.createFeature(
-      attributes: {
-        'Place': 'Current location',
-      },
-      geometry: ArcGISPoint(
-        x: -79.497238,
-        y: 8.849289,
-        spatialReference: SpatialReference.wgs84,
-      ),
+      attributes: {'Place': 'Current location'},
+      geometry: point,
     );
     pointTable.addFeature(feature);
 
-    _featureCollection.tables.add(pointTable);
+    return pointTable;
   }
 
-  void createPolylineTable() {
-    final linesTable = FeatureCollectionTable(
+  // Create a feature collection table using a polyline geometry.
+  FeatureCollectionTable createPolylineTable() {
+    // Create a feature collection table for the geometry type with a list of fields and a spatial reference.
+    final polylineTable = FeatureCollectionTable(
       fields: [
-        Field.text(name: 'Boundary', alias: 'Boundary Name', length: 50),
+        Field.text(name: 'Boundary', alias: 'Boundary Name', length: 50)
       ],
       geometryType: GeometryType.polyline,
       spatialReference: SpatialReference(wkid: 4326),
     );
 
-    linesTable.renderer = SimpleRenderer(
+    // Set a simple renderer to style features from the table.
+    polylineTable.renderer = SimpleRenderer(
       symbol: SimpleLineSymbol(
         style: SimpleLineSymbolStyle.dash,
         color: Colors.green,
@@ -118,43 +132,45 @@ class _AddFeatureCollectionLayerFromTableSampleState
       ),
     );
 
-    final builder =
+    // Build a polyline.
+    final polylineBuilder =
         PolylineBuilder.fromSpatialReference(SpatialReference(wkid: 4326));
-    builder.addPoint(
+    polylineBuilder.addPoint(
       ArcGISPoint(
         x: -79.497238,
         y: 8.849289,
         spatialReference: SpatialReference.wgs84,
       ),
     );
-    builder.addPoint(
+    polylineBuilder.addPoint(
       ArcGISPoint(
         x: -80.035568,
         y: 9.432302,
         spatialReference: SpatialReference.wgs84,
       ),
     );
+    final polyline = polylineBuilder.toGeometry();
 
-    final feature = linesTable.createFeature(
-      attributes: {
-        'Boundary': 'AManAPlanACanalPanama',
-      },
-      geometry: builder.toGeometry(),
+    // Create a feature using the polyline and add it to the table.
+    final feature = polylineTable.createFeature(
+      attributes: {'Boundary': 'AManAPlanACanalPanama'},
+      geometry: polyline,
     );
-    linesTable.addFeature(feature);
+    polylineTable.addFeature(feature);
 
-    _featureCollection.tables.add(linesTable);
+    return polylineTable;
   }
 
-  void createPolygonTable() {
+  // Create a feature collection table using a polygon geometry.
+  FeatureCollectionTable createPolygonTable() {
+    // Create a feature collection table for the geometry type with a list of fields and a spatial reference.
     final polygonTable = FeatureCollectionTable(
-      fields: [
-        Field.text(name: 'Area', alias: 'Area Name', length: 50),
-      ],
+      fields: [Field.text(name: 'Area', alias: 'Area Name', length: 50)],
       geometryType: GeometryType.polygon,
       spatialReference: SpatialReference(wkid: 4326),
     );
 
+    // Set a simple renderer to style features from the table.
     polygonTable.renderer = SimpleRenderer(
       symbol: SimpleFillSymbol(
         style: SimpleFillSymbolStyle.diagonalCross,
@@ -167,38 +183,39 @@ class _AddFeatureCollectionLayerFromTableSampleState
       ),
     );
 
-    final builder =
+    // Build a polygon.
+    final polygonBuilder =
         PolygonBuilder.fromSpatialReference(SpatialReference(wkid: 4326));
-    builder.addPoint(
+    polygonBuilder.addPoint(
       ArcGISPoint(
         x: -79.497238,
         y: 8.849289,
         spatialReference: SpatialReference.wgs84,
       ),
     );
-    builder.addPoint(
+    polygonBuilder.addPoint(
       ArcGISPoint(
         x: -79.337936,
         y: 8.638903,
         spatialReference: SpatialReference.wgs84,
       ),
     );
-    builder.addPoint(
+    polygonBuilder.addPoint(
       ArcGISPoint(
         x: -79.11409,
         y: 8.895422,
         spatialReference: SpatialReference.wgs84,
       ),
     );
+    final polygon = polygonBuilder.toGeometry();
 
+    // Create a feature using the polygon and add it to the table.
     final feature = polygonTable.createFeature(
-      attributes: {
-        'Area': 'Restricted area',
-      },
-      geometry: builder.toGeometry(),
+      attributes: {'Area': 'Restricted area'},
+      geometry: polygon,
     );
     polygonTable.addFeature(feature);
 
-    _featureCollection.tables.add(polygonTable);
+    return polygonTable;
   }
 }
