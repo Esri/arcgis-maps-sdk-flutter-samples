@@ -262,8 +262,8 @@ class _DownloadPreplannedMapAreaSampleState
     defaultDownloadParams.updateMode = PreplannedUpdateMode.noUpdates;
 
     // Create a directory for the map in the downloads directory.
-    final mapDir =
-        Directory('${_downloadDirectory!.path}/${mapArea.portalItem.title}');
+    final mapDir = Directory(
+        '${_downloadDirectory!.path}${Platform.pathSeparator}${mapArea.portalItem.title}');
     mapDir.createSync();
 
     // Create and run a job to download the offline map using the default params and download path.
@@ -283,7 +283,8 @@ class _DownloadPreplannedMapAreaSampleState
   // Create the directory for downloading offline map areas into.
   Future<Directory> createDownloadDirectory() async {
     final documentDir = await getApplicationDocumentsDirectory();
-    final downloadDir = Directory('${documentDir.path}/preplanned_map_sample');
+    final downloadDir = Directory(
+        '${documentDir.path}${Platform.pathSeparator}preplanned_map_sample');
     if (downloadDir.existsSync()) {
       downloadDir.deleteSync(recursive: true);
     }
