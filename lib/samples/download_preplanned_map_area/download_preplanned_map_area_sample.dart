@@ -173,7 +173,7 @@ class _DownloadPreplannedMapAreaSampleState
               ),
             ],
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 10.0),
           // Create a list tile for the web map.
           ListTile(
             title: const Text('Web Map (online)'),
@@ -184,17 +184,17 @@ class _DownloadPreplannedMapAreaSampleState
                 ? setMapAndViewpoint(_webMap)
                 : null,
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 20.0),
           Text('Preplanned Map Areas:',
               style: Theme.of(context).textTheme.titleMedium),
-          const SizedBox(height: 20),
+          const SizedBox(height: 20.0),
           ListView.builder(
             shrinkWrap: true,
             itemCount: _preplannedMapAreas.length,
             itemBuilder: (context, index) {
               return Padding(
                 padding:
-                    const EdgeInsets.symmetric(vertical: 5.0, horizontal: 0),
+                    const EdgeInsets.symmetric(vertical: 5.0, horizontal: 0.0),
                 child: buildMapAreaListTile(
                     _preplannedMapAreas.keys.toList()[index]),
               );
@@ -219,7 +219,7 @@ class _DownloadPreplannedMapAreaSampleState
           trailing: Column(
             children: [
               // When the job is started, display the progress.
-              CircularProgressIndicator(value: job.progress.toDouble() / 100),
+              CircularProgressIndicator(value: job.progress.toDouble() / 100.0),
               Text('${job.progress}%'),
             ],
           ),
