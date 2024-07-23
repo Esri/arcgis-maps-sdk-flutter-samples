@@ -71,6 +71,7 @@ class _AuthenticateWithTokenSampleState
 
   void onMapViewReady() async {
     // Set a portal item map that has a secure layer (traffic).
+    // Loading the secure layer will trigger an authentication challenge.
     _mapViewController.arcGISMap = ArcGISMap.withItem(
       PortalItem.withPortalAndItemId(
         portal: Portal.arcGISOnline(connection: PortalConnection.authenticated),
@@ -82,14 +83,15 @@ class _AuthenticateWithTokenSampleState
   @override
   void handleArcGISAuthenticationChallenge(
       ArcGISAuthenticationChallenge challenge) async {
+    // Show a login dialog to handle the authentication challenge.
     await showDialog(
       context: context,
-      builder: (context) => Dialog(child: LoginWidget(challenge: challenge)),
+      builder: (context) => LoginWidget(challenge: challenge),
     );
   }
 }
 
-//fixme comments
+// A widget that handles an authentication challenge by prompting the user to log in.
 class LoginWidget extends StatefulWidget {
   final ArcGISAuthenticationChallenge challenge;
 
@@ -103,15 +105,20 @@ class LoginWidget extends StatefulWidget {
 }
 
 class _LoginWidgetState extends State<LoginWidget> {
+  // Controllers for the username and password text fields.
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
-  bool? _result;
+  // An error message to display.
   String? _error;
+  // The result: true if the user logged in, false if the user canceled.
+  bool? _result;
 
   @override
   void dispose() {
+    // If the widget was dismissed without a result, the challenge should fail.
     if (_result == null) widget.challenge.continueAndFail();
 
+    // Text editing controllers must be disposed.
     _usernameController.dispose();
     _passwordController.dispose();
 
@@ -120,7 +127,7 @@ class _LoginWidgetState extends State<LoginWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
+    return Dialog(
       child: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Column(
@@ -130,23 +137,22 @@ class _LoginWidgetState extends State<LoginWidget> {
               'Authentication Required',
               style: Theme.of(context).textTheme.titleLarge,
             ),
+            // Show the server URL that is requiring authentication.
             Text(widget.challenge.requestUri.toString()),
+            // Text fields for the username and password.
             TextField(
               controller: _usernameController,
               autocorrect: false,
-              decoration: const InputDecoration(
-                hintText: 'Username',
-              ),
+              decoration: const InputDecoration(hintText: 'Username'),
             ),
             TextField(
               controller: _passwordController,
               autocorrect: false,
               obscureText: true,
-              decoration: const InputDecoration(
-                hintText: 'Password',
-              ),
+              decoration: const InputDecoration(hintText: 'Password'),
             ),
             const SizedBox(height: 10.0),
+            // Buttons to cancel or log in.
             Row(
               children: [
                 ElevatedButton(
@@ -160,6 +166,7 @@ class _LoginWidgetState extends State<LoginWidget> {
                 ),
               ],
             ),
+            // Display an error message if there is one.
             Text(
               _error ?? '',
               style: const TextStyle(color: Colors.red),
@@ -173,12 +180,12 @@ class _LoginWidgetState extends State<LoginWidget> {
   void login() async {
     setState(() => _error = null);
 
+    // Username and password are required.
     final username = _usernameController.text;
     if (username.isEmpty) {
       setState(() => _error = 'Username is required.');
       return;
     }
-
     final password = _passwordController.text;
     if (password.isEmpty) {
       setState(() => _error = 'Password is required.');
@@ -186,6 +193,7 @@ class _LoginWidgetState extends State<LoginWidget> {
     }
 
     try {
+      // Attempt to create a credential with the provided username and password.
       final credential = await TokenCredential.createWithChallenge(
         widget.challenge,
         username: username,
@@ -193,14 +201,17 @@ class _LoginWidgetState extends State<LoginWidget> {
       );
       if (!mounted) return;
 
+      // If successful, continue with the credential.
       widget.challenge.continueWithCredential(credential);
       Navigator.of(context).pop(_result = true);
     } on ArcGISException catch (e) {
+      // If there was an error, display the error message.
       setState(() => _error = e.message);
     }
   }
 
   void cancel() {
+    // If the user cancels, cancel the challenge and dismiss the dialog.
     widget.challenge.cancel();
     Navigator.of(context).pop(_result = false);
   }
