@@ -44,8 +44,6 @@ class _ShowDeviceLocationSampleState extends State<ShowDeviceLocationSample>
   // A subscription to receive changes to the auto-pan mode.
   StreamSubscription? _autoPanModeSubscription;
   var _autoPanMode = LocationDisplayAutoPanMode.recenter;
-  // Declare an exception for if the data source fails to start.
-  ArcGISException? _dataSourceException;
   // A flag for when the map view is ready and controls can be used.
   var _ready = false;
 
@@ -75,14 +73,11 @@ class _ShowDeviceLocationSampleState extends State<ShowDeviceLocationSample>
                     onMapViewReady: onMapViewReady,
                   ),
                 ),
-                Visibility(
-                  visible: _dataSourceException == null,
-                  // An error message if the location data source fails to start.
-                  replacement:
-                      Text('Exception: ${_dataSourceException?.message}'),
-                  // A button to show the Settings bottom sheet.
+                Center(
                   child: ElevatedButton(
-                    onPressed: () => setState(() => _settingsVisible = true),
+                    onPressed: _status == LocationDataSourceStatus.failedToStart
+                        ? null
+                        : () => setState(() => _settingsVisible = true),
                     child: const Text('Location Settings'),
                   ),
                 ),
@@ -212,9 +207,16 @@ class _ShowDeviceLocationSampleState extends State<ShowDeviceLocationSample>
         () => _autoPanMode = _mapViewController.locationDisplay.autoPanMode);
 
     // Attempt to start the location data source (this will prompt the user for permission).
-    await _locationDataSource.start().onError((e, _) {
-      setState(() => _dataSourceException = e as ArcGISException);
-    });
+    try {
+      await _locationDataSource.start();
+    } on ArcGISException catch (e) {
+      if (mounted) {
+        showDialog(
+          context: context,
+          builder: (_) => AlertDialog(content: Text(e.message)),
+        );
+      }
+    }
 
     // Set the ready state variable to true to enable the UI.
     setState(() => _ready = true);
