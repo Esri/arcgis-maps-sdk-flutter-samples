@@ -84,15 +84,18 @@ class _DownloadPreplannedMapAreaSampleState
             ),
             // Display the name of the current map.
             Container(
-              height: 40,
-              width: double.infinity,
+              padding: const EdgeInsets.all(10.0),
               color: Colors.black.withOpacity(0.7),
-              child: Center(
-                // Use the name of the item if available.
-                child: Text(
-                  _mapViewController.arcGISMap?.item?.title ?? '',
-                  style: const TextStyle(color: Colors.white),
-                ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    // Use the name of the item if available.
+                    _mapViewController.arcGISMap?.item?.title ?? '',
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(color: Colors.white),
+                  ),
+                ],
               ),
             ),
             // Display a progress indicator and prevent interaction until state is ready.
