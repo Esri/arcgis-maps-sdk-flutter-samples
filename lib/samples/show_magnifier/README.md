@@ -15,7 +15,7 @@ Tap and hold on the map to show a magnifier, then drag across the map to move th
 ## How it works
 
 1. Create a new `ArcGISMapView` with an `ArcGISMapViewController`, and assign an `ArcGISMap` to the `ArcGISMapViewController.arcGISMap` property.
-2. Enable the magnifier using by setting the `ArcGISMapViewController.magnifiedEnabled` property to `true`. This will set the magnifier to be shown on the `ArcGISMap` when the user performs a long press gesture. Note: The default value is `false`.
+2. Enable the magnifier by setting the `ArcGISMapViewController.magnifiedEnabled` property to `true`. This will set the magnifier to be shown on the `ArcGISMap` when the user performs a long press gesture. Note: The default value is `false`.
 3. Optionally, set the `ArcGISMapViewController.allowMagnifierToPanMap` property to `true` to allow the map to be panned automatically when the magnifier gets near the edge of the `ArcGISMap`. Note: The default value is `true`.
 
 ## Relevant API
