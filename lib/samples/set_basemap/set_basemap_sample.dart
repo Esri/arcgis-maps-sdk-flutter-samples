@@ -55,8 +55,7 @@ class _SetBasemapSampleState extends State<SetBasemapSample>
       key: _scaffoldStateKey,
       // Create an end drawer to display basemaps.
       endDrawer: Drawer(
-        child: SafeArea(
-          top: false,
+        child: SafeArea( 
           // Create a future builder to load basemaps.
           child: FutureBuilder(
             future: _loadBasemapsFuture,
@@ -104,7 +103,7 @@ class _SetBasemapSampleState extends State<SetBasemapSample>
           // Create an ArcGIS map view with a controller.
           ArcGISMapView(
             controllerProvider: () => _mapViewController,
-            onMapViewReady: _onMapViewReady,
+            onMapViewReady: onMapViewReady,
           ),
           Positioned(
             bottom: 70,
@@ -121,23 +120,21 @@ class _SetBasemapSampleState extends State<SetBasemapSample>
     );
   }
 
-  void _onMapViewReady() {
+  void onMapViewReady() {
     // Set the map view controller's map to the ArcGIS map.
     _mapViewController.arcGISMap = _arcGISMap; 
   }
 
   void updateMap(Basemap basemap) {
     // Update the map view with the selected basemap.
-    _arcGISMap.basemap = basemap;
-    // Set the rotation angle to 0.
-    _mapViewController.setViewpointRotation(angleDegrees: 0.0);
+    _arcGISMap.basemap = basemap; 
   }
 
   Future loadBasemaps() async {
     // Create a portal to access online items.
     final portal = Portal.arcGISOnline();
     // Load basemaps from portal.
-    List<Basemap> basemaps = await portal.developerBasemaps();
+    final basemaps = await portal.developerBasemaps();
 
     // Load each basemap to access and display attribute data in the UI.
     for (var basemap in basemaps) {
