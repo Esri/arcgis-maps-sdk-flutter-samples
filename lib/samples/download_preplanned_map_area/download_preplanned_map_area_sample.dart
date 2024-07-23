@@ -15,6 +15,7 @@
 //
 
 import 'dart:io';
+import 'dart:math';
 
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:flutter/material.dart';
@@ -150,11 +151,15 @@ class _DownloadPreplannedMapAreaSampleState
   Widget buildMapSelectionSheet(BuildContext context) {
     return Container(
       padding: EdgeInsets.fromLTRB(
-          20.0,
-          20.0,
+        20.0,
+        0.0,
+        20.0,
+        max(
           20.0,
           View.of(context).viewPadding.bottom /
-              View.of(context).devicePixelRatio),
+              View.of(context).devicePixelRatio,
+        ),
+      ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
