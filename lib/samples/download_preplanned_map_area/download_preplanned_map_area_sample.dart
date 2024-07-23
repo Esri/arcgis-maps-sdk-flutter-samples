@@ -61,7 +61,6 @@ class _DownloadPreplannedMapAreaSampleState
         child: Stack(
           children: [
             Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Expanded(
                   // Add a map view to the widget tree and set a controller.
