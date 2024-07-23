@@ -811,11 +811,28 @@
     "category": "Search and Query",
     "description": "Select features in a feature layer.",
     "ignore": false,
-    "images": [],
-    "keywords": [],
+    "images": [
+      "select_features_in_feature_layer.png"
+    ],
+    "keywords": [
+      "features",
+      "layers",
+      "select",
+      "selection",
+      "tolerance",
+      "Feature",
+      "FeatureLayer",
+      "ServiceFeatureTable"
+    ],
     "redirect_from": [],
-    "relevant_apis": [],
-    "snippets": [],
+    "relevant_apis": [
+      "Feature",
+      "FeatureLayer",
+      "ServiceFeatureTable"
+    ],
+    "snippets": [
+      "select_features_in_feature_layer_sample.dart"
+    ],
     "title": "Select features in feature layer",
     "key": "select_features_in_feature_layer"
   },
@@ -929,11 +946,30 @@
     "category": "Maps",
     "description": "Tap and hold on a map to show a magnifier.",
     "ignore": false,
-    "images": [],
-    "keywords": [],
+    "images": [
+      "show_magnifier.png"
+    ],
+    "keywords": [
+      "magnify",
+      "map",
+      "zoom",
+      "ArcGISMap",
+      "ArcGISMapView",
+      "ArcGISMapViewController",
+      "ArcGISMapViewController.allowMagnifierToPanMap",
+      "ArcGISMapViewController.magnifiedEnabled"
+    ],
     "redirect_from": [],
-    "relevant_apis": [],
-    "snippets": [],
+    "relevant_apis": [
+      "ArcGISMap",
+      "ArcGISMapView",
+      "ArcGISMapViewController",
+      "ArcGISMapViewController.allowMagnifierToPanMap",
+      "ArcGISMapViewController.magnifiedEnabled"
+    ],
+    "snippets": [
+      "show_magnifier_sample.dart"
+    ],
     "title": "Show magnifier",
     "key": "show_magnifier"
   },
