@@ -18,9 +18,7 @@ import 'dart:async';
 
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
 
-import '../../utils/sample_data.dart';
 import '../../utils/sample_state_support.dart';
 
 class SetBasemapSample extends StatefulWidget {
@@ -33,27 +31,20 @@ class SetBasemapSample extends StatefulWidget {
 class _SetBasemapSampleState extends State<SetBasemapSample>
     with SampleStateSupport {
   // Create a key to access the scaffold state.
-  final GlobalKey<ScaffoldState> _scaffoldStateKey = GlobalKey();
+  final _scaffoldStateKey = GlobalKey<ScaffoldState>();
   // Create a controller for the map view and a map with a navigation basemap.
   final _mapViewController = ArcGISMapView.createController();
   final _arcGISMap = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISNavigation);
   // Create a dictionary to store basemaps.
   final _basemaps = <Basemap, Image>{};
   // Create a default image.
-  final _defaultImage = Image.asset('assets/basemap_default.png');
-  // Set the initial viewpoint to San Francisco.
-  final _sanFranciscoViewpoint = Viewpoint.fromCenter(
-    ArcGISPoint(x: -13630206, y: 4546929),
-    scale: 100000,
-  );
+  final _defaultImage = Image.asset('assets/basemap_default.png'); 
   late Future _loadBasemapsFuture;
 
   @override
   void initState() {
     super.initState();
-    // Set the initial viewpoint and basemap for the map.
-    _arcGISMap.initialViewpoint = _sanFranciscoViewpoint;
-    _mapViewController.arcGISMap = _arcGISMap;
+    // Load basemaps when the app starts.
     _loadBasemapsFuture = loadBasemaps();
   }
 
@@ -113,6 +104,7 @@ class _SetBasemapSampleState extends State<SetBasemapSample>
           // Create an ArcGIS map view with a controller.
           ArcGISMapView(
             controllerProvider: () => _mapViewController,
+            onMapViewReady: _onMapViewReady,
           ),
           Positioned(
             bottom: 70,
@@ -129,11 +121,14 @@ class _SetBasemapSampleState extends State<SetBasemapSample>
     );
   }
 
+  void _onMapViewReady() {
+    // Set the map view controller's map to the ArcGIS map.
+    _mapViewController.arcGISMap = _arcGISMap; 
+  }
+
   void updateMap(Basemap basemap) {
     // Update the map view with the selected basemap.
     _arcGISMap.basemap = basemap;
-    // Set the viewpoint to San Francisco.
-    _mapViewController.setViewpointAnimated(_sanFranciscoViewpoint);
     // Set the rotation angle to 0.
     _mapViewController.setViewpointRotation(angleDegrees: 0.0);
   }
@@ -157,34 +152,6 @@ class _SetBasemapSampleState extends State<SetBasemapSample>
         // If the basemap does not have a thumbnail, use the default image.
         _basemaps[basemap] = _defaultImage;
       }
-    }
-
-    // Load basemaps from local packages.
-    await loadTileCache();
-  }
-
-  Future loadTileCache() async {
-    // Download the sample data.
-    await downloadSampleData(['e4a398afe9a945f3b0f4dca1e4faccb5']);
-    const tilePackageName = 'SanFrancisco.tpkx';
-    // Get the path to the sample data.
-    final appDir = await getApplicationDocumentsDirectory();
-    final tpkxPath = '${appDir.absolute.path}/$tilePackageName';
-
-    // Load the tile cache from the sample data.
-    final tileCache = TileCache.withFileUri(Uri.parse(tpkxPath));
-    // Wait for the tile cache to load to access and display thumbnail.
-    await tileCache.load();
-    // Create a tiled layer with the tile cache.
-    final tiledLayer = ArcGISTiledLayer.withTileCache(tileCache);
-    // Create a basemap with the tiled layer.
-    final tiledLayerBasemap = Basemap.withBaseLayer(tiledLayer);
-    // If the tile cache has a thumbnail, use it; otherwise, use the default image.
-    if (tileCache.thumbnail != null) {
-      _basemaps[tiledLayerBasemap] =
-          Image.memory(tileCache.thumbnail!.getEncodedBuffer());
-    } else {
-      _basemaps[tiledLayerBasemap] = _defaultImage;
     }
   }
 }
