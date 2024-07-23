@@ -159,9 +159,7 @@ class _DownloadPreplannedMapAreaSampleState
         mainAxisSize: MainAxisSize.min,
         children: [
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              const Spacer(),
               Text('Select Map', style: Theme.of(context).textTheme.titleLarge),
               const Spacer(),
               IconButton(
