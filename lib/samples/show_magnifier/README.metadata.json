@@ -2,10 +2,29 @@
     "category": "Maps",
     "description": "Tap and hold on a map to show a magnifier.",
     "ignore": false,
-    "images": [],
-    "keywords": [],
+    "images": [
+        "show_magnifier.png"
+    ],
+    "keywords": [
+        "magnify",
+        "map",
+        "zoom",
+        "ArcGISMap",
+        "ArcGISMapView",
+        "ArcGISMapViewController",
+        "ArcGISMapViewController.allowMagnifierToPanMap",
+        "ArcGISMapViewController.magnifiedEnabled"
+    ],
     "redirect_from": [],
-    "relevant_apis": [],
-    "snippets": [],
+    "relevant_apis": [
+        "ArcGISMap",
+        "ArcGISMapView",
+        "ArcGISMapViewController",
+        "ArcGISMapViewController.allowMagnifierToPanMap",
+        "ArcGISMapViewController.magnifiedEnabled"
+    ],
+    "snippets": [
+        "show_magnifier_sample.dart"
+    ],
     "title": "Show magnifier"
 }
