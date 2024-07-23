@@ -289,7 +289,8 @@ class _DownloadPreplannedMapAreaSampleState
   // Sets the provided map to the map view and updates the viewpoint.
   void setMapAndViewpoint(ArcGISMap map) {
     // Set the map to the map view and update the UI to reflect the newly selected map.
-    setState(() => _mapViewController.arcGISMap = map);
+    _mapViewController.arcGISMap = map;
+    setState(() => {});
 
     if (map != _webMap) {
       // If the map is one of the offline maps,
