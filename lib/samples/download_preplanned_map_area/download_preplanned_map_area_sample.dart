@@ -183,19 +183,17 @@ class _DownloadPreplannedMapAreaSampleState
           Text('Preplanned Map Areas:',
               style: Theme.of(context).textTheme.titleMedium),
           const SizedBox(height: 20),
-          SizedBox(
-            height: 250,
-            // Create a series of list tiles for the offline map areas.
-            child: ListView.builder(
-                itemCount: _preplannedMapAreas.length,
-                itemBuilder: (context, index) {
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 5.0, horizontal: 0),
-                    child: buildMapAreaListTile(
-                        _preplannedMapAreas.keys.toList()[index]),
-                  );
-                }),
+          ListView.builder(
+            shrinkWrap: true,
+            itemCount: _preplannedMapAreas.length,
+            itemBuilder: (context, index) {
+              return Padding(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 5.0, horizontal: 0),
+                child: buildMapAreaListTile(
+                    _preplannedMapAreas.keys.toList()[index]),
+              );
+            },
           ),
         ],
       ),
