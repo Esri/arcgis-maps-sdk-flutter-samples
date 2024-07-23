@@ -61,6 +61,7 @@ class _AuthenticateWithTokenSampleState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       // Add a map view to the widget tree and set a controller.
       body: ArcGISMapView(
         controllerProvider: () => _mapViewController,
@@ -130,48 +131,50 @@ class _LoginWidgetState extends State<LoginWidget> {
     return Dialog(
       child: Padding(
         padding: const EdgeInsets.all(20.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              'Authentication Required',
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
-            // Show the server URL that is requiring authentication.
-            Text(widget.challenge.requestUri.toString()),
-            // Text fields for the username and password.
-            TextField(
-              controller: _usernameController,
-              autocorrect: false,
-              decoration: const InputDecoration(hintText: 'Username'),
-            ),
-            TextField(
-              controller: _passwordController,
-              autocorrect: false,
-              obscureText: true,
-              decoration: const InputDecoration(hintText: 'Password'),
-            ),
-            const SizedBox(height: 10.0),
-            // Buttons to cancel or log in.
-            Row(
-              children: [
-                ElevatedButton(
-                  onPressed: cancel,
-                  child: const Text('Cancel'),
-                ),
-                const Spacer(),
-                ElevatedButton(
-                  onPressed: login,
-                  child: const Text('Login'),
-                ),
-              ],
-            ),
-            // Display an error message if there is one.
-            Text(
-              _error ?? '',
-              style: const TextStyle(color: Colors.red),
-            ),
-          ],
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Authentication Required',
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
+              // Show the server URL that is requiring authentication.
+              Text(widget.challenge.requestUri.toString()),
+              // Text fields for the username and password.
+              TextField(
+                controller: _usernameController,
+                autocorrect: false,
+                decoration: const InputDecoration(hintText: 'Username'),
+              ),
+              TextField(
+                controller: _passwordController,
+                autocorrect: false,
+                obscureText: true,
+                decoration: const InputDecoration(hintText: 'Password'),
+              ),
+              const SizedBox(height: 10.0),
+              // Buttons to cancel or log in.
+              Row(
+                children: [
+                  ElevatedButton(
+                    onPressed: cancel,
+                    child: const Text('Cancel'),
+                  ),
+                  const Spacer(),
+                  ElevatedButton(
+                    onPressed: login,
+                    child: const Text('Login'),
+                  ),
+                ],
+              ),
+              // Display an error message if there is one.
+              Text(
+                _error ?? '',
+                style: const TextStyle(color: Colors.red),
+              ),
+            ],
+          ),
         ),
       ),
     );
