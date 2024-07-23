@@ -137,10 +137,10 @@ class _SetBasemapSampleState extends State<SetBasemapSample>
     final basemaps = await portal.developerBasemaps();
 
     // Load each basemap to access and display attribute data in the UI.
-    for (var basemap in basemaps) {
+    for (final basemap in basemaps) {
       await basemap.load();
       if (basemap.item != null) {
-        var thumbnail = basemap.item!.thumbnail;
+        final thumbnail = basemap.item!.thumbnail;
         if (thumbnail != null) {
           await thumbnail.load();
           _basemaps[basemap] = Image.network(thumbnail.uri.toString());
