@@ -88,11 +88,11 @@ class _DownloadPreplannedMapAreaSampleState
               width: double.infinity,
               color: Colors.black.withOpacity(0.7),
               child: Center(
-                // Use the name of the item, or display a default.
-                child: _mapViewController.arcGISMap?.item?.title == null
-                    ? null
-                    : Text(_mapViewController.arcGISMap!.item!.title,
-                        style: const TextStyle(color: Colors.white)),
+                // Use the name of the item if available.
+                child: Text(
+                  _mapViewController.arcGISMap?.item?.title ?? '',
+                  style: const TextStyle(color: Colors.white),
+                ),
               ),
             ),
             // Display a progress indicator and prevent interaction until state is ready.
