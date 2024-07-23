@@ -29,6 +29,7 @@ class FindClosestFacilityFromPointSample extends StatefulWidget {
 
 class _FindClosestFacilityFromPointSampleState
     extends State<FindClosestFacilityFromPointSample> with SampleStateSupport {
+  // Create the URIs for the fire station and fire images, as well as the URIs for the facilities and incidents layers.
   static final _fireStationImageUri = Uri.parse(
       'https://static.arcgis.com/images/Symbols/SafetyHealth/FireStation.png');
   static final _fireImageUri = Uri.parse(
@@ -37,14 +38,19 @@ class _FindClosestFacilityFromPointSampleState
       'https://services2.arcgis.com/ZQgQTuoyBrtmoGdP/ArcGIS/rest/services/San_Diego_Facilities/FeatureServer/0');
   static final _incidentsLayerUri = Uri.parse(
       'https://services2.arcgis.com/ZQgQTuoyBrtmoGdP/ArcGIS/rest/services/San_Diego_Incidents/FeatureServer/0');
+  // Create a task for the closest facility service.
   final _closestFacilityTask = ClosestFacilityTask.withUrl(Uri.parse(
       'https://sampleserver6.arcgisonline.com/arcgis/rest/services/NetworkAnalysis/SanDiego/NAServer/ClosestFacility'));
-
+  // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
+  // Create a graphics overlay for the route.
   final _routeGraphicsOverlay = GraphicsOverlay();
-  bool _isRouteSolved = false;
-  bool _isInitialized = false;
+  // Create a flag to track whether the route has been solved.
+  bool _routeSolved = false;
+  bool _initialized = false;
+  // Create parameters for the closest facility task.
   late final ClosestFacilityParameters _closestFacilityParameters;
+  // Create a symbol for the route line.
   final _routeLineSymbol = SimpleLineSymbol(
       style: SimpleLineSymbolStyle.solid, color: Colors.blue, width: 5.0);
 
@@ -52,9 +58,12 @@ class _FindClosestFacilityFromPointSampleState
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
+        top: false,
+        // Create a column with the map view and buttons to solve the routes and reset the graphics.
         child: Column(
           children: [
             Expanded(
+              // Create the map view.
               child: ArcGISMapView(
                 controllerProvider: () => _mapViewController,
                 onMapViewReady: onMapViewReady,
@@ -66,14 +75,15 @@ class _FindClosestFacilityFromPointSampleState
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
+                  // Create buttons to solve the routes and reset the graphics.
                   ElevatedButton(
-                    onPressed: !_isRouteSolved && _isInitialized
+                    onPressed: !_routeSolved && _initialized
                         ? () => solveRoutes()
                         : null,
                     child: const Text('Solve Routes'),
                   ),
                   ElevatedButton(
-                    onPressed: _isRouteSolved ? () => resetRoutes() : null,
+                    onPressed: _routeSolved ? () => resetRoutes() : null,
                     child: const Text('Reset'),
                   ),
                 ],
@@ -86,15 +96,20 @@ class _FindClosestFacilityFromPointSampleState
   }
 
   Future<void> onMapViewReady() async {
+    // Create a map with the ArcGIS Streets basemap style.
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISStreets);
 
+    // Create feature layers for the facilities and incidents.
     final facilitiesLayer =
         buildFeatureLayer(_facilitiesLayerUri, _fireStationImageUri);
     final incidentsLayer = buildFeatureLayer(_incidentsLayerUri, _fireImageUri);
+    // Add the layers to the map.
     map.operationalLayers.addAll([facilitiesLayer, incidentsLayer]);
 
+    // Set the map on the map view controller.
     _mapViewController.arcGISMap = map;
 
+    // Add the route graphics overlay to the map view controller.
     _routeGraphicsOverlay.opacity = 0.75;
     _mapViewController.graphicsOverlays.add(_routeGraphicsOverlay);
 
@@ -110,47 +125,52 @@ class _FindClosestFacilityFromPointSampleState
       geometry2: incidentsLayer.fullExtent!,
     );
 
+    // Set the viewpoint geometry on the map view controller
     _mapViewController.setViewpointGeometry(mapExtent, paddingInDiPs: 30);
 
+    // Generate the closest facility parameters
     _closestFacilityParameters = await generateClosestFacilityParameters(
         facilitiesLayer, incidentsLayer);
 
-    setState(() => _isInitialized = true);
+    // Set the initialized flag to true
+    setState(() => _initialized = true);
   }
 
   FeatureLayer buildFeatureLayer(Uri tableUri, Uri imageUri) {
+    // Create a feature table and feature layer for the facilities or incidents.
     final featureTable = ServiceFeatureTable.withUri(tableUri);
-    final featureLayer = FeatureLayer.withFeatureTable(featureTable);
-    final markerSymbol = PictureMarkerSymbol.withUrl(imageUri);
-    markerSymbol.width = 30;
-    markerSymbol.height = 30;
-    featureLayer.renderer = SimpleRenderer(symbol: markerSymbol);
+    final markerSymbol = PictureMarkerSymbol.withUrl(imageUri)
+      ..width = 30
+      ..height = 30;
+    final featureLayer = FeatureLayer.withFeatureTable(featureTable)
+      ..renderer = SimpleRenderer(symbol: markerSymbol);
 
     return featureLayer;
   }
 
   Future<ClosestFacilityParameters> generateClosestFacilityParameters(
       FeatureLayer facilitiesLayer, FeatureLayer incidentsLayer) async {
+    // Create query parameters to get all features.
     final featureQueryParams = QueryParameters()..whereClause = '1=1';
-
-    final parameters = await _closestFacilityTask.createDefaultParameters();
-    parameters.setFacilitiesWithFeatureTable(
-      featureTable: facilitiesLayer.featureTable! as ArcGISFeatureTable,
-      queryParameters: featureQueryParams,
-    );
-    parameters.setIncidentsWithFeatureTable(
-      featureTable: incidentsLayer.featureTable! as ArcGISFeatureTable,
-      queryParameters: featureQueryParams,
-    );
+    // Create default parameters for the closest facility task.
+    final parameters = await _closestFacilityTask.createDefaultParameters()
+      ..setFacilitiesWithFeatureTable(
+        featureTable: facilitiesLayer.featureTable! as ArcGISFeatureTable,
+        queryParameters: featureQueryParams,
+      )
+      ..setIncidentsWithFeatureTable(
+        featureTable: incidentsLayer.featureTable! as ArcGISFeatureTable,
+        queryParameters: featureQueryParams,
+      );
 
     return parameters;
   }
 
   Future<void> solveRoutes() async {
+    // Solve the closest facility task with the parameters.
     final results = await _closestFacilityTask.solveClosestFacility(
       closestFacilityParameters: _closestFacilityParameters,
     );
-
     for (var incidentIdx = 0;
         incidentIdx < results.incidents.length;
         ++incidentIdx) {
@@ -160,11 +180,13 @@ class _FindClosestFacilityFromPointSampleState
         continue;
       }
 
+      // Get the route to the closest facility.
       final closestFacilityIdx = rankedFacilities.first;
       final routeToFacility = results.getRoute(
         facilityIndex: closestFacilityIdx,
         incidentIndex: incidentIdx,
       );
+      // Add the route to the graphics overlay.
       if (routeToFacility != null) {
         final routeGraphic = Graphic(
           geometry: routeToFacility.routeGeometry,
@@ -173,11 +195,14 @@ class _FindClosestFacilityFromPointSampleState
         _routeGraphicsOverlay.graphics.add(routeGraphic);
       }
     }
-    setState(() => _isRouteSolved = true);
+
+    // Set the route solved flag to true.
+    setState(() => _routeSolved = true);
   }
 
   void resetRoutes() {
+    // Clear the graphics overlay and set the route solved flag to false.
     _routeGraphicsOverlay.graphics.clear();
-    setState(() => _isRouteSolved = false);
+    setState(() => _routeSolved = false);
   }
 }
