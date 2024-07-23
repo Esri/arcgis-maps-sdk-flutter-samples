@@ -82,8 +82,126 @@ class _AuthenticateWithTokenSampleState
   @override
   void handleArcGISAuthenticationChallenge(
       ArcGISAuthenticationChallenge challenge) async {
-    // When a challenge is received, show a dialog to get the credentials.
-    //fixme show password dialog
-    challenge.continueAndFail();
+    await showDialog(
+      context: context,
+      builder: (context) => Dialog(child: LoginWidget(challenge: challenge)),
+    );
+  }
+}
+
+//fixme comments
+class LoginWidget extends StatefulWidget {
+  final ArcGISAuthenticationChallenge challenge;
+
+  const LoginWidget({
+    super.key,
+    required this.challenge,
+  });
+
+  @override
+  State<LoginWidget> createState() => _LoginWidgetState();
+}
+
+class _LoginWidgetState extends State<LoginWidget> {
+  final _usernameController = TextEditingController();
+  final _passwordController = TextEditingController();
+  bool? _result;
+  String? _error;
+
+  @override
+  void dispose() {
+    if (_result == null) widget.challenge.continueAndFail();
+
+    _usernameController.dispose();
+    _passwordController.dispose();
+
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      child: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'Authentication Required',
+              style: Theme.of(context).textTheme.titleLarge,
+            ),
+            Text(widget.challenge.requestUri.toString()),
+            TextField(
+              controller: _usernameController,
+              autocorrect: false,
+              decoration: const InputDecoration(
+                hintText: 'Username',
+              ),
+            ),
+            TextField(
+              controller: _passwordController,
+              autocorrect: false,
+              obscureText: true,
+              decoration: const InputDecoration(
+                hintText: 'Password',
+              ),
+            ),
+            const SizedBox(height: 10.0),
+            Row(
+              children: [
+                ElevatedButton(
+                  onPressed: cancel,
+                  child: const Text('Cancel'),
+                ),
+                const Spacer(),
+                ElevatedButton(
+                  onPressed: login,
+                  child: const Text('Login'),
+                ),
+              ],
+            ),
+            Text(
+              _error ?? '',
+              style: const TextStyle(color: Colors.red),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void login() async {
+    setState(() => _error = null);
+
+    final username = _usernameController.text;
+    if (username.isEmpty) {
+      setState(() => _error = 'Username is required.');
+      return;
+    }
+
+    final password = _passwordController.text;
+    if (password.isEmpty) {
+      setState(() => _error = 'Password is required.');
+      return;
+    }
+
+    try {
+      final credential = await TokenCredential.createWithChallenge(
+        widget.challenge,
+        username: username,
+        password: password,
+      );
+      if (!mounted) return;
+
+      widget.challenge.continueWithCredential(credential);
+      Navigator.of(context).pop(_result = true);
+    } on ArcGISException catch (e) {
+      setState(() => _error = e.message);
+    }
+  }
+
+  void cancel() {
+    widget.challenge.cancel();
+    Navigator.of(context).pop(_result = false);
   }
 }
