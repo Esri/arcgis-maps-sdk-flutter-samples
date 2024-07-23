@@ -152,7 +152,7 @@ class _DownloadPreplannedMapAreaSampleState
     return Container(
       padding: EdgeInsets.fromLTRB(
         20.0,
-        0.0,
+        20.0,
         20.0,
         max(
           20.0,
