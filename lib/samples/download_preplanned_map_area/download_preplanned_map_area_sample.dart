@@ -264,8 +264,9 @@ class _DownloadPreplannedMapAreaSampleState
     // Create and run a job to download the offline map using the default params and download path.
     final downloadMapJob =
         _offlineMapTask.downloadPreplannedOfflineMapWithParameters(
-            parameters: defaultDownloadParams,
-            downloadDirectoryUri: mapDir.uri);
+      parameters: defaultDownloadParams,
+      downloadDirectoryUri: mapDir.uri,
+    );
 
     // Associate the job with the map area and update the UI.
     setState(() => _preplannedMapAreas[mapArea] = downloadMapJob);
