@@ -38,7 +38,7 @@ class _DownloadPreplannedMapAreaSampleState
   late OfflineMapTask _offlineMapTask;
   late ArcGISMap _webMap;
   // The location to save offline maps to.
-  late Directory _downloadDirectory;
+  Directory? _downloadDirectory;
   // Create a Map to track preplanned map areas and their associated download jobs.
   final _preplannedMapAreas =
       <PreplannedMapArea, DownloadPreplannedOfflineMapJob?>{};
@@ -50,7 +50,7 @@ class _DownloadPreplannedMapAreaSampleState
   @override
   void dispose() {
     // Delete downloaded offline maps on exit.
-    _downloadDirectory.deleteSync(recursive: true);
+    _downloadDirectory?.deleteSync(recursive: true);
     super.dispose();
   }
 
@@ -254,7 +254,7 @@ class _DownloadPreplannedMapAreaSampleState
 
     // Create a directory for the map in the downloads directory.
     final mapDir =
-        Directory('${_downloadDirectory.path}/${mapArea.portalItem.title}');
+        Directory('${_downloadDirectory!.path}/${mapArea.portalItem.title}');
     mapDir.createSync();
 
     // Create and run a job to download the offline map using the default params and download path.
