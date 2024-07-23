@@ -23,8 +23,10 @@ class ShowMagnifierSample extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // Add a map view to the widget tree and set a controller.
       body: ArcGISMapView(
         controllerProvider: () => ArcGISMapView.createController()
+          // Set a map with an initial viewpoint.
           ..arcGISMap =
               ArcGISMap.withBasemapStyle(BasemapStyle.arcGISImageryStandard)
           ..arcGISMap!.initialViewpoint = Viewpoint.fromCenter(
@@ -35,6 +37,7 @@ class ShowMagnifierSample extends StatelessWidget {
             ),
             scale: 2e4,
           )
+          // Set the magnifier enabled property to true to show the magnifier on long press.
           ..magnifierEnabled = true,
       ),
     );
