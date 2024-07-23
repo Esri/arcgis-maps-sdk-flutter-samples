@@ -149,7 +149,12 @@ class _DownloadPreplannedMapAreaSampleState
   // Builds a map selection widget with a list of available maps.
   Widget buildMapSelectionSheet(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(20.0),
+      padding: EdgeInsets.fromLTRB(
+          20.0,
+          20.0,
+          20.0,
+          View.of(context).viewPadding.bottom /
+              View.of(context).devicePixelRatio),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -192,7 +197,6 @@ class _DownloadPreplannedMapAreaSampleState
                   );
                 }),
           ),
-          const SizedBox(height: 20),
         ],
       ),
     );
