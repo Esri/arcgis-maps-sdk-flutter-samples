@@ -26,18 +26,17 @@ class ShowDeviceLocationHistorySample extends StatefulWidget {
   const ShowDeviceLocationHistorySample({super.key});
 
   @override
-  State<ShowDeviceLocationHistorySample> createState() => Configure();
+  State<ShowDeviceLocationHistorySample> createState() =>
+      _ShowDeviceLocationHistorySampleState();
 }
 
-class Configure extends State<ShowDeviceLocationHistorySample>
-    with SampleStateSupport {
+class _ShowDeviceLocationHistorySampleState
+    extends State<ShowDeviceLocationHistorySample> with SampleStateSupport {
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
   // A location data source to simulate location updates.
   final _locationDataSource = SimulatedLocationDataSource();
-  // Subscriptions to listen for location status changes.
-  StreamSubscription? _statusSubscription;
-  // Subscriptions to listen for location changes.
+  // Subscription to listen for location changes.
   StreamSubscription? _locationSubscription;
   // A GraphicsOverlay to display the location history polyline.
   final _locationHistoryLineOverlay = GraphicsOverlay();
@@ -56,7 +55,6 @@ class Configure extends State<ShowDeviceLocationHistorySample>
   void dispose() {
     _locationDataSource.stop();
     _locationSubscription?.cancel();
-    _statusSubscription?.cancel();
     _locationHistoryLineOverlay.graphics.clear();
     _locationHistoryPointOverlay.graphics.clear();
 
@@ -174,18 +172,10 @@ class Configure extends State<ShowDeviceLocationHistorySample>
         await rootBundle.loadString('assets/SimulatedRoute.json');
     final routeLine = Geometry.fromJsonString(routeLineJson) as Polyline;
     _locationDataSource.setLocationsWithPolyline(routeLine);
-    _statusSubscription = _locationDataSource.onStatusChanged.listen((_) {
-      // Redraw the screen when the LDS status changes
-      setState(() {});
-    });
 
+    // Start the location data source.
     try {
-      // Start the location data source.
       await _locationDataSource.start();
-      // Listen for location changes.
-      _locationSubscription = _locationDataSource.onLocationChanged.listen(
-        _handleLdsLocationChange,
-      );
     } on ArcGISException catch (e) {
       if (mounted) {
         showDialog(
@@ -197,6 +187,13 @@ class Configure extends State<ShowDeviceLocationHistorySample>
           ),
         );
       }
+    }
+
+    // Listen for location changes.
+    if (_locationDataSource.status == LocationDataSourceStatus.started) {
+      _locationSubscription = _locationDataSource.onLocationChanged.listen(
+        _handleLdsLocationChange,
+      );
     }
   }
 

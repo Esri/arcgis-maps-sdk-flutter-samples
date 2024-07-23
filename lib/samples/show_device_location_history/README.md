@@ -10,15 +10,14 @@ You can track device location history and display it as lines and points on the 
 
 ## How to use the sample
 
-Tap 'Start tracking' to start tracking your location, which will appear as points on the map. A line will connect the points for easier visualization. Tap 'Stop tracking' to stop updating the location history. This sample uses a simulated data source to allow the sample to be useful on desktop/non-mobile devices. To track a user's real position, use the `LocationDataSource` instead.
+Tap 'Start Tracking' to start tracking your location, which will appear as points on the map. A line will connect the points for easier visualization. Tap 'Stop Tracking' to stop updating the location history. This sample uses a simulated data source to allow the sample to be useful on desktop/non-mobile devices. To track a user's real position, use the `LocationDataSource` instead.
 
 ## How it works
-
 
 1. Create a graphics overlay to show each point and another graphics overlay for displaying the route line.
 2. Create a `SimulatedLocationDataSource` and initialize it with a polyline. Start the `SimulatedLocationDataSource` to begin receiving location updates.
  - NOTE: To track a user's real position, use `LocationDataSource` instead.
-3. Subscribe to the `LocationChanged` event to handle location updates.
+3. Subscribe to the `onLocationChanged` event to handle location updates.
 4. Every time the location updates, store that location, display a point on the map, and recreate the route line.
 
 ## Relevant API
