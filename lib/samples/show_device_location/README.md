@@ -19,14 +19,14 @@ Tap the "Location Settings" button to open the settings. Toggle "Show Location" 
 
 ## How it works
 
-1. Create an `ArcGISMapView`.
+1. Create an `ArcGISMapViewController`.
 2. Get the `LocationDisplay` object from the `locationDisplay` property on the controller.
 3. Use `start()` and `stop()` on the `LocationDisplay` object as necessary.
 
 ## Relevant API
 
 * ArcGISMap
-* ArcGISMapView
+* ArcGISMapViewController
 * LocationDisplay
 * LocationDisplay.autoPanMode
 

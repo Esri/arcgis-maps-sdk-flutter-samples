@@ -142,7 +142,7 @@ class _ShowDeviceLocationSampleState extends State<ShowDeviceLocationSample>
               const Spacer(),
               // A switch to start and stop the location data source.
               Switch(
-                value: (_status == LocationDataSourceStatus.started),
+                value: _status == LocationDataSourceStatus.started,
                 onChanged: (_) {
                   if (_status == LocationDataSourceStatus.started) {
                     _mapViewController.locationDisplay.stop();
