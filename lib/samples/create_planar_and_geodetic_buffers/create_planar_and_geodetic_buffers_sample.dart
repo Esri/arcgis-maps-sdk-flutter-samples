@@ -14,9 +14,9 @@
 // limitations under the License.
 //
 
+import 'dart:math';
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:flutter/material.dart';
-import 'dart:math';
 
 import '../../utils/sample_state_support.dart';
 
