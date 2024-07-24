@@ -28,7 +28,7 @@ class ManageBookmarksSample extends StatefulWidget {
 class _ManageBookmarksSampleState extends State<ManageBookmarksSample> {
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
-  //fixme comment
+  // Declare a list of bookmarks.
   late final List<Bookmark> _bookmarks;
   // A flag for when the map view is ready and controls can be used.
   var _ready = false;
@@ -119,11 +119,13 @@ class _ManageBookmarksSampleState extends State<ManageBookmarksSample> {
                 ),
               ],
             ),
+            // Build the list of bookmarks.
             ListView.builder(
               physics: const NeverScrollableScrollPhysics(),
               shrinkWrap: true,
               itemCount: _bookmarks.length,
               itemBuilder: (context, index) {
+                // When a bookmark is tapped, set the bookmark on the map view.
                 return TextButton(
                   onPressed: () =>
                       _mapViewController.setBookmark(_bookmarks[index]),
@@ -141,11 +143,13 @@ class _ManageBookmarksSampleState extends State<ManageBookmarksSample> {
   }
 
   void onMapViewReady() {
-    //fixme comments
+    // Create a map with an imagery basemap style.
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISImagery);
 
+    // Access the bookmark list from the map.
     _bookmarks = map.bookmarks;
 
+    // Add the predefined bookmarks to the list.
     _bookmarks.addAll([
       Bookmark(
         name: 'Grand Prismatic Spring',
@@ -169,8 +173,8 @@ class _ManageBookmarksSampleState extends State<ManageBookmarksSample> {
       ),
     ]);
 
+    // Set the map on the controller and navigate to the first bookmark.
     _mapViewController.arcGISMap = map;
-
     _mapViewController.setBookmark(_bookmarks.first);
 
     // Set the ready state variable to true to enable the sample UI.
@@ -178,12 +182,14 @@ class _ManageBookmarksSampleState extends State<ManageBookmarksSample> {
   }
 
   void addBookmark() async {
+    // Show a dialog to get the name of the bookmark.
     final name = await showDialog<String>(
       context: context,
       builder: (_) => const AddBookmarkDialog(),
     );
     if (name == null || name.isEmpty) return;
 
+    // Create a bookmark with the current viewpoint and add it to the list.
     final bookmark = Bookmark(
       name: name,
       viewpoint: _mapViewController.getCurrentViewpoint(
@@ -193,6 +199,7 @@ class _ManageBookmarksSampleState extends State<ManageBookmarksSample> {
   }
 }
 
+// A dialog to get the name for a bookmark.
 class AddBookmarkDialog extends StatefulWidget {
   const AddBookmarkDialog({super.key});
 
@@ -233,10 +240,12 @@ class _AddBookmarkDialogState extends State<AddBookmarkDialog> {
     );
   }
 
+  // Cancel the dialog.
   void cancel() {
     Navigator.of(context).pop();
   }
 
+  // Report the name to be used for the bookmark.
   void add(String name) {
     Navigator.of(context).pop(name);
   }
