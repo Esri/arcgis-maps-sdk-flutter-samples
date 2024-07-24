@@ -28,6 +28,7 @@ class ManageBookmarksSample extends StatefulWidget {
 class _ManageBookmarksSampleState extends State<ManageBookmarksSample> {
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
+  //fixme comment
   late final List<Bookmark> _bookmarks;
   // A flag for when the map view is ready and controls can be used.
   var _ready = false;
@@ -88,7 +89,9 @@ class _ManageBookmarksSampleState extends State<ManageBookmarksSample> {
   // The build method for the Bookmarks bottom sheet.
   Widget buildBookmarks(BuildContext context) {
     return Container(
-      color: Colors.white,
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.sizeOf(context).height * 0.5,
+      ),
       padding: EdgeInsets.fromLTRB(
         20.0,
         0.0,
@@ -99,39 +102,40 @@ class _ManageBookmarksSampleState extends State<ManageBookmarksSample> {
               View.of(context).devicePixelRatio,
         ),
       ),
-      //fixme scrollview?
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Row(
-            children: [
-              Text(
-                'Bookmarks',
-                style: Theme.of(context).textTheme.titleLarge,
-              ),
-              const Spacer(),
-              IconButton(
-                icon: const Icon(Icons.close),
-                onPressed: () => setState(() => _bookmarksVisible = false),
-              ),
-            ],
-          ),
-          const SizedBox(height: 20.0),
-          ListView.builder(
-            shrinkWrap: true,
-            itemCount: _bookmarks.length,
-            itemBuilder: (context, index) {
-              return TextButton(
-                onPressed: () =>
-                    _mapViewController.setBookmark(_bookmarks[index]),
-                style: const ButtonStyle(
-                  alignment: Alignment.centerLeft,
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Row(
+              children: [
+                Text(
+                  'Bookmarks',
+                  style: Theme.of(context).textTheme.titleLarge,
                 ),
-                child: Text(_bookmarks[index].name),
-              );
-            },
-          ),
-        ],
+                const Spacer(),
+                IconButton(
+                  icon: const Icon(Icons.close),
+                  onPressed: () => setState(() => _bookmarksVisible = false),
+                ),
+              ],
+            ),
+            ListView.builder(
+              physics: const NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
+              itemCount: _bookmarks.length,
+              itemBuilder: (context, index) {
+                return TextButton(
+                  onPressed: () =>
+                      _mapViewController.setBookmark(_bookmarks[index]),
+                  style: const ButtonStyle(
+                    alignment: Alignment.centerLeft,
+                  ),
+                  child: Text(_bookmarks[index].name),
+                );
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -174,11 +178,57 @@ class _ManageBookmarksSampleState extends State<ManageBookmarksSample> {
   }
 
   void addBookmark() async {
-    //fixme
-    setState(() => _ready = false);
-    // Perform some task.
-    print('Perform task');
-    await Future.delayed(const Duration(seconds: 5));
-    setState(() => _ready = true);
+    final name = await showDialog<String>(
+      context: context,
+      builder: (_) => const AddBookmarkDialog(),
+    );
+    if (name == null || name.isEmpty) return;
+
+    final bookmark = Bookmark(
+      name: name,
+      viewpoint: _mapViewController.getCurrentViewpoint(
+          viewpointType: ViewpointType.centerAndScale),
+    );
+    setState(() => _bookmarks.add(bookmark));
+  }
+}
+
+class AddBookmarkDialog extends StatefulWidget {
+  const AddBookmarkDialog({super.key});
+
+  @override
+  State<AddBookmarkDialog> createState() => _AddBookmarkDialogState();
+}
+
+class _AddBookmarkDialogState extends State<AddBookmarkDialog> {
+  final _nameController = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text('Add Bookmark'),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          TextField(
+            controller: _nameController,
+            decoration: const InputDecoration(labelText: 'Name'),
+          ),
+        ],
+      ),
+      actions: [
+        ElevatedButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: const Text('Cancel'),
+        ),
+        ElevatedButton(
+          onPressed: () {
+            final name = _nameController.text;
+            Navigator.of(context).pop(name);
+          },
+          child: const Text('Add'),
+        ),
+      ],
+    );
   }
 }
