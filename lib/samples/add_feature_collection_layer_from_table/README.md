@@ -14,7 +14,7 @@ When launched, this sample displays a `FeatureCollectionLayer` with a `Point`, `
 
 ## How it works
 
-1. Create a `FeatureCollectionTable` for the `GeometryType`s `Point`, `Polyline`, and `Polygon`, using `FeatureCollectionTable(fields, geometryType, spatialReference)`. Pass in a list of `Field` objects to represent the table's schema, the `GeometryType` and a `SpatialReference`.
+1. Create a `FeatureCollectionTable` for the `GeometryType`s `Point`, `Polyline`, and `Polygon`, using `FeatureCollectionTable(fields, geometryType, spatialReference)`, passing in a list of `Field` objects to represent the table's schema, the `GeometryType`, and a `SpatialReference`.
 2. Assign a `SimpleRenderer` to each table to render any `Feature`s from that table using the `Symbol` that was set.
 3. Use the `FeatureCollectionTable.createFeature(attributes, geometry)` method to create a feature from the feature collection table, passing an attribute and geometry for that feature.
 4. Add new features to the table, `FeatureCollectionTable.addFeature(feature)`.
