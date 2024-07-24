@@ -474,14 +474,38 @@
   },
   "download_vector_tiles_to_local_cache": {
     "category": "Edit and Manage Data",
-    "description": "Take a map offline using a preplanned map area.",
+    "description": "Export tiles from an online vector tile service.",
     "ignore": false,
-    "images": [],
-    "keywords": [],
+    "images": [
+      "download_vector_tiles_to_local_cache.png"
+    ],
+    "keywords": [
+      "cache",
+      "download",
+      "offline",
+      "vector",
+      "ArcGISVectorTiledLayer",
+      "ExportVectorTilesJob",
+      "ExportVectorTilesParameters",
+      "ExportVectorTilesResult",
+      "ExportVectorTilesTask",
+      "ItemResourceCache",
+      "VectorTileCache"
+    ],
     "redirect_from": [],
-    "relevant_apis": [],
-    "snippets": [],
-    "title": "Download preplanned map area",
+    "relevant_apis": [
+      "ArcGISVectorTiledLayer",
+      "ExportVectorTilesJob",
+      "ExportVectorTilesParameters",
+      "ExportVectorTilesResult",
+      "ExportVectorTilesTask",
+      "ItemResourceCache",
+      "VectorTileCache"
+    ],
+    "snippets": [
+      "download_vector_tiles_to_local_cache_sample.dart"
+    ],
+    "title": "Download vector tiles to local cache",
     "key": "download_vector_tiles_to_local_cache"
   },
   "edit_feature_attachments": {
