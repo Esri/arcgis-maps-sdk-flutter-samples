@@ -18,9 +18,7 @@ import 'dart:async';
 
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
 
-import '../../utils/sample_data.dart';
 import '../../utils/sample_state_support.dart';
 
 class SetBasemapSample extends StatefulWidget {
@@ -32,42 +30,44 @@ class SetBasemapSample extends StatefulWidget {
 
 class _SetBasemapSampleState extends State<SetBasemapSample>
     with SampleStateSupport {
-  final GlobalKey<ScaffoldState> _scaffoldStateKey = GlobalKey();
-
+  // Create a key to access the scaffold state.
+  final _scaffoldStateKey = GlobalKey<ScaffoldState>();
+  // Create a controller for the map view and a map with a navigation basemap.
   final _mapViewController = ArcGISMapView.createController();
   final _arcGISMap = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISNavigation);
+  // Create a dictionary to store basemaps.
   final _basemaps = <Basemap, Image>{};
-  final _defaultImage = Image.asset('assets/basemap_default.png');
-  final _sanFranciscoViewpoint = Viewpoint.fromCenter(
-    ArcGISPoint(x: -13630206, y: 4546929),
-    scale: 100000,
-  );
+  // Create a default image.
+  final _defaultImage = Image.asset('assets/basemap_default.png'); 
   late Future _loadBasemapsFuture;
 
   @override
   void initState() {
     super.initState();
-
-    _arcGISMap.initialViewpoint = _sanFranciscoViewpoint;
-    _mapViewController.arcGISMap = _arcGISMap;
+    // Load basemaps when the app starts.
     _loadBasemapsFuture = loadBasemaps();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // Create a scaffold with a key to access the scaffold state.
       key: _scaffoldStateKey,
+      // Create an end drawer to display basemaps.
       endDrawer: Drawer(
-        child: SafeArea(
+        child: SafeArea( 
+          // Create a future builder to load basemaps.
           child: FutureBuilder(
             future: _loadBasemapsFuture,
             builder: (context, snapshot) {
               switch (snapshot.connectionState) {
                 case ConnectionState.done:
+                  // Create a grid view to display basemaps.
                   return GridView.count(
                     crossAxisCount: 2,
                     children: _basemaps.keys
                         .map(
+                          // Create a list tile for each basemap.
                           (basemap) => ListTile(
                             title: Column(
                               children: [
@@ -78,6 +78,7 @@ class _SetBasemapSampleState extends State<SetBasemapSample>
                                 ),
                               ],
                             ),
+                            // Update the map with the selected basemap.
                             onTap: () {
                               updateMap(basemap);
                               _scaffoldStateKey.currentState!.closeEndDrawer();
@@ -87,6 +88,7 @@ class _SetBasemapSampleState extends State<SetBasemapSample>
                         .toList(),
                   );
                 default:
+                  // Display a loading message while loading basemaps.
                   return const Center(
                     child: Text('Loading basemaps...'),
                   );
@@ -95,10 +97,13 @@ class _SetBasemapSampleState extends State<SetBasemapSample>
           ),
         ),
       ),
+      // Create a stack with the map view and a floating action button to open the end drawer.
       body: Stack(
         children: [
+          // Create an ArcGIS map view with a controller.
           ArcGISMapView(
             controllerProvider: () => _mapViewController,
+            onMapViewReady: onMapViewReady,
           ),
           Positioned(
             bottom: 70,
@@ -115,66 +120,35 @@ class _SetBasemapSampleState extends State<SetBasemapSample>
     );
   }
 
+  void onMapViewReady() {
+    // Set the map view controller's map to the ArcGIS map.
+    _mapViewController.arcGISMap = _arcGISMap; 
+  }
+
   void updateMap(Basemap basemap) {
-    _arcGISMap.basemap = basemap;
-    _mapViewController.setViewpointAnimated(_sanFranciscoViewpoint);
-    _mapViewController.setViewpointRotation(angleDegrees: 0.0);
+    // Update the map view with the selected basemap.
+    _arcGISMap.basemap = basemap; 
   }
 
   Future loadBasemaps() async {
-    // load basemaps from online items
-    List<Basemap> basemaps = List.from([
-      Basemap.withUri(Uri.parse(
-          'https://runtime.maps.arcgis.com/home/item.html?id=9b39104916614f0899993934d2f1d375')), // newspaper - from different org
-      Basemap.withUri(Uri.parse(
-          'https://www.arcgis.com/home/item.html?id=358ec1e175ea41c3bf5c68f0da11ae2b')), // dark gray canvas
-      Basemap.withUri(Uri.parse(
-          'https://www.arcgis.com/home/item.html?id=979c6cc89af9449cbeb5342a439c6a76')), // light gray canvas
-      Basemap.withUri(Uri.parse(
-          'https://www.arcgis.com/home/item.html?id=fae788aa91e54244b161b59725dcbb2a')), // OSM
-      Basemap.withUri(Uri.parse(
-          'https://www.arcgis.com/home/item.html?id=28f49811a6974659988fd279de5ce39f')), // Imagery
-      Basemap.withUri(Uri.parse(
-          'https://www.arcgis.com/home/item.html?id=2e8a3ccdfd6d42a995b79812b3b0ebc6')), // Outdoor
-      Basemap.withUri(Uri.parse(
-          'https://www.arcgis.com/home/item.html?id=7e2b9be8a9c94e45b7f87857d8d168d6')), // Streets night
-      Basemap.withStyle(BasemapStyle.arcGISNavigation), // No thumbnail
-    ]);
+    // Create a portal to access online items.
+    final portal = Portal.arcGISOnline();
+    // Load basemaps from portal.
+    final basemaps = await portal.developerBasemaps();
 
-    // load each basemap to access and display attribute data in the UI
-    for (var basemap in basemaps) {
+    // Load each basemap to access and display attribute data in the UI.
+    for (final basemap in basemaps) {
       await basemap.load();
       if (basemap.item != null) {
-        var thumbnail = basemap.item!.thumbnail;
+        final thumbnail = basemap.item!.thumbnail;
         if (thumbnail != null) {
           await thumbnail.load();
           _basemaps[basemap] = Image.network(thumbnail.uri.toString());
         }
       } else {
+        // If the basemap does not have a thumbnail, use the default image.
         _basemaps[basemap] = _defaultImage;
       }
-    }
-
-    // load basemaps from local packages
-    await loadTileCache();
-  }
-
-  Future loadTileCache() async {
-    await downloadSampleData(['e4a398afe9a945f3b0f4dca1e4faccb5']);
-    const tilePackageName = 'SanFrancisco.tpkx';
-    final appDir = await getApplicationDocumentsDirectory();
-    final tpkxPath = '${appDir.absolute.path}/$tilePackageName';
-
-    final tileCache = TileCache.withFileUri(Uri.parse(tpkxPath));
-    // wait for the tile cache to load to access and display thumbnail
-    await tileCache.load();
-    final tiledLayer = ArcGISTiledLayer.withTileCache(tileCache);
-    final tiledLayerBasemap = Basemap.withBaseLayer(tiledLayer);
-    if (tileCache.thumbnail != null) {
-      _basemaps[tiledLayerBasemap] =
-          Image.memory(tileCache.thumbnail!.getEncodedBuffer());
-    } else {
-      _basemaps[tiledLayerBasemap] = _defaultImage;
     }
   }
 }
