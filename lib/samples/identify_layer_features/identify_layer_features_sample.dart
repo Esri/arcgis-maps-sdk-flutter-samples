@@ -50,11 +50,21 @@ class _IdentifyLayerFeaturesSampleState
           // Add a banner to show the results of the identify operation.
           SafeArea(
             child: IgnorePointer(
-              child: Container(
-                color: Colors.white.withAlpha(230),
-                padding: const EdgeInsets.all(10),
-                child: Row(
-                  children: [Text(_message)],
+              child: Visibility(
+                visible: _message.isNotEmpty,
+                child: Container(
+                  padding: const EdgeInsets.all(10),
+                  color: Colors.black.withOpacity(0.7),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        _message,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
