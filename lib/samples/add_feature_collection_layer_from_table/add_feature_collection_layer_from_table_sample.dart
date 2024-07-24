@@ -49,10 +49,9 @@ class _AddFeatureCollectionLayerFromTableSampleState
     final polylineTable = createPolylineTable();
     final polygonTable = createPolygonTable();
 
-    // Create a new feature collection.
-    final featureCollection = FeatureCollection();
-    // Add the feature collection tables to the feature collection.
-    featureCollection.tables.addAll([pointTable, polylineTable, polygonTable]);
+    // Create a new feature collection and add the feature collection tables.
+    final featureCollection = FeatureCollection()
+      ..tables.addAll([pointTable, polylineTable, polygonTable]);
 
     // Create a feature collection layer from the feature collection.
     final featureCollectionLayer =
