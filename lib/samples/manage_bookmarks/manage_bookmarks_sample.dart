@@ -204,31 +204,40 @@ class _AddBookmarkDialogState extends State<AddBookmarkDialog> {
   final _nameController = TextEditingController();
 
   @override
+  void dispose() {
+    _nameController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('Add Bookmark'),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          TextField(
-            controller: _nameController,
-            decoration: const InputDecoration(labelText: 'Name'),
-          ),
-        ],
+      content: TextField(
+        controller: _nameController,
+        autocorrect: false,
+        autofocus: true,
+        enableSuggestions: false,
+        decoration: const InputDecoration(labelText: 'Name'),
+        onSubmitted: add,
       ),
       actions: [
-        ElevatedButton(
-          onPressed: () => Navigator.of(context).pop(),
+        TextButton(
+          onPressed: cancel,
           child: const Text('Cancel'),
         ),
-        ElevatedButton(
-          onPressed: () {
-            final name = _nameController.text;
-            Navigator.of(context).pop(name);
-          },
+        TextButton(
+          onPressed: () => add(_nameController.text),
           child: const Text('Add'),
         ),
       ],
     );
+  }
+
+  void cancel() {
+    Navigator.of(context).pop();
+  }
+
+  void add(String name) {
+    Navigator.of(context).pop(name);
   }
 }
