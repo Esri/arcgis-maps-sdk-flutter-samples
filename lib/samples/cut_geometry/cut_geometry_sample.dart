@@ -3,20 +3,6 @@ import 'package:flutter/material.dart';
 
 import '../../utils/sample_state_support.dart';
 
-void main() async {
-  // Supply your apiKey using the --dart-define-from-file command line argument
-  ArcGISEnvironment.apiKey = const String.fromEnvironment('API_KEY');
-
-  runApp(
-    const MaterialApp(
-      home: CutGeometrySample(),
-    ),
-  );
-}
-
-// To use as a template: copy from here to the end of the file and rename the class.
-// Do NOT copy the copyright block or main function.
-
 class CutGeometrySample extends StatefulWidget {
   const CutGeometrySample({super.key});
 
