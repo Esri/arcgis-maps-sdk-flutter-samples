@@ -45,8 +45,6 @@ class _DownloadVectorTilesToLocalCacheSampleState
   var _progress = 0.0;
   final _mapKey = GlobalKey();
 
-  var _firstTime = true;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -62,7 +60,6 @@ class _DownloadVectorTilesToLocalCacheSampleState
                     key: _mapKey,
                     controllerProvider: () => _mapViewController,
                     onMapViewReady: onMapViewReady,
-                    onTap: onTap,
                   ),
                 ),
                 Row(
@@ -130,13 +127,6 @@ class _DownloadVectorTilesToLocalCacheSampleState
         _downloadVectorTilesOverlay,
       ],
     );
-    // _mapViewController.onDrawStatusChanged.listen(
-    //   (status) {
-    //     if (status == DrawStatus.completed && _firstTime) {
-    //       updateDownloadAreaGraphic();
-    //     }
-    //   },
-    // );
 
     _mapViewController.onViewpointChanged.listen(
       (viewpoint) {
@@ -189,12 +179,6 @@ class _DownloadVectorTilesToLocalCacheSampleState
         ],
       ),
     );
-  }
-
-  void onTap(Offset screenPoint) {
-    // Capture the tapped point and convert it to a map point.
-    final mapPoint = _mapViewController.screenToLocation(screen: screenPoint);
-    if (mapPoint == null) return;
   }
 
   // Download the vector tiles for the outlined region.
@@ -266,21 +250,20 @@ class _DownloadVectorTilesToLocalCacheSampleState
     }
   }
 
+  // Update the download area graphic on the map view.
   void updateDownloadAreaGraphic() {
     // Clear the previous download area.
     _downloadVectorTilesOverlay.graphics.clear();
 
     final envelope = downloadAreaEnvelope();
-    if (envelope == null) return;
-
-    // Add the square envelope to the download vector tiles overlay.
-    _downloadVectorTilesOverlay.graphics.add(
-      Graphic(
-        geometry: envelope,
-      ),
-    );
-
-    _firstTime = false;
+    if (envelope != null) {
+      // Add the square envelope to the download vector tiles overlay.
+      _downloadVectorTilesOverlay.graphics.add(
+        Graphic(
+          geometry: envelope,
+        ),
+      );
+    }
   }
 
   // Calculate the Envelope of the outlined region.
