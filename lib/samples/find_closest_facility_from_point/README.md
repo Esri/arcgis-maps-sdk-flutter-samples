@@ -10,20 +10,17 @@ Quickly and accurately determining the most efficient route between a location a
 
 ## How to use the sample
 
-Tap on 'Solve Routes' button to solve and display the route from each incident (fire) to the nearest facility (fire station).
+Tap on the 'Solve Routes' button to solve and display the route from each incident (fire) to the nearest facility (fire station).
 
 ## How it works
 
 1. Create a `ClosestFacilityTask` using a URL from an online service.
-2. Get the default set of `ClosestFacilityParameters` from the task: `closestFacilityTask.createDefaultParameters()`.
-3. Create feature layers for the `Facilities` and `Incidents`:
-  * Create a `FeatureTable` using `ServiceFeatureTable.withUri(Uri)`.
-  * Query the `FeatureTable` for all `Features` using `FeatureLayer.withFeatureTable(featureTable)`.
-  * Add the `Facilities` and `Incidents` layers to the map.
-4. Add a list of all facilities to the task parameters: `closestFacilityParameters.setFacilitiesWithFeatureTable(facilitiesList)`.
-5. Add a list of all incidents to the task parameters: `closestFacilityParameters.setIncidentsWithFeatureTable(incidentsList)`.
-6. Get `ClosestFacilityResult` by solving the task with the provided parameters: `closestFacilityTask.solveClosestFacility(closestFacilityParameters)`.
-7. Find the closest facility for each incident by iterating over the list of `results.incidents`s.
+2. Create a `FeatureTable` for each of the `Facilities` and `Incidents` services using `ServiceFeatureTable.withUri(uri);`.
+3. Get the default set of `ClosestFacilityParameters` from the task using `ClosestFacilityTask.createDefaultParameters()`.
+4. Add the facilities table to the task parameters, along with `QueryParameters` defined to query all features using `ClosestFacilityParameters.setFacilitiesWithFeatureTable(featureTable, queryParameters)`.
+5. Add the incidents table to the task parameters, along with `QueryParameters` defined to query all features using `ClosestFacilityParameters.setIncidentsWithFeatureTable(featureTable, queryParameters)`.
+6. Get the `ClosestFacilityResult` by solving the task with the provided parameters: `ClosestFacilityTask.solveClosestFacility(closestFacilityParameters)`.
+7. Find the closest facility for each incident by iterating over the list of `result.incidents`.
 8. Display the route as a `Graphic` using the `routeGraphicsOverlay.graphics.add(routeGraphic)`.
 
 ## Relevant API

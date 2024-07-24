@@ -59,11 +59,10 @@ class _FindClosestFacilityFromPointSampleState
     return Scaffold(
       body: SafeArea(
         top: false,
-        // Create a column with the map view and buttons to solve the routes and reset the graphics.
         child: Column(
           children: [
             Expanded(
-              // Create the map view.
+              // Add a map view to the widget tree and set a controller.
               child: ArcGISMapView(
                 controllerProvider: () => _mapViewController,
                 onMapViewReady: onMapViewReady,
@@ -78,12 +77,12 @@ class _FindClosestFacilityFromPointSampleState
                   // Create buttons to solve the routes and reset the graphics.
                   ElevatedButton(
                     onPressed: !_routeSolved && _initialized
-                        ? () => solveRoutes()
+                        ? solveRoutes
                         : null,
                     child: const Text('Solve Routes'),
                   ),
                   ElevatedButton(
-                    onPressed: _routeSolved ? () => resetRoutes() : null,
+                    onPressed: _routeSolved ? resetRoutes : null,
                     child: const Text('Reset'),
                   ),
                 ],
@@ -95,7 +94,7 @@ class _FindClosestFacilityFromPointSampleState
     );
   }
 
-  Future<void> onMapViewReady() async {
+  void onMapViewReady() async {
     // Create a map with the ArcGIS Streets basemap style.
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISStreets);
 
@@ -166,10 +165,10 @@ class _FindClosestFacilityFromPointSampleState
     return parameters;
   }
 
-  Future<void> solveRoutes() async {
+  void solveRoutes() async {
     // Solve the closest facility task with the parameters.
-    final results = await _closestFacilityTask.solveClosestFacility(
-      closestFacilityParameters: _closestFacilityParameters,
+    final result = await _closestFacilityTask.solveClosestFacility(
+      closestFacilityParameters: _closestFacilityParameters
     );
     for (var incidentIdx = 0;
         incidentIdx < results.incidents.length;
