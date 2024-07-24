@@ -401,6 +401,31 @@
     "title": "Create planar and geodetic buffers",
     "key": "create_planar_and_geodetic_buffers"
   },
+  "cut_geometry": {
+    "category": "Analysis",
+    "description": "Cut a geometry along a polyline.",
+    "ignore": false,
+    "images": [],
+    "keywords": [
+      "cut",
+      "geometry",
+      "split",
+      "GeometryEngine::Cut",
+      "Polygon",
+      "Polyline"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+      "GeometryEngine::Cut",
+      "Polygon",
+      "Polyline"
+    ],
+    "snippets": [
+      "cut_geometry_sample.dart"
+    ],
+    "title": "Cut geometry",
+    "key": "cut_geometry"
+  },
   "densify_and_generalize_geometry": {
     "category": "Edit and Manage Data",
     "description": "A multipart geometry can be densified by adding interpolated points at regular intervals. Generalizing multipart geometry simplifies it while preserving its general shape. Densifying a multipart geometry adds more vertices at regular intervals.",
@@ -880,14 +905,28 @@
   },
   "set_basemap": {
     "category": "Maps",
-    "description": "Set a map's basemap. A basemap is beneath all layers on a map and is used to provide visual reference for the operational layers.",
+    "description": "Change a map's basemap. A basemap is beneath all layers on a map and is used to provide visual reference for the operational layers.",
     "ignore": false,
-    "images": [],
-    "keywords": [],
+    "images": [
+      "set_basemap.png"
+    ],
+    "keywords": [
+      "basemap",
+      "map",
+      "ArcGISMap",
+      "ArcGISMapViewController",
+      "Basemap"
+    ],
     "redirect_from": [],
-    "relevant_apis": [],
-    "snippets": [],
-    "title": "Set Basemap",
+    "relevant_apis": [
+      "ArcGISMap",
+      "ArcGISMapViewController",
+      "Basemap"
+    ],
+    "snippets": [
+      "set_basemap_sample.dart"
+    ],
+    "title": "Set basemap",
     "key": "set_basemap"
   },
   "show_device_location": {
@@ -926,11 +965,47 @@
     "category": "Maps",
     "description": "Display your device's location history on the map.",
     "ignore": false,
-    "images": [],
-    "keywords": [],
+    "images": [
+      "show_device_location_history.png"
+    ],
+    "keywords": [
+      "GPS",
+      "bread crumb",
+      "breadcrumb",
+      "history",
+      "movement",
+      "navigation",
+      "real-time",
+      "trace",
+      "track",
+      "trail",
+      "Graphic",
+      "GraphicsOverlay",
+      "LocationDataSource",
+      "LocationDisplay",
+      "LocationDisplayAutoPanMode",
+      "PolylineBuilder",
+      "SimpleLineSymbol",
+      "SimpleMarkerSymbol",
+      "SimpleRenderer",
+      "SimulatedLocationDataSource"
+    ],
     "redirect_from": [],
-    "relevant_apis": [],
-    "snippets": [],
+    "relevant_apis": [
+      "Graphic",
+      "GraphicsOverlay",
+      "LocationDataSource",
+      "LocationDisplay",
+      "LocationDisplayAutoPanMode",
+      "PolylineBuilder",
+      "SimpleLineSymbol",
+      "SimpleMarkerSymbol",
+      "SimpleRenderer",
+      "SimulatedLocationDataSource"
+    ],
+    "snippets": [
+      "show_device_location_history_sample.dart"
+    ],
     "title": "Show device location history",
     "key": "show_device_location_history"
   },
