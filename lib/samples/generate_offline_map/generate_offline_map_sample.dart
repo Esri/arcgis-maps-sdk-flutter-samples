@@ -157,6 +157,9 @@ class _GenerateOfflineMapSampleState extends State<GenerateOfflineMapSample>
     _map = ArcGISMap.withItem(portalItem);
     _mapViewController.arcGISMap = _map;
 
+    // Offline map generation does not consider rotation, so disable it.
+    _mapViewController.interactionOptions.rotateEnabled = false;
+
     // Create an OfflineMapTask for the map.
     _offlineMapTask = OfflineMapTask.withOnlineMap(_map);
 

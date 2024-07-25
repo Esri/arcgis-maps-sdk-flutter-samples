@@ -14,9 +14,8 @@
 // limitations under the License.
 //
 
-// ignore_for_file: avoid_print
-
 import 'dart:io';
+import 'dart:math';
 
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:flutter/material.dart';
@@ -34,130 +33,280 @@ class DownloadPreplannedMapAreaSample extends StatefulWidget {
 
 class _DownloadPreplannedMapAreaSampleState
     extends State<DownloadPreplannedMapAreaSample> with SampleStateSupport {
+  // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
-  var _preplannedAreas = <PreplannedMapArea>[];
-  var _selectedPreplannedAreaIndex = -1;
-  var _isLoading = false;
-  OfflineMapTask? _offlineMapTask;
-  final _sourceMap = ArcGISMap.withUri(Uri.parse(
-      'https://arcgisruntime.maps.arcgis.com/home/item.html?id=acc027394bc84c2fb04d1ed317aac674'))!;
+  // Prepare an offline map task and map for the online web map.
+  late OfflineMapTask _offlineMapTask;
+  late ArcGISMap _webMap;
+  // The location to save offline maps to.
+  Directory? _downloadDirectory;
+  // Create a Map to track preplanned map areas and their associated download jobs.
+  final _preplannedMapAreas =
+      <PreplannedMapArea, DownloadPreplannedOfflineMapJob?>{};
+  // A flag for when the map view is ready and controls can be used.
+  var _ready = false;
+  // A flag for when the map selection UI should be displayed.
+  var _mapSelectionVisible = false;
+
+  @override
+  void dispose() {
+    // Delete downloaded offline maps on exit.
+    _downloadDirectory?.deleteSync(recursive: true);
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
+        child: Stack(
           children: [
-            Expanded(
-              child: ArcGISMapView(
-                controllerProvider: () =>
-                    _mapViewController..arcGISMap = _sourceMap,
-                onMapViewReady: onMapViewReady,
+            Column(
+              children: [
+                Expanded(
+                  // Add a map view to the widget tree and set a controller.
+                  child: ArcGISMapView(
+                    controllerProvider: () => _mapViewController,
+                    onMapViewReady: onMapViewReady,
+                  ),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    // Create a button to open the map selection view.
+                    ElevatedButton(
+                      onPressed: () =>
+                          setState(() => _mapSelectionVisible = true),
+                      child: const Text('Select Map'),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            // Display the name of the current map.
+            Container(
+              padding: const EdgeInsets.all(10.0),
+              color: Colors.black.withOpacity(0.7),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    // Use the name of the item if available.
+                    _mapViewController.arcGISMap?.item?.title ?? '',
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(color: Colors.white),
+                  ),
+                ],
               ),
             ),
-            SizedBox(
-              height: 235,
-              width: double.infinity,
-              child: _buildMapAreaList(context),
-            )
+            // Display a progress indicator and prevent interaction until state is ready.
+            Visibility(
+              visible: !_ready,
+              child: SizedBox.expand(
+                child: Container(
+                  color: Colors.white30,
+                  child: const Center(child: CircularProgressIndicator()),
+                ),
+              ),
+            ),
           ],
         ),
+      ),
+      // Display a list of available maps in a bottom sheet.
+      bottomSheet:
+          _mapSelectionVisible ? buildMapSelectionSheet(context) : null,
+    );
+  }
+
+  void onMapViewReady() async {
+    // Configure the directory to download offline maps to.
+    _downloadDirectory = await createDownloadDirectory();
+
+    // Create a map using a webmap from a portal item.
+    final portal = Portal.arcGISOnline();
+    final portalItem = PortalItem.withPortalAndItemId(
+        portal: portal, itemId: 'acc027394bc84c2fb04d1ed317aac674');
+    _webMap = ArcGISMap.withItem(portalItem);
+
+    // Create and load an offline map task using the portal item.
+    _offlineMapTask = OfflineMapTask.withPortalItem(portalItem);
+    await _offlineMapTask.load();
+
+    // Get the preplanned map areas from the offline map task and load each.
+    final preplannedMapAreas = await _offlineMapTask.getPreplannedMapAreas();
+    for (final mapArea in preplannedMapAreas) {
+      await mapArea.load();
+      // Add each map area as a key in the Map, setting the Job to null initially.
+      _preplannedMapAreas[mapArea] = null;
+    }
+
+    // Initially set the web map to the map view controller.
+    _mapViewController.arcGISMap = _webMap;
+
+    // Upate the state with the preplanned map areas and set the UI state to ready.
+    setState(() => _ready = true);
+  }
+
+  // Builds a map selection widget with a list of available maps.
+  Widget buildMapSelectionSheet(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.fromLTRB(
+        20.0,
+        20.0,
+        20.0,
+        max(
+          20.0,
+          View.of(context).viewPadding.bottom /
+              View.of(context).devicePixelRatio,
+        ),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
+            children: [
+              Text('Select Map', style: Theme.of(context).textTheme.titleLarge),
+              const Spacer(),
+              IconButton(
+                icon: const Icon(Icons.close),
+                onPressed: () => setState(() => _mapSelectionVisible = false),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10.0),
+          // Create a list tile for the web map.
+          ListTile(
+            title: const Text('Web Map (online)'),
+            trailing: _mapViewController.arcGISMap == _webMap
+                ? const Icon(Icons.check)
+                : null,
+            onTap: () => _mapViewController.arcGISMap != _webMap
+                ? setMapAndViewpoint(_webMap)
+                : null,
+          ),
+          const SizedBox(height: 20.0),
+          Text('Preplanned Map Areas:',
+              style: Theme.of(context).textTheme.titleMedium),
+          const SizedBox(height: 20.0),
+          ListView.builder(
+            shrinkWrap: true,
+            itemCount: _preplannedMapAreas.length,
+            itemBuilder: (context, index) {
+              return Padding(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 5.0, horizontal: 0.0),
+                child: buildMapAreaListTile(
+                    _preplannedMapAreas.keys.toList()[index]),
+              );
+            },
+          ),
+        ],
       ),
     );
   }
 
-  ListView _buildMapAreaList(BuildContext context) {
-    return ListView.builder(
-      padding: const EdgeInsets.all(8),
-      itemCount: _preplannedAreas.length,
-      itemBuilder: (context, index) {
-        final name = _preplannedAreas[index].portalItem.title;
-        return Card(
-          child: ListTile(
-            trailing: Text((index == _selectedPreplannedAreaIndex && _isLoading)
-                ? 'Loading'
-                : ''),
-            selected: (index == _selectedPreplannedAreaIndex),
-            title: Text(name),
-            onTap: () async {
-              if (index == _selectedPreplannedAreaIndex) {
-                return;
-              }
-              setState(() {
-                _selectedPreplannedAreaIndex = index;
-                _isLoading = true;
-              });
-              try {
-                final map = await _downloadOfflineMap(index);
-                _mapViewController.arcGISMap = map;
-              } catch (e) {
-                print(e);
-              } finally {
-                setState(() => _isLoading = false);
-              }
-            },
+  // Builds a list tile for each preplanned area and updates the UI depending on the status of the job.
+  Widget buildMapAreaListTile(PreplannedMapArea mapArea) {
+    final title = Text(mapArea.portalItem.title);
+    final job = _preplannedMapAreas[mapArea];
+
+    // If a job has been associated with the preplanned area, check the status and display the relevant UI.
+    if (job != null) {
+      if (job.status == JobStatus.started) {
+        return ListTile(
+          enabled: false,
+          title: title,
+          trailing: Column(
+            children: [
+              // When the job is started, display the progress.
+              CircularProgressIndicator(value: job.progress.toDouble() / 100.0),
+              Text('${job.progress}%'),
+            ],
           ),
         );
-      },
+      } else if (job.status == JobStatus.succeeded && job.result != null) {
+        // When the job has succeeded, get the result and then get the map from the result.
+        final map = job.result!.offlineMap;
+        return ListTile(
+          title: title,
+          trailing: _mapViewController.arcGISMap == map
+              ? const Icon(Icons.check)
+              : null,
+          onTap: () => setMapAndViewpoint(map),
+        );
+      } else if (job.status == JobStatus.failed) {
+        return ListTile(
+          enabled: false,
+          title: title,
+          trailing: const Icon(Icons.error),
+        );
+      }
+    }
+
+    // Otherwise display a default list tile to initiate downloading the offline map.
+    return ListTile(
+      title: title,
+      trailing: const Icon(Icons.download),
+      onTap: () => downloadOfflineMap(mapArea),
     );
   }
 
-  Future<void> onMapViewReady() async {
-    await _initPreplannedMapTask(_sourceMap);
-  }
-
-  Future<void> _initPreplannedMapTask(ArcGISMap map) async {
-    final offlineMapTask = OfflineMapTask.withOnlineMap(_sourceMap);
-    await offlineMapTask.load();
-    final preplannedAreas = await offlineMapTask.getPreplannedMapAreas();
-    for (final preplannedArea in preplannedAreas) {
-      await preplannedArea.load();
-    }
-
-    _offlineMapTask = offlineMapTask;
-    setState(() => _preplannedAreas = preplannedAreas);
-  }
-
-  Future<ArcGISMap?> _downloadOfflineMap(int preplannedAreaIndex) async {
-    if (_offlineMapTask == null) {
-      return null;
-    }
-
-    final offlineMapTask = _offlineMapTask!;
-    final selectedPreplannedArea = _preplannedAreas[preplannedAreaIndex];
-
-    final downloadParams = await offlineMapTask
+  // Download an offline map for a provided preplanned map area.
+  void downloadOfflineMap(PreplannedMapArea mapArea) async {
+    // Create default parameters using the map area.
+    final defaultDownloadParams = await _offlineMapTask
         .createDefaultDownloadPreplannedOfflineMapParameters(
-            preplannedMapArea: selectedPreplannedArea);
+            preplannedMapArea: mapArea);
 
-    // This sample map is not setup for updates
-    downloadParams.updateMode = PreplannedUpdateMode.noUpdates;
+    // Set the required update mode. This sample map is not setup for updates so we use noUpdates.
+    defaultDownloadParams.updateMode = PreplannedUpdateMode.noUpdates;
 
-    final mapDownloadDir = await _getMapDownloadDirectory();
+    // Create a directory for the map in the downloads directory.
+    final mapDir = Directory(
+        '${_downloadDirectory!.path}${Platform.pathSeparator}${mapArea.portalItem.title}');
+    mapDir.createSync();
+
+    // Create and run a job to download the offline map using the default params and download path.
     final downloadMapJob =
-        offlineMapTask.downloadPreplannedOfflineMapWithParameters(
-            parameters: downloadParams,
-            downloadDirectoryUri: mapDownloadDir.uri);
+        _offlineMapTask.downloadPreplannedOfflineMapWithParameters(
+      parameters: defaultDownloadParams,
+      downloadDirectoryUri: mapDir.uri,
+    );
 
-    final downloadResult = await downloadMapJob.run();
-
-    // Return downloaded map
-    if (!downloadResult.hasErrors) {
-      return downloadResult.offlineMap;
-    }
-
-    return null;
+    // Associate the job with the map area and update the UI.
+    setState(() => _preplannedMapAreas[mapArea] = downloadMapJob);
+    // Update the UI when the progress changes.
+    downloadMapJob.onProgressChanged.listen((_) => setState(() {}));
+    downloadMapJob.run();
   }
 
-  Future<Directory> _getMapDownloadDirectory() async {
+  // Create the directory for downloading offline map areas into.
+  Future<Directory> createDownloadDirectory() async {
     final documentDir = await getApplicationDocumentsDirectory();
-    final mapDir = Directory('${documentDir.path}/offline_map');
-    if (mapDir.existsSync()) {
-      mapDir.deleteSync(recursive: true);
+    final downloadDir = Directory(
+        '${documentDir.path}${Platform.pathSeparator}preplanned_map_sample');
+    if (downloadDir.existsSync()) {
+      downloadDir.deleteSync(recursive: true);
     }
+    downloadDir.createSync();
+    return downloadDir;
+  }
 
-    mapDir.createSync();
-    return mapDir;
+  // Sets the provided map to the map view and updates the viewpoint.
+  void setMapAndViewpoint(ArcGISMap map) {
+    // Set the map to the map view and update the UI to reflect the newly selected map.
+    _mapViewController.arcGISMap = map;
+    setState(() {});
+
+    if (map != _webMap) {
+      // If the map is one of the offline maps,
+      // build an envelope zoomed into the extent of the map to better see the features.
+      final envBuilder = EnvelopeBuilder.fromEnvelope(
+          map.initialViewpoint!.targetGeometry.extent)
+        ..expandBy(0.5);
+      final viewpoint = Viewpoint.fromTargetExtent(envBuilder.toGeometry());
+      // Set the viewpoint to the mapview controller.
+      _mapViewController.setViewpoint(viewpoint);
+    }
   }
 }

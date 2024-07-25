@@ -15,6 +15,7 @@
 //
 
 import 'dart:async';
+import 'dart:math';
 
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:flutter/material.dart';
@@ -31,20 +32,27 @@ class ShowDeviceLocationSample extends StatefulWidget {
 
 class _ShowDeviceLocationSampleState extends State<ShowDeviceLocationSample>
     with SampleStateSupport {
+  // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
-  double _latitude = 0.0;
-  double _longitude = 0.0;
-  double _heading = 0.0;
+  // A flag for when the settings bottom sheet is visible.
+  var _settingsVisible = false;
+  // Create the system location data source.
   final _locationDataSource = SystemLocationDataSource();
+  // A subscription to receive status changes of the location data source.
   StreamSubscription? _statusSubscription;
-  StreamSubscription? _locationSubscription;
-  ArcGISException? _ldsException;
+  var _status = LocationDataSourceStatus.stopped;
+  // A subscription to receive changes to the auto-pan mode.
+  StreamSubscription? _autoPanModeSubscription;
+  var _autoPanMode = LocationDisplayAutoPanMode.recenter;
+  // A flag for when the map view is ready and controls can be used.
+  var _ready = false;
 
   @override
   void dispose() {
+    // When exiting, stop the location data source and cancel subscriptions.
     _locationDataSource.stop();
-    _locationSubscription?.cancel();
     _statusSubscription?.cancel();
+    _autoPanModeSubscription?.cancel();
 
     super.dispose();
   }
@@ -53,124 +61,164 @@ class _ShowDeviceLocationSampleState extends State<ShowDeviceLocationSample>
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
+        top: false,
+        child: Stack(
           children: [
-            Expanded(
-              child: Stack(
-                alignment: Alignment.bottomRight,
-                children: [
-                  ArcGISMapView(
+            Column(
+              children: [
+                Expanded(
+                  // Add a map view to the widget tree and set a controller.
+                  child: ArcGISMapView(
                     controllerProvider: () => _mapViewController,
                     onMapViewReady: onMapViewReady,
                   ),
-                  Positioned(
-                    bottom: 60.0,
-                    right: 10.0,
-                    child: Container(
-                      color: Colors.white,
-                      padding: const EdgeInsets.all(5.0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            'Device Location:',
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          Text('Latitude: $_latitude'),
-                          Text('Longitude: $_longitude'),
-                          Text('Heading: $_heading')
-                        ],
-                      ),
-                    ),
-                  )
-                ],
+                ),
+                Center(
+                  child: ElevatedButton(
+                    onPressed: _status == LocationDataSourceStatus.failedToStart
+                        ? null
+                        : () => setState(() => _settingsVisible = true),
+                    child: const Text('Location Settings'),
+                  ),
+                ),
+              ],
+            ),
+            // Display a progress indicator and prevent interaction until state is ready.
+            Visibility(
+              visible: !_ready,
+              child: SizedBox.expand(
+                child: Container(
+                  color: Colors.white30,
+                  child: const Center(child: CircularProgressIndicator()),
+                ),
               ),
             ),
-            SizedBox(
-              height: 90,
-              width: double.infinity,
-              child: Column(
-                children: [
-                  const Text('Location Data Source'),
-                  Visibility(
-                    visible: _ldsException == null,
-                    child: ElevatedButton(
-                      child: Text(_locationDataSource.status ==
-                              LocationDataSourceStatus.started
-                          ? 'Stop'
-                          : 'Start'),
-                      onPressed: () {
-                        if (_locationDataSource.status ==
-                            LocationDataSourceStatus.started) {
-                          _mapViewController.locationDisplay.stop();
-                        } else {
-                          _mapViewController.locationDisplay.start();
-                        }
-                      },
-                    ),
+          ],
+        ),
+      ),
+      // The Settings bottom sheet.
+      bottomSheet: _settingsVisible ? buildSettings(context) : null,
+    );
+  }
+
+  // The build method for the Geometry Settings bottom sheet.
+  Widget buildSettings(BuildContext context) {
+    return Container(
+      color: Colors.white,
+      padding: EdgeInsets.fromLTRB(
+        20.0,
+        0.0,
+        20.0,
+        max(
+          20.0,
+          View.of(context).viewPadding.bottom /
+              View.of(context).devicePixelRatio,
+        ),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
+            children: [
+              Text(
+                'Location Settings',
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
+              const Spacer(),
+              IconButton(
+                icon: const Icon(Icons.close),
+                onPressed: () => setState(() => _settingsVisible = false),
+              ),
+            ],
+          ),
+          Row(
+            children: [
+              const Text('Show Location'),
+              const Spacer(),
+              // A switch to start and stop the location data source.
+              Switch(
+                value: _status == LocationDataSourceStatus.started,
+                onChanged: (_) {
+                  if (_status == LocationDataSourceStatus.started) {
+                    _mapViewController.locationDisplay.stop();
+                  } else {
+                    _mapViewController.locationDisplay.start();
+                  }
+                },
+              ),
+            ],
+          ),
+          Row(
+            children: [
+              const Text('Auto-Pan Mode'),
+              const Spacer(),
+              // A dropdown button to select the auto-pan mode.
+              DropdownButton(
+                value: _autoPanMode,
+                onChanged: (value) {
+                  _mapViewController.locationDisplay.autoPanMode = value!;
+                },
+                items: const [
+                  DropdownMenuItem(
+                    value: LocationDisplayAutoPanMode.off,
+                    child: Text('Off'),
                   ),
-                  Visibility(
-                    visible: _ldsException != null,
-                    child: Text('Exception: ${_ldsException?.message}'),
+                  DropdownMenuItem(
+                    value: LocationDisplayAutoPanMode.recenter,
+                    child: Text('Recenter'),
+                  ),
+                  DropdownMenuItem(
+                    value: LocationDisplayAutoPanMode.navigation,
+                    child: Text('Navigation'),
+                  ),
+                  DropdownMenuItem(
+                    value: LocationDisplayAutoPanMode.compassNavigation,
+                    child: Text('Compass'),
                   ),
                 ],
               ),
-            )
-          ],
-        ),
+            ],
+          ),
+        ],
       ),
     );
   }
 
   void onMapViewReady() async {
-    final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISImageryStandard);
+    // Create a map with the Navigation Night basemap style.
+    _mapViewController.arcGISMap =
+        ArcGISMap.withBasemapStyle(BasemapStyle.arcGISNavigationNight);
 
-    map.initialViewpoint = Viewpoint.fromCenter(
-      ArcGISPoint(
-        x: -110.8258,
-        y: 32.154089,
-        spatialReference: SpatialReference.wgs84,
-      ),
-      scale: 2e4,
-    );
+    // Set the initial system location data source and auto-pan mode.
+    _mapViewController.locationDisplay.dataSource = _locationDataSource;
+    _mapViewController.locationDisplay.autoPanMode =
+        LocationDisplayAutoPanMode.recenter;
 
-    _mapViewController.arcGISMap = map;
-    await _initLocationDisplay();
-  }
-
-  Future<void> _initLocationDisplay() async {
-    final locationDisplay = _mapViewController.locationDisplay;
-    locationDisplay.dataSource = _locationDataSource;
-    locationDisplay.useCourseSymbolOnMovement = true;
-    locationDisplay.autoPanMode = LocationDisplayAutoPanMode.compassNavigation;
-
-    await _initLocationDataSource();
-  }
-
-  Future<void> _initLocationDataSource() async {
-    _statusSubscription = _locationDataSource.onStatusChanged.listen((_) {
-      // Redraw the screen when the LDS status changes
-      setState(() {});
+    // Subscribe to status changes and changes to the auto-pan mode.
+    _statusSubscription = _locationDataSource.onStatusChanged.listen((status) {
+      setState(() => _status = status);
     });
+    setState(() => _status = _locationDataSource.status);
+    _autoPanModeSubscription =
+        _mapViewController.locationDisplay.onAutoPanModeChanged.listen((mode) {
+      setState(() => _autoPanMode = mode);
+    });
+    setState(
+        () => _autoPanMode = _mapViewController.locationDisplay.autoPanMode);
 
+    // Attempt to start the location data source (this will prompt the user for permission).
     try {
       await _locationDataSource.start();
-      _locationSubscription = _locationDataSource.onLocationChanged
-          .listen(_handleLdsLocationChange);
     } on ArcGISException catch (e) {
-      setState(() {
-        _ldsException = e;
-      });
+      if (mounted) {
+        showDialog(
+          context: context,
+          builder: (_) => AlertDialog(content: Text(e.message)),
+        );
+      }
     }
-  }
 
-  void _handleLdsLocationChange(ArcGISLocation location) {
-    setState(() {
-      _latitude = location.position.y;
-      _longitude = location.position.x;
-      _heading = location.course;
-    });
+    // Set the ready state variable to true to enable the UI.
+    setState(() => _ready = true);
   }
 }
