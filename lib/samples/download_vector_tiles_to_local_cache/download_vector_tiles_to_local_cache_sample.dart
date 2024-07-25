@@ -181,7 +181,9 @@ class _DownloadVectorTilesToLocalCacheSampleState
 
   // Cancel the export vector tiles job.
   void cancelDownloadingJob() async {
+    setState(() => _progress = 0.0);
     setState(() => _isJobStarted = false);
+
     await _exportVectorTilesJob!.cancel();
   }
 
@@ -246,12 +248,14 @@ class _DownloadVectorTilesToLocalCacheSampleState
               ],
             ),
           );
+          setState(() => _isJobStarted = false);
         } else if (status == JobStatus.succeeded) {
           // If the job succeeded, load the downloaded vector tiles into the map view.
           final result =
               _exportVectorTilesJob?.result as ExportVectorTilesResult;
           _loadExportedVectorTiles(result);
           setState(() => _previewMap = true);
+          setState(() => _isJobStarted = false);
         }
       },
     );
