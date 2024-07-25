@@ -33,6 +33,37 @@
     "title": "Add feature collection layer from table",
     "key": "add_feature_collection_layer_from_table"
   },
+  "add_feature_layer_with_time_offset": {
+    "category": "Maps",
+    "description": "Display a time-enabled feature layer with a time offset.",
+    "ignore": false,
+    "images": [
+      "add_feature_layer_with_time_offset.png"
+    ],
+    "keywords": [
+      "change",
+      "range",
+      "time",
+      "time extent",
+      "time offset",
+      "time-aware",
+      "time-enabled",
+      "FeatureLayer",
+      "MapView",
+      "TimeExtent"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+      "FeatureLayer",
+      "MapView",
+      "TimeExtent"
+    ],
+    "snippets": [
+      "add_feature_layer_with_time_offset_sample.dart"
+    ],
+    "title": "Add feature layer with time offset",
+    "key": "add_feature_layer_with_time_offset"
+  },
   "add_feature_layers": {
     "category": "Layers",
     "description": "Display feature layers from various data sources.",
@@ -880,14 +911,28 @@
   },
   "set_basemap": {
     "category": "Maps",
-    "description": "Set a map's basemap. A basemap is beneath all layers on a map and is used to provide visual reference for the operational layers.",
+    "description": "Change a map's basemap. A basemap is beneath all layers on a map and is used to provide visual reference for the operational layers.",
     "ignore": false,
-    "images": [],
-    "keywords": [],
+    "images": [
+      "set_basemap.png"
+    ],
+    "keywords": [
+      "basemap",
+      "map",
+      "ArcGISMap",
+      "ArcGISMapViewController",
+      "Basemap"
+    ],
     "redirect_from": [],
-    "relevant_apis": [],
-    "snippets": [],
-    "title": "Set Basemap",
+    "relevant_apis": [
+      "ArcGISMap",
+      "ArcGISMapViewController",
+      "Basemap"
+    ],
+    "snippets": [
+      "set_basemap_sample.dart"
+    ],
+    "title": "Set basemap",
     "key": "set_basemap"
   },
   "show_device_location": {
@@ -926,11 +971,47 @@
     "category": "Maps",
     "description": "Display your device's location history on the map.",
     "ignore": false,
-    "images": [],
-    "keywords": [],
+    "images": [
+      "show_device_location_history.png"
+    ],
+    "keywords": [
+      "GPS",
+      "bread crumb",
+      "breadcrumb",
+      "history",
+      "movement",
+      "navigation",
+      "real-time",
+      "trace",
+      "track",
+      "trail",
+      "Graphic",
+      "GraphicsOverlay",
+      "LocationDataSource",
+      "LocationDisplay",
+      "LocationDisplayAutoPanMode",
+      "PolylineBuilder",
+      "SimpleLineSymbol",
+      "SimpleMarkerSymbol",
+      "SimpleRenderer",
+      "SimulatedLocationDataSource"
+    ],
     "redirect_from": [],
-    "relevant_apis": [],
-    "snippets": [],
+    "relevant_apis": [
+      "Graphic",
+      "GraphicsOverlay",
+      "LocationDataSource",
+      "LocationDisplay",
+      "LocationDisplayAutoPanMode",
+      "PolylineBuilder",
+      "SimpleLineSymbol",
+      "SimpleMarkerSymbol",
+      "SimpleRenderer",
+      "SimulatedLocationDataSource"
+    ],
+    "snippets": [
+      "show_device_location_history_sample.dart"
+    ],
     "title": "Show device location history",
     "key": "show_device_location_history"
   },

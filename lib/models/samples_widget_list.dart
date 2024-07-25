@@ -1,4 +1,5 @@
 import 'package:arcgis_maps_sdk_flutter_samples/samples/add_feature_collection_layer_from_table/add_feature_collection_layer_from_table_sample.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/samples/add_feature_layer_with_time_offset/add_feature_layer_with_time_offset_sample.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/add_feature_layers/add_feature_layers_sample.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/add_tiled_layer/add_tiled_layer_sample.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/add_tiled_layer_as_basemap/add_tiled_layer_as_basemap_sample.dart';
@@ -44,6 +45,7 @@ import 'package:flutter/material.dart';
 const sampleWidgets = <String, Widget>{
   'add_feature_collection_layer_from_table':
       AddFeatureCollectionLayerFromTableSample(),
+  'add_feature_layer_with_time_offset': AddFeatureLayerWithTimeOffsetSample(),
   'add_feature_layers': AddFeatureLayersSample(),
   'add_tiled_layer': AddTiledLayerSample(),
   'add_tiled_layer_as_basemap': AddTiledLayerAsBasemapSample(),
