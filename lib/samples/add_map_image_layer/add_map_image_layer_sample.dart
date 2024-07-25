@@ -29,40 +29,19 @@ class _AddMapImageLayerSampleState extends State<AddMapImageLayerSample>
     with SampleStateSupport {
   // Create a map view controller.
   final _mapViewController = ArcGISMapView.createController();
-  // A flag for when the map view is ready.
-  var _ready = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        top: false,
-        child: Stack(
-          children: [
-            // Add a map view to the widget tree and set a controller.
-            ArcGISMapView(
-              controllerProvider: () => _mapViewController,
-              onMapViewReady: _onMapViewReady,
-            ),
-            // Display a progress indicator and prevent interaction until state is ready.
-            Visibility(
-              visible: !_ready,
-              child: SizedBox.expand(
-                child: Container(
-                  color: Colors.white30,
-                  child: const Center(
-                    child: CircularProgressIndicator(),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
+      // Add a map view to the widget tree and set a controller.
+      body: ArcGISMapView(
+        controllerProvider: () => _mapViewController,
+        onMapViewReady: onMapViewReady,
+      ), 
     );
   }
 
-  void _onMapViewReady() async {
+  void onMapViewReady() async {
     // Create a map with a map image layer.
     final map = ArcGISMap();
     // Create a map image layer with a uri.
@@ -70,13 +49,11 @@ class _AddMapImageLayerSampleState extends State<AddMapImageLayerSample>
       Uri.parse(
           'https://sampleserver5.arcgisonline.com/arcgis/rest/services/Elevation/WorldElevations/MapServer'),
     );
-    // Set the map on the map view controller.
-    _mapViewController.arcGISMap = map;
     // Add the map image layer to the map.
     map.operationalLayers.add(mapImageLayer);
     // Load the map image layer.
     await mapImageLayer.load();
-    // Set the state to ready.
-    setState(() => _ready = true);
+    // Set the map on the map view controller.
+    _mapViewController.arcGISMap = map;
   }
 }
