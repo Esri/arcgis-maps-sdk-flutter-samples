@@ -36,20 +36,21 @@ class _DownloadVectorTilesToLocalCacheSampleState
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
   // The graphics overlay to show a red outline square around the vector tiles
-  // to be downloaded
+  // to be downloaded.
   final _downloadVectorTilesOverlay = GraphicsOverlay();
   // A flag for when the map view is ready and controls can be used.
   var _ready = false;
   // A progress number for the download job.
   var _progress = 0.0;
-  // A instance of the ExportVectorTilesJob
+  // A instance of the ExportVectorTilesJob.
   ExportVectorTilesJob? _exportVectorTilesJob;
-  // A controller to emit progress values to the progress dialog
-  final downloadProgressController = StreamController<double>();
-  // A key to access the map view widget
+  // A key to access the map view widget.
   final _mapKey = GlobalKey();
+  // A flag to indicate if the preview map is open.
   var _previewMap = false;
-
+  // A flag to indicate if the download job has started.
+  var _isJobStarted = false;
+  // The initial Viewpoint for the map view.
   final initialViewpoint = Viewpoint.fromCenter(
     ArcGISPoint(
       x: -117.195800,
@@ -61,7 +62,6 @@ class _DownloadVectorTilesToLocalCacheSampleState
 
   @override
   void dispose() {
-    downloadProgressController.close();
     super.dispose();
   }
 
@@ -91,12 +91,19 @@ class _DownloadVectorTilesToLocalCacheSampleState
                             child: const Text('Close Preview Vector Tiles'),
                           )
                         : ElevatedButton(
-                            onPressed: downloadVectorTiles,
+                            onPressed:
+                                _isJobStarted ? null : startDownloadVectorTiles,
                             child: const Text('Download Vector Tiles'),
                           ),
                   ],
                 ),
               ],
+            ),
+            Visibility(
+              visible: _isJobStarted,
+              child: Center(
+                child: _getProgressIndicator(),
+              ),
             ),
             // Display a progress indicator and prevent interaction until state is ready.
             Visibility(
@@ -156,21 +163,6 @@ class _DownloadVectorTilesToLocalCacheSampleState
     setState(() => _ready = true);
   }
 
-  // Show a dialog with a progress indicator.
-  void _showDownloadProgressDialog() {
-    if (!mounted) return;
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) {
-        return ProgressWidget(
-          stream: downloadProgressController.stream,
-          cancel: cancel,
-        );
-      },
-    );
-  }
-
   // Reset the map into initial state.
   void closePreviewVectorTiles() {
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISStreetsNight);
@@ -184,18 +176,19 @@ class _DownloadVectorTilesToLocalCacheSampleState
       );
     }
     setState(() => _previewMap = false);
+    setState(() => _isJobStarted = false);
   }
 
   // Cancel the export vector tiles job.
-  void cancel() {
-    if (_exportVectorTilesJob != null &&
-        _exportVectorTilesJob?.status == JobStatus.started) {
-      _exportVectorTilesJob?.cancel();
-    }
+  void cancelDownloadingJob() async {
+    setState(() => _isJobStarted = false);
+    await _exportVectorTilesJob!.cancel();
   }
 
   // Download the vector tiles for the outlined region.
-  void downloadVectorTiles() async {
+  void startDownloadVectorTiles() async {
+    setState(() => _isJobStarted = true);
+
     final downloadArea = downloadAreaEnvelope();
     final vectorTileLayer = _mapViewController.arcGISMap!.basemap!.baseLayers[0]
         as ArcGISVectorTiledLayer;
@@ -227,37 +220,44 @@ class _DownloadVectorTilesToLocalCacheSampleState
 
     // Listen to the job's progress, status, and completion.
     _exportVectorTilesJob?.onProgressChanged.listen((progress) {
-      _progress = progress * 0.01;
-      downloadProgressController.add(_progress);
+      setState(() => _progress = progress * 0.01);
     });
 
     // Listen to the job's status and handle the result.
-    _exportVectorTilesJob?.onStatusChanged.listen((status) {
-      if (status == JobStatus.failed || status == JobStatus.canceling) {
-        showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: const Text('Error'),
-            content: Text(
-              'Failed to download vector tiles:'
-              '${_exportVectorTilesJob?.error?.message}',
+    _exportVectorTilesJob?.onStatusChanged.listen(
+      (status) {
+        if (status == JobStatus.failed) {
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title:
+                  Text('Info', style: Theme.of(context).textTheme.titleMedium),
+              content: Text(
+                'Failed to download vector tiles:\n'
+                '${_exportVectorTilesJob?.error?.message}',
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('Close'),
+                ),
+              ],
             ),
-          ),
-        );
-      }
-
-      if (status == JobStatus.succeeded) {
-        final result = _exportVectorTilesJob?.result as ExportVectorTilesResult;
-        _loadExportedVectorTiles(result);
-        setState(() => _previewMap = true);
-      }
-    });
+          );
+        } else if (status == JobStatus.succeeded) {
+          // If the job succeeded, load the downloaded vector tiles into the map view.
+          final result =
+              _exportVectorTilesJob?.result as ExportVectorTilesResult;
+          _loadExportedVectorTiles(result);
+          setState(() => _previewMap = true);
+        }
+      },
+    );
 
     // Start the export vector tiles job.
     _exportVectorTilesJob?.start();
-
-    // Show the download progress dialog.
-    _showDownloadProgressDialog();
   }
 
   // Update the download area graphic on the map view.
@@ -303,8 +303,10 @@ class _DownloadVectorTilesToLocalCacheSampleState
     final directory = await getApplicationDocumentsDirectory();
     final resourceDirectory = Directory(
         '${directory.path}${Platform.pathSeparator}StyleItemResources');
-    await resourceDirectory.delete(recursive: true);
-    await resourceDirectory.create(recursive: true);
+    if (resourceDirectory.existsSync()) {
+      resourceDirectory.deleteSync(recursive: true);
+    }
+    resourceDirectory.createSync(recursive: true);
 
     return resourceDirectory.path;
   }
@@ -324,6 +326,39 @@ class _DownloadVectorTilesToLocalCacheSampleState
       ),
     );
   }
+
+  Widget _getProgressIndicator() {
+    return Container(
+      color: Colors.white,
+      constraints: BoxConstraints(maxWidth: 300),
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            'Downloading...',
+            style: Theme.of(context).textTheme.labelLarge,
+          ),
+          const SizedBox(height: 20),
+          Text(
+            '${(_progress * 100).toStringAsFixed(0)}% completed',
+            style: Theme.of(context).textTheme.labelMedium,
+          ),
+          const SizedBox(height: 20),
+          LinearProgressIndicator(
+            value: _progress,
+            backgroundColor: Colors.grey[200],
+            color: Colors.blue,
+          ),
+          const SizedBox(height: 20),
+          ElevatedButton(
+            onPressed: cancelDownloadingJob,
+            child: const Text('Cancel Job'),
+          ),
+        ],
+      ),
+    );
+  }
 }
 
 extension on Rect {
@@ -338,80 +373,6 @@ extension on Rect {
       shrinkHeight / 2,
       right - shrinkWidth / 2,
       bottom - shrinkHeight / 2,
-    );
-  }
-}
-
-//
-// A stateful widget to display a progress bar.
-//
-class ProgressWidget extends StatefulWidget {
-  final Stream<double> stream;
-  final Function cancel;
-
-  ProgressWidget({required this.stream, required this.cancel});
-
-  @override
-  _ProgressWidgetState createState() => _ProgressWidgetState();
-}
-
-class _ProgressWidgetState extends State<ProgressWidget>
-    with SampleStateSupport {
-  double _progress = 0.0;
-
-  @override
-  void initState() {
-    widget.stream.listen((data) {
-      _startProgress(data);
-    });
-    super.initState();
-  }
-
-  void _startProgress(double progress) {
-    setState(() {
-      _progress = progress;
-      if (_progress >= 1.0) {
-        Navigator.of(context).pop();
-      }
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Dialog(
-      child: Container(
-        color: Colors.white,
-        constraints: BoxConstraints(maxWidth: 300),
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              'Downloading...',
-              style: Theme.of(context).textTheme.labelLarge,
-            ),
-            const SizedBox(height: 20),
-            Text(
-              '${(_progress * 100).toStringAsFixed(1)}% completed',
-              style: Theme.of(context).textTheme.labelMedium,
-            ),
-            const SizedBox(height: 20),
-            LinearProgressIndicator(
-              value: _progress,
-              backgroundColor: Colors.grey[200],
-              color: Colors.blue,
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                widget.cancel;
-                Navigator.of(context).pop();
-              },
-              child: const Text('Cancel Job'),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }
