@@ -50,7 +50,9 @@ class _AddMapImageLayerSampleState extends State<AddMapImageLayerSample>
               child: SizedBox.expand(
                 child: Container(
                   color: Colors.white30,
-                  child: const Center(child: CircularProgressIndicator()),
+                  child: const Center(
+                    child: CircularProgressIndicator(),
+                  ),
                 ),
               ),
             ),
@@ -64,8 +66,10 @@ class _AddMapImageLayerSampleState extends State<AddMapImageLayerSample>
     // Create a map with a map image layer.
     final map = ArcGISMap();
     // Create a map image layer with a uri.
-    final mapImageLayer = ArcGISMapImageLayer.withUri(Uri.parse(
-        'https://sampleserver5.arcgisonline.com/arcgis/rest/services/Elevation/WorldElevations/MapServer'));
+    final mapImageLayer = ArcGISMapImageLayer.withUri(
+      Uri.parse(
+          'https://sampleserver5.arcgisonline.com/arcgis/rest/services/Elevation/WorldElevations/MapServer'),
+    );
     // Set the map on the map view controller.
     _mapViewController.arcGISMap = map;
     // Add the map image layer to the map.
@@ -73,8 +77,6 @@ class _AddMapImageLayerSampleState extends State<AddMapImageLayerSample>
     // Load the map image layer.
     await mapImageLayer.load();
     // Set the state to ready.
-    setState(() {
-      _ready = true;
-    });
+    setState(() => _ready = true);
   }
 }
