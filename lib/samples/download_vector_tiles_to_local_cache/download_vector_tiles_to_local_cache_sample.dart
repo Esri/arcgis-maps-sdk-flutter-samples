@@ -45,10 +45,25 @@ class _DownloadVectorTilesToLocalCacheSampleState
   // A instance of the ExportVectorTilesJob
   ExportVectorTilesJob? _exportVectorTilesJob;
   // A controller to emit progress values to the progress dialog
-  final controller = StreamController<double>();
+  final downloadProgressController = StreamController<double>();
   // A key to access the map view widget
   final _mapKey = GlobalKey();
   var _previewMap = false;
+
+  final initialViewpoint = Viewpoint.fromCenter(
+    ArcGISPoint(
+      x: -117.195800,
+      y: 34.057386,
+      spatialReference: SpatialReference.wgs84,
+    ),
+    scale: 100000,
+  );
+
+  @override
+  void dispose() {
+    downloadProgressController.close();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -89,7 +104,9 @@ class _DownloadVectorTilesToLocalCacheSampleState
               child: SizedBox.expand(
                 child: Container(
                   color: Colors.white30,
-                  child: const Center(child: CircularProgressIndicator()),
+                  child: const Center(
+                    child: CircularProgressIndicator(),
+                  ),
                 ),
               ),
             ),
@@ -106,14 +123,7 @@ class _DownloadVectorTilesToLocalCacheSampleState
     _mapViewController.arcGISMap = map;
     _mapViewController.interactionOptions.rotateEnabled = false;
     _mapViewController.setViewpoint(
-      Viewpoint.fromCenter(
-        ArcGISPoint(
-          x: -117.195800,
-          y: 34.057386,
-          spatialReference: SpatialReference.wgs84,
-        ),
-        scale: 100000,
-      ),
+      initialViewpoint,
     );
 
     // Configure the graphics overlay for the geodetic buffers.
@@ -131,10 +141,8 @@ class _DownloadVectorTilesToLocalCacheSampleState
     _downloadVectorTilesOverlay.opacity = 0.5;
 
     // Add the overlays to the map view.
-    _mapViewController.graphicsOverlays.addAll(
-      [
-        _downloadVectorTilesOverlay,
-      ],
+    _mapViewController.graphicsOverlays.add(
+      _downloadVectorTilesOverlay,
     );
 
     // Listen to the viewpoint changed event to update the download area graphic.
@@ -156,7 +164,7 @@ class _DownloadVectorTilesToLocalCacheSampleState
       barrierDismissible: false,
       builder: (context) {
         return ProgressWidget(
-          stream: controller.stream,
+          stream: downloadProgressController.stream,
           cancel: cancel,
         );
       },
@@ -165,7 +173,16 @@ class _DownloadVectorTilesToLocalCacheSampleState
 
   // Reset the map into initial state.
   void closePreviewVectorTiles() {
-    onMapViewReady();
+    final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISStreetsNight);
+    _mapViewController.arcGISMap = map;
+    _mapViewController.setViewpoint(
+      initialViewpoint,
+    );
+    if (_mapViewController.graphicsOverlays.isEmpty) {
+      _mapViewController.graphicsOverlays.add(
+        _downloadVectorTilesOverlay,
+      );
+    }
     setState(() => _previewMap = false);
   }
 
@@ -211,24 +228,27 @@ class _DownloadVectorTilesToLocalCacheSampleState
     // Listen to the job's progress, status, and completion.
     _exportVectorTilesJob?.onProgressChanged.listen((progress) {
       _progress = progress * 0.01;
-      controller.add(_progress);
+      downloadProgressController.add(_progress);
     });
 
     // Listen to the job's status and handle the result.
     _exportVectorTilesJob?.onStatusChanged.listen((status) {
-      if (status == JobStatus.failed) {
+      if (status == JobStatus.failed || status == JobStatus.canceling) {
         showDialog(
-            context: context,
-            builder: (context) => AlertDialog(
-                  title: const Text('Error'),
-                  content: Text(
-                      'Failed to download vector tiles: ${_exportVectorTilesJob?.error?.message}'),
-                ));
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Error'),
+            content: Text(
+              'Failed to download vector tiles:'
+              '${_exportVectorTilesJob?.error?.message}',
+            ),
+          ),
+        );
       }
 
       if (status == JobStatus.succeeded) {
         final result = _exportVectorTilesJob?.result as ExportVectorTilesResult;
-        _reloadVectorTiles(result);
+        _loadExportedVectorTiles(result);
         setState(() => _previewMap = true);
       }
     });
@@ -242,6 +262,8 @@ class _DownloadVectorTilesToLocalCacheSampleState
 
   // Update the download area graphic on the map view.
   void updateDownloadAreaGraphic() {
+    if (_mapViewController.graphicsOverlays.isEmpty) return;
+
     // Clear the previous download area.
     _downloadVectorTilesOverlay.graphics.clear();
 
@@ -276,6 +298,7 @@ class _DownloadVectorTilesToLocalCacheSampleState
     return Envelope.fromPoints(locationTopLeft, locationBottomRight);
   }
 
+  // Create a directory to store the downloaded vector tiles.
   Future<String> _getDownloadDirectory() async {
     final directory = await getApplicationDocumentsDirectory();
     final resourceDirectory = Directory(
@@ -286,13 +309,15 @@ class _DownloadVectorTilesToLocalCacheSampleState
     return resourceDirectory.path;
   }
 
-  void _reloadVectorTiles(ExportVectorTilesResult result) {
+  // Load the downloaded vector tiles into the map view.
+  void _loadExportedVectorTiles(ExportVectorTilesResult result) {
     final vectorTilesCache = result.vectorTileCache;
     final itemResourceCache = result.itemResourceCache;
     final vectorTileLayer = ArcGISVectorTiledLayer.withVectorTileCache(
       vectorTilesCache!,
       itemResourceCache: itemResourceCache,
     );
+
     _mapViewController.arcGISMap = ArcGISMap.withBasemap(
       Basemap.withBaseLayer(
         vectorTileLayer,
@@ -330,12 +355,13 @@ class ProgressWidget extends StatefulWidget {
   _ProgressWidgetState createState() => _ProgressWidgetState();
 }
 
-class _ProgressWidgetState extends State<ProgressWidget> {
+class _ProgressWidgetState extends State<ProgressWidget>
+    with SampleStateSupport {
   double _progress = 0.0;
 
   @override
   void initState() {
-    widget.stream?.listen((data) {
+    widget.stream.listen((data) {
       _startProgress(data);
     });
     super.initState();

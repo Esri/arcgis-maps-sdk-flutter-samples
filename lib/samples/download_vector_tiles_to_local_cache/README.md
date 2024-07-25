@@ -2,7 +2,7 @@
 
 Export tiles from an online vector tile service.
 
-![Image of download vector tiles to local cache](DownloadVectorTilesToLocalCache.png)
+![Image of download vector tiles to local cache](download_vector_tiles_to_local_cache.png)
 
 ## Use case
 
@@ -10,7 +10,7 @@ Field workers with limited network connectivity can use exported vector tiles as
 
 ## How to use the sample
 
-When the vector tiled layer loads, zoom in to the extent you want to export. The red box shows the extent that will be exported. Click the "Export Vector Tiles" button to start the job. An error will show if the extent is larger than the maximum limit allowed. When finished, a dialog will show the exported result in a new map view.
+When the vector tiled layer loads, zoom in to the extent you want to export. The red box shows the extent that will be exported. Tap the "Download Vector Tiles" button to start the job. An error will show if the extent is larger than the maximum limit allowed. When finished, the downloaded vector tiles cache will be displayed in a new map the map view.
 
 ## How it works
 
