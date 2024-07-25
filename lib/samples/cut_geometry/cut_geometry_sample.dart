@@ -14,12 +14,19 @@ class _CutGeometrySampleState extends State<CutGeometrySample>
     with SampleStateSupport {
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
+
   // A flag for when the map view is ready and controls can be used.
   var _ready = false;
 
+  // A flag to track if the geometry has been cut.
+  var _geometryCut = false;
+
+  // The graphics for the original state of the sample.
   late final Graphic _lakeGraphic;
   late final Graphic _borderGraphic;
-  final graphicsOverlay = GraphicsOverlay();
+
+  // Graphics overlay to present the graphics for the sample.
+  final _graphicsOverlay = GraphicsOverlay();
 
   @override
   Widget build(BuildContext context) {
@@ -35,16 +42,18 @@ class _CutGeometrySampleState extends State<CutGeometrySample>
                   child: ArcGISMapView(
                     controllerProvider: () => _mapViewController,
                     onMapViewReady: onMapViewReady,
-                    onTap: onTap,
                   ),
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    // A button to perform a task.
+                    // Button to trigger the cut function or reset to the original state.
                     ElevatedButton(
-                      onPressed: performTask,
-                      child: const Text('Cut'),
+                      onPressed: _geometryCut ? resetGeometry : cutGeometry,
+                      child: _geometryCut
+                          ? const Text('Reset')
+                          : const Text('Cut'),
                     ),
                   ],
                 ),
@@ -66,9 +75,13 @@ class _CutGeometrySampleState extends State<CutGeometrySample>
     );
   }
 
-  void onMapViewReady() async {
+  void onMapViewReady() {
+    // Create a map with a topographic basemap style and add it to the map view controller.
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic);
     _mapViewController.arcGISMap = map;
+
+    // Add the graphics overlay to the map view controller.
+    _mapViewController.graphicsOverlays.add(_graphicsOverlay);
 
     // Initialize the graphics for the sample.
     initializeGraphics();
@@ -82,29 +95,59 @@ class _CutGeometrySampleState extends State<CutGeometrySample>
     setState(() => _ready = true);
   }
 
-  void onTap(Offset offset) {
-    print('Tapped at $offset');
-  }
-
-  void performTask() async {
-    setState(() => _ready = false);
-    // Perform some task.
-    print('Perform task');
-    await Future.delayed(const Duration(seconds: 5));
-    setState(() => _ready = true);
-  }
-
+  // Initializes the graphics for the sample and adds them to the map.
   void initializeGraphics() {
     _initLakeGraphic();
     _initBorderGraphic();
 
     // Add the graphics to the graphics overlay.
-    graphicsOverlay.graphics.addAll([_lakeGraphic, _borderGraphic]);
-
-    // Add the graphics overlay to the map view controller.
-    _mapViewController.graphicsOverlays.add(graphicsOverlay);
+    _graphicsOverlay.graphics.addAll([_lakeGraphic, _borderGraphic]);
   }
 
+  // Cut the lake geometry with the border geometry. The results
+  // of the cut will be displayed on the map.
+  void cutGeometry() {
+    // Cut the lake geometry with the border geometry.
+    final cutGeometries = GeometryEngine.cut(
+      geometry: _lakeGraphic.geometry!,
+      cutter: _borderGraphic.geometry! as Polyline,
+    );
+
+    // Create graphics for the cut geometries.
+    final canadianGraphic = Graphic(
+      geometry: cutGeometries.first,
+      symbol: SimpleFillSymbol(
+        style: SimpleFillSymbolStyle.backwardDiagonal,
+        color: Colors.green,
+      ),
+    );
+    final usaGraphic = Graphic(
+      geometry: cutGeometries.last,
+      symbol: SimpleFillSymbol(
+        style: SimpleFillSymbolStyle.forwardDiagonal,
+        color: Colors.red,
+      ),
+    );
+
+    // Add the graphics for the cut geometries to the graphics overlay.
+    _graphicsOverlay.graphics.addAll([canadianGraphic, usaGraphic]);
+
+    // Update the state to reflect the geometry cut.
+    setState(() => _geometryCut = true);
+  }
+
+  // Reset the graphics to the original state.
+  void resetGeometry() {
+    // Clear the graphics overlay and add the original graphics.
+    _graphicsOverlay.graphics.clear();
+    _graphicsOverlay.graphics.addAll([_lakeGraphic, _borderGraphic]);
+
+    // Update the state to reflect the geometry reset.
+    setState(() => _geometryCut = false);
+  }
+
+  // Utility function to build the Polygon geometry and create the Graphic for
+  // the lake. This geometry will be cut by the border geometry.
   void _initLakeGraphic() {
     // Build the Polygon for the lake.
     final lakePolygonBuilder = PolygonBuilder.fromSpatialReference(
@@ -167,8 +210,6 @@ class _CutGeometrySampleState extends State<CutGeometrySample>
         .addPoint(ArcGISPoint(x: -10111283.079633, y: 5933406.315128));
     lakePolygonBuilder
         .addPoint(ArcGISPoint(x: -10214761.742852, y: 5888134.399970));
-    lakePolygonBuilder
-        .addPoint(ArcGISPoint(x: -10254374.668616, y: 5901877.659929));
 
     // Generate the polygon graphic.
     _lakeGraphic = Graphic(
@@ -184,6 +225,8 @@ class _CutGeometrySampleState extends State<CutGeometrySample>
     );
   }
 
+  // Utility funciton to build the Polyline geometry and create the Graphic for
+  // the border. This geometry will be used to cut the lake geometry.
   void _initBorderGraphic() {
     // Build the Polyline geometry for the border.
     final borderPolylineBuilder = PolylineBuilder.fromSpatialReference(
