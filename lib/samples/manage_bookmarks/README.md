@@ -6,7 +6,7 @@ Access and create bookmarks on a map.
 
 ## Use case
 
-Bookmarks are used for easily storing and accessing saved locations on the map. Bookmarks are of interest in educational apps (e.g., touring historical sites) or more specifically, for a land management company wishing to visually monitor flood levels over time at a particular location. These locations can be saved as bookmarks and revisited easily each time their basemap data has been updated (e.g. working with up-to-date satellite imagery to monitor water levels).
+Bookmarks are used for easily storing and accessing saved locations on the map. Bookmarks are of interest in educational apps (e.g. touring historical sites) or more specifically, for a land management company wishing to visually monitor flood levels over time at a particular location. These locations can be saved as bookmarks and revisited easily each time their basemap data has been updated (e.g. working with up-to-date satellite imagery to monitor water levels).
 
 ## How to use the sample
 
