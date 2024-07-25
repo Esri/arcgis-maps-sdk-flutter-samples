@@ -180,7 +180,7 @@ class _DownloadPreplannedMapAreaSampleState
             trailing: _mapViewController.arcGISMap == _webMap
                 ? const Icon(Icons.check)
                 : null,
-            onTap: () => _mapViewController.arcGISMap == _webMap
+            onTap: () => _mapViewController.arcGISMap != _webMap
                 ? setMapAndViewpoint(_webMap)
                 : null,
           ),
