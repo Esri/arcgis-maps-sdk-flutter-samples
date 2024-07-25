@@ -10,7 +10,7 @@ Bookmarks are used for easily storing and accessing saved locations on the map. 
 
 ## How to use the sample
 
-The map in the sample comes pre-populated with a set of bookmarks. To access a bookmark and move to that location, tap on a bookmark's name from the 'Bookmarks' list. To add a bookmark, pan and/or zoom to a new location and tap the 'Add Bookmark' button. Enter a unique name for the bookmark and tap Add, and the bookmark will be added to the list.
+The map in the sample comes pre-populated with a set of bookmarks. To access a bookmark and move to that location, tap on a bookmark's name from the 'Bookmarks' list. To add a bookmark, pan and/or zoom to a new location and tap the 'Add Bookmark' button. Enter a unique name for the bookmark and tap 'Add', and the bookmark will be added to the list.
 
 ## How it works
 
