@@ -89,9 +89,6 @@ class _ManageBookmarksSampleState extends State<ManageBookmarksSample> {
   // The build method for the Bookmarks bottom sheet.
   Widget buildBookmarks(BuildContext context) {
     return Container(
-      constraints: BoxConstraints(
-        maxHeight: MediaQuery.sizeOf(context).height * 0.5,
-      ),
       padding: EdgeInsets.fromLTRB(
         20.0,
         0.0,
@@ -102,42 +99,46 @@ class _ManageBookmarksSampleState extends State<ManageBookmarksSample> {
               View.of(context).devicePixelRatio,
         ),
       ),
-      child: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Row(
-              children: [
-                Text(
-                  'Bookmarks',
-                  style: Theme.of(context).textTheme.titleLarge,
-                ),
-                const Spacer(),
-                IconButton(
-                  icon: const Icon(Icons.close),
-                  onPressed: () => setState(() => _bookmarksVisible = false),
-                ),
-              ],
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            children: [
+              Text(
+                'Bookmarks',
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
+              const Spacer(),
+              IconButton(
+                icon: const Icon(Icons.close),
+                onPressed: () => setState(() => _bookmarksVisible = false),
+              ),
+            ],
+          ),
+          Container(
+            constraints: BoxConstraints(
+              maxHeight: MediaQuery.sizeOf(context).height * 0.4,
             ),
-            // Build the list of bookmarks.
-            ListView.builder(
-              physics: const NeverScrollableScrollPhysics(),
-              shrinkWrap: true,
-              itemCount: _bookmarks.length,
-              itemBuilder: (context, index) {
-                // When a bookmark is tapped, set the bookmark on the map view.
-                return TextButton(
-                  onPressed: () =>
-                      _mapViewController.setBookmark(_bookmarks[index]),
-                  style: const ButtonStyle(
-                    alignment: Alignment.centerLeft,
-                  ),
-                  child: Text(_bookmarks[index].name),
-                );
-              },
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: _bookmarks.map(
+                  (bookmark) {
+                    // When a bookmark is tapped, set the bookmark on the map view.
+                    return TextButton(
+                      onPressed: () => _mapViewController.setBookmark(bookmark),
+                      style: const ButtonStyle(
+                        alignment: Alignment.centerLeft,
+                      ),
+                      child: Text(bookmark.name),
+                    );
+                  },
+                ).toList(),
+              ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
