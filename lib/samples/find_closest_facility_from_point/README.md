@@ -15,7 +15,7 @@ Tap on the 'Solve Routes' button to solve and display the route from each incide
 ## How it works
 
 1. Create a `ClosestFacilityTask` using a URL from an online service.
-2. Create a `FeatureTable` for each of the `Facilities` and `Incidents` services using `ServiceFeatureTable.withUri(uri);`.
+2. Create a `FeatureTable` for each of the `Facilities` and `Incidents` services using `ServiceFeatureTable.withUri(uri)`.
 3. Get the default set of `ClosestFacilityParameters` from the task using `ClosestFacilityTask.createDefaultParameters()`.
 4. Add the facilities table to the task parameters, along with `QueryParameters` defined to query all features using `ClosestFacilityParameters.setFacilitiesWithFeatureTable(featureTable, queryParameters)`.
 5. Add the incidents table to the task parameters, along with `QueryParameters` defined to query all features using `ClosestFacilityParameters.setIncidentsWithFeatureTable(featureTable, queryParameters)`.

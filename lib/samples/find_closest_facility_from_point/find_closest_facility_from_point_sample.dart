@@ -46,8 +46,9 @@ class _FindClosestFacilityFromPointSampleState
   // Create a graphics overlay for the route.
   final _routeGraphicsOverlay = GraphicsOverlay();
   // Create a flag to track whether the route has been solved.
-  bool _routeSolved = false;
-  bool _ready = false;
+  var _routeSolved = false;
+  // A flag for when the map view is ready and controls can be used.
+  var _ready = false;
   // Create parameters for the closest facility task.
   late final ClosestFacilityParameters _closestFacilityParameters;
   // Create a symbol for the route line.
@@ -86,6 +87,7 @@ class _FindClosestFacilityFromPointSampleState
                 ),
               ],
             ),
+            // Display a progress indicator and prevent interaction until state is ready.
             Visibility(
               visible: !_ready,
               child: SizedBox.expand(
@@ -145,20 +147,20 @@ class _FindClosestFacilityFromPointSampleState
       incidentsLayer.load(),
     ]);
 
-    // Get the extent from the layers and use the combination as the viewpoint geometry
+    // Get the extent from the layers and use the combination as the viewpoint geometry.
     final mapExtent = GeometryEngine.combineExtents(
       geometry1: facilitiesLayer.fullExtent!,
       geometry2: incidentsLayer.fullExtent!,
     );
 
-    // Set the viewpoint geometry on the map view controller
+    // Set the viewpoint geometry on the map view controller.
     _mapViewController.setViewpointGeometry(mapExtent, paddingInDiPs: 30);
 
-    // Generate the closest facility parameters
+    // Generate the closest facility parameters.
     _closestFacilityParameters = await generateClosestFacilityParameters(
         facilitiesFeatureTable, incidentsFeatureTable);
 
-    // Set the initialized flag to true
+    // Set the initialized flag to true.
     setState(() => _ready = true);
   }
 
