@@ -308,7 +308,7 @@ class _CreateMobileGeodatabaseSampleState
                 ),
                 child: Text(
                   'Attribute table loaded from the mobile geodatabase '
-                  'file. File can be loaded on ArcGIS Pro or ArcGIS Runtime.',
+                  'file. File can be loaded on ArcGIS Pro or ArcGIS Maps SDK.',
                   style: TextStyle(
                     fontSize: 12.0,
                   ),
