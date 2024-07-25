@@ -62,6 +62,7 @@ class _DownloadVectorTilesToLocalCacheSampleState
 
   @override
   void dispose() {
+    _downloadVectorTilesOverlay.graphics.clear();
     super.dispose();
   }
 
@@ -190,15 +191,17 @@ class _DownloadVectorTilesToLocalCacheSampleState
   // Download the vector tiles for the outlined region.
   void startDownloadVectorTiles() async {
     setState(() => _isJobStarted = true);
-
+    // Get the download area.
     final downloadArea = downloadAreaEnvelope();
+    // Get the ArcGISVectorTiledLayer.
     final vectorTileLayer = _mapViewController.arcGISMap!.basemap!.baseLayers[0]
         as ArcGISVectorTiledLayer;
+    // Create an export vector tiles task.
     final vectorTilesExportTask =
         ExportVectorTilesTask.withUri(vectorTileLayer.uri!);
     await vectorTilesExportTask.load();
 
-    // create a temporary directory to store the downloaded vector tiles
+    // Get the cache directory to store the downloaded vector tiles
     final resourceDirectory = await _getDownloadDirectory();
     const vtpkName = 'myTileCacheDownload.vtpk';
     final vtpkFile =
@@ -331,10 +334,11 @@ class _DownloadVectorTilesToLocalCacheSampleState
     );
   }
 
+  // Return a Widget with a linear progress bar.
   Widget _getProgressIndicator() {
     return Container(
       color: Colors.white,
-      constraints: BoxConstraints(maxWidth: 300),
+      constraints: const BoxConstraints(maxWidth: 300),
       padding: const EdgeInsets.all(20),
       child: Column(
         mainAxisSize: MainAxisSize.min,
