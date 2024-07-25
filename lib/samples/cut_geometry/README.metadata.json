@@ -2,18 +2,20 @@
     "category": "Analysis",
     "description": "Cut a geometry along a polyline.",
     "ignore": false,
-    "images": [],
+    "images": [
+        "cut_geometry.png"
+    ],
     "keywords": [
         "cut",
         "geometry",
         "split",
-        "GeometryEngine::Cut",
+        "GeometryEngine.cut",
         "Polygon",
         "Polyline"
     ],
     "redirect_from": [],
     "relevant_apis": [
-        "GeometryEngine::Cut",
+        "GeometryEngine.cut",
         "Polygon",
         "Polyline"
     ],

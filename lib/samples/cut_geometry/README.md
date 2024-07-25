@@ -21,7 +21,7 @@ Tap on the "Reset" button to restore the original state.
 
 ## Relevant API
 
-* GeometryEngine::Cut
+* GeometryEngine.cut
 * Polygon
 * Polyline
 

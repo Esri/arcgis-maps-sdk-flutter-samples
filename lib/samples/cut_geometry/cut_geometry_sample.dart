@@ -1,3 +1,19 @@
+//
+// Copyright 2024 Esri
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//   https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:flutter/material.dart';
 
@@ -46,7 +62,6 @@ class _CutGeometrySampleState extends State<CutGeometrySample>
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     // Button to trigger the cut function or reset to the original state.
                     ElevatedButton(
@@ -84,7 +99,11 @@ class _CutGeometrySampleState extends State<CutGeometrySample>
     _mapViewController.graphicsOverlays.add(_graphicsOverlay);
 
     // Initialize the graphics for the sample.
-    initializeGraphics();
+    _initLakeGraphic();
+    _initBorderGraphic();
+
+    // Add the graphics to the graphics overlay.
+    _graphicsOverlay.graphics.addAll([_lakeGraphic, _borderGraphic]);
 
     // Set the viewpoint to the lake graphic.
     _mapViewController.setViewpoint(
@@ -93,15 +112,6 @@ class _CutGeometrySampleState extends State<CutGeometrySample>
 
     // Set the ready state variable to true to enable the sample UI.
     setState(() => _ready = true);
-  }
-
-  // Initializes the graphics for the sample and adds them to the map.
-  void initializeGraphics() {
-    _initLakeGraphic();
-    _initBorderGraphic();
-
-    // Add the graphics to the graphics overlay.
-    _graphicsOverlay.graphics.addAll([_lakeGraphic, _borderGraphic]);
   }
 
   // Cut the lake geometry with the border geometry. The results
@@ -152,64 +162,35 @@ class _CutGeometrySampleState extends State<CutGeometrySample>
     // Build the Polygon for the lake.
     final lakePolygonBuilder = PolygonBuilder.fromSpatialReference(
         _mapViewController.spatialReference);
-    lakePolygonBuilder
-        .addPoint(ArcGISPoint(x: -10254374.668616, y: 5908345.076380));
-    lakePolygonBuilder
-        .addPoint(ArcGISPoint(x: -10178382.525314, y: 5971402.386779));
-    lakePolygonBuilder
-        .addPoint(ArcGISPoint(x: -10118558.923141, y: 6034459.697178));
-    lakePolygonBuilder
-        .addPoint(ArcGISPoint(x: -9993252.729399, y: 6093474.872295));
-    lakePolygonBuilder
-        .addPoint(ArcGISPoint(x: -9882498.222673, y: 6209888.368416));
-    lakePolygonBuilder
-        .addPoint(ArcGISPoint(x: -9821057.766387, y: 6274562.532928));
-    lakePolygonBuilder
-        .addPoint(ArcGISPoint(x: -9690092.583250, y: 6241417.023616));
-    lakePolygonBuilder
-        .addPoint(ArcGISPoint(x: -9605207.742329, y: 6206654.660191));
-    lakePolygonBuilder
-        .addPoint(ArcGISPoint(x: -9564786.389509, y: 6108834.986367));
-    lakePolygonBuilder
-        .addPoint(ArcGISPoint(x: -9449989.747500, y: 6095091.726408));
-    lakePolygonBuilder
-        .addPoint(ArcGISPoint(x: -9462116.153346, y: 6044160.821855));
-    lakePolygonBuilder
-        .addPoint(ArcGISPoint(x: -9417652.665244, y: 5985145.646738));
-    lakePolygonBuilder
-        .addPoint(ArcGISPoint(x: -9438671.768711, y: 5946341.148031));
-    lakePolygonBuilder
-        .addPoint(ArcGISPoint(x: -9398250.415891, y: 5922088.336339));
-    lakePolygonBuilder
-        .addPoint(ArcGISPoint(x: -9419269.519357, y: 5855797.317714));
-    lakePolygonBuilder
-        .addPoint(ArcGISPoint(x: -9467775.142741, y: 5858222.598884));
-    lakePolygonBuilder
-        .addPoint(ArcGISPoint(x: -9462924.580403, y: 5902686.086985));
-    lakePolygonBuilder
-        .addPoint(ArcGISPoint(x: -9598740.325877, y: 5884092.264688));
-    lakePolygonBuilder
-        .addPoint(ArcGISPoint(x: -9643203.813979, y: 5845287.765981));
-    lakePolygonBuilder
-        .addPoint(ArcGISPoint(x: -9739406.633691, y: 5879241.702350));
-    lakePolygonBuilder
-        .addPoint(ArcGISPoint(x: -9783061.694736, y: 5922896.763395));
-    lakePolygonBuilder
-        .addPoint(ArcGISPoint(x: -9844502.151022, y: 5936640.023354));
-    lakePolygonBuilder
-        .addPoint(ArcGISPoint(x: -9773360.570059, y: 6019099.583107));
-    lakePolygonBuilder
-        .addPoint(ArcGISPoint(x: -9883306.649729, y: 5968977.105610));
-    lakePolygonBuilder
-        .addPoint(ArcGISPoint(x: -9957681.938918, y: 5912387.211662));
-    lakePolygonBuilder
-        .addPoint(ArcGISPoint(x: -10055501.612742, y: 5871965.858842));
-    lakePolygonBuilder
-        .addPoint(ArcGISPoint(x: -10116942.069028, y: 5884092.264688));
-    lakePolygonBuilder
-        .addPoint(ArcGISPoint(x: -10111283.079633, y: 5933406.315128));
-    lakePolygonBuilder
-        .addPoint(ArcGISPoint(x: -10214761.742852, y: 5888134.399970));
+    lakePolygonBuilder.addPointXY(x: -10254374.668616, y: 5908345.076380);
+    lakePolygonBuilder.addPointXY(x: -10178382.525314, y: 5971402.386779);
+    lakePolygonBuilder.addPointXY(x: -10118558.923141, y: 6034459.697178);
+    lakePolygonBuilder.addPointXY(x: -9993252.729399, y: 6093474.872295);
+    lakePolygonBuilder.addPointXY(x: -9882498.222673, y: 6209888.368416);
+    lakePolygonBuilder.addPointXY(x: -9821057.766387, y: 6274562.532928);
+    lakePolygonBuilder.addPointXY(x: -9690092.583250, y: 6241417.023616);
+    lakePolygonBuilder.addPointXY(x: -9605207.742329, y: 6206654.660191);
+    lakePolygonBuilder.addPointXY(x: -9564786.389509, y: 6108834.986367);
+    lakePolygonBuilder.addPointXY(x: -9449989.747500, y: 6095091.726408);
+    lakePolygonBuilder.addPointXY(x: -9462116.153346, y: 6044160.821855);
+    lakePolygonBuilder.addPointXY(x: -9417652.665244, y: 5985145.646738);
+    lakePolygonBuilder.addPointXY(x: -9438671.768711, y: 5946341.148031);
+    lakePolygonBuilder.addPointXY(x: -9398250.415891, y: 5922088.336339);
+    lakePolygonBuilder.addPointXY(x: -9419269.519357, y: 5855797.317714);
+    lakePolygonBuilder.addPointXY(x: -9467775.142741, y: 5858222.598884);
+    lakePolygonBuilder.addPointXY(x: -9462924.580403, y: 5902686.086985);
+    lakePolygonBuilder.addPointXY(x: -9598740.325877, y: 5884092.264688);
+    lakePolygonBuilder.addPointXY(x: -9643203.813979, y: 5845287.765981);
+    lakePolygonBuilder.addPointXY(x: -9739406.633691, y: 5879241.702350);
+    lakePolygonBuilder.addPointXY(x: -9783061.694736, y: 5922896.763395);
+    lakePolygonBuilder.addPointXY(x: -9844502.151022, y: 5936640.023354);
+    lakePolygonBuilder.addPointXY(x: -9773360.570059, y: 6019099.583107);
+    lakePolygonBuilder.addPointXY(x: -9883306.649729, y: 5968977.105610);
+    lakePolygonBuilder.addPointXY(x: -9957681.938918, y: 5912387.211662);
+    lakePolygonBuilder.addPointXY(x: -10055501.612742, y: 5871965.858842);
+    lakePolygonBuilder.addPointXY(x: -10116942.069028, y: 5884092.264688);
+    lakePolygonBuilder.addPointXY(x: -10111283.079633, y: 5933406.315128);
+    lakePolygonBuilder.addPointXY(x: -10214761.742852, y: 5888134.399970);
 
     // Generate the polygon graphic.
     _lakeGraphic = Graphic(
@@ -231,20 +212,13 @@ class _CutGeometrySampleState extends State<CutGeometrySample>
     // Build the Polyline geometry for the border.
     final borderPolylineBuilder = PolylineBuilder.fromSpatialReference(
         _mapViewController.spatialReference);
-    borderPolylineBuilder
-        .addPoint(ArcGISPoint(x: -9981328.687124, y: 6111053.281447));
-    borderPolylineBuilder
-        .addPoint(ArcGISPoint(x: -9946518.044066, y: 6102350.620682));
-    borderPolylineBuilder
-        .addPoint(ArcGISPoint(x: -9872545.427566, y: 6152390.920079));
-    borderPolylineBuilder
-        .addPoint(ArcGISPoint(x: -9838822.617103, y: 6157830.083057));
-    borderPolylineBuilder
-        .addPoint(ArcGISPoint(x: -9446115.050097, y: 5927209.572793));
-    borderPolylineBuilder
-        .addPoint(ArcGISPoint(x: -9430885.393759, y: 5876081.440801));
-    borderPolylineBuilder
-        .addPoint(ArcGISPoint(x: -9415655.737420, y: 5860851.784463));
+    borderPolylineBuilder.addPointXY(x: -9981328.687124, y: 6111053.281447);
+    borderPolylineBuilder.addPointXY(x: -9946518.044066, y: 6102350.620682);
+    borderPolylineBuilder.addPointXY(x: -9872545.427566, y: 6152390.920079);
+    borderPolylineBuilder.addPointXY(x: -9838822.617103, y: 6157830.083057);
+    borderPolylineBuilder.addPointXY(x: -9446115.050097, y: 5927209.572793);
+    borderPolylineBuilder.addPointXY(x: -9430885.393759, y: 5876081.440801);
+    borderPolylineBuilder.addPointXY(x: -9415655.737420, y: 5860851.784463);
 
     // Generate the polyline graphic.
     _borderGraphic = Graphic(
