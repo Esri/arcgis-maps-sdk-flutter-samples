@@ -158,18 +158,21 @@ class _DownloadVectorTilesToLocalCacheSampleState
   void startDownloadVectorTiles() async {
     // Get the download area.
     final downloadArea = downloadAreaEnvelope();
-    if (downloadArea == null) return;
+    // Get the ArcGISVectorTiledLayer which the vector tiles cache will be downloaded from.
+    final layer = _mapViewController.arcGISMap?.basemap?.baseLayers.first;
+    if (downloadArea == null ||
+        layer == null ||
+        layer is! ArcGISVectorTiledLayer ||
+        layer.uri == null) {
+      _showErrorDialog('Invalid download area or layer');
+      return;
+    }
 
-    // Set the progress indicator to appear.
+    // Show the progress indicator to start the download process.
     setState(() => _isJobStarted = true);
 
-    // Get the ArcGISVectorTiledLayer which the vector tiles cache will be downloaded from.
-    final vectorTileLayer = _mapViewController.arcGISMap!.basemap!.baseLayers[0]
-        as ArcGISVectorTiledLayer;
-
     // Create an export vector tiles task.
-    final vectorTilesExportTask =
-        ExportVectorTilesTask.withUri(vectorTileLayer.uri!);
+    final vectorTilesExportTask = ExportVectorTilesTask.withUri(layer.uri!);
     await vectorTilesExportTask.load();
 
     // Get the cache directory to store the downloaded vector tiles
