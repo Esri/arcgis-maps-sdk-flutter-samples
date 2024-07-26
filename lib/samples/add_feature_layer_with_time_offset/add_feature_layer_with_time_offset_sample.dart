@@ -32,14 +32,17 @@ class _AddFeatureLayerWithTimeOffsetSampleState
     extends State<AddFeatureLayerWithTimeOffsetSample> with SampleStateSupport {
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
-  //fixme comment
-  late final TimeExtent _originalTimeExtent;
+  // The start and end times of the feature layer.
+  late DateTime _startTime;
+  late DateTime _endTime;
   // A flag for when the map view is ready and controls can be used.
   var _ready = false;
   // A flag for when the settings bottom sheet is visible.
   var _settingsVisible = false;
-  //fixme comment
-  var _intervalFraction = 1.0;
+  // The current time interval, expressed as a fraction of the full time extent.
+  var _intervalFraction = 0.5;
+  // A message to display the current date range.
+  var _dateRangeMessage = '';
 
   @override
   Widget build(BuildContext context) {
@@ -90,7 +93,6 @@ class _AddFeatureLayerWithTimeOffsetSampleState
   // The build method for the Settings bottom sheet.
   Widget buildSettings(BuildContext context) {
     return Container(
-      color: Colors.white,
       padding: EdgeInsets.fromLTRB(
         20.0,
         0.0,
@@ -117,24 +119,18 @@ class _AddFeatureLayerWithTimeOffsetSampleState
               ),
             ],
           ),
-          Row(
-            children: [
-              const Text('Interval'),
-              const Spacer(),
-              Text(
-                _intervalFraction.toString(), //fixme
-                textAlign: TextAlign.right,
-              ),
-            ],
-          ),
+          // Display the current date range.
+          Text(_dateRangeMessage),
           Row(
             children: [
               Expanded(
                 // A slider to adjust the interval.
                 child: Slider(
                   value: _intervalFraction,
-                  onChanged: (value) =>
-                      setState(() => _intervalFraction = value),
+                  onChanged: (value) {
+                    setState(() => _intervalFraction = value);
+                    updateTimeExtent();
+                  },
                 ),
               ),
             ],
@@ -152,7 +148,7 @@ class _AddFeatureLayerWithTimeOffsetSampleState
                 ),
               ),
               const SizedBox(width: 10.0),
-              const Text('Hurricanes offset 10 days'),
+              const Text('Hurricane tracks, offset 10 days'),
             ],
           ),
           const SizedBox(height: 10.0),
@@ -169,7 +165,7 @@ class _AddFeatureLayerWithTimeOffsetSampleState
                 ),
               ),
               const SizedBox(width: 10.0),
-              const Text('Hurricanes no offset'),
+              const Text('Hurricane tracks, no offset'),
             ],
           ),
         ],
@@ -178,13 +174,22 @@ class _AddFeatureLayerWithTimeOffsetSampleState
   }
 
   void onMapViewReady() async {
-    // Create a map with the oceans basemap style.
+    // Create a map with the oceans basemap style and an initial viewpoint.
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISOceans);
+    map.initialViewpoint = Viewpoint.fromCenter(
+      ArcGISPoint(
+        x: -6000000,
+        y: 2500000,
+        spatialReference: SpatialReference.webMercator,
+      ),
+      scale: 1e8,
+    );
 
-    //fixme comments
+    // The URL of the feature layer showing hurricanes.
     final featureLayerUri = Uri.parse(
         'https://sampleserver6.arcgisonline.com/arcgis/rest/services/Hurricanes/MapServer/0');
 
+    // Create a feature layer for the hurricane tracks, represented by blue dots.
     final featureTable = ServiceFeatureTable.withUri(featureLayerUri);
     final featureLayer = FeatureLayer.withFeatureTable(featureTable);
     featureLayer.renderer = SimpleRenderer(
@@ -195,6 +200,7 @@ class _AddFeatureLayerWithTimeOffsetSampleState
       ),
     );
 
+    // Create another feature layer, offset by 10 days, represented by red dots.
     final offsetFeatureTable = ServiceFeatureTable.withUri(featureLayerUri);
     final offsetFeatureLayer =
         FeatureLayer.withFeatureTable(offsetFeatureTable);
@@ -208,17 +214,15 @@ class _AddFeatureLayerWithTimeOffsetSampleState
     offsetFeatureLayer.timeOffset =
         TimeValue(duration: 10, unit: TimeUnit.days);
 
+    // Add the feature layers to the map.
     map.operationalLayers.addAll([featureLayer, offsetFeatureLayer]);
 
+    // Load the feature layer and record the start and end times.
     await featureLayer.load();
-    _originalTimeExtent = featureLayer.fullTimeExtent!;
-
-//fixme updateTimeExtent
-    _mapViewController.timeExtent = TimeExtent(
-      startTime:
-          _originalTimeExtent.endTime?.subtract(const Duration(days: 10)),
-      endTime: _originalTimeExtent.endTime,
-    );
+    //fixme ! ?
+    _startTime = featureLayer.fullTimeExtent!.startTime!;
+    _endTime = featureLayer.fullTimeExtent!.endTime!;
+    updateTimeExtent();
 
     // Set the map on the map view controller.
     _mapViewController.arcGISMap = map;
@@ -227,11 +231,23 @@ class _AddFeatureLayerWithTimeOffsetSampleState
     setState(() => _ready = true);
   }
 
-  void performTask() async {
-    setState(() => _ready = false);
-    // Perform some task.
-    print('Perform task');
-    await Future.delayed(const Duration(seconds: 5));
-    setState(() => _ready = true);
+  // Calculate the new time extent based on the interval fraction.
+  void updateTimeExtent() {
+    // Calculate how many days to offset from the original start time.
+    final totalDays = _endTime.difference(_startTime).inDays;
+    final desiredDays = (totalDays * _intervalFraction).round();
+
+    // Calculate the new start and end times (10 days apart).
+    final newStart = _startTime.add(Duration(days: desiredDays));
+    var newEnd = newStart.add(const Duration(days: 10));
+    if (newEnd.isAfter(_endTime)) newEnd = _endTime;
+
+    // Set the new time extent on the map view controller.
+    _mapViewController.timeExtent =
+        TimeExtent(startTime: newStart, endTime: newEnd);
+
+    // Update the date range message.
+    _dateRangeMessage = '${newStart.month}/${newStart.day}/${newStart.year} - '
+        '${newEnd.month}/${newEnd.day}/${newEnd.year}';
   }
 }
