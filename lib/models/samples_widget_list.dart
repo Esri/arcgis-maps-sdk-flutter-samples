@@ -1,6 +1,7 @@
 import 'package:arcgis_maps_sdk_flutter_samples/samples/add_feature_collection_layer_from_table/add_feature_collection_layer_from_table_sample.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/add_feature_layer_with_time_offset/add_feature_layer_with_time_offset_sample.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/add_feature_layers/add_feature_layers_sample.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/samples/add_map_image_layer/add_map_image_layer_sample.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/add_tiled_layer/add_tiled_layer_sample.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/add_tiled_layer_as_basemap/add_tiled_layer_as_basemap_sample.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/add_vector_tiled_layer/add_vector_tiled_layer_sample.dart';
@@ -24,6 +25,7 @@ import 'package:arcgis_maps_sdk_flutter_samples/samples/find_closest_facility_fr
 import 'package:arcgis_maps_sdk_flutter_samples/samples/find_route/find_route_sample.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/generate_offline_map/generate_offline_map_sample.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/identify_layer_features/identify_layer_features_sample.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/samples/manage_bookmarks/manage_bookmarks_sample.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/query_feature_table/query_feature_table_sample.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/query_table_statistics/query_table_statistics_sample.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/search_with_geocode/search_with_geocode_sample.dart';
@@ -47,6 +49,7 @@ const sampleWidgets = <String, Widget>{
       AddFeatureCollectionLayerFromTableSample(),
   'add_feature_layer_with_time_offset': AddFeatureLayerWithTimeOffsetSample(),
   'add_feature_layers': AddFeatureLayersSample(),
+  'add_map_image_layer': AddMapImageLayerSample(),
   'add_tiled_layer': AddTiledLayerSample(),
   'add_tiled_layer_as_basemap': AddTiledLayerAsBasemapSample(),
   'add_vector_tiled_layer': AddVectorTiledLayerSample(),
@@ -74,6 +77,7 @@ const sampleWidgets = <String, Widget>{
   'find_route': FindRouteSample(),
   'generate_offline_map': GenerateOfflineMapSample(),
   'identify_layer_features': IdentifyLayerFeaturesSample(),
+  'manage_bookmarks': ManageBookmarksSample(),
   'query_feature_table': QueryFeatureTableSample(),
   'query_table_statistics': QueryTableStatisticsSample(),
   'search_with_geocode': SearchWithGeocodeSample(),
@@ -85,7 +89,7 @@ const sampleWidgets = <String, Widget>{
   'show_magnifier': ShowMagnifierSample(),
   'show_portal_user_info': ShowPortalUserInfoSample(),
   'show_service_area': ShowServiceAreaSample(),
+  'show_legend': ShowLegendSample(),
   'style_point_with_simple_marker_symbol':
       StylePointWithSimpleMarkerSymbolSample(),
-  'show_legend': ShowLegendSample(),
 };
