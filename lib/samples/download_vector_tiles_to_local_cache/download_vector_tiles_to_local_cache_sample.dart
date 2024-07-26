@@ -305,8 +305,12 @@ class _DownloadVectorTilesToLocalCacheSampleState
   void _loadExportedVectorTiles(ExportVectorTilesResult result) {
     final vectorTilesCache = result.vectorTileCache;
     final itemResourceCache = result.itemResourceCache;
+    if (vectorTilesCache == null || itemResourceCache == null) {
+      _showErrorDialog('Invalid vector tiles cache or item resource cache');
+      return;
+    }
     final vectorTileLayer = ArcGISVectorTiledLayer.withVectorTileCache(
-      vectorTilesCache!,
+      vectorTilesCache,
       itemResourceCache: itemResourceCache,
     );
 
