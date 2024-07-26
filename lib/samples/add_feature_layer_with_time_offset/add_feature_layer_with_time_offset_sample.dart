@@ -219,9 +219,8 @@ class _AddFeatureLayerWithTimeOffsetSampleState
 
     // Load the feature layer and record the start and end times.
     await featureLayer.load();
-    //fixme ! ?
-    _startTime = featureLayer.fullTimeExtent!.startTime!;
-    _endTime = featureLayer.fullTimeExtent!.endTime!;
+    _startTime = featureLayer.fullTimeExtent?.startTime ?? DateTime.now();
+    _endTime = featureLayer.fullTimeExtent?.endTime ?? DateTime.now();
     updateTimeExtent();
 
     // Set the map on the map view controller.
