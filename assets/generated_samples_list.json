@@ -48,14 +48,14 @@
       "time offset",
       "time-aware",
       "time-enabled",
+      "ArcGISMapViewController",
       "FeatureLayer",
-      "MapView",
       "TimeExtent"
     ],
     "redirect_from": [],
     "relevant_apis": [
+      "ArcGISMapViewController",
       "FeatureLayer",
-      "MapView",
       "TimeExtent"
     ],
     "snippets": [
