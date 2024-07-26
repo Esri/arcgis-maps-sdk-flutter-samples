@@ -60,6 +60,10 @@ class _DownloadVectorTilesToLocalCacheSampleState
     scale: 100000,
   );
 
+  // A flag for when the map is viewing offline data.
+  var _offline = false;
+  final _outlineKey = GlobalKey();
+
   @override
   void dispose() {
     _downloadVectorTilesOverlay.graphics.clear();
@@ -76,35 +80,51 @@ class _DownloadVectorTilesToLocalCacheSampleState
             Column(
               children: [
                 Expanded(
-                  // Add a map view to the widget tree and set a controller.
-                  child: ArcGISMapView(
-                    key: _mapKey,
-                    controllerProvider: () => _mapViewController,
-                    onMapViewReady: onMapViewReady,
+                  child: Stack(
+                    children: [
+                      // Add a map view to the widget tree and set a controller.
+                      ArcGISMapView(
+                        key: _mapKey,
+                        controllerProvider: () => _mapViewController,
+                        onMapViewReady: onMapViewReady,
+                      ),
+                      // Add a red outline that marks the region to be taken offline.
+                      Visibility(
+                        visible: !_previewMap,
+                        child: IgnorePointer(
+                          child: SafeArea(
+                            child: Container(
+                              margin: const EdgeInsets.fromLTRB(
+                                  30.0, 30.0, 30.0, 50.0),
+                              child: Container(
+                                key: _outlineKey,
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                    color: Colors.red,
+                                    width: 2.0,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    _previewMap
-                        ? ElevatedButton(
-                            onPressed: closePreviewVectorTiles,
-                            child: const Text('Close Preview Vector Tiles'),
-                          )
-                        : ElevatedButton(
-                            onPressed:
-                                _isJobStarted ? null : startDownloadVectorTiles,
-                            child: const Text('Download Vector Tiles'),
-                          ),
-                  ],
+                Center(
+                  child: _previewMap
+                      ? ElevatedButton(
+                          onPressed: closePreviewVectorTiles,
+                          child: const Text('Close Preview Vector Tiles'),
+                        )
+                      : ElevatedButton(
+                          onPressed:
+                              _isJobStarted ? null : startDownloadVectorTiles,
+                          child: const Text('Download Vector Tiles'),
+                        ),
                 ),
               ],
-            ),
-            Visibility(
-              visible: _isJobStarted,
-              child: Center(
-                child: _getProgressIndicator(),
-              ),
             ),
             // Display a progress indicator and prevent interaction until state is ready.
             Visibility(
@@ -116,6 +136,13 @@ class _DownloadVectorTilesToLocalCacheSampleState
                     child: CircularProgressIndicator(),
                   ),
                 ),
+              ),
+            ),
+            // Display a progress indicator and a cancel button during the offline map generation.
+            Visibility(
+              visible: _isJobStarted,
+              child: Center(
+                child: _getProgressIndicator(),
               ),
             ),
           ],
@@ -134,31 +161,31 @@ class _DownloadVectorTilesToLocalCacheSampleState
       initialViewpoint,
     );
 
-    // Configure the graphics overlay for the geodetic buffers.
-    _downloadVectorTilesOverlay.renderer = SimpleRenderer(
-      symbol: SimpleFillSymbol(
-        style: SimpleFillSymbolStyle.solid,
-        color: Colors.red[200]!.withOpacity(0.5),
-        outline: SimpleLineSymbol(
-          style: SimpleLineSymbolStyle.solid,
-          color: Colors.red,
-          width: 2.0,
-        ),
-      ),
-    );
-    _downloadVectorTilesOverlay.opacity = 0.5;
+    // // Configure the graphics overlay for the geodetic buffers.
+    // _downloadVectorTilesOverlay.renderer = SimpleRenderer(
+    //   symbol: SimpleFillSymbol(
+    //     style: SimpleFillSymbolStyle.solid,
+    //     color: Colors.red[200]!.withOpacity(0.5),
+    //     outline: SimpleLineSymbol(
+    //       style: SimpleLineSymbolStyle.solid,
+    //       color: Colors.red,
+    //       width: 2.0,
+    //     ),
+    //   ),
+    // );
+    // _downloadVectorTilesOverlay.opacity = 0.5;
 
-    // Add the overlays to the map view.
-    _mapViewController.graphicsOverlays.add(
-      _downloadVectorTilesOverlay,
-    );
+    // // Add the overlays to the map view.
+    // _mapViewController.graphicsOverlays.add(
+    //   _downloadVectorTilesOverlay,
+    // );
 
-    // Listen to the viewpoint changed event to update the download area graphic.
-    _mapViewController.onViewpointChanged.listen(
-      (viewpoint) {
-        updateDownloadAreaGraphic();
-      },
-    );
+    // // Listen to the viewpoint changed event to update the download area graphic.
+    // _mapViewController.onViewpointChanged.listen(
+    //   (viewpoint) {
+    //     updateDownloadAreaGraphic();
+    //   },
+    // );
 
     // Set the ready state variable to true to enable the sample UI.
     setState(() => _ready = true);
@@ -267,23 +294,23 @@ class _DownloadVectorTilesToLocalCacheSampleState
     _exportVectorTilesJob?.start();
   }
 
-  // Update the download area graphic on the map view.
-  void updateDownloadAreaGraphic() {
-    if (_mapViewController.graphicsOverlays.isEmpty) return;
+  // // Update the download area graphic on the map view.
+  // void updateDownloadAreaGraphic() {
+  //   if (_mapViewController.graphicsOverlays.isEmpty) return;
 
-    // Clear the previous download area.
-    _downloadVectorTilesOverlay.graphics.clear();
+  //   // Clear the previous download area.
+  //   _downloadVectorTilesOverlay.graphics.clear();
 
-    final envelope = downloadAreaEnvelope();
-    if (envelope != null) {
-      // Add the square envelope to the download vector tiles overlay.
-      _downloadVectorTilesOverlay.graphics.add(
-        Graphic(
-          geometry: envelope,
-        ),
-      );
-    }
-  }
+  //   final envelope = downloadAreaEnvelope();
+  //   if (envelope != null) {
+  //     // Add the square envelope to the download vector tiles overlay.
+  //     _downloadVectorTilesOverlay.graphics.add(
+  //       Graphic(
+  //         geometry: envelope,
+  //       ),
+  //     );
+  //   }
+  // }
 
   // Calculate the Envelope of the outlined region.
   Envelope? downloadAreaEnvelope() {
