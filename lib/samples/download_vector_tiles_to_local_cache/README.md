@@ -10,14 +10,14 @@ Field workers with limited network connectivity can use exported vector tiles as
 
 ## How to use the sample
 
-When the vector tiled layer loads, zoom in to the extent you want to export. The red box shows the extent that will be exported. Tap the "Download Vector Tiles" button to start the job. An error will show if the extent is larger than the maximum limit allowed. When finished, the downloaded vector tiles cache will be displayed in a new map the map view.
+When the vector tiled layer loads, zoom in to the extent you want to export. The red box shows the extent that will be exported. Tap the "Download Vector Tiles" button to start the job. An error will show if the extent is larger than the maximum limit allowed. When finished, the downloaded vector tiles cache will be displayed in the map view.
 
 ## How it works
 
 1. Create an `ArcGISVectorTiledLayer` from the map's base layers.
 2. Create an `ExportVectorTilesTask` using the vector tiled layer's URL.
 3. Create default `ExportVectorTilesParameters` from the task, specifying extent and maximum scale.
-4. Create a `ExportVectorTilesJob` from the task using the parameters, and specifying a vector tile cache path and an item resource path. The resource path is required if you want to export the tiles with the style.
+4. Create an `ExportVectorTilesJob` from the task using the parameters, and specifying a vector tile cache path and an item resource path. The resource path is required if you want to export the tiles with the style.
 5. Start the job, and once it completes successfully, get the resulting `ExportVectorTilesResult`.
 6. Get the `VectorTileCache` and `ItemResourceCache` from the result to create an `ArcGISVectorTiledLayer` that can be displayed to the map view.
 
