@@ -35,40 +35,20 @@ class _DownloadVectorTilesToLocalCacheSampleState
     with SampleStateSupport {
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
-  // The graphics overlay to show a red outline square around the vector tiles
-  // to be downloaded.
-  final _downloadVectorTilesOverlay = GraphicsOverlay();
-  // A flag for when the map view is ready and controls can be used.
-  var _ready = false;
-  // A progress number for the download job.
-  var _progress = 0.0;
   // A instance of the ExportVectorTilesJob.
   ExportVectorTilesJob? _exportVectorTilesJob;
-  // A key to access the map view widget.
-  final _mapKey = GlobalKey();
+  // A progress number for the download job.
+  var _progress = 0.0;
   // A flag to indicate if the preview map is open.
   var _previewMap = false;
   // A flag to indicate if the download job has started.
   var _isJobStarted = false;
-  // The initial Viewpoint for the map view.
-  final initialViewpoint = Viewpoint.fromCenter(
-    ArcGISPoint(
-      x: -117.195800,
-      y: 34.057386,
-      spatialReference: SpatialReference.wgs84,
-    ),
-    scale: 100000,
-  );
-
-  // A flag for when the map is viewing offline data.
-  var _offline = false;
+  // A flag for when the map view is ready and controls can be used.
+  var _ready = false;
+  // A key to access the map view widget.
+  final _mapKey = GlobalKey();
+  // A key to be used when converting screen locations to map coordinates.
   final _outlineKey = GlobalKey();
-
-  @override
-  void dispose() {
-    _downloadVectorTilesOverlay.graphics.clear();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -91,23 +71,7 @@ class _DownloadVectorTilesToLocalCacheSampleState
                       // Add a red outline that marks the region to be taken offline.
                       Visibility(
                         visible: !_previewMap,
-                        child: IgnorePointer(
-                          child: SafeArea(
-                            child: Container(
-                              margin: const EdgeInsets.fromLTRB(
-                                  30.0, 30.0, 30.0, 50.0),
-                              child: Container(
-                                key: _outlineKey,
-                                decoration: BoxDecoration(
-                                  border: Border.all(
-                                    color: Colors.red,
-                                    width: 2.0,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
+                        child: _getRedOutline(),
                       ),
                     ],
                   ),
@@ -153,56 +117,30 @@ class _DownloadVectorTilesToLocalCacheSampleState
 
   // the method to be called when the map view is ready
   void onMapViewReady() {
-    // Create a map with the basemap style and set to the map view.
-    final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISStreetsNight);
-    _mapViewController.arcGISMap = map;
-    _mapViewController.interactionOptions.rotateEnabled = false;
-    _mapViewController.setViewpoint(
-      initialViewpoint,
-    );
-
-    // // Configure the graphics overlay for the geodetic buffers.
-    // _downloadVectorTilesOverlay.renderer = SimpleRenderer(
-    //   symbol: SimpleFillSymbol(
-    //     style: SimpleFillSymbolStyle.solid,
-    //     color: Colors.red[200]!.withOpacity(0.5),
-    //     outline: SimpleLineSymbol(
-    //       style: SimpleLineSymbolStyle.solid,
-    //       color: Colors.red,
-    //       width: 2.0,
-    //     ),
-    //   ),
-    // );
-    // _downloadVectorTilesOverlay.opacity = 0.5;
-
-    // // Add the overlays to the map view.
-    // _mapViewController.graphicsOverlays.add(
-    //   _downloadVectorTilesOverlay,
-    // );
-
-    // // Listen to the viewpoint changed event to update the download area graphic.
-    // _mapViewController.onViewpointChanged.listen(
-    //   (viewpoint) {
-    //     updateDownloadAreaGraphic();
-    //   },
-    // );
-
+    setupInitialMapView();
     // Set the ready state variable to true to enable the sample UI.
     setState(() => _ready = true);
   }
 
-  // Reset the map into initial state.
-  void closePreviewVectorTiles() {
+  // Set up the initial map view.
+  void setupInitialMapView() {
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISStreetsNight);
     _mapViewController.arcGISMap = map;
     _mapViewController.setViewpoint(
-      initialViewpoint,
+      Viewpoint.fromCenter(
+        ArcGISPoint(
+          x: -117.195800,
+          y: 34.057386,
+          spatialReference: SpatialReference.wgs84,
+        ),
+        scale: 100000,
+      ),
     );
-    if (_mapViewController.graphicsOverlays.isEmpty) {
-      _mapViewController.graphicsOverlays.add(
-        _downloadVectorTilesOverlay,
-      );
-    }
+  }
+
+  // After the tiles caches are previewed, reset the map into initial state.
+  void closePreviewVectorTiles() {
+    setupInitialMapView();
     setState(() => _previewMap = false);
     setState(() => _isJobStarted = false);
   }
@@ -211,18 +149,24 @@ class _DownloadVectorTilesToLocalCacheSampleState
   void cancelDownloadingJob() async {
     setState(() => _progress = 0.0);
     setState(() => _isJobStarted = false);
-
+    // Cancel the export vector tiles job, the job status will be failed.
+    // The status listener will popup a dialog to show the error message.
     await _exportVectorTilesJob!.cancel();
   }
 
-  // Download the vector tiles for the outlined region.
+  // Start to download the vector tiles for the outlined region.
   void startDownloadVectorTiles() async {
-    setState(() => _isJobStarted = true);
     // Get the download area.
     final downloadArea = downloadAreaEnvelope();
-    // Get the ArcGISVectorTiledLayer.
+    if (downloadArea == null) return;
+
+    // Set the progress indicator to appear.
+    setState(() => _isJobStarted = true);
+
+    // Get the ArcGISVectorTiledLayer which the vector tiles cache will be downloaded from.
     final vectorTileLayer = _mapViewController.arcGISMap!.basemap!.baseLayers[0]
         as ArcGISVectorTiledLayer;
+
     // Create an export vector tiles task.
     final vectorTilesExportTask =
         ExportVectorTilesTask.withUri(vectorTileLayer.uri!);
@@ -230,15 +174,15 @@ class _DownloadVectorTilesToLocalCacheSampleState
 
     // Get the cache directory to store the downloaded vector tiles
     final resourceDirectory = await _getDownloadDirectory();
-    const vtpkName = 'myTileCacheDownload.vtpk';
-    final vtpkFile =
-        File('$resourceDirectory${Platform.pathSeparator}${vtpkName}');
+    final vtpkFile = File(
+      '$resourceDirectory${Platform.pathSeparator}myTileCacheDownload.vtpk',
+    );
 
     // Create the default export vector tiles parameters,
     // and shrink the area of interest by 10%.
     final exportVectorTilesParameters =
         await vectorTilesExportTask.createDefaultExportVectorTilesParameters(
-      areaOfInterest: downloadArea!,
+      areaOfInterest: downloadArea,
       maxScale: _mapViewController.scale * 0.1,
     );
 
@@ -258,34 +202,30 @@ class _DownloadVectorTilesToLocalCacheSampleState
     // Listen to the job's status and handle the result.
     _exportVectorTilesJob?.onStatusChanged.listen(
       (status) {
-        if (status == JobStatus.failed) {
-          showDialog(
-            context: context,
-            builder: (context) => AlertDialog(
-              title:
-                  Text('Info', style: Theme.of(context).textTheme.titleMedium),
-              content: Text(
-                'Failed to download vector tiles:\n'
-                '${_exportVectorTilesJob?.error?.message}',
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: const Text('Close'),
-                ),
-              ],
-            ),
-          );
-          setState(() => _isJobStarted = false);
-        } else if (status == JobStatus.succeeded) {
-          // If the job succeeded, load the downloaded vector tiles into the map view.
-          final result =
-              _exportVectorTilesJob?.result as ExportVectorTilesResult;
-          _loadExportedVectorTiles(result);
-          setState(() => _previewMap = true);
-          setState(() => _isJobStarted = false);
+        switch (status) {
+          // If the job succeeded, load the downloaded caches into the map view.
+          case JobStatus.succeeded:
+            final result =
+                _exportVectorTilesJob?.result as ExportVectorTilesResult;
+            _loadExportedVectorTiles(result);
+            setState(() {
+              _previewMap = true;
+              _isJobStarted = false;
+              _progress = 0.0;
+            });
+            break;
+          // If the job failed, show an error dialog
+          case JobStatus.failed:
+            _showErrorDialog(
+                _exportVectorTilesJob?.error?.message ?? 'unknown');
+            setState(() {
+              _previewMap = false;
+              _isJobStarted = false;
+              _progress = 0.0;
+            });
+            break;
+          default:
+            break;
         }
       },
     );
@@ -294,38 +234,47 @@ class _DownloadVectorTilesToLocalCacheSampleState
     _exportVectorTilesJob?.start();
   }
 
-  // // Update the download area graphic on the map view.
-  // void updateDownloadAreaGraphic() {
-  //   if (_mapViewController.graphicsOverlays.isEmpty) return;
-
-  //   // Clear the previous download area.
-  //   _downloadVectorTilesOverlay.graphics.clear();
-
-  //   final envelope = downloadAreaEnvelope();
-  //   if (envelope != null) {
-  //     // Add the square envelope to the download vector tiles overlay.
-  //     _downloadVectorTilesOverlay.graphics.add(
-  //       Graphic(
-  //         geometry: envelope,
-  //       ),
-  //     );
-  //   }
-  // }
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Info', style: Theme.of(context).textTheme.titleMedium),
+        content: Text(
+          'Failed to download vector tiles:\n ${message}',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: const Text('Close'),
+          ),
+        ],
+      ),
+    );
+  }
 
   // Calculate the Envelope of the outlined region.
   Envelope? downloadAreaEnvelope() {
+    final outlineContext = _outlineKey.currentContext;
     final mapContext = _mapKey.currentContext;
-    if (mapContext == null) return null;
+    if (outlineContext == null || mapContext == null) return null;
+
+    // Get the global screen rect of the outlined region.
+    final outlineRenderBox = outlineContext.findRenderObject() as RenderBox;
+    final outlineGlobalScreenRect =
+        outlineRenderBox.localToGlobal(Offset.zero) & outlineRenderBox.size;
 
     // Convert the global screen rect to a rect local to the map view.
     final mapRenderBox = mapContext.findRenderObject() as RenderBox;
-    final shrunkRect = mapRenderBox.paintBounds.shrink(0.2);
+    final mapLocalScreenRect =
+        outlineGlobalScreenRect.shift(-mapRenderBox.localToGlobal(Offset.zero));
 
     // Convert the local screen rect to map coordinates.
     final locationTopLeft =
-        _mapViewController.screenToLocation(screen: shrunkRect.topLeft);
-    final locationBottomRight =
-        _mapViewController.screenToLocation(screen: shrunkRect.bottomRight);
+        _mapViewController.screenToLocation(screen: mapLocalScreenRect.topLeft);
+    final locationBottomRight = _mapViewController.screenToLocation(
+        screen: mapLocalScreenRect.bottomRight);
     if (locationTopLeft == null || locationBottomRight == null) return null;
 
     // Create an Envelope from the map coordinates.
@@ -361,6 +310,26 @@ class _DownloadVectorTilesToLocalCacheSampleState
     );
   }
 
+  // Return a Widget with a red outline.
+  Widget _getRedOutline() {
+    return IgnorePointer(
+      child: SafeArea(
+        child: Container(
+          margin: const EdgeInsets.fromLTRB(30.0, 30.0, 30.0, 50.0),
+          child: Container(
+            key: _outlineKey,
+            decoration: BoxDecoration(
+              border: Border.all(
+                color: Colors.red,
+                width: 2.0,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   // Return a Widget with a linear progress bar.
   Widget _getProgressIndicator() {
     return Container(
@@ -392,22 +361,6 @@ class _DownloadVectorTilesToLocalCacheSampleState
           ),
         ],
       ),
-    );
-  }
-}
-
-extension on Rect {
-  // Shrink the Rect by a factor of the width and height.
-  Rect shrink(double factor) {
-    final double shrinkWidth = width * factor;
-    final double shrinkHeight = height * factor;
-
-    // Create a new Rect with the shrunk dimensions
-    return Rect.fromLTRB(
-      left + shrinkWidth / 2,
-      shrinkHeight / 2,
-      right - shrinkWidth / 2,
-      bottom - shrinkHeight / 2,
     );
   }
 }
