@@ -205,39 +205,22 @@ class _DownloadVectorTilesToLocalCacheSampleState
       },
     );
 
-    // Listen to the job's status and handle the result.
-    _exportVectorTilesJob?.onStatusChanged.listen(
-      (status) {
-        switch (status) {
-          // If the job succeeded, load the downloaded caches into the map view.
-          case JobStatus.succeeded:
-            final result =
-                _exportVectorTilesJob?.result as ExportVectorTilesResult;
-            _loadExportedVectorTiles(result);
-            setState(() {
-              _previewMap = true;
-              _isJobStarted = false;
-              _progress = 0.0;
-            });
-            break;
-          // If the job failed, show an error dialog
-          case JobStatus.failed:
-            _showErrorDialog(
-                _exportVectorTilesJob?.error?.message ?? 'unknown');
-            setState(() {
-              _previewMap = false;
-              _isJobStarted = false;
-              _progress = 0.0;
-            });
-            break;
-          default:
-            break;
-        }
-      },
-    );
+    try {
+      // Start the export vector tiles job.
+      final result = await _exportVectorTilesJob?.run();
 
-    // Start the export vector tiles job.
-    _exportVectorTilesJob?.start();
+      // If the job succeeded, load the downloaded caches into the map view.
+      _loadExportedVectorTiles(result);
+    } on ArcGISException catch (e) {
+      _showErrorDialog(e.message);
+    } finally {
+      _exportVectorTilesJob = null;
+    }
+    // Dismiss the progress indicator.
+    setState(() {
+      _isJobStarted = false;
+      _progress = 0.0;
+    });
   }
 
   // Show an error dialog.
@@ -302,23 +285,26 @@ class _DownloadVectorTilesToLocalCacheSampleState
   }
 
   // Load the downloaded vector tiles into the map view.
-  void _loadExportedVectorTiles(ExportVectorTilesResult result) {
-    final vectorTilesCache = result.vectorTileCache;
-    final itemResourceCache = result.itemResourceCache;
+  void _loadExportedVectorTiles(ExportVectorTilesResult? result) {
+    final vectorTilesCache = result?.vectorTileCache;
+    final itemResourceCache = result?.itemResourceCache;
     if (vectorTilesCache == null || itemResourceCache == null) {
       _showErrorDialog('Invalid vector tiles cache or item resource cache');
       return;
     }
+    // Create a new vector tile layer with the downloaded vector tiles.
     final vectorTileLayer = ArcGISVectorTiledLayer.withVectorTileCache(
       vectorTilesCache,
       itemResourceCache: itemResourceCache,
     );
-
+    // display the vector tile layer as a basemap layer in the map view.
     _mapViewController.arcGISMap = ArcGISMap.withBasemap(
       Basemap.withBaseLayer(
         vectorTileLayer,
       ),
     );
+    // Display the preview map button.
+    setState(() => _previewMap = true);
   }
 
   // Return a Widget with a red outline.
