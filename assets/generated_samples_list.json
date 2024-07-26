@@ -67,6 +67,28 @@
     "title": "Add feature layers",
     "key": "add_feature_layers"
   },
+  "add_map_image_layer": {
+    "category": "Maps",
+    "description": "Display a layer from an ArcGIS map image layer service.",
+    "ignore": false,
+    "images": [],
+    "keywords": [
+      "display",
+      "image",
+      "layer",
+      "map",
+      "ArcGISMapImageLayer"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+      "ArcGISMapImageLayer"
+    ],
+    "snippets": [
+      "add_map_image_layer_sample.dart"
+    ],
+    "title": "Add map image layer",
+    "key": "add_map_image_layer"
+  },
   "add_tiled_layer": {
     "category": "Layers",
     "description": "Load an ArcGIS tiled layer from a URL.",
