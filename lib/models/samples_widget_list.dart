@@ -23,6 +23,7 @@ import 'package:arcgis_maps_sdk_flutter_samples/samples/find_closest_facility_fr
 import 'package:arcgis_maps_sdk_flutter_samples/samples/find_route/find_route_sample.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/generate_offline_map/generate_offline_map_sample.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/identify_layer_features/identify_layer_features_sample.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/samples/manage_bookmarks/manage_bookmarks_sample.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/query_feature_table/query_feature_table_sample.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/query_table_statistics/query_table_statistics_sample.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/search_with_geocode/search_with_geocode_sample.dart';
@@ -72,6 +73,7 @@ const sampleWidgets = <String, Widget>{
   'find_route': FindRouteSample(),
   'generate_offline_map': GenerateOfflineMapSample(),
   'identify_layer_features': IdentifyLayerFeaturesSample(),
+  'manage_bookmarks': ManageBookmarksSample(),
   'query_feature_table': QueryFeatureTableSample(),
   'query_table_statistics': QueryTableStatisticsSample(),
   'search_with_geocode': SearchWithGeocodeSample(),

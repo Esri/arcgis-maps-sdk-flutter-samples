@@ -763,6 +763,32 @@
     "title": "Identify layer features",
     "key": "identify_layer_features"
   },
+  "manage_bookmarks": {
+    "category": "Maps",
+    "description": "Access and create bookmarks on a map.",
+    "ignore": false,
+    "images": [
+      "manage_bookmarks.png"
+    ],
+    "keywords": [
+      "bookmark",
+      "extent",
+      "location",
+      "zoom",
+      "Bookmark",
+      "Viewpoint"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+      "Bookmark",
+      "Viewpoint"
+    ],
+    "snippets": [
+      "manage_bookmarks_sample.dart"
+    ],
+    "title": "Manage bookmarks",
+    "key": "manage_bookmarks"
+  },
   "query_feature_table": {
     "category": "Search and Query",
     "description": "Find features in a feature table which match an SQL query.",
@@ -880,14 +906,28 @@
   },
   "set_basemap": {
     "category": "Maps",
-    "description": "Set a map's basemap. A basemap is beneath all layers on a map and is used to provide visual reference for the operational layers.",
+    "description": "Change a map's basemap. A basemap is beneath all layers on a map and is used to provide visual reference for the operational layers.",
     "ignore": false,
-    "images": [],
-    "keywords": [],
+    "images": [
+      "set_basemap.png"
+    ],
+    "keywords": [
+      "basemap",
+      "map",
+      "ArcGISMap",
+      "ArcGISMapViewController",
+      "Basemap"
+    ],
     "redirect_from": [],
-    "relevant_apis": [],
-    "snippets": [],
-    "title": "Set Basemap",
+    "relevant_apis": [
+      "ArcGISMap",
+      "ArcGISMapViewController",
+      "Basemap"
+    ],
+    "snippets": [
+      "set_basemap_sample.dart"
+    ],
+    "title": "Set basemap",
     "key": "set_basemap"
   },
   "show_device_location": {
@@ -926,11 +966,47 @@
     "category": "Maps",
     "description": "Display your device's location history on the map.",
     "ignore": false,
-    "images": [],
-    "keywords": [],
+    "images": [
+      "show_device_location_history.png"
+    ],
+    "keywords": [
+      "GPS",
+      "bread crumb",
+      "breadcrumb",
+      "history",
+      "movement",
+      "navigation",
+      "real-time",
+      "trace",
+      "track",
+      "trail",
+      "Graphic",
+      "GraphicsOverlay",
+      "LocationDataSource",
+      "LocationDisplay",
+      "LocationDisplayAutoPanMode",
+      "PolylineBuilder",
+      "SimpleLineSymbol",
+      "SimpleMarkerSymbol",
+      "SimpleRenderer",
+      "SimulatedLocationDataSource"
+    ],
     "redirect_from": [],
-    "relevant_apis": [],
-    "snippets": [],
+    "relevant_apis": [
+      "Graphic",
+      "GraphicsOverlay",
+      "LocationDataSource",
+      "LocationDisplay",
+      "LocationDisplayAutoPanMode",
+      "PolylineBuilder",
+      "SimpleLineSymbol",
+      "SimpleMarkerSymbol",
+      "SimpleRenderer",
+      "SimulatedLocationDataSource"
+    ],
+    "snippets": [
+      "show_device_location_history_sample.dart"
+    ],
     "title": "Show device location history",
     "key": "show_device_location_history"
   },
