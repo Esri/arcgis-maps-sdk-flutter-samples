@@ -21,8 +21,8 @@ When the sample loads, you'll see hurricane tracks visualized in red and blue. T
 
 ## Relevant API
 
+* ArcGISMapViewController
 * FeatureLayer
-* MapView
 * TimeExtent
 
 ## About the data
