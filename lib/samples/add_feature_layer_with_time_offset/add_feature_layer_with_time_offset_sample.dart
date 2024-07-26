@@ -14,6 +14,7 @@
 // limitations under the License.
 //
 
+import 'dart:math';
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:flutter/material.dart';
 
@@ -31,8 +32,14 @@ class _AddFeatureLayerWithTimeOffsetSampleState
     extends State<AddFeatureLayerWithTimeOffsetSample> with SampleStateSupport {
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
+  //fixme comment
+  late final TimeExtent _originalTimeExtent;
   // A flag for when the map view is ready and controls can be used.
   var _ready = false;
+  // A flag for when the settings bottom sheet is visible.
+  var _settingsVisible = false;
+  //fixme comment
+  var _intervalFraction = 1.0;
 
   @override
   Widget build(BuildContext context) {
@@ -48,16 +55,15 @@ class _AddFeatureLayerWithTimeOffsetSampleState
                   child: ArcGISMapView(
                     controllerProvider: () => _mapViewController,
                     onMapViewReady: onMapViewReady,
-                    onTap: onTap,
                   ),
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    // A button to perform a task.
+                    // A button to show the Settings bottom sheet.
                     ElevatedButton(
-                      onPressed: performTask,
-                      child: const Text('Perform Task'),
+                      onPressed: () => setState(() => _settingsVisible = true),
+                      child: const Text('Settings'),
                     ),
                   ],
                 ),
@@ -76,20 +82,149 @@ class _AddFeatureLayerWithTimeOffsetSampleState
           ],
         ),
       ),
+      // The Settings bottom sheet.
+      bottomSheet: _settingsVisible ? buildSettings(context) : null,
+    );
+  }
+
+  // The build method for the Settings bottom sheet.
+  Widget buildSettings(BuildContext context) {
+    return Container(
+      color: Colors.white,
+      padding: EdgeInsets.fromLTRB(
+        20.0,
+        0.0,
+        20.0,
+        max(
+          20.0,
+          View.of(context).viewPadding.bottom /
+              View.of(context).devicePixelRatio,
+        ),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
+            children: [
+              Text(
+                'Settings',
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
+              const Spacer(),
+              IconButton(
+                icon: const Icon(Icons.close),
+                onPressed: () => setState(() => _settingsVisible = false),
+              ),
+            ],
+          ),
+          Row(
+            children: [
+              const Text('Interval'),
+              const Spacer(),
+              Text(
+                _intervalFraction.toString(), //fixme
+                textAlign: TextAlign.right,
+              ),
+            ],
+          ),
+          Row(
+            children: [
+              Expanded(
+                // A slider to adjust the interval.
+                child: Slider(
+                  value: _intervalFraction,
+                  onChanged: (value) =>
+                      setState(() => _intervalFraction = value),
+                ),
+              ),
+            ],
+          ),
+          Row(
+            children: [
+              SizedBox(
+                width: 20.0,
+                height: 20.0,
+                child: Container(
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.red,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 10.0),
+              const Text('Hurricanes offset 10 days'),
+            ],
+          ),
+          const SizedBox(height: 10.0),
+          Row(
+            children: [
+              SizedBox(
+                width: 20.0,
+                height: 20.0,
+                child: Container(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.blue.shade900,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 10.0),
+              const Text('Hurricanes no offset'),
+            ],
+          ),
+        ],
+      ),
     );
   }
 
   void onMapViewReady() async {
-    final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic);
+    // Create a map with the oceans basemap style.
+    final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISOceans);
+
+    //fixme comments
+    final featureLayerUri = Uri.parse(
+        'https://sampleserver6.arcgisonline.com/arcgis/rest/services/Hurricanes/MapServer/0');
+
+    final featureTable = ServiceFeatureTable.withUri(featureLayerUri);
+    final featureLayer = FeatureLayer.withFeatureTable(featureTable);
+    featureLayer.renderer = SimpleRenderer(
+      symbol: SimpleMarkerSymbol(
+        style: SimpleMarkerSymbolStyle.circle,
+        color: Colors.blue.shade900,
+        size: 10.0,
+      ),
+    );
+
+    final offsetFeatureTable = ServiceFeatureTable.withUri(featureLayerUri);
+    final offsetFeatureLayer =
+        FeatureLayer.withFeatureTable(offsetFeatureTable);
+    offsetFeatureLayer.renderer = SimpleRenderer(
+      symbol: SimpleMarkerSymbol(
+        style: SimpleMarkerSymbolStyle.circle,
+        color: Colors.red,
+        size: 10.0,
+      ),
+    );
+    offsetFeatureLayer.timeOffset =
+        TimeValue(duration: 10, unit: TimeUnit.days);
+
+    map.operationalLayers.addAll([featureLayer, offsetFeatureLayer]);
+
+    await featureLayer.load();
+    _originalTimeExtent = featureLayer.fullTimeExtent!;
+
+//fixme updateTimeExtent
+    _mapViewController.timeExtent = TimeExtent(
+      startTime:
+          _originalTimeExtent.endTime?.subtract(const Duration(days: 10)),
+      endTime: _originalTimeExtent.endTime,
+    );
+
+    // Set the map on the map view controller.
     _mapViewController.arcGISMap = map;
-    // Perform some long-running setup task.
-    await Future.delayed(const Duration(seconds: 10));
+
     // Set the ready state variable to true to enable the sample UI.
     setState(() => _ready = true);
-  }
-
-  void onTap(Offset offset) {
-    print('Tapped at $offset');
   }
 
   void performTask() async {
