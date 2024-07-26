@@ -149,9 +149,10 @@ class _DownloadVectorTilesToLocalCacheSampleState
   void cancelDownloadingJob() async {
     setState(() => _progress = 0.0);
     setState(() => _isJobStarted = false);
+
     // Cancel the export vector tiles job, the job status will be failed.
     // The status listener will popup a dialog to show the error message.
-    await _exportVectorTilesJob!.cancel();
+    await _exportVectorTilesJob?.cancel();
   }
 
   // Start to download the vector tiles for the outlined region.
@@ -198,9 +199,11 @@ class _DownloadVectorTilesToLocalCacheSampleState
     );
 
     // Listen to the job's progress, status, and completion.
-    _exportVectorTilesJob?.onProgressChanged.listen((progress) {
-      setState(() => _progress = progress * 0.01);
-    });
+    _exportVectorTilesJob?.onProgressChanged.listen(
+      (progress) {
+        setState(() => _progress = progress * 0.01);
+      },
+    );
 
     // Listen to the job's status and handle the result.
     _exportVectorTilesJob?.onStatusChanged.listen(
@@ -237,6 +240,7 @@ class _DownloadVectorTilesToLocalCacheSampleState
     _exportVectorTilesJob?.start();
   }
 
+  // Show an error dialog.
   void _showErrorDialog(String message) {
     showDialog(
       context: context,
