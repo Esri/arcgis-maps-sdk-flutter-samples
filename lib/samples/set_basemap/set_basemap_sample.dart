@@ -38,8 +38,11 @@ class _SetBasemapSampleState extends State<SetBasemapSample>
   // Create a dictionary to store basemaps.
   final _basemaps = <Basemap, Image>{};
   // Create a default image.
-  final _defaultImage = Image.asset('assets/basemap_default.png'); 
+  final _defaultImage = Image.asset('assets/basemap_default.png');
+  // Create a future to load basemaps.
   late Future _loadBasemapsFuture;
+  // Create a variable to store the selected basemap.
+  Basemap? _selectedBasemap;
 
   @override
   void initState() {
@@ -55,7 +58,7 @@ class _SetBasemapSampleState extends State<SetBasemapSample>
       key: _scaffoldStateKey,
       // Create an end drawer to display basemaps.
       endDrawer: Drawer(
-        child: SafeArea( 
+        child: SafeArea(
           // Create a future builder to load basemaps.
           child: FutureBuilder(
             future: _loadBasemapsFuture,
@@ -71,7 +74,19 @@ class _SetBasemapSampleState extends State<SetBasemapSample>
                           (basemap) => ListTile(
                             title: Column(
                               children: [
-                                _basemaps[basemap] ?? _defaultImage,
+                                Container(
+                                  // Add a border to the selected basemap.
+                                  decoration: _selectedBasemap == basemap
+                                      ? BoxDecoration(
+                                          border: Border.all(
+                                            color: Colors.blue,
+                                            width: 4,
+                                          ),
+                                        )
+                                      : null,
+                                  // Display the basemap image.
+                                  child: _basemaps[basemap] ?? _defaultImage,
+                                ),
                                 Text(
                                   basemap.name,
                                   textAlign: TextAlign.center,
@@ -80,6 +95,7 @@ class _SetBasemapSampleState extends State<SetBasemapSample>
                             ),
                             // Update the map with the selected basemap.
                             onTap: () {
+                              _selectedBasemap = basemap;
                               updateMap(basemap);
                               _scaffoldStateKey.currentState!.closeEndDrawer();
                             },
@@ -122,12 +138,12 @@ class _SetBasemapSampleState extends State<SetBasemapSample>
 
   void onMapViewReady() {
     // Set the map view controller's map to the ArcGIS map.
-    _mapViewController.arcGISMap = _arcGISMap; 
+    _mapViewController.arcGISMap = _arcGISMap;
   }
 
   void updateMap(Basemap basemap) {
     // Update the map view with the selected basemap.
-    _arcGISMap.basemap = basemap; 
+    _arcGISMap.basemap = basemap;
   }
 
   Future loadBasemaps() async {
