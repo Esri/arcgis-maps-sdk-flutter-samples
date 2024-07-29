@@ -71,7 +71,7 @@ class _DownloadVectorTilesToLocalCacheSampleState
                       // Add a red outline that marks the region to be taken offline.
                       Visibility(
                         visible: !_previewMap,
-                        child: _getRedOutline(),
+                        child: buildRedOutline(),
                       ),
                     ],
                   ),
@@ -106,7 +106,7 @@ class _DownloadVectorTilesToLocalCacheSampleState
             Visibility(
               visible: _isJobStarted,
               child: Center(
-                child: _getProgressIndicator(),
+                child: buildProgressIndicator(),
               ),
             ),
           ],
@@ -198,7 +198,7 @@ class _DownloadVectorTilesToLocalCacheSampleState
       itemResourceCacheUri: Uri.directory(resourceDirectory),
     );
 
-    // Listen to the job's progress, status, and completion.
+    // Listen to the job's progress.
     _exportVectorTilesJob?.onProgressChanged.listen(
       (progress) {
         setState(() => _progress = progress * 0.01);
@@ -308,7 +308,7 @@ class _DownloadVectorTilesToLocalCacheSampleState
   }
 
   // Return a Widget with a red outline.
-  Widget _getRedOutline() {
+  Widget buildRedOutline() {
     return IgnorePointer(
       child: SafeArea(
         child: Container(
@@ -328,10 +328,11 @@ class _DownloadVectorTilesToLocalCacheSampleState
   }
 
   // Return a Widget with a linear progress bar.
-  Widget _getProgressIndicator() {
+  Widget buildProgressIndicator() {
     return Container(
       color: Colors.white,
-      constraints: const BoxConstraints(maxWidth: 300),
+      constraints:
+          BoxConstraints(maxWidth: MediaQuery.sizeOf(context).width * 0.5),
       padding: const EdgeInsets.all(20),
       child: Column(
         mainAxisSize: MainAxisSize.min,
