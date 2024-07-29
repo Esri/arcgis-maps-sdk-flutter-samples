@@ -332,7 +332,7 @@ class _DownloadVectorTilesToLocalCacheSampleState
     return Container(
       color: Colors.white,
       constraints:
-          BoxConstraints(maxWidth: MediaQuery.sizeOf(context).width * 0.5),
+          BoxConstraints(maxWidth: MediaQuery.sizeOf(context).width * 0.6),
       padding: const EdgeInsets.all(20),
       child: Column(
         mainAxisSize: MainAxisSize.min,
