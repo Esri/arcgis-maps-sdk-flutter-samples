@@ -71,7 +71,9 @@
     "category": "Maps",
     "description": "Display a layer from an ArcGIS map image layer service.",
     "ignore": false,
-    "images": [],
+    "images": [
+      "add_map_image_layer.png"
+    ],
     "keywords": [
       "display",
       "image",
@@ -675,11 +677,37 @@
     "category": "Routing and Logistics",
     "description": "Find routes from several locations to the respective closest facility.",
     "ignore": false,
-    "images": [],
-    "keywords": [],
+    "images": [
+      "find_closest_facility_from_point.png"
+    ],
+    "keywords": [
+      "incident",
+      "network analysis",
+      "route",
+      "search",
+      "ClosestFacilityParameters",
+      "ClosestFacilityResult",
+      "ClosestFacilityRoute",
+      "ClosestFacilityTask",
+      "Facility",
+      "Graphic",
+      "GraphicsOverlay",
+      "Incident"
+    ],
     "redirect_from": [],
-    "relevant_apis": [],
-    "snippets": [],
+    "relevant_apis": [
+      "ClosestFacilityParameters",
+      "ClosestFacilityResult",
+      "ClosestFacilityRoute",
+      "ClosestFacilityTask",
+      "Facility",
+      "Graphic",
+      "GraphicsOverlay",
+      "Incident"
+    ],
+    "snippets": [
+      "find_closest_facility_from_point_sample.dart"
+    ],
     "title": "Find closest facility from point",
     "key": "find_closest_facility_from_point"
   },
@@ -884,18 +912,6 @@
     ],
     "title": "Query table statistics",
     "key": "query_table_statistics"
-  },
-  "search_with_geocode": {
-    "category": "Search and Query",
-    "description": "Find the location for an address or places of interest near a location or within a specific area.",
-    "ignore": false,
-    "images": [],
-    "keywords": [],
-    "redirect_from": [],
-    "relevant_apis": [],
-    "snippets": [],
-    "title": "Search with geocode",
-    "key": "search_with_geocode"
   },
   "select_features_in_feature_layer": {
     "category": "Search and Query",
