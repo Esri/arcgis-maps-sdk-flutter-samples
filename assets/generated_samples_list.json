@@ -71,7 +71,9 @@
     "category": "Maps",
     "description": "Display a layer from an ArcGIS map image layer service.",
     "ignore": false,
-    "images": [],
+    "images": [
+      "add_map_image_layer.png"
+    ],
     "keywords": [
       "display",
       "image",
@@ -675,11 +677,37 @@
     "category": "Routing and Logistics",
     "description": "Find routes from several locations to the respective closest facility.",
     "ignore": false,
-    "images": [],
-    "keywords": [],
+    "images": [
+      "find_closest_facility_from_point.png"
+    ],
+    "keywords": [
+      "incident",
+      "network analysis",
+      "route",
+      "search",
+      "ClosestFacilityParameters",
+      "ClosestFacilityResult",
+      "ClosestFacilityRoute",
+      "ClosestFacilityTask",
+      "Facility",
+      "Graphic",
+      "GraphicsOverlay",
+      "Incident"
+    ],
     "redirect_from": [],
-    "relevant_apis": [],
-    "snippets": [],
+    "relevant_apis": [
+      "ClosestFacilityParameters",
+      "ClosestFacilityResult",
+      "ClosestFacilityRoute",
+      "ClosestFacilityTask",
+      "Facility",
+      "Graphic",
+      "GraphicsOverlay",
+      "Incident"
+    ],
+    "snippets": [
+      "find_closest_facility_from_point_sample.dart"
+    ],
     "title": "Find closest facility from point",
     "key": "find_closest_facility_from_point"
   },
@@ -951,6 +979,32 @@
     ],
     "title": "Set basemap",
     "key": "set_basemap"
+  },
+  "set_reference_scale": {
+    "category": "Maps",
+    "description": "Set the map's reference scale and which feature layers should honor the reference scale.",
+    "ignore": false,
+    "images": [
+      "set_reference_scale.png",
+      "set_reference_scale2.png"
+    ],
+    "keywords": [
+      "map",
+      "reference scale",
+      "scene",
+      "ArcGISMap",
+      "FeatureLayer"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+      "ArcGISMap",
+      "FeatureLayer"
+    ],
+    "snippets": [
+      "set_reference_scale_sample.dart"
+    ],
+    "title": "Set reference scale",
+    "key": "set_reference_scale"
   },
   "show_device_location": {
     "category": "Maps",

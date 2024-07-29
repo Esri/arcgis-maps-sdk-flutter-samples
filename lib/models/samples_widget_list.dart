@@ -30,6 +30,7 @@ import 'package:arcgis_maps_sdk_flutter_samples/samples/query_table_statistics/q
 import 'package:arcgis_maps_sdk_flutter_samples/samples/search_with_geocode/search_with_geocode_sample.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/select_features_in_feature_layer/select_features_in_feature_layer_sample.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/set_basemap/set_basemap_sample.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/samples/set_reference_scale/set_reference_scale_sample.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/show_device_location/show_device_location_sample.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/show_device_location_history/show_device_location_history_sample.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/show_grid/show_grid_sample.dart';
@@ -81,6 +82,7 @@ const sampleWidgets = <String, Widget>{
   'search_with_geocode': SearchWithGeocodeSample(),
   'select_features_in_feature_layer': SelectFeaturesInFeatureLayerSample(),
   'set_basemap': SetBasemapSample(),
+  'set_reference_scale': SetReferenceScaleSample(),
   'show_device_location': ShowDeviceLocationSample(),
   'show_device_location_history': ShowDeviceLocationHistorySample(),
   'show_grid': ShowGridSample(),
