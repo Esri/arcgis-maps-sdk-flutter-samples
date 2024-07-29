@@ -2,7 +2,7 @@
 
 Display a time-enabled feature layer with a time offset.
 
-![Image of add feature layer with time offset](add_feature_layer_with_time_offset.jpg)
+![Image of add feature layer with time offset](add_feature_layer_with_time_offset.png)
 
 ## Use case
 
