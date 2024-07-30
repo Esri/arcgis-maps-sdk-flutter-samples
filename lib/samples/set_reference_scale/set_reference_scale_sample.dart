@@ -32,41 +32,37 @@ class _SetReferenceScaleState extends State<SetReferenceScaleSample>
   final _mapViewController = ArcGISMapView.createController();
   // Create a list of dropdown menu items to load all the reference scales.
   final _referenceScaleList = <DropdownMenuItem<double>>[];
-  // Create a list of possible reference scales.
-  final _possibleReferenceScales = <double>[500000, 250000, 100000, 50000];
   // Create a list of selected feature layers.
   final _selectedFeatureLayers = <String>[];
   // Create a list of all feature layers.
-  final _allFeatureLayers = <String>[];
+  late List<String> _allFeatureLayers;
   // Create a variable to store the map.
   var _map = ArcGISMap();
   // Create a variable to store the scale.
   var _scale = 250000.0;
-  // Create a variable to store the ready state.
+  // Create a flag for when the map view is ready and controls can be used.
   var _ready = false;
-  // Create a variable to store the selected feature layer source.
-  int? _selectedScale;
 
   @override
   void initState() {
     super.initState();
     // Add scales to the list.
     _referenceScaleList.addAll([
-      DropdownMenuItem(
-        value: _possibleReferenceScales[0],
-        child: const Text('1:500,000'),
+      const DropdownMenuItem(
+        value: 500000.0,
+        child: Text('1:500,000'),
       ),
-      DropdownMenuItem(
-        value: _possibleReferenceScales[1],
-        child: const Text('1:250,000'),
+      const DropdownMenuItem(
+        value: 250000.0,
+        child: Text('1:250,000'),
       ),
-      DropdownMenuItem(
-        value: _possibleReferenceScales[2],
-        child: const Text('1:100,000'),
+      const DropdownMenuItem(
+        value: 100000.0,
+        child: Text('1:100,000'),
       ),
-      DropdownMenuItem(
-        value: _possibleReferenceScales[3],
-        child: const Text('1:50,000'),
+      const DropdownMenuItem(
+        value: 50000.0,
+        child: Text('1:50,000'),
       )
     ]);
   }
@@ -95,12 +91,7 @@ class _SetReferenceScaleState extends State<SetReferenceScaleSample>
                         builder: (context) => showSettings(context),
                       )
                   : null,
-              child: const Text(
-                'Settings',
-                style: TextStyle(
-                  color: Colors.deepPurple,
-                ),
-              ),
+              child: const Text('Settings'),
             )
           ],
         ),
@@ -120,85 +111,81 @@ class _SetReferenceScaleState extends State<SetReferenceScaleSample>
     _map = ArcGISMap.withItem(portalItem);
     await _map.load();
 
-    // Get the operational layers from the map.
-    for (var layer in _map.operationalLayers) {
-      _allFeatureLayers.add(layer.name);
-    }
+    // Get the operational layer names from the map.
+    _allFeatureLayers =
+        _map.operationalLayers.map((layer) => layer.name).toList();
+
+    // Set the map view controller's map to the ArcGIS map.
     _mapViewController.arcGISMap = _map;
 
-    // See if the map is ready.
+    // Set the ready state variable to true to enable the sample UI.
     setState(() => _ready = true);
   }
 
-  StatefulBuilder showSettings(BuildContext newContext) {
+  StatefulBuilder showSettings(BuildContext context) {
     // Show the settings dialog.
-    return StatefulBuilder(builder: (newContext, setNewState) {
+    return StatefulBuilder(builder: (context, setNewState) {
       return Dialog(
         child: Padding(
           padding: const EdgeInsets.all(8),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              Center(
-                child: Text('Settings',
-                    style: Theme.of(context).textTheme.headlineMedium),
-              ),
-              // Add a dropdown button for setting a new reference scale.
-              DropdownButton(
-                alignment: Alignment.center,
-                hint: const Text(
-                  'Select a New Reference Scale',
-                  style: TextStyle(
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Center(
+                  child: Text('Settings',
+                      style: Theme.of(context).textTheme.headlineMedium),
+                ),
+                // Add a dropdown button for setting a new reference scale.
+                DropdownButton(
+                  alignment: Alignment.center,
+                  hint: const Text('Select a New Reference Scale'),
+                  // Set the selected scale
+                  value: _scale,
+                  icon: const Icon(
+                    Icons.arrow_drop_down,
                     color: Colors.deepPurple,
                   ),
+                  // Set the onChanged callback to update the selected scale.
+                  onChanged: (newScale) {
+                    setState(() => _scale = newScale!);
+                  },
+                  items: _referenceScaleList,
                 ),
-                // Set the selected scale
-                value: _selectedScale,
-                icon: const Icon(
-                  Icons.arrow_drop_down,
-                  color: Colors.deepPurple,
+                const Text(
+                  'Apply Reference Scale to a Layer',
                 ),
-                elevation: 16,
-                style: const TextStyle(color: Colors.deepPurple),
-                // Set the onChanged callback to update the selected scale.
-                onChanged: (newScale) {
-                  updateScale(newScale!.toDouble());
-                },
-                items: _referenceScaleList,
-              ),
-              const Text(
-                'Apply Reference Scale to a Layer',
-              ),
-              // Add a list of checkboxes for selecting feature layers that will honor the reference scale.
-              Column(
-                children: [
-                  // Create a checkbox for each feature layer.
-                  for (var layer in _allFeatureLayers)
-                    CheckboxListTile(
-                      value: _selectedFeatureLayers.contains(layer),
-                      onChanged: (value) {
-                        // Update the selected feature layers.
-                        setNewState(() {
-                          if (value ?? false) {
-                            _selectedFeatureLayers.add(layer);
-                          } else {
-                            _selectedFeatureLayers.remove(layer);
-                          }
-                        });
-                      },
-                      title: Text(layer),
-                    ),
-                ],
-              ),
-              // Add a button to set the map scale to the reference scale and update the layers.
-              ElevatedButton(
-                onPressed: () {
-                  setScaleAndLayers();
-                  Navigator.pop(newContext);
-                },
-                child: const Text('Set Map Scale to Reference Scale'),
-              ),
-            ],
+                // Add a list of checkboxes for selecting feature layers that will honor the reference scale.
+                Column(
+                  children: [
+                    // Create a checkbox for each feature layer.
+                    for (final layer in _allFeatureLayers)
+                      CheckboxListTile(
+                        value: _selectedFeatureLayers.contains(layer),
+                        onChanged: (value) {
+                          // Update the selected feature layers.
+                          setNewState(() {
+                            if (value ?? false) {
+                              _selectedFeatureLayers.add(layer);
+                            } else {
+                              _selectedFeatureLayers.remove(layer);
+                            }
+                          });
+                        },
+                        title: Text(layer),
+                      ),
+                  ],
+                ),
+                // Add a button to set the map scale to the reference scale and update the layers.
+                ElevatedButton(
+                  onPressed: () {
+                    setScaleAndLayers();
+                    Navigator.pop(context);
+                  },
+                  child: const Text('Set Map Scale to Reference Scale'),
+                ),
+              ],
+            ),
           ),
         ),
       );
@@ -211,17 +198,14 @@ class _SetReferenceScaleState extends State<SetReferenceScaleSample>
   }
 
   void setScaleAndLayers() {
-    // Set the map scale to the reference scale and update the layers.
-    setState(() {
-      // Set the map scale to the reference scale.
-      _map.referenceScale = _scale;
-      // Update the layers to honor the reference scale.
-      for (var layer in _selectedFeatureLayers) {
-        var matchingLayers = _map.operationalLayers
-            .where((element) => element.name == layer)
-            .first as FeatureLayer;
-        matchingLayers.scaleSymbols = true;
-      }
-    });
+    // Set the map scale to the reference scale.
+    _map.referenceScale = _scale;
+    // Update the layers to honor the reference scale.
+    for (final layer in _selectedFeatureLayers) {
+      var matchingLayers = _map.operationalLayers
+          .where((element) => element.name == layer)
+          .first as FeatureLayer;
+      matchingLayers.scaleSymbols = true;
+    }
   }
 }

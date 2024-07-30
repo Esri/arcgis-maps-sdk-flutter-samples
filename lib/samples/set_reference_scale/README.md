@@ -12,9 +12,9 @@ Map annotations are typically only relevant at certain scales. For instance, ann
 
 ## How to use the sample
 
-* Use the drop box through the settings menu to set the map's reference scale (1:500,000 1:250,000 1:100,000 1:50,000).
-* Click the button to set the map scale to the reference scale.
-* Use the menu checkboxes in the settings menu to set which feature layers should honor the reference scale.
+* Use the drop-down menu through the Settings dialog to set the map's reference scale (1:500,000 1:250,000 1:100,000 1:50,000).
+* Tap the button to set the map scale to the reference scale.
+* Use the checkboxes in the Settings dialog to set which feature layers should honor the reference scale.
 
 ## How it works
 
