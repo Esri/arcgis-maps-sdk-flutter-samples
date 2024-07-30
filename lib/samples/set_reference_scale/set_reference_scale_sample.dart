@@ -192,11 +192,6 @@ class _SetReferenceScaleState extends State<SetReferenceScaleSample>
     });
   }
 
-  void updateScale(double newScale) {
-    // Update the scale.
-    setState(() => _scale = newScale);
-  }
-
   void setScaleAndLayers() {
     // Set the map scale to the reference scale.
     _map.referenceScale = _scale;
