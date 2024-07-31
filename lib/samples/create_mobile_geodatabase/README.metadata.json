@@ -32,7 +32,7 @@
         "TableDescription"
     ],
     "snippets": [
-        "create_mobile_geodatabase_sample.dart"
+        "create_mobile_geodatabase.dart"
     ],
     "title": "Create mobile geodatabase"
 }

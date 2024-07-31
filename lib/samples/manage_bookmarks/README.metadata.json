@@ -19,7 +19,7 @@
         "Viewpoint"
     ],
     "snippets": [
-        "manage_bookmarks_sample.dart"
+        "manage_bookmarks.dart"
     ],
     "title": "Manage bookmarks"
 }

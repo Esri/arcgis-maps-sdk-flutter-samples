@@ -31,7 +31,7 @@
         "Incident"
     ],
     "snippets": [
-        "find_closest_facility_from_point_sample.dart"
+        "find_closest_facility_from_point.dart"
     ],
     "title": "Find closest facility from point"
 }

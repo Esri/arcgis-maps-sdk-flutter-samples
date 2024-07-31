@@ -28,7 +28,7 @@
         "SpatialReference"
     ],
     "snippets": [
-        "densify_and_generalize_geometry_sample.dart"
+        "densify_and_generalize_geometry.dart"
     ],
     "title": "Densify and generalize geometry"
 }

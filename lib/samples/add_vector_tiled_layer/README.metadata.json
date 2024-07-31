@@ -20,7 +20,7 @@
         "Basemap"
     ],
     "snippets": [
-        "add_vector_tiled_layer_sample.dart"
+        "add_vector_tiled_layer.dart"
     ],
     "title": "Add vector tiled layer"
 }

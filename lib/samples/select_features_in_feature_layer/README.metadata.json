@@ -22,7 +22,7 @@
         "ServiceFeatureTable"
     ],
     "snippets": [
-        "select_features_in_feature_layer_sample.dart"
+        "select_features_in_feature_layer.dart"
     ],
     "title": "Select features in feature layer"
 }

@@ -32,7 +32,7 @@
         "fetchAttachments"
     ],
     "snippets": [
-        "edit_feature_attachments_sample.dart"
+        "edit_feature_attachments.dart"
     ],
     "title": "Edit feature attachments"
 }

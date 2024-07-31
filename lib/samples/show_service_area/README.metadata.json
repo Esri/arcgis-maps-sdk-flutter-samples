@@ -28,7 +28,7 @@
         "ServiceAreaTask"
     ],
     "snippets": [
-        "show_service_area_sample.dart"
+        "show_service_area.dart"
     ],
     "title": "Show service area"
 }
