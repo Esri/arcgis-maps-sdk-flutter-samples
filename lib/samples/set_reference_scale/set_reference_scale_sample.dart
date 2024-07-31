@@ -43,30 +43,22 @@ class _SetReferenceScaleState extends State<SetReferenceScaleSample>
   // Create a flag for when the map view is ready and controls can be used.
   var _ready = false;
   // Create a regular expression to format the scale.
-  final reg = RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))');
+  final _digitGroupRegex = RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))');
 
   @override
   void initState() {
     super.initState();
     // Add scales to the list.
-    _referenceScaleList.addAll([
-      const DropdownMenuItem(
-        value: 500000.0,
-        child: Text('1:500,000'),
-      ),
-      const DropdownMenuItem(
-        value: 250000.0,
-        child: Text('1:250,000'),
-      ),
-      const DropdownMenuItem(
-        value: 100000.0,
-        child: Text('1:100,000'),
-      ),
-      const DropdownMenuItem(
-        value: 50000.0,
-        child: Text('1:50,000'),
-      )
-    ]);
+    for (final value in [500000.0, 250000.0, 100000.0, 50000.0]) {
+      _referenceScaleList.add(
+        DropdownMenuItem(
+          value: value,
+          child: Text(
+            formatAsScale(value),
+          ),
+        ),
+      );
+    }
   }
 
   @override
@@ -170,7 +162,7 @@ class _SetReferenceScaleState extends State<SetReferenceScaleSample>
                     for (final layer in _allFeatureLayers)
                       CheckboxListTile(
                         value: _selectedFeatureLayers.contains(layer),
-                        onChanged: (value) { 
+                        onChanged: (value) {
                           setNewState(() {
                             // Update the selected feature layers list.
                             if (value ?? false) {
@@ -201,7 +193,7 @@ class _SetReferenceScaleState extends State<SetReferenceScaleSample>
                       style: Theme.of(context).textTheme.titleMedium),
                 ),
                 Text(
-                  '1:${_mapViewController.scale.toInt().toString().replaceAllMapped(reg, mathFunc)}',
+                  formatAsScale(_mapViewController.scale),
                 ),
                 ElevatedButton(
                   onPressed: () {
@@ -221,5 +213,10 @@ class _SetReferenceScaleState extends State<SetReferenceScaleSample>
   }
 
   // Create a function to format the scale.
-  String Function(Match) mathFunc = (Match match) => '${match[1]},';
+  String formatAsScale(double value) {
+    return '1:${value.toInt().toString().replaceAllMapped(_digitGroupRegex, matchFormatter)}';
+  }
+
+  // Create a helpder function to be applied on the regular expression.
+  String Function(Match) matchFormatter = (Match match) => '${match[1]},';
 }
