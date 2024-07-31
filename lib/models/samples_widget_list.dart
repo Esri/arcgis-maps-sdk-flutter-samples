@@ -39,58 +39,63 @@ import 'package:arcgis_maps_sdk_flutter_samples/samples/show_magnifier/show_magn
 import 'package:arcgis_maps_sdk_flutter_samples/samples/show_portal_user_info/show_portal_user_info_sample.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/show_service_area/show_service_area_sample.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/style_point_with_simple_marker_symbol/style_point_with_simple_marker_symbol_sample.dart';
-import 'package:flutter/material.dart';
 
 // A list of all the Widgets for individual Samples.
 // Used by the Sample Viewer App to display the Widget when a sample is selected.
 // The key is the directory name for the sample which is in snake case. E.g. display_map
-const sampleWidgets = <String, Widget>{
-  'add_feature_collection_layer_from_table':
+final sampleWidgets = <String, Function>{
+  'add_feature_collection_layer_from_table': () =>
       AddFeatureCollectionLayerFromTableSample(),
-  'add_feature_layer_with_time_offset': AddFeatureLayerWithTimeOffsetSample(),
-  'add_feature_layers': AddFeatureLayersSample(),
-  'add_map_image_layer': AddMapImageLayerSample(),
-  'add_tiled_layer': AddTiledLayerSample(),
-  'add_tiled_layer_as_basemap': AddTiledLayerAsBasemapSample(),
-  'add_vector_tiled_layer': AddVectorTiledLayerSample(),
-  'apply_class_breaks_renderer_to_sublayer':
+  'add_feature_layer_with_time_offset': () =>
+      AddFeatureLayerWithTimeOffsetSample(),
+  'add_feature_layers': () => AddFeatureLayersSample(),
+  'add_map_image_layer': () => AddMapImageLayerSample(),
+  'add_tiled_layer': () => AddTiledLayerSample(),
+  'add_tiled_layer_as_basemap': () => AddTiledLayerAsBasemapSample(),
+  'add_vector_tiled_layer': () => AddVectorTiledLayerSample(),
+  'apply_class_breaks_renderer_to_sublayer': () =>
       ApplyClassBreaksRendererToSublayerSample(),
-  'apply_scheduled_updates_to_preplanned_map_area':
+  'apply_scheduled_updates_to_preplanned_map_area': () =>
       ApplyScheduledUpdatesToPreplannedMapAreaSample(),
-  'apply_simple_renderer_to_feature_layer':
+  'apply_simple_renderer_to_feature_layer': () =>
       ApplySimpleRendererToFeatureLayerSample(),
-  'apply_unique_value_renderer': ApplyUniqueValueRendererSample(),
-  'authenticate_with_oauth': AuthenticateWithOAuthSample(),
-  'authenticate_with_token': AuthenticateWithTokenSample(),
-  'create_mobile_geodatabase': CreateMobileGeodatabaseSample(),
-  'create_planar_and_geodetic_buffers': CreatePlanarAndGeodeticBuffersSample(),
-  'densify_and_generalize_geometry': DensifyAndGeneralizeGeometrySample(),
-  'display_clusters': DisplayClustersSample(),
-  'display_map': DisplayMapSample(),
-  'display_map_from_mobile_map_package': DisplayMapFromMobileMapPackageSample(),
-  'download_preplanned_map_area': DownloadPreplannedMapAreaSample(),
-  'download_vector_tiles_to_local_cache':
+  'apply_unique_value_renderer': () => ApplyUniqueValueRendererSample(),
+  'authenticate_with_oauth': () => AuthenticateWithOAuthSample(),
+  'authenticate_with_token': () => AuthenticateWithTokenSample(),
+  'create_mobile_geodatabase': () => CreateMobileGeodatabaseSample(),
+  'create_planar_and_geodetic_buffers': () =>
+      CreatePlanarAndGeodeticBuffersSample(),
+  'densify_and_generalize_geometry': () => DensifyAndGeneralizeGeometrySample(),
+  'display_clusters': () => DisplayClustersSample(),
+  'display_map': () => DisplayMapSample(),
+  'display_map_from_mobile_map_package': () =>
+      DisplayMapFromMobileMapPackageSample(),
+  'download_preplanned_map_area': () => DownloadPreplannedMapAreaSample(),
+  'download_vector_tiles_to_local_cache': () =>
       DownloadVectorTilesToLocalCacheSample(),
-  'edit_feature_attachments': EditFeatureAttachmentsSample(),
-  'filter_by_definition_expression_or_display_filter':
+  'edit_feature_attachments': () => EditFeatureAttachmentsSample(),
+  'filter_by_definition_expression_or_display_filter': () =>
       FilterByDefinitionExpressionOrDisplayFilterSample(),
-  'find_address_with_reverse_geocode': FindAddressWithReverseGeocodeSample(),
-  'find_closest_facility_from_point': FindClosestFacilityFromPointSample(),
-  'find_route': FindRouteSample(),
-  'generate_offline_map': GenerateOfflineMapSample(),
-  'identify_layer_features': IdentifyLayerFeaturesSample(),
-  'manage_bookmarks': ManageBookmarksSample(),
-  'query_feature_table': QueryFeatureTableSample(),
-  'query_table_statistics': QueryTableStatisticsSample(),
-  'select_features_in_feature_layer': SelectFeaturesInFeatureLayerSample(),
-  'set_basemap': SetBasemapSample(),
-  'show_device_location': ShowDeviceLocationSample(),
-  'show_device_location_history': ShowDeviceLocationHistorySample(),
-  'show_grid': ShowGridSample(),
-  'show_magnifier': ShowMagnifierSample(),
-  'show_portal_user_info': ShowPortalUserInfoSample(),
-  'show_service_area': ShowServiceAreaSample(),
-  'show_legend': ShowLegendSample(),
-  'style_point_with_simple_marker_symbol':
+  'find_address_with_reverse_geocode': () =>
+      FindAddressWithReverseGeocodeSample(),
+  'find_closest_facility_from_point': () =>
+      FindClosestFacilityFromPointSample(),
+  'find_route': () => FindRouteSample(),
+  'generate_offline_map': () => GenerateOfflineMapSample(),
+  'identify_layer_features': () => IdentifyLayerFeaturesSample(),
+  'manage_bookmarks': () => ManageBookmarksSample(),
+  'query_feature_table': () => QueryFeatureTableSample(),
+  'query_table_statistics': () => QueryTableStatisticsSample(),
+  'select_features_in_feature_layer': () =>
+      SelectFeaturesInFeatureLayerSample(),
+  'set_basemap': () => SetBasemapSample(),
+  'show_device_location': () => ShowDeviceLocationSample(),
+  'show_device_location_history': () => ShowDeviceLocationHistorySample(),
+  'show_grid': () => ShowGridSample(),
+  'show_magnifier': () => ShowMagnifierSample(),
+  'show_portal_user_info': () => ShowPortalUserInfoSample(),
+  'show_service_area': () => ShowServiceAreaSample(),
+  'show_legend': () => ShowLegendSample(),
+  'style_point_with_simple_marker_symbol': () =>
       StylePointWithSimpleMarkerSymbolSample(),
 };
