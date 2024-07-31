@@ -151,7 +151,7 @@ class _SetReferenceScaleState extends State<SetReferenceScaleSample>
                     Icons.arrow_drop_down,
                     color: Colors.deepPurple,
                   ),
-                  // Set the onChanged callback to update the selected scale.
+                  // Set the callback to update the selected scale.
                   onChanged: (newScale) {
                     setNewState(() {
                       _scale = newScale!;
@@ -171,7 +171,6 @@ class _SetReferenceScaleState extends State<SetReferenceScaleSample>
                       CheckboxListTile(
                         value: _selectedFeatureLayers.contains(layer),
                         onChanged: (value) {
-                          // Update the selected feature layers.
                           setNewState(() {
                             // Update the selected feature layers list.
                             if (value ?? false) {
@@ -186,7 +185,7 @@ class _SetReferenceScaleState extends State<SetReferenceScaleSample>
                               .where((element) => element.name == layer)
                               .first as FeatureLayer;
 
-                          // Set the scaleSymbols property based on the checkbox value.
+                          // Set the layer property based on the checkbox value.
                           _selectedFeatureLayers.contains(matchingLayer.name)
                               ? matchingLayer.scaleSymbols = true
                               : matchingLayer.scaleSymbols = false;
@@ -206,7 +205,7 @@ class _SetReferenceScaleState extends State<SetReferenceScaleSample>
                 ),
                 ElevatedButton(
                   onPressed: () {
-                    // Set the map scale to the reference scale and close the Settings dialog.
+                    // Set the map scale to the reference scale and close the settings dialog.
                     _mapViewController.setViewpointScale(
                         scale: _map.referenceScale);
                     Navigator.pop(context);
