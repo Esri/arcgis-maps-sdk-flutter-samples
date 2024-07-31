@@ -103,10 +103,9 @@ class _QueryTableStatisticsSampleState extends State<QueryTableStatisticsSample>
   // The build method for the query options shown in the bottom sheet.
   Widget querySettings(BuildContext context) {
     return Container(
-      color: Colors.white,
       padding: EdgeInsets.fromLTRB(
         20.0,
-        0.0,
+        20.0,
         20.0,
         max(
           20.0,
@@ -114,48 +113,45 @@ class _QueryTableStatisticsSampleState extends State<QueryTableStatisticsSample>
               View.of(context).devicePixelRatio,
         ),
       ),
-      child: Container(
-        color: Colors.white,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Row(
-              children: [
-                Text(
-                  'Query Settings',
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-                const Spacer(),
-                IconButton(
-                  icon: const Icon(Icons.close),
-                  onPressed: () => setState(() => _settingsVisible = false),
-                ),
-              ],
-            ),
-            Row(
-              children: [
-                Checkbox(
-                  value: _onlyCitiesInCurrentExtent,
-                  onChanged: (value) {
-                    setState(() => _onlyCitiesInCurrentExtent = value!);
-                  },
-                ),
-                const Text('Only cities in current extent'),
-              ],
-            ),
-            Row(
-              children: [
-                Checkbox(
-                  value: _onlyCitiesGreaterThan5M,
-                  onChanged: (value) {
-                    setState(() => _onlyCitiesGreaterThan5M = value!);
-                  },
-                ),
-                const Text('Only cities greater than 5M'),
-              ],
-            ),
-          ],
-        ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
+            children: [
+              Text(
+                'Query Settings',
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
+              const Spacer(),
+              IconButton(
+                icon: const Icon(Icons.close),
+                onPressed: () => setState(() => _settingsVisible = false),
+              ),
+            ],
+          ),
+          Row(
+            children: [
+              Checkbox(
+                value: _onlyCitiesInCurrentExtent,
+                onChanged: (value) {
+                  setState(() => _onlyCitiesInCurrentExtent = value!);
+                },
+              ),
+              const Text('Only cities in current extent'),
+            ],
+          ),
+          Row(
+            children: [
+              Checkbox(
+                value: _onlyCitiesGreaterThan5M,
+                onChanged: (value) {
+                  setState(() => _onlyCitiesGreaterThan5M = value!);
+                },
+              ),
+              const Text('Only cities greater than 5M'),
+            ],
+          ),
+        ],
       ),
     );
   }

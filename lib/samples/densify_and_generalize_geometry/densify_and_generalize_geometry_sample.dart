@@ -100,10 +100,9 @@ class _DensifyAndGeneralizeGeometrySampleState
   // The build method for the Geometry Settings bottom sheet.
   Widget buildSettings(BuildContext context) {
     return Container(
-      color: Colors.white,
       padding: EdgeInsets.fromLTRB(
         20.0,
-        0.0,
+        20.0,
         20.0,
         max(
           20.0,
