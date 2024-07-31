@@ -20,7 +20,7 @@
         "SimpleRenderer"
     ],
     "snippets": [
-        "apply_simple_renderer_to_feature_layer_sample.dart"
+        "apply_simple_renderer_to_feature_layer.dart"
     ],
     "title": "Apply simple renderer to feature layer"
 }

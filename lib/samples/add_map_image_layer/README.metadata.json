@@ -17,7 +17,7 @@
         "ArcGISMapImageLayer"
     ],
     "snippets": [
-        "add_map_image_layer_sample.dart"
+        "add_map_image_layer.dart"
     ],
     "title": "Add map image layer"
 }

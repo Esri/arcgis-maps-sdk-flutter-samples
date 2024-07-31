@@ -25,7 +25,7 @@
         "LocationDisplay.autoPanMode"
     ],
     "snippets": [
-        "show_device_location_sample.dart"
+        "show_device_location.dart"
     ],
     "title": "Show device location"
 }

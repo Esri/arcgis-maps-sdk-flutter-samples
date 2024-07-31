@@ -28,7 +28,7 @@
         "UniqueValueRenderer"
     ],
     "snippets": [
-        "apply_unique_value_renderer_sample.dart"
+        "apply_unique_value_renderer.dart"
     ],
     "title": "Apply unique value renderer"
 }

@@ -23,7 +23,7 @@
         "FeatureReduction"
     ],
     "snippets": [
-        "display_clusters_sample.dart"
+        "display_clusters.dart"
     ],
     "title": "Display clusters"
 }

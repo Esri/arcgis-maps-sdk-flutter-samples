@@ -24,7 +24,7 @@
         "TimeExtent"
     ],
     "snippets": [
-        "add_feature_layer_with_time_offset_sample.dart"
+        "add_feature_layer_with_time_offset.dart"
     ],
     "title": "Add feature layer with time offset"
 }

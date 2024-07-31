@@ -22,7 +22,7 @@
         "ReverseGeocodeParameters"
     ],
     "snippets": [
-        "find_address_with_reverse_geocode_sample.dart"
+        "find_address_with_reverse_geocode.dart"
     ],
     "title": "Find address with reverse geocode"
 }
