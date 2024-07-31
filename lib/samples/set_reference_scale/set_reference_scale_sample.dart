@@ -42,6 +42,8 @@ class _SetReferenceScaleState extends State<SetReferenceScaleSample>
   var _scale = 250000.0;
   // Create a flag for when the map view is ready and controls can be used.
   var _ready = false;
+  // Create a regular expression to format the scale.
+  final reg = RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))');
 
   @override
   void initState() {
@@ -136,10 +138,13 @@ class _SetReferenceScaleState extends State<SetReferenceScaleSample>
                   child: Text('Settings',
                       style: Theme.of(context).textTheme.headlineMedium),
                 ),
+                Center(
+                  child: Text('Reference Scale',
+                      style: Theme.of(context).textTheme.titleMedium),
+                ),
                 // Add a dropdown button for setting a new reference scale.
                 DropdownButton(
                   alignment: Alignment.center,
-                  hint: const Text('Select a New Reference Scale'),
                   // Set the selected scale
                   value: _scale,
                   icon: const Icon(
@@ -148,13 +153,16 @@ class _SetReferenceScaleState extends State<SetReferenceScaleSample>
                   ),
                   // Set the onChanged callback to update the selected scale.
                   onChanged: (newScale) {
-                    setState(() => _scale = newScale!);
+                    setNewState(() {
+                      _scale = newScale!;
+                      _map.referenceScale = _scale;
+                    });
                   },
                   items: _referenceScaleList,
                 ),
-                const Text(
-                  'Apply Reference Scale to a Layer',
-                ),
+                Text('Apply Reference Scale to Layers',
+                    style: Theme.of(context).textTheme.titleMedium),
+
                 // Add a list of checkboxes for selecting feature layers that will honor the reference scale.
                 Column(
                   children: [
@@ -165,24 +173,45 @@ class _SetReferenceScaleState extends State<SetReferenceScaleSample>
                         onChanged: (value) {
                           // Update the selected feature layers.
                           setNewState(() {
+                            // Update the selected feature layers list.
                             if (value ?? false) {
                               _selectedFeatureLayers.add(layer);
                             } else {
                               _selectedFeatureLayers.remove(layer);
                             }
                           });
+
+                          // Get the matching layer from the map.
+                          var matchingLayer = _map.operationalLayers
+                              .where((element) => element.name == layer)
+                              .first as FeatureLayer;
+
+                          // Set the scaleSymbols property based on the checkbox value.
+                          _selectedFeatureLayers.contains(matchingLayer.name)
+                              ? matchingLayer.scaleSymbols = true
+                              : matchingLayer.scaleSymbols = false;
                         },
+                        // Set the title of the checkbox to the layer name.
                         title: Text(layer),
                       ),
                   ],
                 ),
-                // Add a button to set the map scale to the reference scale and update the layers.
+                // Add text to display the current map scale.
+                Center(
+                  child: Text('Map Scale',
+                      style: Theme.of(context).textTheme.titleMedium),
+                ),
+                Text(
+                  '1:${_mapViewController.scale.toInt().toString().replaceAllMapped(reg, mathFunc)}',
+                ),
                 ElevatedButton(
                   onPressed: () {
-                    setScaleAndLayers();
+                    // Set the map scale to the reference scale and close the Settings dialog.
+                    _mapViewController.setViewpointScale(
+                        scale: _map.referenceScale);
                     Navigator.pop(context);
                   },
-                  child: const Text('Set Map Scale to Reference Scale'),
+                  child: const Text('Set to Reference Scale'),
                 ),
               ],
             ),
@@ -192,15 +221,6 @@ class _SetReferenceScaleState extends State<SetReferenceScaleSample>
     });
   }
 
-  void setScaleAndLayers() {
-    // Set the map scale to the reference scale.
-    _map.referenceScale = _scale;
-    // Update the layers to honor the reference scale.
-    for (final layer in _selectedFeatureLayers) {
-      var matchingLayer = _map.operationalLayers
-          .where((element) => element.name == layer)
-          .first as FeatureLayer;
-      matchingLayer.scaleSymbols = true;
-    }
-  }
+  // Create a function to format the scale.
+  String Function(Match) mathFunc = (Match match) => '${match[1]},';
 }
