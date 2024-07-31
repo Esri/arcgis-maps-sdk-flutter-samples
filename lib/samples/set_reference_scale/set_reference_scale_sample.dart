@@ -197,10 +197,10 @@ class _SetReferenceScaleState extends State<SetReferenceScaleSample>
     _map.referenceScale = _scale;
     // Update the layers to honor the reference scale.
     for (final layer in _selectedFeatureLayers) {
-      var matchingLayers = _map.operationalLayers
+      var matchingLayer = _map.operationalLayers
           .where((element) => element.name == layer)
           .first as FeatureLayer;
-      matchingLayers.scaleSymbols = true;
+      matchingLayer.scaleSymbols = true;
     }
   }
 }
