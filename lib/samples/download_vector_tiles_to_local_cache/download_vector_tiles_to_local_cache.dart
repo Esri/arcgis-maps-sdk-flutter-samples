@@ -31,8 +31,7 @@ class DownloadVectorTilesToLocalCache extends StatefulWidget {
 }
 
 class _DownloadVectorTilesToLocalCacheState
-    extends State<DownloadVectorTilesToLocalCache>
-    with SampleStateSupport {
+    extends State<DownloadVectorTilesToLocalCache> with SampleStateSupport {
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
   // A instance of the ExportVectorTilesJob.
@@ -230,7 +229,7 @@ class _DownloadVectorTilesToLocalCacheState
       builder: (context) => AlertDialog(
         title: Text('Info', style: Theme.of(context).textTheme.titleMedium),
         content: Text(
-          'Failed to download vector tiles:\n ${message}',
+          'Failed to download vector tiles:\n$message',
         ),
         actions: [
           TextButton(
