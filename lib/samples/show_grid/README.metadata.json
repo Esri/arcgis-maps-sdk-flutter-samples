@@ -38,7 +38,7 @@
         "UTMGrid"
     ],
     "snippets": [
-        "show_grid_sample.dart"
+        "show_grid.dart"
     ],
     "title": "Show grid"
 }

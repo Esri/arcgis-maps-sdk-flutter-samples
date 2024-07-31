@@ -28,7 +28,7 @@
         "OfflineMapUpdatesInfo"
     ],
     "snippets": [
-        "apply_scheduled_updates_to_preplanned_map_area_sample.dart"
+        "apply_scheduled_updates_to_preplanned_map_area.dart"
     ],
     "title": "Apply scheduled updates to preplanned map area"
 }

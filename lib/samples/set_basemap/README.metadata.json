@@ -19,7 +19,7 @@
         "Basemap"
     ],
     "snippets": [
-        "set_basemap_sample.dart"
+        "set_basemap.dart"
     ],
     "title": "Set basemap"
 }

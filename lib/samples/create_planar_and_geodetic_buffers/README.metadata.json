@@ -23,7 +23,7 @@
         "GraphicsOverlay"
     ],
     "snippets": [
-        "create_planar_and_geodetic_buffers_sample.dart"
+        "create_planar_and_geodetic_buffers.dart"
     ],
     "title": "Create planar and geodetic buffers"
 }

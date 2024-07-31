@@ -39,7 +39,7 @@
         "StatisticsQueryResult"
     ],
     "snippets": [
-        "query_table_statistics_sample.dart"
+        "query_table_statistics.dart"
     ],
     "title": "Query table statistics"
 }

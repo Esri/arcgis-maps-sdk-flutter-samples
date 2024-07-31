@@ -24,7 +24,7 @@
         "Basemap"
     ],
     "snippets": [
-        "add_tiled_layer_sample.dart"
+        "add_tiled_layer.dart"
     ],
     "title": "Add tiled layer"
 }
