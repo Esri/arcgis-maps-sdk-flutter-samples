@@ -44,50 +44,59 @@ import 'package:flutter/material.dart';
 // A list of all the Widgets for individual Samples.
 // Used by the Sample Viewer App to display the Widget when a sample is selected.
 // The key is the directory name for the sample which is in snake case. E.g. display_map
-const sampleWidgets = <String, Widget>{
-  'add_feature_collection_layer_from_table':
-      AddFeatureCollectionLayerFromTable(),
-  'add_feature_layer_with_time_offset': AddFeatureLayerWithTimeOffset(),
-  'add_feature_layers': AddFeatureLayers(),
-  'add_map_image_layer': AddMapImageLayer(),
-  'add_tiled_layer': AddTiledLayer(),
-  'add_tiled_layer_as_basemap': AddTiledLayerAsBasemap(),
-  'add_vector_tiled_layer': AddVectorTiledLayer(),
-  'apply_class_breaks_renderer_to_sublayer':
-      ApplyClassBreaksRendererToSublayer(),
-  'apply_scheduled_updates_to_preplanned_map_area':
-      ApplyScheduledUpdatesToPreplannedMapArea(),
-  'apply_simple_renderer_to_feature_layer': ApplySimpleRendererToFeatureLayer(),
-  'apply_unique_value_renderer': ApplyUniqueValueRenderer(),
-  'authenticate_with_oauth': AuthenticateWithOAuth(),
-  'authenticate_with_token': AuthenticateWithToken(),
-  'create_mobile_geodatabase': CreateMobileGeodatabase(),
-  'create_planar_and_geodetic_buffers': CreatePlanarAndGeodeticBuffers(),
-  'densify_and_generalize_geometry': DensifyAndGeneralizeGeometry(),
-  'display_clusters': DisplayClusters(),
-  'display_map': DisplayMap(),
-  'display_map_from_mobile_map_package': DisplayMapFromMobileMapPackage(),
-  'download_preplanned_map_area': DownloadPreplannedMapArea(),
-  'download_vector_tiles_to_local_cache': DownloadVectorTilesToLocalCache(),
-  'edit_feature_attachments': EditFeatureAttachments(),
-  'filter_by_definition_expression_or_display_filter':
-      FilterByDefinitionExpressionOrDisplayFilter(),
-  'find_address_with_reverse_geocode': FindAddressWithReverseGeocode(),
-  'find_closest_facility_from_point': FindClosestFacilityFromPoint(),
-  'find_route': FindRoute(),
-  'generate_offline_map': GenerateOfflineMap(),
-  'identify_layer_features': IdentifyLayerFeatures(),
-  'manage_bookmarks': ManageBookmarks(),
-  'query_feature_table': QueryFeatureTable(),
-  'query_table_statistics': QueryTableStatistics(),
-  'select_features_in_feature_layer': SelectFeaturesInFeatureLayer(),
-  'set_basemap': SetBasemap(),
-  'show_device_location': ShowDeviceLocation(),
-  'show_device_location_history': ShowDeviceLocationHistory(),
-  'show_grid': ShowGrid(),
-  'show_magnifier': ShowMagnifier(),
-  'show_portal_user_info': ShowPortalUserInfo(),
-  'show_service_area': ShowServiceArea(),
-  'show_legend': ShowLegend(),
-  'style_point_with_simple_marker_symbol': StylePointWithSimpleMarkerSymbol(),
+final sampleWidgets = <String, Function>{
+  'add_feature_collection_layer_from_table': () =>
+      const AddFeatureCollectionLayerFromTable(),
+  'add_feature_layer_with_time_offset': () =>
+      const AddFeatureLayerWithTimeOffset(),
+  'add_feature_layers': () => const AddFeatureLayers(),
+  'add_map_image_layer': () => const AddMapImageLayer(),
+  'add_tiled_layer': () => const AddTiledLayer(),
+  'add_tiled_layer_as_basemap': () => const AddTiledLayerAsBasemap(),
+  'add_vector_tiled_layer': () => const AddVectorTiledLayer(),
+  'apply_class_breaks_renderer_to_sublayer': () =>
+      const ApplyClassBreaksRendererToSublayer(),
+  'apply_scheduled_updates_to_preplanned_map_area': () =>
+      const ApplyScheduledUpdatesToPreplannedMapArea(),
+  'apply_simple_renderer_to_feature_layer': () =>
+      const ApplySimpleRendererToFeatureLayer(),
+  'apply_unique_value_renderer': () => const ApplyUniqueValueRenderer(),
+  'authenticate_with_oauth': () => const AuthenticateWithOAuth(),
+  'authenticate_with_token': () => const AuthenticateWithToken(),
+  'create_mobile_geodatabase': () => const CreateMobileGeodatabase(),
+  'create_planar_and_geodetic_buffers': () =>
+      const CreatePlanarAndGeodeticBuffers(),
+  'densify_and_generalize_geometry': () => const DensifyAndGeneralizeGeometry(),
+  'display_clusters': () => const DisplayClusters(),
+  'display_map': () => const DisplayMap(),
+  'display_map_from_mobile_map_package': () =>
+      const DisplayMapFromMobileMapPackage(),
+  'download_preplanned_map_area': () => const DownloadPreplannedMapArea(),
+  'download_vector_tiles_to_local_cache': () =>
+      const DownloadVectorTilesToLocalCache(),
+  'edit_feature_attachments': () => const EditFeatureAttachments(),
+  'filter_by_definition_expression_or_display_filter': () =>
+      const FilterByDefinitionExpressionOrDisplayFilter(),
+  'find_address_with_reverse_geocode': () =>
+      const FindAddressWithReverseGeocode(),
+  'find_closest_facility_from_point': () =>
+      const FindClosestFacilityFromPoint(),
+  'find_route': () => const FindRoute(),
+  'generate_offline_map': () => const GenerateOfflineMap(),
+  'identify_layer_features': () => const IdentifyLayerFeatures(),
+  'manage_bookmarks': () => const ManageBookmarks(),
+  'query_feature_table': () => const QueryFeatureTable(),
+  'query_table_statistics': () => const QueryTableStatistics(),
+  'select_features_in_feature_layer': () =>
+      const SelectFeaturesInFeatureLayer(),
+  'set_basemap': () => const SetBasemap(),
+  'show_device_location': () => const ShowDeviceLocation(),
+  'show_device_location_history': () => const ShowDeviceLocationHistory(),
+  'show_grid': () => const ShowGrid(),
+  'show_magnifier': () => const ShowMagnifier(),
+  'show_portal_user_info': () => const ShowPortalUserInfo(),
+  'show_service_area': () => const ShowServiceArea(),
+  'show_legend': () => const ShowLegend(),
+  'style_point_with_simple_marker_symbol': () =>
+      const StylePointWithSimpleMarkerSymbol(),
 };
