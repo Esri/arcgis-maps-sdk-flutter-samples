@@ -82,7 +82,7 @@ class _CreateMobileGeodatabaseSampleState
                         'Number of features added: $_featureCount',
                       ),
                       ElevatedButton(
-                        onPressed: _displayTable,
+                        onPressed: _featureCount > 0 ? _displayTable : null,
                         child: const Text(
                           'View table',
                         ),
@@ -99,12 +99,12 @@ class _CreateMobileGeodatabaseSampleState
                     10,
                   ),
                   child: ElevatedButton.icon(
-                    onPressed: _shareGeodatabaseUri,
+                    onPressed: _featureCount > 0 ? _shareGeodatabaseUri : null,
                     icon: const Icon(
-                      Icons.edit,
+                      Icons.share,
                     ),
                     label: const Text(
-                      'Create and share mobile geodatabase',
+                      'Share Mobile Geodatabase',
                     ),
                   ),
                 ),
@@ -326,19 +326,10 @@ class _CreateMobileGeodatabaseSampleState
     _geodatabase?.close();
 
     // Open the platform share sheet and share the mobile geodatabase file URI.
-    final shareResult = await Share.share(
+    await Share.share(
       subject: 'Sharing the geodatabase',
       _geodatabase!.fileUri.path,
     );
-
-    // Display a dialog based on the share result.
-    if (shareResult.status == ShareResultStatus.success) {
-      _showDialog('Success',
-          'The geodatabase has been successfully shared, and a new one has been created.');
-    } else {
-      _showDialog('Info',
-          'The geodatabase has not been shared, and a new one has been created.');
-    }
 
     // Create a new mobile geodatabase and feature table to start again.
     _setupGeodatabase();
