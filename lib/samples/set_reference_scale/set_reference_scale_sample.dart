@@ -76,7 +76,7 @@ class _SetReferenceScaleState extends State<SetReferenceScaleSample>
                 onMapViewReady: onMapViewReady,
               ),
             ),
-            // Add a Settings button to the widget tree.
+            // Add a settings button to the widget tree.
             ElevatedButton(
               // Show the settings dialog when the button is pressed.
               onPressed: _ready
