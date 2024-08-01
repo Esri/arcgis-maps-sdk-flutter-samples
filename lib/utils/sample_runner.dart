@@ -37,7 +37,7 @@ void main() {
   // const sample = 'display_map';
   runApp(
     MaterialApp(
-      home: sampleWidgets[sample],
+      home: sampleWidgets[sample]!(),
     ),
   );
 }

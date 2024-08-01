@@ -34,7 +34,7 @@ class Sample {
         _snippets = List<String>.from(json['snippets']),
         _title = json['title'],
         _keywords = List<String>.from(json['keywords']),
-        _sampleWidget = sampleWidgets[json['key']] ?? const Placeholder();
+        _sampleWidget = sampleWidgets[json['key']]!() ?? const Placeholder();
 
   String get title => _title;
 

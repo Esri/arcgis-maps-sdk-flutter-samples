@@ -27,7 +27,7 @@
         "ServiceFeatureTable"
     ],
     "snippets": [
-        "add_feature_layers_sample.dart"
+        "add_feature_layers.dart"
     ],
     "title": "Add feature layers"
 }

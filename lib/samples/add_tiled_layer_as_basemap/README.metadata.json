@@ -23,7 +23,7 @@
         "TileCache"
     ],
     "snippets": [
-        "add_tiled_layer_as_basemap_sample.dart"
+        "add_tiled_layer_as_basemap.dart"
     ],
     "title": "Add tiled layer as basemap"
 }

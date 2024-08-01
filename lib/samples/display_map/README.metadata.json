@@ -19,7 +19,7 @@
         "BasemapStyle"
     ],
     "snippets": [
-        "display_map_sample.dart"
+        "display_map.dart"
     ],
     "title": "Display map"
 }

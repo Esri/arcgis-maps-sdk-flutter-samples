@@ -1,0 +1,30 @@
+{
+    "category": "Maps",
+    "description": "Display a time-enabled feature layer with a time offset.",
+    "ignore": false,
+    "images": [
+        "add_feature_layer_with_time_offset.png"
+    ],
+    "keywords": [
+        "change",
+        "range",
+        "time",
+        "time extent",
+        "time offset",
+        "time-aware",
+        "time-enabled",
+        "ArcGISMapViewController",
+        "FeatureLayer",
+        "TimeExtent"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+        "ArcGISMapViewController",
+        "FeatureLayer",
+        "TimeExtent"
+    ],
+    "snippets": [
+        "add_feature_layer_with_time_offset.dart"
+    ],
+    "title": "Add feature layer with time offset"
+}

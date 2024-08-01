@@ -28,7 +28,7 @@
         "PortalItem"
     ],
     "snippets": [
-        "authenticate_with_token_sample.dart"
+        "authenticate_with_token.dart"
     ],
     "title": "Authenticate with token"
 }
