@@ -13,6 +13,7 @@ import 'package:arcgis_maps_sdk_flutter_samples/samples/authenticate_with_oauth/
 import 'package:arcgis_maps_sdk_flutter_samples/samples/authenticate_with_token/authenticate_with_token.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/create_mobile_geodatabase/create_mobile_geodatabase.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/create_planar_and_geodetic_buffers/create_planar_and_geodetic_buffers.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/samples/cut_geometry/cut_geometry_sample.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/densify_and_generalize_geometry/densify_and_generalize_geometry.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/display_clusters/display_clusters.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/display_map/display_map.dart';
@@ -66,6 +67,7 @@ final sampleWidgets = <String, Function>{
   'create_mobile_geodatabase': () => const CreateMobileGeodatabase(),
   'create_planar_and_geodetic_buffers': () =>
       const CreatePlanarAndGeodeticBuffers(),
+  'cut_geometry': () => const CutGeometrySample(),
   'densify_and_generalize_geometry': () => const DensifyAndGeneralizeGeometry(),
   'display_clusters': () => const DisplayClusters(),
   'display_map': () => const DisplayMap(),

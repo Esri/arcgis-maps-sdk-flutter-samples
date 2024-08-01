@@ -1,0 +1,26 @@
+{
+    "category": "Analysis",
+    "description": "Cut a geometry along a polyline.",
+    "ignore": false,
+    "images": [
+        "cut_geometry.png"
+    ],
+    "keywords": [
+        "cut",
+        "geometry",
+        "split",
+        "GeometryEngine.cut",
+        "Polygon",
+        "Polyline"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+        "GeometryEngine.cut",
+        "Polygon",
+        "Polyline"
+    ],
+    "snippets": [
+        "cut_geometry_sample.dart"
+    ],
+    "title": "Cut geometry"
+}
