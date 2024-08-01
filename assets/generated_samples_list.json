@@ -456,6 +456,33 @@
     "title": "Create planar and geodetic buffers",
     "key": "create_planar_and_geodetic_buffers"
   },
+  "cut_geometry": {
+    "category": "Analysis",
+    "description": "Cut a geometry along a polyline.",
+    "ignore": false,
+    "images": [
+      "cut_geometry.png"
+    ],
+    "keywords": [
+      "cut",
+      "geometry",
+      "split",
+      "GeometryEngine.cut",
+      "Polygon",
+      "Polyline"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+      "GeometryEngine.cut",
+      "Polygon",
+      "Polyline"
+    ],
+    "snippets": [
+      "cut_geometry_sample.dart"
+    ],
+    "title": "Cut geometry",
+    "key": "cut_geometry"
+  },
   "densify_and_generalize_geometry": {
     "category": "Edit and Manage Data",
     "description": "A multipart geometry can be densified by adding interpolated points at regular intervals. Generalizing multipart geometry simplifies it while preserving its general shape. Densifying a multipart geometry adds more vertices at regular intervals.",
