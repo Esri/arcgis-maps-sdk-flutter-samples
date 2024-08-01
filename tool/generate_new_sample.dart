@@ -1,5 +1,6 @@
 // ignore_for_file: avoid_print
 
+import 'dart:developer';
 import 'dart:io';
 import 'package:image/image.dart' as img;
 
@@ -17,14 +18,18 @@ void main(List<String> arguments) async {
 
 // Create a new sample directory
 // The sample directory will be created in the lib/samples directory
-// The sampleName is expected to be in the camel case format  e.g. MyNewSample
-// The sample directory will be created in the format my_new_sample
+// The [sampleCamelName] is expected to be in the camel case format
+// e.g. MyNewSample
+// The sample directory will be created in the format
+// e.g. my_new_sample
 void createNewSampleDirectory(String sampleCamelName) {
+  final ps = Platform.pathSeparator;
   final currentDirectory = Directory.current;
   final sampleSnakeName = camelToSnake(sampleCamelName);
-  final sampleRootDirectory = Directory('${currentDirectory.path}/lib/samples');
+  final sampleRootDirectory =
+      Directory('${currentDirectory.path}${ps}lib${ps}samples');
   final sampleDirectory =
-      Directory('${sampleRootDirectory.path}/${sampleSnakeName}');
+      Directory('${sampleRootDirectory.path}$ps$sampleSnakeName');
 
   if (sampleDirectory.existsSync()) {
     throw FileSystemException(
@@ -36,7 +41,7 @@ void createNewSampleDirectory(String sampleCamelName) {
   // Create the sample directory
   try {
     sampleDirectory.createSync();
-    print('>Sample directory created at ${sampleDirectory.path}');
+    log('>Sample directory created at ${sampleDirectory.path}');
   } on Exception catch (_) {
     rethrow;
   }
@@ -60,21 +65,24 @@ String camelToSnake(String input) {
   return snakeCase.toLowerCase();
 }
 
-// Create a new sample README.md file
+// Create a new sample README.md file,
+// or copy the template README.md file
+// from the common-samples/designs directory if it exists.
 void createEmptyReadMeOrCopy(
     Directory sampleDirectory, String sampleCamelName) {
+  final ps = Platform.pathSeparator;
   final templateReadmeFile = File(
-      '${Directory.current.parent.path}/common-samples/designs/${sampleCamelName}/README.md');
+      '${Directory.current.parent.path}${ps}common-samples${ps}designs$ps$sampleCamelName${ps}README.md');
   try {
-    final sampleReadmeFile = File('${sampleDirectory.path}/README.md');
+    final sampleReadmeFile = File('${sampleDirectory.path}${ps}README.md');
     if (templateReadmeFile.existsSync()) {
       sampleReadmeFile.writeAsBytesSync(templateReadmeFile.readAsBytesSync());
-      print('>A README File created');
+      log('>A README File created');
     } else {
-      print('>A empty README file was created');
+      log('>A empty README file was created');
       sampleReadmeFile.writeAsStringSync('README-Empty');
     }
-  } catch (e) {
+  } catch (_) {
     rethrow;
   }
 }
@@ -86,10 +94,10 @@ void createEmptyPNGFile(Directory sampleDirectory, String sampleSnakeName) {
     img.fill(image, color: img.ColorRgb8(255, 255, 255));
     final png = img.encodePng(image);
     final file = File(
-        '${sampleDirectory.path}${Platform.pathSeparator}${sampleSnakeName}.png');
+        '${sampleDirectory.path}${Platform.pathSeparator}$sampleSnakeName.png');
     file.writeAsBytesSync(png);
-    print('>A blank PNG file created with dimensions 600x300.');
-  } on Exception catch (e) {
+    log('>A blank PNG file created with dimensions 600x300.');
+  } on Exception catch (_) {
     rethrow;
   }
 }
@@ -97,13 +105,10 @@ void createEmptyPNGFile(Directory sampleDirectory, String sampleSnakeName) {
 // Create a new sample file
 void createNewSampleFile(
     Directory sampleDirectory, String sampleSnakeName, String sampleCamelName) {
+  final ps = Platform.pathSeparator;
   final templateFile = File(
-      '${Directory.current.parent.path}/flutter/internal/lib/sample_skeleton.dart');
-  print(templateFile.path);
-  print(templateFile.existsSync());
-  final sampleFile = File('${sampleDirectory.path}/$sampleSnakeName.dart');
-  print(sampleFile.path);
-  print(sampleFile.existsSync());
+      '${Directory.current.parent.path}${ps}flutter${ps}internal${ps}lib${ps}sample_skeleton.dart');
+  final sampleFile = File('${sampleDirectory.path}$ps$sampleSnakeName.dart');
 
   sampleFile.createSync();
   sampleFile.writeAsStringSync(copyright);
@@ -119,7 +124,7 @@ void createNewSampleFile(
       }
     }
   }
-  print('>A sample file created');
+  log('>A sample file created');
 }
 
 const copyright = '''
