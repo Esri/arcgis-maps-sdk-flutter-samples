@@ -19,14 +19,14 @@ import 'package:flutter/material.dart';
 
 import '../../utils/sample_state_support.dart';
 
-class SetReferenceScaleSample extends StatefulWidget {
-  const SetReferenceScaleSample({super.key});
+class SetReferenceScale extends StatefulWidget {
+  const SetReferenceScale({super.key});
 
   @override
-  State<SetReferenceScaleSample> createState() => _SetReferenceScaleState();
+  State<SetReferenceScale> createState() => _SetReferenceScaleState();
 }
 
-class _SetReferenceScaleState extends State<SetReferenceScaleSample>
+class _SetReferenceScaleState extends State<SetReferenceScale>
     with SampleStateSupport {
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
@@ -108,6 +108,14 @@ class _SetReferenceScaleState extends State<SetReferenceScaleSample>
     // Get the operational layer names from the map.
     _allFeatureLayers =
         _map.operationalLayers.map((layer) => layer.name).toList();
+
+    // Get the feature layers that have scale symbols enabled and add them to the selected feature layers list.
+    for (final layer in _map.operationalLayers) {
+      layer as FeatureLayer;
+      layer.scaleSymbols == true
+          ? _selectedFeatureLayers.add(layer.name)
+          : null;
+    }
 
     // Set the map view controller's map to the ArcGIS map.
     _mapViewController.arcGISMap = _map;

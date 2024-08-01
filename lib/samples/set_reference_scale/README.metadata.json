@@ -19,7 +19,7 @@
         "FeatureLayer"
     ],
     "snippets": [
-        "set_reference_scale_sample.dart"
+        "set_reference_scale.dart"
     ],
     "title": "Set reference scale"
 }

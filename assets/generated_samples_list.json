@@ -105,9 +105,6 @@
     "images": [
       "add_map_image_layer.png"
     ],
-    "images": [
-      "add_map_image_layer.png"
-    ],
     "keywords": [
       "display",
       "image",
@@ -1086,7 +1083,7 @@
       "FeatureLayer"
     ],
     "snippets": [
-      "set_reference_scale_sample.dart"
+      "set_reference_scale.dart"
     ],
     "title": "Set reference scale",
     "key": "set_reference_scale"
