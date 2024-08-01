@@ -40,7 +40,6 @@ import 'package:arcgis_maps_sdk_flutter_samples/samples/show_magnifier/show_magn
 import 'package:arcgis_maps_sdk_flutter_samples/samples/show_portal_user_info/show_portal_user_info.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/show_service_area/show_service_area.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/style_point_with_simple_marker_symbol/style_point_with_simple_marker_symbol.dart';
-import 'package:flutter/material.dart';
 
 // A list of all the Widgets for individual Samples.
 // Used by the Sample Viewer App to display the Widget when a sample is selected.
