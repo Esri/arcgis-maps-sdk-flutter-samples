@@ -67,7 +67,7 @@ final sampleWidgets = <String, Function>{
   'create_mobile_geodatabase': () => const CreateMobileGeodatabase(),
   'create_planar_and_geodetic_buffers': () =>
       const CreatePlanarAndGeodeticBuffers(),
-  'cut_geometry': CutGeometrySample(),
+  'cut_geometry': () => const CutGeometrySample(),
   'densify_and_generalize_geometry': () => const DensifyAndGeneralizeGeometry(),
   'display_clusters': () => const DisplayClusters(),
   'display_map': () => const DisplayMap(),
