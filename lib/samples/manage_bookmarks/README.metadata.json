@@ -1,0 +1,25 @@
+{
+    "category": "Maps",
+    "description": "Access and create bookmarks on a map.",
+    "ignore": false,
+    "images": [
+        "manage_bookmarks.png"
+    ],
+    "keywords": [
+        "bookmark",
+        "extent",
+        "location",
+        "zoom",
+        "Bookmark",
+        "Viewpoint"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+        "Bookmark",
+        "Viewpoint"
+    ],
+    "snippets": [
+        "manage_bookmarks.dart"
+    ],
+    "title": "Manage bookmarks"
+}

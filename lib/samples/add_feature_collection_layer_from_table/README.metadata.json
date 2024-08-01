@@ -27,7 +27,7 @@
         "SimpleRenderer"
     ],
     "snippets": [
-        "add_feature_collection_layer_from_table_sample.dart"
+        "add_feature_collection_layer_from_table.dart"
     ],
     "title": "Add feature collection layer from table"
 }

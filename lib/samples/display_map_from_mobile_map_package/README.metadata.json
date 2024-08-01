@@ -18,7 +18,7 @@
         "MobileMapPackage"
     ],
     "snippets": [
-        "display_map_from_mobile_map_package_sample.dart"
+        "display_map_from_mobile_map_package.dart"
     ],
     "title": "Display map from mobile map package"
 }

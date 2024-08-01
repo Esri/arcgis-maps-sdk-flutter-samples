@@ -18,7 +18,7 @@
       "Field",
       "SimpleRenderer"
     ],
-    "redirect_from": [],
+    "redirect_from": [ ],
     "relevant_apis": [
       "Feature",
       "FeatureCollection",
@@ -28,10 +28,41 @@
       "SimpleRenderer"
     ],
     "snippets": [
-      "add_feature_collection_layer_from_table_sample.dart"
+      "add_feature_collection_layer_from_table.dart"
     ],
     "title": "Add feature collection layer from table",
     "key": "add_feature_collection_layer_from_table"
+  },
+  "add_feature_layer_with_time_offset": {
+    "category": "Maps",
+    "description": "Display a time-enabled feature layer with a time offset.",
+    "ignore": false,
+    "images": [
+      "add_feature_layer_with_time_offset.png"
+    ],
+    "keywords": [
+      "change",
+      "range",
+      "time",
+      "time extent",
+      "time offset",
+      "time-aware",
+      "time-enabled",
+      "ArcGISMapViewController",
+      "FeatureLayer",
+      "TimeExtent"
+    ],
+    "redirect_from": [ ],
+    "relevant_apis": [
+      "ArcGISMapViewController",
+      "FeatureLayer",
+      "TimeExtent"
+    ],
+    "snippets": [
+      "add_feature_layer_with_time_offset.dart"
+    ],
+    "title": "Add feature layer with time offset",
+    "key": "add_feature_layer_with_time_offset"
   },
   "add_feature_layers": {
     "category": "Layers",
@@ -53,7 +84,7 @@
       "Portal",
       "ServiceFeatureTable"
     ],
-    "redirect_from": [],
+    "redirect_from": [ ],
     "relevant_apis": [
       "FeatureLayer",
       "GeoPackage",
@@ -62,10 +93,34 @@
       "ServiceFeatureTable"
     ],
     "snippets": [
-      "add_feature_layers_sample.dart"
+      "add_feature_layers.dart"
     ],
     "title": "Add feature layers",
     "key": "add_feature_layers"
+  },
+  "add_map_image_layer": {
+    "category": "Maps",
+    "description": "Display a layer from an ArcGIS map image layer service.",
+    "ignore": false,
+    "images": [
+      "add_map_image_layer.png"
+    ],
+    "keywords": [
+      "display",
+      "image",
+      "layer",
+      "map",
+      "ArcGISMapImageLayer"
+    ],
+    "redirect_from": [ ],
+    "relevant_apis": [
+      "ArcGISMapImageLayer"
+    ],
+    "snippets": [
+      "add_map_image_layer.dart"
+    ],
+    "title": "Add map image layer",
+    "key": "add_map_image_layer"
   },
   "add_tiled_layer": {
     "category": "Layers",
@@ -85,7 +140,7 @@
       "ArcGISTiledLayer",
       "Basemap"
     ],
-    "redirect_from": [],
+    "redirect_from": [ ],
     "relevant_apis": [
       "ArcGISMap",
       "ArcGISMapViewController",
@@ -93,7 +148,7 @@
       "Basemap"
     ],
     "snippets": [
-      "add_tiled_layer_sample.dart"
+      "add_tiled_layer.dart"
     ],
     "title": "Add tiled layer",
     "key": "add_tiled_layer"
@@ -115,7 +170,7 @@
       "Basemap",
       "TileCache"
     ],
-    "redirect_from": [],
+    "redirect_from": [ ],
     "relevant_apis": [
       "ArcGISMap",
       "ArcGISTiledLayer",
@@ -123,7 +178,7 @@
       "TileCache"
     ],
     "snippets": [
-      "add_tiled_layer_as_basemap_sample.dart"
+      "add_tiled_layer_as_basemap.dart"
     ],
     "title": "Add tiled layer as basemap",
     "key": "add_tiled_layer_as_basemap"
@@ -144,13 +199,13 @@
       "ArcGISVectorTiledLayer",
       "Basemap"
     ],
-    "redirect_from": [],
+    "redirect_from": [ ],
     "relevant_apis": [
       "ArcGISVectorTiledLayer",
       "Basemap"
     ],
     "snippets": [
-      "add_vector_tiled_layer_sample.dart"
+      "add_vector_tiled_layer.dart"
     ],
     "title": "Add vector tiled layer",
     "key": "add_vector_tiled_layer"
@@ -175,7 +230,7 @@
       "ClassBreaksRenderer",
       "ClassBreaksRenderer.ClassBreak"
     ],
-    "redirect_from": [],
+    "redirect_from": [ ],
     "relevant_apis": [
       "ArcGISMapImageLayer",
       "ArcGISMapImageSublayer",
@@ -183,7 +238,7 @@
       "ClassBreaksRenderer.ClassBreak"
     ],
     "snippets": [
-      "apply_class_breaks_renderer_to_sublayer_sample.dart"
+      "apply_class_breaks_renderer_to_sublayer.dart"
     ],
     "title": "Apply class breaks renderer to sublayer",
     "key": "apply_class_breaks_renderer_to_sublayer"
@@ -208,7 +263,7 @@
       "OfflineMapSyncTask",
       "OfflineMapUpdatesInfo"
     ],
-    "redirect_from": [],
+    "redirect_from": [ ],
     "relevant_apis": [
       "MobileMapPackage",
       "OfflineMapSyncJob",
@@ -218,7 +273,7 @@
       "OfflineMapUpdatesInfo"
     ],
     "snippets": [
-      "apply_scheduled_updates_to_preplanned_map_area_sample.dart"
+      "apply_scheduled_updates_to_preplanned_map_area.dart"
     ],
     "title": "Apply scheduled updates to preplanned map area",
     "key": "apply_scheduled_updates_to_preplanned_map_area"
@@ -238,14 +293,14 @@
       "ServiceFeatureTable",
       "SimpleRenderer"
     ],
-    "redirect_from": [],
+    "redirect_from": [ ],
     "relevant_apis": [
       "FeatureLayer.setRenderer",
       "ServiceFeatureTable",
       "SimpleRenderer"
     ],
     "snippets": [
-      "apply_simple_renderer_to_feature_layer_sample.dart"
+      "apply_simple_renderer_to_feature_layer.dart"
     ],
     "title": "Apply simple renderer to feature layer",
     "key": "apply_simple_renderer_to_feature_layer"
@@ -270,7 +325,7 @@
       "UniqueValue",
       "UniqueValueRenderer"
     ],
-    "redirect_from": [],
+    "redirect_from": [ ],
     "relevant_apis": [
       "FeatureLayer",
       "ServiceFeatureTable",
@@ -280,7 +335,7 @@
       "UniqueValueRenderer"
     ],
     "snippets": [
-      "apply_unique_value_renderer_sample.dart"
+      "apply_unique_value_renderer.dart"
     ],
     "title": "Apply unique value renderer",
     "key": "apply_unique_value_renderer"
@@ -289,11 +344,11 @@
     "category": "Cloud and Portal",
     "description": "Authenticate with ArcGIS Online (or your own portal) using OAuth2 to access secured resources (such as private web maps or layers).",
     "ignore": false,
-    "images": [],
-    "keywords": [],
-    "redirect_from": [],
-    "relevant_apis": [],
-    "snippets": [],
+    "images": [ ],
+    "keywords": [ ],
+    "redirect_from": [ ],
+    "relevant_apis": [ ],
+    "snippets": [ ],
     "title": "Authenticate with OAuth",
     "key": "authenticate_with_oauth"
   },
@@ -317,7 +372,7 @@
       "Portal",
       "PortalItem"
     ],
-    "redirect_from": [],
+    "redirect_from": [ ],
     "relevant_apis": [
       "ArcGISAuthenticationChallengeHandler",
       "ArcGISMap",
@@ -327,7 +382,7 @@
       "PortalItem"
     ],
     "snippets": [
-      "authenticate_with_token_sample.dart"
+      "authenticate_with_token.dart"
     ],
     "title": "Authenticate with token",
     "key": "authenticate_with_token"
@@ -355,7 +410,7 @@
       "GeodatabaseFeatureTable",
       "TableDescription"
     ],
-    "redirect_from": [],
+    "redirect_from": [ ],
     "relevant_apis": [
       "ArcGISFeature",
       "FeatureLayer",
@@ -366,7 +421,7 @@
       "TableDescription"
     ],
     "snippets": [
-      "create_mobile_geodatabase_sample.dart"
+      "create_mobile_geodatabase.dart"
     ],
     "title": "Create mobile geodatabase",
     "key": "create_mobile_geodatabase"
@@ -389,14 +444,14 @@
       "GeometryEngine.bufferGeodetic",
       "GraphicsOverlay"
     ],
-    "redirect_from": [],
+    "redirect_from": [ ],
     "relevant_apis": [
       "GeometryEngine.buffer",
       "GeometryEngine.bufferGeodetic",
       "GraphicsOverlay"
     ],
     "snippets": [
-      "create_planar_and_geodetic_buffers_sample.dart"
+      "create_planar_and_geodetic_buffers.dart"
     ],
     "title": "Create planar and geodetic buffers",
     "key": "create_planar_and_geodetic_buffers"
@@ -405,7 +460,7 @@
     "category": "Analysis",
     "description": "Cut a geometry along a polyline.",
     "ignore": false,
-    "images": [],
+    "images": [ ],
     "keywords": [
       "cut",
       "geometry",
@@ -414,7 +469,7 @@
       "Polygon",
       "Polyline"
     ],
-    "redirect_from": [],
+    "redirect_from": [ ],
     "relevant_apis": [
       "GeometryEngine::Cut",
       "Polygon",
@@ -445,7 +500,7 @@
       "SimpleLineSymbol",
       "SpatialReference"
     ],
-    "redirect_from": [],
+    "redirect_from": [ ],
     "relevant_apis": [
       "ArcGISPoint",
       "GeometryEngine",
@@ -456,7 +511,7 @@
       "SpatialReference"
     ],
     "snippets": [
-      "densify_and_generalize_geometry_sample.dart"
+      "densify_and_generalize_geometry.dart"
     ],
     "title": "Densify and generalize geometry",
     "key": "densify_and_generalize_geometry"
@@ -480,13 +535,13 @@
       "FeatureLayer",
       "FeatureReduction"
     ],
-    "redirect_from": [],
+    "redirect_from": [ ],
     "relevant_apis": [
       "FeatureLayer",
       "FeatureReduction"
     ],
     "snippets": [
-      "display_clusters_sample.dart"
+      "display_clusters.dart"
     ],
     "title": "Display clusters",
     "key": "display_clusters"
@@ -505,14 +560,14 @@
       "ArcGISMapView",
       "BasemapStyle"
     ],
-    "redirect_from": [],
+    "redirect_from": [ ],
     "relevant_apis": [
       "ArcGISMap",
       "ArcGISMapView",
       "BasemapStyle"
     ],
     "snippets": [
-      "display_map_sample.dart"
+      "display_map.dart"
     ],
     "title": "Display map",
     "key": "display_map"
@@ -531,13 +586,13 @@
       "ArcGISMapView",
       "MobileMapPackage"
     ],
-    "redirect_from": [],
+    "redirect_from": [ ],
     "relevant_apis": [
       "ArcGISMapView",
       "MobileMapPackage"
     ],
     "snippets": [
-      "display_map_from_mobile_map_package_sample.dart"
+      "display_map_from_mobile_map_package.dart"
     ],
     "title": "Display map from mobile map package",
     "key": "display_map_from_mobile_map_package"
@@ -560,7 +615,7 @@
       "OfflineMapTask",
       "PreplannedMapArea"
     ],
-    "redirect_from": [],
+    "redirect_from": [ ],
     "relevant_apis": [
       "DownloadPreplannedOfflineMapJob",
       "DownloadPreplannedOfflineMapParameters",
@@ -569,10 +624,46 @@
       "PreplannedMapArea"
     ],
     "snippets": [
-      "download_preplanned_map_area_sample.dart"
+      "download_preplanned_map_area.dart"
     ],
     "title": "Download preplanned map area",
     "key": "download_preplanned_map_area"
+  },
+  "download_vector_tiles_to_local_cache": {
+    "category": "Edit and Manage Data",
+    "description": "Export tiles from an online vector tile service.",
+    "ignore": false,
+    "images": [
+      "download_vector_tiles_to_local_cache.png"
+    ],
+    "keywords": [
+      "cache",
+      "download",
+      "offline",
+      "vector",
+      "ArcGISVectorTiledLayer",
+      "ExportVectorTilesJob",
+      "ExportVectorTilesParameters",
+      "ExportVectorTilesResult",
+      "ExportVectorTilesTask",
+      "ItemResourceCache",
+      "VectorTileCache"
+    ],
+    "redirect_from": [ ],
+    "relevant_apis": [
+      "ArcGISVectorTiledLayer",
+      "ExportVectorTilesJob",
+      "ExportVectorTilesParameters",
+      "ExportVectorTilesResult",
+      "ExportVectorTilesTask",
+      "ItemResourceCache",
+      "VectorTileCache"
+    ],
+    "snippets": [
+      "download_vector_tiles_to_local_cache.dart"
+    ],
+    "title": "Download vector tiles to local cache",
+    "key": "download_vector_tiles_to_local_cache"
   },
   "edit_feature_attachments": {
     "category": "Edit and Manage Data",
@@ -597,7 +688,7 @@
       "deleteAttachment",
       "fetchAttachments"
     ],
-    "redirect_from": [],
+    "redirect_from": [ ],
     "relevant_apis": [
       "ArcGISFeature",
       "FeatureLayer",
@@ -608,7 +699,7 @@
       "fetchAttachments"
     ],
     "snippets": [
-      "edit_feature_attachments_sample.dart"
+      "edit_feature_attachments.dart"
     ],
     "title": "Edit feature attachments",
     "key": "edit_feature_attachments"
@@ -633,14 +724,14 @@
       "FeatureLayer",
       "ServiceFeatureTable"
     ],
-    "redirect_from": [],
+    "redirect_from": [ ],
     "relevant_apis": [
       "DefinitionExpression",
       "FeatureLayer",
       "ServiceFeatureTable"
     ],
     "snippets": [
-      "filter_by_definition_expression_or_display_filter_sample.dart"
+      "filter_by_definition_expression_or_display_filter.dart"
     ],
     "title": "Filter by definition expression or display filter",
     "key": "filter_by_definition_expression_or_display_filter"
@@ -662,14 +753,14 @@
       "LocatorTask",
       "ReverseGeocodeParameters"
     ],
-    "redirect_from": [],
+    "redirect_from": [ ],
     "relevant_apis": [
       "GeocodeParameters",
       "LocatorTask",
       "ReverseGeocodeParameters"
     ],
     "snippets": [
-      "find_address_with_reverse_geocode_sample.dart"
+      "find_address_with_reverse_geocode.dart"
     ],
     "title": "Find address with reverse geocode",
     "key": "find_address_with_reverse_geocode"
@@ -678,11 +769,37 @@
     "category": "Routing and Logistics",
     "description": "Find routes from several locations to the respective closest facility.",
     "ignore": false,
-    "images": [],
-    "keywords": [],
-    "redirect_from": [],
-    "relevant_apis": [],
-    "snippets": [],
+    "images": [
+      "find_closest_facility_from_point.png"
+    ],
+    "keywords": [
+      "incident",
+      "network analysis",
+      "route",
+      "search",
+      "ClosestFacilityParameters",
+      "ClosestFacilityResult",
+      "ClosestFacilityRoute",
+      "ClosestFacilityTask",
+      "Facility",
+      "Graphic",
+      "GraphicsOverlay",
+      "Incident"
+    ],
+    "redirect_from": [ ],
+    "relevant_apis": [
+      "ClosestFacilityParameters",
+      "ClosestFacilityResult",
+      "ClosestFacilityRoute",
+      "ClosestFacilityTask",
+      "Facility",
+      "Graphic",
+      "GraphicsOverlay",
+      "Incident"
+    ],
+    "snippets": [
+      "find_closest_facility_from_point.dart"
+    ],
     "title": "Find closest facility from point",
     "key": "find_closest_facility_from_point"
   },
@@ -711,7 +828,7 @@
       "RouteTask",
       "Stop"
     ],
-    "redirect_from": [],
+    "redirect_from": [ ],
     "relevant_apis": [
       "DirectionManeuver",
       "Route",
@@ -721,7 +838,7 @@
       "Stop"
     ],
     "snippets": [
-      "find_route_sample.dart"
+      "find_route.dart"
     ],
     "title": "Find route",
     "key": "find_route"
@@ -744,7 +861,7 @@
       "OfflineMapTask",
       "PortalItem"
     ],
-    "redirect_from": [],
+    "redirect_from": [ ],
     "relevant_apis": [
       "GenerateOfflineMapJob",
       "GenerateOfflineMapParameters",
@@ -753,7 +870,7 @@
       "PortalItem"
     ],
     "snippets": [
-      "generate_offline_map_sample.dart"
+      "generate_offline_map.dart"
     ],
     "title": "Generate offline map",
     "key": "generate_offline_map"
@@ -775,7 +892,7 @@
       "IdentifyLayerResult.layerContent.name",
       "IdentifyLayerResult.sublayerResults"
     ],
-    "redirect_from": [],
+    "redirect_from": [ ],
     "relevant_apis": [
       "ArcGISMapViewController.identifyLayers",
       "IdentifyLayerResult",
@@ -783,10 +900,36 @@
       "IdentifyLayerResult.sublayerResults"
     ],
     "snippets": [
-      "identify_layer_features_sample.dart"
+      "identify_layer_features.dart"
     ],
     "title": "Identify layer features",
     "key": "identify_layer_features"
+  },
+  "manage_bookmarks": {
+    "category": "Maps",
+    "description": "Access and create bookmarks on a map.",
+    "ignore": false,
+    "images": [
+      "manage_bookmarks.png"
+    ],
+    "keywords": [
+      "bookmark",
+      "extent",
+      "location",
+      "zoom",
+      "Bookmark",
+      "Viewpoint"
+    ],
+    "redirect_from": [ ],
+    "relevant_apis": [
+      "Bookmark",
+      "Viewpoint"
+    ],
+    "snippets": [
+      "manage_bookmarks.dart"
+    ],
+    "title": "Manage bookmarks",
+    "key": "manage_bookmarks"
   },
   "query_feature_table": {
     "category": "Search and Query",
@@ -803,7 +946,7 @@
       "QueryParameters",
       "ServiceFeatureTable"
     ],
-    "redirect_from": [],
+    "redirect_from": [ ],
     "relevant_apis": [
       "FeatureLayer",
       "FeatureQueryResult",
@@ -811,7 +954,7 @@
       "ServiceFeatureTable"
     ],
     "snippets": [
-      "query_feature_table_sample.dart"
+      "query_feature_table.dart"
     ],
     "title": "Query feature table",
     "key": "query_feature_table"
@@ -846,7 +989,7 @@
       "StatisticsQueryParameters",
       "StatisticsQueryResult"
     ],
-    "redirect_from": [],
+    "redirect_from": [ ],
     "relevant_apis": [
       "QueryParameters",
       "ServiceFeatureTable",
@@ -857,22 +1000,10 @@
       "StatisticsQueryResult"
     ],
     "snippets": [
-      "query_table_statistics_sample.dart"
+      "query_table_statistics.dart"
     ],
     "title": "Query table statistics",
     "key": "query_table_statistics"
-  },
-  "search_with_geocode": {
-    "category": "Search and Query",
-    "description": "Find the location for an address or places of interest near a location or within a specific area.",
-    "ignore": false,
-    "images": [],
-    "keywords": [],
-    "redirect_from": [],
-    "relevant_apis": [],
-    "snippets": [],
-    "title": "Search with geocode",
-    "key": "search_with_geocode"
   },
   "select_features_in_feature_layer": {
     "category": "Search and Query",
@@ -891,14 +1022,14 @@
       "FeatureLayer",
       "ServiceFeatureTable"
     ],
-    "redirect_from": [],
+    "redirect_from": [ ],
     "relevant_apis": [
       "Feature",
       "FeatureLayer",
       "ServiceFeatureTable"
     ],
     "snippets": [
-      "select_features_in_feature_layer_sample.dart"
+      "select_features_in_feature_layer.dart"
     ],
     "title": "Select features in feature layer",
     "key": "select_features_in_feature_layer"
@@ -917,14 +1048,14 @@
       "ArcGISMapViewController",
       "Basemap"
     ],
-    "redirect_from": [],
+    "redirect_from": [ ],
     "relevant_apis": [
       "ArcGISMap",
       "ArcGISMapViewController",
       "Basemap"
     ],
     "snippets": [
-      "set_basemap_sample.dart"
+      "set_basemap.dart"
     ],
     "title": "Set basemap",
     "key": "set_basemap"
@@ -948,7 +1079,7 @@
       "LocationDisplay",
       "LocationDisplay.autoPanMode"
     ],
-    "redirect_from": [],
+    "redirect_from": [ ],
     "relevant_apis": [
       "ArcGISMap",
       "ArcGISMapView",
@@ -956,7 +1087,7 @@
       "LocationDisplay.autoPanMode"
     ],
     "snippets": [
-      "show_device_location_sample.dart"
+      "show_device_location.dart"
     ],
     "title": "Show device location",
     "key": "show_device_location"
@@ -990,7 +1121,7 @@
       "SimpleRenderer",
       "SimulatedLocationDataSource"
     ],
-    "redirect_from": [],
+    "redirect_from": [ ],
     "relevant_apis": [
       "Graphic",
       "GraphicsOverlay",
@@ -1004,7 +1135,7 @@
       "SimulatedLocationDataSource"
     ],
     "snippets": [
-      "show_device_location_history_sample.dart"
+      "show_device_location_history.dart"
     ],
     "title": "Show device location history",
     "key": "show_device_location_history"
@@ -1037,7 +1168,7 @@
       "USNGGrid",
       "UTMGrid"
     ],
-    "redirect_from": [],
+    "redirect_from": [ ],
     "relevant_apis": [
       "ArcGISMapView",
       "Grid",
@@ -1049,7 +1180,7 @@
       "UTMGrid"
     ],
     "snippets": [
-      "show_grid_sample.dart"
+      "show_grid.dart"
     ],
     "title": "Show grid",
     "key": "show_grid"
@@ -1068,13 +1199,13 @@
       "LayerContent",
       "LegendInfo"
     ],
-    "redirect_from": [],
+    "redirect_from": [ ],
     "relevant_apis": [
       "LayerContent",
       "LegendInfo"
     ],
     "snippets": [
-      "show_legend_sample.dart"
+      "show_legend.dart"
     ],
     "title": "Show legend",
     "key": "show_legend"
@@ -1096,7 +1227,7 @@
       "ArcGISMapViewController.allowMagnifierToPanMap",
       "ArcGISMapViewController.magnifiedEnabled"
     ],
-    "redirect_from": [],
+    "redirect_from": [ ],
     "relevant_apis": [
       "ArcGISMap",
       "ArcGISMapView",
@@ -1105,7 +1236,7 @@
       "ArcGISMapViewController.magnifiedEnabled"
     ],
     "snippets": [
-      "show_magnifier_sample.dart"
+      "show_magnifier.dart"
     ],
     "title": "Show magnifier",
     "key": "show_magnifier"
@@ -1134,7 +1265,7 @@
       "PortalInfo",
       "PortalUser"
     ],
-    "redirect_from": [],
+    "redirect_from": [ ],
     "relevant_apis": [
       "ArcGISAuthenticationChallengeHandler",
       "AuthenticationManager",
@@ -1143,7 +1274,7 @@
       "PortalUser"
     ],
     "snippets": [
-      "show_portal_user_info_sample.dart"
+      "show_portal_user_info.dart"
     ],
     "title": "Show portal user info",
     "key": "show_portal_user_info"
@@ -1168,7 +1299,7 @@
       "ServiceAreaResult",
       "ServiceAreaTask"
     ],
-    "redirect_from": [],
+    "redirect_from": [ ],
     "relevant_apis": [
       "PolylineBarrier",
       "ServiceAreaFacility",
@@ -1178,7 +1309,7 @@
       "ServiceAreaTask"
     ],
     "snippets": [
-      "show_service_area_sample.dart"
+      "show_service_area.dart"
     ],
     "title": "Show service area",
     "key": "show_service_area"
@@ -1197,7 +1328,7 @@
       "GraphicsOverlay",
       "SimpleMarkerSymbol"
     ],
-    "redirect_from": [],
+    "redirect_from": [ ],
     "relevant_apis": [
       "ArcGISPoint",
       "Graphic",
@@ -1205,7 +1336,7 @@
       "SimpleMarkerSymbol"
     ],
     "snippets": [
-      "style_point_with_simple_marker_symbol_sample.dart"
+      "style_point_with_simple_marker_symbol.dart"
     ],
     "title": "Style point with simple marker symbol",
     "key": "style_point_with_simple_marker_symbol"

@@ -24,7 +24,7 @@
         "ArcGISMapViewController.magnifiedEnabled"
     ],
     "snippets": [
-        "show_magnifier_sample.dart"
+        "show_magnifier.dart"
     ],
     "title": "Show magnifier"
 }

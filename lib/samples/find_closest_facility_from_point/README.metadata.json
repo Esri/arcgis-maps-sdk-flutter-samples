@@ -2,10 +2,36 @@
     "category": "Routing and Logistics",
     "description": "Find routes from several locations to the respective closest facility.",
     "ignore": false,
-    "images": [],
-    "keywords": [],
+    "images": [
+        "find_closest_facility_from_point.png"
+    ],
+    "keywords": [
+        "incident",
+        "network analysis",
+        "route",
+        "search",
+        "ClosestFacilityParameters",
+        "ClosestFacilityResult",
+        "ClosestFacilityRoute",
+        "ClosestFacilityTask",
+        "Facility",
+        "Graphic",
+        "GraphicsOverlay",
+        "Incident"
+    ],
     "redirect_from": [],
-    "relevant_apis": [],
-    "snippets": [],
+    "relevant_apis": [
+        "ClosestFacilityParameters",
+        "ClosestFacilityResult",
+        "ClosestFacilityRoute",
+        "ClosestFacilityTask",
+        "Facility",
+        "Graphic",
+        "GraphicsOverlay",
+        "Incident"
+    ],
+    "snippets": [
+        "find_closest_facility_from_point.dart"
+    ],
     "title": "Find closest facility from point"
 }

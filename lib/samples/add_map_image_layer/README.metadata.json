@@ -1,0 +1,23 @@
+{
+    "category": "Maps",
+    "description": "Display a layer from an ArcGIS map image layer service.",
+    "ignore": false,
+    "images": [
+        "add_map_image_layer.png"
+    ],
+    "keywords": [
+        "display",
+        "image",
+        "layer",
+        "map",
+        "ArcGISMapImageLayer"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+        "ArcGISMapImageLayer"
+    ],
+    "snippets": [
+        "add_map_image_layer.dart"
+    ],
+    "title": "Add map image layer"
+}
