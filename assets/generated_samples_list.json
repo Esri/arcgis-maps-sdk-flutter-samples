@@ -18,7 +18,7 @@
       "Field",
       "SimpleRenderer"
     ],
-    "redirect_from": [ ],
+    "redirect_from": [],
     "relevant_apis": [
       "Feature",
       "FeatureCollection",
@@ -52,7 +52,7 @@
       "FeatureLayer",
       "TimeExtent"
     ],
-    "redirect_from": [ ],
+    "redirect_from": [],
     "relevant_apis": [
       "ArcGISMapViewController",
       "FeatureLayer",
@@ -84,7 +84,7 @@
       "Portal",
       "ServiceFeatureTable"
     ],
-    "redirect_from": [ ],
+    "redirect_from": [],
     "relevant_apis": [
       "FeatureLayer",
       "GeoPackage",
@@ -112,7 +112,7 @@
       "map",
       "ArcGISMapImageLayer"
     ],
-    "redirect_from": [ ],
+    "redirect_from": [],
     "relevant_apis": [
       "ArcGISMapImageLayer"
     ],
@@ -140,7 +140,7 @@
       "ArcGISTiledLayer",
       "Basemap"
     ],
-    "redirect_from": [ ],
+    "redirect_from": [],
     "relevant_apis": [
       "ArcGISMap",
       "ArcGISMapViewController",
@@ -170,7 +170,7 @@
       "Basemap",
       "TileCache"
     ],
-    "redirect_from": [ ],
+    "redirect_from": [],
     "relevant_apis": [
       "ArcGISMap",
       "ArcGISTiledLayer",
@@ -199,7 +199,7 @@
       "ArcGISVectorTiledLayer",
       "Basemap"
     ],
-    "redirect_from": [ ],
+    "redirect_from": [],
     "relevant_apis": [
       "ArcGISVectorTiledLayer",
       "Basemap"
@@ -230,7 +230,7 @@
       "ClassBreaksRenderer",
       "ClassBreaksRenderer.ClassBreak"
     ],
-    "redirect_from": [ ],
+    "redirect_from": [],
     "relevant_apis": [
       "ArcGISMapImageLayer",
       "ArcGISMapImageSublayer",
@@ -263,7 +263,7 @@
       "OfflineMapSyncTask",
       "OfflineMapUpdatesInfo"
     ],
-    "redirect_from": [ ],
+    "redirect_from": [],
     "relevant_apis": [
       "MobileMapPackage",
       "OfflineMapSyncJob",
@@ -293,7 +293,7 @@
       "ServiceFeatureTable",
       "SimpleRenderer"
     ],
-    "redirect_from": [ ],
+    "redirect_from": [],
     "relevant_apis": [
       "FeatureLayer.setRenderer",
       "ServiceFeatureTable",
@@ -325,7 +325,7 @@
       "UniqueValue",
       "UniqueValueRenderer"
     ],
-    "redirect_from": [ ],
+    "redirect_from": [],
     "relevant_apis": [
       "FeatureLayer",
       "ServiceFeatureTable",
@@ -344,11 +344,11 @@
     "category": "Cloud and Portal",
     "description": "Authenticate with ArcGIS Online (or your own portal) using OAuth2 to access secured resources (such as private web maps or layers).",
     "ignore": false,
-    "images": [ ],
-    "keywords": [ ],
-    "redirect_from": [ ],
-    "relevant_apis": [ ],
-    "snippets": [ ],
+    "images": [],
+    "keywords": [],
+    "redirect_from": [],
+    "relevant_apis": [],
+    "snippets": [],
     "title": "Authenticate with OAuth",
     "key": "authenticate_with_oauth"
   },
@@ -372,7 +372,7 @@
       "Portal",
       "PortalItem"
     ],
-    "redirect_from": [ ],
+    "redirect_from": [],
     "relevant_apis": [
       "ArcGISAuthenticationChallengeHandler",
       "ArcGISMap",
@@ -410,7 +410,7 @@
       "GeodatabaseFeatureTable",
       "TableDescription"
     ],
-    "redirect_from": [ ],
+    "redirect_from": [],
     "relevant_apis": [
       "ArcGISFeature",
       "FeatureLayer",
@@ -444,7 +444,7 @@
       "GeometryEngine.bufferGeodetic",
       "GraphicsOverlay"
     ],
-    "redirect_from": [ ],
+    "redirect_from": [],
     "relevant_apis": [
       "GeometryEngine.buffer",
       "GeometryEngine.bufferGeodetic",
@@ -460,18 +460,20 @@
     "category": "Analysis",
     "description": "Cut a geometry along a polyline.",
     "ignore": false,
-    "images": [ ],
+    "images": [
+      "cut_geometry.png"
+    ],
     "keywords": [
       "cut",
       "geometry",
       "split",
-      "GeometryEngine::Cut",
+      "GeometryEngine.cut",
       "Polygon",
       "Polyline"
     ],
-    "redirect_from": [ ],
+    "redirect_from": [],
     "relevant_apis": [
-      "GeometryEngine::Cut",
+      "GeometryEngine.cut",
       "Polygon",
       "Polyline"
     ],
@@ -500,7 +502,7 @@
       "SimpleLineSymbol",
       "SpatialReference"
     ],
-    "redirect_from": [ ],
+    "redirect_from": [],
     "relevant_apis": [
       "ArcGISPoint",
       "GeometryEngine",
@@ -535,7 +537,7 @@
       "FeatureLayer",
       "FeatureReduction"
     ],
-    "redirect_from": [ ],
+    "redirect_from": [],
     "relevant_apis": [
       "FeatureLayer",
       "FeatureReduction"
@@ -560,7 +562,7 @@
       "ArcGISMapView",
       "BasemapStyle"
     ],
-    "redirect_from": [ ],
+    "redirect_from": [],
     "relevant_apis": [
       "ArcGISMap",
       "ArcGISMapView",
@@ -586,7 +588,7 @@
       "ArcGISMapView",
       "MobileMapPackage"
     ],
-    "redirect_from": [ ],
+    "redirect_from": [],
     "relevant_apis": [
       "ArcGISMapView",
       "MobileMapPackage"
@@ -615,7 +617,7 @@
       "OfflineMapTask",
       "PreplannedMapArea"
     ],
-    "redirect_from": [ ],
+    "redirect_from": [],
     "relevant_apis": [
       "DownloadPreplannedOfflineMapJob",
       "DownloadPreplannedOfflineMapParameters",
@@ -649,7 +651,7 @@
       "ItemResourceCache",
       "VectorTileCache"
     ],
-    "redirect_from": [ ],
+    "redirect_from": [],
     "relevant_apis": [
       "ArcGISVectorTiledLayer",
       "ExportVectorTilesJob",
@@ -688,7 +690,7 @@
       "deleteAttachment",
       "fetchAttachments"
     ],
-    "redirect_from": [ ],
+    "redirect_from": [],
     "relevant_apis": [
       "ArcGISFeature",
       "FeatureLayer",
@@ -724,7 +726,7 @@
       "FeatureLayer",
       "ServiceFeatureTable"
     ],
-    "redirect_from": [ ],
+    "redirect_from": [],
     "relevant_apis": [
       "DefinitionExpression",
       "FeatureLayer",
@@ -753,7 +755,7 @@
       "LocatorTask",
       "ReverseGeocodeParameters"
     ],
-    "redirect_from": [ ],
+    "redirect_from": [],
     "relevant_apis": [
       "GeocodeParameters",
       "LocatorTask",
@@ -786,7 +788,7 @@
       "GraphicsOverlay",
       "Incident"
     ],
-    "redirect_from": [ ],
+    "redirect_from": [],
     "relevant_apis": [
       "ClosestFacilityParameters",
       "ClosestFacilityResult",
@@ -828,7 +830,7 @@
       "RouteTask",
       "Stop"
     ],
-    "redirect_from": [ ],
+    "redirect_from": [],
     "relevant_apis": [
       "DirectionManeuver",
       "Route",
@@ -861,7 +863,7 @@
       "OfflineMapTask",
       "PortalItem"
     ],
-    "redirect_from": [ ],
+    "redirect_from": [],
     "relevant_apis": [
       "GenerateOfflineMapJob",
       "GenerateOfflineMapParameters",
@@ -892,7 +894,7 @@
       "IdentifyLayerResult.layerContent.name",
       "IdentifyLayerResult.sublayerResults"
     ],
-    "redirect_from": [ ],
+    "redirect_from": [],
     "relevant_apis": [
       "ArcGISMapViewController.identifyLayers",
       "IdentifyLayerResult",
@@ -920,7 +922,7 @@
       "Bookmark",
       "Viewpoint"
     ],
-    "redirect_from": [ ],
+    "redirect_from": [],
     "relevant_apis": [
       "Bookmark",
       "Viewpoint"
@@ -946,7 +948,7 @@
       "QueryParameters",
       "ServiceFeatureTable"
     ],
-    "redirect_from": [ ],
+    "redirect_from": [],
     "relevant_apis": [
       "FeatureLayer",
       "FeatureQueryResult",
@@ -989,7 +991,7 @@
       "StatisticsQueryParameters",
       "StatisticsQueryResult"
     ],
-    "redirect_from": [ ],
+    "redirect_from": [],
     "relevant_apis": [
       "QueryParameters",
       "ServiceFeatureTable",
@@ -1022,7 +1024,7 @@
       "FeatureLayer",
       "ServiceFeatureTable"
     ],
-    "redirect_from": [ ],
+    "redirect_from": [],
     "relevant_apis": [
       "Feature",
       "FeatureLayer",
@@ -1048,7 +1050,7 @@
       "ArcGISMapViewController",
       "Basemap"
     ],
-    "redirect_from": [ ],
+    "redirect_from": [],
     "relevant_apis": [
       "ArcGISMap",
       "ArcGISMapViewController",
@@ -1079,7 +1081,7 @@
       "LocationDisplay",
       "LocationDisplay.autoPanMode"
     ],
-    "redirect_from": [ ],
+    "redirect_from": [],
     "relevant_apis": [
       "ArcGISMap",
       "ArcGISMapView",
@@ -1121,7 +1123,7 @@
       "SimpleRenderer",
       "SimulatedLocationDataSource"
     ],
-    "redirect_from": [ ],
+    "redirect_from": [],
     "relevant_apis": [
       "Graphic",
       "GraphicsOverlay",
@@ -1168,7 +1170,7 @@
       "USNGGrid",
       "UTMGrid"
     ],
-    "redirect_from": [ ],
+    "redirect_from": [],
     "relevant_apis": [
       "ArcGISMapView",
       "Grid",
@@ -1199,7 +1201,7 @@
       "LayerContent",
       "LegendInfo"
     ],
-    "redirect_from": [ ],
+    "redirect_from": [],
     "relevant_apis": [
       "LayerContent",
       "LegendInfo"
@@ -1227,7 +1229,7 @@
       "ArcGISMapViewController.allowMagnifierToPanMap",
       "ArcGISMapViewController.magnifiedEnabled"
     ],
-    "redirect_from": [ ],
+    "redirect_from": [],
     "relevant_apis": [
       "ArcGISMap",
       "ArcGISMapView",
@@ -1265,7 +1267,7 @@
       "PortalInfo",
       "PortalUser"
     ],
-    "redirect_from": [ ],
+    "redirect_from": [],
     "relevant_apis": [
       "ArcGISAuthenticationChallengeHandler",
       "AuthenticationManager",
@@ -1299,7 +1301,7 @@
       "ServiceAreaResult",
       "ServiceAreaTask"
     ],
-    "redirect_from": [ ],
+    "redirect_from": [],
     "relevant_apis": [
       "PolylineBarrier",
       "ServiceAreaFacility",
@@ -1328,7 +1330,7 @@
       "GraphicsOverlay",
       "SimpleMarkerSymbol"
     ],
-    "redirect_from": [ ],
+    "redirect_from": [],
     "relevant_apis": [
       "ArcGISPoint",
       "Graphic",
