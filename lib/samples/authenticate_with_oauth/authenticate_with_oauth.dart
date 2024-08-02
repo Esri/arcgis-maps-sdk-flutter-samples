@@ -42,6 +42,18 @@ class _AuthenticateWithOAuthState extends State<AuthenticateWithOAuth>
   );
 
   @override
+  void initState() {
+    super.initState();
+
+    // Set this class to the arcGISAuthenticationChallengeHandler property on the authentication manager.
+    // This class implements the ArcGISAuthenticationChallengeHandler interface,
+    // which allows it to handle authentication challenges via calls to its
+    // handleArcGISAuthenticationChallenge() method.
+    ArcGISEnvironment
+        .authenticationManager.arcGISAuthenticationChallengeHandler = this;
+  }
+
+  @override
   void dispose() async {
     // We do not want to handle authentication challenges outside of this sample,
     // so we remove this as the challenge handler.
@@ -71,13 +83,6 @@ class _AuthenticateWithOAuthState extends State<AuthenticateWithOAuth>
   }
 
   void onMapViewReady() {
-    // Set this class to the arcGISAuthenticationChallengeHandler property on the authentication manager.
-    // This class implements the ArcGISAuthenticationChallengeHandler interface,
-    // which allows it to handle authentication challenges via calls to its
-    // handleArcGISAuthenticationChallenge() method.
-    ArcGISEnvironment
-        .authenticationManager.arcGISAuthenticationChallengeHandler = this;
-
     // Create a map from a web map that has a secure layer (traffic).
     final portalItem = PortalItem.withPortalAndItemId(
       portal: Portal.arcGISOnline(connection: PortalConnection.authenticated),
