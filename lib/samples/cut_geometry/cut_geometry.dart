@@ -23,10 +23,10 @@ class CutGeometry extends StatefulWidget {
   const CutGeometry({super.key});
 
   @override
-  State<CutGeometry> createState() => CutGeometryState();
+  State<CutGeometry> createState() => _CutGeometryState();
 }
 
-class CutGeometryState extends State<CutGeometry> with SampleStateSupport {
+class _CutGeometryState extends State<CutGeometry> with SampleStateSupport {
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
 
