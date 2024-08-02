@@ -19,15 +19,14 @@ import 'package:flutter/material.dart';
 
 import '../../utils/sample_state_support.dart';
 
-class CutGeometrySample extends StatefulWidget {
-  const CutGeometrySample({super.key});
+class CutGeometry extends StatefulWidget {
+  const CutGeometry({super.key});
 
   @override
-  State<CutGeometrySample> createState() => _CutGeometrySampleState();
+  State<CutGeometry> createState() => CutGeometryState();
 }
 
-class _CutGeometrySampleState extends State<CutGeometrySample>
-    with SampleStateSupport {
+class CutGeometryState extends State<CutGeometry> with SampleStateSupport {
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
 
