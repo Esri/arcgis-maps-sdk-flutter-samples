@@ -1062,6 +1062,32 @@
     "title": "Set basemap",
     "key": "set_basemap"
   },
+  "set_reference_scale": {
+    "category": "Maps",
+    "description": "Set the map's reference scale and which feature layers should honor the reference scale.",
+    "ignore": false,
+    "images": [
+      "set_reference_scale.png",
+      "set_reference_scale_settings.png"
+    ],
+    "keywords": [
+      "map",
+      "reference scale",
+      "scene",
+      "ArcGISMap",
+      "FeatureLayer"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+      "ArcGISMap",
+      "FeatureLayer"
+    ],
+    "snippets": [
+      "set_reference_scale.dart"
+    ],
+    "title": "Set reference scale",
+    "key": "set_reference_scale"
+  },
   "show_device_location": {
     "category": "Maps",
     "description": "Display your current position on the map, as well as switch between different types of auto pan modes.",
