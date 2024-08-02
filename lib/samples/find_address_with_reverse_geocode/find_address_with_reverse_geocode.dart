@@ -31,7 +31,7 @@ class _FindAddressWithReverseGeocodeState
     extends State<FindAddressWithReverseGeocode> with SampleStateSupport {
   final _graphicsOverlay = GraphicsOverlay();
   final _worldLocatorTask = LocatorTask.withUri(Uri.parse(
-      'https://geocode-api.arcgis.com/arcgis/rest/services/World/GeocodeServer'));
+      'https://geocode-api.arcgis.com/arcgis/rest/services/World/GeocodeServer',),);
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
   final _initialViewpoint = Viewpoint.fromCenter(

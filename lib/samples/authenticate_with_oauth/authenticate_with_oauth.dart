@@ -73,7 +73,7 @@ class _AuthenticateWithOAuthState
         .authenticationManager.arcGISCredentialStore
         .getCredentials()
         .whereType<OAuthUserCredential>()
-        .map((credential) => credential.revokeToken()));
+        .map((credential) => credential.revokeToken()),);
     ArcGISEnvironment.authenticationManager.arcGISCredentialStore.removeAll();
   }
 
@@ -88,11 +88,11 @@ class _AuthenticateWithOAuthState
 
   @override
   void handleArcGISAuthenticationChallenge(
-      ArcGISAuthenticationChallenge challenge) async {
+      ArcGISAuthenticationChallenge challenge,) async {
     try {
       // Initiate the sign in process to the OAuth server.
       final credential = await OAuthUserCredential.create(
-          configuration: _oauthUserConfiguration);
+          configuration: _oauthUserConfiguration,);
 
       // Sign in was successful, so continue with the provided credential.
       challenge.continueWithCredential(credential);

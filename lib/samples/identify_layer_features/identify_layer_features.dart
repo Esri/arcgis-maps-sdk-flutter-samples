@@ -87,12 +87,12 @@ class _IdentifyLayerFeaturesState
   void onMapViewReady() async {
     // Create a feature layer of damaged property data.
     final serviceFeatureTable = ServiceFeatureTable.withUri(Uri.parse(
-        'https://sampleserver6.arcgisonline.com/arcgis/rest/services/DamageAssessment/FeatureServer/0'));
+        'https://sampleserver6.arcgisonline.com/arcgis/rest/services/DamageAssessment/FeatureServer/0',),);
     final featureLayer = FeatureLayer.withFeatureTable(serviceFeatureTable);
 
     // Create a layer with world cities data.
     final mapImageLayer = ArcGISMapImageLayer.withUri(Uri.parse(
-        'https://sampleserver6.arcgisonline.com/arcgis/rest/services/SampleWorldCities/MapServer'));
+        'https://sampleserver6.arcgisonline.com/arcgis/rest/services/SampleWorldCities/MapServer',),);
     await mapImageLayer.load();
     // Hide continent and world layers.
     mapImageLayer.subLayerContents[1].isVisible = false;
@@ -152,6 +152,6 @@ extension on IdentifyLayerResult {
   // The total count of features, recursively including all sublayers.
   int get totalCount {
     return sublayerResults.fold(geoElements.length,
-        (previous, element) => previous + element.totalCount);
+        (previous, element) => previous + element.totalCount,);
   }
 }

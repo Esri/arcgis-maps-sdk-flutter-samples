@@ -46,7 +46,7 @@ class _QueryFeatureTableState extends State<QueryFeatureTable>
   );
   // Create a feature table and a feature layer.
   final _featureTable = ServiceFeatureTable.withUri(Uri.parse(
-      'https://services.arcgis.com/jIL9msH9OI208GCb/arcgis/rest/services/USA_Daytime_Population_2016/FeatureServer/0'));
+      'https://services.arcgis.com/jIL9msH9OI208GCb/arcgis/rest/services/USA_Daytime_Population_2016/FeatureServer/0',),);
   late FeatureLayer _featureLayer;
 
   @override
@@ -101,7 +101,7 @@ class _QueryFeatureTableState extends State<QueryFeatureTable>
 
     // Create a renderer with a fill symbol and apply to the feature layer.
     final lineSymbol = SimpleLineSymbol(
-        style: SimpleLineSymbolStyle.solid, color: Colors.black, width: 1);
+        style: SimpleLineSymbolStyle.solid, color: Colors.black, width: 1,);
     final fillSymbol = SimpleFillSymbol(
       style: SimpleFillSymbolStyle.solid,
       color: Colors.yellow,

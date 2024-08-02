@@ -195,7 +195,7 @@ class _QueryTableStatisticsState extends State<QueryTableStatistics>
     }
     // Query the statistics.
     final statisticsQueryResult = await _serviceFeatureTable.queryStatistics(
-        statisticsQueryParameters: statisticsQueryParameters);
+        statisticsQueryParameters: statisticsQueryParameters,);
 
     // Prepare the statistics results for display.
     final statistics = [];
@@ -220,7 +220,7 @@ class _QueryTableStatisticsState extends State<QueryTableStatistics>
               'Statistical Query Results',
               style: Theme.of(context).textTheme.titleMedium,
             ),
-            content: Text(statistics.join('\n').toString()),
+            content: Text(statistics.join('\n')),
           );
         },
       );

@@ -46,8 +46,8 @@ class _ApplyScheduledUpdatesToPreplannedMapAreaState
   // The Active mobile map package.
   MobileMapPackage? _mobileMapPackage;
   // Offline task and parameters used for updating the map package.
-  OfflineMapSyncTask? _offlineMapSyncTask;
-  OfflineMapSyncParameters? _mapSyncParameters;
+  late OfflineMapSyncTask? _offlineMapSyncTask;
+  late OfflineMapSyncParameters? _mapSyncParameters;
   // The location of the map package on the device.
   late final Uri _dataUri;
 
@@ -83,10 +83,10 @@ class _ApplyScheduledUpdatesToPreplannedMapAreaState
                       child: ElevatedButton(
                           // Disable the button if no update is available.
                           onPressed: _canUpdate ? syncUpdates : null,
-                          child: const Text('Apply Updates')),
+                          child: const Text('Apply Updates'),),
                     ),
                   ],
-                )
+                ),
               ],
             ),
             // Display a progress indicator and prevent interaction before state is ready.
@@ -226,7 +226,7 @@ class _ApplyScheduledUpdatesToPreplannedMapAreaState
         actions: [
           TextButton(
               onPressed: () => Navigator.pop(context, 'OK'),
-              child: const Text('OK'))
+              child: const Text('OK'),),
         ],
       ),
     );

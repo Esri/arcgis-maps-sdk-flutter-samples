@@ -201,7 +201,7 @@ class _AttachmentsOptionsState extends State<AttachmentsOptions>
                   ElevatedButton(
                     onPressed: addAttachment,
                     child: const Text('Add Attachment'),
-                  )
+                  ),
                 ],
               ),
             ),
@@ -237,7 +237,7 @@ class _AttachmentsOptionsState extends State<AttachmentsOptions>
                     );
                   },
                 ),
-              ]),
+              ],),
             ),
           ],
         ),

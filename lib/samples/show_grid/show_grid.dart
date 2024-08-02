@@ -148,7 +148,7 @@ class _ShowGridState extends State<ShowGrid>
   }
 
   // Change the label format if the grid is LatitudeLongitudeGrid.
-  _onLabelFormatChanged(LatLongLabelFormatType labelFormatType) {
+  void _onLabelFormatChanged(LatLongLabelFormatType labelFormatType) {
     _labelFormatType = labelFormatType;
     if (_mapViewController.grid is LatitudeLongitudeGrid) {
       final grid = _mapViewController.grid! as LatitudeLongitudeGrid;
@@ -172,7 +172,7 @@ class _ShowGridState extends State<ShowGrid>
       barrierColor: Colors.transparent,
       builder: (context) {
         return Align(
-          alignment: const Alignment(0, 1),
+          alignment: Alignment.bottomCenter,
           child: Material(
             child: Padding(
               padding: const EdgeInsets.all(10.0),

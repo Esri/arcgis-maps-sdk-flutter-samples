@@ -86,7 +86,7 @@ class _ShowDeviceLocationHistoryState extends State<ShowDeviceLocationHistory>
                         setState(() => _enableTracking = !_enableTracking);
                       },
                       child: Text(
-                          _enableTracking ? 'Stop Tracking' : 'Start Tracking'),
+                          _enableTracking ? 'Stop Tracking' : 'Start Tracking',),
                     ),
                   ],
                 ),

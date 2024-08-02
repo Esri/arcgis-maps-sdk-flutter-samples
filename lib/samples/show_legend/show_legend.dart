@@ -79,12 +79,12 @@ class _ShowLegendState extends State<ShowLegend>
     // Create an image layer.
     final imageLayer = ArcGISMapImageLayer.withUri(
       Uri.parse(
-          'https://sampleserver6.arcgisonline.com/arcgis/rest/services/Census/MapServer'),
+          'https://sampleserver6.arcgisonline.com/arcgis/rest/services/Census/MapServer',),
     );
     // Create a feature table.
     final featureTable = ServiceFeatureTable.withUri(
       Uri.parse(
-          'https://sampleserver6.arcgisonline.com/arcgis/rest/services/Recreation/FeatureServer/0'),
+          'https://sampleserver6.arcgisonline.com/arcgis/rest/services/Recreation/FeatureServer/0',),
     );
     // Create a feature layer.
     final featureLayer = FeatureLayer.withFeatureTable(featureTable);
@@ -96,7 +96,7 @@ class _ShowLegendState extends State<ShowLegend>
     // Create a list to store operational layers and populate it with image and feature layers.
     final operationalLayersList = <LayerContent>[
       ...imageLayer.subLayerContents,
-      featureLayer
+      featureLayer,
     ];
 
     // Create a list to store dropdown items.

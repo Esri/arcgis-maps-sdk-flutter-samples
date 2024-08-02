@@ -81,7 +81,7 @@ class _AuthenticateWithTokenState extends State<AuthenticateWithToken>
 
   @override
   void handleArcGISAuthenticationChallenge(
-      ArcGISAuthenticationChallenge challenge) async {
+      ArcGISAuthenticationChallenge challenge,) async {
     // Show a login dialog to handle the authentication challenge.
     await showDialog(
       context: context,

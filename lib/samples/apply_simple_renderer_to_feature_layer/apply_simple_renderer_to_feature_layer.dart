@@ -64,7 +64,7 @@ class _ApplySimpleRendererToFeatureLayerState
                         ? const Text('Blue Renderer')
                         : const Text('Orange Renderer'),
                   ),
-                )
+                ),
               ],
             ),
             // Display a progress indicator and prevent interaction before state is ready.
@@ -86,7 +86,7 @@ class _ApplySimpleRendererToFeatureLayerState
   void onMapViewReady() {
     // Initialize the feature layer with a feature table web service.
     final uri = Uri.parse(
-        'https://services.arcgis.com/V6ZHFr6zdgNZuVG0/arcgis/rest/services/Landscape_Trees/FeatureServer/0');
+        'https://services.arcgis.com/V6ZHFr6zdgNZuVG0/arcgis/rest/services/Landscape_Trees/FeatureServer/0',);
     final serviceFeatureTable = ServiceFeatureTable.withUri(uri);
     _featureLayer = FeatureLayer.withFeatureTable(serviceFeatureTable);
 
@@ -112,7 +112,7 @@ class _ApplySimpleRendererToFeatureLayerState
   void overrideRenderer() {
     // Set a new renderer for the feature layer
     final markerSymbol = SimpleMarkerSymbol(
-        style: SimpleMarkerSymbolStyle.circle, color: Colors.blue, size: 5);
+        style: SimpleMarkerSymbolStyle.circle, color: Colors.blue, size: 5,);
     _featureLayer.renderer = SimpleRenderer(symbol: markerSymbol);
     setState(() => _usingDefaultRenderer = false);
   }

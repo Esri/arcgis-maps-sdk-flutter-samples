@@ -86,7 +86,7 @@ class _SetReferenceScaleState extends State<SetReferenceScale>
                       )
                   : null,
               child: const Text('Settings'),
-            )
+            ),
           ],
         ),
       ),
@@ -97,7 +97,7 @@ class _SetReferenceScaleState extends State<SetReferenceScale>
     // Create a portal item.
     final portal = Portal.arcGISOnline();
     final portalItem = PortalItem.withPortalAndItemId(
-        portal: portal, itemId: '3953413f3bd34e53a42bf70f2937a408');
+        portal: portal, itemId: '3953413f3bd34e53a42bf70f2937a408',);
     // Load the portal item.
     await portalItem.load();
 
@@ -136,11 +136,11 @@ class _SetReferenceScaleState extends State<SetReferenceScale>
               children: [
                 Center(
                   child: Text('Settings',
-                      style: Theme.of(context).textTheme.headlineMedium),
+                      style: Theme.of(context).textTheme.headlineMedium,),
                 ),
                 Center(
                   child: Text('Reference Scale',
-                      style: Theme.of(context).textTheme.titleMedium),
+                      style: Theme.of(context).textTheme.titleMedium,),
                 ),
                 // Add a dropdown button for setting a new reference scale.
                 DropdownButton(
@@ -161,7 +161,7 @@ class _SetReferenceScaleState extends State<SetReferenceScale>
                   items: _referenceScaleList,
                 ),
                 Text('Apply Reference Scale to Layers',
-                    style: Theme.of(context).textTheme.titleMedium),
+                    style: Theme.of(context).textTheme.titleMedium,),
 
                 // Add a list of checkboxes for selecting feature layers that will honor the reference scale.
                 Column(
@@ -198,7 +198,7 @@ class _SetReferenceScaleState extends State<SetReferenceScale>
                 // Add text to display the current map scale.
                 Center(
                   child: Text('Map Scale',
-                      style: Theme.of(context).textTheme.titleMedium),
+                      style: Theme.of(context).textTheme.titleMedium,),
                 ),
                 Text(
                   formatAsScale(_mapViewController.scale),
@@ -207,7 +207,7 @@ class _SetReferenceScaleState extends State<SetReferenceScale>
                   onPressed: () {
                     // Set the map scale to the reference scale and close the settings dialog.
                     _mapViewController.setViewpointScale(
-                        scale: _map.referenceScale);
+                        scale: _map.referenceScale,);
                     Navigator.pop(context);
                   },
                   child: const Text('Set to Reference Scale'),
@@ -217,7 +217,7 @@ class _SetReferenceScaleState extends State<SetReferenceScale>
           ),
         ),
       );
-    });
+    },);
   }
 
   // Create a function to format the scale.

@@ -203,7 +203,7 @@ class _ShowDeviceLocationState extends State<ShowDeviceLocation>
       setState(() => _autoPanMode = mode);
     });
     setState(
-        () => _autoPanMode = _mapViewController.locationDisplay.autoPanMode);
+        () => _autoPanMode = _mapViewController.locationDisplay.autoPanMode,);
 
     // Attempt to start the location data source (this will prompt the user for permission).
     try {

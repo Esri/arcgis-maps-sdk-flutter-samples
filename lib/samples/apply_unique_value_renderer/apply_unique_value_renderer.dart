@@ -53,7 +53,7 @@ class _ApplyUniqueValueRendererState
 
     // Create a feature layer from a service feature table and set a unique value renderer.
     final uri = Uri.parse(
-        'https://sampleserver6.arcgisonline.com/arcgis/rest/services/Census/MapServer/3');
+        'https://sampleserver6.arcgisonline.com/arcgis/rest/services/Census/MapServer/3',);
     final serviceFeatureTable = ServiceFeatureTable.withUri(uri);
     final featureLayer = FeatureLayer.withFeatureTable(serviceFeatureTable);
     featureLayer.renderer = _configureUniqueValueRenderer();
@@ -67,41 +67,41 @@ class _ApplyUniqueValueRendererState
   /// Configure a unique value renderer.
   Renderer? _configureUniqueValueRenderer() {
     final stateOutlineSymbol = SimpleLineSymbol(
-        style: SimpleLineSymbolStyle.solid, color: Colors.white, width: 0.7);
+        style: SimpleLineSymbolStyle.solid, color: Colors.white, width: 0.7,);
 
     // Create fill symbols for each region.
     final pacificFillSymbol = SimpleFillSymbol(
         style: SimpleFillSymbolStyle.solid,
         color: const Color.fromARGB(255, 0, 0, 255),
-        outline: stateOutlineSymbol);
+        outline: stateOutlineSymbol,);
     final mountainFillSymbol = SimpleFillSymbol(
         style: SimpleFillSymbolStyle.solid,
         color: const Color.fromARGB(255, 0, 255, 0),
-        outline: stateOutlineSymbol);
+        outline: stateOutlineSymbol,);
     final westSouthCentralFillSymbol = SimpleFillSymbol(
         style: SimpleFillSymbolStyle.solid,
         color: const Color.fromARGB(255, 250, 125, 0),
-        outline: stateOutlineSymbol);
+        outline: stateOutlineSymbol,);
 
     // Create unique values for each region.
     final pacificValue = UniqueValue(
         description: 'Pacific Region',
         label: 'Pacific',
         symbol: pacificFillSymbol,
-        values: ['Pacific']);
+        values: ['Pacific'],);
     final mountainValue = UniqueValue(
         description: 'Rocky Mountain Region',
         label: 'Mountain',
         symbol: mountainFillSymbol,
-        values: ['Mountain']);
+        values: ['Mountain'],);
     final westSouthCentralValue = UniqueValue(
         description: 'West South Central Region',
         label: 'West South Central',
         symbol: westSouthCentralFillSymbol,
-        values: ['West South Central']);
+        values: ['West South Central'],);
 
     final defaultFillSymbol = SimpleFillSymbol(
-        style: SimpleFillSymbolStyle.cross, color: Colors.grey, outline: null);
+        style: SimpleFillSymbolStyle.cross, color: Colors.grey, outline: null,);
 
     // Create a unique value renderer with the unique values.
     return UniqueValueRenderer(

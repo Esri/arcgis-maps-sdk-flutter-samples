@@ -167,7 +167,7 @@ class _CreateMobileGeodatabaseState
   Future<void> _setupGeodatabase() async {
     final directory = await getApplicationDocumentsDirectory();
     final geodatabaseFile = File(
-        '${directory.path}${Platform.pathSeparator}localHistory.geodatabase');
+        '${directory.path}${Platform.pathSeparator}localHistory.geodatabase',);
     if (geodatabaseFile.existsSync()) geodatabaseFile.deleteSync();
 
     try {
