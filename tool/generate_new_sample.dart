@@ -68,6 +68,10 @@ String camelToSnake(String input) {
 // Create a new sample README.md file,
 // or copy the template README.md file
 // from the common-samples/designs directory if it exists.
+// The common-samples directory is expected to be at the same level
+// as the samples directory.
+// - /common-samples
+// - /arcgis-maps-sdk-flutter-samples
 void createEmptyReadMeOrCopy(
     Directory sampleDirectory, String sampleCamelName) {
   final ps = Platform.pathSeparator;
