@@ -37,14 +37,9 @@ void createNewSample(String sampleCamelName) {
       sampleDirectory.path,
     );
   }
-
   // Create the sample directory
-  try {
-    sampleDirectory.createSync();
-    print('>Sample directory created at ${sampleDirectory.path}');
-  } on Exception catch (_) {
-    rethrow;
-  }
+  sampleDirectory.createSync();
+  print('>Sample directory created at ${sampleDirectory.path}');
 
   // Create the README.md file
   createEmptyReadMeOrCopy(sampleDirectory, sampleCamelName);
@@ -53,8 +48,7 @@ void createNewSample(String sampleCamelName) {
   createNewSampleFile(sampleDirectory, sampleSnakeName, sampleCamelName);
 
   // Add the sample to the samples_widget_list.dart file
-  addSampleToSamplesWidgetList(
-      sampleRootDirectory, sampleSnakeName, sampleCamelName);
+  addSampleToSamplesWidgetList(sampleRootDirectory);
 }
 
 // Convert a camel case string to snake case.
@@ -64,6 +58,19 @@ String camelToSnake(String input) {
     (Match match) => '${match.group(1)}_${match.group(2)!.toLowerCase()}',
   );
   return snakeCase.toLowerCase();
+}
+
+// Convert a snake case string to camel case.
+String snakeToCamel(String input) {
+  final camelCase = input.replaceAllMapped(
+    RegExp(r'(_[a-z])'),
+    (Match match) => match.group(0)!.toUpperCase().substring(1),
+  );
+  var newName = camelCase[0].toUpperCase() + camelCase.substring(1);
+  if (newName.contains('Oauth')) {
+    newName = newName.replaceFirst('Oauth', 'OAuth');
+  }
+  return newName;
 }
 
 // Create a new sample README.md file,
@@ -78,17 +85,13 @@ void createEmptyReadMeOrCopy(
   final ps = Platform.pathSeparator;
   final templateReadmeFile = File(
       '${Directory.current.parent.path}${ps}common-samples${ps}designs$ps$sampleCamelName${ps}README.md');
-  try {
-    final sampleReadmeFile = File('${sampleDirectory.path}${ps}README.md');
-    if (templateReadmeFile.existsSync()) {
-      sampleReadmeFile.writeAsBytesSync(templateReadmeFile.readAsBytesSync());
-      print('>A README File created');
-    } else {
-      print('>A empty README file was created');
-      sampleReadmeFile.writeAsStringSync('README-Empty');
-    }
-  } catch (_) {
-    rethrow;
+  final sampleReadmeFile = File('${sampleDirectory.path}${ps}README.md');
+  if (templateReadmeFile.existsSync()) {
+    sampleReadmeFile.writeAsBytesSync(templateReadmeFile.readAsBytesSync());
+    print('>A README File created');
+  } else {
+    print('>A empty README file was created');
+    sampleReadmeFile.writeAsStringSync('README-Empty');
   }
 }
 
@@ -105,54 +108,58 @@ void createNewSampleFile(
 
   if (templateFile.existsSync()) {
     final lines = templateFile.readAsLinesSync();
-    var skip = false;
     for (var line in lines) {
-      skip = line.startsWith('//') ? true : false;
-      if (!skip) {
+      if (!line.startsWith('//')) {
         final newLine = line.replaceAll('SampleWidget', sampleCamelName);
         sampleFile.writeAsStringSync('$newLine${Platform.lineTerminator}',
             mode: FileMode.append);
       }
     }
   }
-  print('>A sample file created');
+  print('>A sample file ${sampleCamelName}.dart created');
 }
 
 // Add the new sample to the samples_widget_list.dart file
-void addSampleToSamplesWidgetList(Directory sampleRootDirectory,
-    String sampleSnakeName, String sampleCamelName) {
+void addSampleToSamplesWidgetList(Directory sampleRootDirectory) {
   final ps = Platform.pathSeparator;
   final samplesWidgetListFile = File(
       '${sampleRootDirectory.parent.path}${ps}models${ps}samples_widget_list.dart');
-  final sampleWidgetImport =
-      "import 'package:arcgis_maps_sdk_flutter_samples/samples/$sampleSnakeName/$sampleSnakeName.dart';";
-  final sampleWidgetMap =
-      "  '$sampleSnakeName': () => const $sampleCamelName(),";
 
-  final samplesWidgetListFileLines = samplesWidgetListFile.readAsLinesSync();
-  var indexImport = 0;
-  for (var i = 0; i <= samplesWidgetListFileLines.length; i++) {
-    var line = samplesWidgetListFileLines[i];
-    if (line.startsWith('//')) {
-      indexImport = i; // starting line for comments
-      break;
-    }
-  }
-  samplesWidgetListFileLines.insert(indexImport - 1, sampleWidgetImport);
-  final indexEnd = samplesWidgetListFileLines.indexOf('};');
-  samplesWidgetListFileLines.insert(indexEnd, sampleWidgetMap);
-  //clean up the file first
-  samplesWidgetListFile.writeAsStringSync('');
+  final buffer = StringBuffer();
+  final sortedSampleNames = sampleRootDirectory
+      .listSync()
+      .where((entity) => entity is Directory)
+      .map((entity) => entity.path.split(ps).last)
+      .toList()
+    ..sort();
 
-  for (var line in samplesWidgetListFileLines) {
-    samplesWidgetListFile.writeAsStringSync('$line${Platform.lineTerminator}',
-        mode: FileMode.append);
+  for (var sampleName in sortedSampleNames) {
+    buffer.writeln(
+        "import 'package:arcgis_maps_sdk_flutter_samples/samples/$sampleName/$sampleName.dart';");
   }
-  print('>An entry is added to the samples_widget_list.dart');
+
+  // Print out the declaration and opening bracket for final sampleWidgets
+  buffer.writeln('\nfinal sampleWidgets = {');
+
+  // Print out the sampleWidgets entry for each subdirectory
+  for (var sampleName in sortedSampleNames) {
+    final camelCaseName = snakeToCamel(sampleName);
+
+    buffer.writeln("  '$camelCaseName': () => const $camelCaseName(),");
+  }
+
+  // Print out the closing bracket
+  buffer.writeln('};');
+
+  // Write to the file
+  samplesWidgetListFile.writeAsStringSync(buffer.toString());
+  // Run dart format on the file
+  Process.runSync('dart', ['format', samplesWidgetListFile.path]);
+  print('>The samples_widget_list.dart regenerated');
 }
 
-const copyright = '''
-// Copyright 2024 Esri
+final copyright = '''
+// Copyright ${DateTime.now().year}  Esri
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
