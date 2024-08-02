@@ -119,7 +119,7 @@ void createNewSampleFile(
   print('>A sample file ${sampleCamelName}.dart created');
 }
 
-// Add the new sample to the samples_widget_list.dart file
+// Regenerate the samples_widget_list.dart file
 void addSampleToSamplesWidgetList(Directory sampleRootDirectory) {
   final ps = Platform.pathSeparator;
   final samplesWidgetListFile = File(
@@ -138,17 +138,11 @@ void addSampleToSamplesWidgetList(Directory sampleRootDirectory) {
         "import 'package:arcgis_maps_sdk_flutter_samples/samples/$sampleName/$sampleName.dart';");
   }
 
-  // Print out the declaration and opening bracket for final sampleWidgets
   buffer.writeln('\nfinal sampleWidgets = {');
-
-  // Print out the sampleWidgets entry for each subdirectory
   for (var sampleName in sortedSampleNames) {
     final camelCaseName = snakeToCamel(sampleName);
-
     buffer.writeln("  '$camelCaseName': () => const $camelCaseName(),");
   }
-
-  // Print out the closing bracket
   buffer.writeln('};');
 
   // Write to the file
