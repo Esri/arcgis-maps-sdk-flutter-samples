@@ -1,6 +1,5 @@
 // ignore_for_file: avoid_print
 
-import 'dart:developer';
 import 'dart:io';
 
 /// Run from arcgis-maps-sdk-flutter-samples root directory.
@@ -42,7 +41,7 @@ void createNewSample(String sampleCamelName) {
   // Create the sample directory
   try {
     sampleDirectory.createSync();
-    log('>Sample directory created at ${sampleDirectory.path}');
+    print('>Sample directory created at ${sampleDirectory.path}');
   } on Exception catch (_) {
     rethrow;
   }
@@ -83,9 +82,9 @@ void createEmptyReadMeOrCopy(
     final sampleReadmeFile = File('${sampleDirectory.path}${ps}README.md');
     if (templateReadmeFile.existsSync()) {
       sampleReadmeFile.writeAsBytesSync(templateReadmeFile.readAsBytesSync());
-      log('>A README File created');
+      print('>A README File created');
     } else {
-      log('>A empty README file was created');
+      print('>A empty README file was created');
       sampleReadmeFile.writeAsStringSync('README-Empty');
     }
   } catch (_) {
@@ -116,7 +115,7 @@ void createNewSampleFile(
       }
     }
   }
-  log('>A sample file created');
+  print('>A sample file created');
 }
 
 // Add the new sample to the samples_widget_list.dart file
@@ -149,6 +148,7 @@ void addSampleToSamplesWidgetList(Directory sampleRootDirectory,
     samplesWidgetListFile.writeAsStringSync('$line${Platform.lineTerminator}',
         mode: FileMode.append);
   }
+  print('>An entry is added to the samples_widget_list.dart');
 }
 
 const copyright = '''
