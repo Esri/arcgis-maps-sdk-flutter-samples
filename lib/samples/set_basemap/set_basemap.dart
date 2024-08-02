@@ -28,8 +28,7 @@ class SetBasemap extends StatefulWidget {
   State<SetBasemap> createState() => _SetBasemapState();
 }
 
-class _SetBasemapState extends State<SetBasemap>
-    with SampleStateSupport {
+class _SetBasemapState extends State<SetBasemap> with SampleStateSupport {
   // Create a key to access the scaffold state.
   final _scaffoldStateKey = GlobalKey<ScaffoldState>();
   // Create a controller for the map view and a map with a navigation basemap.
@@ -105,9 +104,7 @@ class _SetBasemapState extends State<SetBasemap>
                   );
                 default:
                   // Display a loading message while loading basemaps.
-                  return const Center(
-                    child: Text('Loading basemaps...'),
-                  );
+                  return const Center(child: Text('Loading basemaps...'));
               }
             },
           ),

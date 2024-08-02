@@ -25,8 +25,7 @@ class QueryTableStatistics extends StatefulWidget {
   const QueryTableStatistics({super.key});
 
   @override
-  State<QueryTableStatistics> createState() =>
-      _QueryTableStatisticsState();
+  State<QueryTableStatistics> createState() => _QueryTableStatisticsState();
 }
 
 class _QueryTableStatisticsState extends State<QueryTableStatistics>
@@ -133,9 +132,8 @@ class _QueryTableStatisticsState extends State<QueryTableStatistics>
             children: [
               Checkbox(
                 value: _onlyCitiesInCurrentExtent,
-                onChanged: (value) {
-                  setState(() => _onlyCitiesInCurrentExtent = value!);
-                },
+                onChanged: (value) =>
+                    setState(() => _onlyCitiesInCurrentExtent = value!),
               ),
               const Text('Only cities in current extent'),
             ],
@@ -144,9 +142,8 @@ class _QueryTableStatisticsState extends State<QueryTableStatistics>
             children: [
               Checkbox(
                 value: _onlyCitiesGreaterThan5M,
-                onChanged: (value) {
-                  setState(() => _onlyCitiesGreaterThan5M = value!);
-                },
+                onChanged: (value) =>
+                    setState(() => _onlyCitiesGreaterThan5M = value!),
               ),
               const Text('Only cities greater than 5M'),
             ],
@@ -168,17 +165,13 @@ class _QueryTableStatisticsState extends State<QueryTableStatistics>
       );
     }
     // Create a map with a topographic basemap.
-    final map = ArcGISMap.withBasemapStyle(
-      BasemapStyle.arcGISTopographic,
-    );
+    final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic);
+
     // Create a feature layer from the service feature table.
-    final featureLayer = FeatureLayer.withFeatureTable(
-      _serviceFeatureTable,
-    );
+    final featureLayer = FeatureLayer.withFeatureTable(_serviceFeatureTable);
+
     // Add the feature layer to the map.
-    map.operationalLayers.add(
-      featureLayer,
-    );
+    map.operationalLayers.add(featureLayer);
     // Set the map to the map view.
     _mapViewController.arcGISMap = map;
     setState(() => _ready = true);
@@ -187,9 +180,8 @@ class _QueryTableStatisticsState extends State<QueryTableStatistics>
   // Query statistics from the service feature table.
   void queryStatistics() async {
     // Create a statistics query parameters object.
-    final statisticsQueryParameters = StatisticsQueryParameters(
-      statisticDefinitions: _statisticDefinitions,
-    );
+    final statisticsQueryParameters =
+        StatisticsQueryParameters(statisticDefinitions: _statisticDefinitions);
 
     // Set the geometry and spatial relationship if the flag is true.
     if (_onlyCitiesInCurrentExtent) {
@@ -203,8 +195,7 @@ class _QueryTableStatisticsState extends State<QueryTableStatistics>
     }
     // Query the statistics.
     final statisticsQueryResult = await _serviceFeatureTable.queryStatistics(
-      statisticsQueryParameters: statisticsQueryParameters,
-    );
+        statisticsQueryParameters: statisticsQueryParameters);
 
     // Prepare the statistics results for display.
     final statistics = [];
@@ -229,9 +220,7 @@ class _QueryTableStatisticsState extends State<QueryTableStatistics>
               'Statistical Query Results',
               style: Theme.of(context).textTheme.titleMedium,
             ),
-            content: Text(
-              statistics.join('\n').toString(),
-            ),
+            content: Text(statistics.join('\n').toString()),
           );
         },
       );

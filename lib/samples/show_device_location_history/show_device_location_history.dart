@@ -30,8 +30,8 @@ class ShowDeviceLocationHistory extends StatefulWidget {
       _ShowDeviceLocationHistoryState();
 }
 
-class _ShowDeviceLocationHistoryState
-    extends State<ShowDeviceLocationHistory> with SampleStateSupport {
+class _ShowDeviceLocationHistoryState extends State<ShowDeviceLocationHistory>
+    with SampleStateSupport {
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
   // A location data source to simulate location updates.
@@ -43,9 +43,8 @@ class _ShowDeviceLocationHistoryState
   // A GraphicsOverlay to display the location history points.
   final _locationHistoryPointOverlay = GraphicsOverlay();
   // A PolylineBuilder to build the location history polyline.
-  final _polylineBuilder = PolylineBuilder.fromSpatialReference(
-    SpatialReference.wgs84,
-  );
+  final _polylineBuilder =
+      PolylineBuilder.fromSpatialReference(SpatialReference.wgs84);
   // A flag for when the map view is ready and controls can be used.
   var _ready = false;
   // A flag for toggling location tracking.
@@ -53,6 +52,7 @@ class _ShowDeviceLocationHistoryState
 
   @override
   void dispose() {
+    // When exiting, stop the location data source and cancel subscriptions.
     _locationDataSource.stop();
     _locationSubscription?.cancel();
     _locationHistoryLineOverlay.graphics.clear();
@@ -83,13 +83,10 @@ class _ShowDeviceLocationHistoryState
                     // A button to enable or disable location tracking.
                     ElevatedButton(
                       onPressed: () {
-                        setState(() {
-                          _enableTracking = !_enableTracking;
-                        });
+                        setState(() => _enableTracking = !_enableTracking);
                       },
                       child: Text(
-                        _enableTracking ? 'Stop Tracking' : 'Start Tracking',
-                      ),
+                          _enableTracking ? 'Stop Tracking' : 'Start Tracking'),
                     ),
                   ],
                 ),
@@ -101,9 +98,7 @@ class _ShowDeviceLocationHistoryState
               child: SizedBox.expand(
                 child: Container(
                   color: Colors.white30,
-                  child: const Center(
-                    child: CircularProgressIndicator(),
-                  ),
+                  child: const Center(child: CircularProgressIndicator()),
                 ),
               ),
             ),
@@ -181,9 +176,7 @@ class _ShowDeviceLocationHistoryState
         showDialog(
           context: context,
           builder: (_) => AlertDialog(
-            content: Text(
-              e.message,
-            ),
+            content: Text(e.message),
           ),
         );
       }
@@ -191,9 +184,8 @@ class _ShowDeviceLocationHistoryState
 
     // Listen for location changes.
     if (_locationDataSource.status == LocationDataSourceStatus.started) {
-      _locationSubscription = _locationDataSource.onLocationChanged.listen(
-        _handleLdsLocationChange,
-      );
+      _locationSubscription = _locationDataSource.onLocationChanged
+          .listen(_handleLdsLocationChange);
     }
   }
 
@@ -202,19 +194,12 @@ class _ShowDeviceLocationHistoryState
     if (!_enableTracking) return;
     // Add the location to the location history as a graphic point.
     final point = location.position;
-    _locationHistoryPointOverlay.graphics.add(
-      Graphic(
-        geometry: point,
-      ),
-    );
+    _locationHistoryPointOverlay.graphics.add(Graphic(geometry: point));
     // Add the location to the location history as a polyline.
     _polylineBuilder.addPoint(point);
     // Visualize the location history polyline on the map.
     _locationHistoryLineOverlay.graphics.clear();
-    _locationHistoryLineOverlay.graphics.add(
-      Graphic(
-        geometry: _polylineBuilder.toGeometry() as Polyline,
-      ),
-    );
+    _locationHistoryLineOverlay.graphics
+        .add(Graphic(geometry: _polylineBuilder.toGeometry() as Polyline));
   }
 }
