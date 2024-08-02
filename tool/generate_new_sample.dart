@@ -2,27 +2,28 @@
 
 import 'dart:developer';
 import 'dart:io';
-import 'package:image/image.dart' as img;
 
-/// Run from arcgis-maps-sdk-flutter-samples root directory
+/// Run from arcgis-maps-sdk-flutter-samples root directory.
 ///
 /// Example:
-/// dart run tool/generate_new_sample.dart Add3dTilesLayer
+/// dart run tool/generate_new_sample.dart [optional SampleClassName]
 void main(List<String> arguments) async {
   var sampleDirectoryName = 'MyNewSample';
   if (arguments.isNotEmpty) {
     sampleDirectoryName = arguments[0];
   }
-  createNewSampleDirectory(sampleDirectoryName);
+  createNewSample(sampleDirectoryName);
 }
 
-// Create a new sample directory
-// The sample directory will be created in the lib/samples directory
-// The [sampleCamelName] is expected to be in the camel case format
+// Create a new sample directory and a sample template.
+//
+// The sample directory will be created in the lib/samples directory.
+// The [sampleCamelName] is expected to be in the camel case format:
 // e.g. MyNewSample
-// The sample directory will be created in the format
+//
+// The sample directory will be created in the format:
 // e.g. my_new_sample
-void createNewSampleDirectory(String sampleCamelName) {
+void createNewSample(String sampleCamelName) {
   final ps = Platform.pathSeparator;
   final currentDirectory = Directory.current;
   final sampleSnakeName = camelToSnake(sampleCamelName);
@@ -49,11 +50,12 @@ void createNewSampleDirectory(String sampleCamelName) {
   // Create the README.md file
   createEmptyReadMeOrCopy(sampleDirectory, sampleCamelName);
 
-  // Create a blank PNG file
-  createEmptyPNGFile(sampleDirectory, sampleSnakeName);
-
   // Create the sample file
   createNewSampleFile(sampleDirectory, sampleSnakeName, sampleCamelName);
+
+  // Add the sample to the samples_widget_list.dart file
+  addSampleToSamplesWidgetList(
+      sampleRootDirectory, sampleSnakeName, sampleCamelName);
 }
 
 // Convert a camel case string to snake case.
@@ -91,21 +93,6 @@ void createEmptyReadMeOrCopy(
   }
 }
 
-// Create a new blank PNG file
-void createEmptyPNGFile(Directory sampleDirectory, String sampleSnakeName) {
-  try {
-    final image = img.Image(height: 600, width: 300);
-    img.fill(image, color: img.ColorRgb8(255, 255, 255));
-    final png = img.encodePng(image);
-    final file = File(
-        '${sampleDirectory.path}${Platform.pathSeparator}$sampleSnakeName.png');
-    file.writeAsBytesSync(png);
-    log('>A blank PNG file created with dimensions 600x300.');
-  } on Exception catch (_) {
-    rethrow;
-  }
-}
-
 // Create a new sample file
 void createNewSampleFile(
     Directory sampleDirectory, String sampleSnakeName, String sampleCamelName) {
@@ -124,11 +111,44 @@ void createNewSampleFile(
       skip = line.startsWith('//') ? true : false;
       if (!skip) {
         final newLine = line.replaceAll('SampleWidget', sampleCamelName);
-        sampleFile.writeAsStringSync('$newLine\n', mode: FileMode.append);
+        sampleFile.writeAsStringSync('$newLine${Platform.lineTerminator}',
+            mode: FileMode.append);
       }
     }
   }
   log('>A sample file created');
+}
+
+// Add the new sample to the samples_widget_list.dart file
+void addSampleToSamplesWidgetList(Directory sampleRootDirectory,
+    String sampleSnakeName, String sampleCamelName) {
+  final ps = Platform.pathSeparator;
+  final samplesWidgetListFile = File(
+      '${sampleRootDirectory.parent.path}${ps}models${ps}samples_widget_list.dart');
+  final sampleWidgetImport =
+      "import 'package:arcgis_maps_sdk_flutter_samples/samples/$sampleSnakeName/$sampleSnakeName.dart';";
+  final sampleWidgetMap =
+      "  '$sampleSnakeName': () => const $sampleCamelName(),";
+
+  final samplesWidgetListFileLines = samplesWidgetListFile.readAsLinesSync();
+  var indexImport = 0;
+  for (var i = 0; i <= samplesWidgetListFileLines.length; i++) {
+    var line = samplesWidgetListFileLines[i];
+    if (line.startsWith('//')) {
+      indexImport = i; // starting line for comments
+      break;
+    }
+  }
+  samplesWidgetListFileLines.insert(indexImport - 1, sampleWidgetImport);
+  final indexEnd = samplesWidgetListFileLines.indexOf('};');
+  samplesWidgetListFileLines.insert(indexEnd, sampleWidgetMap);
+  //clean up the file first
+  samplesWidgetListFile.writeAsStringSync('');
+
+  for (var line in samplesWidgetListFileLines) {
+    samplesWidgetListFile.writeAsStringSync('$line${Platform.lineTerminator}',
+        mode: FileMode.append);
+  }
 }
 
 const copyright = '''
