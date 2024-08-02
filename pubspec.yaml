@@ -23,6 +23,7 @@ dependencies:
 
 dev_dependencies:
   flutter_lints: ^3.0.1
+  image: ^4.2.0
 
 flutter:
   uses-material-design: true
