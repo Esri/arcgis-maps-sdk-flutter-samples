@@ -18,7 +18,7 @@ When you run the sample, the app will load a web map which contains premium cont
 1. Implement the `ArcGISAuthenticationChallengeHandler` interface to handle the challenges sent by the protected map service.
 2. Set the `arcGISAuthenticationChallengeHandler` property on `AuthenticationManager`.
 3. Create an `OAuthConfiguration` specifying the portal URL, client ID, and redirect URL.
-4. Load a map with premium content from a `PortalItem` requiring authentication to automatically invoke the  authentication challenge.
+4. Load a map with premium content from a `PortalItem` requiring authentication to automatically invoke the authentication challenge.
 5. Use the OAuth user configuration to create and apply an `OAuthUserCredential` in response to the authentication challenge.
 
 ## Relevant API
