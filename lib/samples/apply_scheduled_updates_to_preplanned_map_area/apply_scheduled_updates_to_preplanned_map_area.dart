@@ -46,8 +46,8 @@ class _ApplyScheduledUpdatesToPreplannedMapAreaState
   // The Active mobile map package.
   MobileMapPackage? _mobileMapPackage;
   // Offline task and parameters used for updating the map package.
-  late OfflineMapSyncTask? _offlineMapSyncTask;
-  late OfflineMapSyncParameters? _mapSyncParameters;
+  late OfflineMapSyncTask _offlineMapSyncTask;
+  late OfflineMapSyncParameters _mapSyncParameters;
   // The location of the map package on the device.
   late final Uri _dataUri;
 
@@ -125,7 +125,7 @@ class _ApplyScheduledUpdatesToPreplannedMapAreaState
     setState(() => _canUpdate = false);
 
     final mapSyncJob =
-        _offlineMapSyncTask!.syncOfflineMap(parameters: _mapSyncParameters!);
+        _offlineMapSyncTask.syncOfflineMap(parameters: _mapSyncParameters);
     try {
       await mapSyncJob.run();
       final result = mapSyncJob.result;
@@ -147,7 +147,7 @@ class _ApplyScheduledUpdatesToPreplannedMapAreaState
 
   // Function to check for map package updates.
   Future<void> _checkForUpdates() async {
-    final updatesInfo = await _offlineMapSyncTask!.checkForUpdates();
+    final updatesInfo = await _offlineMapSyncTask.checkForUpdates();
     setState(() {
       _updateStatus = updatesInfo.downloadAvailability;
       _updateSizeKB = updatesInfo.scheduledUpdatesDownloadSize / 1024;
@@ -192,7 +192,7 @@ class _ApplyScheduledUpdatesToPreplannedMapAreaState
 
     // Set the map sync parameters.
     _mapSyncParameters =
-        await _offlineMapSyncTask!.createDefaultOfflineMapSyncParameters()
+        await _offlineMapSyncTask.createDefaultOfflineMapSyncParameters()
           ..syncDirection = SyncDirection.none
           ..preplannedScheduledUpdatesOption =
               PreplannedScheduledUpdatesOption.downloadAllUpdates
