@@ -144,9 +144,8 @@ void addSampleToSamplesWidgetList(Directory sampleRootDirectory) {
     buffer.writeln("  '$camelCaseName': () => const $camelCaseName(),");
   }
   buffer.writeln('};');
-
-  // Write to the file
   samplesWidgetListFile.writeAsStringSync(buffer.toString());
+
   // Run dart format on the file
   Process.runSync('dart', ['format', samplesWidgetListFile.path]);
   print('>The samples_widget_list.dart regenerated');
