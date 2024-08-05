@@ -360,7 +360,8 @@ class _DensifyAndGeneralizeGeometryState
 
     // Use a MultipointBuilder to create a Multipoint geometry from the points.
     final multipointBuilder = MultipointBuilder.fromSpatialReference(
-        mutablePointCollection.spatialReference,);
+      mutablePointCollection.spatialReference,
+    );
     multipointBuilder.points = mutablePointCollection;
     return multipointBuilder.toGeometry() as Multipoint;
   }

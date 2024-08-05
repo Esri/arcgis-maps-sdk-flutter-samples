@@ -27,8 +27,7 @@ class AddFeatureCollectionLayerFromTable extends StatefulWidget {
 }
 
 class _AddFeatureCollectionLayerFromTableState
-    extends State<AddFeatureCollectionLayerFromTable>
-    with SampleStateSupport {
+    extends State<AddFeatureCollectionLayerFromTable> with SampleStateSupport {
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
 

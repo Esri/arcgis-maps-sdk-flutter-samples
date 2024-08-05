@@ -25,8 +25,7 @@ class ShowLegend extends StatefulWidget {
   State<ShowLegend> createState() => _ShowLegendState();
 }
 
-class _ShowLegendState extends State<ShowLegend>
-    with SampleStateSupport {
+class _ShowLegendState extends State<ShowLegend> with SampleStateSupport {
   // Create a map view controller.
   final _mapViewController = ArcGISMapView.createController();
   // Create a map with a basemap style.
@@ -79,12 +78,14 @@ class _ShowLegendState extends State<ShowLegend>
     // Create an image layer.
     final imageLayer = ArcGISMapImageLayer.withUri(
       Uri.parse(
-          'https://sampleserver6.arcgisonline.com/arcgis/rest/services/Census/MapServer',),
+        'https://sampleserver6.arcgisonline.com/arcgis/rest/services/Census/MapServer',
+      ),
     );
     // Create a feature table.
     final featureTable = ServiceFeatureTable.withUri(
       Uri.parse(
-          'https://sampleserver6.arcgisonline.com/arcgis/rest/services/Recreation/FeatureServer/0',),
+        'https://sampleserver6.arcgisonline.com/arcgis/rest/services/Recreation/FeatureServer/0',
+      ),
     );
     // Create a feature layer.
     final featureLayer = FeatureLayer.withFeatureTable(featureTable);

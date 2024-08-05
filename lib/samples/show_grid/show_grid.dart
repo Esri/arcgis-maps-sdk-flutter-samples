@@ -26,8 +26,7 @@ class ShowGrid extends StatefulWidget {
   State<ShowGrid> createState() => _ShowGridState();
 }
 
-class _ShowGridState extends State<ShowGrid>
-    with SampleStateSupport {
+class _ShowGridState extends State<ShowGrid> with SampleStateSupport {
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
   final _center = ArcGISPoint(

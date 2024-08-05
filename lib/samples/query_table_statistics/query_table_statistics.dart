@@ -195,7 +195,8 @@ class _QueryTableStatisticsState extends State<QueryTableStatistics>
     }
     // Query the statistics.
     final statisticsQueryResult = await _serviceFeatureTable.queryStatistics(
-        statisticsQueryParameters: statisticsQueryParameters,);
+      statisticsQueryParameters: statisticsQueryParameters,
+    );
 
     // Prepare the statistics results for display.
     final statistics = [];

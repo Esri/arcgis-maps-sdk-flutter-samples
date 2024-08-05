@@ -81,9 +81,10 @@ class _ApplyScheduledUpdatesToPreplannedMapAreaState
                     ),
                     Center(
                       child: ElevatedButton(
-                          // Disable the button if no update is available.
-                          onPressed: _canUpdate ? syncUpdates : null,
-                          child: const Text('Apply Updates'),),
+                        // Disable the button if no update is available.
+                        onPressed: _canUpdate ? syncUpdates : null,
+                        child: const Text('Apply Updates'),
+                      ),
                     ),
                   ],
                 ),
@@ -225,8 +226,9 @@ class _ApplyScheduledUpdatesToPreplannedMapAreaState
         content: Text(message),
         actions: [
           TextButton(
-              onPressed: () => Navigator.pop(context, 'OK'),
-              child: const Text('OK'),),
+            onPressed: () => Navigator.pop(context, 'OK'),
+            child: const Text('OK'),
+          ),
         ],
       ),
     );

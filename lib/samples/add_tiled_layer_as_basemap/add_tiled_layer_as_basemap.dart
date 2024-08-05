@@ -25,12 +25,11 @@ class AddTiledLayerAsBasemap extends StatefulWidget {
   const AddTiledLayerAsBasemap({super.key});
 
   @override
-  AddTiledLayerAsBasemapState createState() =>
-      AddTiledLayerAsBasemapState();
+  AddTiledLayerAsBasemapState createState() => AddTiledLayerAsBasemapState();
 }
 
-class AddTiledLayerAsBasemapState
-    extends State<AddTiledLayerAsBasemap> with SampleStateSupport {
+class AddTiledLayerAsBasemapState extends State<AddTiledLayerAsBasemap>
+    with SampleStateSupport {
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
   // A flag for when the map view is ready.

@@ -28,8 +28,7 @@ class StylePointWithSimpleMarkerSymbol extends StatefulWidget {
 }
 
 class _StylePointWithSimpleMarkerSymbolState
-    extends State<StylePointWithSimpleMarkerSymbol>
-    with SampleStateSupport {
+    extends State<StylePointWithSimpleMarkerSymbol> with SampleStateSupport {
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
 

@@ -60,5 +60,6 @@ Future<void> extractZipArchive(File archiveFile) async {
 /// Fetch data from the provided Portal and PortalItem ID and return the response.
 Future<Response> _fetchData(String portal, String itemId) async {
   return get(
-      Uri.parse('$portal/sharing/rest/content/items/$itemId/data'),);
+    Uri.parse('$portal/sharing/rest/content/items/$itemId/data'),
+  );
 }

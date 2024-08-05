@@ -23,12 +23,10 @@ class AuthenticateWithOAuth extends StatefulWidget {
   const AuthenticateWithOAuth({super.key});
 
   @override
-  State<AuthenticateWithOAuth> createState() =>
-      _AuthenticateWithOAuthState();
+  State<AuthenticateWithOAuth> createState() => _AuthenticateWithOAuthState();
 }
 
-class _AuthenticateWithOAuthState
-    extends State<AuthenticateWithOAuth>
+class _AuthenticateWithOAuthState extends State<AuthenticateWithOAuth>
     with SampleStateSupport
     implements ArcGISAuthenticationChallengeHandler {
   // This document describes the steps to configure OAuth for your app:
@@ -69,11 +67,12 @@ class _AuthenticateWithOAuthState
     super.dispose();
 
     // Revoke OAuth tokens and remove all credentials to log out.
-    await Future.wait(ArcGISEnvironment
-        .authenticationManager.arcGISCredentialStore
-        .getCredentials()
-        .whereType<OAuthUserCredential>()
-        .map((credential) => credential.revokeToken()),);
+    await Future.wait(
+      ArcGISEnvironment.authenticationManager.arcGISCredentialStore
+          .getCredentials()
+          .whereType<OAuthUserCredential>()
+          .map((credential) => credential.revokeToken()),
+    );
     ArcGISEnvironment.authenticationManager.arcGISCredentialStore.removeAll();
   }
 
@@ -88,11 +87,13 @@ class _AuthenticateWithOAuthState
 
   @override
   void handleArcGISAuthenticationChallenge(
-      ArcGISAuthenticationChallenge challenge,) async {
+    ArcGISAuthenticationChallenge challenge,
+  ) async {
     try {
       // Initiate the sign in process to the OAuth server.
       final credential = await OAuthUserCredential.create(
-          configuration: _oauthUserConfiguration,);
+        configuration: _oauthUserConfiguration,
+      );
 
       // Sign in was successful, so continue with the provided credential.
       challenge.continueWithCredential(credential);
