@@ -116,6 +116,9 @@ class _DownloadVectorTilesToLocalCacheState
 
   // the method to be called when the map view is ready
   void onMapViewReady() {
+    // disable the map view's rotation.
+    _mapViewController.interactionOptions.rotateEnabled = false;
+
     setupInitialMapView();
     // Set the ready state variable to true to enable the sample UI.
     setState(() => _ready = true);
