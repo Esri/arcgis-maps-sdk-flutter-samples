@@ -88,9 +88,9 @@ void createEmptyReadMeOrCopy(
   final sampleReadmeFile = File('${sampleDirectory.path}${ps}README.md');
   if (templateReadmeFile.existsSync()) {
     sampleReadmeFile.writeAsBytesSync(templateReadmeFile.readAsBytesSync());
-    print('>A README File created');
+    print('>A README FIle was created was from a template');
   } else {
-    print('>A empty README file was created');
+    print('>An empty README file was created');
     sampleReadmeFile.writeAsStringSync('README-Empty');
   }
 }
@@ -116,7 +116,7 @@ void createNewSampleFile(
       }
     }
   }
-  print('>A sample file ${sampleCamelName}.dart created');
+  print('>A sample file $sampleCamelName.dart created');
 }
 
 // Regenerate the samples_widget_list.dart file
@@ -128,18 +128,18 @@ void addSampleToSamplesWidgetList(Directory sampleRootDirectory) {
   final buffer = StringBuffer();
   final sortedSampleNames = sampleRootDirectory
       .listSync()
-      .where((entity) => entity is Directory)
+      .whereType<Directory>()
       .map((entity) => entity.path.split(ps).last)
       .toList()
     ..sort();
 
-  for (var sampleName in sortedSampleNames) {
+  for (final sampleName in sortedSampleNames) {
     buffer.writeln(
         "import 'package:arcgis_maps_sdk_flutter_samples/samples/$sampleName/$sampleName.dart';");
   }
 
   buffer.writeln('\nfinal sampleWidgets = {');
-  for (var sampleName in sortedSampleNames) {
+  for (final sampleName in sortedSampleNames) {
     final camelCaseName = snakeToCamel(sampleName);
     buffer.writeln("  '$camelCaseName': () => const $camelCaseName(),");
   }
@@ -153,7 +153,7 @@ void addSampleToSamplesWidgetList(Directory sampleRootDirectory) {
 }
 
 final copyright = '''
-// Copyright ${DateTime.now().year}  Esri
+// Copyright ${DateTime.now().year} Esri
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
