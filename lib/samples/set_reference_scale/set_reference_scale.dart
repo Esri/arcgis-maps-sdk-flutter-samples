@@ -89,7 +89,7 @@ class _SetReferenceScaleState extends State<SetReferenceScale>
           ],
         ),
       ),
-      bottomSheet: _bottomSheetVisible ? showSettings(context) : null,
+      bottomSheet: _bottomSheetVisible ? buildSettings(context) : null,
     );
   }
 
@@ -124,13 +124,17 @@ class _SetReferenceScaleState extends State<SetReferenceScale>
     setState(() => _ready = true);
   }
 
-  Widget showSettings(BuildContext context) {
+  Widget buildSettings(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.fromLTRB(
+      padding: EdgeInsets.fromLTRB(
         20.0,
         20.0,
         20.0,
-        0,
+        max(
+          20.0,
+          View.of(context).viewPadding.bottom /
+              View.of(context).devicePixelRatio,
+        ),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
