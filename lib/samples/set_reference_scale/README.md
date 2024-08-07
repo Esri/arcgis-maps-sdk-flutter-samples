@@ -3,7 +3,6 @@
 Set the map's reference scale and which feature layers should honor the reference scale.
 
 ![Image of set reference scale](set_reference_scale.png)
-![Image of set reference scale settings](set_reference_scale_settings.png)
 
 ## Use case
 
