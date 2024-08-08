@@ -20,6 +20,7 @@ dependencies:
   flutter_archive: ^6.0.0
   file_picker: ^8.0.6
   share_plus: ^9.0.0
+  simple_html_css: ^5.0.0
 
 dev_dependencies:
   flutter_lints: ^3.0.1
