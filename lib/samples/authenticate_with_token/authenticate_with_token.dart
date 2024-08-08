@@ -36,6 +36,7 @@ class _AuthenticateWithTokenState extends State<AuthenticateWithToken>
   void initState() {
     super.initState();
 
+    // Set this class to the arcGISAuthenticationChallengeHandler property on the authentication manager.
     // This class implements the ArcGISAuthenticationChallengeHandler interface,
     // which allows it to handle authentication challenges via calls to its
     // handleArcGISAuthenticationChallenge() method.

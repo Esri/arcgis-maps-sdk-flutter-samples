@@ -15,8 +15,9 @@ class ShowPortalUserInfo extends StatefulWidget {
 class _ShowPortalUserInfoState extends State<ShowPortalUserInfo>
     with SampleStateSupport
     implements ArcGISAuthenticationChallengeHandler {
+  // Create an OAuthUserConfiguration.
   // This document describes the steps to configure OAuth for your app:
-  // https://developers.arcgis.com/documentation/mapping-apis-and-services/security/user-authentication/serverless-native-flow/
+  // https://developers.arcgis.com/documentation/security-and-authentication/user-authentication/flows/authorization-code-with-pkce/
   final _oauthUserConfiguration = OAuthUserConfiguration(
     portalUri: Uri.parse('https://www.arcgis.com'),
     clientId: 'T0A3SudETrIQndd2',
@@ -35,6 +36,7 @@ class _ShowPortalUserInfoState extends State<ShowPortalUserInfo>
   void initState() {
     super.initState();
 
+    // Set this class to the arcGISAuthenticationChallengeHandler property on the authentication manager.
     // This class implements the ArcGISAuthenticationChallengeHandler interface,
     // which allows it to handle authentication challenges via calls to its
     // handleArcGISAuthenticationChallenge() method.
@@ -69,7 +71,7 @@ class _ShowPortalUserInfoState extends State<ShowPortalUserInfo>
     ArcGISAuthenticationChallenge challenge,
   ) async {
     try {
-      // Initiate the sign in process to the OAuth server.
+      // Initiate the sign in process to the OAuth server using the defined user configuration.
       final credential = await OAuthUserCredential.create(
         configuration: _oauthUserConfiguration,
       );
