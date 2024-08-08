@@ -31,8 +31,8 @@ class CreateMobileGeodatabase extends StatefulWidget {
       _CreateMobileGeodatabaseState();
 }
 
-class _CreateMobileGeodatabaseState
-    extends State<CreateMobileGeodatabase> with SampleStateSupport {
+class _CreateMobileGeodatabaseState extends State<CreateMobileGeodatabase>
+    with SampleStateSupport {
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
   // Declare a map to be loaded later.
@@ -167,7 +167,8 @@ class _CreateMobileGeodatabaseState
   Future<void> _setupGeodatabase() async {
     final directory = await getApplicationDocumentsDirectory();
     final geodatabaseFile = File(
-        '${directory.path}${Platform.pathSeparator}localHistory.geodatabase');
+      '${directory.path}${Platform.pathSeparator}localHistory.geodatabase',
+    );
     if (geodatabaseFile.existsSync()) geodatabaseFile.deleteSync();
 
     try {

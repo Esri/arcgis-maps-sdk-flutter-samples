@@ -38,7 +38,8 @@ class SampleListView extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => SampleDetailPage(sample: sample)),
+                  builder: (context) => SampleDetailPage(sample: sample),
+                ),
               );
             },
           ),

@@ -74,7 +74,8 @@ void main(List<String> args) {
       // Exit if readme filename capitalization is incorrect.
       if (filename != 'README.md') {
         print(
-            'Error: readme file has wrong capitalization in filename. Should be: README.md');
+          'Error: readme file has wrong capitalization in filename. Should be: README.md',
+        );
         returnCode++;
       }
       // Get the readme file.
@@ -86,7 +87,8 @@ void main(List<String> args) {
       // Exit if metadata filename capitalization is incorrect.
       if (filename != 'README.metadata.json') {
         print(
-            'Error: metadata file has wrong capitalization in filename. Should be: README.metadata.json');
+          'Error: metadata file has wrong capitalization in filename. Should be: README.metadata.json',
+        );
         returnCode++;
       }
       metadataFile = filePath;
@@ -96,7 +98,8 @@ void main(List<String> args) {
   // Check the readme exists.
   if (readmeFile == null) {
     print(
-        'Error: README.md does not exist. Please create and re-run the script.');
+      'Error: README.md does not exist. Please create and re-run the script.',
+    );
     returnCode++;
   }
 
@@ -123,8 +126,10 @@ void main(List<String> args) {
 
 int createMetadataFromReadme(String dirPath, String category) {
   print('**** Creating README.metadata.json from README.md ****');
-  final result = Process.runSync('python3',
-      ['create_metadata_from_README.py', '-s', dirPath, '-c', category]);
+  final result = Process.runSync(
+    'python3',
+    ['create_metadata_from_README.py', '-s', dirPath, '-c', category],
+  );
   printScriptOutput('create readme from metadata script', result);
   return result.exitCode;
 }

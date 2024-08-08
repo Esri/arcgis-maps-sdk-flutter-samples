@@ -32,8 +32,7 @@ class DisplayMapFromMobileMapPackage extends StatefulWidget {
 }
 
 class _DisplayMapFromMobileMapPackageState
-    extends State<DisplayMapFromMobileMapPackage>
-    with SampleStateSupport {
+    extends State<DisplayMapFromMobileMapPackage> with SampleStateSupport {
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
   // A flag for when the map view is ready.

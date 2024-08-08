@@ -79,7 +79,9 @@ class _DisplayClustersState extends State<DisplayClusters>
     // Get the power plants web map from the default portal.
     final portal = Portal.arcGISOnline();
     final portalItem = PortalItem.withPortalAndItemId(
-        portal: portal, itemId: '8916d50c44c746c1aafae001552bad23');
+      portal: portal,
+      itemId: '8916d50c44c746c1aafae001552bad23',
+    );
     // Load the portal item.
     await portalItem.load();
     // Create a map from the portal item.

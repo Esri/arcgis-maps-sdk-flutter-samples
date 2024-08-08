@@ -34,8 +34,12 @@ class _FilterByDefinitionExpressionOrDisplayFilterState
   final _mapViewController = ArcGISMapView.createController();
   // Create a feature layer.
   final _featureLayer = FeatureLayer.withFeatureTable(
-      ServiceFeatureTable.withUri(Uri.parse(
-          'https://services2.arcgis.com/ZQgQTuoyBrtmoGdP/arcgis/rest/services/SF_311_Incidents/FeatureServer/0')));
+    ServiceFeatureTable.withUri(
+      Uri.parse(
+        'https://services2.arcgis.com/ZQgQTuoyBrtmoGdP/arcgis/rest/services/SF_311_Incidents/FeatureServer/0',
+      ),
+    ),
+  );
   // Create a display filter definition.
   ManualDisplayFilterDefinition? _displayFilterDefinition;
   // Create a definition expression.
@@ -118,12 +122,15 @@ class _FilterByDefinitionExpressionOrDisplayFilterState
     _definitionExpression = '';
     // Apply a display filter to the feature layer.
     final displayFilter = DisplayFilter.withWhereClause(
-        name: 'Damaged Trees',
-        whereClause: "req_type LIKE '%Tree Maintenance%'");
+      name: 'Damaged Trees',
+      whereClause: "req_type LIKE '%Tree Maintenance%'",
+    );
     // Create a manual display filter definition.
     final manualDisplayFilterDefinition =
         ManualDisplayFilterDefinition.withFilters(
-            activeFilter: displayFilter, availableFilters: [displayFilter]);
+      activeFilter: displayFilter,
+      availableFilters: [displayFilter],
+    );
     _displayFilterDefinition = manualDisplayFilterDefinition;
     // Count the number of features.
     await calculateFeatureCount();

@@ -37,7 +37,7 @@ class _AddMapImageLayerState extends State<AddMapImageLayer>
       body: ArcGISMapView(
         controllerProvider: () => _mapViewController,
         onMapViewReady: onMapViewReady,
-      ), 
+      ),
     );
   }
 
@@ -47,7 +47,8 @@ class _AddMapImageLayerState extends State<AddMapImageLayer>
     // Create a map image layer with a uri.
     final mapImageLayer = ArcGISMapImageLayer.withUri(
       Uri.parse(
-          'https://sampleserver5.arcgisonline.com/arcgis/rest/services/Elevation/WorldElevations/MapServer'),
+        'https://sampleserver5.arcgisonline.com/arcgis/rest/services/Elevation/WorldElevations/MapServer',
+      ),
     );
     // Add the map image layer to the map.
     map.operationalLayers.add(mapImageLayer);

@@ -27,8 +27,8 @@ class ApplyUniqueValueRenderer extends StatefulWidget {
       _ApplyUniqueValueRendererState();
 }
 
-class _ApplyUniqueValueRendererState
-    extends State<ApplyUniqueValueRenderer> with SampleStateSupport {
+class _ApplyUniqueValueRendererState extends State<ApplyUniqueValueRenderer>
+    with SampleStateSupport {
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
 
@@ -53,7 +53,8 @@ class _ApplyUniqueValueRendererState
 
     // Create a feature layer from a service feature table and set a unique value renderer.
     final uri = Uri.parse(
-        'https://sampleserver6.arcgisonline.com/arcgis/rest/services/Census/MapServer/3');
+      'https://sampleserver6.arcgisonline.com/arcgis/rest/services/Census/MapServer/3',
+    );
     final serviceFeatureTable = ServiceFeatureTable.withUri(uri);
     final featureLayer = FeatureLayer.withFeatureTable(serviceFeatureTable);
     featureLayer.renderer = _configureUniqueValueRenderer();
@@ -67,41 +68,53 @@ class _ApplyUniqueValueRendererState
   /// Configure a unique value renderer.
   Renderer? _configureUniqueValueRenderer() {
     final stateOutlineSymbol = SimpleLineSymbol(
-        style: SimpleLineSymbolStyle.solid, color: Colors.white, width: 0.7);
+      style: SimpleLineSymbolStyle.solid,
+      color: Colors.white,
+      width: 0.7,
+    );
 
     // Create fill symbols for each region.
     final pacificFillSymbol = SimpleFillSymbol(
-        style: SimpleFillSymbolStyle.solid,
-        color: const Color.fromARGB(255, 0, 0, 255),
-        outline: stateOutlineSymbol);
+      style: SimpleFillSymbolStyle.solid,
+      color: const Color.fromARGB(255, 0, 0, 255),
+      outline: stateOutlineSymbol,
+    );
     final mountainFillSymbol = SimpleFillSymbol(
-        style: SimpleFillSymbolStyle.solid,
-        color: const Color.fromARGB(255, 0, 255, 0),
-        outline: stateOutlineSymbol);
+      style: SimpleFillSymbolStyle.solid,
+      color: const Color.fromARGB(255, 0, 255, 0),
+      outline: stateOutlineSymbol,
+    );
     final westSouthCentralFillSymbol = SimpleFillSymbol(
-        style: SimpleFillSymbolStyle.solid,
-        color: const Color.fromARGB(255, 250, 125, 0),
-        outline: stateOutlineSymbol);
+      style: SimpleFillSymbolStyle.solid,
+      color: const Color.fromARGB(255, 250, 125, 0),
+      outline: stateOutlineSymbol,
+    );
 
     // Create unique values for each region.
     final pacificValue = UniqueValue(
-        description: 'Pacific Region',
-        label: 'Pacific',
-        symbol: pacificFillSymbol,
-        values: ['Pacific']);
+      description: 'Pacific Region',
+      label: 'Pacific',
+      symbol: pacificFillSymbol,
+      values: ['Pacific'],
+    );
     final mountainValue = UniqueValue(
-        description: 'Rocky Mountain Region',
-        label: 'Mountain',
-        symbol: mountainFillSymbol,
-        values: ['Mountain']);
+      description: 'Rocky Mountain Region',
+      label: 'Mountain',
+      symbol: mountainFillSymbol,
+      values: ['Mountain'],
+    );
     final westSouthCentralValue = UniqueValue(
-        description: 'West South Central Region',
-        label: 'West South Central',
-        symbol: westSouthCentralFillSymbol,
-        values: ['West South Central']);
+      description: 'West South Central Region',
+      label: 'West South Central',
+      symbol: westSouthCentralFillSymbol,
+      values: ['West South Central'],
+    );
 
     final defaultFillSymbol = SimpleFillSymbol(
-        style: SimpleFillSymbolStyle.cross, color: Colors.grey, outline: null);
+      style: SimpleFillSymbolStyle.cross,
+      color: Colors.grey,
+      outline: null,
+    );
 
     // Create a unique value renderer with the unique values.
     return UniqueValueRenderer(

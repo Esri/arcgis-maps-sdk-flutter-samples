@@ -26,8 +26,7 @@ class AddTiledLayer extends StatefulWidget {
   State<AddTiledLayer> createState() => _AddTiledLayerState();
 }
 
-class _AddTiledLayerState extends State<AddTiledLayer>
-    with SampleStateSupport {
+class _AddTiledLayerState extends State<AddTiledLayer> with SampleStateSupport {
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
 
@@ -46,7 +45,8 @@ class _AddTiledLayerState extends State<AddTiledLayer>
     // Create a tiled layer with a URL to a tiled map service.
     final tiledLayer = ArcGISTiledLayer.withUri(
       Uri.parse(
-          'http://services.arcgisonline.com/arcgis/rest/services/World_Topo_Map/MapServer'),
+        'http://services.arcgisonline.com/arcgis/rest/services/World_Topo_Map/MapServer',
+      ),
     );
     // Create a basemap with the tiled layer.
     final basemap = Basemap.withBaseLayer(tiledLayer);

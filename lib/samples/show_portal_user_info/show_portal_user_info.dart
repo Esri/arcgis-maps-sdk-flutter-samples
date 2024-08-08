@@ -57,21 +57,24 @@ class _ShowPortalUserInfoState extends State<ShowPortalUserInfo>
     super.dispose();
 
     // Revoke OAuth tokens and remove all credentials to log out.
-    await Future.wait(ArcGISEnvironment
-        .authenticationManager.arcGISCredentialStore
-        .getCredentials()
-        .whereType<OAuthUserCredential>()
-        .map((credential) => credential.revokeToken()));
+    await Future.wait(
+      ArcGISEnvironment.authenticationManager.arcGISCredentialStore
+          .getCredentials()
+          .whereType<OAuthUserCredential>()
+          .map((credential) => credential.revokeToken()),
+    );
     ArcGISEnvironment.authenticationManager.arcGISCredentialStore.removeAll();
   }
 
   @override
   void handleArcGISAuthenticationChallenge(
-      ArcGISAuthenticationChallenge challenge) async {
+    ArcGISAuthenticationChallenge challenge,
+  ) async {
     try {
       // Initiate the sign in process to the OAuth server using the defined user configuration.
       final credential = await OAuthUserCredential.create(
-          configuration: _oauthUserConfiguration);
+        configuration: _oauthUserConfiguration,
+      );
 
       // Sign in was successful, so continue with the provided credential.
       challenge.continueWithCredential(credential);
@@ -93,58 +96,59 @@ class _ShowPortalUserInfoState extends State<ShowPortalUserInfo>
         minimum: const EdgeInsets.symmetric(horizontal: 10),
         // Create a FutureBuilder to respond to the loading of the portal.
         child: FutureBuilder(
-            future: _portalLoadFuture,
-            builder: (context, snapshot) {
-              // If the portal is still loading, display a message.
-              if (snapshot.connectionState != ConnectionState.done) {
-                return const Text('Authenticating...');
-              }
+          future: _portalLoadFuture,
+          builder: (context, snapshot) {
+            // If the portal is still loading, display a message.
+            if (snapshot.connectionState != ConnectionState.done) {
+              return const Text('Authenticating...');
+            }
 
-              // If the portal load failed with an error, display the error.
-              if (snapshot.hasError) {
-                return Text('Error: ${snapshot.error}');
-              }
+            // If the portal load failed with an error, display the error.
+            if (snapshot.hasError) {
+              return Text('Error: ${snapshot.error}');
+            }
 
-              // If the portal load succeeded, display the portal information.
-              final titleStyle = Theme.of(context).textTheme.titleMedium;
-              return SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      '${_portal.user?.fullName} Profile',
-                      style: Theme.of(context).textTheme.titleLarge,
-                    ),
-                    const SizedBox(height: 20.0),
-                    _userThumbnail != null
-                        ? Image.memory(_userThumbnail!)
-                        : const Icon(Icons.person),
-                    Text('Full name', style: titleStyle),
-                    Text(_portal.user?.fullName ?? ''),
-                    Text('Username', style: titleStyle),
-                    Text(_portal.user?.username ?? ''),
-                    Text('Email', style: titleStyle),
-                    Text(_portal.user?.email ?? ''),
-                    Text('Description', style: titleStyle),
-                    Text(_portal.user?.userDescription ?? ''),
-                    Text('Access', style: titleStyle),
-                    Text(_portal.user?.access.name ?? ''),
-                    const Divider(),
-                    _organizationThumbnail != null
-                        ? Image.memory(_organizationThumbnail!)
-                        : const Icon(Icons.domain),
-                    Text('Organization', style: titleStyle),
-                    Text(_portal.portalInfo?.organizationName ?? ''),
-                    Text('Can find external content', style: titleStyle),
-                    Text('${_portal.portalInfo?.canSearchPublic}'),
-                    Text('Can share items externally', style: titleStyle),
-                    Text('${_portal.portalInfo?.canSharePublic}'),
-                    Text('Description', style: titleStyle),
-                    Text(_portal.portalInfo?.organizationDescription ?? ''),
-                  ],
-                ),
-              );
-            }),
+            // If the portal load succeeded, display the portal information.
+            final titleStyle = Theme.of(context).textTheme.titleMedium;
+            return SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '${_portal.user?.fullName} Profile',
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
+                  const SizedBox(height: 20.0),
+                  _userThumbnail != null
+                      ? Image.memory(_userThumbnail!)
+                      : const Icon(Icons.person),
+                  Text('Full name', style: titleStyle),
+                  Text(_portal.user?.fullName ?? ''),
+                  Text('Username', style: titleStyle),
+                  Text(_portal.user?.username ?? ''),
+                  Text('Email', style: titleStyle),
+                  Text(_portal.user?.email ?? ''),
+                  Text('Description', style: titleStyle),
+                  Text(_portal.user?.userDescription ?? ''),
+                  Text('Access', style: titleStyle),
+                  Text(_portal.user?.access.name ?? ''),
+                  const Divider(),
+                  _organizationThumbnail != null
+                      ? Image.memory(_organizationThumbnail!)
+                      : const Icon(Icons.domain),
+                  Text('Organization', style: titleStyle),
+                  Text(_portal.portalInfo?.organizationName ?? ''),
+                  Text('Can find external content', style: titleStyle),
+                  Text('${_portal.portalInfo?.canSearchPublic}'),
+                  Text('Can share items externally', style: titleStyle),
+                  Text('${_portal.portalInfo?.canSharePublic}'),
+                  Text('Description', style: titleStyle),
+                  Text(_portal.portalInfo?.organizationDescription ?? ''),
+                ],
+              ),
+            );
+          },
+        ),
       ),
     );
   }

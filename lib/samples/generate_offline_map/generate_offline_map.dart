@@ -74,7 +74,11 @@ class _GenerateOfflineMapState extends State<GenerateOfflineMap>
                           child: SafeArea(
                             child: Container(
                               margin: const EdgeInsets.fromLTRB(
-                                  30.0, 30.0, 30.0, 50.0),
+                                30.0,
+                                30.0,
+                                30.0,
+                                50.0,
+                              ),
                               child: Container(
                                 key: _outlineKey,
                                 decoration: BoxDecoration(
@@ -185,7 +189,8 @@ class _GenerateOfflineMapState extends State<GenerateOfflineMap>
     final locationTopLeft =
         _mapViewController.screenToLocation(screen: mapLocalScreenRect.topLeft);
     final locationBottomRight = _mapViewController.screenToLocation(
-        screen: mapLocalScreenRect.bottomRight);
+      screen: mapLocalScreenRect.bottomRight,
+    );
     if (locationTopLeft == null || locationBottomRight == null) return null;
 
     // Create an Envelope from the map coordinates.
