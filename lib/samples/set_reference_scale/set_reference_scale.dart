@@ -165,8 +165,10 @@ class _SetReferenceScaleState extends State<SetReferenceScale>
                 children: [
                   Row(
                     children: [
-                      Text('Reference Scale',
-                          style: Theme.of(context).textTheme.titleMedium,),
+                      Text(
+                        'Reference Scale',
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
                       const Spacer(),
                       // Add a dropdown button for setting a new reference scale.
                       DropdownButton(
@@ -194,8 +196,10 @@ class _SetReferenceScaleState extends State<SetReferenceScale>
                   const Divider(),
                   Row(
                     children: [
-                      Text('Apply Reference Scale to Layers',
-                          style: Theme.of(context).textTheme.titleMedium,),
+                      Text(
+                        'Apply Reference Scale to Layers',
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
                     ],
                   ),
                   // Add a list of checkboxes for selecting feature layers that will honor the reference scale.
@@ -228,8 +232,10 @@ class _SetReferenceScaleState extends State<SetReferenceScale>
                                 : matchingLayer.scaleSymbols = false;
                           },
                           // Set the title of the checkbox to the layer name.
-                          title: Text(layer,
-                              style: Theme.of(context).textTheme.titleSmall,),
+                          title: Text(
+                            layer,
+                            style: Theme.of(context).textTheme.titleSmall,
+                          ),
                         ),
                     ],
                   ),
@@ -237,11 +243,15 @@ class _SetReferenceScaleState extends State<SetReferenceScale>
                   Row(
                     children: [
                       // Add text to display the current map scale.
-                      Text('Map Scale',
-                          style: Theme.of(context).textTheme.titleMedium,),
+                      Text(
+                        'Map Scale',
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
                       const Spacer(),
-                      Text(formatAsScale(_mapViewController.scale),
-                          style: Theme.of(context).textTheme.titleSmall,),
+                      Text(
+                        formatAsScale(_mapViewController.scale),
+                        style: Theme.of(context).textTheme.titleSmall,
+                      ),
                     ],
                   ),
                   // Add a button to set the map scale to the reference scale.
@@ -251,7 +261,8 @@ class _SetReferenceScaleState extends State<SetReferenceScale>
                       onPressed: () {
                         // Set the map scale to the reference scale and close the settings dialog.
                         _mapViewController.setViewpointScale(
-                            scale: _map.referenceScale);
+                          scale: _map.referenceScale,
+                        );
                         setState(() => _bottomSheetVisible = false);
                       },
                       child: const Text('Set to Reference Scale'),
