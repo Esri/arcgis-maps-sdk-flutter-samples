@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:flutter/material.dart';
+import 'package:simple_html_css/simple_html_css.dart';
 
 import '../../utils/sample_state_support.dart';
 
@@ -143,7 +144,15 @@ class _ShowPortalUserInfoState extends State<ShowPortalUserInfo>
                   Text('Can share items externally', style: titleStyle),
                   Text('${_portal.portalInfo?.canSharePublic}'),
                   Text('Description', style: titleStyle),
-                  Text(_portal.portalInfo?.organizationDescription ?? ''),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 10.0),
+                    child: RichText(
+                      text: HTML.toTextSpan(
+                        context,
+                        _portal.portalInfo?.organizationDescription ?? '',
+                      ),
+                    ),
+                  ),
                 ],
               ),
             );
