@@ -27,8 +27,7 @@ class AddFeatureCollectionLayerFromTable extends StatefulWidget {
 }
 
 class _AddFeatureCollectionLayerFromTableState
-    extends State<AddFeatureCollectionLayerFromTable>
-    with SampleStateSupport {
+    extends State<AddFeatureCollectionLayerFromTable> with SampleStateSupport {
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
 
@@ -116,7 +115,7 @@ class _AddFeatureCollectionLayerFromTableState
     // Create a feature collection table for the geometry type with a list of fields and a spatial reference.
     final polylineTable = FeatureCollectionTable(
       fields: [
-        Field.text(name: 'Boundary', alias: 'Boundary Name', length: 50)
+        Field.text(name: 'Boundary', alias: 'Boundary Name', length: 50),
       ],
       geometryType: GeometryType.polyline,
       spatialReference: SpatialReference(wkid: 4326),

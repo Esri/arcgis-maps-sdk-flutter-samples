@@ -23,12 +23,11 @@ class IdentifyLayerFeatures extends StatefulWidget {
   const IdentifyLayerFeatures({super.key});
 
   @override
-  State<IdentifyLayerFeatures> createState() =>
-      _IdentifyLayerFeaturesState();
+  State<IdentifyLayerFeatures> createState() => _IdentifyLayerFeaturesState();
 }
 
-class _IdentifyLayerFeaturesState
-    extends State<IdentifyLayerFeatures> with SampleStateSupport {
+class _IdentifyLayerFeaturesState extends State<IdentifyLayerFeatures>
+    with SampleStateSupport {
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
   // A flag for when the map view is ready and controls can be used.
@@ -86,13 +85,19 @@ class _IdentifyLayerFeaturesState
 
   void onMapViewReady() async {
     // Create a feature layer of damaged property data.
-    final serviceFeatureTable = ServiceFeatureTable.withUri(Uri.parse(
-        'https://sampleserver6.arcgisonline.com/arcgis/rest/services/DamageAssessment/FeatureServer/0'));
+    final serviceFeatureTable = ServiceFeatureTable.withUri(
+      Uri.parse(
+        'https://sampleserver6.arcgisonline.com/arcgis/rest/services/DamageAssessment/FeatureServer/0',
+      ),
+    );
     final featureLayer = FeatureLayer.withFeatureTable(serviceFeatureTable);
 
     // Create a layer with world cities data.
-    final mapImageLayer = ArcGISMapImageLayer.withUri(Uri.parse(
-        'https://sampleserver6.arcgisonline.com/arcgis/rest/services/SampleWorldCities/MapServer'));
+    final mapImageLayer = ArcGISMapImageLayer.withUri(
+      Uri.parse(
+        'https://sampleserver6.arcgisonline.com/arcgis/rest/services/SampleWorldCities/MapServer',
+      ),
+    );
     await mapImageLayer.load();
     // Hide continent and world layers.
     mapImageLayer.subLayerContents[1].isVisible = false;
@@ -151,7 +156,9 @@ class _IdentifyLayerFeaturesState
 extension on IdentifyLayerResult {
   // The total count of features, recursively including all sublayers.
   int get totalCount {
-    return sublayerResults.fold(geoElements.length,
-        (previous, element) => previous + element.totalCount);
+    return sublayerResults.fold(
+      geoElements.length,
+      (previous, element) => previous + element.totalCount,
+    );
   }
 }

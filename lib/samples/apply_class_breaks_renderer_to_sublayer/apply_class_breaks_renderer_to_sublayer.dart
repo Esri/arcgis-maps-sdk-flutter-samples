@@ -28,8 +28,7 @@ class ApplyClassBreaksRendererToSublayer extends StatefulWidget {
 }
 
 class _ApplyClassBreaksRendererToSublayerState
-    extends State<ApplyClassBreaksRendererToSublayer>
-    with SampleStateSupport {
+    extends State<ApplyClassBreaksRendererToSublayer> with SampleStateSupport {
   // Create a map view controller.
   final _mapViewController = ArcGISMapView.createController();
   // Create a map with a basemap style.
@@ -64,7 +63,7 @@ class _ApplyClassBreaksRendererToSublayerState
                     onPressed: !_rendered ? renderLayer : null,
                     child: const Text('Change Sublayer Renderer'),
                   ),
-                )
+                ),
               ],
             ),
             // Display a progress indicator and prevent interaction until state is ready.
@@ -87,14 +86,18 @@ class _ApplyClassBreaksRendererToSublayerState
     // Create an image layer.
     final imageLayer = ArcGISMapImageLayer.withUri(
       Uri.parse(
-          'https://sampleserver6.arcgisonline.com/arcgis/rest/services/Census/MapServer'),
+        'https://sampleserver6.arcgisonline.com/arcgis/rest/services/Census/MapServer',
+      ),
     );
     // Set the map to the map view controller.
     _mapViewController.arcGISMap = _map;
     // Set the initial viewpoint.
     _mapViewController.setViewpoint(
       Viewpoint.withLatLongScale(
-          latitude: 48.354406, longitude: -99.998267, scale: 147914382),
+        latitude: 48.354406,
+        longitude: -99.998267,
+        scale: 147914382,
+      ),
     );
     // Add the image layer to the map.
     _map.operationalLayers.add(imageLayer);
@@ -125,17 +128,35 @@ class _ApplyClassBreaksRendererToSublayerState
 
     // Create symbols for the class breaks.
     final outline = SimpleLineSymbol(
-        style: SimpleLineSymbolStyle.solid, color: Colors.grey, width: 1);
+      style: SimpleLineSymbolStyle.solid,
+      color: Colors.grey,
+      width: 1,
+    );
     final classSymbol1 = SimpleFillSymbol(
-        style: SimpleFillSymbolStyle.solid, color: blue1, outline: outline);
+      style: SimpleFillSymbolStyle.solid,
+      color: blue1,
+      outline: outline,
+    );
     final classSymbol2 = SimpleFillSymbol(
-        style: SimpleFillSymbolStyle.solid, color: blue2, outline: outline);
+      style: SimpleFillSymbolStyle.solid,
+      color: blue2,
+      outline: outline,
+    );
     final classSymbol3 = SimpleFillSymbol(
-        style: SimpleFillSymbolStyle.solid, color: blue3, outline: outline);
+      style: SimpleFillSymbolStyle.solid,
+      color: blue3,
+      outline: outline,
+    );
     final classSymbol4 = SimpleFillSymbol(
-        style: SimpleFillSymbolStyle.solid, color: blue4, outline: outline);
+      style: SimpleFillSymbolStyle.solid,
+      color: blue4,
+      outline: outline,
+    );
     final classSymbol5 = SimpleFillSymbol(
-        style: SimpleFillSymbolStyle.solid, color: blue5, outline: outline);
+      style: SimpleFillSymbolStyle.solid,
+      color: blue5,
+      outline: outline,
+    );
 
     // Create class breaks.
     final classBreak1 = ClassBreak(

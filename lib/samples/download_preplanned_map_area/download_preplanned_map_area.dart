@@ -31,8 +31,8 @@ class DownloadPreplannedMapArea extends StatefulWidget {
       _DownloadPreplannedMapAreaState();
 }
 
-class _DownloadPreplannedMapAreaState
-    extends State<DownloadPreplannedMapArea> with SampleStateSupport {
+class _DownloadPreplannedMapAreaState extends State<DownloadPreplannedMapArea>
+    with SampleStateSupport {
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
   // Prepare an offline map task and map for the online web map.
@@ -125,7 +125,9 @@ class _DownloadPreplannedMapAreaState
     // Create a map using a webmap from a portal item.
     final portal = Portal.arcGISOnline();
     final portalItem = PortalItem.withPortalAndItemId(
-        portal: portal, itemId: 'acc027394bc84c2fb04d1ed317aac674');
+      portal: portal,
+      itemId: 'acc027394bc84c2fb04d1ed317aac674',
+    );
     _webMap = ArcGISMap.withItem(portalItem);
 
     // Create and load an offline map task using the portal item.
@@ -185,8 +187,10 @@ class _DownloadPreplannedMapAreaState
                 : null,
           ),
           const SizedBox(height: 20.0),
-          Text('Preplanned Map Areas:',
-              style: Theme.of(context).textTheme.titleMedium),
+          Text(
+            'Preplanned Map Areas:',
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
           const SizedBox(height: 20.0),
           ListView.builder(
             shrinkWrap: true,
@@ -196,7 +200,8 @@ class _DownloadPreplannedMapAreaState
                 padding:
                     const EdgeInsets.symmetric(vertical: 5.0, horizontal: 0.0),
                 child: buildMapAreaListTile(
-                    _preplannedMapAreas.keys.toList()[index]),
+                  _preplannedMapAreas.keys.toList()[index],
+                ),
               );
             },
           ),
@@ -256,14 +261,16 @@ class _DownloadPreplannedMapAreaState
     // Create default parameters using the map area.
     final defaultDownloadParams = await _offlineMapTask
         .createDefaultDownloadPreplannedOfflineMapParameters(
-            preplannedMapArea: mapArea);
+      preplannedMapArea: mapArea,
+    );
 
     // Set the required update mode. This sample map is not setup for updates so we use noUpdates.
     defaultDownloadParams.updateMode = PreplannedUpdateMode.noUpdates;
 
     // Create a directory for the map in the downloads directory.
     final mapDir = Directory(
-        '${_downloadDirectory!.path}${Platform.pathSeparator}${mapArea.portalItem.title}');
+      '${_downloadDirectory!.path}${Platform.pathSeparator}${mapArea.portalItem.title}',
+    );
     mapDir.createSync();
 
     // Create and run a job to download the offline map using the default params and download path.
@@ -284,7 +291,8 @@ class _DownloadPreplannedMapAreaState
   Future<Directory> createDownloadDirectory() async {
     final documentDir = await getApplicationDocumentsDirectory();
     final downloadDir = Directory(
-        '${documentDir.path}${Platform.pathSeparator}preplanned_map_sample');
+      '${documentDir.path}${Platform.pathSeparator}preplanned_map_sample',
+    );
     if (downloadDir.existsSync()) {
       downloadDir.deleteSync(recursive: true);
     }
@@ -302,8 +310,8 @@ class _DownloadPreplannedMapAreaState
       // If the map is one of the offline maps,
       // build an envelope zoomed into the extent of the map to better see the features.
       final envBuilder = EnvelopeBuilder.fromEnvelope(
-          map.initialViewpoint!.targetGeometry.extent)
-        ..expandBy(0.5);
+        map.initialViewpoint!.targetGeometry.extent,
+      )..expandBy(0.5);
       final viewpoint = Viewpoint.fromTargetExtent(envBuilder.toGeometry());
       // Set the viewpoint to the mapview controller.
       _mapViewController.setViewpoint(viewpoint);

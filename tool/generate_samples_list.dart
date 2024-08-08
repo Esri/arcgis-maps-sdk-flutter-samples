@@ -20,7 +20,8 @@ void generateSamplesList() {
   // check for the required directories
   final currentDirectory = Directory.current;
   final samplesDirectory = Directory(
-      '${currentDirectory.path}${pathSeparator}lib${pathSeparator}samples');
+    '${currentDirectory.path}${pathSeparator}lib${pathSeparator}samples',
+  );
   final assetsDirectory =
       Directory('${currentDirectory.path}${pathSeparator}assets');
 
@@ -58,18 +59,19 @@ void generateSamplesList() {
 
   // Sort alphabetically.
   final sortedSamples = {
-    for (var k in samples.keys.toList()..sort()) k: samples[k]
+    for (final k in samples.keys.toList()..sort()) k: samples[k],
   };
 
   // Print list of samples to console.
-  for (var key in sortedSamples.keys) {
+  for (final key in sortedSamples.keys) {
     print(key);
   }
   print('Total samples: ${sortedSamples.keys.length}');
 
   // Write the list of sorted samples to the generated_samples_list.json file.
   final samplesJsonFile = File(
-      '${assetsDirectory.path}${pathSeparator}generated_samples_list.json');
+    '${assetsDirectory.path}${pathSeparator}generated_samples_list.json',
+  );
   const encoder = JsonEncoder.withIndent('  ');
   samplesJsonFile.writeAsStringSync(encoder.convert(sortedSamples));
 }

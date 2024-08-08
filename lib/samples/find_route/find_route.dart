@@ -44,8 +44,11 @@ class _FindRouteState extends State<FindRoute> with SampleStateSupport {
   // Define route parameters for the route.
   late final RouteParameters _routeParameters;
   // Create a route task.
-  final _routeTask = RouteTask.withUrl(Uri.parse(
-      'https://sampleserver6.arcgisonline.com/arcgis/rest/services/NetworkAnalysis/SanDiego/NAServer/Route'));
+  final _routeTask = RouteTask.withUrl(
+    Uri.parse(
+      'https://sampleserver6.arcgisonline.com/arcgis/rest/services/NetworkAnalysis/SanDiego/NAServer/Route',
+    ),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -89,7 +92,7 @@ class _FindRouteState extends State<FindRoute> with SampleStateSupport {
                       ),
                     ],
                   ),
-                )
+                ),
               ],
             ),
             // Display a progress indicator and prevent interaction until state is ready.
@@ -138,9 +141,15 @@ class _FindRouteState extends State<FindRoute> with SampleStateSupport {
   void initStops() {
     // Create symbols to use for the start and end stops of the route.
     final routeStartCircleSymbol = SimpleMarkerSymbol(
-        style: SimpleMarkerSymbolStyle.circle, color: Colors.blue, size: 15.0);
+      style: SimpleMarkerSymbolStyle.circle,
+      color: Colors.blue,
+      size: 15.0,
+    );
     final routeEndCircleSymbol = SimpleMarkerSymbol(
-        style: SimpleMarkerSymbolStyle.circle, color: Colors.blue, size: 15.0);
+      style: SimpleMarkerSymbolStyle.circle,
+      color: Colors.blue,
+      size: 15.0,
+    );
     final routeStartNumberSymbol =
         TextSymbol(text: '1', color: Colors.white, size: 10.0);
     final routeEndNumberSymbol =
@@ -198,7 +207,10 @@ class _FindRouteState extends State<FindRoute> with SampleStateSupport {
   Future<void> generateRoute() async {
     // Create the symbol for the route line.
     final routeLineSymbol = SimpleLineSymbol(
-        style: SimpleLineSymbolStyle.solid, color: Colors.blue, width: 5.0);
+      style: SimpleLineSymbolStyle.solid,
+      color: Colors.blue,
+      width: 5.0,
+    );
 
     // Reset the route.
     resetRoute();
@@ -238,13 +250,16 @@ class _FindRouteState extends State<FindRoute> with SampleStateSupport {
         child: Column(
           children: [
             Center(
-              child: Text('Directions',
-                  style: Theme.of(context).textTheme.headlineMedium),
+              child: Text(
+                'Directions',
+                style: Theme.of(context).textTheme.headlineMedium,
+              ),
             ),
             Expanded(
-                child: _directions.isEmpty
-                    ? const Center(child: Text('No directions to show.'))
-                    : buildDirectionsListView()),
+              child: _directions.isEmpty
+                  ? const Center(child: Text('No directions to show.'))
+                  : buildDirectionsListView(),
+            ),
             TextButton(
               onPressed: () {
                 Navigator.pop(context);
@@ -262,9 +277,9 @@ class _FindRouteState extends State<FindRoute> with SampleStateSupport {
     return ListView.separated(
       padding: const EdgeInsets.all(8),
       itemCount: _directions.length,
-      itemBuilder: ((context, index) {
+      itemBuilder: (context, index) {
         return Text(_directions[index].directionText);
-      }),
+      },
       separatorBuilder: (context, index) => const Divider(),
     );
   }
@@ -278,8 +293,9 @@ class _FindRouteState extends State<FindRoute> with SampleStateSupport {
         content: Text(message),
         actions: [
           TextButton(
-              onPressed: () => Navigator.pop(context, 'OK'),
-              child: const Text('OK'))
+            onPressed: () => Navigator.pop(context, 'OK'),
+            child: const Text('OK'),
+          ),
         ],
       ),
     );

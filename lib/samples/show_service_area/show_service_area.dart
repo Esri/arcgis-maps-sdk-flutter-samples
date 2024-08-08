@@ -53,8 +53,11 @@ class _ShowServiceAreaState extends State<ShowServiceArea>
   ];
 
   // Create a service area task used to find service areas around a facility.
-  final _serviceAreaTask = ServiceAreaTask.withUrl(Uri.parse(
-      'https://route-api.arcgis.com/arcgis/rest/services/World/ServiceAreas/NAServer/ServiceArea_World'));
+  final _serviceAreaTask = ServiceAreaTask.withUrl(
+    Uri.parse(
+      'https://route-api.arcgis.com/arcgis/rest/services/World/ServiceAreas/NAServer/ServiceArea_World',
+    ),
+  );
   late final ServiceAreaParameters _serviceAreaParameters;
 
   // A state variable for controlling the segmented button selection.
@@ -142,20 +145,28 @@ class _ShowServiceAreaState extends State<ShowServiceArea>
     // Create a map with the light gray basemap style and an initial viewpoint.
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISLightGray)
       ..initialViewpoint = Viewpoint.withLatLongScale(
-          latitude: 32.73, longitude: -117.16, scale: 25000);
+        latitude: 32.73,
+        longitude: -117.16,
+        scale: 25000,
+      );
     // Set the map to the map view.
     _mapViewController.arcGISMap = map;
 
     // Apply a renderer to the barrier graphics overlay.
     _barrierGraphicsOverlay.renderer = SimpleRenderer(
       symbol: SimpleFillSymbol(
-          style: SimpleFillSymbolStyle.diagonalCross, color: Colors.red),
+        style: SimpleFillSymbolStyle.diagonalCross,
+        color: Colors.red,
+      ),
     );
 
     // Apply a renderer to the facility graphics overlay.
     _facilityGraphicsOverlay.renderer = SimpleRenderer(
-      symbol: PictureMarkerSymbol.withUrl(Uri.parse(
-          'https://static.arcgis.com/images/Symbols/SafetyHealth/Hospital.png')),
+      symbol: PictureMarkerSymbol.withUrl(
+        Uri.parse(
+          'https://static.arcgis.com/images/Symbols/SafetyHealth/Hospital.png',
+        ),
+      ),
     );
 
     // Add the graphics overlays to the map view.
@@ -207,15 +218,18 @@ class _ShowServiceAreaState extends State<ShowServiceArea>
 
       // For each graphic in the facilities graphics overlay, add a facility to the parameters.
       final facilities = _facilityGraphicsOverlay.graphics
-          .map((graphic) =>
-              ServiceAreaFacility(point: graphic.geometry as ArcGISPoint))
+          .map(
+            (graphic) =>
+                ServiceAreaFacility(point: graphic.geometry as ArcGISPoint),
+          )
           .toList();
       _serviceAreaParameters.setFacilities(facilities);
 
       // For each graphic in the barriers graphics overlay, add a polygon barrier to the parameters.
       final barriers = _barrierGraphicsOverlay.graphics
           .map(
-              (graphic) => PolygonBarrier(polygon: graphic.geometry as Polygon))
+            (graphic) => PolygonBarrier(polygon: graphic.geometry as Polygon),
+          )
           .toList();
       _serviceAreaParameters.setPolygonBarriers(barriers);
 
@@ -245,12 +259,13 @@ class _ShowServiceAreaState extends State<ShowServiceArea>
         context: context,
         builder: (context) => AlertDialog(
           content: const Text(
-              'At least 1 facility is required to perform a service area calculation.'),
+            'At least 1 facility is required to perform a service area calculation.',
+          ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context, 'OK'),
               child: const Text('OK'),
-            )
+            ),
           ],
         ),
       );

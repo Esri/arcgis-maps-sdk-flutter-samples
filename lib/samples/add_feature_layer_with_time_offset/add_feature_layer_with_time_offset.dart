@@ -187,7 +187,8 @@ class _AddFeatureLayerWithTimeOffsetState
 
     // The URL of the feature layer showing hurricanes.
     final featureLayerUri = Uri.parse(
-        'https://sampleserver6.arcgisonline.com/arcgis/rest/services/Hurricanes/MapServer/0');
+      'https://sampleserver6.arcgisonline.com/arcgis/rest/services/Hurricanes/MapServer/0',
+    );
 
     // Create a feature layer for the hurricane tracks, represented by blue dots.
     final featureTable = ServiceFeatureTable.withUri(featureLayerUri);

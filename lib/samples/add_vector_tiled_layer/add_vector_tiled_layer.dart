@@ -26,7 +26,9 @@ enum VectorTiledItem {
   newspaper('Newspaper', 'dfb04de5f3144a80bc3f9f336228d24a'),
   nova('Nova', '75f4dfdff19e445395653121a95a85db'),
   worldStreetMapNight(
-      'World Street Map (Night)', '86f556a2d1fd468181855a35e344567f');
+    'World Street Map (Night)',
+    '86f556a2d1fd468181855a35e344567f',
+  );
 
   final String label;
   final String itemId;
@@ -44,8 +46,7 @@ class AddVectorTiledLayer extends StatefulWidget {
   const AddVectorTiledLayer({super.key});
 
   @override
-  State<AddVectorTiledLayer> createState() =>
-      _AddVectorTiledLayerState();
+  State<AddVectorTiledLayer> createState() => _AddVectorTiledLayerState();
 }
 
 class _AddVectorTiledLayerState extends State<AddVectorTiledLayer>

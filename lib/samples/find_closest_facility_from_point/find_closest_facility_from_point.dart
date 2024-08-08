@@ -31,16 +31,23 @@ class _FindClosestFacilityFromPointState
     extends State<FindClosestFacilityFromPoint> with SampleStateSupport {
   // Create the URIs for the fire station and fire images, as well as the URIs for the facilities and incidents layers.
   static final _fireStationImageUri = Uri.parse(
-      'https://static.arcgis.com/images/Symbols/SafetyHealth/FireStation.png');
+    'https://static.arcgis.com/images/Symbols/SafetyHealth/FireStation.png',
+  );
   static final _fireImageUri = Uri.parse(
-      'https://static.arcgis.com/images/Symbols/SafetyHealth/esriCrimeMarker_56_Gradient.png');
+    'https://static.arcgis.com/images/Symbols/SafetyHealth/esriCrimeMarker_56_Gradient.png',
+  );
   static final _facilitiesLayerUri = Uri.parse(
-      'https://services2.arcgis.com/ZQgQTuoyBrtmoGdP/ArcGIS/rest/services/San_Diego_Facilities/FeatureServer/0');
+    'https://services2.arcgis.com/ZQgQTuoyBrtmoGdP/ArcGIS/rest/services/San_Diego_Facilities/FeatureServer/0',
+  );
   static final _incidentsLayerUri = Uri.parse(
-      'https://services2.arcgis.com/ZQgQTuoyBrtmoGdP/ArcGIS/rest/services/San_Diego_Incidents/FeatureServer/0');
+    'https://services2.arcgis.com/ZQgQTuoyBrtmoGdP/ArcGIS/rest/services/San_Diego_Incidents/FeatureServer/0',
+  );
   // Create a task for the closest facility service.
-  final _closestFacilityTask = ClosestFacilityTask.withUrl(Uri.parse(
-      'https://sampleserver6.arcgisonline.com/arcgis/rest/services/NetworkAnalysis/SanDiego/NAServer/ClosestFacility'));
+  final _closestFacilityTask = ClosestFacilityTask.withUrl(
+    Uri.parse(
+      'https://sampleserver6.arcgisonline.com/arcgis/rest/services/NetworkAnalysis/SanDiego/NAServer/ClosestFacility',
+    ),
+  );
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
   // Create a graphics overlay for the route.
@@ -53,7 +60,10 @@ class _FindClosestFacilityFromPointState
   late final ClosestFacilityParameters _closestFacilityParameters;
   // Create a symbol for the route line.
   final _routeLineSymbol = SimpleLineSymbol(
-      style: SimpleLineSymbolStyle.solid, color: Colors.blue, width: 5.0);
+    style: SimpleLineSymbolStyle.solid,
+    color: Colors.blue,
+    width: 5.0,
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -158,7 +168,9 @@ class _FindClosestFacilityFromPointState
 
     // Generate the closest facility parameters.
     _closestFacilityParameters = await generateClosestFacilityParameters(
-        facilitiesFeatureTable, incidentsFeatureTable);
+      facilitiesFeatureTable,
+      incidentsFeatureTable,
+    );
 
     // Set the initialized flag to true.
     setState(() => _ready = true);
@@ -177,8 +189,9 @@ class _FindClosestFacilityFromPointState
   }
 
   Future<ClosestFacilityParameters> generateClosestFacilityParameters(
-      FeatureTable facilitiesFeatureTable,
-      FeatureTable incidentsFeatureTable) async {
+    FeatureTable facilitiesFeatureTable,
+    FeatureTable incidentsFeatureTable,
+  ) async {
     // Create query parameters to get all features.
     final featureQueryParams = QueryParameters()..whereClause = '1=1';
     // Create default parameters for the closest facility task.
@@ -199,7 +212,8 @@ class _FindClosestFacilityFromPointState
     setState(() => _ready = false);
     // Solve the closest facility task with the parameters.
     final result = await _closestFacilityTask.solveClosestFacility(
-        closestFacilityParameters: _closestFacilityParameters);
+      closestFacilityParameters: _closestFacilityParameters,
+    );
     for (var incidentIdx = 0;
         incidentIdx < result.incidents.length;
         ++incidentIdx) {
@@ -218,7 +232,9 @@ class _FindClosestFacilityFromPointState
       // Add the route to the graphics overlay.
       if (routeToFacility != null) {
         final routeGraphic = Graphic(
-            geometry: routeToFacility.routeGeometry, symbol: _routeLineSymbol);
+          geometry: routeToFacility.routeGeometry,
+          symbol: _routeLineSymbol,
+        );
         _routeGraphicsOverlay.graphics.add(routeGraphic);
       }
     }

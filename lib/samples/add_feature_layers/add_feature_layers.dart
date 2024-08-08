@@ -73,7 +73,7 @@ class _AddFeatureLayersState extends State<AddFeatureLayers>
         onTap: loadGeopackage,
         value: Source.geopackage,
         child: const Text('Geopackage'),
-      )
+      ),
     ]);
   }
 
@@ -131,7 +131,8 @@ class _AddFeatureLayersState extends State<AddFeatureLayers>
   void loadFeatureServiceFromUri() {
     // Create a uri to a feature service.
     final uri = Uri.parse(
-        'https://sampleserver6.arcgisonline.com/arcgis/rest/services/DamageAssessment/FeatureServer/0');
+      'https://sampleserver6.arcgisonline.com/arcgis/rest/services/DamageAssessment/FeatureServer/0',
+    );
     // Create a service feature table with the uri.
     final serviceFeatureTables = ServiceFeatureTable.withUri(uri);
     // Create a feature layer with the service feature table.

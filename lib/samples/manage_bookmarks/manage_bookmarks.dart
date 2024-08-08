@@ -155,22 +155,34 @@ class _ManageBookmarksState extends State<ManageBookmarks> {
       Bookmark(
         name: 'Grand Prismatic Spring',
         viewpoint: Viewpoint.withLatLongScale(
-            latitude: 44.525, longitude: -110.838, scale: 6e3),
+          latitude: 44.525,
+          longitude: -110.838,
+          scale: 6e3,
+        ),
       ),
       Bookmark(
         name: 'Guitar-Shaped Forest',
         viewpoint: Viewpoint.withLatLongScale(
-            latitude: -33.867, longitude: -63.985, scale: 4e4),
+          latitude: -33.867,
+          longitude: -63.985,
+          scale: 4e4,
+        ),
       ),
       Bookmark(
         name: 'Mysterious Desert Pattern',
         viewpoint: Viewpoint.withLatLongScale(
-            latitude: 27.380, longitude: 33.632, scale: 6e3),
+          latitude: 27.380,
+          longitude: 33.632,
+          scale: 6e3,
+        ),
       ),
       Bookmark(
         name: 'Strange Symbol',
         viewpoint: Viewpoint.withLatLongScale(
-            latitude: 37.401, longitude: -116.867, scale: 6e3),
+          latitude: 37.401,
+          longitude: -116.867,
+          scale: 6e3,
+        ),
       ),
     ]);
 
@@ -194,7 +206,8 @@ class _ManageBookmarksState extends State<ManageBookmarks> {
     final bookmark = Bookmark(
       name: name,
       viewpoint: _mapViewController.getCurrentViewpoint(
-          viewpointType: ViewpointType.centerAndScale),
+        viewpointType: ViewpointType.centerAndScale,
+      ),
     );
     setState(() => _bookmarks.add(bookmark));
   }

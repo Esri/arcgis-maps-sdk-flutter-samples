@@ -201,7 +201,7 @@ class _AttachmentsOptionsState extends State<AttachmentsOptions>
                   ElevatedButton(
                     onPressed: addAttachment,
                     child: const Text('Add Attachment'),
-                  )
+                  ),
                 ],
               ),
             ),
@@ -211,33 +211,36 @@ class _AttachmentsOptionsState extends State<AttachmentsOptions>
 
             // Display each attachment with view and delete buttons.
             SingleChildScrollView(
-              child: Column(children: [
-                ListView.builder(
-                  itemCount: attachments.length,
-                  shrinkWrap: true,
-                  padding: const EdgeInsets.all(2),
-                  itemBuilder: (context, index) {
-                    return ListTile(
-                      title: Text(attachments[index].name),
-                      subtitle: Text(attachments[index].contentType),
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          IconButton(
-                            icon: const Icon(Icons.remove_red_eye),
-                            onPressed: () => viewAttachment(attachments[index]),
-                          ),
-                          IconButton(
-                            icon: const Icon(Icons.delete),
-                            onPressed: () =>
-                                deleteAttachment(attachments[index]),
-                          ),
-                        ],
-                      ),
-                    );
-                  },
-                ),
-              ]),
+              child: Column(
+                children: [
+                  ListView.builder(
+                    itemCount: attachments.length,
+                    shrinkWrap: true,
+                    padding: const EdgeInsets.all(2),
+                    itemBuilder: (context, index) {
+                      return ListTile(
+                        title: Text(attachments[index].name),
+                        subtitle: Text(attachments[index].contentType),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            IconButton(
+                              icon: const Icon(Icons.remove_red_eye),
+                              onPressed: () =>
+                                  viewAttachment(attachments[index]),
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.delete),
+                              onPressed: () =>
+                                  deleteAttachment(attachments[index]),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ),
             ),
           ],
         ),

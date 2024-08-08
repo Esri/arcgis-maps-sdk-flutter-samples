@@ -283,7 +283,7 @@ class _DensifyAndGeneralizeGeometryState
           originalPointGraphic,
           originalPolylineGraphic,
           _resultPointsGraphic,
-          _resultPolylineGraphic
+          _resultPolylineGraphic,
         ],
       );
     _mapViewController.graphicsOverlays.add(graphicsOverlay);
@@ -360,7 +360,8 @@ class _DensifyAndGeneralizeGeometryState
 
     // Use a MultipointBuilder to create a Multipoint geometry from the points.
     final multipointBuilder = MultipointBuilder.fromSpatialReference(
-        mutablePointCollection.spatialReference);
+      mutablePointCollection.spatialReference,
+    );
     multipointBuilder.points = mutablePointCollection;
     return multipointBuilder.toGeometry() as Multipoint;
   }

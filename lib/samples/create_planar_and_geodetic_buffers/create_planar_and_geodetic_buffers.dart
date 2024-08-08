@@ -29,8 +29,7 @@ class CreatePlanarAndGeodeticBuffers extends StatefulWidget {
 }
 
 class _CreatePlanarAndGeodeticBuffersState
-    extends State<CreatePlanarAndGeodeticBuffers>
-    with SampleStateSupport {
+    extends State<CreatePlanarAndGeodeticBuffers> with SampleStateSupport {
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
   // The graphics overlay for the geodetic buffers.
