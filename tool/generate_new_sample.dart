@@ -54,7 +54,7 @@ void createNewSample(String sampleCamelName) {
 // Convert a camel case string to snake case.
 String camelToSnake(String input) {
   final snakeCase = input.replaceAllMapped(
-    RegExp(r'([a-z])([A-Z])'),
+    RegExp('([a-z])([A-Z])'),
     (Match match) => '${match.group(1)}_${match.group(2)!.toLowerCase()}',
   );
   return snakeCase.toLowerCase();
@@ -63,7 +63,7 @@ String camelToSnake(String input) {
 // Convert a snake case string to camel case.
 String snakeToCamel(String input) {
   final camelCase = input.replaceAllMapped(
-    RegExp(r'(_[a-z])'),
+    RegExp('(_[a-z])'),
     (Match match) => match.group(0)!.toUpperCase().substring(1),
   );
   var newName = camelCase[0].toUpperCase() + camelCase.substring(1);
@@ -81,10 +81,13 @@ String snakeToCamel(String input) {
 // - /common-samples
 // - /arcgis-maps-sdk-flutter-samples
 void createEmptyReadMeOrCopy(
-    Directory sampleDirectory, String sampleCamelName) {
+  Directory sampleDirectory,
+  String sampleCamelName,
+) {
   final ps = Platform.pathSeparator;
   final templateReadmeFile = File(
-      '${Directory.current.parent.path}${ps}common-samples${ps}designs$ps$sampleCamelName${ps}README.md');
+    '${Directory.current.parent.path}${ps}common-samples${ps}designs$ps$sampleCamelName${ps}README.md',
+  );
   final sampleReadmeFile = File('${sampleDirectory.path}${ps}README.md');
   if (templateReadmeFile.existsSync()) {
     sampleReadmeFile.writeAsBytesSync(templateReadmeFile.readAsBytesSync());
@@ -97,10 +100,14 @@ void createEmptyReadMeOrCopy(
 
 // Create a new sample file
 void createNewSampleFile(
-    Directory sampleDirectory, String sampleSnakeName, String sampleCamelName) {
+  Directory sampleDirectory,
+  String sampleSnakeName,
+  String sampleCamelName,
+) {
   final ps = Platform.pathSeparator;
   final templateFile = File(
-      '${Directory.current.parent.path}${ps}flutter${ps}internal${ps}lib${ps}sample_skeleton.dart');
+    '${Directory.current.parent.path}${ps}flutter${ps}internal${ps}lib${ps}sample_skeleton.dart',
+  );
   final sampleFile = File('${sampleDirectory.path}$ps$sampleSnakeName.dart');
 
   sampleFile.createSync();
@@ -108,11 +115,13 @@ void createNewSampleFile(
 
   if (templateFile.existsSync()) {
     final lines = templateFile.readAsLinesSync();
-    for (var line in lines) {
+    for (final line in lines) {
       if (!line.startsWith('//')) {
         final newLine = line.replaceAll('SampleWidget', sampleCamelName);
-        sampleFile.writeAsStringSync('$newLine${Platform.lineTerminator}',
-            mode: FileMode.append);
+        sampleFile.writeAsStringSync(
+          '$newLine${Platform.lineTerminator}',
+          mode: FileMode.append,
+        );
       }
     }
   }
@@ -123,7 +132,8 @@ void createNewSampleFile(
 void addSampleToSamplesWidgetList(Directory sampleRootDirectory) {
   final ps = Platform.pathSeparator;
   final samplesWidgetListFile = File(
-      '${sampleRootDirectory.parent.path}${ps}models${ps}samples_widget_list.dart');
+    '${sampleRootDirectory.parent.path}${ps}models${ps}samples_widget_list.dart',
+  );
 
   final buffer = StringBuffer();
   final sortedSampleNames = sampleRootDirectory
@@ -135,7 +145,8 @@ void addSampleToSamplesWidgetList(Directory sampleRootDirectory) {
 
   for (final sampleName in sortedSampleNames) {
     buffer.writeln(
-        "import 'package:arcgis_maps_sdk_flutter_samples/samples/$sampleName/$sampleName.dart';");
+      "import 'package:arcgis_maps_sdk_flutter_samples/samples/$sampleName/$sampleName.dart';",
+    );
   }
 
   buffer.writeln('\nfinal sampleWidgets = {');
