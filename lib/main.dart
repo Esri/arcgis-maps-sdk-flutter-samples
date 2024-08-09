@@ -14,12 +14,15 @@
 // limitations under the License.
 //
 
+import 'dart:convert';
 import 'package:arcgis_maps/arcgis_maps.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/models/sample.dart';
 import 'package:flutter/material.dart';
-import 'src/sample_list_view.dart';
+import 'package:flutter/services.dart';
+import 'widgets/sample_list_view.dart';
 
 void main() {
-  // Supply your apiKey using the --dart-define-from-file command line argument
+  // Supply your apiKey using the --dart-define-from-file command line argument.
   const apiKey = String.fromEnvironment('API_KEY');
   // Alternatively, replace the above line with the following and hard-code your apiKey here:
   // const apiKey = 'your_api_key_here';
@@ -28,29 +31,135 @@ void main() {
   } else {
     ArcGISEnvironment.apiKey = apiKey;
   }
-  runApp(const MyApp());
+  runApp(const SampleViewerApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class SampleViewerApp extends StatefulWidget {
+  const SampleViewerApp({super.key});
+
+  @override
+  State<SampleViewerApp> createState() => _SampleViewerAppState();
+}
+
+class _SampleViewerAppState extends State<SampleViewerApp> {
+  final _allSamples = <Sample>[];
+  final _searchFocusNode = FocusNode();
+  final _textEditingController = TextEditingController();
+  var _filteredSamples = <Sample>[];
+  bool _ready = false;
+  bool _searchHasFocus = false;
+
+  @override
+  void initState() {
+    super.initState();
+    loadSamples();
+    _searchFocusNode.addListener(
+      () {
+        if (_searchFocusNode.hasFocus != _searchHasFocus) {
+          setState(() => _searchHasFocus = _searchFocusNode.hasFocus);
+        }
+      },
+    );
+  }
+
+  @override
+  void dispose() {
+    _textEditingController.dispose();
+    _searchFocusNode.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     final ColorScheme colorScheme =
         ColorScheme.fromSeed(seedColor: Colors.deepPurple);
+    const title = 'ArcGIS Maps SDK for Flutter Samples';
 
     return MaterialApp(
-      title: 'ArcGIS Maps SDK for Flutter Samples',
+      title: title,
       theme: ThemeData(
         colorScheme: colorScheme,
         appBarTheme: AppBarTheme(backgroundColor: colorScheme.inversePrimary),
       ),
       home: Scaffold(
         appBar: AppBar(
-          title: const Text('ArcGIS Maps SDK for Flutter Samples'),
+          title: const Text(title),
         ),
-        body: const SampleListView(),
+        body: Column(
+          children: [
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              child: TextField(
+                focusNode: _searchFocusNode,
+                controller: _textEditingController,
+                onChanged: onSearchChanged,
+                autocorrect: false,
+                decoration: InputDecoration(
+                  hintText: 'Search...',
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _searchHasFocus ? Icons.cancel : Icons.search,
+                    ),
+                    onPressed: onSearchSuffixPressed,
+                  ),
+                ),
+              ),
+            ),
+            _ready
+                ? Expanded(
+                    child: Listener(
+                      onPointerDown: (_) =>
+                          FocusManager.instance.primaryFocus?.unfocus(),
+                      child: SampleListView(samples: _filteredSamples),
+                    ),
+                  )
+                : const Center(
+                    child: Text('Loading samples...'),
+                  ),
+          ],
+        ),
       ),
     );
+  }
+
+  void onSearchSuffixPressed() {
+    if (_searchHasFocus) {
+      _textEditingController.clear();
+      FocusManager.instance.primaryFocus?.unfocus();
+      onSearchChanged('');
+    } else {
+      _searchFocusNode.requestFocus();
+    }
+  }
+
+  void loadSamples() async {
+    final jsonString =
+        await rootBundle.loadString('assets/generated_samples_list.json');
+    final sampleData = jsonDecode(jsonString);
+    for (final s in sampleData.entries) {
+      _allSamples.add(Sample.fromJson(s.value));
+    }
+    _filteredSamples = _allSamples;
+    setState(() => _ready = true);
+  }
+
+  void onSearchChanged(String searchText) {
+    final List<Sample> results;
+    if (searchText.isEmpty) {
+      results = _allSamples;
+    } else {
+      results = _allSamples.where(
+        (sample) {
+          final lowerSearchText = searchText.toLowerCase();
+          return sample.title.toLowerCase().contains(lowerSearchText) ||
+              sample.category.toLowerCase().contains(lowerSearchText) ||
+              sample.keywords.any(
+                (keyword) => keyword.toLowerCase().contains(lowerSearchText),
+              );
+        },
+      ).toList();
+    }
+
+    setState(() => _filteredSamples = results);
   }
 }

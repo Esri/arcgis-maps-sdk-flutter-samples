@@ -5,19 +5,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Samples (debug)",
-            "request": "launch",
-            "type": "dart",
-            "flutterMode": "debug"
-        },
-        {
-            "name": "Samples (release)",
-            "request": "launch",
-            "type": "dart",
-            "flutterMode": "release"
-        },
-        {
-            "name": "Samples with API Key (debug)",
+            "name": "Sample Viewer App with API Key from env (debug)",
             "request": "launch",
             "type": "dart",
             "flutterMode": "debug",
@@ -26,7 +14,7 @@
             ]
         },
         {
-            "name": "Samples with API Key (release)",
+            "name": "Sample Viewer App with API Key from env (release)",
             "request": "launch",
             "type": "dart",
             "flutterMode": "release",
@@ -35,14 +23,38 @@
             ]
         },
         {
-            "name": "Custom Sample with API Key (debug)",
+            "name": "Sample Viewer App (debug)",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "debug"
+        },
+        {
+            "name": "Sample Viewer App (release)",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release"
+        },
+        {
+            "name": "Custom Sample with API key from env (debug)",
             "request": "launch",
             "type": "dart",
             "flutterMode": "debug",
-            // replace display_map with another sample to run individually
-            "program": "lib/src/samples/display_map.dart",
+            "program": "lib/utils/sample_runner.dart",
+            // replace display_map with the directory name of any other sample
             "toolArgs": [
+                "--dart-define=SAMPLE=display_map",
                 "--dart-define-from-file=env.json"
+            ]
+        },
+        {
+            "name": "Custom Sample",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "debug",
+            "program": "lib/utils/sample_runner.dart",
+            // replace display_map with the directory name of any other sample
+            "toolArgs": [
+                "--dart-define=SAMPLE=display_map",
             ]
         },
     ]

@@ -1,0 +1,26 @@
+{
+    "category": "Visualization",
+    "description": "Show a simple marker symbol on a map.",
+    "ignore": false,
+    "images": [
+        "style_point_with_simple_marker_symbol.png"
+    ],
+    "keywords": [
+        "symbol",
+        "ArcGISPoint",
+        "Graphic",
+        "GraphicsOverlay",
+        "SimpleMarkerSymbol"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+        "ArcGISPoint",
+        "Graphic",
+        "GraphicsOverlay",
+        "SimpleMarkerSymbol"
+    ],
+    "snippets": [
+        "style_point_with_simple_marker_symbol_sample.dart"
+    ],
+    "title": "Style point with simple marker symbol"
+}

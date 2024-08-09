@@ -30,6 +30,8 @@ flutter pub upgrade
 
 Install arcgis_maps_core.
 
+Note on Windows: this step requires permission to create symlinks. Either run this step in an elevated "Administrator" command prompt, or go to "Settings > Update & Security > For developers" and turn on "Developer Mode".
+
 ```
 dart run arcgis_maps install
 ```
@@ -44,8 +46,8 @@ The app can be run on an iOS or Android simulator or device. Note: you will need
 - Ensure a simulator is running or a device is connected to your development machine 
 - Open the "Run and Debug" sidebar
 - Select which device or simulator you wish to use in the lower right corner of the VSCode window
-- Select "Samples (debug or release)"
-  - Note that "Samples (release)" can only be run on a device
+- Select "Sample Viewer App (debug or release)"
+  - Note that "Sample Viewer App (release)" can only be run on a device
 - Click the run button or press F5
 
 ## Running individual samples
@@ -55,8 +57,8 @@ Individual samples can also be run on an iOS or Android simulator or device.
 - Open the flutter project in VSCode
 - Ensure a simulator is running or a device is connected to your development machine
 - Select which device or simulator you wish to use in the lower right corner of the VSCode window
-- To run from VSCode, open a sample file from `/lib/src/samples` e.g. `display_map.dart` and click `run` above the `main()` method
-- Or run from the command line with `flutter run lib/src/samples/display_map.dart`
+- To run from VSCode, open `lib/utils/sample_runner.dart` and define the sample you want to run
+- Or run from the command line with `flutter run lib/utils/sample_runner.dart --dart-define=SAMPLE=display_map`
 
 ## Configuring API Keys
 
@@ -72,16 +74,10 @@ The JSON file itself should be of the format:
 }
 ```
 
-To run using the JSON file to define your API key:
+To run the Sample Viewer App using the JSON file to define your API key:
 
 ```
 flutter run --dart-define-from-file=path/to/json/file.json
-```
-
-Or to run an individual sample:
-
-```
-flutter run lib/src/samples/display_map.dart --dart-define-from-file=path/to/json/file.json
 ```
 
 ## Licensing
