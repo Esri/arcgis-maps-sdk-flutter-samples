@@ -31,10 +31,10 @@ class _QueryRelatedFeaturesState extends State<QueryRelatedFeatures>
   // Feature table for the Alaska National Parks Species layer.
   late final ServiceFeatureTable _alaskaNationalParksSpeciesTable;
   // The name of the selected park.
-  String _selectedParkName = '';
+  var _selectedParkName = '';
   // Lists to store the names of the related features.
-  final featurePreserves = <String>[];
-  final featureSpecies = <String>[];
+  final _featurePreserves = <String>[];
+  final _featureSpecies = <String>[];
 
   @override
   Widget build(BuildContext context) {
@@ -104,13 +104,13 @@ class _QueryRelatedFeaturesState extends State<QueryRelatedFeatures>
                   child: ListView.builder(
                     shrinkWrap: true,
                     padding: EdgeInsets.zero,
-                    itemCount: featurePreserves.length,
+                    itemCount: _featurePreserves.length,
                     itemBuilder: (context, index) {
                       return ListTile(
                         dense: true,
                         contentPadding: EdgeInsets.zero,
                         title: Text(
-                          featurePreserves[index],
+                          _featurePreserves[index],
                           style: Theme.of(context).textTheme.titleSmall,
                         ),
                       );
@@ -128,13 +128,13 @@ class _QueryRelatedFeaturesState extends State<QueryRelatedFeatures>
                   child: ListView.builder(
                     shrinkWrap: true,
                     padding: EdgeInsets.zero,
-                    itemCount: featureSpecies.length,
+                    itemCount: _featureSpecies.length,
                     itemBuilder: (context, index) {
                       return ListTile(
                         dense: true,
                         contentPadding: EdgeInsets.zero,
                         title: Text(
-                          featureSpecies[index],
+                          _featureSpecies[index],
                           style: Theme.of(context).textTheme.titleSmall,
                         ),
                       );
@@ -224,6 +224,7 @@ class _QueryRelatedFeaturesState extends State<QueryRelatedFeatures>
         _layerDataVisible = true;
         _loadingFeatures = true;
       });
+      // Query for related features.
       queryRelatedFeatures(selectedFeature);
     } else {
       setState(() {
@@ -235,43 +236,43 @@ class _QueryRelatedFeaturesState extends State<QueryRelatedFeatures>
 
   // Query for related features given the origin feature.
   void queryRelatedFeatures(ArcGISFeature selectedPark) async {
-    // Query for related features
+    // Query for related features.
     final selectedParkTable = selectedPark.featureTable as ServiceFeatureTable;
     final relatedFeatureQueryResult =
         await selectedParkTable.queryRelatedFeatures(feature: selectedPark);
 
-    // Get the related species and preserves features
+    // Get the related species and preserves features.
     final lists = <List<String>>[];
     for (final RelatedFeatureQueryResult result in relatedFeatureQueryResult) {
       final list = <String>[];
       for (final feature in result.features()) {
         ArcGISFeature relatedFeature = feature as ArcGISFeature;
-        // Get a reference to the feature's table
+        // Get a reference to the feature's table.
         ArcGISFeatureTable relatedTable =
             feature.featureTable as ArcGISFeatureTable;
 
-        // Get the display field name - this is the name of the field that is intended for display
+        // Get the display field name - this is the name of the field that is intended for display.
         final displayFieldName = relatedTable.layerInfo!.displayFieldName;
 
-        // Get the display name for the feature
+        // Get the display name for the feature.
         final featureDisplayname = relatedFeature.attributes[displayFieldName];
 
-        // Add the display name to the list
+        // Add the display name to the list.
         list.add(featureDisplayname);
       }
       lists.add(list);
     }
 
-    // Update the UI with the related features
+    // Update the UI with the related features.
     setState(() {
       _loadingFeatures = false;
       _selectedParkName = selectedPark.attributes['UNIT_NAME'];
 
-      featurePreserves
+      _featurePreserves
         ..clear()
         ..addAll(lists[0]);
 
-      featureSpecies
+      _featureSpecies
         ..clear()
         ..addAll(lists[1]);
     });
