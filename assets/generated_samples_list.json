@@ -902,6 +902,32 @@
     "title": "Generate offline map",
     "key": "generate_offline_map"
   },
+  "identify_graphics": {
+    "category": "Display Information",
+    "description": "Display an alert message when a graphic is clicked.",
+    "ignore": false,
+    "images": [
+      "identify_graphics.png"
+    ],
+    "keywords": [
+      "graphics",
+      "identify",
+      "Graphic",
+      "GraphicsOverlay",
+      "MapView"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+      "Graphic",
+      "GraphicsOverlay",
+      "MapView"
+    ],
+    "snippets": [
+      "identify_graphics.dart"
+    ],
+    "title": "Identify graphics",
+    "key": "identify_graphics"
+  },
   "identify_layer_features": {
     "category": "Search and Query",
     "description": "Identify features in all layers in a map.",
@@ -1092,8 +1118,7 @@
     "description": "Set the map's reference scale and which feature layers should honor the reference scale.",
     "ignore": false,
     "images": [
-      "set_reference_scale.png",
-      "set_reference_scale_settings.png"
+      "set_reference_scale.png"
     ],
     "keywords": [
       "map",

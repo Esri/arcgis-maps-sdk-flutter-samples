@@ -1,0 +1,25 @@
+{
+    "category": "Display Information",
+    "description": "Display an alert message when a graphic is clicked.",
+    "ignore": false,
+    "images": [
+        "identify_graphics.png"
+    ],
+    "keywords": [
+        "graphics",
+        "identify",
+        "Graphic",
+        "GraphicsOverlay",
+        "MapView"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+        "Graphic",
+        "GraphicsOverlay",
+        "MapView"
+    ],
+    "snippets": [
+        "identify_graphics.dart"
+    ],
+    "title": "Identify graphics"
+}
