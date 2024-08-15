@@ -986,6 +986,40 @@
     "title": "Query feature table",
     "key": "query_feature_table"
   },
+  "query_related_features": {
+    "category": "Search and Query",
+    "description": "List features related to the selected feature.",
+    "ignore": false,
+    "images": [
+      "query_related_features.png"
+    ],
+    "keywords": [
+      "features",
+      "identify",
+      "query",
+      "related",
+      "relationship",
+      "search",
+      "ArcGISFeature",
+      "ArcGISFeatureTable",
+      "FeatureQueryResult",
+      "FeatureTable.queryRelatedFeatures",
+      "RelatedFeatureQueryResult"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+      "ArcGISFeature",
+      "ArcGISFeatureTable",
+      "FeatureQueryResult",
+      "FeatureTable.queryRelatedFeatures",
+      "RelatedFeatureQueryResult"
+    ],
+    "snippets": [
+      "query_related_features.dart"
+    ],
+    "title": "Query related features",
+    "key": "query_related_features"
+  },
   "query_table_statistics": {
     "category": "Search and Query",
     "description": "Query a table to get aggregated statistics back for a specific field.",
@@ -1092,8 +1126,7 @@
     "description": "Set the map's reference scale and which feature layers should honor the reference scale.",
     "ignore": false,
     "images": [
-      "set_reference_scale.png",
-      "set_reference_scale_settings.png"
+      "set_reference_scale.png"
     ],
     "keywords": [
       "map",
