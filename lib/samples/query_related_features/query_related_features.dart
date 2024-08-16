@@ -1,6 +1,6 @@
 import 'dart:math';
 
-import 'package:arcgis_maps/arcgis_maps.dart';
+import 'package:arcgis_maps_sdk/arcgis_maps.dart';
 import 'package:flutter/material.dart';
 
 import '../../utils/sample_state_support.dart';
@@ -33,8 +33,8 @@ class _QueryRelatedFeaturesState extends State<QueryRelatedFeatures>
   // The name of the selected park.
   var _selectedParkName = '';
   // Lists to store the names of the related features.
-  final _featurePreserves = <String>[];
-  final _featureSpecies = <String>[];
+  var _featurePreserves = <String>[];
+  var _featureSpecies = <String>[];
 
   @override
   Widget build(BuildContext context) {
@@ -86,62 +86,74 @@ class _QueryRelatedFeaturesState extends State<QueryRelatedFeatures>
               ),
             ),
             width: double.infinity,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  _selectedParkName,
-                  style: Theme.of(context).textTheme.titleLarge,
-                ),
-                const Divider(),
-                Text(
-                  'Alaska National Preserves',
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-                const Divider(),
-                // Display the list of feature preserves for the selected park.
-                Flexible(
-                  child: ListView.builder(
-                    shrinkWrap: true,
-                    padding: EdgeInsets.zero,
-                    itemCount: _featurePreserves.length,
-                    itemBuilder: (context, index) {
-                      return ListTile(
-                        dense: true,
-                        contentPadding: EdgeInsets.zero,
-                        title: Text(
-                          _featurePreserves[index],
-                          style: Theme.of(context).textTheme.titleSmall,
-                        ),
-                      );
-                    },
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Row(
+                    children: [
+                      Text(
+                        _selectedParkName,
+                        style: Theme.of(context).textTheme.titleLarge,
+                      ),
+                      const Spacer(),
+                      IconButton(
+                        icon: const Icon(Icons.close),
+                        onPressed: () =>
+                            setState(() => _layerDataVisible = false),
+                      ),
+                    ],
                   ),
-                ),
-                const Divider(),
-                Text(
-                  'Alaska National Species',
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-                const Divider(),
-                // Display the list of feature species for the selected park.
-                Flexible(
-                  child: ListView.builder(
-                    shrinkWrap: true,
-                    padding: EdgeInsets.zero,
-                    itemCount: _featureSpecies.length,
-                    itemBuilder: (context, index) {
-                      return ListTile(
-                        dense: true,
-                        contentPadding: EdgeInsets.zero,
-                        title: Text(
-                          _featureSpecies[index],
-                          style: Theme.of(context).textTheme.titleSmall,
-                        ),
-                      );
-                    },
+                  const Divider(),
+                  Text(
+                    'Alaska National Parks Preserves',
+                    style: Theme.of(context).textTheme.titleMedium,
                   ),
-                ),
-              ],
+                  const Divider(),
+                  // Display the list of feature preserves for the selected park.
+                  Flexible(
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      padding: EdgeInsets.zero,
+                      itemCount: _featurePreserves.length,
+                      itemBuilder: (context, index) {
+                        return ListTile(
+                          dense: true,
+                          contentPadding: EdgeInsets.zero,
+                          title: Text(
+                            _featurePreserves[index],
+                            style: Theme.of(context).textTheme.titleSmall,
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                  const Divider(),
+                  Text(
+                    'Alaska National Parks Species',
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                  const Divider(),
+                  // Display the list of feature species for the selected park.
+                  Flexible(
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      padding: EdgeInsets.zero,
+                      itemCount: _featureSpecies.length,
+                      itemBuilder: (context, index) {
+                        return ListTile(
+                          dense: true,
+                          contentPadding: EdgeInsets.zero,
+                          title: Text(
+                            _featureSpecies[index],
+                            style: Theme.of(context).textTheme.titleSmall,
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
             ),
           );
   }
@@ -150,28 +162,28 @@ class _QueryRelatedFeaturesState extends State<QueryRelatedFeatures>
     // Create a map with a topographic basemap style.
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic);
 
-    // Feature table for the Alaska National Parks layer
+    // Feature table for the Alaska National Parks layer.
     _alaskaNationalParksFeaturesTable = ServiceFeatureTable.withUri(
       Uri.parse(
         'https://services2.arcgis.com/ZQgQTuoyBrtmoGdP/ArcGIS/rest/services/AlaskaNationalParksPreservesSpecies_List/FeatureServer/1',
       ),
     );
 
-    // Create parks feature layer, the origin layer in the relationship
+    // Create parks feature layer, the origin layer in the relationship.
     _alaskaNationalParksLayer =
         FeatureLayer.withFeatureTable(_alaskaNationalParksFeaturesTable);
 
-    // Add parks feature layer to the map
+    // Add parks feature layer to the map.
     map.operationalLayers.add(_alaskaNationalParksLayer);
     await _alaskaNationalParksLayer.load();
 
-    // Feature table for related preserves layer
+    // Create a feature table for related preserves layer.
     _alaskaNationalParksPreservesTable = ServiceFeatureTable.withUri(
       Uri.parse(
         'https://services2.arcgis.com/ZQgQTuoyBrtmoGdP/ArcGIS/rest/services/AlaskaNationalParksPreservesSpecies_List/FeatureServer/0',
       ),
     );
-    // Feature table for related species layer
+    // Create a feature table for related species layer.
     _alaskaNationalParksSpeciesTable = ServiceFeatureTable.withUri(
       Uri.parse(
         'https://services2.arcgis.com/ZQgQTuoyBrtmoGdP/ArcGIS/rest/services/AlaskaNationalParksPreservesSpecies_List/FeatureServer/2',
@@ -182,7 +194,7 @@ class _QueryRelatedFeaturesState extends State<QueryRelatedFeatures>
       [_alaskaNationalParksSpeciesTable, _alaskaNationalParksPreservesTable],
     );
 
-    // assign map to the map view
+    // Assign map to the map view.
     _mapViewController.arcGISMap = map
       ..initialViewpoint = Viewpoint.fromCenter(
         ArcGISPoint(
@@ -193,7 +205,7 @@ class _QueryRelatedFeaturesState extends State<QueryRelatedFeatures>
         scale: 36764077,
       );
 
-    // set selection color
+    // Set selection color.
     _mapViewController.selectionProperties =
         SelectionProperties(color: Colors.yellow);
 
@@ -242,14 +254,13 @@ class _QueryRelatedFeaturesState extends State<QueryRelatedFeatures>
         await selectedParkTable.queryRelatedFeatures(feature: selectedPark);
 
     // Get the related species and preserves features.
-    final lists = <List<String>>[];
-    for (final RelatedFeatureQueryResult result in relatedFeatureQueryResult) {
-      final list = <String>[];
+    final relatedFeaturesLists = <List<String>>[];
+    for (final result in relatedFeatureQueryResult) {
+      final relatedFeatures = <String>[];
       for (final feature in result.features()) {
-        ArcGISFeature relatedFeature = feature as ArcGISFeature;
+        final relatedFeature = feature as ArcGISFeature;
         // Get a reference to the feature's table.
-        ArcGISFeatureTable relatedTable =
-            feature.featureTable as ArcGISFeatureTable;
+        final relatedTable = feature.featureTable as ArcGISFeatureTable;
 
         // Get the display field name - this is the name of the field that is intended for display.
         final displayFieldName = relatedTable.layerInfo!.displayFieldName;
@@ -258,9 +269,9 @@ class _QueryRelatedFeaturesState extends State<QueryRelatedFeatures>
         final featureDisplayname = relatedFeature.attributes[displayFieldName];
 
         // Add the display name to the list.
-        list.add(featureDisplayname);
+        relatedFeatures.add(featureDisplayname);
       }
-      lists.add(list);
+      relatedFeaturesLists.add(relatedFeatures);
     }
 
     // Update the UI with the related features.
@@ -268,13 +279,9 @@ class _QueryRelatedFeaturesState extends State<QueryRelatedFeatures>
       _loadingFeatures = false;
       _selectedParkName = selectedPark.attributes['UNIT_NAME'];
 
-      _featurePreserves
-        ..clear()
-        ..addAll(lists[0]);
+      _featurePreserves = relatedFeaturesLists[0];
 
-      _featureSpecies
-        ..clear()
-        ..addAll(lists[1]);
+      _featureSpecies = relatedFeaturesLists[1];
     });
   }
 }
