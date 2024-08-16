@@ -903,8 +903,8 @@
     "key": "generate_offline_map"
   },
   "identify_graphics": {
-    "category": "Display Information",
-    "description": "Display an alert message when a graphic is clicked.",
+    "category": "Visualization",
+    "description": "Display an alert message when a graphic is tapped.",
     "ignore": false,
     "images": [
       "identify_graphics.png"
@@ -912,15 +912,15 @@
     "keywords": [
       "graphics",
       "identify",
+      "ArcGISMapView",
       "Graphic",
-      "GraphicsOverlay",
-      "MapView"
+      "GraphicsOverlay"
     ],
     "redirect_from": [],
     "relevant_apis": [
+      "ArcGISMapView",
       "Graphic",
-      "GraphicsOverlay",
-      "MapView"
+      "GraphicsOverlay"
     ],
     "snippets": [
       "identify_graphics.dart"

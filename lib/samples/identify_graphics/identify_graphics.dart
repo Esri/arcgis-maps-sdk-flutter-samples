@@ -36,34 +36,31 @@ class _IdentifyGraphicsState extends State<IdentifyGraphics> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        top: false,
-        child: Stack(
-          children: [
-            Column(
-              children: [
-                Expanded(
-                  // Add a map view to the widget tree and set a controller.
-                  child: ArcGISMapView(
-                    controllerProvider: () => _mapViewController,
-                    onMapViewReady: onMapViewReady,
-                    onTap: onTap,
-                  ),
-                ),
-              ],
-            ),
-            // Display a progress indicator and prevent interaction until state is ready.
-            Visibility(
-              visible: !_ready,
-              child: const SizedBox.expand(
-                child: ColoredBox(
-                  color: Colors.white30,
-                  child: Center(child: CircularProgressIndicator()),
+      body: Stack(
+        children: [
+          Column(
+            children: [
+              Expanded(
+                // Add a map view to the widget tree and set a controller.
+                child: ArcGISMapView(
+                  controllerProvider: () => _mapViewController,
+                  onMapViewReady: onMapViewReady,
+                  onTap: onTap,
                 ),
               ),
+            ],
+          ),
+          // Display a progress indicator and prevent interaction until state is ready.
+          Visibility(
+            visible: !_ready,
+            child: const SizedBox.expand(
+              child: ColoredBox(
+                color: Colors.white30,
+                child: Center(child: CircularProgressIndicator()),
+              ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -93,7 +90,7 @@ class _IdentifyGraphicsState extends State<IdentifyGraphics> {
     _graphicsOverlay.graphics.add(_graphic);
     // Add the graphics overlay to the map view controller.
     _mapViewController.graphicsOverlays.add(_graphicsOverlay);
-    // Set the viewpoint to the lake graphic.
+    // Set the viewpoint to the graphic.
     _mapViewController.setViewpoint(
       Viewpoint.fromTargetExtent(_graphic.geometry!.extent),
     );
