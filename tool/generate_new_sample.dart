@@ -149,7 +149,11 @@ void addSampleToSamplesWidgetList(Directory sampleRootDirectory) {
     );
   }
 
-  buffer.writeln('\nfinal sampleWidgets = {');
+  buffer.writeln(
+    '\n// A list of all the Widgets for individual Samples.\n// Used by the Sample Viewer App to display the Widget when a sample is selected.\n// The key is the directory name for the sample which is in snake case. E.g. display_map',
+  );
+
+  buffer.writeln('final sampleWidgets = {');
   for (final sampleName in sortedSampleNames) {
     final camelCaseName = snakeToCamel(sampleName);
     buffer.writeln("  '$camelCaseName': () => const $camelCaseName(),");
