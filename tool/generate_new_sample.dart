@@ -156,7 +156,7 @@ void addSampleToSamplesWidgetList(Directory sampleRootDirectory) {
   buffer.writeln('final sampleWidgets = {');
   for (final sampleName in sortedSampleNames) {
     final camelCaseName = snakeToCamel(sampleName);
-    buffer.writeln("  '$camelCaseName': () => const $camelCaseName(),");
+    buffer.writeln("  '$sampleName': () => const $camelCaseName(),");
   }
   buffer.writeln('};');
   samplesWidgetListFile.writeAsStringSync(buffer.toString());
