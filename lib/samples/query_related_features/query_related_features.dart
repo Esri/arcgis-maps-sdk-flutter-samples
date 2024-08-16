@@ -24,12 +24,6 @@ class _QueryRelatedFeaturesState extends State<QueryRelatedFeatures>
   var _loadingFeatures = false;
   // Feature layer for the Alaska National Parks.
   late final FeatureLayer _alaskaNationalParksLayer;
-  // Feature table for the Alaska National Parks features.
-  late final ServiceFeatureTable _alaskaNationalParksFeaturesTable;
-  // Feature table for the Alaska National Parks Preserves layer.
-  late final ServiceFeatureTable _alaskaNationalParksPreservesTable;
-  // Feature table for the Alaska National Parks Species layer.
-  late final ServiceFeatureTable _alaskaNationalParksSpeciesTable;
   // The name of the selected park.
   var _selectedParkName = '';
   // Lists to store the names of the related features.
@@ -163,7 +157,7 @@ class _QueryRelatedFeaturesState extends State<QueryRelatedFeatures>
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic);
 
     // Feature table for the Alaska National Parks layer.
-    _alaskaNationalParksFeaturesTable = ServiceFeatureTable.withUri(
+    final alaskaNationalParksFeaturesTable = ServiceFeatureTable.withUri(
       Uri.parse(
         'https://services2.arcgis.com/ZQgQTuoyBrtmoGdP/ArcGIS/rest/services/AlaskaNationalParksPreservesSpecies_List/FeatureServer/1',
       ),
@@ -171,27 +165,27 @@ class _QueryRelatedFeaturesState extends State<QueryRelatedFeatures>
 
     // Create parks feature layer, the origin layer in the relationship.
     _alaskaNationalParksLayer =
-        FeatureLayer.withFeatureTable(_alaskaNationalParksFeaturesTable);
+        FeatureLayer.withFeatureTable(alaskaNationalParksFeaturesTable);
 
     // Add parks feature layer to the map.
     map.operationalLayers.add(_alaskaNationalParksLayer);
     await _alaskaNationalParksLayer.load();
 
     // Create a feature table for related preserves layer.
-    _alaskaNationalParksPreservesTable = ServiceFeatureTable.withUri(
+    final alaskaNationalParksPreservesTable = ServiceFeatureTable.withUri(
       Uri.parse(
         'https://services2.arcgis.com/ZQgQTuoyBrtmoGdP/ArcGIS/rest/services/AlaskaNationalParksPreservesSpecies_List/FeatureServer/0',
       ),
     );
     // Create a feature table for related species layer.
-    _alaskaNationalParksSpeciesTable = ServiceFeatureTable.withUri(
+    final alaskaNationalParksSpeciesTable = ServiceFeatureTable.withUri(
       Uri.parse(
         'https://services2.arcgis.com/ZQgQTuoyBrtmoGdP/ArcGIS/rest/services/AlaskaNationalParksPreservesSpecies_List/FeatureServer/2',
       ),
     );
     // Add these to the tables on the map.
     map.tables.addAll(
-      [_alaskaNationalParksSpeciesTable, _alaskaNationalParksPreservesTable],
+      [alaskaNationalParksSpeciesTable, alaskaNationalParksPreservesTable],
     );
 
     // Assign map to the map view.
