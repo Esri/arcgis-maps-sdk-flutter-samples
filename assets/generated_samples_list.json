@@ -28,7 +28,7 @@
       "SimpleRenderer"
     ],
     "snippets": [
-      "add_feature_collection_layer_from_table_sample.dart"
+      "add_feature_collection_layer_from_table.dart"
     ],
     "title": "Add feature collection layer from table",
     "key": "add_feature_collection_layer_from_table"
@@ -59,7 +59,7 @@
       "TimeExtent"
     ],
     "snippets": [
-      "add_feature_layer_with_time_offset_sample.dart"
+      "add_feature_layer_with_time_offset.dart"
     ],
     "title": "Add feature layer with time offset",
     "key": "add_feature_layer_with_time_offset"
@@ -93,7 +93,7 @@
       "ServiceFeatureTable"
     ],
     "snippets": [
-      "add_feature_layers_sample.dart"
+      "add_feature_layers.dart"
     ],
     "title": "Add feature layers",
     "key": "add_feature_layers"
@@ -117,7 +117,7 @@
       "ArcGISMapImageLayer"
     ],
     "snippets": [
-      "add_map_image_layer_sample.dart"
+      "add_map_image_layer.dart"
     ],
     "title": "Add map image layer",
     "key": "add_map_image_layer"
@@ -148,7 +148,7 @@
       "Basemap"
     ],
     "snippets": [
-      "add_tiled_layer_sample.dart"
+      "add_tiled_layer.dart"
     ],
     "title": "Add tiled layer",
     "key": "add_tiled_layer"
@@ -178,7 +178,7 @@
       "TileCache"
     ],
     "snippets": [
-      "add_tiled_layer_as_basemap_sample.dart"
+      "add_tiled_layer_as_basemap.dart"
     ],
     "title": "Add tiled layer as basemap",
     "key": "add_tiled_layer_as_basemap"
@@ -205,7 +205,7 @@
       "Basemap"
     ],
     "snippets": [
-      "add_vector_tiled_layer_sample.dart"
+      "add_vector_tiled_layer.dart"
     ],
     "title": "Add vector tiled layer",
     "key": "add_vector_tiled_layer"
@@ -238,7 +238,7 @@
       "ClassBreaksRenderer.ClassBreak"
     ],
     "snippets": [
-      "apply_class_breaks_renderer_to_sublayer_sample.dart"
+      "apply_class_breaks_renderer_to_sublayer.dart"
     ],
     "title": "Apply class breaks renderer to sublayer",
     "key": "apply_class_breaks_renderer_to_sublayer"
@@ -273,7 +273,7 @@
       "OfflineMapUpdatesInfo"
     ],
     "snippets": [
-      "apply_scheduled_updates_to_preplanned_map_area_sample.dart"
+      "apply_scheduled_updates_to_preplanned_map_area.dart"
     ],
     "title": "Apply scheduled updates to preplanned map area",
     "key": "apply_scheduled_updates_to_preplanned_map_area"
@@ -300,7 +300,7 @@
       "SimpleRenderer"
     ],
     "snippets": [
-      "apply_simple_renderer_to_feature_layer_sample.dart"
+      "apply_simple_renderer_to_feature_layer.dart"
     ],
     "title": "Apply simple renderer to feature layer",
     "key": "apply_simple_renderer_to_feature_layer"
@@ -335,20 +335,45 @@
       "UniqueValueRenderer"
     ],
     "snippets": [
-      "apply_unique_value_renderer_sample.dart"
+      "apply_unique_value_renderer.dart"
     ],
     "title": "Apply unique value renderer",
     "key": "apply_unique_value_renderer"
   },
   "authenticate_with_oauth": {
     "category": "Cloud and Portal",
-    "description": "Authenticate with ArcGIS Online (or your own portal) using OAuth2 to access secured resources (such as private web maps or layers).",
+    "description": "Authenticate with ArcGIS Online (or your own portal) using OAuth2 to access secured resources (such as private web maps or layers). Accessing secured items requires logging in to the portal that hosts them (an ArcGIS Online account, for example).",
     "ignore": false,
-    "images": [],
-    "keywords": [],
+    "images": [
+      "authenticate_with_oauth.png",
+      "authenticate_with_oauth_loaded.png"
+    ],
+    "keywords": [
+      "OAuth",
+      "authentication",
+      "cloud",
+      "credential",
+      "portal",
+      "security",
+      "ArcGISAuthenticationChallengeHandler",
+      "AuthenticationManager",
+      "OAuthConfiguration",
+      "OAuthUserCredential",
+      "Portal",
+      "PortalItem"
+    ],
     "redirect_from": [],
-    "relevant_apis": [],
-    "snippets": [],
+    "relevant_apis": [
+      "ArcGISAuthenticationChallengeHandler",
+      "AuthenticationManager",
+      "OAuthConfiguration",
+      "OAuthUserCredential",
+      "Portal",
+      "PortalItem"
+    ],
+    "snippets": [
+      "authenticate_with_oauth.dart"
+    ],
     "title": "Authenticate with OAuth",
     "key": "authenticate_with_oauth"
   },
@@ -382,7 +407,7 @@
       "PortalItem"
     ],
     "snippets": [
-      "authenticate_with_token_sample.dart"
+      "authenticate_with_token.dart"
     ],
     "title": "Authenticate with token",
     "key": "authenticate_with_token"
@@ -421,7 +446,7 @@
       "TableDescription"
     ],
     "snippets": [
-      "create_mobile_geodatabase_sample.dart"
+      "create_mobile_geodatabase.dart"
     ],
     "title": "Create mobile geodatabase",
     "key": "create_mobile_geodatabase"
@@ -451,10 +476,37 @@
       "GraphicsOverlay"
     ],
     "snippets": [
-      "create_planar_and_geodetic_buffers_sample.dart"
+      "create_planar_and_geodetic_buffers.dart"
     ],
     "title": "Create planar and geodetic buffers",
     "key": "create_planar_and_geodetic_buffers"
+  },
+  "cut_geometry": {
+    "category": "Analysis",
+    "description": "Cut a geometry along a polyline.",
+    "ignore": false,
+    "images": [
+      "cut_geometry.png"
+    ],
+    "keywords": [
+      "cut",
+      "geometry",
+      "split",
+      "GeometryEngine.cut",
+      "Polygon",
+      "Polyline"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+      "GeometryEngine.cut",
+      "Polygon",
+      "Polyline"
+    ],
+    "snippets": [
+      "cut_geometry.dart"
+    ],
+    "title": "Cut geometry",
+    "key": "cut_geometry"
   },
   "densify_and_generalize_geometry": {
     "category": "Edit and Manage Data",
@@ -486,7 +538,7 @@
       "SpatialReference"
     ],
     "snippets": [
-      "densify_and_generalize_geometry_sample.dart"
+      "densify_and_generalize_geometry.dart"
     ],
     "title": "Densify and generalize geometry",
     "key": "densify_and_generalize_geometry"
@@ -516,7 +568,7 @@
       "FeatureReduction"
     ],
     "snippets": [
-      "display_clusters_sample.dart"
+      "display_clusters.dart"
     ],
     "title": "Display clusters",
     "key": "display_clusters"
@@ -542,7 +594,7 @@
       "BasemapStyle"
     ],
     "snippets": [
-      "display_map_sample.dart"
+      "display_map.dart"
     ],
     "title": "Display map",
     "key": "display_map"
@@ -567,7 +619,7 @@
       "MobileMapPackage"
     ],
     "snippets": [
-      "display_map_from_mobile_map_package_sample.dart"
+      "display_map_from_mobile_map_package.dart"
     ],
     "title": "Display map from mobile map package",
     "key": "display_map_from_mobile_map_package"
@@ -599,10 +651,46 @@
       "PreplannedMapArea"
     ],
     "snippets": [
-      "download_preplanned_map_area_sample.dart"
+      "download_preplanned_map_area.dart"
     ],
     "title": "Download preplanned map area",
     "key": "download_preplanned_map_area"
+  },
+  "download_vector_tiles_to_local_cache": {
+    "category": "Edit and Manage Data",
+    "description": "Export tiles from an online vector tile service.",
+    "ignore": false,
+    "images": [
+      "download_vector_tiles_to_local_cache.png"
+    ],
+    "keywords": [
+      "cache",
+      "download",
+      "offline",
+      "vector",
+      "ArcGISVectorTiledLayer",
+      "ExportVectorTilesJob",
+      "ExportVectorTilesParameters",
+      "ExportVectorTilesResult",
+      "ExportVectorTilesTask",
+      "ItemResourceCache",
+      "VectorTileCache"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+      "ArcGISVectorTiledLayer",
+      "ExportVectorTilesJob",
+      "ExportVectorTilesParameters",
+      "ExportVectorTilesResult",
+      "ExportVectorTilesTask",
+      "ItemResourceCache",
+      "VectorTileCache"
+    ],
+    "snippets": [
+      "download_vector_tiles_to_local_cache.dart"
+    ],
+    "title": "Download vector tiles to local cache",
+    "key": "download_vector_tiles_to_local_cache"
   },
   "edit_feature_attachments": {
     "category": "Edit and Manage Data",
@@ -638,7 +726,7 @@
       "fetchAttachments"
     ],
     "snippets": [
-      "edit_feature_attachments_sample.dart"
+      "edit_feature_attachments.dart"
     ],
     "title": "Edit feature attachments",
     "key": "edit_feature_attachments"
@@ -670,7 +758,7 @@
       "ServiceFeatureTable"
     ],
     "snippets": [
-      "filter_by_definition_expression_or_display_filter_sample.dart"
+      "filter_by_definition_expression_or_display_filter.dart"
     ],
     "title": "Filter by definition expression or display filter",
     "key": "filter_by_definition_expression_or_display_filter"
@@ -699,7 +787,7 @@
       "ReverseGeocodeParameters"
     ],
     "snippets": [
-      "find_address_with_reverse_geocode_sample.dart"
+      "find_address_with_reverse_geocode.dart"
     ],
     "title": "Find address with reverse geocode",
     "key": "find_address_with_reverse_geocode"
@@ -737,7 +825,7 @@
       "Incident"
     ],
     "snippets": [
-      "find_closest_facility_from_point_sample.dart"
+      "find_closest_facility_from_point.dart"
     ],
     "title": "Find closest facility from point",
     "key": "find_closest_facility_from_point"
@@ -777,7 +865,7 @@
       "Stop"
     ],
     "snippets": [
-      "find_route_sample.dart"
+      "find_route.dart"
     ],
     "title": "Find route",
     "key": "find_route"
@@ -809,7 +897,7 @@
       "PortalItem"
     ],
     "snippets": [
-      "generate_offline_map_sample.dart"
+      "generate_offline_map.dart"
     ],
     "title": "Generate offline map",
     "key": "generate_offline_map"
@@ -839,7 +927,7 @@
       "IdentifyLayerResult.sublayerResults"
     ],
     "snippets": [
-      "identify_layer_features_sample.dart"
+      "identify_layer_features.dart"
     ],
     "title": "Identify layer features",
     "key": "identify_layer_features"
@@ -865,7 +953,7 @@
       "Viewpoint"
     ],
     "snippets": [
-      "manage_bookmarks_sample.dart"
+      "manage_bookmarks.dart"
     ],
     "title": "Manage bookmarks",
     "key": "manage_bookmarks"
@@ -893,7 +981,7 @@
       "ServiceFeatureTable"
     ],
     "snippets": [
-      "query_feature_table_sample.dart"
+      "query_feature_table.dart"
     ],
     "title": "Query feature table",
     "key": "query_feature_table"
@@ -939,7 +1027,7 @@
       "StatisticsQueryResult"
     ],
     "snippets": [
-      "query_table_statistics_sample.dart"
+      "query_table_statistics.dart"
     ],
     "title": "Query table statistics",
     "key": "query_table_statistics"
@@ -968,7 +1056,7 @@
       "ServiceFeatureTable"
     ],
     "snippets": [
-      "select_features_in_feature_layer_sample.dart"
+      "select_features_in_feature_layer.dart"
     ],
     "title": "Select features in feature layer",
     "key": "select_features_in_feature_layer"
@@ -994,10 +1082,35 @@
       "Basemap"
     ],
     "snippets": [
-      "set_basemap_sample.dart"
+      "set_basemap.dart"
     ],
     "title": "Set basemap",
     "key": "set_basemap"
+  },
+  "set_reference_scale": {
+    "category": "Maps",
+    "description": "Set the map's reference scale and which feature layers should honor the reference scale.",
+    "ignore": false,
+    "images": [
+      "set_reference_scale.png"
+    ],
+    "keywords": [
+      "map",
+      "reference scale",
+      "scene",
+      "ArcGISMap",
+      "FeatureLayer"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+      "ArcGISMap",
+      "FeatureLayer"
+    ],
+    "snippets": [
+      "set_reference_scale.dart"
+    ],
+    "title": "Set reference scale",
+    "key": "set_reference_scale"
   },
   "show_device_location": {
     "category": "Maps",
@@ -1026,7 +1139,7 @@
       "LocationDisplay.autoPanMode"
     ],
     "snippets": [
-      "show_device_location_sample.dart"
+      "show_device_location.dart"
     ],
     "title": "Show device location",
     "key": "show_device_location"
@@ -1074,7 +1187,7 @@
       "SimulatedLocationDataSource"
     ],
     "snippets": [
-      "show_device_location_history_sample.dart"
+      "show_device_location_history.dart"
     ],
     "title": "Show device location history",
     "key": "show_device_location_history"
@@ -1119,7 +1232,7 @@
       "UTMGrid"
     ],
     "snippets": [
-      "show_grid_sample.dart"
+      "show_grid.dart"
     ],
     "title": "Show grid",
     "key": "show_grid"
@@ -1144,7 +1257,7 @@
       "LegendInfo"
     ],
     "snippets": [
-      "show_legend_sample.dart"
+      "show_legend.dart"
     ],
     "title": "Show legend",
     "key": "show_legend"
@@ -1175,7 +1288,7 @@
       "ArcGISMapViewController.magnifiedEnabled"
     ],
     "snippets": [
-      "show_magnifier_sample.dart"
+      "show_magnifier.dart"
     ],
     "title": "Show magnifier",
     "key": "show_magnifier"
@@ -1213,7 +1326,7 @@
       "PortalUser"
     ],
     "snippets": [
-      "show_portal_user_info_sample.dart"
+      "show_portal_user_info.dart"
     ],
     "title": "Show portal user info",
     "key": "show_portal_user_info"
@@ -1248,7 +1361,7 @@
       "ServiceAreaTask"
     ],
     "snippets": [
-      "show_service_area_sample.dart"
+      "show_service_area.dart"
     ],
     "title": "Show service area",
     "key": "show_service_area"
@@ -1275,7 +1388,7 @@
       "SimpleMarkerSymbol"
     ],
     "snippets": [
-      "style_point_with_simple_marker_symbol_sample.dart"
+      "style_point_with_simple_marker_symbol.dart"
     ],
     "title": "Style point with simple marker symbol",
     "key": "style_point_with_simple_marker_symbol"

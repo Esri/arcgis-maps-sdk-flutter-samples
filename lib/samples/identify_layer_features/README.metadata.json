@@ -23,7 +23,7 @@
         "IdentifyLayerResult.sublayerResults"
     ],
     "snippets": [
-        "identify_layer_features_sample.dart"
+        "identify_layer_features.dart"
     ],
     "title": "Identify layer features"
 }

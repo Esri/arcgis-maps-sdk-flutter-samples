@@ -26,7 +26,7 @@
         "ClassBreaksRenderer.ClassBreak"
     ],
     "snippets": [
-        "apply_class_breaks_renderer_to_sublayer_sample.dart"
+        "apply_class_breaks_renderer_to_sublayer.dart"
     ],
     "title": "Apply class breaks renderer to sublayer"
 }

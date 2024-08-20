@@ -33,7 +33,7 @@
         "Stop"
     ],
     "snippets": [
-        "find_route_sample.dart"
+        "find_route.dart"
     ],
     "title": "Find route"
 }

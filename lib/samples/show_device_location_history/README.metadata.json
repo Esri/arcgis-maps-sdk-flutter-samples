@@ -41,7 +41,7 @@
         "SimulatedLocationDataSource"
     ],
     "snippets": [
-        "show_device_location_history_sample.dart"
+        "show_device_location_history.dart"
     ],
     "title": "Show device location history"
 }

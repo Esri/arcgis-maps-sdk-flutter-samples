@@ -31,7 +31,7 @@
         "PortalUser"
     ],
     "snippets": [
-        "show_portal_user_info_sample.dart"
+        "show_portal_user_info.dart"
     ],
     "title": "Show portal user info"
 }

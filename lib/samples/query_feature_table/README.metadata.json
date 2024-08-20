@@ -21,7 +21,7 @@
         "ServiceFeatureTable"
     ],
     "snippets": [
-        "query_feature_table_sample.dart"
+        "query_feature_table.dart"
     ],
     "title": "Query feature table"
 }

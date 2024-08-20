@@ -25,7 +25,7 @@
         "PreplannedMapArea"
     ],
     "snippets": [
-        "download_preplanned_map_area_sample.dart"
+        "download_preplanned_map_area.dart"
     ],
     "title": "Download preplanned map area"
 }
