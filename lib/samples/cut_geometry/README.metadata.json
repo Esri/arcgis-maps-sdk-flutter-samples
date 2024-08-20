@@ -20,7 +20,7 @@
         "Polyline"
     ],
     "snippets": [
-        "cut_geometry_sample.dart"
+        "cut_geometry.dart"
     ],
     "title": "Cut geometry"
 }
