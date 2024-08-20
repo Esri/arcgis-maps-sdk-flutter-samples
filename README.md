@@ -62,13 +62,7 @@ Individual samples can also be run on an iOS or Android simulator or device.
 
 ## Configuring API Keys
 
-To take full advantage of the samples in the app, you will need to generate an API Key.
-
-- Log into your developer account at [ArcGIS Developers](https://developers.arcgis.com/)
-  - If you do not have an account, [create one](https://developers.arcgis.com/sign-up/)
-- Go to the "API keys" tab
-- Click the "New API Key" button and provide a Title and Description
-- Set Location Service scopes to add or remove key capabilities
+To take full advantage of the samples in the app, you will need to generate an API Key access token. Follow the [Create an API Key](https://links.esri.com/create-an-api-key) tutorial. Ensure that you set the **Location services** privileges to **Basemap, Geocoding, and Routing**. Copy the API key as it will be used in the next step.
 
 Add the new API Key directly to [main.dart](lib/main.dart) or create an environment JSON file that can be loaded with the `--dart-define-from-file` `flutter run` command line argument.
 
