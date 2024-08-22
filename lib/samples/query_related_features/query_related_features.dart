@@ -89,7 +89,6 @@ class _QueryRelatedFeaturesState extends State<QueryRelatedFeatures>
                         style: Theme.of(context).textTheme.titleLarge,
                       ),
                     ),
-                    // const Spacer(),
                     IconButton(
                       alignment: Alignment.centerRight,
                       icon: const Icon(Icons.close),
