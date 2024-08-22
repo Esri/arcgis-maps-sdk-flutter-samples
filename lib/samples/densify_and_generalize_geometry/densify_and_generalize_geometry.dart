@@ -350,10 +350,8 @@ class _DensifyAndGeneralizeGeometryState
     // Create a MutablePointCollection and add all the points of the polyline.
     final mutablePointCollection =
         MutablePointCollection.withSpatialReference(polyline.spatialReference);
-    for (var i = 0; i < polyline.parts.size; i++) {
-      final part = polyline.parts.getPart(index: i);
-      for (var j = 0; j < part.pointCount; j++) {
-        final point = part.getPoint(pointIndex: j);
+    for (final part in polyline.parts) {
+      for (final point in part.getPoints()) {
         mutablePointCollection.addPoint(point);
       }
     }
