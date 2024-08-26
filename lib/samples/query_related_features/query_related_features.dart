@@ -62,7 +62,6 @@ class _QueryRelatedFeaturesState extends State<QueryRelatedFeatures>
   }
 
   Widget buildLayerData(BuildContext context) {
-    // Display the selected park name and related features.
     return _loadingFeatures
         ? const CircularProgressIndicator()
         : Container(
@@ -80,74 +79,66 @@ class _QueryRelatedFeaturesState extends State<QueryRelatedFeatures>
               ),
             ),
             width: double.infinity,
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Row(
-                    children: [
-                      Text(
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
                         _selectedParkName,
                         style: Theme.of(context).textTheme.titleLarge,
                       ),
-                      const Spacer(),
-                      IconButton(
-                        icon: const Icon(Icons.close),
-                        onPressed: () =>
-                            setState(() => _layerDataVisible = false),
-                      ),
-                    ],
-                  ),
-                  const Divider(),
-                  Text(
-                    'Alaska National Parks Preserves',
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
-                  const Divider(),
-                  // Display the list of feature preserves for the selected park.
-                  Flexible(
-                    child: ListView.builder(
-                      shrinkWrap: true,
-                      padding: EdgeInsets.zero,
-                      itemCount: _featurePreserves.length,
-                      itemBuilder: (context, index) {
-                        return ListTile(
-                          dense: true,
-                          contentPadding: EdgeInsets.zero,
-                          title: Text(
-                            _featurePreserves[index],
-                            style: Theme.of(context).textTheme.titleSmall,
+                    ),
+                    IconButton(
+                      alignment: Alignment.centerRight,
+                      icon: const Icon(Icons.close),
+                      onPressed: () =>
+                          setState(() => _layerDataVisible = false),
+                    ),
+                  ],
+                ),
+                const Divider(),
+                Flexible(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          'Alaska National Parks Preserves',
+                          style: Theme.of(context).textTheme.titleMedium,
+                        ),
+                        const Divider(),
+                        // Display the list of feature preserves for the selected park.
+                        for (final preserve in _featurePreserves)
+                          ListTile(
+                            dense: true,
+                            contentPadding: EdgeInsets.zero,
+                            title: Text(
+                              preserve,
+                              style: Theme.of(context).textTheme.titleSmall,
+                            ),
                           ),
-                        );
-                      },
+                        const Divider(),
+                        Text(
+                          'Alaska National Parks Species',
+                          style: Theme.of(context).textTheme.titleMedium,
+                        ),
+                        const Divider(),
+                        // Display the list of feature species for the selected park.
+                        for (final species in _featureSpecies)
+                          ListTile(
+                            dense: true,
+                            contentPadding: EdgeInsets.zero,
+                            title: Text(
+                              species,
+                              style: Theme.of(context).textTheme.titleSmall,
+                            ),
+                          ),
+                      ],
                     ),
                   ),
-                  const Divider(),
-                  Text(
-                    'Alaska National Parks Species',
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
-                  const Divider(),
-                  // Display the list of feature species for the selected park.
-                  Flexible(
-                    child: ListView.builder(
-                      shrinkWrap: true,
-                      padding: EdgeInsets.zero,
-                      itemCount: _featureSpecies.length,
-                      itemBuilder: (context, index) {
-                        return ListTile(
-                          dense: true,
-                          contentPadding: EdgeInsets.zero,
-                          title: Text(
-                            _featureSpecies[index],
-                            style: Theme.of(context).textTheme.titleSmall,
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
           );
   }
