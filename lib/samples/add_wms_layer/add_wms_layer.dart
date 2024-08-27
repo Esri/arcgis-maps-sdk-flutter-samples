@@ -30,6 +30,7 @@ class _AddWmsLayerState extends State<AddWmsLayer> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // Add a map view to the widget tree and set a controller.
       body: ArcGISMapView(
         controllerProvider: () => _mapViewController,
         onMapViewReady: onMapViewReady,
