@@ -5,6 +5,7 @@ import 'package:arcgis_maps_sdk_flutter_samples/samples/add_map_image_layer/add_
 import 'package:arcgis_maps_sdk_flutter_samples/samples/add_tiled_layer/add_tiled_layer.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/add_tiled_layer_as_basemap/add_tiled_layer_as_basemap.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/add_vector_tiled_layer/add_vector_tiled_layer.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/samples/add_wms_layer/add_wms_layer.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/apply_class_breaks_renderer_to_sublayer/apply_class_breaks_renderer_to_sublayer.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/apply_scheduled_updates_to_preplanned_map_area/apply_scheduled_updates_to_preplanned_map_area.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/apply_simple_renderer_to_feature_layer/apply_simple_renderer_to_feature_layer.dart';
@@ -47,7 +48,7 @@ import 'package:arcgis_maps_sdk_flutter_samples/samples/style_point_with_simple_
 // A list of all the Widgets for individual Samples.
 // Used by the Sample Viewer App to display the Widget when a sample is selected.
 // The key is the directory name for the sample which is in snake case. E.g. display_map
-final sampleWidgets = <String, Function>{
+final sampleWidgets = {
   'add_feature_collection_layer_from_table': () =>
       const AddFeatureCollectionLayerFromTable(),
   'add_feature_layer_with_time_offset': () =>
@@ -57,6 +58,7 @@ final sampleWidgets = <String, Function>{
   'add_tiled_layer': () => const AddTiledLayer(),
   'add_tiled_layer_as_basemap': () => const AddTiledLayerAsBasemap(),
   'add_vector_tiled_layer': () => const AddVectorTiledLayer(),
+  'add_wms_layer': () => const AddWmsLayer(),
   'apply_class_breaks_renderer_to_sublayer': () =>
       const ApplyClassBreaksRendererToSublayer(),
   'apply_scheduled_updates_to_preplanned_map_area': () =>
@@ -87,12 +89,12 @@ final sampleWidgets = <String, Function>{
       const FindClosestFacilityFromPoint(),
   'find_route': () => const FindRoute(),
   'generate_offline_map': () => const GenerateOfflineMap(),
-  'identify_layer_features': () => const IdentifyLayerFeatures(),
   'identify_graphics': () => const IdentifyGraphics(),
+  'identify_layer_features': () => const IdentifyLayerFeatures(),
   'manage_bookmarks': () => const ManageBookmarks(),
   'query_feature_table': () => const QueryFeatureTable(),
-  'query_table_statistics': () => const QueryTableStatistics(),
   'query_related_features': () => const QueryRelatedFeatures(),
+  'query_table_statistics': () => const QueryTableStatistics(),
   'select_features_in_feature_layer': () =>
       const SelectFeaturesInFeatureLayer(),
   'set_basemap': () => const SetBasemap(),
@@ -100,10 +102,10 @@ final sampleWidgets = <String, Function>{
   'show_device_location': () => const ShowDeviceLocation(),
   'show_device_location_history': () => const ShowDeviceLocationHistory(),
   'show_grid': () => const ShowGrid(),
+  'show_legend': () => const ShowLegend(),
   'show_magnifier': () => const ShowMagnifier(),
   'show_portal_user_info': () => const ShowPortalUserInfo(),
   'show_service_area': () => const ShowServiceArea(),
-  'show_legend': () => const ShowLegend(),
   'style_point_with_simple_marker_symbol': () =>
       const StylePointWithSimpleMarkerSymbol(),
 };
