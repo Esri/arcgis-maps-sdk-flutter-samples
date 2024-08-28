@@ -40,6 +40,11 @@ class _AddWmsLayerState extends State<AddWmsLayer> with SampleStateSupport {
   }
 
   void onMapViewReady() async {
+    // Create a map with a basemap style.
+    final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISLightGray);
+    // Set the map to the map view controller.
+    _mapViewController.arcGISMap = map;
+
     // The URL to a WMS service showing U.S. weather radar.
     final uri = Uri.parse(
       'https://nowcoast.noaa.gov/geoserver/observations/weather_radar/wms?SERVICE=WMS&REQUEST=GetCapabilities',
@@ -49,18 +54,14 @@ class _AddWmsLayerState extends State<AddWmsLayer> with SampleStateSupport {
     // Create a WMS layer using the URL and list of names.
     final wmsLayer =
         WmsLayer.withUriAndLayerNames(uri: uri, layerNames: layerNames);
-    // Load the layer and get its extent.
+    // Load the layer and get the extent.
     await wmsLayer.load();
     final layerExtent = wmsLayer.fullExtent;
-    // Create a map with a basemap style.
-    final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISLightGray);
-    // Add the WMS layer to the maps operational layers.
-    map.operationalLayers.add(wmsLayer);
-    // Set the map to the map view controller.
-    _mapViewController.arcGISMap = map;
-    // Set the viewpoint to the layers extent.
+    // Set the viewpoint to the layer's extent.
     if (layerExtent != null) {
       _mapViewController.setViewpoint(Viewpoint.fromTargetExtent(layerExtent));
     }
+    // Add the WMS layer to the map's operational layers.
+    map.operationalLayers.add(wmsLayer);
   }
 }
