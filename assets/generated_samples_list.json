@@ -210,6 +210,32 @@
     "title": "Add vector tiled layer",
     "key": "add_vector_tiled_layer"
   },
+  "add_wms_layer": {
+    "category": "Layers",
+    "description": "Display a WMS layer using a WMS service URL.",
+    "ignore": false,
+    "images": [
+      "add_wms_layer.png"
+    ],
+    "keywords": [
+      "OGC",
+      "web map service",
+      "ArcGISMap",
+      "ArcGISMapView",
+      "WmsLayer"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+      "ArcGISMap",
+      "ArcGISMapView",
+      "WmsLayer"
+    ],
+    "snippets": [
+      "add_wms_layer.dart"
+    ],
+    "title": "Add WMS layer",
+    "key": "add_wms_layer"
+  },
   "apply_class_breaks_renderer_to_sublayer": {
     "category": "Visualization",
     "description": "Apply a renderer to a sublayer.",
