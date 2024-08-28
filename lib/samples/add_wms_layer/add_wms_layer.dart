@@ -48,7 +48,7 @@ class _AddWmsLayerState extends State<AddWmsLayer> with SampleStateSupport {
     final layerNames = ['conus_base_reflectivity_mosaic'];
     // Create a WMS layer using the URL and list of names.
     final wmsLayer =
-        WmsLayer.withUrlAndLayerNames(uri: uri, layerNames: layerNames);
+        WmsLayer.withUriAndLayerNames(uri: uri, layerNames: layerNames);
     // Load the layer and get its extent.
     await wmsLayer.load();
     final layerExtent = wmsLayer.fullExtent;
