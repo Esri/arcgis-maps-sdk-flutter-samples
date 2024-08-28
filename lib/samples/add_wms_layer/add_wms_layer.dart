@@ -14,6 +14,7 @@
 //
 
 import 'package:arcgis_maps_sdk/arcgis_maps.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_state_support.dart';
 import 'package:flutter/material.dart';
 
 class AddWmsLayer extends StatefulWidget {
@@ -23,7 +24,7 @@ class AddWmsLayer extends StatefulWidget {
   State<AddWmsLayer> createState() => _AddWmsLayerState();
 }
 
-class _AddWmsLayerState extends State<AddWmsLayer> {
+class _AddWmsLayerState extends State<AddWmsLayer> with SampleStateSupport {
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
 
