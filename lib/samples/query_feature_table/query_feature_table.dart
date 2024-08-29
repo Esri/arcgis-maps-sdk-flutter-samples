@@ -127,14 +127,14 @@ class _QueryFeatureTableState extends State<QueryFeatureTable>
     _featureLayer.clearSelection();
 
     // Create query parameters and set the where clause.
-    final queryParameters = QueryParameters();
+    final parameters = QueryParameters();
     final stateName = value.trim();
-    queryParameters.whereClause =
+    parameters.whereClause =
         "upper(STATE_NAME) LIKE '${stateName.toUpperCase().sqlEscape()}%'";
 
     // Query the feature table with the query parameters.
     final queryResult =
-        await _featureTable.queryFeatures(parameters: queryParameters);
+        await _featureTable.queryFeatures(parameters: parameters);
 
     // Get the first feature from the query result.
     final iterator = queryResult.features().iterator;
