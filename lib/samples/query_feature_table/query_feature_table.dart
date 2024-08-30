@@ -134,7 +134,7 @@ class _QueryFeatureTableState extends State<QueryFeatureTable>
 
     // Query the feature table with the query parameters.
     final queryResult =
-        await _featureTable.queryFeatures(parameters: queryParameters);
+        await _featureTable.queryFeatures(queryParameters: queryParameters);
 
     // Get the first feature from the query result.
     final iterator = queryResult.features().iterator;
