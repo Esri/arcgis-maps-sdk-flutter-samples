@@ -154,12 +154,12 @@ class _FilterByDefinitionExpressionOrDisplayFilterState
         .extent;
 
     // Create query parameters.
-    final parameters = QueryParameters();
-    parameters.geometry = extent;
+    final queryParameters = QueryParameters();
+    queryParameters.geometry = extent;
 
     // Query the feature count.
     final featureCount = await _featureLayer.featureTable!
-        .queryFeatureCount(parameters: parameters);
+        .queryFeatureCount(queryParameters: queryParameters);
 
     // Show the feature count in an alert dialog.
     if (mounted) {

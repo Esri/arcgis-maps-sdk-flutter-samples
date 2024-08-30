@@ -246,7 +246,7 @@ class _CreateMobileGeodatabaseState extends State<CreateMobileGeodatabase>
   // Display the attribute table in a dialog.
   void _displayTable() async {
     final queryResult =
-        await _featureTable?.queryFeatures(parameters: QueryParameters());
+        await _featureTable?.queryFeatures(queryParameters: QueryParameters());
 
     final dataRows = <DataRow>[];
     for (final feature in queryResult!.features()) {
