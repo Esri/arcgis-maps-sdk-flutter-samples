@@ -130,19 +130,48 @@ class _GroupLayersTogetherState extends State<GroupLayersTogether>
     );
   }
 
+  static const displayName = <String, String>{
+    'DevelopmentProjectArea': 'Project Area',
+    'DevA_Pathways': 'Pathways',
+  };
+
   Widget buildGroupLayerSettings(GroupLayer groupLayer) {
-    return Row(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text(
-          groupLayer.name,
-          style: Theme.of(context).textTheme.titleMedium,
+        Row(
+          children: [
+            Text(
+              groupLayer.name,
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+            const Spacer(),
+            Switch(
+              value: groupLayer.isVisible,
+              onChanged: (value) {
+                groupLayer.isVisible = value;
+                setState(() {});
+              },
+            ),
+          ],
         ),
-        const Spacer(),
-        Switch(
-          value: groupLayer.isVisible,
-          onChanged: (value) {
-            groupLayer.isVisible = value;
-            setState(() {});
+        ...groupLayer.layers.map(
+          (layer) {
+            return Row(
+              children: [
+                Text(displayName[layer.name] ?? layer.name),
+                const Spacer(),
+                Switch(
+                  value: layer.isVisible,
+                  onChanged: groupLayer.isVisible
+                      ? (value) {
+                          layer.isVisible = value;
+                          setState(() {});
+                        }
+                      : null,
+                ),
+              ],
+            );
           },
         ),
       ],
