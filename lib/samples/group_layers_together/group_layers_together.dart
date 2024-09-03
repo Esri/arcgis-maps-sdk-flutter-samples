@@ -135,6 +135,7 @@ class _GroupLayersTogetherState extends State<GroupLayersTogether>
     'DevA_Pathways': 'Pathways',
   };
 
+  // Create Widgets to control the Group Layer and its layers.
   Widget buildGroupLayerSettings(GroupLayer groupLayer) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -146,6 +147,7 @@ class _GroupLayersTogetherState extends State<GroupLayersTogether>
               style: Theme.of(context).textTheme.titleMedium,
             ),
             const Spacer(),
+            // Create a Switch to toggle the visibility of the Group Layer.
             Switch(
               value: groupLayer.isVisible,
               onChanged: (value) {
@@ -155,12 +157,14 @@ class _GroupLayersTogetherState extends State<GroupLayersTogether>
             ),
           ],
         ),
+        // Create a list of Switches to toggle the visibility of the individual layers.
         ...groupLayer.layers.map(
           (layer) {
             return Row(
               children: [
                 Text(displayName[layer.name] ?? layer.name),
                 const Spacer(),
+                // Create a Switch to toggle the visibility of the individual layer.
                 Switch(
                   value: layer.isVisible,
                   onChanged: groupLayer.isVisible
@@ -179,32 +183,41 @@ class _GroupLayersTogetherState extends State<GroupLayersTogether>
   }
 
   void onMapViewReady() async {
-    //fixme comments
+    // Create a Group Layer for the Project Area Group.
     final projectAreaGroupLayer = GroupLayer()..name = 'Project Area Group';
+    // Create a Feature Layer for the Project Area.
     final projectAreaTable = ServiceFeatureTable.withUri(
       Uri.parse(
         'https://services.arcgis.com/P3ePLMYs2RVChkJx/arcgis/rest/services/DevelopmentProjectArea/FeatureServer/0',
       ),
     );
     final projectAreaLayer = FeatureLayer.withFeatureTable(projectAreaTable);
+    // Create a Feature Layer for the Pathways.
     final pathwaysTable = ServiceFeatureTable.withUri(
       Uri.parse(
         'https://services.arcgis.com/P3ePLMYs2RVChkJx/arcgis/rest/services/DevA_Pathways/FeatureServer/1',
       ),
     );
     final pathwaysLayer = FeatureLayer.withFeatureTable(pathwaysTable);
+    // Add the layers to the Group Layer.
     projectAreaGroupLayer.layers.addAll([projectAreaLayer, pathwaysLayer]);
 
+    // Create a map with the ArcGIS Streets basemap style.
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISStreets);
+    // Add the Group Layers to the map.
     map.operationalLayers.addAll([projectAreaGroupLayer]);
 
+    // Load a layer so that the group layer has a full extent.
     await projectAreaLayer.load();
     if (projectAreaGroupLayer.fullExtent != null) {
+      // Set the initial viewpoint to the full extent of the group layer.
       map.initialViewpoint =
           Viewpoint.fromTargetExtent(projectAreaGroupLayer.fullExtent!);
     }
 
+    // Set the map to the map view.
     _mapViewController.arcGISMap = map;
+    // Set the ready state variable to true to enable the UI.
     setState(() => _ready = true);
   }
 }
