@@ -27,6 +27,7 @@ import 'package:arcgis_maps_sdk_flutter_samples/samples/find_address_with_revers
 import 'package:arcgis_maps_sdk_flutter_samples/samples/find_closest_facility_from_point/find_closest_facility_from_point.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/find_route/find_route.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/generate_offline_map/generate_offline_map.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/samples/group_layers_together/group_layers_together.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/identify_graphics/identify_graphics.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/identify_layer_features/identify_layer_features.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/manage_bookmarks/manage_bookmarks.dart';
@@ -89,6 +90,7 @@ final sampleWidgets = {
       const FindClosestFacilityFromPoint(),
   'find_route': () => const FindRoute(),
   'generate_offline_map': () => const GenerateOfflineMap(),
+  'group_layers_together': () => const GroupLayersTogether(),
   'identify_graphics': () => const IdentifyGraphics(),
   'identify_layer_features': () => const IdentifyLayerFeatures(),
   'manage_bookmarks': () => const ManageBookmarks(),

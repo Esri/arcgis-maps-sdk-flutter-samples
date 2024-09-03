@@ -928,6 +928,28 @@
     "title": "Generate offline map",
     "key": "generate_offline_map"
   },
+  "group_layers_together": {
+    "category": "Layers",
+    "description": "Group a collection of layers together and toggle their visibility as a group.",
+    "ignore": false,
+    "images": [
+      "group_layers_together.png"
+    ],
+    "keywords": [
+      "group layer",
+      "layers",
+      "GroupLayer"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+      "GroupLayer"
+    ],
+    "snippets": [
+      "group_layers_together.dart"
+    ],
+    "title": "Group layers together",
+    "key": "group_layers_together"
+  },
   "identify_graphics": {
     "category": "Visualization",
     "description": "Display an alert message when a graphic is tapped.",
