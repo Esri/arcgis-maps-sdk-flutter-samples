@@ -131,8 +131,21 @@ class _GroupLayersTogetherState extends State<GroupLayersTogether>
   }
 
   Widget buildGroupLayerSettings(GroupLayer groupLayer) {
-    return ListTile(
-      title: Text(groupLayer.name),
+    return Row(
+      children: [
+        Text(
+          groupLayer.name,
+          style: Theme.of(context).textTheme.titleMedium,
+        ),
+        const Spacer(),
+        Switch(
+          value: groupLayer.isVisible,
+          onChanged: (value) {
+            groupLayer.isVisible = value;
+            setState(() {});
+          },
+        ),
+      ],
     );
   }
 
