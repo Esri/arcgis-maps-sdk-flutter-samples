@@ -31,7 +31,7 @@ class _AddWmtsLayerState extends State<AddWmtsLayer> with SampleStateSupport {
   final wmtsServiceUri = Uri.parse(
     'https://sampleserver6.arcgisonline.com/arcgis/rest/services/WorldTimeZones/MapServer/WMTS',
   );
-  // A UI flag to control which layer construtor is currently being used.
+  // A flag indicating which layer constructor is currently being used.
   var _fromUriActive = true;
   // A flag for when the map is ready and controls can be used.
   var _ready = false;
@@ -39,7 +39,6 @@ class _AddWmtsLayerState extends State<AddWmtsLayer> with SampleStateSupport {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // Add a map view to the widget tree and set a controller.
       body: SafeArea(
         top: false,
         child: Stack(
@@ -47,6 +46,7 @@ class _AddWmtsLayerState extends State<AddWmtsLayer> with SampleStateSupport {
             Column(
               children: [
                 Expanded(
+                  // Add a map view to the widget tree and set a controller.
                   child: ArcGISMapView(
                     controllerProvider: () => _mapViewController,
                     onMapViewReady: onMapViewReady,
@@ -94,7 +94,7 @@ class _AddWmtsLayerState extends State<AddWmtsLayer> with SampleStateSupport {
     // Set the ready state variable to false to disable the sample UI.
     setState(() => _ready = false);
 
-    // Create a WMTS Layer using a URI.
+    // Create a WMTS Layer using a URI and layer ID.
     final wmtsLayerFromUri = WmtsLayer.withUri(
       wmtsServiceUri,
       layerId: 'WorldTimeZones',
