@@ -6,6 +6,7 @@ import 'package:arcgis_maps_sdk_flutter_samples/samples/add_tiled_layer/add_tile
 import 'package:arcgis_maps_sdk_flutter_samples/samples/add_tiled_layer_as_basemap/add_tiled_layer_as_basemap.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/add_vector_tiled_layer/add_vector_tiled_layer.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/add_wms_layer/add_wms_layer.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/samples/add_wmts_layer/add_wmts_layer.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/apply_class_breaks_renderer_to_sublayer/apply_class_breaks_renderer_to_sublayer.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/apply_scheduled_updates_to_preplanned_map_area/apply_scheduled_updates_to_preplanned_map_area.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/apply_simple_renderer_to_feature_layer/apply_simple_renderer_to_feature_layer.dart';
@@ -59,6 +60,7 @@ final sampleWidgets = {
   'add_tiled_layer_as_basemap': () => const AddTiledLayerAsBasemap(),
   'add_vector_tiled_layer': () => const AddVectorTiledLayer(),
   'add_wms_layer': () => const AddWmsLayer(),
+  'add_wmts_layer': () => const AddWmtsLayer(),
   'apply_class_breaks_renderer_to_sublayer': () =>
       const ApplyClassBreaksRendererToSublayer(),
   'apply_scheduled_updates_to_preplanned_map_area': () =>
