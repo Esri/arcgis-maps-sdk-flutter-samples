@@ -88,12 +88,11 @@ class _AddWmtsLayerState extends State<AddWmtsLayer> with SampleStateSupport {
   void onMapViewReady() async {
     // Initially display the map with the URI constructor.
     createWmtsLayerFromUri();
+    // Set the ready state variable to true to enable the sample UI.
+    setState(() => _ready = true);
   }
 
   void createWmtsLayerFromUri() {
-    // Set the ready state variable to false to disable the sample UI.
-    setState(() => _ready = false);
-
     // Create a WMTS Layer using a URI and layer ID.
     final wmtsLayerFromUri = WmtsLayer.withUri(
       wmtsServiceUri,
@@ -105,11 +104,8 @@ class _AddWmtsLayerState extends State<AddWmtsLayer> with SampleStateSupport {
     // Set the map to the map view controller.
     _mapViewController.arcGISMap = map;
 
-    // Set the ready state variable to true to enable the sample UI.
-    setState(() {
-      _fromUriActive = true;
-      _ready = true;
-    });
+    // Set flag indicating the constructor being used.
+    setState(() => _fromUriActive = true);
   }
 
   void createWmtsLayerFromLayerInfo() async {
