@@ -118,7 +118,8 @@ class _AddWmtsLayerState extends State<AddWmtsLayer> with SampleStateSupport {
     final service = WmtsService.withUri(wmtsServiceUri);
     await service.load();
     // Once loaded get the layer infos from the service info and create a WMTS layer from the first layer.
-    if (service.serviceInfo != null) {
+    if (service.serviceInfo != null &&
+        service.serviceInfo!.layerInfos.isNotEmpty) {
       final layerInfos = service.serviceInfo!.layerInfos;
       final wmtsFromLayerInfo = WmtsLayer.withLayerInfo(layerInfos.first);
       // Create a basemap using the WMTS layer and set to the map.
