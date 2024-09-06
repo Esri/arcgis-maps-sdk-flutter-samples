@@ -88,7 +88,7 @@ class _EditFeatureAttachmentsState extends State<EditFeatureAttachments>
     final features =
         identifyLayerResult.geoElements.whereType<Feature>().toList();
     if (features.isNotEmpty) {
-      _featureLayer.selectFeatures(features: features);
+      _featureLayer.selectFeatures(features);
       final selectedFeature = features.first as ArcGISFeature;
       if (mounted) _showBottomSheet(selectedFeature);
     }
