@@ -1001,7 +1001,7 @@
     ],
     "redirect_from": [],
     "relevant_apis": [
-      "ArcGISMapViewController.identifyLayerAsync",
+      "ArcGISMapViewController.identifyLayer",
       "IdentifyLayerResult",
       "IdentifyLayerResult.geoElements",
       "WmsFeature",

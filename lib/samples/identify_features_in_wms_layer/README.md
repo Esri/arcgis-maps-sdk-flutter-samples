@@ -24,7 +24,7 @@ Tap a feature to identify it. The HTML content associated with the feature will 
 
 ## Relevant API
 
-* ArcGISMapViewController.identifyLayerAsync
+* ArcGISMapViewController.identifyLayer
 * IdentifyLayerResult
 * IdentifyLayerResult.geoElements
 * WmsFeature
