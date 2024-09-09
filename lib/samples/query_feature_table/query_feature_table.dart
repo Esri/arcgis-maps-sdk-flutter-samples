@@ -147,7 +147,7 @@ class _QueryFeatureTableState extends State<QueryFeatureTable>
           paddingInDiPs: 20.0,
         );
       }
-      _featureLayer.selectFeature(feature: feature);
+      _featureLayer.selectFeature(feature);
     } else {
       // Show an alert dialog if no matching state is found.
       if (mounted) {

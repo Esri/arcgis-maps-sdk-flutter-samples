@@ -261,7 +261,7 @@ class _SetReferenceScaleState extends State<SetReferenceScale>
                       onPressed: () {
                         // Set the map scale to the reference scale and close the settings dialog.
                         _mapViewController.setViewpointScale(
-                          scale: _map.referenceScale,
+                          _map.referenceScale,
                         );
                         setState(() => _bottomSheetVisible = false);
                       },

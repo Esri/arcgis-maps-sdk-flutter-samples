@@ -215,7 +215,7 @@ class _QueryRelatedFeaturesState extends State<QueryRelatedFeatures>
     final features =
         identifyLayerResult.geoElements.whereType<Feature>().toList();
     if (features.isNotEmpty) {
-      _alaskaNationalParksLayer.selectFeatures(features: features);
+      _alaskaNationalParksLayer.selectFeatures(features);
       final selectedFeature = features.first as ArcGISFeature;
       setState(() {
         _layerDataVisible = true;
