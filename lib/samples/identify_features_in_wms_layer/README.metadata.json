@@ -1,0 +1,32 @@
+{
+    "category": "Layers",
+    "description": "Identify features in a WMS layer and display the associated popup content.",
+    "ignore": false,
+    "images": [
+        "identify_features_in_wms_layer.png"
+    ],
+    "keywords": [
+        "OGC",
+        "WMS",
+        "web map service",
+        "ArcGISMapViewController.identifyLayerAsync",
+        "IdentifyLayerResult",
+        "IdentifyLayerResult.geoElements",
+        "WmsFeature",
+        "WmsFeature.attributes",
+        "WmsLayer"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+        "ArcGISMapViewController.identifyLayerAsync",
+        "IdentifyLayerResult",
+        "IdentifyLayerResult.geoElements",
+        "WmsFeature",
+        "WmsFeature.attributes",
+        "WmsLayer"
+    ],
+    "snippets": [
+        "identify_features_in_wms_layer.dart"
+    ],
+    "title": "Identify features in WMS layer"
+}
