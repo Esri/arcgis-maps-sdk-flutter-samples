@@ -2,7 +2,7 @@
 
 Identify features in a WMS layer and display the associated popup content.
 
-![Image of identify features in WMS layer](IdentifyFeaturesInWmsLayer.png)
+![Image of identify features in WMS layer](identify_features_in_wms_layer.png)
 
 ## Use case
 

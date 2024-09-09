@@ -144,7 +144,7 @@ class _IdentifyFeaturesInWmsLayerState extends State<IdentifyFeaturesInWmsLayer>
         final zoomedHtmlContent = updateHtmlInitialScale(htmlContent);
         // Load the HTML content via the web view controller.
         await _webViewController.loadHtmlString(zoomedHtmlContent);
-        // Display a dialog that will display the results.
+        // Configure a dialog that will display the results.
         showResultsDialog();
       }
     }
