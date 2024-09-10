@@ -992,7 +992,7 @@
       "OGC",
       "WMS",
       "web map service",
-      "ArcGISMapViewController.identifyLayerAsync",
+      "ArcGISMapViewController.identifyLayer",
       "IdentifyLayerResult",
       "IdentifyLayerResult.geoElements",
       "WmsFeature",
