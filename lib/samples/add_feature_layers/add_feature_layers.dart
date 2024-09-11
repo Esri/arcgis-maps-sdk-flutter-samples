@@ -24,7 +24,7 @@ import '../../utils/sample_data.dart';
 import '../../utils/sample_state_support.dart';
 
 // Create an enumeration to define the feature layer sources.
-enum Source { url, portalItem, geodatabase, geopackage }
+enum Source { url, portalItem, geodatabase, geopackage, shapefile }
 
 class AddFeatureLayers extends StatefulWidget {
   const AddFeatureLayers({super.key});
@@ -73,6 +73,11 @@ class _AddFeatureLayersState extends State<AddFeatureLayers>
         onTap: loadGeopackage,
         value: Source.geopackage,
         child: const Text('Geopackage'),
+      ),
+      DropdownMenuItem(
+        onTap: loadShapefile,
+        value: Source.shapefile,
+        child: const Text('Shapefile'),
       ),
     ]);
   }
@@ -241,6 +246,35 @@ class _AddFeatureLayersState extends State<AddFeatureLayers>
         latitude: 39.7294,
         longitude: -104.8319,
         scale: 577790.554289,
+      ),
+    );
+  }
+
+  /// Load a feature layer with a local shapefile.
+  void loadShapefile() async {
+    // Download the sample data.
+    await downloadSampleData(['15a7cbd3af1e47cfa5d2c6b93dc44fc2']);
+    // Get the application documents directory.
+    final appDir = await getApplicationDocumentsDirectory();
+    // Get the Shapefile from the download resource.
+    final shapefile = File(
+      '${appDir.absolute.path}/ScottishWildlifeTrust_reserves/ScottishWildlifeTrust_ReserveBoundaries_20201102.shp',
+    );
+    // Create a feature table from the Shapefile URI.
+    final shapefileFeatureTable =
+        ShapefileFeatureTable.withFileUri(shapefile.uri);
+    // Create a feature layer for the Shapefile feature table.
+    final shapefileFeatureLayer =
+        FeatureLayer.withFeatureTable(shapefileFeatureTable);
+    // Clear the operational layers and add the feature layer to the map.
+    _map.operationalLayers.clear();
+    _map.operationalLayers.add(shapefileFeatureLayer);
+    // Set the viewpoint to the feature layer.
+    _mapViewController.setViewpoint(
+      Viewpoint.withLatLongScale(
+        latitude: 56.641344,
+        longitude: -3.889066,
+        scale: 6e6,
       ),
     );
   }
