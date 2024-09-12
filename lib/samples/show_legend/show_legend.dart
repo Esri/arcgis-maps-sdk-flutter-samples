@@ -123,12 +123,14 @@ class _ShowLegendState extends State<ShowLegend> with SampleStateSupport {
       // Add current layer's legends to the dropdown list.
       for (final legend in layerLegends) {
         ArcGISImage? arcGISImage;
+        const symbolSize = Size.square(6);
         // Create a swatch for the legend if the legend exists.
         if (legend.symbol != null) {
           arcGISImage = await legend.symbol!.createSwatch(
             screenScale: screenScale,
             backgroundColor: Colors.transparent,
-            size: const Size.square(6),
+            width: symbolSize.width,
+            height: symbolSize.height,
           );
         }
         // Add the legend to the legends list.
