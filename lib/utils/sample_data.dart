@@ -15,7 +15,7 @@
 //
 
 import 'dart:io';
-import 'package:arcgis_maps_sdk/arcgis_maps.dart';
+import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:flutter_archive/flutter_archive.dart';
 import 'package:http/http.dart';
 import 'package:path_provider/path_provider.dart';

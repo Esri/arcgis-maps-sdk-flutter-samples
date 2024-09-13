@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-import 'package:arcgis_maps_sdk/arcgis_maps.dart';
+import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:flutter/material.dart';
 
 class IdentifyGraphics extends StatefulWidget {
