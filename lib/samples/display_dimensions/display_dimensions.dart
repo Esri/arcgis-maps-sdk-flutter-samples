@@ -13,8 +13,12 @@
 // limitations under the License.
 //
 
+import 'dart:io';
+
 import 'package:arcgis_maps_sdk/arcgis_maps.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_data.dart';
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
 
 class DisplayDimensions extends StatefulWidget {
   const DisplayDimensions({super.key});
@@ -43,18 +47,35 @@ class _DisplayDimensionsState extends State<DisplayDimensions> {
                   child: ArcGISMapView(
                     controllerProvider: () => _mapViewController,
                     onMapViewReady: onMapViewReady,
-                    onTap: onTap,
                   ),
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    // A button to perform a task.
-                    ElevatedButton(
-                      onPressed: performTask,
-                      child: const Text('Perform Task'),
-                    ),
-                  ],
+                Container(
+                  margin: const EdgeInsets.fromLTRB(15, 0, 15, 0),
+                  child: Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text('Dimensions layer'),
+                          Switch(
+                            value: true,
+                            onChanged: (value) {},
+                          ),
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text(
+                              'Definition Expression: Dimensions >= 450m'),
+                          Switch(
+                            value: true,
+                            onChanged: (value) {},
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
@@ -75,16 +96,22 @@ class _DisplayDimensionsState extends State<DisplayDimensions> {
   }
 
   void onMapViewReady() async {
-    final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic);
-    _mapViewController.arcGISMap = map;
-    // Perform some long-running setup task.
-    await Future.delayed(const Duration(seconds: 10));
+    await downloadSampleData(['f5ff6f5556a945bca87ca513b8729a1e']);
+    final appDir = await getApplicationDocumentsDirectory();
+
+    // Load the local mobile map package.
+    final mmpkFile =
+        File('${appDir.absolute.path}/Edinburgh_Pylon_Dimensions.mmpk');
+    final mmpk = MobileMapPackage.withFileUri(mmpkFile.uri);
+    await mmpk.load();
+
+    if (mmpk.maps.isNotEmpty) {
+      // Get the first map in the mobile map package and set to the map view.
+      _mapViewController.arcGISMap = mmpk.maps.first;
+    }
+
     // Set the ready state variable to true to enable the sample UI.
     setState(() => _ready = true);
-  }
-
-  void onTap(Offset offset) {
-    print('Tapped at $offset');
   }
 
   void performTask() async {

@@ -630,6 +630,36 @@
     "title": "Display clusters",
     "key": "display_clusters"
   },
+  "display_dimensions": {
+    "category": "Layers",
+    "description": "Display dimension features from a mobile map package.",
+    "ignore": false,
+    "images": [
+      "display_dimensions.png"
+    ],
+    "keywords": [
+      "definition expression",
+      "dimension",
+      "distance",
+      "layer",
+      "length",
+      "mmpk",
+      "mobile map package",
+      "utility",
+      "DimensionLayer",
+      "MobileMapPackage"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+      "DimensionLayer",
+      "MobileMapPackage"
+    ],
+    "snippets": [
+      "display_dimensions.dart"
+    ],
+    "title": "Display dimensions",
+    "key": "display_dimensions"
+  },
   "display_map": {
     "category": "Maps",
     "description": "Display a map with an imagery basemap.",
@@ -992,7 +1022,7 @@
       "OGC",
       "WMS",
       "web map service",
-      "ArcGISMapViewController.identifyLayer",
+      "ArcGISMapViewController.identifyLayerAsync",
       "IdentifyLayerResult",
       "IdentifyLayerResult.geoElements",
       "WmsFeature",

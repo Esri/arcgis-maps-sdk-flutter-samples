@@ -2,7 +2,7 @@
 
 Display dimension features from a mobile map package.
 
-![Image showing the Display Dimensions sample](DisplayDimensions.png)
+![Image showing the Display Dimensions sample](display_dimensions.png)
 
 ## Use case
 
@@ -10,7 +10,7 @@ Dimensions show specific lengths or distances on a map. A dimension may indicate
 
 ## How to use the sample
 
-When the sample loads, it will automatically display the map containing dimension features from the mobile map package. The name of the dimension layer containing the dimension features is displayed in the controls box. Control the visibility of the dimension layer with the "Dimension Layer visibility" check box, and apply a definition expression to show dimensions greater than or equal to 450m in length using the "Definition Expression" check box.
+When the sample loads, it will automatically display the map containing dimension features from the mobile map package. The name of the dimension layer containing the dimension features is displayed in the controls box. Control the visibility of the dimension layer with the "Dimension Layer visibility" switch, and apply a definition expression to show dimensions greater than or equal to 450m in length using the "Definition Expression" switch.
 
 **Note**: the minimum scale range of the sample is set to 1:35000 to maintain readability of the dimension features.
 
