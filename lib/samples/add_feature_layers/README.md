@@ -31,7 +31,10 @@ Tap the button on the toolbar to add feature layers, from different sources, to 
     i. Instantiate and load a geopackage using its file name.  
     ii. Get the first `GeoPackageFeatureTable` from the `GeoPackageFeatureTables` list.  
     iii. Create a `FeatureLayer` from the feature table.
-6. Add the feature layer to the map's `operationalLayers`.
+6. Load a feature layer with a shapefile.
+    i. Create a `ShapefileFeatureTable` using the shapefile name.
+    ii. Create a `FeatureLayer` from the feature table and load it.
+7. Add the feature layer to the map's `operationalLayers`.
 
 ## Relevant API
 
@@ -40,6 +43,7 @@ Tap the button on the toolbar to add feature layers, from different sources, to 
 * GeoPackage
 * Portal
 * ServiceFeatureTable
+* ShapefileFeatureTable
 
 ## About the data
 
@@ -47,4 +51,4 @@ This sample uses the [Naperville damage assessment service](https://sampleserver
 
 ## Tags
 
-feature, geodatabase, geopackage, layers, service, table
+feature, geodatabase, geopackage, layers, service, shapefile, table
