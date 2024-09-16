@@ -87,7 +87,9 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
                   child: ArcGISMapView(
                     controllerProvider: () => _mapViewController,
                     onMapViewReady: onMapViewReady,
-                    onTap: onTap,
+                    // Only select existing graphics to edit if the geometry editor is not started
+                    // i.e. editing is not already in progress.
+                    onTap: !_geometryEditorIsStarted ? onTap : null,
                   ),
                 ),
                 // Build the bottom menu.
@@ -147,11 +149,6 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
   }
 
   void onTap(Offset localPosition) async {
-    // Only select existing graphics to edit if the geometry editor is not started i.e. editing is not already in progress.
-    if (_geometryEditor.isStarted) {
-      return;
-    }
-
     // Perform an identify operation on the graphics overlay at the tapped location.
     final identifyResult = await _mapViewController.identifyGraphicsOverlay(
       _graphicsOverlay,
