@@ -138,11 +138,13 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
         .listen((canRedo) => setState(() => _geometryEditorCanRedo = canRedo));
     // Listen to changes in isStarted in order to enable/disable the UI.
     _geometryEditor.onIsStartedChanged.listen(
-        (isStarted) => setState(() => _geometryEditorIsStarted = isStarted));
+      (isStarted) => setState(() => _geometryEditorIsStarted = isStarted),
+    );
     // Listen to changes in the selected element in order to enable/disable the UI.
     _geometryEditor.onSelectedElementChanged.listen(
       (selectedElement) => setState(
-          () => _geometryEditorHasSelectedElement = selectedElement != null),
+        () => _geometryEditorHasSelectedElement = selectedElement != null,
+      ),
     );
     // Set the geometry editor to the map view controller.
     _mapViewController.geometryEditor = _geometryEditor;
