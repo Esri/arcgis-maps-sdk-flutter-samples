@@ -402,7 +402,7 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
                       child: const Icon(Icons.undo),
                     ),
                   ),
-                  const SizedBox(width: 2),
+                  const SizedBox(width: 4),
                   // A button to call redo on the geometry editor, if enabled.
                   Tooltip(
                     message: 'Redo',
@@ -428,7 +428,7 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
                       child: const Icon(Icons.save),
                     ),
                   ),
-                  const SizedBox(width: 2),
+                  const SizedBox(width: 4),
                   // A button to delete the selected element on the geometry editor.
                   Tooltip(
                     message: 'Delete selected element',
@@ -457,7 +457,7 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
                       child: const Icon(Icons.not_interested_sharp),
                     ),
                   ),
-                  const SizedBox(width: 2),
+                  const SizedBox(width: 4),
                   // A button to clear all graphics from the graphics overlay.
                   Tooltip(
                     message: 'Delete all graphics',
@@ -487,7 +487,7 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
                           ? Icons.check_box
                           : Icons.check_box_outline_blank,
                     ),
-                    const SizedBox(width: 5),
+                    const SizedBox(width: 10),
                     const Text('Uniform\nScale'),
                   ],
                 ),
