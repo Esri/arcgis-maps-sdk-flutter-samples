@@ -25,7 +25,7 @@ Use the control panel to undo or redo changes made to the geometry, delete a sel
 ## How it works
 
 1. Create a `GeometryEditor` and set it to the map view controller's `geometryEditor` property.
-2. Start the `GeometryEditor` using `GeometryEditor.startWithGeometryType(GeometryType)` to create a new geometry or `GeometryEditor.startWithGeometry(Geomtry)` to edit an existing geometry.
+2. Start the `GeometryEditor` using `GeometryEditor.startWithGeometryType(GeometryType)` to create a new geometry or `GeometryEditor.startWithGeometry(Geometry)` to edit an existing geometry.
     * If using the Geometry Editor to edit an existing geometry, the geometry must be retrieved from the graphics overlay being used to visualize the geometry prior to calling the start method. To do this:
         * Use `ArcGISMapViewController.identifyGraphicsOverlay(...)` to identify graphics at the location of a tap.
         * Await the `IdentifyGraphicsOverlayResult` result.
