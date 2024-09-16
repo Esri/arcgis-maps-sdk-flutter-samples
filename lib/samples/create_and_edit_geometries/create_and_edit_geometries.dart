@@ -182,12 +182,10 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
     }
   }
 
-  void startEditingWithGeometryType(GeometryType? geometryType) {
-    if (geometryType != null) {
-      // Set the selected geometry type.
-      setState(() => _selectedGeometryType = geometryType);
-      _geometryEditor.startWithGeometryType(geometryType);
-    }
+  void startEditingWithGeometryType(GeometryType geometryType) {
+    // Set the selected geometry type.
+    setState(() => _selectedGeometryType = geometryType);
+    _geometryEditor.startWithGeometryType(geometryType);
   }
 
   void stopAndSave() {
@@ -354,10 +352,10 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
           value: _selectedGeometryType,
           items: configureGeometryTypeMenuItems(),
           // If the geometry editor is already started then we don't enable editing with another geometry type.
-          onChanged: !_geometryEditorIsStarted
-              ? (geometryType) =>
-                  startEditingWithGeometryType(geometryType as GeometryType)
-              : null,
+          onChanged: (geometryType) =>
+              !_geometryEditorIsStarted && geometryType != null
+                  ? startEditingWithGeometryType(geometryType)
+                  : null,
         ),
         // A drop down button for selecting a tool.
         DropdownButton(
