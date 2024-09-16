@@ -233,14 +233,6 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
     setState(() => _selectedGeometryType = null);
   }
 
-  void deleteSelectedElement() {
-    // Delete the selected element on the geometry editor, if allowed.
-    if (_geometryEditor.selectedElement != null &&
-        _geometryEditor.selectedElement!.canDelete) {
-      _geometryEditor.deleteSelectedElement();
-    }
-  }
-
   void toggleScale() {
     // Toggle the selected scale mode and then update each tool with the new value.
     setState(
@@ -443,8 +435,10 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
                     child: ElevatedButton(
                       style: _buttonStyle,
                       onPressed: _geometryEditorIsStarted &&
-                              _geometryEditorHasSelectedElement
-                          ? deleteSelectedElement
+                              _geometryEditorHasSelectedElement &&
+                              _geometryEditor.selectedElement != null &&
+                              _geometryEditor.selectedElement!.canDelete
+                          ? () => _geometryEditor.deleteSelectedElement()
                           : null,
                       child: const Icon(Icons.clear),
                     ),
