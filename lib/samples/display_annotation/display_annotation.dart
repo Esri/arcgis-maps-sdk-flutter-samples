@@ -37,72 +37,49 @@ class DisplayAnnotation extends StatefulWidget {
 class _DisplayAnnotationState extends State<DisplayAnnotation> {
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
-  // A flag for when the map view is ready and controls can be used.
-  var _ready = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        top: false,
-        child: Stack(
-          children: [
-            Column(
-              children: [
-                Expanded(
-                  // Add a map view to the widget tree and set a controller.
-                  child: ArcGISMapView(
-                    controllerProvider: () => _mapViewController,
-                    onMapViewReady: onMapViewReady,
-                    onTap: onTap,
-                  ),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    // A button to perform a task.
-                    ElevatedButton(
-                      onPressed: performTask,
-                      child: const Text('Perform Task'),
-                    ),
-                  ],
-                ),
-              ],
+      body: Column(
+        children: [
+          Expanded(
+            // Add a map view to the widget tree and set a controller.
+            child: ArcGISMapView(
+              controllerProvider: () => _mapViewController,
+              onMapViewReady: onMapViewReady,
             ),
-            // Display a progress indicator and prevent interaction until state is ready.
-            Visibility(
-              visible: !_ready,
-              child: const SizedBox.expand(
-                child: ColoredBox(
-                  color: Colors.white30,
-                  child: Center(child: CircularProgressIndicator()),
-                ),
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 
-  void onMapViewReady() async {
-    final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic);
+  void onMapViewReady() {
+    // Create a map with a Basemap style and an initial viewpoint.
+    final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISLightGray);
+    map.initialViewpoint = Viewpoint.withLatLongScale(
+      latitude: 55.882436,
+      longitude: -2.725610,
+      scale: 72223.819286,
+    );
+
+    // Add a FeatureLayer from the East Lothian Rivers service.
+    const riverService =
+        'https://services1.arcgis.com/6677msI40mnLuuLr/arcgis/rest/services/East_Lothian_Rivers/FeatureServer/0';
+    final featureLayer = FeatureLayer.withFeatureTable(
+      ServiceFeatureTable.withUri(Uri.parse(riverService)),
+    );
+    map.operationalLayers.add(featureLayer);
+
+    // Add an AnnotationLayer from the river annotation service.
+    const riverAnnotationService =
+        'https://sampleserver6.arcgisonline.com/arcgis/rest/services/RiversAnnotation/FeatureServer/0';
+    final annotationLayer =
+        AnnotationLayer.withUri(Uri.parse(riverAnnotationService));
+    map.operationalLayers.add(annotationLayer);
+
+    // Set the map to the map view.
     _mapViewController.arcGISMap = map;
-    // Perform some long-running setup task.
-    await Future.delayed(const Duration(seconds: 10));
-    // Set the ready state variable to true to enable the sample UI.
-    setState(() => _ready = true);
-  }
-
-  void onTap(Offset offset) {
-    print('Tapped at $offset');
-  }
-
-  void performTask() async {
-    setState(() => _ready = false);
-    // Perform some task.
-    print('Perform task');
-    await Future.delayed(const Duration(seconds: 5));
-    setState(() => _ready = true);
   }
 }
