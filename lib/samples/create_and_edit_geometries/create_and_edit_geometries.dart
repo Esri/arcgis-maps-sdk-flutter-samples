@@ -346,10 +346,13 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
           value: _selectedGeometryType,
           items: configureGeometryTypeMenuItems(),
           // If the geometry editor is already started then we don't enable editing with another geometry type.
-          onChanged: (geometryType) =>
-              !_geometryEditorIsStarted && geometryType != null
-                  ? startEditingWithGeometryType(geometryType)
-                  : null,
+          onChanged: _geometryEditorIsStarted
+              ? null
+              : (geometryType) => geometryType == null
+                  ? null
+                  : startEditingWithGeometryType(
+                      geometryType as GeometryType,
+                    ),
         ),
         // A drop down button for selecting a tool.
         DropdownButton(
