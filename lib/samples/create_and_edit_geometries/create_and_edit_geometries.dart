@@ -239,7 +239,7 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
       () => _selectedScaleMode =
           _selectedScaleMode == GeometryEditorScaleMode.uniform
               ? GeometryEditorScaleMode.stretch
-              : _selectedScaleMode = GeometryEditorScaleMode.uniform,
+              : GeometryEditorScaleMode.uniform,
     );
     _vertexTool.configuration.scaleMode = _selectedScaleMode;
     _freehandTool.configuration.scaleMode = _selectedScaleMode;
