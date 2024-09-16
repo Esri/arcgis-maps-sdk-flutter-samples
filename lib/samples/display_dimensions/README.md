@@ -17,10 +17,11 @@ When the sample loads, it will automatically display the map containing dimensio
 ## How it works
 
 1. Create a `MobileMapPackage` specifying the path to the .mmpk file.
-2. Load the mobile map package (mmpk) with `mmpk.loadAsync()`.
-3. After the mmpk successfully loads, get the map from the mmpk and add it to the map view: `mapView.setMap(mmpk.getMaps().get(0))`.
-4. Loop through the map's layers to find the `DimensionLayer` and set the name of the layer to the UI with `dimensionLayer.getName()`.
-5. Control the dimension layer's visibility with `dimensionLayer.setVisible(boolean)` and set a definition expression with `dimensionLayer.setDefinitionExpression(String)`.
+2. Load the mobile map package (mmpk) with `mmpk.load()`.
+3. After the mmpk successfully loads, get the map from the mmpk `map = mmpk.maps.first`.
+4. Loop through the map's layers to find the `DimensionLayer` and get the layer name to display on the UI with `_dimensionsLayer.name`.
+4. Add the map to the map view: `mapViewController.arcGISMap = map`
+5. Control the dimension layer's visibility with `dimensionLayer.isVisible = <bool>` and set a definition expression with `dimensionLayer.definitionExpression = <String>`.
 
 ## Relevant API
 
@@ -33,7 +34,7 @@ This sample shows a subset of the network of pylons, substations, and power line
 
 ## Additional information
 
-Dimension layers can be taken offline from a feature service hosted on ArcGIS Enterprise 10.9 or later, using the [GeodatabaseSyncTask](https://developers.arcgis.com/java/api-reference/reference/com/esri/arcgisruntime/tasks/geodatabase/GeodatabaseSyncTask.html). Dimension layers are also supported in mobile map packages or mobile geodatabases created in ArcGIS Pro 2.9 or later.
+Dimension layers can be taken offline from a feature service hosted on ArcGIS Enterprise 10.9 or later, using the `GeodatabaseSyncTask`. Dimension layers are also supported in mobile map packages or mobile geodatabases created in ArcGIS Pro 2.9 or later.
 
 ## Tags
 

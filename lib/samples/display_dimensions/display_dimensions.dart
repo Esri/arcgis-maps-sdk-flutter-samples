@@ -15,7 +15,7 @@
 
 import 'dart:io';
 
-import 'package:arcgis_maps_sdk/arcgis_maps.dart';
+import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_data.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
@@ -36,6 +36,7 @@ class _DisplayDimensionsState extends State<DisplayDimensions> {
 
   // The DimensionsLayer showing the dimensions on the map.
   late final DimensionLayer _dimensionsLayer;
+  var _dimensionsLayerName = '';
 
   // Toggle states for the dimensions layer and definition expression.
   var _showDimensionsLayer = true;
@@ -64,10 +65,17 @@ class _DisplayDimensionsState extends State<DisplayDimensions> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
+                          const Text('Dimensions layer name: '),
+                          Text(_dimensionsLayerName),
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
                           const Text('Dimensions layer'),
                           Switch(
                             value: _showDimensionsLayer,
-                            onChanged: (value) => showDimensionsLayer(value),
+                            onChanged: showDimensionsLayer,
                           ),
                         ],
                       ),
@@ -79,8 +87,7 @@ class _DisplayDimensionsState extends State<DisplayDimensions> {
                           ),
                           Switch(
                             value: _isDefinitionExpressionApplied,
-                            onChanged: (value) =>
-                                applyDefinitionExpression(value),
+                            onChanged: applyDefinitionExpression,
                           ),
                         ],
                       ),
@@ -142,7 +149,10 @@ class _DisplayDimensionsState extends State<DisplayDimensions> {
     }
 
     // Set the ready state variable to true to enable the sample UI.
-    setState(() => _ready = true);
+    setState(() {
+      _dimensionsLayerName = _dimensionsLayer.name;
+      _ready = true;
+    });
   }
 
   void showDimensionsLayer(bool show) {
