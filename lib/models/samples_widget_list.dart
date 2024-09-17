@@ -20,6 +20,7 @@ import 'package:arcgis_maps_sdk_flutter_samples/samples/cut_geometry/cut_geometr
 import 'package:arcgis_maps_sdk_flutter_samples/samples/densify_and_generalize_geometry/densify_and_generalize_geometry.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/display_annotation/display_annotation.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/display_clusters/display_clusters.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/samples/display_dimensions/display_dimensions.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/display_map/display_map.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/display_map_from_mobile_map_package/display_map_from_mobile_map_package.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/download_preplanned_map_area/download_preplanned_map_area.dart';
@@ -82,6 +83,7 @@ final sampleWidgets = {
   'densify_and_generalize_geometry': () => const DensifyAndGeneralizeGeometry(),
   'display_annotation': () => const DisplayAnnotation(),
   'display_clusters': () => const DisplayClusters(),
+  'display_dimensions': () => const DisplayDimensions(),
   'display_map': () => const DisplayMap(),
   'display_map_from_mobile_map_package': () =>
       const DisplayMapFromMobileMapPackage(),
