@@ -11,12 +11,14 @@
         "geopackage",
         "layers",
         "service",
+        "shapefile",
         "table",
         "FeatureLayer",
         "GeoPackage",
         "Geodatabase",
         "Portal",
-        "ServiceFeatureTable"
+        "ServiceFeatureTable",
+        "ShapefileFeatureTable"
     ],
     "redirect_from": [],
     "relevant_apis": [
@@ -24,7 +26,8 @@
         "GeoPackage",
         "Geodatabase",
         "Portal",
-        "ServiceFeatureTable"
+        "ServiceFeatureTable",
+        "ShapefileFeatureTable"
     ],
     "snippets": [
         "add_feature_layers.dart"

@@ -349,7 +349,7 @@ class _DensifyAndGeneralizeGeometryState
   Multipoint multipointFromPolyline(Polyline polyline) {
     // Create a MutablePointCollection and add all the points of the polyline.
     final mutablePointCollection =
-        MutablePointCollection.withSpatialReference(polyline.spatialReference);
+        MutablePointCollection(spatialReference: polyline.spatialReference);
     for (final part in polyline.parts) {
       for (final point in part.getPoints()) {
         mutablePointCollection.addPoint(point);
