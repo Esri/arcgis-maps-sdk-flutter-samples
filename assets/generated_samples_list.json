@@ -472,6 +472,40 @@
     "title": "Authenticate with token",
     "key": "authenticate_with_token"
   },
+  "create_and_edit_geometries": {
+    "category": "Maps",
+    "description": "Use the Geometry Editor to create new point, multipoint, polyline, or polygon geometries or to edit existing geometries by interacting with a map view.",
+    "ignore": false,
+    "images": [
+      "create_and_edit_geometries.png"
+    ],
+    "keywords": [
+      "draw",
+      "edit",
+      "freehand",
+      "geometry editor",
+      "sketch",
+      "vertex",
+      "ArcGISMapView",
+      "Geometry",
+      "GeometryEditor",
+      "Graphic",
+      "GraphicsOverlay"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+      "ArcGISMapView",
+      "Geometry",
+      "GeometryEditor",
+      "Graphic",
+      "GraphicsOverlay"
+    ],
+    "snippets": [
+      "create_and_edit_geometries.dart"
+    ],
+    "title": "Create and edit geometries",
+    "key": "create_and_edit_geometries"
+  },
   "create_mobile_geodatabase": {
     "category": "Edit and Manage Data",
     "description": "Create and share a mobile geodatabase.",
@@ -602,6 +636,35 @@
     ],
     "title": "Densify and generalize geometry",
     "key": "densify_and_generalize_geometry"
+  },
+  "display_annotation": {
+    "category": "Layers",
+    "description": "Display annotation from a feature service URL.",
+    "ignore": false,
+    "images": [
+      "display_annotation.png"
+    ],
+    "keywords": [
+      "annotation",
+      "cartography",
+      "labels",
+      "placement",
+      "reference scale",
+      "text",
+      "utility",
+      "AnnotationLayer",
+      "FeatureLayer"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+      "AnnotationLayer",
+      "FeatureLayer"
+    ],
+    "snippets": [
+      "display_annotation.dart"
+    ],
+    "title": "Display annotation",
+    "key": "display_annotation"
   },
   "display_clusters": {
     "category": "Layers",
