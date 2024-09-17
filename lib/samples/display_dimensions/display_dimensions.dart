@@ -128,11 +128,8 @@ class _DisplayDimensionsState extends State<DisplayDimensions> {
       final map = mmpk.maps.first;
 
       // Get the dimensions layer from the map's operational layers.
-      for (final layer in map.operationalLayers) {
-        if (layer is DimensionLayer) {
-          _dimensionsLayer = layer;
-        }
-      }
+      _dimensionsLayer =
+          map.operationalLayers.whereType<DimensionLayer>().first;
 
       // Set an initial viewpoint for the map.
       map.initialViewpoint = Viewpoint.fromCenter(
