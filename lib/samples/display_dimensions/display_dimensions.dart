@@ -37,14 +37,14 @@ class _DisplayDimensionsState extends State<DisplayDimensions>
   // A flag for when the map view is ready and controls can be used.
   var _ready = false;
 
-  // The DimensionsLayer showing the dimensions on the map.
+  // The DimensionLayer showing the dimensions on the map.
   late final DimensionLayer _dimensionLayer;
 
   // The state variable to show the name of the dimension layer.
   var _dimensionLayerName = '';
 
   // Switch states for the dimension layer and definition expression.
-  var _showDimensionsLayer = true;
+  var _showDimensionLayer = true;
   var _isDefinitionExpressionApplied = false;
 
   @override
@@ -70,17 +70,17 @@ class _DisplayDimensionsState extends State<DisplayDimensions>
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Text('Dimensions layer name: '),
+                          const Text('Dimension layer name: '),
                           Text(_dimensionLayerName),
                         ],
                       ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Text('Dimensions layer'),
+                          const Text('Dimension layer'),
                           Switch(
-                            value: _showDimensionsLayer,
-                            onChanged: showDimensionsLayer,
+                            value: _showDimensionLayer,
+                            onChanged: showDimensionLayer,
                           ),
                         ],
                       ),
@@ -157,9 +157,9 @@ class _DisplayDimensionsState extends State<DisplayDimensions>
   }
 
   // Function that shows or hides the dimension layer on the map.
-  void showDimensionsLayer(bool show) {
+  void showDimensionLayer(bool show) {
     _dimensionLayer.isVisible = show;
-    setState(() => _showDimensionsLayer = show);
+    setState(() => _showDimensionLayer = show);
   }
 
   // Function that applies or removes the definition expression to the dimension layer.
