@@ -16,16 +16,7 @@
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:flutter/material.dart';
 
-void main() async {
-  // Supply your apiKey using the --dart-define-from-file command line argument
-  ArcGISEnvironment.apiKey = const String.fromEnvironment('API_KEY');
-
-  runApp(
-    const MaterialApp(
-      home: DisplayAnnotation(),
-    ),
-  );
-}
+import '../../utils/sample_state_support.dart';
 
 class DisplayAnnotation extends StatefulWidget {
   const DisplayAnnotation({super.key});
@@ -34,7 +25,8 @@ class DisplayAnnotation extends StatefulWidget {
   State<DisplayAnnotation> createState() => _DisplayAnnotationState();
 }
 
-class _DisplayAnnotationState extends State<DisplayAnnotation> with SampleStateSupport {
+class _DisplayAnnotationState extends State<DisplayAnnotation>
+    with SampleStateSupport {
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
 
