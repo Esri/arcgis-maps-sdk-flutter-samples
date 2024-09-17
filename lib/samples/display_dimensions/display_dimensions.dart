@@ -16,9 +16,11 @@
 import 'dart:io';
 
 import 'package:arcgis_maps/arcgis_maps.dart';
-import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_data.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
+
+import '../../utils/sample_data.dart';
+import '../../utils/sample_state_support.dart';
 
 class DisplayDimensions extends StatefulWidget {
   const DisplayDimensions({super.key});
@@ -27,7 +29,8 @@ class DisplayDimensions extends StatefulWidget {
   State<DisplayDimensions> createState() => _DisplayDimensionsState();
 }
 
-class _DisplayDimensionsState extends State<DisplayDimensions> {
+class _DisplayDimensionsState extends State<DisplayDimensions>
+    with SampleStateSupport {
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
 
@@ -35,12 +38,12 @@ class _DisplayDimensionsState extends State<DisplayDimensions> {
   var _ready = false;
 
   // The DimensionsLayer showing the dimensions on the map.
-  late final DimensionLayer _dimensionsLayer;
+  late final DimensionLayer _dimensionLayer;
 
-  // The state variable to show the name of the dimensions layer.
-  var _dimensionsLayerName = '';
+  // The state variable to show the name of the dimension layer.
+  var _dimensionLayerName = '';
 
-  // Switch states for the dimensions layer and definition expression.
+  // Switch states for the dimension layer and definition expression.
   var _showDimensionsLayer = true;
   var _isDefinitionExpressionApplied = false;
 
@@ -68,7 +71,7 @@ class _DisplayDimensionsState extends State<DisplayDimensions> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           const Text('Dimensions layer name: '),
-                          Text(_dimensionsLayerName),
+                          Text(_dimensionLayerName),
                         ],
                       ),
                       Row(
@@ -129,9 +132,8 @@ class _DisplayDimensionsState extends State<DisplayDimensions> {
       // Get the first map in the mobile map package and set to the map view.
       final map = mmpk.maps.first;
 
-      // Get the dimensions layer from the map's operational layers.
-      _dimensionsLayer =
-          map.operationalLayers.whereType<DimensionLayer>().first;
+      // Get the dimension layer from the map's operational layers.
+      _dimensionLayer = map.operationalLayers.whereType<DimensionLayer>().first;
 
       // Set an initial viewpoint for the map.
       map.initialViewpoint = Viewpoint.fromCenter(
@@ -149,21 +151,21 @@ class _DisplayDimensionsState extends State<DisplayDimensions> {
 
     // Set the ready state variable to true to enable the sample UI.
     setState(() {
-      _dimensionsLayerName = _dimensionsLayer.name;
+      _dimensionLayerName = _dimensionLayer.name;
       _ready = true;
     });
   }
 
-  // Function that shows or hides the dimensions layer on the map.
+  // Function that shows or hides the dimension layer on the map.
   void showDimensionsLayer(bool show) {
-    _dimensionsLayer.isVisible = show;
+    _dimensionLayer.isVisible = show;
     setState(() => _showDimensionsLayer = show);
   }
 
-  // Function that applies or removes the definition expression to the dimensions layer.
+  // Function that applies or removes the definition expression to the dimension layer.
   void applyDefinitionExpression(bool apply) {
     final definitionExpression = apply ? 'DIMLENGTH >= 450' : '';
-    _dimensionsLayer.definitionExpression = definitionExpression;
+    _dimensionLayer.definitionExpression = definitionExpression;
     setState(() => _isDefinitionExpressionApplied = apply);
   }
 }
