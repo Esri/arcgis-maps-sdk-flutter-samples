@@ -637,6 +637,35 @@
     "title": "Densify and generalize geometry",
     "key": "densify_and_generalize_geometry"
   },
+  "display_annotation": {
+    "category": "Layers",
+    "description": "Display annotation from a feature service URL.",
+    "ignore": false,
+    "images": [
+      "display_annotation.png"
+    ],
+    "keywords": [
+      "annotation",
+      "cartography",
+      "labels",
+      "placement",
+      "reference scale",
+      "text",
+      "utility",
+      "AnnotationLayer",
+      "FeatureLayer"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+      "AnnotationLayer",
+      "FeatureLayer"
+    ],
+    "snippets": [
+      "display_annotation.dart"
+    ],
+    "title": "Display annotation",
+    "key": "display_annotation"
+  },
   "display_clusters": {
     "category": "Layers",
     "description": "Display a web map with a point feature layer that has feature reduction enabled to aggregate points into clusters.",
