@@ -36,9 +36,11 @@ class _DisplayDimensionsState extends State<DisplayDimensions> {
 
   // The DimensionsLayer showing the dimensions on the map.
   late final DimensionLayer _dimensionsLayer;
+
+  // The state variable to show the name of the dimensions layer.
   var _dimensionsLayerName = '';
 
-  // Toggle states for the dimensions layer and definition expression.
+  // Switch states for the dimensions layer and definition expression.
   var _showDimensionsLayer = true;
   var _isDefinitionExpressionApplied = false;
 
@@ -152,11 +154,13 @@ class _DisplayDimensionsState extends State<DisplayDimensions> {
     });
   }
 
+  // Function that shows or hides the dimensions layer on the map.
   void showDimensionsLayer(bool show) {
     _dimensionsLayer.isVisible = show;
     setState(() => _showDimensionsLayer = show);
   }
 
+  // Function that applies or removes the definition expression to the dimensions layer.
   void applyDefinitionExpression(bool apply) {
     final definitionExpression = apply ? 'DIMLENGTH >= 450' : '';
     _dimensionsLayer.definitionExpression = definitionExpression;
