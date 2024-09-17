@@ -34,7 +34,7 @@ class DisplayAnnotation extends StatefulWidget {
   State<DisplayAnnotation> createState() => _DisplayAnnotationState();
 }
 
-class _DisplayAnnotationState extends State<DisplayAnnotation> {
+class _DisplayAnnotationState extends State<DisplayAnnotation> with SampleStateSupport {
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
 
