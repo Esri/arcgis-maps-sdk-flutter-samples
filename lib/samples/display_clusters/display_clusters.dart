@@ -111,7 +111,7 @@ class _DisplayClustersState extends State<DisplayClusters>
         _map.operationalLayers.first is FeatureLayer) {
       // Get the first layer from the web map a feature layer.
       _featureLayer = _map.operationalLayers.first as FeatureLayer;
-      if (_featureLayer.featureReduction == null) {
+      if (_featureLayer.featureReduction != null) {
         // Set the ready state variable to true to enable the sample UI.
         // Set the feature reduction flag to the current state of the feature
         setState(() {
