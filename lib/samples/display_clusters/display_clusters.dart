@@ -32,6 +32,8 @@ class _DisplayClustersState extends State<DisplayClusters>
   final _mapViewController = ArcGISMapView.createController();
   late ArcGISMap _map;
   late FeatureLayer _featureLayer;
+  // A flag to track whether feature clustering is enabled to display in the UI.
+  var _featureReductionEnabled = false;
   // A flag for when the map view is ready and controls can be used.
   var _ready = false;
 
@@ -52,12 +54,24 @@ class _DisplayClustersState extends State<DisplayClusters>
                     onTap: onTap,
                   ),
                 ),
-                Center(
-                  // Create a button to toggle feature clustering.
-                  child: ElevatedButton(
-                    onPressed: toggleFeatureClustering,
-                    child: const Text('Toggle feature clustering'),
-                  ),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    // Add a button to toggle feature clustering.
+                    ElevatedButton(
+                      onPressed: toggleFeatureClustering,
+                      child: const Text('Toggle feature clustering'),
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    // Display the current feature reduction state.
+                    Text(
+                      _featureReductionEnabled == true
+                          ? 'Feature Reduction: On'
+                          : 'Feature Reduction: Off',
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -97,11 +111,21 @@ class _DisplayClustersState extends State<DisplayClusters>
         _map.operationalLayers.first is FeatureLayer) {
       // Get the first layer from the web map a feature layer.
       _featureLayer = _map.operationalLayers.first as FeatureLayer;
+      if (_featureLayer.featureReduction == null) {
+        // Set the ready state variable to true to enable the sample UI.
+        // Set the feature reduction flag to the current state of the feature
+        setState(() {
+          _ready = true;
+          _featureReductionEnabled = _featureLayer.featureReduction!.enabled;
+        });
+      } else {
+        showWarningDialog(
+          'Feature layer does not have feature reduction enabled.',
+        );
+      }
     } else {
-      showWarningDialog();
+      showWarningDialog('Unable to access a feature layer on the web map.');
     }
-    // Set the ready state variable to true to enable the sample UI.
-    setState(() => _ready = true);
   }
 
   void onTap(Offset localPosition) async {
@@ -167,22 +191,23 @@ class _DisplayClustersState extends State<DisplayClusters>
   }
 
   void toggleFeatureClustering() {
-    // Check if the feature layer has feature reduction.
     if (_featureLayer.featureReduction != null) {
       // Toggle the feature reduction.
-      _featureLayer.featureReduction!.enabled =
-          !_featureLayer.featureReduction!.enabled;
+      final featureReduction = _featureLayer.featureReduction!;
+      featureReduction.enabled = !featureReduction.enabled;
+      setState(() => _featureReductionEnabled = featureReduction.enabled);
     }
   }
 
-  void showWarningDialog() {
+  void showWarningDialog(String message) {
+    // Show a dialog with the provided message.
     showDialog(
       context: context,
       builder: (context) {
-        return const AlertDialog(
-          title: Text('Warning'),
+        return AlertDialog(
+          title: const Text('Warning'),
           content: Text(
-            'Unable to access a feature layer on the web map.',
+            '$message Could not load sample.',
           ),
         );
       },
