@@ -31,6 +31,9 @@ class _DisplayClustersState extends State<DisplayClusters>
   // Create a map view controller.
   final _mapViewController = ArcGISMapView.createController();
   late ArcGISMap _map;
+  late FeatureLayer _featureLayer;
+  // A flag to track whether feature clustering is enabled to display in the UI.
+  var _featureReductionEnabled = false;
   // A flag for when the map view is ready and controls can be used.
   var _ready = false;
 
@@ -48,14 +51,27 @@ class _DisplayClustersState extends State<DisplayClusters>
                   child: ArcGISMapView(
                     controllerProvider: () => _mapViewController,
                     onMapViewReady: onMapViewReady,
+                    onTap: onTap,
                   ),
                 ),
-                Center(
-                  // Create a button to toggle feature clustering.
-                  child: ElevatedButton(
-                    onPressed: toggleFeatureClustering,
-                    child: const Text('Toggle feature clustering'),
-                  ),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    // Add a button to toggle feature clustering.
+                    ElevatedButton(
+                      onPressed: toggleFeatureClustering,
+                      child: const Text('Toggle feature clustering'),
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    // Display the current feature reduction state.
+                    Text(
+                      _featureReductionEnabled
+                          ? 'Feature Reduction: On'
+                          : 'Feature Reduction: Off',
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -90,22 +106,111 @@ class _DisplayClustersState extends State<DisplayClusters>
     _mapViewController.arcGISMap = _map;
     // Load the map.
     await _map.load();
-    // Set the ready state variable to true to enable the sample UI.
-    setState(() => _ready = true);
+    // Get the power plant feature layer once the map has finished loading.
+    if (_map.operationalLayers.isNotEmpty &&
+        _map.operationalLayers.first is FeatureLayer) {
+      // Get the first layer from the web map a feature layer.
+      _featureLayer = _map.operationalLayers.first as FeatureLayer;
+      if (_featureLayer.featureReduction != null) {
+        // Set the ready state variable to true to enable the sample UI.
+        // Set the feature reduction flag to the current state of the feature
+        setState(() {
+          _ready = true;
+          _featureReductionEnabled = _featureLayer.featureReduction!.enabled;
+        });
+      } else {
+        showWarningDialog(
+          'Feature layer does not have feature reduction enabled.',
+        );
+      }
+    } else {
+      showWarningDialog('Unable to access a feature layer on the web map.');
+    }
+  }
+
+  void onTap(Offset localPosition) async {
+    // Clear any existing selected features.
+    _featureLayer.clearSelection();
+    // Perform an identify result on the map view controller, using the feature layer and tapped location.
+    final identifyLayerResult = await _mapViewController.identifyLayer(
+      _featureLayer,
+      screenPoint: localPosition,
+      tolerance: 12.0,
+    );
+    // Get the aggregate geoelements from the identify result.
+    final aggregateGeoElements =
+        identifyLayerResult.geoElements.whereType<AggregateGeoElement>();
+    if (aggregateGeoElements.isEmpty) return;
+    // Select the first aggregate geoelement.
+    final aggregateGeoElement = aggregateGeoElements.first;
+    aggregateGeoElement.isSelected = true;
+
+    // Get the list of geoelements associated with the aggregate geoelement.
+    final geoElements = await aggregateGeoElement.getGeoElements();
+    // Display a dialog with information about the geoelements.
+    showResultsDialog(geoElements);
+  }
+
+  void showResultsDialog(List<GeoElement> geoElements) {
+    // Create a dialog that lists the count and names of the provided list of geoelements.
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Contained GeoElements'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Total GeoElements: ${geoElements.length}',
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+              const SizedBox(height: 10),
+              SizedBox(
+                height: 200,
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: geoElements
+                        .map(
+                          (geoElement) => Text(
+                            geoElement.attributes['name'] ??
+                                'Geoelement: ${geoElements.indexOf(geoElement)}}',
+                          ),
+                        )
+                        .toList(),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   void toggleFeatureClustering() {
-    // Check if the map has operational layers and the first layer is a feature layer.
-    if (_map.operationalLayers.isNotEmpty &&
-        _map.operationalLayers.first is FeatureLayer) {
-      // Get the first layer as a feature layer.
-      final featureLayer = _map.operationalLayers.first as FeatureLayer;
-      // Check if the feature layer has feature reduction.
-      if (featureLayer.featureReduction != null) {
-        // Toggle the feature reduction.
-        featureLayer.featureReduction!.enabled =
-            !featureLayer.featureReduction!.enabled;
-      }
+    if (_featureLayer.featureReduction != null) {
+      // Toggle the feature reduction.
+      final featureReduction = _featureLayer.featureReduction!;
+      featureReduction.enabled = !featureReduction.enabled;
+      setState(() => _featureReductionEnabled = featureReduction.enabled);
     }
+  }
+
+  void showWarningDialog(String message) {
+    // Show a dialog with the provided message.
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Warning'),
+          content: Text(
+            '$message Could not load sample.',
+          ),
+        );
+      },
+    );
   }
 }

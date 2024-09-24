@@ -14,13 +14,19 @@
         "normalize",
         "reduce",
         "summarize",
+        "AggregateGeoElement",
         "FeatureLayer",
-        "FeatureReduction"
+        "FeatureReduction",
+        "GeoElement",
+        "IdentifyLayerResult"
     ],
     "redirect_from": [],
     "relevant_apis": [
+        "AggregateGeoElement",
         "FeatureLayer",
-        "FeatureReduction"
+        "FeatureReduction",
+        "GeoElement",
+        "IdentifyLayerResult"
     ],
     "snippets": [
         "display_clusters.dart"
