@@ -15,15 +15,15 @@ Pan the map and observe how new features are loaded from the OGC API feature ser
 ## How it works
 
 1. Create an `OgcFeatureCollectionTable` object using a URL to an OGC API feature service and a collection ID.
-2. Set the feature table's `FeatureRequestMode` property to `FeatureRequestMode.manualCache`.
+2. Set the feature table's `featureRequestMode` property to `FeatureRequestMode.manualCache`.
 3. Call `OgcFeatureCollectionTable.load()`.
 4. Create a `FeatureLayer` using the feature table and add it to the map view.
 5. Every time the map view navigation completes:
    1. Create `QueryParameters`.
-   2. Set the parameter's `Geometry` to the current extent of the map view.
-   3. Set the parameter's `SpatialRelationship` property to `SpatialRelationship.intersects`.
+   2. Set the parameter's `geometry` property to the current extent of the map view.
+   3. Set the parameter's `spatialRelationship` property to `SpatialRelationship.intersects`.
    4. Set the `maxFeatures` property to 5000 (some services have a low default value for maximum features).
-   5. Call `OgcFeatureCollectionTable.PopulateFromService()` using the query parameters from the previous steps.
+   5. Call `OgcFeatureCollectionTable.populateFromService()` using the query parameters from the previous steps.
 
 ## Relevant API
 
