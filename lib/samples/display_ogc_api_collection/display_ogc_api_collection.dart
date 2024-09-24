@@ -72,11 +72,11 @@ class _DisplayOGCAPICollectionState extends State<DisplayOGCAPICollection>
     _mapViewController.arcGISMap = map;
 
     // Create an OGC feature collection table by passing in a service URL and a collection id.
-    final serviceUri = Uri.parse('https://demo.ldproxy.net/daraa');
+    const serviceUri = 'https://demo.ldproxy.net/daraa';
     const collectionId = 'TransportationGroundCrv';
     final ogcFeatureCollectionTable =
         OgcFeatureCollectionTable.withUriAndCollectionId(
-      uri: serviceUri,
+      uri: Uri.parse(serviceUri),
       collectionId: collectionId,
     );
     // Set the feature request mode to manual cache.
