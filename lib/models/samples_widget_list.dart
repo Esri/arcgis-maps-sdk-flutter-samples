@@ -23,6 +23,7 @@ import 'package:arcgis_maps_sdk_flutter_samples/samples/display_clusters/display
 import 'package:arcgis_maps_sdk_flutter_samples/samples/display_dimensions/display_dimensions.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/display_map/display_map.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/display_map_from_mobile_map_package/display_map_from_mobile_map_package.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/samples/display_ogc_api_collection/display_ogc_api_collection.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/download_preplanned_map_area/download_preplanned_map_area.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/download_vector_tiles_to_local_cache/download_vector_tiles_to_local_cache.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/edit_feature_attachments/edit_feature_attachments.dart';
@@ -87,6 +88,7 @@ final sampleWidgets = {
   'display_map': () => const DisplayMap(),
   'display_map_from_mobile_map_package': () =>
       const DisplayMapFromMobileMapPackage(),
+  'display_ogc_api_collection': () => const DisplayOGCAPICollection(),
   'download_preplanned_map_area': () => const DownloadPreplannedMapArea(),
   'download_vector_tiles_to_local_cache': () =>
       const DownloadVectorTilesToLocalCache(),
