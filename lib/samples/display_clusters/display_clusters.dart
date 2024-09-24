@@ -67,7 +67,7 @@ class _DisplayClustersState extends State<DisplayClusters>
                     ),
                     // Display the current feature reduction state.
                     Text(
-                      _featureReductionEnabled == true
+                      _featureReductionEnabled
                           ? 'Feature Reduction: On'
                           : 'Feature Reduction: Off',
                     ),
