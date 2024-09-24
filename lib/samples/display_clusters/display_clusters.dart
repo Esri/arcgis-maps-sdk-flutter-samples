@@ -157,9 +157,9 @@ class _DisplayClustersState extends State<DisplayClusters>
       context: context,
       builder: (context) {
         return AlertDialog(
-          scrollable: true,
           title: const Text('Contained GeoElements'),
           content: Column(
+            mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
