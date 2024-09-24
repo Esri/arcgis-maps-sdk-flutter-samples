@@ -17,8 +17,8 @@ Pan and zoom the map to view how clustering is dynamically updated. Toggle clust
 1. Create a map from a web map `PortalItem`.
 2. Get the cluster enabled layer from the map's operational layers.
 3. Get the `FeatureReduction` from the feature layer and set the `enabled` bool to enable or disable clustering on the feature layer.
-4. When the user taps on the map view, call `IdentifyFeatureLayer()`, passing in the layer, map tap location and tolerance.
-5. Select the `AggregateGeoElement` from the resulting `IdentifyLayerResult` and call `GetGeoElements()` to retrieve the containing `GeoElement` objects.
+4. When the user taps on the map view, call `identifyLayer()`, passing in the layer, map tap location and tolerance.
+5. Select the `AggregateGeoElement` from the resulting `IdentifyLayerResult` and call `getGeoElements()` to retrieve the containing `GeoElement` objects.
 6. Display the list of contained `GeoElement` objects in a dialog.
 
 ## Relevant API
