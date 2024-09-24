@@ -114,7 +114,7 @@ class _DisplayOGCAPICollectionState extends State<DisplayOGCAPICollection>
             ..spatialRelationship = SpatialRelationship.intersects
             ..maxFeatures = 5000;
           // Populate the table with the query, leaving existing table entries intact.
-          // Setting outFields to null requests all fields.
+          // Setting outFields to empty requests all fields.
           await ogcFeatureCollectionTable.populateFromService(
             clearCache: false,
             outFields: [],
