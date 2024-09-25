@@ -610,8 +610,7 @@ class _SnapGeometryEditsState extends State<SnapGeometryEdits>
             // A checkbox to enable all source settings in the category.
             Checkbox(
               value: allSourceSettings.firstWhereOrNull(
-                    (snapSourceSettings) =>
-                        snapSourceSettings.isEnabled == false,
+                    (snapSourceSettings) => !snapSourceSettings.isEnabled,
                   ) ==
                   null,
               onChanged: (allEnabled) {
