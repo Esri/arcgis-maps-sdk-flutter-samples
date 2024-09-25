@@ -163,9 +163,7 @@ class _SnapGeometryEditsState extends State<SnapGeometryEdits>
 
       // Ensure the map and each layer loads in order to synchronize snap settings.
       await map.load();
-      for (final layer in map.operationalLayers) {
-        await layer.load();
-      }
+      await Future.wait(map.operationalLayers.map((layer) => layer.load()));
 
       // Sync snap settings.
       synchronizeSnapSettings();
