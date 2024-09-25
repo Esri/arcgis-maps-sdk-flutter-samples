@@ -39,14 +39,6 @@ class _SnapGeometryEditsState extends State<SnapGeometryEdits>
   // A flag for when the map view is ready and controls can be used.
   var _ready = false;
 
-  // Create a list of geometry types to make available for editing.
-  final _geometryTypes = [
-    GeometryType.point,
-    GeometryType.multipoint,
-    GeometryType.polyline,
-    GeometryType.polygon,
-  ];
-
   // Create a list of menu items for each geometry type.
   final _geometryTypeMenuItems = <DropdownMenuItem<GeometryType>>[];
 
@@ -645,8 +637,15 @@ class _SnapGeometryEditsState extends State<SnapGeometryEdits>
   }
 
   List<DropdownMenuItem<GeometryType>> configureGeometryTypeMenuItems() {
+    // Create a list of geometry types to make available for editing.
+    final geometryTypes = [
+      GeometryType.point,
+      GeometryType.multipoint,
+      GeometryType.polyline,
+      GeometryType.polygon,
+    ];
     // Returns a list of drop down menu items for each geometry type.
-    return _geometryTypes.map((type) {
+    return geometryTypes.map((type) {
       return DropdownMenuItem(
         value: type,
         child: Text(
