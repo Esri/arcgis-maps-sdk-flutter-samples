@@ -642,14 +642,14 @@ class _SnapGeometryEditsState extends State<SnapGeometryEdits>
       GeometryType.polygon,
     ];
     // Returns a list of drop down menu items for each geometry type.
-    return geometryTypes.map((type) {
-      return DropdownMenuItem(
-        value: type,
-        child: Text(
-          type.name.capitalize(),
-        ),
-      );
-    }).toList();
+    return geometryTypes
+        .map(
+          (type) => DropdownMenuItem(
+            value: type,
+            child: Text(type.name.capitalize()),
+          ),
+        )
+        .toList();
   }
 
   List<DropdownMenuItem<GeometryEditorTool>> configureToolMenuItems() {
