@@ -69,8 +69,8 @@ class _IdentifyGraphicsState extends State<IdentifyGraphics> {
     // Create a map with a topographic basemap.
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic);
     // Create a polygon geometry.
-    final polygonBuilder = PolygonBuilder.fromSpatialReference(
-      _mapViewController.spatialReference,
+    final polygonBuilder = PolygonBuilder(
+      spatialReference: _mapViewController.spatialReference,
     );
     // Add points to the polygon.
     polygonBuilder.addPointXY(x: -20e5, y: 20e5);

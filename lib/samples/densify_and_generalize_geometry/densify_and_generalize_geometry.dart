@@ -221,7 +221,7 @@ class _DensifyAndGeneralizeGeometryState
     // Build the polyline that represents the ship's route.
     // The spatial reference is NAD83 / Oregon North.
     final polylineBuilder =
-        PolylineBuilder.fromSpatialReference(SpatialReference(wkid: 32126))
+        PolylineBuilder(spatialReference: SpatialReference(wkid: 32126))
           ..addPointXY(x: 2330611.130549, y: 202360.002957)
           ..addPointXY(x: 2330583.834672, y: 202525.984012)
           ..addPointXY(x: 2330574.164902, y: 202691.488009)
@@ -357,8 +357,8 @@ class _DensifyAndGeneralizeGeometryState
     }
 
     // Use a MultipointBuilder to create a Multipoint geometry from the points.
-    final multipointBuilder = MultipointBuilder.fromSpatialReference(
-      mutablePointCollection.spatialReference,
+    final multipointBuilder = MultipointBuilder(
+      spatialReference: mutablePointCollection.spatialReference,
     );
     multipointBuilder.points = mutablePointCollection;
     return multipointBuilder.toGeometry() as Multipoint;
