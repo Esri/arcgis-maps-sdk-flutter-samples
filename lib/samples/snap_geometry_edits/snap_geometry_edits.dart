@@ -258,7 +258,7 @@ class _SnapGeometryEditsState extends State<SnapGeometryEdits>
       } else {
         // If there was no existing graphic, create a new one and add to the graphics overlay.
         final graphic = Graphic(geometry: geometry);
-        // Apply a symbol to the graphic from the geometry editor style to the graphic depending on the geometry type.
+        // Apply a symbol to the graphic from the geometry editor style depending on the geometry type.
         final geometryType = geometry.geometryType;
         if (geometryType == GeometryType.point ||
             geometryType == GeometryType.multipoint) {
@@ -516,7 +516,7 @@ class _SnapGeometryEditsState extends State<SnapGeometryEdits>
                       ),
                     ],
                   ),
-                  // Add a checkbox to toggle snapping, geometry guides and feature snapping.
+                  // Add a checkbox to toggle all snapping options.
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -600,7 +600,7 @@ class _SnapGeometryEditsState extends State<SnapGeometryEdits>
                       ? (sourceSetting.source as FeatureLayer).name
                       : 'Editor Graphics Overlay',
                 ),
-                // A checkbox to toggle whether the source setting is enabled.
+                // A checkbox to toggle whether this source setting is enabled.
                 Checkbox(
                   value: sourceSetting.isEnabled,
                   onChanged: (isEnabled) {
@@ -657,7 +657,7 @@ class _SnapGeometryEditsState extends State<SnapGeometryEdits>
   }
 
   List<DropdownMenuItem<GeometryEditorTool>> configureToolMenuItems() {
-    // Returns a list of drop down menu items for the tools.
+    // Returns a list of drop down menu items for the required tools.
     return [
       DropdownMenuItem(
         value: _vertexTool,
