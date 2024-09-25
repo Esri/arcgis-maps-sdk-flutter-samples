@@ -10,7 +10,7 @@ A field worker can create new features by editing and snapping the vertices of a
 
 ## How to use the sample
 
-To create a geometry, tap the create button to choose the geometry type you want to create (i.e. points, multipoints, polyline, or polygon) and interactively tap and drag on the map view to create the geometry.
+To create a geometry, choose the geometry type you want to create (i.e. points, multipoints, polyline, or polygon) and interactively tap and drag on the map view to create the geometry.
 
 Snap settings can be configured by enabling and disabling snapping, feature snapping, geometry guides and snap sources.
 
