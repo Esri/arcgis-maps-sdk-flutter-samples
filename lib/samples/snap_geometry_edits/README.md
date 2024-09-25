@@ -29,7 +29,7 @@ To save your edits, tap the save button.
 1. Create an `ArcGISMap` from the `URL` and connect it to the `ArcGISMapView` via the `ArcGISMapViewController`.
 2. Set the map's `loadSettings.featureTilingMode` to `enabledWithFullResolutionWhenSupported`.
 3. Create a `GeometryEditor` and connect it to the map view controller.
-4. Call `syncSourceSettings` after the map's operational layers are loaded and the geometry editor has connected.
+4. Call `syncSourceSettings()` after the map's operational layers are loaded and the geometry editor has connected.
 5. Set `snapSettings.isEnabled` and `snapSourceSettings.isEnabled` to true for the `SnapSource` of interest.
 6. Toggle geometry guides using `snapSettings.isGeometryGuidesEnabled` and feature snapping using `snapSettings.isFeatureSnappingEnabled`.
 7. Start the geometry editor with a `GeometryType`.
