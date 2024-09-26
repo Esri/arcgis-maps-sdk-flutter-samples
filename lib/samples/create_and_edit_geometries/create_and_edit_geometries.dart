@@ -343,14 +343,14 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
           style: const TextStyle(color: Colors.deepPurple),
           value: _selectedGeometryType,
           items: configureGeometryTypeMenuItems(),
-          // If the geometry editor is already started then we don't enable editing with another geometry type.
-          onChanged: _geometryEditorIsStarted
-              ? null
-              : (geometryType) => geometryType == null
-                  ? null
-                  : startEditingWithGeometryType(
-                      geometryType as GeometryType,
-                    ),
+          // If the geometry editor is already started then we fully disable the DropDownButton and prevent editing with another geometry type.
+          onChanged: !_geometryEditorIsStarted
+              ? (geometryType) {
+                  if (geometryType != null) {
+                    startEditingWithGeometryType(geometryType as GeometryType);
+                  }
+                }
+              : null,
         ),
         // A drop down button for selecting a tool.
         DropdownButton(
