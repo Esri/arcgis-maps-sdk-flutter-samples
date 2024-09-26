@@ -1670,6 +1670,47 @@
     "title": "Show service area",
     "key": "show_service_area"
   },
+  "snap_geometry_edits": {
+    "category": "Maps",
+    "description": "Use the Geometry Editor to edit a geometry and align it to existing geometries on a map.",
+    "ignore": false,
+    "images": [],
+    "keywords": [
+      "edit",
+      "feature",
+      "geometry editor",
+      "graphics",
+      "layers",
+      "map",
+      "snapping",
+      "ArcGISMapView",
+      "FeatureLayer",
+      "Geometry",
+      "GeometryEditor",
+      "GeometryEditorStyle",
+      "GraphicsOverlay",
+      "SnapSettings",
+      "SnapSource",
+      "SnapSourceSettings"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+      "ArcGISMapView",
+      "FeatureLayer",
+      "Geometry",
+      "GeometryEditor",
+      "GeometryEditorStyle",
+      "GraphicsOverlay",
+      "SnapSettings",
+      "SnapSource",
+      "SnapSourceSettings"
+    ],
+    "snippets": [
+      "snap_geometry_edits.dart"
+    ],
+    "title": "Snap geometry edits",
+    "key": "snap_geometry_edits"
+  },
   "style_point_with_simple_marker_symbol": {
     "category": "Visualization",
     "description": "Show a simple marker symbol on a map.",

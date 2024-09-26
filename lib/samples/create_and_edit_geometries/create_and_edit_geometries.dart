@@ -168,10 +168,8 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
         // Hide the selected graphic so that only the version of the graphic that is being edited is visible.
         graphic.isVisible = false;
         // Set the graphic as the selected graphic and also set the selected geometry type to update the UI.
-        setState(() {
-          _selectedGraphic = graphic;
-          _selectedGeometryType = geometry.geometryType;
-        });
+        _selectedGraphic = graphic;
+        setState(() => _selectedGeometryType = geometry.geometryType);
         // If a point or multipoint has been selected, we need to use a vertex tool - the UI also needs updating.
         if (geometry.geometryType == GeometryType.point ||
             geometry.geometryType == GeometryType.multipoint) {
@@ -200,7 +198,7 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
         _selectedGraphic!.geometry = geometry;
         _selectedGraphic!.isVisible = true;
         // Reset the selected graphic to null.
-        setState(() => _selectedGraphic = null);
+        _selectedGraphic = null;
       } else {
         // If there was no existing graphic, create a new one and add to the graphics overlay.
         final graphic = Graphic(geometry: geometry);
@@ -229,7 +227,7 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
     if (_selectedGraphic != null) {
       // If editing a previously existing geometry, reset the selectedGraphic.
       _selectedGraphic!.isVisible = true;
-      setState(() => _selectedGraphic = null);
+      _selectedGraphic = null;
     }
     // Reset the selected geometry type.
     setState(() => _selectedGeometryType = null);
@@ -345,14 +343,14 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
           style: const TextStyle(color: Colors.deepPurple),
           value: _selectedGeometryType,
           items: configureGeometryTypeMenuItems(),
-          // If the geometry editor is already started then we don't enable editing with another geometry type.
-          onChanged: _geometryEditorIsStarted
-              ? null
-              : (geometryType) => geometryType == null
-                  ? null
-                  : startEditingWithGeometryType(
-                      geometryType as GeometryType,
-                    ),
+          // If the geometry editor is already started then we fully disable the DropDownButton and prevent editing with another geometry type.
+          onChanged: !_geometryEditorIsStarted
+              ? (GeometryType? geometryType) {
+                  if (geometryType != null) {
+                    startEditingWithGeometryType(geometryType);
+                  }
+                }
+              : null,
         ),
         // A drop down button for selecting a tool.
         DropdownButton(
