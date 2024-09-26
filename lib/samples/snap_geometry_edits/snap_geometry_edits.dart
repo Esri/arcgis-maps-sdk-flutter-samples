@@ -297,9 +297,9 @@ class _SnapGeometryEditsState extends State<SnapGeometryEdits>
           items: _geometryTypeMenuItems,
           // If the geometry editor is already started then we fully disable the DropDownButton and prevent editing with another geometry type.
           onChanged: !_geometryEditorIsStarted
-              ? (geometryType) {
+              ? (GeometryType? geometryType) {
                   if (geometryType != null) {
-                    startEditingWithGeometryType(geometryType as GeometryType);
+                    startEditingWithGeometryType(geometryType);
                   }
                 }
               : null,
