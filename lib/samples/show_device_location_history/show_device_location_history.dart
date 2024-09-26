@@ -44,7 +44,7 @@ class _ShowDeviceLocationHistoryState extends State<ShowDeviceLocationHistory>
   final _locationHistoryPointOverlay = GraphicsOverlay();
   // A PolylineBuilder to build the location history polyline.
   final _polylineBuilder =
-      PolylineBuilder.fromSpatialReference(SpatialReference.wgs84);
+      PolylineBuilder(spatialReference: SpatialReference.wgs84);
   // A flag for when the map view is ready and controls can be used.
   var _ready = false;
   // A flag for toggling location tracking.

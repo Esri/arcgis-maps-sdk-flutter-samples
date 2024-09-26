@@ -159,8 +159,8 @@ class _CutGeometryState extends State<CutGeometry> with SampleStateSupport {
   // the lake. This geometry will be cut by the border geometry.
   void _initLakeGraphic() {
     // Build the Polygon for the lake.
-    final lakePolygonBuilder = PolygonBuilder.fromSpatialReference(
-      _mapViewController.spatialReference,
+    final lakePolygonBuilder = PolygonBuilder(
+      spatialReference: _mapViewController.spatialReference,
     );
     lakePolygonBuilder.addPointXY(x: -10254374.668616, y: 5908345.076380);
     lakePolygonBuilder.addPointXY(x: -10178382.525314, y: 5971402.386779);
@@ -210,8 +210,8 @@ class _CutGeometryState extends State<CutGeometry> with SampleStateSupport {
   // the border. This geometry will be used to cut the lake geometry.
   void _initBorderGraphic() {
     // Build the Polyline geometry for the border.
-    final borderPolylineBuilder = PolylineBuilder.fromSpatialReference(
-      _mapViewController.spatialReference,
+    final borderPolylineBuilder = PolylineBuilder(
+      spatialReference: _mapViewController.spatialReference,
     );
     borderPolylineBuilder.addPointXY(x: -9981328.687124, y: 6111053.281447);
     borderPolylineBuilder.addPointXY(x: -9946518.044066, y: 6102350.620682);
