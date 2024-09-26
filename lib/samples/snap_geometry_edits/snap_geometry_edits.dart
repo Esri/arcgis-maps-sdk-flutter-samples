@@ -194,10 +194,8 @@ class _SnapGeometryEditsState extends State<SnapGeometryEdits>
         // Hide the selected graphic so that only the version of the graphic that is being edited is visible.
         graphic.isVisible = false;
         // Set the graphic as the selected graphic and also set the selected geometry type to update the UI.
-        setState(() {
-          _selectedGraphic = graphic;
-          _selectedGeometryType = geometry.geometryType;
-        });
+        _selectedGraphic = graphic;
+        setState(() => _selectedGeometryType = geometry.geometryType);
         // Start the geometry editor using the geometry of the graphic.
         _geometryEditor.startWithGeometry(geometry);
       }
@@ -244,7 +242,7 @@ class _SnapGeometryEditsState extends State<SnapGeometryEdits>
         _selectedGraphic!.geometry = geometry;
         _selectedGraphic!.isVisible = true;
         // Reset the selected graphic to null.
-        setState(() => _selectedGraphic = null);
+        _selectedGraphic = null;
       } else {
         // If there was no existing graphic, create a new one and add to the graphics overlay.
         final graphic = Graphic(geometry: geometry);
@@ -272,7 +270,7 @@ class _SnapGeometryEditsState extends State<SnapGeometryEdits>
     if (_selectedGraphic != null) {
       // If editing a previously existing geometry, reset the selectedGraphic.
       _selectedGraphic!.isVisible = true;
-      setState(() => _selectedGraphic = null);
+      _selectedGraphic = null;
     }
     // Reset the selected geometry type.
     setState(() => _selectedGeometryType = null);
