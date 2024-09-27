@@ -158,8 +158,8 @@ class _FilterByDefinitionExpressionOrDisplayFilterState
     queryParameters.geometry = extent;
 
     // Query the feature count.
-    final featureCount = await _featureLayer.featureTable!
-        .queryFeatureCount(queryParameters: queryParameters);
+    final featureCount =
+        await _featureLayer.featureTable!.queryFeatureCount(queryParameters);
 
     // Show the feature count in an alert dialog.
     if (mounted) {

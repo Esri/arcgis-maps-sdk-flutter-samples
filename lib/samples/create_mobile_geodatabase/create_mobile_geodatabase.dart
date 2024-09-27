@@ -210,8 +210,7 @@ class _CreateMobileGeodatabaseState extends State<CreateMobileGeodatabase>
 
     // Create the feature table and add the associated feature layer to the map.
     try {
-      _featureTable =
-          await _geodatabase!.createTable(tableDescription: tableDescription);
+      _featureTable = await _geodatabase!.createTable(tableDescription);
       _map.operationalLayers.clear();
       _map.operationalLayers.add(
         FeatureLayer.withFeatureTable(_featureTable as GeodatabaseFeatureTable),
@@ -245,8 +244,7 @@ class _CreateMobileGeodatabaseState extends State<CreateMobileGeodatabase>
 
   // Display the attribute table in a dialog.
   void _displayTable() async {
-    final queryResult =
-        await _featureTable?.queryFeatures(queryParameters: QueryParameters());
+    final queryResult = await _featureTable?.queryFeatures(QueryParameters());
 
     final dataRows = <DataRow>[];
     for (final feature in queryResult!.features()) {
