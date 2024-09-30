@@ -260,9 +260,7 @@ class _DownloadPreplannedMapAreaState extends State<DownloadPreplannedMapArea>
   void downloadOfflineMap(PreplannedMapArea mapArea) async {
     // Create default parameters using the map area.
     final defaultDownloadParams = await _offlineMapTask
-        .createDefaultDownloadPreplannedOfflineMapParameters(
-      preplannedMapArea: mapArea,
-    );
+        .createDefaultDownloadPreplannedOfflineMapParameters(mapArea);
 
     // Set the required update mode. This sample map is not setup for updates so we use noUpdates.
     defaultDownloadParams.updateMode = PreplannedUpdateMode.noUpdates;

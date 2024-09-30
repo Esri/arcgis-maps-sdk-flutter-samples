@@ -212,7 +212,7 @@ class _FindClosestFacilityFromPointState
     setState(() => _ready = false);
     // Solve the closest facility task with the parameters.
     final result = await _closestFacilityTask.solveClosestFacility(
-      closestFacilityParameters: _closestFacilityParameters,
+      _closestFacilityParameters,
     );
     for (var incidentIdx = 0;
         incidentIdx < result.incidents.length;

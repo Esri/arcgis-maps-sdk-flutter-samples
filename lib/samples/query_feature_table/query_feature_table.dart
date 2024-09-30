@@ -133,8 +133,7 @@ class _QueryFeatureTableState extends State<QueryFeatureTable>
         "upper(STATE_NAME) LIKE '${stateName.toUpperCase().sqlEscape()}%'";
 
     // Query the feature table with the query parameters.
-    final queryResult =
-        await _featureTable.queryFeatures(queryParameters: queryParameters);
+    final queryResult = await _featureTable.queryFeatures(queryParameters);
 
     // Get the first feature from the query result.
     final iterator = queryResult.features().iterator;
