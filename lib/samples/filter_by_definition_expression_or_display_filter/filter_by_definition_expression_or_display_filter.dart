@@ -149,7 +149,7 @@ class _FilterByDefinitionExpressionOrDisplayFilterState
     _featureLayer.definitionExpression = _definitionExpression;
     // Get the current extent of the map view.
     final extent = _mapViewController
-        .getCurrentViewpoint(viewpointType: ViewpointType.boundingGeometry)
+        .getCurrentViewpoint(ViewpointType.boundingGeometry)
         ?.targetGeometry
         .extent;
 
