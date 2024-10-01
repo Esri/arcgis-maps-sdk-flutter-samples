@@ -58,16 +58,6 @@ class _ShowWfsLayerWithXmlQueryState extends State<ShowWfsLayerWithXmlQuery> {
                     onMapViewReady: onMapViewReady,
                   ),
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    ElevatedButton(
-                      onPressed: AddWfsLayerWithQueriedFeatures,
-                      child:
-                          const Text('Add a WFS layer with queried features'),
-                    ),
-                  ],
-                ),
               ],
             ),
             // Display a progress indicator and prevent interaction until state is ready.
@@ -90,15 +80,14 @@ class _ShowWfsLayerWithXmlQueryState extends State<ShowWfsLayerWithXmlQuery> {
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISNavigation);
     _mapViewController.arcGISMap = map;
 
+    // Load the WFS layer with the XML query.
+    await loadWfsLayerWithXmlQuery();
+
     // Set the ready state variable to true to enable the sample UI.
     setState(() => _ready = true);
   }
 
-  void AddWfsLayerWithQueriedFeatures() async {
-    setState(() => _ready = false);
-    // Clear the operational layers
-    _mapViewController.arcGISMap?.operationalLayers.clear();
-
+  Future<void> loadWfsLayerWithXmlQuery() async {
     const wfsFeatureTableUri =
         'https://dservices2.arcgis.com/ZQgQTuoyBrtmoGdP/arcgis/services/Seattle_Downtown_Features/WFSServer?service=wfs&amp;request=getcapabilities';
 
@@ -129,7 +118,5 @@ class _ShowWfsLayerWithXmlQueryState extends State<ShowWfsLayerWithXmlQuery> {
 
     // Zoom to the full extent of the feature layer
     _mapViewController.setViewpointGeometry(featureLayer.fullExtent!);
-
-    setState(() => _ready = true);
   }
 }
