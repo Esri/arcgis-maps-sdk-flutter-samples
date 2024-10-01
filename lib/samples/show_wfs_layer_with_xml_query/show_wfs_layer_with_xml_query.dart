@@ -91,7 +91,7 @@ class _ShowWfsLayerWithXmlQueryState extends State<ShowWfsLayerWithXmlQuery> {
     const wfsFeatureTableUri =
         'https://dservices2.arcgis.com/ZQgQTuoyBrtmoGdP/arcgis/services/Seattle_Downtown_Features/WFSServer?service=wfs&amp;request=getcapabilities';
 
-    // create the WFS feature table from URL and name
+    // create the WFS feature table from URI and name
     final statesTable = WfsFeatureTable.withUriAndTableName(
       uri: Uri.parse(wfsFeatureTableUri),
       tableName: 'Seattle_Downtown_Features:Trees',
