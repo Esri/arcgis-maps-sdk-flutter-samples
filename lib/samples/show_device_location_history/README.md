@@ -22,6 +22,8 @@ Tap 'Start Tracking' to start tracking your location, which will appear as point
 
 ## Relevant API
 
+* Graphic
+* GraphicsOverlay
 * LocationDataSource
 * LocationDisplay
 * LocationDisplayAutoPanMode
@@ -30,8 +32,6 @@ Tap 'Start Tracking' to start tracking your location, which will appear as point
 * SimpleMarkerSymbol
 * SimpleRenderer
 * SimulatedLocationDataSource
-* Graphic
-* GraphicsOverlay
 
 ## About the data
 
