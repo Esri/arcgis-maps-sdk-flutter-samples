@@ -218,7 +218,7 @@ class _ManageFeaturesState extends State<ManageFeatures> {
       feature.attributes['typdamage'] = 'Minor';
       feature.attributes['primcause'] = 'Earthquake';
 
-      // Add the feature to the table.
+      // Add the feature to the local table.
       await _damageFeatureLayer.featureTable!.addFeature(feature);
 
       // Apply the edits to the service on the service geodatabase.
@@ -238,8 +238,8 @@ class _ManageFeaturesState extends State<ManageFeatures> {
   void deleteFeature(Feature feature) async {
     // Disable the UI while the async operations are in progress.
     setState(() => _ready = false);
-    // Delete the feature from the feature table.
-    await _damageServiceFeatureTable.deleteFeature(feature);
+    // Delete the feature from the local table.
+    await _damageFeatureLayer.featureTable!.deleteFeature(feature);
     // Sync the change with the service on the service geodatabase.
     await _damageServiceFeatureTable.serviceGeodatabase!.applyEdits();
     showMessageDialog(
@@ -258,9 +258,9 @@ class _ManageFeaturesState extends State<ManageFeatures> {
     setState(() => _ready = false);
     // Update the damage type field to the selected value.
     feature.attributes[damageTypeFieldName] = damageType;
-    // Update the feature in the table.
-    await _damageServiceFeatureTable.updateFeature(feature);
-    // Apply the edits to the service.
+    // Update the feature in the local table.
+    await _damageFeatureLayer.featureTable!.updateFeature(feature);
+    // Sync the change with the service on the service geodatabase.
     await _damageServiceFeatureTable.serviceGeodatabase!.applyEdits();
     showMessageDialog(
       'Updated feature ${feature.attributes['objectid']} to $damageType.',
@@ -283,9 +283,9 @@ class _ManageFeaturesState extends State<ManageFeatures> {
       final normalizedNewGeometry =
           GeometryEngine.normalizeCentralMeridian(newGeometry);
       feature.geometry = normalizedNewGeometry;
-      // Update the feature in the table.
-      await _damageServiceFeatureTable.updateFeature(feature);
-      // Apply the edits to the service.
+      // Update the feature in the local table.
+      await _damageFeatureLayer.featureTable!.updateFeature(feature);
+      // Sync the change with the service on the service geodatabase.
       await _damageServiceFeatureTable.serviceGeodatabase!.applyEdits();
       showMessageDialog(
         'Updated feature ${feature.attributes['objectid']}',
