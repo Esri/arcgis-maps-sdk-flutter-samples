@@ -1272,16 +1272,16 @@
       "search",
       "ArcGISFeature",
       "ArcGISFeatureTable",
+      "ArcGISFeatureTable.queryRelatedFeatures",
       "FeatureQueryResult",
-      "FeatureTable.queryRelatedFeatures",
       "RelatedFeatureQueryResult"
     ],
     "redirect_from": [],
     "relevant_apis": [
       "ArcGISFeature",
       "ArcGISFeatureTable",
+      "ArcGISFeatureTable.queryRelatedFeatures",
       "FeatureQueryResult",
-      "FeatureTable.queryRelatedFeatures",
       "RelatedFeatureQueryResult"
     ],
     "snippets": [
@@ -1431,14 +1431,14 @@
       "mobile",
       "navigation",
       "ArcGISMap",
-      "ArcGISMapView",
+      "ArcGISMapViewController",
       "LocationDisplay",
       "LocationDisplay.autoPanMode"
     ],
     "redirect_from": [],
     "relevant_apis": [
       "ArcGISMap",
-      "ArcGISMapView",
+      "ArcGISMapViewController",
       "LocationDisplay",
       "LocationDisplay.autoPanMode"
     ],
@@ -1674,7 +1674,9 @@
     "category": "Maps",
     "description": "Use the Geometry Editor to edit a geometry and align it to existing geometries on a map.",
     "ignore": false,
-    "images": [],
+    "images": [
+      "snap_geometry_edits.png"
+    ],
     "keywords": [
       "edit",
       "feature",
