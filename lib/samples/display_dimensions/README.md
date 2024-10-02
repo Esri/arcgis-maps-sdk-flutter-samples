@@ -20,8 +20,8 @@ When the sample loads, it will automatically display the map containing dimensio
 2. Load the mobile map package (mmpk) with `mmpk.load()`.
 3. After the mmpk successfully loads, get the map from the mmpk `map = mmpk.maps.first`.
 4. Loop through the map's layers to find the `DimensionLayer` and get the layer name to display on the UI with `DimensionLayer.name`.
-4. Add the map to the map view: `mapViewController.arcGISMap = map`
-5. Control the dimension layer's visibility with `DimensionLayer.isVisible = <bool>` and set a definition expression with `DimensionLayer.definitionExpression = <String>`.
+5. Add the map to the map view: `mapViewController.arcGISMap = map`
+6. Control the dimension layer's visibility with `DimensionLayer.isVisible = <bool>` and set a definition expression with `DimensionLayer.definitionExpression = <String>`.
 
 ## Relevant API
 

@@ -14,16 +14,16 @@
         "search",
         "ArcGISFeature",
         "ArcGISFeatureTable",
+        "ArcGISFeatureTable.queryRelatedFeatures",
         "FeatureQueryResult",
-        "FeatureTable.queryRelatedFeatures",
         "RelatedFeatureQueryResult"
     ],
     "redirect_from": [],
     "relevant_apis": [
         "ArcGISFeature",
         "ArcGISFeatureTable",
+        "ArcGISFeatureTable.queryRelatedFeatures",
         "FeatureQueryResult",
-        "FeatureTable.queryRelatedFeatures",
         "RelatedFeatureQueryResult"
     ],
     "snippets": [
