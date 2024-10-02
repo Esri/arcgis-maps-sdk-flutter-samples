@@ -1228,6 +1228,53 @@
     "title": "Manage bookmarks",
     "key": "manage_bookmarks"
   },
+  "manage_features": {
+    "category": "Edit and Manage Data",
+    "description": "Create, update, and delete features to manage a feature layer.",
+    "ignore": false,
+    "images": [
+      "manage_features.png"
+    ],
+    "keywords": [
+      "amend",
+      "attribute",
+      "create",
+      "delete",
+      "deletion",
+      "details",
+      "edit",
+      "editing",
+      "feature",
+      "feature layer",
+      "feature table",
+      "geodatabase",
+      "information",
+      "moving",
+      "online service",
+      "service",
+      "update",
+      "updating",
+      "value",
+      "Feature",
+      "FeatureEditResult",
+      "FeatureLayer",
+      "ServiceFeatureTable",
+      "ServiceGeodatabase"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+      "Feature",
+      "FeatureEditResult",
+      "FeatureLayer",
+      "ServiceFeatureTable",
+      "ServiceGeodatabase"
+    ],
+    "snippets": [
+      "manage_features.dart"
+    ],
+    "title": "Manage features",
+    "key": "manage_features"
+  },
   "query_feature_table": {
     "category": "Search and Query",
     "description": "Find features in a feature table which match an SQL query.",
@@ -1674,7 +1721,9 @@
     "category": "Maps",
     "description": "Use the Geometry Editor to edit a geometry and align it to existing geometries on a map.",
     "ignore": false,
-    "images": [],
+    "images": [
+      "snap_geometry_edits.png"
+    ],
     "keywords": [
       "edit",
       "feature",
