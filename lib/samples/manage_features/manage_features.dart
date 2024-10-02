@@ -90,30 +90,33 @@ class _ManageFeaturesState extends State<ManageFeatures> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Column(
-                      children: [
-                        // Create a dropdown button to select a feature management operation.
-                        DropdownButton(
-                          alignment: Alignment.center,
-                          hint: const Text(
-                            'Select operation',
-                            style: TextStyle(color: Colors.deepPurple),
+                    Container(
+                      padding: const EdgeInsets.all(5),
+                      child: Column(
+                        children: [
+                          // Create a dropdown button to select a feature management operation.
+                          DropdownButton(
+                            alignment: Alignment.center,
+                            hint: const Text(
+                              'Select operation',
+                              style: TextStyle(color: Colors.deepPurple),
+                            ),
+                            value: _selectedOperation,
+                            icon: const Icon(
+                              Icons.arrow_drop_down,
+                              color: Colors.deepPurple,
+                            ),
+                            elevation: 16,
+                            style: const TextStyle(color: Colors.deepPurple),
+                            // Set the onChanged callback to update the selected operation.
+                            onChanged: (operation) =>
+                                setState(() => _selectedOperation = operation),
+                            items: _featureManagementOptions,
                           ),
-                          value: _selectedOperation,
-                          icon: const Icon(
-                            Icons.arrow_drop_down,
-                            color: Colors.deepPurple,
-                          ),
-                          elevation: 16,
-                          style: const TextStyle(color: Colors.deepPurple),
-                          // Set the onChanged callback to update the selected operation.
-                          onChanged: (operation) =>
-                              setState(() => _selectedOperation = operation),
-                          items: _featureManagementOptions,
-                        ),
-                        // Display additional UI depending on the selected operation.
-                        buildOperationSpecificWidget(),
-                      ],
+                          // Display additional UI depending on the selected operation.
+                          buildOperationSpecificWidget(),
+                        ],
+                      ),
                     ),
                   ],
                 ),
