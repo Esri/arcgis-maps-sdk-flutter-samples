@@ -1670,6 +1670,39 @@
     "title": "Show service area",
     "key": "show_service_area"
   },
+  "show_wfs_layer_with_xml_query": {
+    "category": "Search and Query",
+    "description": "Load a WFS feature table using an XML query.",
+    "ignore": false,
+    "images": [
+      "show_wfs_layer_with_xml_query.png"
+    ],
+    "keywords": [
+      "OGC",
+      "WFS",
+      "XML",
+      "feature",
+      "query",
+      "service",
+      "web",
+      "FeatureLayer",
+      "WfsFeatureTable",
+      "WfsFeatureTable.axisOrder",
+      "WfsFeatureTable.populateFromServiceWithXml"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+      "FeatureLayer",
+      "WfsFeatureTable",
+      "WfsFeatureTable.axisOrder",
+      "WfsFeatureTable.populateFromServiceWithXml"
+    ],
+    "snippets": [
+      "show_wfs_layer_with_xml_query.dart"
+    ],
+    "title": "Show WFS layer with XML query",
+    "key": "show_wfs_layer_with_xml_query"
+  },
   "snap_geometry_edits": {
     "category": "Maps",
     "description": "Use the Geometry Editor to edit a geometry and align it to existing geometries on a map.",
