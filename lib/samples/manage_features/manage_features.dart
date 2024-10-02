@@ -405,9 +405,9 @@ class _ManageFeaturesState extends State<ManageFeatures> {
       case FeatureManagementOperation.delete:
         return 'Delete feature';
       case FeatureManagementOperation.attribute:
-        return 'Update Attribute';
+        return 'Update attribute';
       case FeatureManagementOperation.geometry:
-        return 'Update Geometry';
+        return 'Update geometry';
       default:
         return 'Select a feature management operation.';
     }
