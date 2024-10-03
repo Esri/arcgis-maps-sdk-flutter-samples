@@ -210,6 +210,8 @@ class _SnapGeometryEditsState extends State<SnapGeometryEdits>
     setState(() => _snappingEnabled = true);
     // Create a list of snap source settings for each geometry type and graphics overlay.
     for (final sourceSettings in _geometryEditor.snapSettings.sourceSettings) {
+      // Enable all the source settings initially.
+      setState(() => sourceSettings.isEnabled = true);
       if (sourceSettings.source is FeatureLayer) {
         final featureLayer = sourceSettings.source as FeatureLayer;
         if (featureLayer.featureTable != null) {
