@@ -141,25 +141,24 @@ class _ManageFeaturesState extends State<ManageFeatures>
   }
 
   void onMapViewReady() async {
-    // Create and load a service geodatabase from a service URL.
-    const featureServiceURL =
-        'https://sampleserver6.arcgisonline.com/arcgis/rest/services/DamageAssessment/FeatureServer/0';
-    final serviceGeodatabase =
-        ServiceGeodatabase.withUri(Uri.parse(featureServiceURL));
-    await serviceGeodatabase.load();
+    try {
+      // Create and load a service geodatabase from a service URL.
+      const featureServiceUri =
+          'https://sampleserver6.arcgisonline.com/arcgis/rest/services/DamageAssessment/FeatureServer/0';
+      final serviceGeodatabase =
+          ServiceGeodatabase.withUri(Uri.parse(featureServiceUri));
+      await serviceGeodatabase.load();
 
-    // Get the feature table from the service geodatabase referencing the Damage Assessment feature service.
-    // Creating the feature table from the feature service will cause the service geodatabase to be null.
-    final table = serviceGeodatabase.getTable(layerId: 0);
-    if (table != null) {
-      _damageServiceFeatureTable = table;
+      // Get the feature table from the service geodatabase referencing the Damage Assessment feature service.
+      // Creating the feature table from the feature service will cause the service geodatabase to be null.
+      _damageServiceFeatureTable = serviceGeodatabase.getTable(layerId: 0)!;
       // Load the table.
       await _damageServiceFeatureTable.load();
       // Get the required field from the table - in this case, damage type.
-      final damageTypeField =
-          table.fields.firstWhere((field) => field.name == damageTypeFieldName);
+      final damageTypeField = _damageServiceFeatureTable.fields
+          .firstWhere((field) => field.name == damageTypeFieldName);
       // Get the domain for the field.
-      final domain = damageTypeField.domain as CodedValueDomain;
+      final domain = damageTypeField.domain! as CodedValueDomain;
       // Update the dropdown menu with the attribute values from the domain.
       configureAttributeDropdownMenuItems(domain);
 
@@ -185,8 +184,12 @@ class _ManageFeaturesState extends State<ManageFeatures>
       );
       // Set the ready state variable to true to enable the sample UI.
       setState(() => _ready = true);
-    } else {
-      showMessageDialog('Unable to access the required feature table.');
+    } on ArcGISException catch (e) {
+      showMessageDialog('${e.message}.');
+    } on Exception {
+      showMessageDialog(
+        'There was an error loading the data required for the sample.',
+      );
     }
   }
 
