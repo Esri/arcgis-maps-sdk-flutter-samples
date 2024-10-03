@@ -14,6 +14,7 @@
 //
 
 import 'package:arcgis_maps/arcgis_maps.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_state_support.dart';
 import 'package:flutter/material.dart';
 
 class ManageFeatures extends StatefulWidget {
@@ -23,7 +24,7 @@ class ManageFeatures extends StatefulWidget {
   State<ManageFeatures> createState() => _ManageFeaturesState();
 }
 
-class _ManageFeaturesState extends State<ManageFeatures> {
+class _ManageFeaturesState extends State<ManageFeatures> with SampleStateSupport {
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
 
