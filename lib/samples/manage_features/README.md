@@ -17,14 +17,13 @@ Pick an operation, then tap on the map to perform the operation at that location
 1. Create a `ServiceGeodatabase` from a URL.
 2. Get a `ServiceFeatureTable` from the `ServiceGeodatabase`.
 3. Create a `FeatureLayer` derived from the `ServiceFeatureTable` instance.
-4. Update the `onTap` subscription on the `ArcGISMapView` when a feature management operation is selected.
-5. Apply the feature management operation upon tapping the map.
+4. Apply the feature management operation upon tapping the map.
     * Create features: create a `Feature` with attributes and a location using the `ServiceFeatureTable`.
     * Delete features: delete the selected `Feature` from the `FeatureTable`.
     * Update attribute: update the attribute of the selected `Feature`.
     * Update geometry: update the geometry of the selected `Feature`.
-6. Update the `FeatureTable` locally.
-7. Update the `ServiceGeodatabase` of the `ServiceFeatureTable` by calling `applyEdits()`.
+5. Update the `FeatureTable` locally.
+6. Update the `ServiceGeodatabase` of the `ServiceFeatureTable` by calling `applyEdits()`.
     * This pushes the changes to the server.
 
 ## Relevant API
