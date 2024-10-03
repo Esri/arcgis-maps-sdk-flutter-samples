@@ -65,7 +65,7 @@ class _SnapGeometryEditsState extends State<SnapGeometryEdits>
   var _featureSnappingEnabled = true;
 
   // A flag for controlling the visibility of the editing toolbar.
-  var _showEditToolbar = false;
+  var _showEditToolbar = true;
   // A flag for controlling the visibility of the snap settings.
   var _snapSettingsVisible = false;
 
