@@ -37,6 +37,7 @@ import 'package:arcgis_maps_sdk_flutter_samples/samples/identify_features_in_wms
 import 'package:arcgis_maps_sdk_flutter_samples/samples/identify_graphics/identify_graphics.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/identify_layer_features/identify_layer_features.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/manage_bookmarks/manage_bookmarks.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/samples/manage_features/manage_features.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/query_feature_table/query_feature_table.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/query_related_features/query_related_features.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/query_table_statistics/query_table_statistics.dart';
@@ -108,6 +109,7 @@ final sampleWidgets = {
   'identify_graphics': () => const IdentifyGraphics(),
   'identify_layer_features': () => const IdentifyLayerFeatures(),
   'manage_bookmarks': () => const ManageBookmarks(),
+  'manage_features': () => const ManageFeatures(),
   'query_feature_table': () => const QueryFeatureTable(),
   'query_related_features': () => const QueryRelatedFeatures(),
   'query_table_statistics': () => const QueryTableStatistics(),
