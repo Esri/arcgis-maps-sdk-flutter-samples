@@ -197,18 +197,52 @@ class _ManageFeaturesState extends State<ManageFeatures>
     // Configure actions when a user taps on the map, depending on the selected operation.
     if (_selectedOperation == FeatureManagementOperation.create) {
       // Create a feature if create is selected.
-      createFeature(localPosition);
+      await createFeature(localPosition);
     } else if (_selectedOperation == FeatureManagementOperation.geometry &&
         _selectedFeature != null) {
       // If update geometry is selected, update the selected feature.
-      updateGeometry(_selectedFeature!, localPosition);
+      await updateGeometry(_selectedFeature!, localPosition);
     } else {
       // Otherwise attempt to identify and select a feature.
-      identifyAndSelectFeature(localPosition);
+      await identifyAndSelectFeature(localPosition);
     }
   }
 
-  void createFeature(Offset localPosition) async {
+  Future<void> identifyAndSelectFeature(Offset localPosition) async {
+    // Disable the UI while the async operations are in progress.
+    setState(() => _ready = false);
+
+    // Unselect any previously selected feature.
+    if (_selectedFeature != null) {
+      _damageFeatureLayer.unselectFeature(_selectedFeature!);
+      setState(() {
+        _selectedFeature = null;
+        _selectedDamageType = null;
+      });
+    }
+
+    // Perform an identify operation on the feature layer at the tapped location.
+    final identifyResult = await _mapViewController.identifyLayer(
+      _damageFeatureLayer,
+      screenPoint: localPosition,
+      tolerance: 12.0,
+      maximumResults: 1,
+    );
+
+    if (identifyResult.geoElements.isNotEmpty) {
+      // If a feature is identified, select it.
+      final feature = identifyResult.geoElements.first as ArcGISFeature;
+      _damageFeatureLayer.selectFeature(feature);
+      setState(() {
+        _selectedFeature = feature;
+        _selectedDamageType = feature.attributes[damageTypeFieldName];
+      });
+    }
+    // Re-enable the UI.
+    setState(() => _ready = true);
+  }
+
+  Future<void> createFeature(Offset localPosition) async {
     // Disable the UI while the async operations are in progress.
     setState(() => _ready = false);
 
@@ -243,7 +277,7 @@ class _ManageFeaturesState extends State<ManageFeatures>
     setState(() => _ready = true);
   }
 
-  void deleteFeature(Feature feature) async {
+  Future<void> deleteFeature(Feature feature) async {
     // Disable the UI while the async operations are in progress.
     setState(() => _ready = false);
     // Delete the feature from the local table.
@@ -261,23 +295,7 @@ class _ManageFeaturesState extends State<ManageFeatures>
     });
   }
 
-  void updateAttribute(Feature feature, String damageType) async {
-    // Disable the UI while the async operations are in progress.
-    setState(() => _ready = false);
-    // Update the damage type field to the selected value.
-    feature.attributes[damageTypeFieldName] = damageType;
-    // Update the feature in the local table.
-    await _damageFeatureLayer.featureTable!.updateFeature(feature);
-    // Sync the change with the service on the service geodatabase.
-    await _damageServiceFeatureTable.serviceGeodatabase!.applyEdits();
-    showMessageDialog(
-      'Updated feature ${feature.attributes['objectid']} to $damageType.',
-    );
-    // Re-enable the UI.
-    setState(() => _ready = true);
-  }
-
-  void updateGeometry(
+  Future<void> updateGeometry(
     Feature feature,
     Offset localPosition,
   ) async {
@@ -303,36 +321,18 @@ class _ManageFeaturesState extends State<ManageFeatures>
     }
   }
 
-  void identifyAndSelectFeature(Offset localPosition) async {
+  void updateAttribute(Feature feature, String damageType) async {
     // Disable the UI while the async operations are in progress.
     setState(() => _ready = false);
-
-    // Unselect any previously selected feature.
-    if (_selectedFeature != null) {
-      _damageFeatureLayer.unselectFeature(_selectedFeature!);
-      setState(() {
-        _selectedFeature = null;
-        _selectedDamageType = null;
-      });
-    }
-
-    // Perform an identify operation on the feature layer at the tapped location.
-    final identifyResult = await _mapViewController.identifyLayer(
-      _damageFeatureLayer,
-      screenPoint: localPosition,
-      tolerance: 12.0,
-      maximumResults: 1,
+    // Update the damage type field to the selected value.
+    feature.attributes[damageTypeFieldName] = damageType;
+    // Update the feature in the local table.
+    await _damageFeatureLayer.featureTable!.updateFeature(feature);
+    // Sync the change with the service on the service geodatabase.
+    await _damageServiceFeatureTable.serviceGeodatabase!.applyEdits();
+    showMessageDialog(
+      'Updated feature ${feature.attributes['objectid']} to $damageType.',
     );
-
-    if (identifyResult.geoElements.isNotEmpty) {
-      // If a feature is identified, select it.
-      final feature = identifyResult.geoElements.first as ArcGISFeature;
-      _damageFeatureLayer.selectFeature(feature);
-      setState(() {
-        _selectedFeature = feature;
-        _selectedDamageType = feature.attributes[damageTypeFieldName];
-      });
-    }
     // Re-enable the UI.
     setState(() => _ready = true);
   }
