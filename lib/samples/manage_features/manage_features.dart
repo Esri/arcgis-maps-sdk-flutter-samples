@@ -33,8 +33,6 @@ class _ManageFeaturesState extends State<ManageFeatures>
   late final ServiceFeatureTable _damageServiceFeatureTable;
   // Create a feature layer.
   late final FeatureLayer _damageFeatureLayer;
-  // The name of the attribute being used in the sample.
-  final damageTypeFieldName = 'typdamage';
 
   // Create a list of feature management options.
   final _featureManagementOptions =
@@ -156,7 +154,7 @@ class _ManageFeaturesState extends State<ManageFeatures>
       await _damageServiceFeatureTable.load();
       // Get the required field from the table - in this case, damage type.
       final damageTypeField = _damageServiceFeatureTable.fields
-          .firstWhere((field) => field.name == damageTypeFieldName);
+          .firstWhere((field) => field.name == 'typdamage');
       // Get the domain for the field.
       final domain = damageTypeField.domain! as CodedValueDomain;
       // Update the dropdown menu with the attribute values from the domain.
@@ -235,7 +233,7 @@ class _ManageFeaturesState extends State<ManageFeatures>
       _damageFeatureLayer.selectFeature(feature);
       setState(() {
         _selectedFeature = feature;
-        _selectedDamageType = feature.attributes[damageTypeFieldName];
+        _selectedDamageType = feature.attributes['typdamage'];
       });
     }
     // Re-enable the UI.
@@ -325,7 +323,7 @@ class _ManageFeaturesState extends State<ManageFeatures>
     // Disable the UI while the async operations are in progress.
     setState(() => _ready = false);
     // Update the damage type field to the selected value.
-    feature.attributes[damageTypeFieldName] = damageType;
+    feature.attributes['typdamage'] = damageType;
     // Update the feature in the local table.
     await _damageFeatureLayer.featureTable!.updateFeature(feature);
     // Sync the change with the service on the service geodatabase.
