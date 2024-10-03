@@ -24,7 +24,8 @@ class ManageFeatures extends StatefulWidget {
   State<ManageFeatures> createState() => _ManageFeaturesState();
 }
 
-class _ManageFeaturesState extends State<ManageFeatures> with SampleStateSupport {
+class _ManageFeaturesState extends State<ManageFeatures>
+    with SampleStateSupport {
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
 
@@ -56,19 +57,19 @@ class _ManageFeaturesState extends State<ManageFeatures> with SampleStateSupport
   void initState() {
     super.initState();
     // Add each feature management operation to the list of dropdown menu options.
-    FeatureManagementOperation.values
-        .map(
-          (operation) => _featureManagementOptions.add(
-            DropdownMenuItem(
+    _featureManagementOptions.addAll(
+      FeatureManagementOperation.values
+          .map(
+            (operation) => DropdownMenuItem(
               onTap: () => setState(
                 () => _selectedOperation == operation,
               ),
               value: operation,
               child: Text(getLabel(operation)),
             ),
-          ),
-        )
-        .toList();
+          )
+          .toList(),
+    );
   }
 
   @override
