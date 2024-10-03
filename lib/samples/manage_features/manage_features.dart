@@ -337,19 +337,19 @@ class _ManageFeaturesState extends State<ManageFeatures>
 
   void configureAttributeDropdownMenuItems(CodedValueDomain domain) {
     // Display a dropdown menu item for each coded value in the domain.
-    domain.codedValues
-        .map(
-          (value) => _damageTypeAttributeOptions.add(
-            DropdownMenuItem(
+    _damageTypeAttributeOptions.addAll(
+      domain.codedValues
+          .map(
+            (value) => DropdownMenuItem(
               onTap: () => setState(
                 () => _selectedDamageType == value.name,
               ),
               value: value.name,
               child: Text(value.name),
             ),
-          ),
-        )
-        .toList();
+          )
+          .toList(),
+    );
   }
 
   Widget buildOperationSpecificWidget() {
