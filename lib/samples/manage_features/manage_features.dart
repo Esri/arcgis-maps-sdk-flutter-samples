@@ -56,17 +56,15 @@ class _ManageFeaturesState extends State<ManageFeatures>
     super.initState();
     // Add each feature management operation to the list of dropdown menu options.
     _featureManagementOptions.addAll(
-      FeatureManagementOperation.values
-          .map(
-            (operation) => DropdownMenuItem(
-              onTap: () => setState(
-                () => _selectedOperation == operation,
-              ),
-              value: operation,
-              child: Text(getLabel(operation)),
-            ),
-          )
-          .toList(),
+      FeatureManagementOperation.values.map(
+        (operation) => DropdownMenuItem(
+          onTap: () => setState(
+            () => _selectedOperation == operation,
+          ),
+          value: operation,
+          child: Text(getLabel(operation)),
+        ),
+      ),
     );
   }
 
@@ -338,17 +336,15 @@ class _ManageFeaturesState extends State<ManageFeatures>
   void configureAttributeDropdownMenuItems(CodedValueDomain domain) {
     // Display a dropdown menu item for each coded value in the domain.
     _damageTypeAttributeOptions.addAll(
-      domain.codedValues
-          .map(
-            (value) => DropdownMenuItem(
-              onTap: () => setState(
-                () => _selectedDamageType == value.name,
-              ),
-              value: value.name,
-              child: Text(value.name),
-            ),
-          )
-          .toList(),
+      domain.codedValues.map(
+        (value) => DropdownMenuItem(
+          onTap: () => setState(
+            () => _selectedDamageType == value.name,
+          ),
+          value: value.name,
+          child: Text(value.name),
+        ),
+      ),
     );
   }
 
