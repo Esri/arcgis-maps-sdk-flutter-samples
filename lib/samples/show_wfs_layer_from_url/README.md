@@ -1,4 +1,4 @@
-# Show WFS Layer from URL
+# Show WFS layer from URL
 
 Display a layer from a WFS service using data from URL
 

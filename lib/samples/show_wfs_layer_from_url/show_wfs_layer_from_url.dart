@@ -91,9 +91,11 @@ class _ShowWfsLayerFromUrlState extends State<ShowWfsLayerFromUrl>
     // Add a listener for map navigation events
     _mapViewController.onNavigationChanged.listen((isNavigating) {
       if (!isNavigating) {
-        onNavigationChanged();
+        loadFeatures();
       }
     });
+
+    await loadFeatures();
     // Set the ready state variable to true to enable the sample UI.
     setState(() => _ready = true);
   }
@@ -131,7 +133,7 @@ class _ShowWfsLayerFromUrlState extends State<ShowWfsLayerFromUrl>
     _mapViewController.arcGISMap?.operationalLayers.add(featureLayer);
   }
 
-  void onNavigationChanged() async {
+  Future<void> loadFeatures() async {
     // Show the loading indicator.
     setState(() => _ready = false);
 
@@ -144,7 +146,7 @@ class _ShowWfsLayerFromUrlState extends State<ShowWfsLayerFromUrl>
       ..spatialRelationship = SpatialRelationship.intersects;
 
     try {
-      // Populate teh table with the query, leaving existing table entries intact
+      // Populate the table with the query, leaving existing table entries intact
       await _featureTable.populateFromService(
         parameters: visibleExtentQuery,
         clearCache: false,
