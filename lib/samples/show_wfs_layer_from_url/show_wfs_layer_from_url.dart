@@ -49,7 +49,6 @@ class _ShowWfsLayerFromUrlState extends State<ShowWfsLayerFromUrl>
                   child: ArcGISMapView(
                     controllerProvider: () => _mapViewController,
                     onMapViewReady: onMapViewReady,
-                    onTap: onTap,
                   ),
                 ),
               ],
@@ -100,10 +99,6 @@ class _ShowWfsLayerFromUrlState extends State<ShowWfsLayerFromUrl>
     setState(() => _ready = true);
   }
 
-  void onTap(Offset offset) {
-    print('Tapped at $offset');
-  }
-
   Future<void> loadWfsLayerFromURL() async {
     const wfsFeatureTableUri =
         'https://dservices2.arcgis.com/ZQgQTuoyBrtmoGdP/arcgis/services/Seattle_Downtown_Features/WFSServer?service=wfs&request=getcapabilities';
@@ -111,8 +106,7 @@ class _ShowWfsLayerFromUrlState extends State<ShowWfsLayerFromUrl>
     // Create a WFS feature table from URI and name.
     _featureTable = WfsFeatureTable.withUriAndTableName(
         uri: Uri.parse(wfsFeatureTableUri),
-        tableName: 'Seattle_Downtown_Features:Buildings')
-
+        tableName: 'Seattle_Downtown_Features:Buildings',)
       // Set the axis order and feature request mode.
       ..axisOrder = OgcAxisOrder.noSwap
       ..featureRequestMode = FeatureRequestMode.manualCache;
@@ -145,18 +139,14 @@ class _ShowWfsLayerFromUrlState extends State<ShowWfsLayerFromUrl>
       ..geometry = currentExtent
       ..spatialRelationship = SpatialRelationship.intersects;
 
-    try {
       // Populate the table with the query, leaving existing table entries intact
       await _featureTable.populateFromService(
         parameters: visibleExtentQuery,
         clearCache: false,
         outFields: [],
       );
-    } catch (exception) {
-      print('Error populating table: $exception');
-    } finally {
       // Hide the loading indicator
       setState(() => _ready = true);
-    }
+
   }
 }

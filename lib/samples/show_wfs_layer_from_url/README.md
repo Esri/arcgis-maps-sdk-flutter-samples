@@ -16,7 +16,7 @@ Pan and zoom to see features within the current map extent.
 
 1. Create a `WfsFeatureTable` with a URL.
 2. Create a `FeatureLayer` from the feature table and add it to the map.
-3. Listen for the `ArcGISMapViewController.onNavigatonChanged` event to detect when the user has stopped navigating the map.
+3. Listen for the `ArcGISMapViewController.onNavigatonChanged` event to detect when the navigation is complete.
 4. When the user is finished navigating, use `WfsFeatureTable.populateFromService` to load the table with data for the current visible extent.
 
 ## Relevant API
@@ -29,7 +29,7 @@ Pan and zoom to see features within the current map extent.
 
 ## About the data
 
-This service shows building footprints for downtown Seattle. For additional information, see the underlying service on ArcGIS Online.
+This service shows building footprints for downtown Seattle. For additional information, see the underlying service on [ArcGIS Online](https://arcgisruntime.maps.arcgis.com/home/item.html?id=1b81d35c5b0942678140efc29bc25391).
 
 ## Tags
 
