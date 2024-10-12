@@ -1793,6 +1793,39 @@
     "title": "Snap geometry edits",
     "key": "snap_geometry_edits"
   },
+  "style_graphics_with_symbols": {
+    "category": "GraphicsOverlay",
+    "description": "Use a symbol style to display a graphic on a graphics overlay.",
+    "formal_name": "AddGraphicsWithSymbols",
+    "ignore": false,
+    "images": [
+      "style_graphics_with_symbols.png"
+    ],
+    "keywords": [
+      "display",
+      "fill",
+      "graphics",
+      "line",
+      "marker",
+      "overlay",
+      "point",
+      "symbol"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+      "Geometry",
+      "Graphic",
+      "GraphicsOverlay",
+      "SimpleFillSymbol",
+      "SimpleLineSymbol",
+      "SimpleMarkerSymbol"
+    ],
+    "snippets": [
+      "style_graphics_with_symbols.dart"
+    ],
+    "title": "Style graphics with symbols",
+    "key": "style_graphics_with_symbols"
+  },
   "style_point_with_simple_marker_symbol": {
     "category": "Visualization",
     "description": "Show a simple marker symbol on a map.",
