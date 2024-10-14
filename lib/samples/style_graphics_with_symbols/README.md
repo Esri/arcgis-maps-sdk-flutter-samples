@@ -14,7 +14,7 @@ Pan and zoom around the map. Observe the graphics on the map.
 
 ## How it works
 
-1. Create a `GraphicsOverlay` and add it to the `MapView`.
+1. Create a `GraphicsOverlay` and add it to the `ArcGISMapView`.
 2. Create a `Symbol` such as `SimpleMarkerSymbol`, `SimpleLineSymbol` or `SimpleFillSymbol`.
 3. Create a `Graphic`, specifying a `Geometry` and a `Symbol`.
 4. Add the `Graphic` to the `GraphicsOverlay`.
