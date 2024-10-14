@@ -87,6 +87,12 @@ class _ChangeViewpointState extends State<ChangeViewpoint> {
   }
 
   void onMapViewReady() async {
+    // Coordinates for London
+    // Coordinates for London
+    final ArcGISPoint condonCoords = ArcGISPoint(
+        x: -13881.7678417696, y: 6710726.57374296, spatialReference: SpatialReference.webMercator, );
+
+
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic);
     _mapViewController.arcGISMap = map;
     // Perform some long-running setup task.
