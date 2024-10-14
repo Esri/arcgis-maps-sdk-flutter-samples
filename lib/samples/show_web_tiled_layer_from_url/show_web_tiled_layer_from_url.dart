@@ -33,13 +33,6 @@ class _ShowWebTiledLayerFromUrlState extends State<ShowWebTiledLayerFromUrl>
   // A flag for when the map view is ready and controls can be used.
   var _ready = false;
 
-  // Templated URL to the tile service
-  final String _templateUri =
-      'https://server.arcgisonline.com/arcgis/rest/services/Ocean/World_Ocean_Base/MapServer/tile/{level}/{row}/{col}.jpg';
-
-  // Attribution string for the Living Atlas service
-  final String _attribution = 'Map tiles by ArcGIS Living Atlas of the World, under Esri Master License Agreement. Data by Esri, Garmin, GEBCO, NOAA NGDC, and other contributors.';
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -73,22 +66,29 @@ class _ShowWebTiledLayerFromUrlState extends State<ShowWebTiledLayerFromUrl>
       ),
     );
   }
-
+  // Called when the map view is ready.
   void onMapViewReady() async {
+    // Templated URL to the tile service.
+    const templateUrl =
+        'https://server.arcgisonline.com/arcgis/rest/services/Ocean/World_Ocean_Base/MapServer/tile/{level}/{row}/{col}.jpg';
 
-    // Create the WebTiledLayer from the URL
-    final webTiledLayer = WebTiledLayer(template: _templateUri)
-    // Set the attribution
-        ..setAttribution(_attribution);
+    // Attribution string for the Living Atlas service.
+    const attribution =
+        'Map tiles by ArcGIS Living Atlas of the World, under Esri Master License Agreement. Data by Esri, Garmin, GEBCO, NOAA NGDC, and other contributors.';
 
-    // Create a Basemap from the WebTiledLayer
+    // Create the WebTiledLayer from the URL.
+    final webTiledLayer = WebTiledLayer(template: templateUrl)
+      // Set the attribution.
+      ..setAttribution(attribution);
+
+    // Create a basemap from the WebTiledLayer.
     final basemap = Basemap.withBaseLayer(webTiledLayer);
 
-    // Create a ArcGISMap to hold the BaseMap
-    final arcGISMap = ArcGISMap.withBasemap(basemap);
+    // Create a map to hold the BaseMap.
+    final map = ArcGISMap.withBasemap(basemap);
 
-    // Set the ArcGISMap to the map view controller
-    _mapViewController.arcGISMap = arcGISMap;
+    // Set the ArcGISMap to the map view controller.
+    _mapViewController.arcGISMap = map;
 
     setState(() => _ready = true);
   }

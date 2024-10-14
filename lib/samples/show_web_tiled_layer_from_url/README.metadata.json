@@ -3,7 +3,7 @@
     "description": "Display a tiled web layer.",
     "ignore": false,
     "images": [
-        "ShowWebTiledLayerFromUrl.png"
+        "show_web_tiled_layer_from_url.png"
     ],
     "keywords": [
         "OGC",

@@ -2,7 +2,7 @@
 
 Display a tiled web layer.
 
-![Image of show web tiled layer From Url](ShowWebTiledLayerFromUrl.png)
+![Image of show web tiled layer From Url](show_web_tiled_layer_from_url.png)
 
 ## Use case
 
