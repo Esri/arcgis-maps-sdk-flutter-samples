@@ -1754,7 +1754,7 @@
     ],
     "title": "Show WFS layer from URL",
     "key": "show_wfs_layer_from_url"
-
+  },
   "show_web_tiled_layer_from_url": {
     "category": "Layers",
     "description": "Display a tiled web layer.",
