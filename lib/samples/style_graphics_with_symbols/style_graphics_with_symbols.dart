@@ -184,7 +184,10 @@ class _StyleGraphicsWithSymbolsState extends State<StyleGraphicsWithSymbols>
     final polyline = polylineBuilder.toGeometry();
 
     // Create the graphic with polyline and symbol.
-    final graphic = Graphic(geometry: polyline, symbol: lineSymbol);
+    final graphic = Graphic(
+      geometry: polyline,
+      symbol: lineSymbol,
+    );
 
     // Add graphic to the graphics overlay.
     _graphicsOverlay.graphics.add(graphic);
