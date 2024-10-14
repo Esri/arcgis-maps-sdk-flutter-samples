@@ -171,7 +171,7 @@ class _StyleGraphicsWithSymbolsState extends State<StyleGraphicsWithSymbols>
   }
 
   void _createPolygon() {
-    // Create a green dash line symbol
+    // Create a green dash line symbol.
     final outlineSymbol = SimpleLineSymbol(
       style: SimpleLineSymbolStyle.dash,
       color: Colors.green,
