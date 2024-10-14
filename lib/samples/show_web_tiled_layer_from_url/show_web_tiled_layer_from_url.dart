@@ -29,7 +29,6 @@ class _ShowWebTiledLayerFromUrlState extends State<ShowWebTiledLayerFromUrl>
     with SampleStateSupport {
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
-
   // A flag for when the map view is ready and controls can be used.
   var _ready = false;
 
@@ -66,12 +65,12 @@ class _ShowWebTiledLayerFromUrlState extends State<ShowWebTiledLayerFromUrl>
       ),
     );
   }
+
   // Called when the map view is ready.
-  void onMapViewReady() async {
+  void onMapViewReady() {
     // Templated URL to the tile service.
     const templateUrl =
         'https://server.arcgisonline.com/arcgis/rest/services/Ocean/World_Ocean_Base/MapServer/tile/{level}/{row}/{col}.jpg';
-
     // Attribution string for the Living Atlas service.
     const attribution =
         'Map tiles by ArcGIS Living Atlas of the World, under Esri Master License Agreement. Data by Esri, Garmin, GEBCO, NOAA NGDC, and other contributors.';
@@ -83,13 +82,12 @@ class _ShowWebTiledLayerFromUrlState extends State<ShowWebTiledLayerFromUrl>
 
     // Create a basemap from the WebTiledLayer.
     final basemap = Basemap.withBaseLayer(webTiledLayer);
-
     // Create a map to hold the BaseMap.
     final map = ArcGISMap.withBasemap(basemap);
-
     // Set the ArcGISMap to the map view controller.
     _mapViewController.arcGISMap = map;
 
+    // Set the ready state variable to true to enable the sample UI.
     setState(() => _ready = true);
   }
 }
