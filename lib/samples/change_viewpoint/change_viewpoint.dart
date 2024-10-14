@@ -94,61 +94,29 @@ class _ChangeViewpointState extends State<ChangeViewpoint>
   }
 
   void onMapViewReady() {
-    // Coordinates for Redlands
+    // Coordinates for Redlands.
     redlandsEnvelope = PolygonBuilder(
       spatialReference: SpatialReference.webMercator,
     );
 
-    redlandsEnvelope.addPoint(
-      ArcGISPoint(
-        x: -13049785.1566222,
-        y: 4032064.6003424,
-      ),
-    );
-    redlandsEnvelope.addPoint(
-      ArcGISPoint(
-        x: -13049785.1566222,
-        y: -13049785.1566222,
-      ),
-    );
-    redlandsEnvelope.addPoint(
-      ArcGISPoint(
-        x: -13037033.5780234,
-        y: 4032064.6003424,
-      ),
-    );
-    redlandsEnvelope.addPoint(
-      ArcGISPoint(
-        x: -13037033.5780234,
-        y: 4040202.42595729,
-      ),
-    );
+    redlandsEnvelope.addPointXY(x: -13049785.1566222, y: 4032064.6003424);
+    redlandsEnvelope.addPointXY(x: -13049785.1566222, y: -13049785.1566222);
+    redlandsEnvelope.addPointXY(x: -13037033.5780234, y: 4032064.6003424);
+    redlandsEnvelope.addPointXY(x: -13037033.5780234, y: 4040202.42595729);
 
-    // Coordinates for Edinburgh
+    // Coordinates for Edinburgh.
     final edinburghEnvelope = PolygonBuilder(
       spatialReference: SpatialReference.webMercator,
     );
-    edinburghEnvelope.addPointXY(
-      x: -354262.156621384,
-      y: 47548092.94093301,
-    );
-    edinburghEnvelope.addPointXY(
-      x: -354262.156621384,
-      y: 7548901.50684376,
-    );
-    edinburghEnvelope.addPointXY(
-      x: -353039.164455303,
-      y: 7548092.94093301,
-    );
-    edinburghEnvelope.addPointXY(
-      x: -353039.164455303,
-      y: 7548901.50684376,
-    );
+    edinburghEnvelope.addPointXY(x: -354262.156621384, y: 47548092.94093301);
+    edinburghEnvelope.addPointXY(x: -354262.156621384, y: 7548901.50684376);
+    edinburghEnvelope.addPointXY(x: -353039.164455303, y: 7548092.94093301);
+    edinburghEnvelope.addPointXY(x: -353039.164455303, y: 7548901.50684376);
 
-    // Create new Map with basemap and initial location
+    // Create new Map with basemap and initial location.
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic);
 
-    // Assign the map to the MapView
+    // Assign the map to the MapView.
     _mapViewController.arcGISMap = map;
 
     // Set the ready state variable to true to enable the sample UI.
@@ -195,28 +163,28 @@ class _ChangeViewpointState extends State<ChangeViewpoint>
 
     switch (_selectedViewpoint) {
       case 'Geometry':
-        // Set Viewpoint using Redlands envelope defined above and a padding of 20
+        // Set Viewpoint using Redlands envelope defined above and a padding of 20.
         await _mapViewController.setViewpointGeometry(
           redlandsEnvelope.toGeometry(),
           paddingInDiPs: 20,
         );
 
       case 'Center & Scale':
-        // Set Viewpoint so that it is centered on the London coordinates defined above
+        // Set Viewpoint so that it is centered on the London coordinates defined above.
         await _mapViewController.setViewpointCenter(londonCoordinates);
 
-        // Set the Viewpoint scale to match the specified scale
+        // Set the Viewpoint scale to match the specified scale.
         await _mapViewController.setViewpointScale(londonScale);
 
       case 'Animate':
-        // Navigate to full extent of the first baselayer before animating to specified geometry
+        // Navigate to full extent of the first baselayer before animating to specified geometry.
         await _mapViewController.setViewpoint(Viewpoint.en(_mapViewController
             .arcGISMap!.basemap!.baseLayers.first.fullExtent));
 
-        // Create a new Viewpoint using the specified geometry
+        // Create a new Viewpoint using the specified geometry.
         Viewpoint viewpoint = new Viewpoint(EdinburghEnvelope);
 
-        // Set Viewpoint of MapView to the Viewpoint created above and animate to it using a timespan of 5 seconds
+        // Set Viewpoint of MapView to the Viewpoint created above and animate to it using a timespan of 5 seconds.
         await MyMapView.SetViewpointAsync(viewpoint, TimeSpan.FromSeconds(5));
         break;
 
