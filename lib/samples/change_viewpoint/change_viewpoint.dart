@@ -24,11 +24,38 @@ class ChangeViewpoint extends StatefulWidget {
   State<ChangeViewpoint> createState() => _ChangeViewpointState();
 }
 
-class _ChangeViewpointState extends State<ChangeViewpoint> with SampleStateSupport {
+class _ChangeViewpointState extends State<ChangeViewpoint>
+    with SampleStateSupport {
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
+
   // A flag for when the map view is ready and controls can be used.
   var _ready = false;
+
+  // Coordinates for London
+  final londonCoordinates = ArcGISPoint(
+    x: -13881.7678417696,
+    y: 6710726.57374296,
+    spatialReference: SpatialReference.webMercator,
+  );
+  static const londonScale = 8762.7156655228955;
+
+  // String array to store titles for the viewpoints specified above.
+  final _viewpointTitles = <String>[
+    'Geometry',
+    'Center & Scale',
+    'Animate',
+  ];
+
+  late String _selectedViewpoint;
+  late PolygonBuilder redlandsEnvelope;
+
+  @override
+  void initState() {
+    //_selectedViewpoint = _viewpointTitles.first;
+
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,6 +73,8 @@ class _ChangeViewpointState extends State<ChangeViewpoint> with SampleStateSuppo
                     onMapViewReady: onMapViewReady,
                   ),
                 ),
+                // Build the bottom menu.
+                buildBottomMenu(),
               ],
             ),
             // Display a progress indicator and prevent interaction until state is ready.
@@ -64,20 +93,12 @@ class _ChangeViewpointState extends State<ChangeViewpoint> with SampleStateSuppo
     );
   }
 
-  void onMapViewReady() async {
-    // Coordinates for London
-    // Coordinates for London
-    final ArcGISPoint londonCoords = ArcGISPoint(
-      x: -13881.7678417696,
-      y: 6710726.57374296,
-      spatialReference: SpatialReference.webMercator,
-    );
-    const double londonScale = 8762.7156655228955;
-
+  void onMapViewReady() {
     // Coordinates for Redlands
-    final redlandsEnvelope = PolygonBuilder(
+    redlandsEnvelope = PolygonBuilder(
       spatialReference: SpatialReference.webMercator,
     );
+
     redlandsEnvelope.addPoint(
       ArcGISPoint(
         x: -13049785.1566222,
@@ -107,49 +128,100 @@ class _ChangeViewpointState extends State<ChangeViewpoint> with SampleStateSuppo
     final edinburghEnvelope = PolygonBuilder(
       spatialReference: SpatialReference.webMercator,
     );
-    edinburghEnvelope.addPoint(
-      ArcGISPoint(
-        x: -354262.156621384,
-        y: 47548092.94093301,
-      ),
+    edinburghEnvelope.addPointXY(
+      x: -354262.156621384,
+      y: 47548092.94093301,
     );
-    edinburghEnvelope.addPoint(
-      ArcGISPoint(
-        x: -354262.156621384,
-        y: 7548901.50684376,
-      ),
+    edinburghEnvelope.addPointXY(
+      x: -354262.156621384,
+      y: 7548901.50684376,
     );
-    edinburghEnvelope.addPoint(
-      ArcGISPoint(
-        x: -353039.164455303,
-        y: 7548092.94093301,
-      ),
+    edinburghEnvelope.addPointXY(
+      x: -353039.164455303,
+      y: 7548092.94093301,
     );
-    edinburghEnvelope.addPoint(
-      ArcGISPoint(
-        x: -353039.164455303,
-        y: 7548901.50684376,
-      ),
+    edinburghEnvelope.addPointXY(
+      x: -353039.164455303,
+      y: 7548901.50684376,
     );
 
-    // String array to store titles for the viewpoints specified above.
-    const viewpointTitles = [
-      'Geometry',
-      'Center & Scale',
-      'Animate',
-    ];
-
-    initializeViewpoint();
-
-    // Set the ready state variable to true to enable the sample UI.
-    setState(() => _ready = true);
-  }
-
-  void initializeViewpoint() {
     // Create new Map with basemap and initial location
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic);
 
     // Assign the map to the MapView
     _mapViewController.arcGISMap = map;
+
+    // Set the ready state variable to true to enable the sample UI.
+    setState(() => _ready = true);
+  }
+
+  Widget buildBottomMenu() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        // A drop down button for selecting viewpoint.
+        DropdownButton(
+          alignment: Alignment.center,
+          hint: const Text(
+            'Select viewpoint',
+            style: TextStyle(
+              color: Colors.deepPurple,
+            ),
+          ),
+          icon: const Icon(Icons.arrow_drop_down),
+          iconEnabledColor: Colors.deepPurple,
+          iconDisabledColor: Colors.grey,
+          style: const TextStyle(color: Colors.deepPurple),
+          value: _selectedViewpoint,
+          items: _viewpointTitles.map((String items) {
+            return DropdownMenuItem(
+              value: items,
+              child: Text(items),
+            );
+          }).toList(),
+          onChanged: (String? viewpoint) {
+            if (viewpoint != null) {
+              changeViewpoint(viewpoint);
+            }
+          },
+        ),
+      ],
+    );
+  }
+
+  void changeViewpoint(String viewpoint) async {
+    // Set the selected viewpoint.
+    setState(() => _selectedViewpoint = viewpoint);
+
+    switch (_selectedViewpoint) {
+      case 'Geometry':
+        // Set Viewpoint using Redlands envelope defined above and a padding of 20
+        await _mapViewController.setViewpointGeometry(
+          redlandsEnvelope.toGeometry(),
+          paddingInDiPs: 20,
+        );
+
+      case 'Center & Scale':
+        // Set Viewpoint so that it is centered on the London coordinates defined above
+        await _mapViewController.setViewpointCenter(londonCoordinates);
+
+        // Set the Viewpoint scale to match the specified scale
+        await _mapViewController.setViewpointScale(londonScale);
+
+      case 'Animate':
+        // Navigate to full extent of the first baselayer before animating to specified geometry
+        await _mapViewController.setViewpoint(Viewpoint.en(_mapViewController
+            .arcGISMap!.basemap!.baseLayers.first.fullExtent));
+
+        // Create a new Viewpoint using the specified geometry
+        Viewpoint viewpoint = new Viewpoint(EdinburghEnvelope);
+
+        // Set Viewpoint of MapView to the Viewpoint created above and animate to it using a timespan of 5 seconds
+        await MyMapView.SetViewpointAsync(viewpoint, TimeSpan.FromSeconds(5));
+        break;
+
+      default:
+        break;
+    }
   }
 }
