@@ -1717,6 +1717,7 @@
     "title": "Show service area",
     "key": "show_service_area"
   },
+
   "show_wfs_layer_from_url": {
     "category": "Layers",
     "description": "Display a layer from a WFS service using data from URL",
@@ -1753,6 +1754,32 @@
     ],
     "title": "Show WFS layer from URL",
     "key": "show_wfs_layer_from_url"
+
+  "show_web_tiled_layer_from_url": {
+    "category": "Layers",
+    "description": "Display a tiled web layer.",
+    "ignore": false,
+    "images": [
+      "show_web_tiled_layer_from_url.png"
+    ],
+    "keywords": [
+      "OGC",
+      "layer",
+      "tiled",
+      "tiles",
+      "Basemap",
+      "WebTiledLayer"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+      "Basemap",
+      "WebTiledLayer"
+    ],
+    "snippets": [
+      "show_web_tiled_layer_from_url.dart"
+    ],
+    "title": "Show web tiled layer from URL",
+    "key": "show_web_tiled_layer_from_url"
   },
   "show_wfs_layer_with_xml_query": {
     "category": "Search and Query",
@@ -1829,6 +1856,39 @@
     ],
     "title": "Snap geometry edits",
     "key": "snap_geometry_edits"
+  },
+  "style_graphics_with_symbols": {
+    "category": "GraphicsOverlay",
+    "description": "Use a symbol style to display a graphic on a graphics overlay.",
+    "formal_name": "AddGraphicsWithSymbols",
+    "ignore": false,
+    "images": [
+      "style_graphics_with_symbols.png"
+    ],
+    "keywords": [
+      "display",
+      "fill",
+      "graphics",
+      "line",
+      "marker",
+      "overlay",
+      "point",
+      "symbol"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+      "Geometry",
+      "Graphic",
+      "GraphicsOverlay",
+      "SimpleFillSymbol",
+      "SimpleLineSymbol",
+      "SimpleMarkerSymbol"
+    ],
+    "snippets": [
+      "style_graphics_with_symbols.dart"
+    ],
+    "title": "Style graphics with symbols",
+    "key": "style_graphics_with_symbols"
   },
   "style_point_with_simple_marker_symbol": {
     "category": "Visualization",
