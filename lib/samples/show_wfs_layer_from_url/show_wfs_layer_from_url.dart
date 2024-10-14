@@ -28,10 +28,8 @@ class _ShowWfsLayerFromUrlState extends State<ShowWfsLayerFromUrl>
     with SampleStateSupport {
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
-
   // A flag for when the map view is ready and controls can be used.
   var _ready = false;
-
   // Reference to the WFS feature table.
   late WfsFeatureTable _featureTable;
 
@@ -72,7 +70,7 @@ class _ShowWfsLayerFromUrlState extends State<ShowWfsLayerFromUrl>
   void onMapViewReady() async {
     // Create a map with the ArcGIS Navigation basemap style and set to the map view.
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISNavigation);
-
+    // Set the map to _mapViewController.
     _mapViewController.arcGISMap = map;
 
     // Load the WFS layer.
@@ -84,22 +82,24 @@ class _ShowWfsLayerFromUrlState extends State<ShowWfsLayerFromUrl>
       longitude: -122.341581,
       scale: 5000,
     );
-
+    //Set the initial Viewpoint on _mapViewController.
     _mapViewController.setViewpoint(initialViewPoint);
 
-    // Add a listener for map navigation events
+    // Add a listener for map navigation events.
     _mapViewController.onNavigationChanged.listen((isNavigating) {
       if (!isNavigating) {
         loadFeatures();
       }
     });
 
+    // Load the features.
     await loadFeatures();
     // Set the ready state variable to true to enable the sample UI.
     setState(() => _ready = true);
   }
 
   Future<void> loadWfsLayerFromURL() async {
+    // Uri for the wfsFeatureTable.
     const wfsFeatureTableUri =
         'https://dservices2.arcgis.com/ZQgQTuoyBrtmoGdP/arcgis/services/Seattle_Downtown_Features/WFSServer?service=wfs&request=getcapabilities';
 
@@ -113,7 +113,6 @@ class _ShowWfsLayerFromUrlState extends State<ShowWfsLayerFromUrl>
 
     // Create the feature layer from the feature table.
     final featureLayer = FeatureLayer.withFeatureTable(_featureTable)
-
       // Apply a renderer.
       ..renderer = SimpleRenderer(
         symbol: SimpleLineSymbol(
@@ -121,12 +120,14 @@ class _ShowWfsLayerFromUrlState extends State<ShowWfsLayerFromUrl>
           width: 3,
         ),
       );
+    // Wait for the feature layer to load.
     await featureLayer.load();
 
-    // Add the feature layer to the map
+    // Add the feature layer to the map.
     _mapViewController.arcGISMap?.operationalLayers.add(featureLayer);
   }
 
+  // Call this function to load the features in the initial viewpoint.
   Future<void> loadFeatures() async {
     // Show the loading indicator.
     setState(() => _ready = false);
@@ -139,13 +140,13 @@ class _ShowWfsLayerFromUrlState extends State<ShowWfsLayerFromUrl>
       ..geometry = currentExtent
       ..spatialRelationship = SpatialRelationship.intersects;
 
-      // Populate the table with the query, leaving existing table entries intact
+      // Populate the table with the query, leaving existing table entries intact.
       await _featureTable.populateFromService(
         parameters: visibleExtentQuery,
         clearCache: false,
         outFields: [],
       );
-      // Hide the loading indicator
+      // Hide the loading indicator.
       setState(() => _ready = true);
 
   }
