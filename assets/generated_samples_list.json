@@ -1717,6 +1717,32 @@
     "title": "Show service area",
     "key": "show_service_area"
   },
+  "show_web_tiled_layer_from_url": {
+    "category": "Layers",
+    "description": "Display a tiled web layer.",
+    "ignore": false,
+    "images": [
+      "show_web_tiled_layer_from_url.png"
+    ],
+    "keywords": [
+      "OGC",
+      "layer",
+      "tiled",
+      "tiles",
+      "Basemap",
+      "WebTiledLayer"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+      "Basemap",
+      "WebTiledLayer"
+    ],
+    "snippets": [
+      "show_web_tiled_layer_from_url.dart"
+    ],
+    "title": "Show web tiled layer from URL",
+    "key": "show_web_tiled_layer_from_url"
+  },
   "show_wfs_layer_with_xml_query": {
     "category": "Search and Query",
     "description": "Load a WFS feature table using an XML query.",
