@@ -29,6 +29,7 @@ class _StyleGraphicsWithSymbolsState extends State<StyleGraphicsWithSymbols>
     with SampleStateSupport {
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
+
   // A flag for when the map view is ready and controls can be used.
   var _ready = false;
 
@@ -152,42 +153,18 @@ class _StyleGraphicsWithSymbolsState extends State<StyleGraphicsWithSymbols>
     // Build a polyline.
     final polylineBuilder =
         PolylineBuilder(spatialReference: SpatialReference.wgs84);
-    polylineBuilder.addPointXY(
-      x: -2.715,
-      y: 56.061,
-    );
-    polylineBuilder.addPointXY(
-      x: -2.6438,
-      y: 56.079,
-    );
-    polylineBuilder.addPointXY(
-      x: -2.638,
-      y: 56.079,
-    );
-    polylineBuilder.addPointXY(
-      x: -2.636,
-      y: 56.078,
-    );
-    polylineBuilder.addPointXY(
-      x: -2.636,
-      y: 56.077,
-    );
-    polylineBuilder.addPointXY(
-      x: -2.637,
-      y: 56.076,
-    );
-    polylineBuilder.addPointXY(
-      x: -2.715,
-      y: 56.061,
-    );
+    polylineBuilder.addPointXY(x: -2.715, y: 56.061);
+    polylineBuilder.addPointXY(x: -2.6438, y: 56.079);
+    polylineBuilder.addPointXY(x: -2.638, y: 56.079);
+    polylineBuilder.addPointXY(x: -2.636, y: 56.078);
+    polylineBuilder.addPointXY(x: -2.636, y: 56.077);
+    polylineBuilder.addPointXY(x: -2.637, y: 56.076);
+    polylineBuilder.addPointXY(x: -2.715, y: 56.061);
 
     final polyline = polylineBuilder.toGeometry();
 
     // Create the graphic with polyline and symbol.
-    final graphic = Graphic(
-      geometry: polyline,
-      symbol: lineSymbol,
-    );
+    final graphic = Graphic(geometry: polyline, symbol: lineSymbol);
 
     // Add graphic to the graphics overlay.
     _graphicsOverlay.graphics.add(graphic);
@@ -211,30 +188,14 @@ class _StyleGraphicsWithSymbolsState extends State<StyleGraphicsWithSymbols>
     // Create a new point collection for polygon.
     final polygonBuilder =
         PolygonBuilder(spatialReference: SpatialReference.wgs84);
-    polygonBuilder.addPointXY(
-      x: -2.6425,
-      y: 56.0784,
-    );
-    polygonBuilder.addPointXY(
-      x: -2.6430,
-      y: 56.0763,
-    );
-    polygonBuilder.addPointXY(
-      x: -2.6410,
-      y: 56.0759,
-    );
-    polygonBuilder.addPointXY(
-      x: -2.6380,
-      y: 56.0765,
-    );
-    polygonBuilder.addPointXY(
-      x: -2.6380,
-      y: 56.0784,
-    );
-    polygonBuilder.addPointXY(
-      x: -2.6410,
-      y: 56.0786,
-    );
+
+    polygonBuilder.addPointXY(x: -2.6425, y: 56.0784);
+    polygonBuilder.addPointXY(x: -2.6430, y: 56.0763);
+    polygonBuilder.addPointXY(x: -2.6410, y: 56.0759);
+    polygonBuilder.addPointXY(x: -2.6380, y: 56.0765);
+    polygonBuilder.addPointXY(x: -2.6380, y: 56.0784);
+    polygonBuilder.addPointXY(x: -2.6410, y: 56.0786);
+
     final polygon = polygonBuilder.toGeometry();
 
     // Create the graphic with polygon and symbol.
@@ -275,37 +236,24 @@ class _StyleGraphicsWithSymbolsState extends State<StyleGraphicsWithSymbols>
     );
 
     // Create two graphics from the points and symbols.
-    final bassRockGraphic = Graphic(
-      geometry: bassPoint,
-      symbol: bassRockTextSymbol,
-    );
-    final craigleithGraphic = Graphic(
-      geometry: craigleithPoint,
-      symbol: craigleithTextSymbol,
-    );
+    final bassRockGraphic =
+        Graphic(geometry: bassPoint, symbol: bassRockTextSymbol);
+    final craigleithGraphic =
+        Graphic(geometry: craigleithPoint, symbol: craigleithTextSymbol);
 
     // Add graphics to the graphics overlay.
-    _graphicsOverlay.graphics.addAll([
-      bassRockGraphic,
-      craigleithGraphic,
-    ]);
+    _graphicsOverlay.graphics.addAll([bassRockGraphic, craigleithGraphic]);
   }
 
   void _setExtent() async {
-    // Get all of the graphics contained in the graphics overlay.
-    List<Graphic> myGraphicCollection = _graphicsOverlay.graphics;
-
     // Create a new envelope builder using the same spatial reference as the graphics.
-    EnvelopeBuilder myEnvelopeBuilder = EnvelopeBuilder(
-      spatialReference: SpatialReference.wgs84,
-    );
+    final myEnvelopeBuilder =
+        EnvelopeBuilder(spatialReference: SpatialReference.wgs84);
 
     // Loop through each graphic in the graphic collection.
-    for (final graphic in myGraphicCollection) {
+    for (final graphic in _graphicsOverlay.graphics) {
       // Union the extent of each graphic in the envelope builder.
-      myEnvelopeBuilder.unionWithEnvelope(
-        graphic.geometry!.extent,
-      );
+      myEnvelopeBuilder.unionWithEnvelope(graphic.geometry!.extent);
     }
 
     // Expand the envelope builder by 30%.
@@ -314,9 +262,7 @@ class _StyleGraphicsWithSymbolsState extends State<StyleGraphicsWithSymbols>
     // Adjust the viewable area of the map to encompass all of the graphics in the
     // graphics overlay plus an extra 30% margin for better viewing.
     _mapViewController.setViewpointAnimated(
-      Viewpoint.fromTargetExtent(
-        myEnvelopeBuilder.extent,
-      ),
+      Viewpoint.fromTargetExtent(myEnvelopeBuilder.extent),
     );
   }
 }
