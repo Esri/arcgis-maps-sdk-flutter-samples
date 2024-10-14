@@ -27,7 +27,6 @@ void main() async {
   );
 }
 
-
 class ChangeViewpoint extends StatefulWidget {
   const ChangeViewpoint({super.key});
 
@@ -89,16 +88,90 @@ class _ChangeViewpointState extends State<ChangeViewpoint> {
   void onMapViewReady() async {
     // Coordinates for London
     // Coordinates for London
-    final ArcGISPoint condonCoords = ArcGISPoint(
-        x: -13881.7678417696, y: 6710726.57374296, spatialReference: SpatialReference.webMercator, );
+    final ArcGISPoint londonCoords = ArcGISPoint(
+      x: -13881.7678417696,
+      y: 6710726.57374296,
+      spatialReference: SpatialReference.webMercator,
+    );
+    const double londonScale = 8762.7156655228955;
 
+    // Coordinates for Redlands
+    final redlandsEnvelope = PolygonBuilder(
+      spatialReference: SpatialReference.webMercator,
+    );
+    redlandsEnvelope.addPoint(
+      ArcGISPoint(
+        x: -13049785.1566222,
+        y: 4032064.6003424,
+      ),
+    );
+    redlandsEnvelope.addPoint(
+      ArcGISPoint(
+        x: -13049785.1566222,
+        y: -13049785.1566222,
+      ),
+    );
+    redlandsEnvelope.addPoint(
+      ArcGISPoint(
+        x: -13037033.5780234,
+        y: 4032064.6003424,
+      ),
+    );
+    redlandsEnvelope.addPoint(
+      ArcGISPoint(
+        x: -13037033.5780234,
+        y: 4040202.42595729,
+      ),
+    );
 
-    final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic);
-    _mapViewController.arcGISMap = map;
-    // Perform some long-running setup task.
-    await Future.delayed(const Duration(seconds: 10));
+    // Coordinates for Edinburgh
+    final edinburghEnvelope = PolygonBuilder(
+      spatialReference: SpatialReference.webMercator,
+    );
+    edinburghEnvelope.addPoint(
+      ArcGISPoint(
+        x: -354262.156621384,
+        y: 47548092.94093301,
+      ),
+    );
+    edinburghEnvelope.addPoint(
+      ArcGISPoint(
+        x: -354262.156621384,
+        y: 7548901.50684376,
+      ),
+    );
+    edinburghEnvelope.addPoint(
+      ArcGISPoint(
+        x: -353039.164455303,
+        y: 7548092.94093301,
+      ),
+    );
+    edinburghEnvelope.addPoint(
+      ArcGISPoint(
+        x: -353039.164455303,
+        y: 7548901.50684376,
+      ),
+    );
+
+    // String array to store titles for the viewpoints specified above.
+    const viewpointTitles = [
+      'Geometry',
+      'Center & Scale',
+      'Animate',
+    ];
+
+    initializeViewpoint();
+
     // Set the ready state variable to true to enable the sample UI.
     setState(() => _ready = true);
+  }
+
+  void initializeViewpoint() {
+    // Create new Map with basemap and initial location
+    final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic);
+
+    // Assign the map to the MapView
+    _mapViewController.arcGISMap = map;
   }
 
   void onTap(Offset offset) {
