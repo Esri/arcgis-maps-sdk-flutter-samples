@@ -204,7 +204,7 @@ class _AddFeatureLayersState extends State<AddFeatureLayers>
     await portalItem.load();
     // Create a feature layer with the portal item and layer ID.
     final portalItemFeatureLayer = FeatureLayer.withItem(
-      featureServiceItem: portalItem,
+      item: portalItem,
       layerId: 0,
     );
     // Clear the operational layers and add the feature layer to the map.
