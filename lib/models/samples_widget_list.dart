@@ -51,6 +51,7 @@ import 'package:arcgis_maps_sdk_flutter_samples/samples/show_legend/show_legend.
 import 'package:arcgis_maps_sdk_flutter_samples/samples/show_magnifier/show_magnifier.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/show_portal_user_info/show_portal_user_info.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/show_service_area/show_service_area.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/samples/show_wfs_layer_from_url/show_wfs_layer_from_url.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/show_web_tiled_layer_from_url/show_web_tiled_layer_from_url.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/show_wfs_layer_with_xml_query/show_wfs_layer_with_xml_query.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/snap_geometry_edits/snap_geometry_edits.dart';
@@ -126,6 +127,7 @@ final sampleWidgets = {
   'show_magnifier': () => const ShowMagnifier(),
   'show_portal_user_info': () => const ShowPortalUserInfo(),
   'show_service_area': () => const ShowServiceArea(),
+  'show_wfs_layer_from_url': () => const ShowWfsLayerFromUrl(),
   'show_web_tiled_layer_from_url': () => const ShowWebTiledLayerFromUrl(),
   'show_wfs_layer_with_xml_query': () => const ShowWfsLayerWithXmlQuery(),
   'snap_geometry_edits': () => const SnapGeometryEdits(),
