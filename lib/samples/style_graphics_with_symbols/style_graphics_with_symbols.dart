@@ -16,17 +16,6 @@
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:flutter/material.dart';
 
-void main() async {
-  // Supply your apiKey using the --dart-define-from-file command line argument
-  ArcGISEnvironment.apiKey = const String.fromEnvironment('API_KEY');
-
-  runApp(
-    const MaterialApp(
-      home: StyleGraphicsWithSymbols(),
-    ),
-  );
-}
-
 class StyleGraphicsWithSymbols extends StatefulWidget {
   const StyleGraphicsWithSymbols({super.key});
 
@@ -75,6 +64,7 @@ class _StyleGraphicsWithSymbolsState extends State<StyleGraphicsWithSymbols> {
     final point = ArcGISPoint(
       x: 56.075844,
       y: -2.681572,
+      spatialReference: SpatialReference.wgs84,
     );
 
     // Set the initial viewpoint of the map to the point and provide a scale.
@@ -95,8 +85,6 @@ class _StyleGraphicsWithSymbolsState extends State<StyleGraphicsWithSymbols> {
     // Update the extent to encompass all of the symbols.
     _setExtent();
 
-    // Perform some long-running setup task.
-    await Future.delayed(const Duration(seconds: 10));
     // Set the ready state variable to true to enable the sample UI.
     setState(() => _ready = true);
   }
