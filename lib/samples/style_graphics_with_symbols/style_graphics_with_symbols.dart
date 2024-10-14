@@ -15,6 +15,7 @@
 
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:flutter/material.dart';
+import '../../utils/sample_state_support.dart';
 
 class StyleGraphicsWithSymbols extends StatefulWidget {
   const StyleGraphicsWithSymbols({super.key});
@@ -24,7 +25,7 @@ class StyleGraphicsWithSymbols extends StatefulWidget {
       _StyleGraphicsWithSymbolsState();
 }
 
-class _StyleGraphicsWithSymbolsState extends State<StyleGraphicsWithSymbols> {
+class _StyleGraphicsWithSymbolsState extends State<StyleGraphicsWithSymbols> with SampleStateSupport {
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
   // A flag for when the map view is ready and controls can be used.
