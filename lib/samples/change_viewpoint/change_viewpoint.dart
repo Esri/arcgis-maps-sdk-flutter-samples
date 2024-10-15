@@ -29,24 +29,14 @@ class _ChangeViewpointState extends State<ChangeViewpoint>
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
 
-  // Coordinates for London
-  final londonCoordinates = ArcGISPoint(
-    x: -13881.7678417696,
-    y: 6710726.57374296,
-    spatialReference: SpatialReference.webMercator,
-  );
+  // Define the Redlands polygon.
+  late PolygonBuilder _redlandsEnvelope;
 
-  // Scale for London
-  final londonScale = 8762.7156655228955;
-
-  // Initialize Redlands polygon.
-  late PolygonBuilder redlandsEnvelope;
-
-  // Initialize Edinburgh polygon.
-  late PolygonBuilder edinburghEnvelope;
+  // Define the Edinburgh polygon.
+  late PolygonBuilder _edinburghEnvelope;
 
   // String array to store titles for the viewpoints specified above.
-  final _viewpointTitles = <String>[
+  final _viewpointTitles = [
     'Geometry',
     'Center & Scale',
     'Animate',
@@ -54,6 +44,9 @@ class _ChangeViewpointState extends State<ChangeViewpoint>
 
   // Create variable for holding state relating to the viewpoint.
   String? _selectedViewpoint;
+
+  // Define an envelope that can navigate to the full extent.
+  Envelope? _fullExtent;
 
   // A flag for when the map view is ready and controls can be used.
   var _ready = false;
@@ -94,27 +87,31 @@ class _ChangeViewpointState extends State<ChangeViewpoint>
     );
   }
 
-  void onMapViewReady() {
+  void onMapViewReady() async {
     // Create new Map with basemap and initial location.
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic);
     // Assign the map to the ArcGISMapView.
     _mapViewController.arcGISMap = map;
 
+    // Load the map so that we get the full extent.
+    await map.load();
+    _fullExtent = map.basemap!.baseLayers.first.fullExtent;
+
     // Coordinates for Redlands.
-    redlandsEnvelope =
+    _redlandsEnvelope =
         PolygonBuilder(spatialReference: SpatialReference.webMercator);
-    redlandsEnvelope.addPointXY(x: -13049785.1566222, y: 4032064.6003424);
-    redlandsEnvelope.addPointXY(x: -13049785.1566222, y: 4040202.42595729);
-    redlandsEnvelope.addPointXY(x: -13037033.5780234, y: 4032064.6003424);
-    redlandsEnvelope.addPointXY(x: -13037033.5780234, y: 4040202.42595729);
+    _redlandsEnvelope.addPointXY(x: -13049785.1566222, y: 4032064.6003424);
+    _redlandsEnvelope.addPointXY(x: -13049785.1566222, y: 4040202.42595729);
+    _redlandsEnvelope.addPointXY(x: -13037033.5780234, y: 4032064.6003424);
+    _redlandsEnvelope.addPointXY(x: -13037033.5780234, y: 4040202.42595729);
 
     // Coordinates for Edinburgh.
-    edinburghEnvelope =
+    _edinburghEnvelope =
         PolygonBuilder(spatialReference: SpatialReference.webMercator);
-    edinburghEnvelope.addPointXY(x: -354262.156621384, y: 7548092.94093301);
-    edinburghEnvelope.addPointXY(x: -354262.156621384, y: 7548901.50684376);
-    edinburghEnvelope.addPointXY(x: -353039.164455303, y: 7548092.94093301);
-    edinburghEnvelope.addPointXY(x: -353039.164455303, y: 7548901.50684376);
+    _edinburghEnvelope.addPointXY(x: -354262.156621384, y: 7548092.94093301);
+    _edinburghEnvelope.addPointXY(x: -354262.156621384, y: 7548901.50684376);
+    _edinburghEnvelope.addPointXY(x: -353039.164455303, y: 7548092.94093301);
+    _edinburghEnvelope.addPointXY(x: -353039.164455303, y: 7548901.50684376);
 
     // Set the ready state variable to true to enable the sample UI.
     setState(() => _ready = true);
@@ -136,13 +133,13 @@ class _ChangeViewpointState extends State<ChangeViewpoint>
         iconDisabledColor: Colors.grey,
         style: const TextStyle(color: Colors.deepPurple),
         value: _selectedViewpoint,
-        items: _viewpointTitles.map((String items) {
+        items: _viewpointTitles.map((items) {
           return DropdownMenuItem(
             value: items,
             child: Text(items),
           );
         }).toList(),
-        onChanged: (String? viewpoint) {
+        onChanged: (viewpoint) {
           if (viewpoint != null) {
             changeViewpoint(viewpoint);
           }
@@ -159,32 +156,36 @@ class _ChangeViewpointState extends State<ChangeViewpoint>
       case 'Geometry':
         // Set Viewpoint using Redlands envelope defined above and a padding of 20.
         await _mapViewController.setViewpointGeometry(
-          redlandsEnvelope.toGeometry(),
+          _redlandsEnvelope.toGeometry(),
           paddingInDiPs: 20,
         );
       case 'Center & Scale':
         // Set Viewpoint so that it is centered on the London coordinates defined above.
         await _mapViewController.setViewpointCenter(
-          londonCoordinates,
-          scale: londonScale,
+          ArcGISPoint(
+            x: -13881.7678417696,
+            y: 6710726.57374296,
+            spatialReference: SpatialReference.webMercator,
+          ),
+          scale: 8762.7156655228955,
         );
       case 'Animate':
-        // Navigate to full extent of the first baselayer before animating to specified geometry.
-        _mapViewController.setViewpoint(
-          Viewpoint.fromTargetExtent(
-            _mapViewController
-                .arcGISMap!.basemap!.baseLayers.first.fullExtent!.extent,
-          ),
-        );
+        if (_fullExtent != null) {
+          // Navigate to full extent of the first baselayer before animating to specified geometry.
+          _mapViewController.setViewpoint(
+            Viewpoint.fromTargetExtent(
+              _fullExtent!.extent,
+            ),
+          );
 
-        // Set Viewpoint of ArcGISMapView to the Viewpoint created above and animate to it using a timespan of 5 seconds.
-        await _mapViewController.setViewpointAnimated(
-          Viewpoint.fromTargetExtent(edinburghEnvelope.toGeometry()),
-          duration: 5,
-        );
-
+          // Set Viewpoint of ArcGISMapView to the Viewpoint created above and animate to it using a timespan of 5 seconds.
+          await _mapViewController.setViewpointAnimated(
+            Viewpoint.fromTargetExtent(_edinburghEnvelope.toGeometry()),
+            duration: 5,
+          );
+        }
       default:
-        break;
+        throw StateError('Unknown viewpoint type');
     }
   }
 }

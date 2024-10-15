@@ -1,10 +1,9 @@
 {
-  "category": "MapView",
+  "category": "Maps",
   "description": "Set the map view to a new viewpoint.",
-  "formal_name": "ChangeViewpoint",
   "ignore": false,
   "images": [
-    "change_viewpoint.jpg"
+    "change_viewpoint.png"
   ],
   "keywords": [
     "animate",
@@ -13,15 +12,19 @@
     "rotate",
     "scale",
     "view",
-    "zoom"
+    "zoom",
+    "ArcGISMap",
+    "ArcGISMapView",
+    "ArcGISPoint",
+    "Geometry",
+    "Viewpoint"
   ],
-  "offline_data": [],
   "redirect_from": [],
   "relevant_apis": [
+    "ArcGISMap",
+    "ArcGISMapView",
+    "ArcGISPoint",
     "Geometry",
-    "Map",
-    "MapView",
-    "Point",
     "Viewpoint"
   ],
   "snippets": [
