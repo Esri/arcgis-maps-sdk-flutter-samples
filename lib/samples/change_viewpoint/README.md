@@ -16,15 +16,11 @@ to see the viewpoint changed using that method.
 
 ## How it works
 
-1. Create a new `ArcGISMapView` with an `ArcGISMapViewController`, and assign an `ArcGISMap` to
-   the `ArcGISMapViewController.arcGISMap` property.
+1. Create a new `ArcGISMapView` with an `ArcGISMapViewController`, and assign an `ArcGISMap` to the `ArcGISMapViewController.arcGISMap` property.
 2. Change the map's `Viewpoint` using one of the available methods:
-
 * Use `ArcGISMapViewController.setViewpointGeometry()` to set the viewpoint to a given `Geometry`.
-* Use `ArcGISMapViewController.setViewpointCenter()` to center the viewpoint on a `ArcGISPoint` and
-  set a distance from the ground using a scale.
-* Use `ArcGISMapViewController.setViewpointAnimated()` to pan to a viewpoint over the specified
-  length of time.
+* Use `ArcGISMapViewController.setViewpointCenter()` to center the viewpoint on a `ArcGISPoint` and set a distance from the ground using a scale.
+* Use `ArcGISMapViewController.setViewpointAnimated()` to pan to a viewpoint over the specified length of time.
 
 ## Relevant API
 
