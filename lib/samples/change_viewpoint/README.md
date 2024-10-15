@@ -2,42 +2,50 @@
 
 Set the map view to a new viewpoint.
 
-![Image of change viewpoint](ChangeViewpoint.png)
+![Image of change viewpoint](change_viewpoint.png)
 
 ## Use case
 
-Programmatically navigate to a specified location in the map or scene. Use this to focus on a particular point or area of interest.
+Programmatically navigate to a specified location in the map or scene. Use this to focus on a
+particular point or area of interest.
 
 ## How to use the sample
 
-The map view has several methods for setting its current viewpoint. Select a viewpoint from the UI to see the viewpoint changed using that method.
+The map view has several methods for setting its current viewpoint. Select a viewpoint from the UI
+to see the viewpoint changed using that method.
 
 ## How it works
 
-1. Create a new `ArcGISMap` object and set it to the `MapView` object.
+1. Create a new `ArcGISMapView` with an `ArcGISMapViewController`, and assign an `ArcGISMap` to
+   the `ArcGISMapViewController.arcGISMap` property.
 2. Change the map's `Viewpoint` using one of the available methods:
-  * Use `MapView.setViewpointWithDurationAsync()` to pan to a viewpoint over the specified length of time.
-  * Use `MapView.setViewpointCenterAsync()` to center the viewpoint on a `Point` and set a distance from the ground using a scale.
-  * Use `MapView.setViewpointGeometryAsync()` to set the viewpoint to a given `Geometry`.
+
+* Use `ArcGISMapViewController.setViewpointGeometry()` to set the viewpoint to a given `Geometry`.
+* Use `ArcGISMapViewController.setViewpointCenter()` to center the viewpoint on a `ArcGISPoint` and
+  set a distance from the ground using a scale.
+* Use `ArcGISMapViewController.setViewpointAnimated()` to pan to a viewpoint over the specified
+  length of time.
 
 ## Relevant API
 
 * ArcGISMap
 * Geometry
-* MapView
-* Point
 * Viewpoint
+* ArcGISPoint
+* ArcGISMapView
+* ArcGISMapViewController
+* ArcGISMapViewController.setViewpointGeometry
+* ArcGISMapViewController.setViewpointCenter
+* ArcGISMapViewController.setViewpointAnimated
 
 ## Additional information
 
 Below are some other ways to set a viewpoint:
 
-* setViewpoint
-* setViewpointAsync
-* setViewpointCenterAsync
-* setViewpointGeometryAsync
-* setViewpointRotationAsync
-* setViewpointScaleAsync
+* ArcGISMapViewController.setViewpoint
+* ArcGISMapViewController.setViewpointScale
+* ArcGISMapViewController.setViewpointRotation
+* ArcGISMapViewController.setViewpointWithDurationAndCurve
 
 ## Tags
 
