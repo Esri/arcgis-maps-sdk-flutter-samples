@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-import 'package:arcgis_maps/arcgis_maps.dart' hide FontStyle;
+import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_state_support.dart';
 import 'package:flutter/material.dart';
 
