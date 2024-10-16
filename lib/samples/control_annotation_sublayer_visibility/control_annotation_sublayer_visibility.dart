@@ -14,30 +14,22 @@
 //
 
 import 'package:arcgis_maps/arcgis_maps.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_state_support.dart';
 import 'package:flutter/material.dart';
-
-void main() async {
-  // Supply your apiKey using the --dart-define-from-file command line argument
-  ArcGISEnvironment.apiKey = const String.fromEnvironment('API_KEY');
-
-  runApp(
-    const MaterialApp(
-      home: ControlAnnotationSublayerVisibility(),
-    ),
-  );
-}
-
 
 class ControlAnnotationSublayerVisibility extends StatefulWidget {
   const ControlAnnotationSublayerVisibility({super.key});
 
   @override
-  State<ControlAnnotationSublayerVisibility> createState() => _ControlAnnotationSublayerVisibilityState();
+  State<ControlAnnotationSublayerVisibility> createState() =>
+      _ControlAnnotationSublayerVisibilityState();
 }
 
-class _ControlAnnotationSublayerVisibilityState extends State<ControlAnnotationSublayerVisibility> {
+class _ControlAnnotationSublayerVisibilityState
+    extends State<ControlAnnotationSublayerVisibility> with SampleStateSupport {
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
+
   // A flag for when the map view is ready and controls can be used.
   var _ready = false;
 
@@ -55,18 +47,7 @@ class _ControlAnnotationSublayerVisibilityState extends State<ControlAnnotationS
                   child: ArcGISMapView(
                     controllerProvider: () => _mapViewController,
                     onMapViewReady: onMapViewReady,
-                    onTap: onTap,
                   ),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    // A button to perform a task.
-                    ElevatedButton(
-                      onPressed: performTask,
-                      child: const Text('Perform Task'),
-                    ),
-                  ],
                 ),
               ],
             ),
@@ -92,18 +73,6 @@ class _ControlAnnotationSublayerVisibilityState extends State<ControlAnnotationS
     // Perform some long-running setup task.
     await Future.delayed(const Duration(seconds: 10));
     // Set the ready state variable to true to enable the sample UI.
-    setState(() => _ready = true);
-  }
-
-  void onTap(Offset offset) {
-    print('Tapped at $offset');
-  }
-
-  void performTask() async {
-    setState(() => _ready = false);
-    // Perform some task.
-    print('Perform task');
-    await Future.delayed(const Duration(seconds: 5));
     setState(() => _ready = true);
   }
 }

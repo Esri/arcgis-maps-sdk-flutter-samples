@@ -29,8 +29,10 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
     with SampleStateSupport {
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
+
   // Create a graphics overlay.
   final _graphicsOverlay = GraphicsOverlay();
+
   // Create a geometry editor.
   final _geometryEditor = GeometryEditor();
 
@@ -66,8 +68,10 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
   var _geometryEditorCanRedo = false;
   var _geometryEditorIsStarted = false;
   var _geometryEditorHasSelectedElement = false;
+
   // A flag for controlling the visibility of the editing toolbar.
   var _showEditToolbar = false;
+
   // A custom style for when the editing toolbar buttons are not enabled.
   final _buttonStyle = ElevatedButton.styleFrom(
     disabledBackgroundColor: Colors.white.withOpacity(0.6),
@@ -266,7 +270,7 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
                 ? null
                 : const TextStyle(
                     color: Colors.grey,
-                    fontStyle: FontStyle.italic,
+                    //fontStyle: FontStyle.italic,
                   ),
           ),
         );
@@ -316,7 +320,7 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
                 ? null
                 : const TextStyle(
                     color: Colors.grey,
-                    fontStyle: FontStyle.italic,
+                    //fontStyle: FontStyle.italic,
                   ),
           ),
         );
