@@ -13,6 +13,7 @@ import 'package:arcgis_maps_sdk_flutter_samples/samples/apply_simple_renderer_to
 import 'package:arcgis_maps_sdk_flutter_samples/samples/apply_unique_value_renderer/apply_unique_value_renderer.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/authenticate_with_oauth/authenticate_with_oauth.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/authenticate_with_token/authenticate_with_token.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/samples/change_viewpoint/change_viewpoint.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/create_and_edit_geometries/create_and_edit_geometries.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/create_mobile_geodatabase/create_mobile_geodatabase.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/create_planar_and_geodetic_buffers/create_planar_and_geodetic_buffers.dart';
@@ -37,6 +38,7 @@ import 'package:arcgis_maps_sdk_flutter_samples/samples/identify_features_in_wms
 import 'package:arcgis_maps_sdk_flutter_samples/samples/identify_graphics/identify_graphics.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/identify_layer_features/identify_layer_features.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/manage_bookmarks/manage_bookmarks.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/samples/manage_features/manage_features.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/query_feature_table/query_feature_table.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/query_related_features/query_related_features.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/query_table_statistics/query_table_statistics.dart';
@@ -50,8 +52,11 @@ import 'package:arcgis_maps_sdk_flutter_samples/samples/show_legend/show_legend.
 import 'package:arcgis_maps_sdk_flutter_samples/samples/show_magnifier/show_magnifier.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/show_portal_user_info/show_portal_user_info.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/show_service_area/show_service_area.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/samples/show_web_tiled_layer_from_url/show_web_tiled_layer_from_url.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/samples/show_wfs_layer_from_url/show_wfs_layer_from_url.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/show_wfs_layer_with_xml_query/show_wfs_layer_with_xml_query.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/snap_geometry_edits/snap_geometry_edits.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/samples/style_graphics_with_symbols/style_graphics_with_symbols.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/style_point_with_simple_marker_symbol/style_point_with_simple_marker_symbol.dart';
 
 // A list of all the Widgets for individual Samples.
@@ -78,6 +83,7 @@ final sampleWidgets = {
   'apply_unique_value_renderer': () => const ApplyUniqueValueRenderer(),
   'authenticate_with_oauth': () => const AuthenticateWithOAuth(),
   'authenticate_with_token': () => const AuthenticateWithToken(),
+  'change_viewpoint': () => const ChangeViewpoint(),
   'create_and_edit_geometries': () => const CreateAndEditGeometries(),
   'create_mobile_geodatabase': () => const CreateMobileGeodatabase(),
   'create_planar_and_geodetic_buffers': () =>
@@ -108,6 +114,7 @@ final sampleWidgets = {
   'identify_graphics': () => const IdentifyGraphics(),
   'identify_layer_features': () => const IdentifyLayerFeatures(),
   'manage_bookmarks': () => const ManageBookmarks(),
+  'manage_features': () => const ManageFeatures(),
   'query_feature_table': () => const QueryFeatureTable(),
   'query_related_features': () => const QueryRelatedFeatures(),
   'query_table_statistics': () => const QueryTableStatistics(),
@@ -122,8 +129,11 @@ final sampleWidgets = {
   'show_magnifier': () => const ShowMagnifier(),
   'show_portal_user_info': () => const ShowPortalUserInfo(),
   'show_service_area': () => const ShowServiceArea(),
+  'show_wfs_layer_from_url': () => const ShowWfsLayerFromUrl(),
+  'show_web_tiled_layer_from_url': () => const ShowWebTiledLayerFromUrl(),
   'show_wfs_layer_with_xml_query': () => const ShowWfsLayerWithXmlQuery(),
   'snap_geometry_edits': () => const SnapGeometryEdits(),
+  'style_graphics_with_symbols': () => const StyleGraphicsWithSymbols(),
   'style_point_with_simple_marker_symbol': () =>
       const StylePointWithSimpleMarkerSymbol(),
 };

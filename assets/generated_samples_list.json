@@ -472,6 +472,41 @@
     "title": "Authenticate with token",
     "key": "authenticate_with_token"
   },
+  "change_viewpoint": {
+    "category": "Maps",
+    "description": "Set the map view to a new viewpoint.",
+    "ignore": false,
+    "images": [
+      "change_viewpoint.png"
+    ],
+    "keywords": [
+      "animate",
+      "extent",
+      "pan",
+      "rotate",
+      "scale",
+      "view",
+      "zoom",
+      "ArcGISMap",
+      "ArcGISMapView",
+      "ArcGISPoint",
+      "Geometry",
+      "Viewpoint"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+      "ArcGISMap",
+      "ArcGISMapView",
+      "ArcGISPoint",
+      "Geometry",
+      "Viewpoint"
+    ],
+    "snippets": [
+      "change_viewpoint.dart"
+    ],
+    "title": "Change viewpoint",
+    "key": "change_viewpoint"
+  },
   "create_and_edit_geometries": {
     "category": "Maps",
     "description": "Use the Geometry Editor to create new point, multipoint, polyline, or polygon geometries or to edit existing geometries by interacting with a map view.",
@@ -1228,6 +1263,53 @@
     "title": "Manage bookmarks",
     "key": "manage_bookmarks"
   },
+  "manage_features": {
+    "category": "Edit and Manage Data",
+    "description": "Create, update, and delete features to manage a feature layer.",
+    "ignore": false,
+    "images": [
+      "manage_features.png"
+    ],
+    "keywords": [
+      "amend",
+      "attribute",
+      "create",
+      "delete",
+      "deletion",
+      "details",
+      "edit",
+      "editing",
+      "feature",
+      "feature layer",
+      "feature table",
+      "geodatabase",
+      "information",
+      "moving",
+      "online service",
+      "service",
+      "update",
+      "updating",
+      "value",
+      "Feature",
+      "FeatureEditResult",
+      "FeatureLayer",
+      "ServiceFeatureTable",
+      "ServiceGeodatabase"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+      "Feature",
+      "FeatureEditResult",
+      "FeatureLayer",
+      "ServiceFeatureTable",
+      "ServiceGeodatabase"
+    ],
+    "snippets": [
+      "manage_features.dart"
+    ],
+    "title": "Manage features",
+    "key": "manage_features"
+  },
   "query_feature_table": {
     "category": "Search and Query",
     "description": "Find features in a feature table which match an SQL query.",
@@ -1670,6 +1752,69 @@
     "title": "Show service area",
     "key": "show_service_area"
   },
+  "show_web_tiled_layer_from_url": {
+    "category": "Layers",
+    "description": "Display a tiled web layer.",
+    "ignore": false,
+    "images": [
+      "show_web_tiled_layer_from_url.png"
+    ],
+    "keywords": [
+      "OGC",
+      "layer",
+      "tiled",
+      "tiles",
+      "Basemap",
+      "WebTiledLayer"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+      "Basemap",
+      "WebTiledLayer"
+    ],
+    "snippets": [
+      "show_web_tiled_layer_from_url.dart"
+    ],
+    "title": "Show web tiled layer from URL",
+    "key": "show_web_tiled_layer_from_url"
+  },
+  "show_wfs_layer_from_url": {
+    "category": "Layers",
+    "description": "Display a layer from a WFS service using data from URL",
+    "ignore": false,
+    "images": [
+      "show_wfs_layer_from_url.png"
+    ],
+    "keywords": [
+      "OGC",
+      "WFS",
+      "browse",
+      "catalog",
+      "feature",
+      "interaction cache",
+      "layers",
+      "service",
+      "web",
+      "ArcGISMapView",
+      "ArcGISMapViewController.onNavigationChanged",
+      "FeatureLayer",
+      "WfsFeatureTable",
+      "WfsFeatureTable.populateFromService"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+      "ArcGISMapView",
+      "ArcGISMapViewController.onNavigationChanged",
+      "FeatureLayer",
+      "WfsFeatureTable",
+      "WfsFeatureTable.populateFromService"
+    ],
+    "snippets": [
+      "show_wfs_layer_from_url.dart"
+    ],
+    "title": "Show WFS layer from URL",
+    "key": "show_wfs_layer_from_url"
+  },
   "show_wfs_layer_with_xml_query": {
     "category": "Search and Query",
     "description": "Load a WFS feature table using an XML query.",
@@ -1745,6 +1890,39 @@
     ],
     "title": "Snap geometry edits",
     "key": "snap_geometry_edits"
+  },
+  "style_graphics_with_symbols": {
+    "category": "GraphicsOverlay",
+    "description": "Use a symbol style to display a graphic on a graphics overlay.",
+    "formal_name": "AddGraphicsWithSymbols",
+    "ignore": false,
+    "images": [
+      "style_graphics_with_symbols.png"
+    ],
+    "keywords": [
+      "display",
+      "fill",
+      "graphics",
+      "line",
+      "marker",
+      "overlay",
+      "point",
+      "symbol"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+      "Geometry",
+      "Graphic",
+      "GraphicsOverlay",
+      "SimpleFillSymbol",
+      "SimpleLineSymbol",
+      "SimpleMarkerSymbol"
+    ],
+    "snippets": [
+      "style_graphics_with_symbols.dart"
+    ],
+    "title": "Style graphics with symbols",
+    "key": "style_graphics_with_symbols"
   },
   "style_point_with_simple_marker_symbol": {
     "category": "Visualization",
