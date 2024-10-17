@@ -604,12 +604,11 @@ class _SnapGeometryEditsState extends State<SnapGeometryEdits>
                     if (allEnabled != null) {
                       allSourceSettings
                           .map(
-                            (snapSourceSettings) =>
-                                snapSourceSettings.isEnabled = allEnabled,
+                            (snapSourceSettings) => setState(
+                              () => snapSourceSettings.isEnabled = allEnabled,
+                            ),
                           )
                           .toList();
-                      // We must redraw to update the checkbox UI.
-                      setState(() {});
                     }
                   },
                 ),
