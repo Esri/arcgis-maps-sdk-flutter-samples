@@ -14,6 +14,7 @@ import 'package:arcgis_maps_sdk_flutter_samples/samples/apply_unique_value_rende
 import 'package:arcgis_maps_sdk_flutter_samples/samples/authenticate_with_oauth/authenticate_with_oauth.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/authenticate_with_token/authenticate_with_token.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/control_annotation_sublayer_visibility/control_annotation_sublayer_visibility.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/samples/change_viewpoint/change_viewpoint.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/create_and_edit_geometries/create_and_edit_geometries.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/create_mobile_geodatabase/create_mobile_geodatabase.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/create_planar_and_geodetic_buffers/create_planar_and_geodetic_buffers.dart';
@@ -83,6 +84,7 @@ final sampleWidgets = {
   'apply_unique_value_renderer': () => const ApplyUniqueValueRenderer(),
   'authenticate_with_oauth': () => const AuthenticateWithOAuth(),
   'authenticate_with_token': () => const AuthenticateWithToken(),
+  'change_viewpoint': () => const ChangeViewpoint(),
   'control_annotation_sublayer_visibility': () =>
       const ControlAnnotationSublayerVisibility(),
   'create_and_edit_geometries': () => const CreateAndEditGeometries(),
