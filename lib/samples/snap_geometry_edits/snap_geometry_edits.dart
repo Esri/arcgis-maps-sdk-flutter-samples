@@ -16,7 +16,6 @@
 import 'dart:math';
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_state_support.dart';
-import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 
 class SnapGeometryEdits extends StatefulWidget {
@@ -598,10 +597,9 @@ class _SnapGeometryEditsState extends State<SnapGeometryEdits>
                 const Text('Enable all'),
                 // A checkbox to enable all source settings in the category.
                 Checkbox(
-                  value: allSourceSettings.firstWhereOrNull(
-                        (snapSourceSettings) => !snapSourceSettings.isEnabled,
-                      ) ==
-                      null,
+                  value: allSourceSettings.every(
+                    (snapSourceSettings) => snapSourceSettings.isEnabled,
+                  ),
                   onChanged: (allEnabled) {
                     if (allEnabled != null) {
                       allSourceSettings
