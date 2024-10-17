@@ -44,8 +44,8 @@ class _ControlAnnotationSublayerVisibilityState
   Color? _openLabelColor;
 
   // Declare the annotation sub layers.
-  AnnotationSublayer? _openSublayer;
   AnnotationSublayer? _closedSublayer;
+  AnnotationSublayer? _openSublayer;
 
   // A flag for when the map view is ready and controls can be used.
   var _ready = false;
@@ -194,9 +194,14 @@ class _ControlAnnotationSublayerVisibilityState
       await annotationLayer.load();
 
       // Get the annotation sub layers.
-      _openSublayer = annotationLayer.subLayerContents[1] as AnnotationSublayer;
       _closedSublayer =
           annotationLayer.subLayerContents[0] as AnnotationSublayer;
+      _openSublayer = annotationLayer.subLayerContents[1] as AnnotationSublayer;
+
+      if (_closedSublayer != null) {
+        // Set the closed label content.
+        _closedLabel = _closedSublayer!.name;
+      }
 
       if (_openSublayer != null) {
         // Set the open label content.
@@ -217,11 +222,6 @@ class _ControlAnnotationSublayerVisibilityState
 
           setState(() {});
         });
-      }
-
-      if (_closedSublayer != null) {
-        // Set the closed label content.
-        _closedLabel = _closedSublayer!.name;
       }
     }
 
