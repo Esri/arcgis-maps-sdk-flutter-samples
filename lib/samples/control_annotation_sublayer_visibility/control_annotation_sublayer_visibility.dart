@@ -40,7 +40,7 @@ class _ControlAnnotationSublayerVisibilityState
   String? _closedLabel;
   String? _currentScaleLabel;
 
-  // Declare labels styles.
+  // Declare open label color.
   Color? _openLabelColor;
 
   // Declare the annotation sub layers.
@@ -95,7 +95,7 @@ class _ControlAnnotationSublayerVisibilityState
     );
   }
 
-  // The build method for the Geometry Settings bottom sheet.
+  // The build method for the Settings bottom sheet.
   Widget buildSettings(BuildContext context) {
     return Container(
       padding: EdgeInsets.fromLTRB(
