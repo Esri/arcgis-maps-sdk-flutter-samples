@@ -312,8 +312,12 @@ class _ManageFeaturesState extends State<ManageFeatures>
       showMessageDialog(
         'Updated feature ${feature.attributes['objectid']}',
       );
-      // Re-enable the UI.
-      setState(() => _ready = true);
+      // Re-enable the UI and deselect the currently selected feature.
+      _damageFeatureLayer.unselectFeature(_selectedFeature!);
+      setState(() {
+        _selectedFeature = null;
+        _ready = true;
+      });
     }
   }
 
