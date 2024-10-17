@@ -25,11 +25,13 @@ Use the checkboxes to manually set "Open" and "Closed" annotation sublayers visi
 
 ## How it works
 
-1. Load a `MobileMapPackage` that contains `AnnotationSublayer`.
-2. Get the sublayers from the map package's layers by calling `sublayer.getSubLayerContents.get(i)`.
-3. You can toggle the visibility of each sublayer manually using `sublayer.setVisible()`.
-4. To determine if a sublayer is visible at the current scale of the `MapView`,
-   use `sublayer.isVisibleAtScale()`, by passing in the map's current scale.
+1. Create a new `ArcGISMapView` with an `ArcGISMapViewController`.
+2. Load a `MobileMapPackage` that contains `AnnotationSublayer`.
+3. Get the sublayers from the map package's layers by calling `sublayer.subLayerContents`.
+4. You can toggle the visibility of each sublayer manually using `sublayer.isVisible` property.
+5. To determine if a sublayer is visible at the current scale of the `ArcGISMapView`,
+   use `sublayer.isVisibleAtScale(ArcGISMapViewController.scale)`, by passing in the map's current
+   scale.
 
 ## Relevant API
 
@@ -39,25 +41,16 @@ Use the checkboxes to manually set "Open" and "Closed" annotation sublayers visi
 
 ## Offline data
 
-1. Download
-   the [GasDeviceAnno](https://arcgisruntime.maps.arcgis.com/home/item.html?id=b87307dcfb26411eb2e92e1627cb615b)
-   mobile map package from ArcGIS Online.
-2. Extract the contents of the downloaded zip file to disk.
-3. Open your command prompt and navigate to the folder where you extracted the contents of the data
-   from step 1.
-4. Execute the following command:
-   `adb push GasDeviceAnno.mmpk /sdcard/ArcGIS/Samples/MapPackage/GasDeviceAnno.mmpk`
-
- Link                                                                                                                           | Local Location                                          
---------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------|
-| [Gas device anno mobile map package](https://arcgisruntime.maps.arcgis.com/home/item.html?id=b87307dcfb26411eb2e92e1627cb615b) | `<sdcard>`/ArcGIS/Samples/MapPackage/GasDeviceAnno.mmpk |
+This sample
+uses [Gas Device Anno Mobile Map Package](https://arcgisruntime.maps.arcgis.com/home/item.html?id=b87307dcfb26411eb2e92e1627cb615b).
+It is downloaded from ArcGIS Online automatically before the sample runs.
 
 ## About the data
 
 The scale ranges were set by the map's author using ArcGIS Pro:
 
 * The "Open" annotation sublayer has its maximum scale set to 1:500 and its minimum scale set to 1:
-    2000.
+  2000.
 * The "Closed" annotation sublayer has no minimum or maximum scales set, so will be drawn at all
   scales.
 
