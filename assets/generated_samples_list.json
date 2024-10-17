@@ -472,33 +472,6 @@
     "title": "Authenticate with token",
     "key": "authenticate_with_token"
   },
-  "control_annotation_sublayer_visibility": {
-    "category": "",
-    "description": "Use annotation sublayers to gain finer control of annotation layer subtypes.",
-    "ignore": false,
-    "images": [],
-    "keywords": [
-      "annotation",
-      "scale",
-      "text",
-      "utilities",
-      "visualization",
-      "AnnotationLayer",
-      "AnnotationSublayer",
-      "LayerContent"
-    ],
-    "redirect_from": [],
-    "relevant_apis": [
-      "AnnotationLayer",
-      "AnnotationSublayer",
-      "LayerContent"
-    ],
-    "snippets": [
-      "control_annotation_sublayer_visibility.dart"
-    ],
-    "title": "Control annotation sublayer visibility",
-    "key": "control_annotation_sublayer_visibility"
-  },
   "change_viewpoint": {
     "category": "Maps",
     "description": "Set the map view to a new viewpoint.",
@@ -533,6 +506,35 @@
     ],
     "title": "Change viewpoint",
     "key": "change_viewpoint"
+  },
+  "control_annotation_sublayer_visibility": {
+    "category": "",
+    "description": "Use annotation sublayers to gain finer control of annotation layer subtypes.",
+    "ignore": false,
+    "images": [
+      "control_annotation_sublayer_visibility.png"
+    ],
+    "keywords": [
+      "annotation",
+      "scale",
+      "text",
+      "utilities",
+      "visualization",
+      "AnnotationLayer",
+      "AnnotationSublayer",
+      "LayerContent"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+      "AnnotationLayer",
+      "AnnotationSublayer",
+      "LayerContent"
+    ],
+    "snippets": [
+      "control_annotation_sublayer_visibility.dart"
+    ],
+    "title": "Control annotation sublayer visibility",
+    "key": "control_annotation_sublayer_visibility"
   },
   "create_and_edit_geometries": {
     "category": "Maps",

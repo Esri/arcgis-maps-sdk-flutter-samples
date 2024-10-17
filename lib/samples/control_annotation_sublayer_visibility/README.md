@@ -2,7 +2,7 @@
 
 Use annotation sublayers to gain finer control of annotation layer subtypes.
 
-![Image of control annotation sublayer visibility](control-annotation-sublayer-visibility.png)
+![Image of control annotation sublayer visibility](control_annotation_sublayer_visibility.png)
 
 ## Use case
 
@@ -57,7 +57,7 @@ Use the checkboxes to manually set "Open" and "Closed" annotation sublayers visi
 The scale ranges were set by the map's author using ArcGIS Pro:
 
 * The "Open" annotation sublayer has its maximum scale set to 1:500 and its minimum scale set to 1:
-  2000.
+    2000.
 * The "Closed" annotation sublayer has no minimum or maximum scales set, so will be drawn at all
   scales.
 
