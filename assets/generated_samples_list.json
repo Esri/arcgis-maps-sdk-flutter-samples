@@ -508,7 +508,7 @@
     "key": "change_viewpoint"
   },
   "control_annotation_sublayer_visibility": {
-    "category": "",
+    "category": "Layers",
     "description": "Use annotation sublayers to gain finer control of annotation layer subtypes.",
     "ignore": false,
     "images": [
