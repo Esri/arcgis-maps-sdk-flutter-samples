@@ -43,6 +43,10 @@ class _ControlAnnotationSublayerVisibilityState
   // Declare labels styles.
   Color? _openLabelColor;
 
+  // Declare the annotation sub layers.
+  AnnotationSublayer? _openSublayer;
+  AnnotationSublayer? _closedSublayer;
+
   // A flag for when the map view is ready and controls can be used.
   var _ready = false;
 
@@ -66,17 +70,12 @@ class _ControlAnnotationSublayerVisibilityState
                   ),
                 ),
                 // A button to control Settings bottom sheet.
-                if (_currentScaleLabel != null) buildBottomMenu()
-                /*Center(
+                Center(
                   child: ElevatedButton(
                     onPressed: () => setState(() => _settingsVisible = true),
-                    child: const Text('Geometry Settings'),
+                    child: const Text('Settings'),
                   ),
-                ),*/
-                /*Text(
-                  _openLabel ?? '',
-                  style: TextStyle(color: _openLabelColor),
-                ),*/
+                ),
               ],
             ),
             // Display a progress indicator and prevent interaction until state is ready.
@@ -92,27 +91,12 @@ class _ControlAnnotationSublayerVisibilityState
           ],
         ),
       ),
-      //bottomSheet: _settingsVisible ? buildSettings(context) : null,
-    );
-  }
-
-  Widget buildBottomMenu() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        // A text to show current map scale
-        Text(_currentScaleLabel ?? ''),
-        // A button to toggle the visibility of the editing toolbar.
-        IconButton(
-          onPressed: () => setState(() => _settingsVisible = !_settingsVisible),
-          icon: const Icon(Icons.edit, color: Colors.deepPurple),
-        ),
-      ],
+      bottomSheet: _settingsVisible ? buildSettings(context) : null,
     );
   }
 
   // The build method for the Geometry Settings bottom sheet.
-  /*Widget buildSettings(BuildContext context) {
+  Widget buildSettings(BuildContext context) {
     return Container(
       padding: EdgeInsets.fromLTRB(
         20.0,
@@ -130,7 +114,7 @@ class _ControlAnnotationSublayerVisibilityState
           Row(
             children: [
               Text(
-                'Geometry Settings',
+                'Settings',
                 style: Theme.of(context).textTheme.titleLarge,
               ),
               const Spacer(),
@@ -143,22 +127,47 @@ class _ControlAnnotationSublayerVisibilityState
           if (_openLabel != null)
             Row(
               children: [
-                Text(_openLabel!),
+                Text(
+                  _openLabel!,
+                  style: TextStyle(color: _openLabelColor),
+                ),
                 const Spacer(),
                 Switch(
-                  value: _generalize,
+                  value: _openSublayer!.isVisible,
                   onChanged: (value) {
-                    setState(() => _generalize = value);
-                    updateGraphics();
+                    // Set the visibility of the open sub layer.
+                    if (_openSublayer != null) {
+                      setState(() => _openSublayer!.isVisible = value);
+                    }
                   },
                 ),
               ],
             ),
-          const Divider(),
+          if (_closedLabel != null)
+            Row(
+              children: [
+                Text(
+                  _closedLabel!,
+                ),
+                const Spacer(),
+                Switch(
+                  value: _closedSublayer!.isVisible,
+                  onChanged: (value) {
+                    // Set the visibility of the closed sub layer.
+                    if (_closedSublayer != null) {
+                      setState(() => _closedSublayer!.isVisible = value);
+                    }
+                  },
+                ),
+              ],
+            ),
+          Text(
+            _currentScaleLabel ?? '',
+          ),
         ],
       ),
     );
-  }*/
+  }
 
   void onMapViewReady() async {
     await downloadSampleData(['b87307dcfb26411eb2e92e1627cb615b']);
@@ -185,30 +194,35 @@ class _ControlAnnotationSublayerVisibilityState
       await annotationLayer.load();
 
       // Get the annotation sub layers.
-      final openSublayer =
-          annotationLayer.subLayerContents[1] as AnnotationSublayer;
-      final closedSublayer =
+      _openSublayer = annotationLayer.subLayerContents[1] as AnnotationSublayer;
+      _closedSublayer =
           annotationLayer.subLayerContents[0] as AnnotationSublayer;
 
-      // Set the label content.
-      _openLabel =
-          '${openSublayer.name} (1:${openSublayer.maxScale.toInt()} - 1:${openSublayer.minScale.toInt()})';
+      if (_openSublayer != null) {
+        // Set the open label content.
+        _openLabel =
+            '${_openSublayer!.name} (1:${_openSublayer!.maxScale.toInt()} - 1:${_openSublayer!.minScale.toInt()})';
 
-      // Add event handler for changing the text to indicate whether the "open" sublayer is visible at the current scale.
-      _mapViewController.onViewpointChanged.listen((_) {
-        // Check if the sublayer is visible at the current map scale.
-        if (closedSublayer.isVisibleAtScale(_mapViewController.scale)) {
-          _openLabelColor = Colors.purple;
-        }
+        // Add event handler for changing the text color to indicate whether the "open" sublayer is visible at the current scale.
+        _mapViewController.onViewpointChanged.listen((_) {
+          // Check if the sublayer is visible at the current map scale.
+          if (_openSublayer!.isVisibleAtScale(_mapViewController.scale)) {
+            _openLabelColor = Colors.purple;
+          } else {
+            _openLabelColor = null;
+          }
+          // Set the current map scale text.
+          _currentScaleLabel =
+              'Current map scale: 1:${_mapViewController.scale.toInt()}';
 
-        // Set the current map scale text.
-        _currentScaleLabel =
-            'Current map scale: 1:${_mapViewController.scale.toInt()}';
+          setState(() {});
+        });
+      }
 
-        setState(() {});
-      });
-
-      _closedLabel = closedSublayer.name;
+      if (_closedSublayer != null) {
+        // Set the closed label content.
+        _closedLabel = _closedSublayer!.name;
+      }
     }
 
     // Set the ready state variable to true to enable the sample UI.
