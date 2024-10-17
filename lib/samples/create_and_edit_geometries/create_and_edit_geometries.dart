@@ -67,7 +67,7 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
   var _geometryEditorIsStarted = false;
   var _geometryEditorHasSelectedElement = false;
   // A flag for controlling the visibility of the editing toolbar.
-  var _showEditToolbar = false;
+  var _showEditToolbar = true;
   // A custom style for when the editing toolbar buttons are not enabled.
   final _buttonStyle = ElevatedButton.styleFrom(
     disabledBackgroundColor: Colors.white.withOpacity(0.6),

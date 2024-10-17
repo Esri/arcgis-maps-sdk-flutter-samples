@@ -16,7 +16,6 @@
 import 'dart:math';
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_state_support.dart';
-import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 
 class SnapGeometryEdits extends StatefulWidget {
@@ -65,7 +64,7 @@ class _SnapGeometryEditsState extends State<SnapGeometryEdits>
   var _featureSnappingEnabled = true;
 
   // A flag for controlling the visibility of the editing toolbar.
-  var _showEditToolbar = false;
+  var _showEditToolbar = true;
   // A flag for controlling the visibility of the snap settings.
   var _snapSettingsVisible = false;
 
@@ -210,6 +209,8 @@ class _SnapGeometryEditsState extends State<SnapGeometryEdits>
     setState(() => _snappingEnabled = true);
     // Create a list of snap source settings for each geometry type and graphics overlay.
     for (final sourceSettings in _geometryEditor.snapSettings.sourceSettings) {
+      // Enable all the source settings initially.
+      setState(() => sourceSettings.isEnabled = true);
       if (sourceSettings.source is FeatureLayer) {
         final featureLayer = sourceSettings.source as FeatureLayer;
         if (featureLayer.featureTable != null) {
@@ -429,7 +430,7 @@ class _SnapGeometryEditsState extends State<SnapGeometryEdits>
           Row(
             children: [
               Text(
-                'Snap Settings',
+                'Settings',
                 style: Theme.of(context).textTheme.titleLarge,
               ),
               const Spacer(),
@@ -447,6 +448,42 @@ class _SnapGeometryEditsState extends State<SnapGeometryEdits>
             child: SingleChildScrollView(
               child: Column(
                 children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Snap Settings',
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
+                      // Add a checkbox to toggle all snapping options.
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text('Enable all'),
+                          Checkbox(
+                            value: _snappingEnabled &&
+                                _geometryGuidesEnabled &&
+                                _featureSnappingEnabled,
+                            onChanged: (allEnabled) {
+                              if (allEnabled != null) {
+                                _geometryEditor.snapSettings.isEnabled =
+                                    allEnabled;
+                                _geometryEditor.snapSettings
+                                    .isGeometryGuidesEnabled = allEnabled;
+                                _geometryEditor.snapSettings
+                                    .isFeatureSnappingEnabled = allEnabled;
+                                setState(() {
+                                  _snappingEnabled = allEnabled;
+                                  _geometryGuidesEnabled = allEnabled;
+                                  _featureSnappingEnabled = allEnabled;
+                                });
+                              }
+                            },
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                   // Add a checkbox to toggle whether snapping is enabled.
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -506,32 +543,6 @@ class _SnapGeometryEditsState extends State<SnapGeometryEdits>
                       ),
                     ],
                   ),
-                  // Add a checkbox to toggle all snapping options.
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text('Enable all'),
-                      Checkbox(
-                        value: _snappingEnabled &&
-                            _geometryGuidesEnabled &&
-                            _featureSnappingEnabled,
-                        onChanged: (allEnabled) {
-                          if (allEnabled != null) {
-                            _geometryEditor.snapSettings.isEnabled = allEnabled;
-                            _geometryEditor.snapSettings
-                                .isGeometryGuidesEnabled = allEnabled;
-                            _geometryEditor.snapSettings
-                                .isFeatureSnappingEnabled = allEnabled;
-                            setState(() {
-                              _snappingEnabled = allEnabled;
-                              _geometryGuidesEnabled = allEnabled;
-                              _featureSnappingEnabled = allEnabled;
-                            });
-                          }
-                        },
-                      ),
-                    ],
-                  ),
                   const SizedBox(height: 20),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.start,
@@ -574,9 +585,36 @@ class _SnapGeometryEditsState extends State<SnapGeometryEdits>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          label,
-          style: Theme.of(context).textTheme.titleMedium,
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              label,
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+            Row(
+              children: [
+                const Text('Enable all'),
+                // A checkbox to enable all source settings in the category.
+                Checkbox(
+                  value: allSourceSettings.every(
+                    (snapSourceSettings) => snapSourceSettings.isEnabled,
+                  ),
+                  onChanged: (allEnabled) {
+                    if (allEnabled != null) {
+                      allSourceSettings
+                          .map(
+                            (snapSourceSettings) => setState(
+                              () => snapSourceSettings.isEnabled = allEnabled,
+                            ),
+                          )
+                          .toList();
+                    }
+                  },
+                ),
+              ],
+            ),
+          ],
         ),
         Column(
           children: allSourceSettings.map((sourceSetting) {
@@ -602,31 +640,6 @@ class _SnapGeometryEditsState extends State<SnapGeometryEdits>
               ],
             );
           }).toList(),
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text('Enable all'),
-            // A checkbox to enable all source settings in the category.
-            Checkbox(
-              value: allSourceSettings.firstWhereOrNull(
-                    (snapSourceSettings) => !snapSourceSettings.isEnabled,
-                  ) ==
-                  null,
-              onChanged: (allEnabled) {
-                if (allEnabled != null) {
-                  allSourceSettings
-                      .map(
-                        (snapSourceSettings) =>
-                            snapSourceSettings.isEnabled = allEnabled,
-                      )
-                      .toList();
-                  // We must redraw to update the checkbox UI.
-                  setState(() {});
-                }
-              },
-            ),
-          ],
         ),
         const SizedBox(height: 20),
       ],
