@@ -174,55 +174,47 @@ class _ControlAnnotationSublayerVisibilityState
       final mmpk = MobileMapPackage.withFileUri(mmpkFile.uri);
       await mmpk.load();
 
-      if (mmpk.maps.isNotEmpty) {
-        // Get the first map in the mobile map package and set to the map view.
-        _mapViewController.arcGISMap = mmpk.maps.first;
-      }
+      // Get the first map in the mobile map package and set to the map view.
+      _mapViewController.arcGISMap = mmpk.maps.first;
 
-      if (_mapViewController.arcGISMap != null) {
-        // Get the annotation layer from the MapView operational layers.
-        final annotationLayer = _mapViewController.arcGISMap!.operationalLayers
-            .whereType<AnnotationLayer>()
-            .first;
+      // Get the annotation layer from the MapView operational layers.
+      final annotationLayer = _mapViewController.arcGISMap!.operationalLayers
+          .whereType<AnnotationLayer>()
+          .first;
 
-        // Load the annotation layer.
-        await annotationLayer.load();
+      // Load the annotation layer.
+      await annotationLayer.load();
 
-        setState(() {
-          // Get the annotation sub layers.
-          _closedSublayer =
-              annotationLayer.subLayerContents[0] as AnnotationSublayer;
+      setState(() {
+        // Get the annotation sub layers.
+        _closedSublayer =
+            annotationLayer.subLayerContents[0] as AnnotationSublayer;
 
-          _openSublayer =
-              annotationLayer.subLayerContents[1] as AnnotationSublayer;
+        _openSublayer =
+            annotationLayer.subLayerContents[1] as AnnotationSublayer;
 
-          // Set the closed label content.
-          _closedLabel = _closedSublayer.name;
+        // Set the closed label content.
+        _closedLabel = _closedSublayer.name;
 
-          // Set the open label content.
-          _openLabel =
-              '${_openSublayer.name} (1:${_openSublayer.maxScale.toInt()} - 1:${_openSublayer.minScale.toInt()})';
-        });
+        // Set the open label content.
+        _openLabel =
+            '${_openSublayer.name} (1:${_openSublayer.maxScale.toInt()} - 1:${_openSublayer.minScale.toInt()})';
+      });
 
-        // Add event handler for changing the text color to indicate whether the "open" sublayer is visible at the current scale.
-        _mapViewController.onViewpointChanged.listen((_) {
-          // Check if the sublayer is visible at the current map scale.
-          if (_openSublayer.isVisibleAtScale(_mapViewController.scale)) {
-            setState(() {
-              _openLabelColor = Colors.purple;
-            });
-          } else {
-            setState(() {
-              _openLabelColor = null;
-            });
-          }
-          setState(() {
-            // Set the current map scale text.
-            _currentScaleLabel =
-                'Current map scale: 1:${_mapViewController.scale.toInt()}';
-          });
-        });
-      }
+      // Add event handler for changing the text color to indicate whether the "open" sublayer is visible at the current scale.
+      _mapViewController.onViewpointChanged.listen((_) {
+        // Check if the sublayer is visible at the current map scale.
+        if (_openSublayer.isVisibleAtScale(_mapViewController.scale)) {
+          setState(() => _openLabelColor = Colors.purple);
+        } else {
+          setState(() => _openLabelColor = null);
+        }
+        // Set the current map scale text.
+        setState(
+          () => _currentScaleLabel =
+              'Current map scale: 1:${_mapViewController.scale.toInt()}',
+        );
+      });
 
       // Set the ready state variable to true to enable the sample UI.
       setState(() => _ready = true);
