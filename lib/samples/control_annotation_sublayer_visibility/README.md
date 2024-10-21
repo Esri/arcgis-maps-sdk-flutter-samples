@@ -40,7 +40,7 @@ Use the switches to manually set "Open" and "Closed" annotation sublayers visibi
 ## Offline data
 
 This sample uses [Gas Device Anno Mobile Map Package](https://arcgisruntime.maps.arcgis.com/home/item.html?id=b87307dcfb26411eb2e92e1627cb615b).
-It is downloaded from ArcGIS Online automatically before the sample runs.
+It is downloaded from ArcGIS Online as part of the sample.
 
 ## About the data
 
