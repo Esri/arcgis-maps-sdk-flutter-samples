@@ -11,8 +11,7 @@ at particular scales. Annotation sublayers allow for finer control of annotation
 properties (like visibility in the map and legend) to be set and others to be read (like name) on
 subtypes of an annotation layer.
 
-An annotation dataset which marks valves as "Opened" or "Closed", might be set to display the "
-Closed" valves over a broader range of scales than the "Opened" valves, if the "Closed" data is
+An annotation dataset which marks valves as "Opened" or "Closed", might be set to display the "Closed" valves over a broader range of scales than the "Opened" valves, if the "Closed" data is
 considered more relevant by the map's author. Regardless, the user can be given a manual option to
 set visibility of annotation sublayers on and off, if required.
 
