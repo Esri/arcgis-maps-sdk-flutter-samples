@@ -36,16 +36,16 @@ class _ControlAnnotationSublayerVisibilityState
   final _mapViewController = ArcGISMapView.createController();
 
   // Declare labels text.
-  String? _openLabel;
-  String? _closedLabel;
-  String? _currentScaleLabel;
+  var _openLabel = '';
+  var _closedLabel = '';
+  var _currentScaleLabel = '';
 
   // Declare open label color.
   Color? _openLabelColor;
 
   // Declare the annotation sub layers.
-  AnnotationSublayer? _closedSublayer;
-  AnnotationSublayer? _openSublayer;
+  late final AnnotationSublayer _closedSublayer;
+  late final AnnotationSublayer _openSublayer;
 
   // A flag for when the map view is ready and controls can be used.
   var _ready = false;
@@ -124,45 +124,39 @@ class _ControlAnnotationSublayerVisibilityState
               ),
             ],
           ),
-          if (_openLabel != null)
-            Row(
-              children: [
-                Text(
-                  _openLabel!,
-                  style: TextStyle(color: _openLabelColor),
-                ),
-                const Spacer(),
-                Switch(
-                  value: _openSublayer!.isVisible,
-                  onChanged: (value) {
-                    // Set the visibility of the open sub layer.
-                    if (_openSublayer != null) {
-                      setState(() => _openSublayer!.isVisible = value);
-                    }
-                  },
-                ),
-              ],
-            ),
-          if (_closedLabel != null)
-            Row(
-              children: [
-                Text(
-                  _closedLabel!,
-                ),
-                const Spacer(),
-                Switch(
-                  value: _closedSublayer!.isVisible,
-                  onChanged: (value) {
-                    // Set the visibility of the closed sub layer.
-                    if (_closedSublayer != null) {
-                      setState(() => _closedSublayer!.isVisible = value);
-                    }
-                  },
-                ),
-              ],
-            ),
+          Row(
+            children: [
+              Text(
+                _openLabel,
+                style: TextStyle(color: _openLabelColor),
+              ),
+              const Spacer(),
+              Switch(
+                value: _openSublayer.isVisible,
+                onChanged: (value) {
+                  // Set the visibility of the open sub layer.
+                  setState(() => _openSublayer.isVisible = value);
+                },
+              ),
+            ],
+          ),
+          Row(
+            children: [
+              Text(
+                _closedLabel,
+              ),
+              const Spacer(),
+              Switch(
+                value: _closedSublayer.isVisible,
+                onChanged: (value) {
+                  // Set the visibility of the closed sub layer.
+                  setState(() => _closedSublayer.isVisible = value);
+                },
+              ),
+            ],
+          ),
           Text(
-            _currentScaleLabel ?? '',
+            _currentScaleLabel,
           ),
         ],
       ),
@@ -170,62 +164,86 @@ class _ControlAnnotationSublayerVisibilityState
   }
 
   void onMapViewReady() async {
-    await downloadSampleData(['b87307dcfb26411eb2e92e1627cb615b']);
-    final appDir = await getApplicationDocumentsDirectory();
+    try {
+      await downloadSampleData(['b87307dcfb26411eb2e92e1627cb615b']);
+      final appDir = await getApplicationDocumentsDirectory();
 
-    // Load the mobile map package.
-    final mmpkFile = File('${appDir.absolute.path}/GasDeviceAnno.mmpk');
-    // Mobile map package that contains annotation layers.
-    final mmpk = MobileMapPackage.withFileUri(mmpkFile.uri);
-    await mmpk.load();
+      // Load the mobile map package.
+      final mmpkFile = File('${appDir.absolute.path}/GasDeviceAnno.mmpk');
+      // Mobile map package that contains annotation layers.
+      final mmpk = MobileMapPackage.withFileUri(mmpkFile.uri);
+      await mmpk.load();
 
-    if (mmpk.maps.isNotEmpty) {
-      // Get the first map in the mobile map package and set to the map view.
-      _mapViewController.arcGISMap = mmpk.maps.first;
-    }
-
-    if (_mapViewController.arcGISMap != null) {
-      // Get the annotation layer from the MapView operational layers.
-      final annotationLayer = _mapViewController.arcGISMap!.operationalLayers
-          .whereType<AnnotationLayer>()
-          .first;
-
-      // Load the annotation layer.
-      await annotationLayer.load();
-
-      // Get the annotation sub layers.
-      _closedSublayer =
-          annotationLayer.subLayerContents[0] as AnnotationSublayer;
-      _openSublayer = annotationLayer.subLayerContents[1] as AnnotationSublayer;
-
-      if (_closedSublayer != null) {
-        // Set the closed label content.
-        _closedLabel = _closedSublayer!.name;
+      if (mmpk.maps.isNotEmpty) {
+        // Get the first map in the mobile map package and set to the map view.
+        _mapViewController.arcGISMap = mmpk.maps.first;
       }
 
-      if (_openSublayer != null) {
-        // Set the open label content.
-        _openLabel =
-            '${_openSublayer!.name} (1:${_openSublayer!.maxScale.toInt()} - 1:${_openSublayer!.minScale.toInt()})';
+      if (_mapViewController.arcGISMap != null) {
+        // Get the annotation layer from the MapView operational layers.
+        final annotationLayer = _mapViewController.arcGISMap!.operationalLayers
+            .whereType<AnnotationLayer>()
+            .first;
+
+        // Load the annotation layer.
+        await annotationLayer.load();
+
+        setState(() {
+          // Get the annotation sub layers.
+          _closedSublayer =
+              annotationLayer.subLayerContents[0] as AnnotationSublayer;
+
+          _openSublayer =
+              annotationLayer.subLayerContents[1] as AnnotationSublayer;
+
+          // Set the closed label content.
+          _closedLabel = _closedSublayer.name;
+
+          // Set the open label content.
+          _openLabel =
+              '${_openSublayer.name} (1:${_openSublayer.maxScale.toInt()} - 1:${_openSublayer.minScale.toInt()})';
+        });
 
         // Add event handler for changing the text color to indicate whether the "open" sublayer is visible at the current scale.
         _mapViewController.onViewpointChanged.listen((_) {
           // Check if the sublayer is visible at the current map scale.
-          if (_openSublayer!.isVisibleAtScale(_mapViewController.scale)) {
-            _openLabelColor = Colors.purple;
+          if (_openSublayer.isVisibleAtScale(_mapViewController.scale)) {
+            setState(() {
+              _openLabelColor = Colors.purple;
+            });
           } else {
-            _openLabelColor = null;
+            setState(() {
+              _openLabelColor = null;
+            });
           }
-          // Set the current map scale text.
-          _currentScaleLabel =
-              'Current map scale: 1:${_mapViewController.scale.toInt()}';
-
-          setState(() {});
+          setState(() {
+            // Set the current map scale text.
+            _currentScaleLabel =
+                'Current map scale: 1:${_mapViewController.scale.toInt()}';
+          });
         });
       }
-    }
 
-    // Set the ready state variable to true to enable the sample UI.
-    setState(() => _ready = true);
+      // Set the ready state variable to true to enable the sample UI.
+      setState(() => _ready = true);
+    } on ArcGISException catch (e) {
+      showMessageDialog('${e.message}.');
+    } on Exception {
+      showMessageDialog(
+        'There was an error loading the data required for the sample.',
+      );
+    }
+  }
+
+  void showMessageDialog(String message) {
+    // Show a dialog with the provided message.
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          content: Text(message),
+        );
+      },
+    );
   }
 }
