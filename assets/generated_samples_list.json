@@ -507,6 +507,35 @@
     "title": "Change viewpoint",
     "key": "change_viewpoint"
   },
+  "control_annotation_sublayer_visibility": {
+    "category": "Layers",
+    "description": "Use annotation sublayers to gain finer control of annotation layer subtypes.",
+    "ignore": false,
+    "images": [
+      "control_annotation_sublayer_visibility.png"
+    ],
+    "keywords": [
+      "annotation",
+      "scale",
+      "text",
+      "utilities",
+      "visualization",
+      "AnnotationLayer",
+      "AnnotationSublayer",
+      "LayerContent"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+      "AnnotationLayer",
+      "AnnotationSublayer",
+      "LayerContent"
+    ],
+    "snippets": [
+      "control_annotation_sublayer_visibility.dart"
+    ],
+    "title": "Control annotation sublayer visibility",
+    "key": "control_annotation_sublayer_visibility"
+  },
   "create_and_edit_geometries": {
     "category": "Maps",
     "description": "Use the Geometry Editor to create new point, multipoint, polyline, or polygon geometries or to edit existing geometries by interacting with a map view.",
@@ -1892,9 +1921,8 @@
     "key": "snap_geometry_edits"
   },
   "style_graphics_with_symbols": {
-    "category": "GraphicsOverlay",
+    "category": "Visualization",
     "description": "Use a symbol style to display a graphic on a graphics overlay.",
-    "formal_name": "AddGraphicsWithSymbols",
     "ignore": false,
     "images": [
       "style_graphics_with_symbols.png"
@@ -1907,7 +1935,13 @@
       "marker",
       "overlay",
       "point",
-      "symbol"
+      "symbol",
+      "Geometry",
+      "Graphic",
+      "GraphicsOverlay",
+      "SimpleFillSymbol",
+      "SimpleLineSymbol",
+      "SimpleMarkerSymbol"
     ],
     "redirect_from": [],
     "relevant_apis": [
