@@ -24,12 +24,11 @@ Use the switches to manually set "Open" and "Closed" annotation sublayers visibi
 
 ## How it works
 
-1. Create a new `ArcGISMapView` with an `ArcGISMapViewController`.
-2. Load a `MobileMapPackage` that contains `AnnotationSublayer`.
-3. Get the sublayers from the map package's layers by calling `sublayer.subLayerContents`.
-4. You can toggle the visibility of each sublayer manually using `sublayer.isVisible` property.
-5. To determine if a sublayer is visible at the current scale of the `ArcGISMapView`,
-   use `sublayer.isVisibleAtScale(ArcGISMapViewController.scale)`, by passing in the map's current
+1. Load a `MobileMapPackage` that contains `AnnotationSublayer`. 
+2. Get the sublayers from the map package's layers by calling `Sublayer.subLayerContents`. 
+3. You can toggle the visibility of each sublayer manually using `Sublayer.isVisible` property. 
+4. To determine if a sublayer is visible at the current scale of the `ArcGISMapView`,
+   use `Sublayer.isVisibleAtScale(ArcGISMapViewController.scale)`, by passing in the map's current
    scale.
 
 ## Relevant API
@@ -40,18 +39,15 @@ Use the switches to manually set "Open" and "Closed" annotation sublayers visibi
 
 ## Offline data
 
-This sample
-uses [Gas Device Anno Mobile Map Package](https://arcgisruntime.maps.arcgis.com/home/item.html?id=b87307dcfb26411eb2e92e1627cb615b).
+This sample uses [Gas Device Anno Mobile Map Package](https://arcgisruntime.maps.arcgis.com/home/item.html?id=b87307dcfb26411eb2e92e1627cb615b).
 It is downloaded from ArcGIS Online automatically before the sample runs.
 
 ## About the data
 
 The scale ranges were set by the map's author using ArcGIS Pro:
 
-* The "Open" annotation sublayer has its maximum scale set to 1:500 and its minimum scale set to 1:
-  2000.
-* The "Closed" annotation sublayer has no minimum or maximum scales set, so will be drawn at all
-  scales.
+* The "Open" annotation sublayer has its maximum scale set to 1:500 and its minimum scale set to 1:2000.
+* The "Closed" annotation sublayer has no minimum or maximum scales set, so will be drawn at all scales.
 
 ## Tags
 
