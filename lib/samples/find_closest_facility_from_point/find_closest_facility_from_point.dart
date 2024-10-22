@@ -49,22 +49,16 @@ class _FindClosestFacilityFromPointState
       'https://sampleserver6.arcgisonline.com/arcgis/rest/services/NetworkAnalysis/SanDiego/NAServer/ClosestFacility',
     ),
   );
-
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
-
   // Create a graphics overlay for the route.
   final _routeGraphicsOverlay = GraphicsOverlay();
-
   // Create a flag to track whether the route has been solved.
   var _routeSolved = false;
-
   // A flag for when the map view is ready and controls can be used.
   var _ready = false;
-
   // Create parameters for the closest facility task.
   late final ClosestFacilityParameters _closestFacilityParameters;
-
   // Create a symbol for the route line.
   final _routeLineSymbol = SimpleLineSymbol(
     style: SimpleLineSymbolStyle.solid,
