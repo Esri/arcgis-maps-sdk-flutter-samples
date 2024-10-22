@@ -42,7 +42,6 @@ class _FindClosestFacilityFromPointState
   static final _incidentsLayerUri = Uri.parse(
     'https://services2.arcgis.com/ZQgQTuoyBrtmoGdP/ArcGIS/rest/services/San_Diego_Incidents/FeatureServer/0',
   );
-
   // Create a task for the closest facility service.
   final _closestFacilityTask = ClosestFacilityTask.withUri(
     Uri.parse(
