@@ -29,28 +29,20 @@ class FindRoute extends StatefulWidget {
 class _FindRouteState extends State<FindRoute> with SampleStateSupport {
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
-
   // Create a graphics overlay for the stops.
   final _stopsGraphicsOverlay = GraphicsOverlay();
-
   // Create a graphics overlay for the route.
   final _routeGraphicsOverlay = GraphicsOverlay();
-
   // Create a list of stops.
   final _stops = <Stop>[];
-
   // A flag to indicate whether the route is generated.
   var _routeGenerated = false;
-
   // A flag for when the map view is ready and controls can be used.
   var _ready = false;
-
   // Create a list of directions for the route.
   var _directions = <DirectionManeuver>[];
-
   // Define route parameters for the route.
   late final RouteParameters _routeParameters;
-
   // Create a route task.
   final _routeTask = RouteTask.withUri(
     Uri.parse(
