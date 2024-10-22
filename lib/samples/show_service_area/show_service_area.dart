@@ -53,7 +53,7 @@ class _ShowServiceAreaState extends State<ShowServiceArea>
   ];
 
   // Create a service area task used to find service areas around a facility.
-  final _serviceAreaTask = ServiceAreaTask.withUrl(
+  final _serviceAreaTask = ServiceAreaTask.withUri(
     Uri.parse(
       'https://route-api.arcgis.com/arcgis/rest/services/World/ServiceAreas/NAServer/ServiceArea_World',
     ),
@@ -65,6 +65,7 @@ class _ShowServiceAreaState extends State<ShowServiceArea>
 
   // A flag for when the map view is ready and controls can be used.
   var _ready = false;
+
   // A flag for when the service area task is in progress.
   var _taskInProgress = false;
 
@@ -162,7 +163,7 @@ class _ShowServiceAreaState extends State<ShowServiceArea>
 
     // Apply a renderer to the facility graphics overlay.
     _facilityGraphicsOverlay.renderer = SimpleRenderer(
-      symbol: PictureMarkerSymbol.withUrl(
+      symbol: PictureMarkerSymbol.withUri(
         Uri.parse(
           'https://static.arcgis.com/images/Symbols/SafetyHealth/Hospital.png',
         ),

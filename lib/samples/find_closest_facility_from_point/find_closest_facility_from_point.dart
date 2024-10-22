@@ -42,22 +42,29 @@ class _FindClosestFacilityFromPointState
   static final _incidentsLayerUri = Uri.parse(
     'https://services2.arcgis.com/ZQgQTuoyBrtmoGdP/ArcGIS/rest/services/San_Diego_Incidents/FeatureServer/0',
   );
+
   // Create a task for the closest facility service.
-  final _closestFacilityTask = ClosestFacilityTask.withUrl(
+  final _closestFacilityTask = ClosestFacilityTask.withUri(
     Uri.parse(
       'https://sampleserver6.arcgisonline.com/arcgis/rest/services/NetworkAnalysis/SanDiego/NAServer/ClosestFacility',
     ),
   );
+
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
+
   // Create a graphics overlay for the route.
   final _routeGraphicsOverlay = GraphicsOverlay();
+
   // Create a flag to track whether the route has been solved.
   var _routeSolved = false;
+
   // A flag for when the map view is ready and controls can be used.
   var _ready = false;
+
   // Create parameters for the closest facility task.
   late final ClosestFacilityParameters _closestFacilityParameters;
+
   // Create a symbol for the route line.
   final _routeLineSymbol = SimpleLineSymbol(
     style: SimpleLineSymbolStyle.solid,
@@ -122,7 +129,7 @@ class _FindClosestFacilityFromPointState
         ServiceFeatureTable.withUri(_facilitiesLayerUri);
     // Create a marker symbol for the facilities.
     final facilitiesMarkerSymbol =
-        PictureMarkerSymbol.withUrl(_fireStationImageUri)
+        PictureMarkerSymbol.withUri(_fireStationImageUri)
           ..width = 30
           ..height = 30;
     // Create a feature layer for the facilities.
@@ -134,7 +141,7 @@ class _FindClosestFacilityFromPointState
     final incidentsFeatureTable =
         ServiceFeatureTable.withUri(_incidentsLayerUri);
     // Create a marker symbol for the incidents.
-    final incidentsMarkerSymbol = PictureMarkerSymbol.withUrl(_fireImageUri)
+    final incidentsMarkerSymbol = PictureMarkerSymbol.withUri(_fireImageUri)
       ..width = 30
       ..height = 30;
     // Create a feature layer for the incidents.
@@ -179,7 +186,7 @@ class _FindClosestFacilityFromPointState
   FeatureLayer buildFeatureLayer(Uri tableUri, Uri imageUri) {
     // Create a feature table and feature layer for the facilities or incidents.
     final featureTable = ServiceFeatureTable.withUri(tableUri);
-    final markerSymbol = PictureMarkerSymbol.withUrl(imageUri)
+    final markerSymbol = PictureMarkerSymbol.withUri(imageUri)
       ..width = 30
       ..height = 30;
     final featureLayer = FeatureLayer.withFeatureTable(featureTable)
