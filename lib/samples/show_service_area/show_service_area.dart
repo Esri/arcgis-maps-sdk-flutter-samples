@@ -65,7 +65,6 @@ class _ShowServiceAreaState extends State<ShowServiceArea>
 
   // A flag for when the map view is ready and controls can be used.
   var _ready = false;
-
   // A flag for when the service area task is in progress.
   var _taskInProgress = false;
 
