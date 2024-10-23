@@ -570,6 +570,38 @@
     "title": "Create and edit geometries",
     "key": "create_and_edit_geometries"
   },
+  "create_buffers_around_points": {
+    "category": "Maps",
+    "description": "Generate multiple individual buffers or a single unioned buffer around multiple points.",
+    "ignore": false,
+    "images": [
+      "create_buffers_around_points.png"
+    ],
+    "keywords": [
+      "analysis",
+      "buffer",
+      "geometry",
+      "planar",
+      "Geometry",
+      "GeometryEngine.buffer",
+      "GeometryEngine.bufferCollection",
+      "GeometryEngine.project",
+      "SpatialReference"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+      "Geometry",
+      "GeometryEngine.buffer",
+      "GeometryEngine.bufferCollection",
+      "GeometryEngine.project",
+      "SpatialReference"
+    ],
+    "snippets": [
+      "create_buffers_around_points.dart"
+    ],
+    "title": "Create buffers around points",
+    "key": "create_buffers_around_points"
+  },
   "create_mobile_geodatabase": {
     "category": "Edit and Manage Data",
     "description": "Create and share a mobile geodatabase.",
