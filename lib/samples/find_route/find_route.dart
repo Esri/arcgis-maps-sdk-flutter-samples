@@ -44,7 +44,7 @@ class _FindRouteState extends State<FindRoute> with SampleStateSupport {
   // Define route parameters for the route.
   late final RouteParameters _routeParameters;
   // Create a route task.
-  final _routeTask = RouteTask.withUrl(
+  final _routeTask = RouteTask.withUri(
     Uri.parse(
       'https://sampleserver6.arcgisonline.com/arcgis/rest/services/NetworkAnalysis/SanDiego/NAServer/Route',
     ),
