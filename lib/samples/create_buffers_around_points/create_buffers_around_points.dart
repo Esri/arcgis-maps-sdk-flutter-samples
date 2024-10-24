@@ -1,3 +1,19 @@
+//
+// Copyright 2024 Esri
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//   https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+
 import 'dart:math';
 
 import 'package:arcgis_maps/arcgis_maps.dart';
@@ -35,6 +51,9 @@ class _CreateBuffersAroundPointsState extends State<CreateBuffersAroundPoints>
   // Union status.
   var _shouldUnion = false;
 
+  // A flag for when the settings bottom sheet is visible.
+  var _showSettings = false;
+
   // Define the graphics overlays.
   final bufferGraphicsOverlay = GraphicsOverlay();
   final tapPointGraphicsOverlay = GraphicsOverlay();
@@ -55,6 +74,25 @@ class _CreateBuffersAroundPointsState extends State<CreateBuffersAroundPoints>
           children: [
             Column(
               children: [
+                // Display a banner with instructions at the top.
+                SafeArea(
+                  child: IgnorePointer(
+                    child: Container(
+                      padding: const EdgeInsets.all(10),
+                      color: Colors.white.withOpacity(0.7),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            _status.label,
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(color: Colors.black),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
                 Expanded(
                   // Add a map view to the widget tree and set a controller.
                   child: ArcGISMapView(
@@ -68,21 +106,10 @@ class _CreateBuffersAroundPointsState extends State<CreateBuffersAroundPoints>
                   children: [
                     ElevatedButton(
                       onPressed: () {
-                        showModalBottomSheet(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return StatefulBuilder(
-                              builder:
-                                  (BuildContext context, StateSetter setState) {
-                                return buildSettings(context, setState);
-                              },
-                            );
-                          },
-                        );
+                        setState(() => _showSettings = !_showSettings);
                       },
                       child: const Text('Settings'),
                     ),
-
                     // A button to clear the buffers.
                     ElevatedButton(
                       onPressed: _bufferPoints.isEmpty
@@ -95,6 +122,8 @@ class _CreateBuffersAroundPointsState extends State<CreateBuffersAroundPoints>
                     ),
                   ],
                 ),
+                // Conditionally display the settings.
+                if (_showSettings) buildSettings(context, setState),
               ],
             ),
             // Display a progress indicator and prevent interaction until state is ready.
@@ -104,19 +133,6 @@ class _CreateBuffersAroundPointsState extends State<CreateBuffersAroundPoints>
                 child: ColoredBox(
                   color: Colors.white30,
                   child: Center(child: CircularProgressIndicator()),
-                ),
-              ),
-            ),
-            Positioned(
-              top: 0,
-              left: 0,
-              right: 0,
-              child: Container(
-                padding: const EdgeInsets.all(8),
-                color: Colors.white.withOpacity(0.4),
-                child: Text(
-                  _status.label,
-                  textAlign: TextAlign.center,
                 ),
               ),
             ),
@@ -143,7 +159,7 @@ class _CreateBuffersAroundPointsState extends State<CreateBuffersAroundPoints>
       ..size = 10;
   }
 
-  // The build method for the Setting bottom sheet.
+  // The build method for the settings.
   Widget buildSettings(BuildContext context, StateSetter setState) {
     return Container(
       padding: EdgeInsets.fromLTRB(
@@ -168,7 +184,7 @@ class _CreateBuffersAroundPointsState extends State<CreateBuffersAroundPoints>
               const Spacer(),
               IconButton(
                 onPressed: () {
-                  Navigator.pop(context); // Close the bottom sheet
+                  setState(() => _showSettings = false);
                 },
                 icon: const Icon(Icons.close),
               ),
@@ -204,12 +220,10 @@ class _CreateBuffersAroundPointsState extends State<CreateBuffersAroundPoints>
               Switch(
                 value: _shouldUnion,
                 onChanged: (value) {
-                  setState(() {
-                    _shouldUnion = value;
-                    if (_bufferPoints.isNotEmpty) {
-                      drawBuffers(unionized: _shouldUnion);
-                    }
-                  });
+                  setState(() => _shouldUnion = value);
+                  if (_bufferPoints.isNotEmpty) {
+                    drawBuffers(unionized: _shouldUnion);
+                  }
                 },
               ),
             ],

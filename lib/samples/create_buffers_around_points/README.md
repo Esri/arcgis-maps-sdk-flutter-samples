@@ -10,7 +10,7 @@ Creating buffers is a core concept in GIS proximity analysis that allows you to 
 
 ## How to use the sample
 
-Tap on the map to add points. Tap the "Union Settings" button to adjust the buffer radius and union settings. The buffer radius can be adjusted using the slider, and the union option can be toggled using the switch. Click the "Clear" button to start over. The red dashed envelope shows the area where you can expect reasonable results for planar buffer operations with the North Central Texas State Plane spatial reference.
+Tap on the map to add points. Tap the "Settings" button to adjust the buffer radius and union settings. The buffer radius can be adjusted using the slider, and the union option can be toggled using the switch. Click the "Clear" button to start over. The red dashed envelope shows the area where you can expect reasonable results for planar buffer operations with the North Central Texas State Plane spatial reference.
 
 ## How it works
 
