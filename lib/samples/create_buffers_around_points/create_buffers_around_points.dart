@@ -123,7 +123,6 @@ class _CreateBuffersAroundPointsState extends State<CreateBuffersAroundPoints>
                   ],
                 ),
                 // Conditionally display the settings.
-                if (_showSettings) buildSettings(context, setState),
               ],
             ),
             // Display a progress indicator and prevent interaction until state is ready.
@@ -139,6 +138,7 @@ class _CreateBuffersAroundPointsState extends State<CreateBuffersAroundPoints>
           ],
         ),
       ),
+      bottomSheet: _showSettings? buildSettings(context, setState) : null,
     );
   }
 
