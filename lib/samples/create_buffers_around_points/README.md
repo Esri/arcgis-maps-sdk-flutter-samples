@@ -10,19 +10,21 @@ Creating buffers is a core concept in GIS proximity analysis that allows you to 
 
 ## How to use the sample
 
-Click/tap on the map to add points. Click the "Create Buffer(s)" button to draw buffer(s) around the points (the size of the buffer is determined by the value entered by the user). Check the check box if you want the result to union (combine) the buffers. Click the "Clear" button to start over. The red dashed envelope shows the area where you can expect reasonable results for planar buffer operations with the North Central Texas State Plane spatial reference.
+Tap on the map to add points. Tap the "Union Settings" button to adjust the buffer radius and union settings. The buffer radius can be adjusted using the slider, and the union option can be toggled using the switch. Click the "Clear" button to start over. The red dashed envelope shows the area where you can expect reasonable results for planar buffer operations with the North Central Texas State Plane spatial reference.
 
 ## How it works
 
-1. Use `GeometryEngine.buffer(points, distances, union)` to create a `Polygon`. The parameter `points` are the points to buffer around, `distances` are the buffer distances for each point (in meters) and `union` is a boolean for whether the results should be unioned.
+1. Use `GeometryEngine.bufferCollection(geometries, distances, unionResult)` to create buffer polygons. The parameter `geometries` are the points to buffer around, `distances` are the buffer distances for each point (in feet), and `unionResult` is a boolean for whether the results should be unioned.
 2. Add the resulting polygons (if not unioned) or single polygon (if unioned) to the map's `GraphicsOverlay` as a `Graphic`.
 
 ## Relevant API
 
-* Geometry
-* GeometryEngine.buffer
+* ArcGISMap
+* ArcGISMapImageLayer
+* ArcGISMapView
 * GeometryEngine.bufferCollection
 * GeometryEngine.project
+* GraphicsOverlay
 * SpatialReference
 
 ## Additional information

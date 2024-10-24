@@ -10,18 +10,22 @@
         "buffer",
         "geometry",
         "planar",
-        "Geometry",
-        "GeometryEngine.buffer",
+        "ArcGISMap",
+        "ArcGISMapImageLayer",
+        "ArcGISMapView",
         "GeometryEngine.bufferCollection",
         "GeometryEngine.project",
+        "GraphicsOverlay",
         "SpatialReference"
     ],
     "redirect_from": [],
     "relevant_apis": [
-        "Geometry",
-        "GeometryEngine.buffer",
+        "ArcGISMap",
+        "ArcGISMapImageLayer",
+        "ArcGISMapView",
         "GeometryEngine.bufferCollection",
         "GeometryEngine.project",
+        "GraphicsOverlay",
         "SpatialReference"
     ],
     "snippets": [

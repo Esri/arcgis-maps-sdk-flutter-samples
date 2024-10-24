@@ -43,6 +43,9 @@ class _CreateBuffersAroundPointsState extends State<CreateBuffersAroundPoints>
   final bufferFillSymbol = SimpleFillSymbol();
   final tapPointSymbol = SimpleMarkerSymbol();
 
+  final statePlanNorthCentralTexasSpatialReference =
+      SpatialReference(wkid: 32038);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -69,14 +72,15 @@ class _CreateBuffersAroundPointsState extends State<CreateBuffersAroundPoints>
                           context: context,
                           builder: (BuildContext context) {
                             return StatefulBuilder(
-                              builder: (BuildContext context, StateSetter setState) {
+                              builder:
+                                  (BuildContext context, StateSetter setState) {
                                 return buildSettings(context, setState);
                               },
                             );
                           },
                         );
                       },
-                      child: const Text('Union Settings'),
+                      child: const Text('Settings'),
                     ),
 
                     // A button to clear the buffers.
@@ -84,11 +88,9 @@ class _CreateBuffersAroundPointsState extends State<CreateBuffersAroundPoints>
                       onPressed: _bufferPoints.isEmpty
                           ? null
                           : () {
-                        setState(() {
-                          clearBufferPoints();
-                          _status = Status.addPoints;
-                        });
-                      },
+                              clearBufferPoints();
+                              setState(() => _status = Status.addPoints);
+                            },
                       child: const Text('Clear'),
                     ),
                   ],
@@ -123,7 +125,6 @@ class _CreateBuffersAroundPointsState extends State<CreateBuffersAroundPoints>
       ),
     );
   }
-
 
   void _initializeSymbols() {
     // Initialize the fill symbol for the buffer.
@@ -191,9 +192,7 @@ class _CreateBuffersAroundPointsState extends State<CreateBuffersAroundPoints>
                   value: _bufferRadius,
                   min: 10,
                   max: 300,
-                  onChanged: (value) => setState(() {
-                    _bufferRadius = value;
-                  }),
+                  onChanged: (value) => setState(() => _bufferRadius = value),
                 ),
               ),
             ],
@@ -220,14 +219,10 @@ class _CreateBuffersAroundPointsState extends State<CreateBuffersAroundPoints>
     );
   }
 
-  void onMapViewReady() async {
+  void onMapViewReady() {
     // Initialize the boundary polygon and the symbols.
     _boundaryPolygon = _makeBoundaryPolygon();
     _initializeSymbols();
-
-    // State Plane Central Texas Spatial reference.
-    final statePlanNorthCentralTexasSpatialReference =
-        SpatialReference(wkid: 32038);
 
     // Create a map with the spatial reference as the basemap and add it to our map controller.
     final map =
@@ -243,9 +238,6 @@ class _CreateBuffersAroundPointsState extends State<CreateBuffersAroundPoints>
 
     // Add the map image layer to the map.
     map.operationalLayers.add(usaLayer);
-
-    // Load the map image layer.
-    await usaLayer.load();
 
     // Set the map on the map view controller.
     _mapViewController.arcGISMap = map;
@@ -287,40 +279,16 @@ class _CreateBuffersAroundPointsState extends State<CreateBuffersAroundPoints>
   }
 
   Polygon _makeBoundaryPolygon() {
-    final statePlanNorthCentralTexasSpatialReference =
-        SpatialReference(wkid: 32038);
-
-    // Show a box where the spatial reference is valid for planar buffers.
-    final boundaryPoints = <ArcGISPoint>[
-      ArcGISPoint(
-        x: -103.070,
-        y: 31.720,
-        spatialReference: SpatialReference.wgs84,
-      ),
-      ArcGISPoint(
-        x: -103.070,
-        y: 34.580,
-        spatialReference: SpatialReference.wgs84,
-      ),
-      ArcGISPoint(
-        x: -94.000,
-        y: 34.580,
-        spatialReference: SpatialReference.wgs84,
-      ),
-      ArcGISPoint(
-        x: -94.000,
-        y: 31.720,
-        spatialReference: SpatialReference.wgs84,
-      ),
-    ];
-
     // Create a boundary polygon.
     final polygonBuilder =
         PolygonBuilder(spatialReference: SpatialReference.wgs84);
 
-    for (final point in boundaryPoints) {
-      polygonBuilder.addPoint(point);
-    }
+    // Add points to define the boundary where the spatial reference is valid for planar buffers.
+    polygonBuilder.addPointXY(x: -103.070, y: 31.720);
+    polygonBuilder.addPointXY(x: -103.070, y: 34.580);
+    polygonBuilder.addPointXY(x: -94.000, y: 34.580);
+    polygonBuilder.addPointXY(x: -94.000, y: 31.720);
+
     final boundaryGeometry = polygonBuilder.toGeometry();
 
     final boundaryPolygon = GeometryEngine.project(
@@ -331,7 +299,7 @@ class _CreateBuffersAroundPointsState extends State<CreateBuffersAroundPoints>
     return boundaryPolygon;
   }
 
-  void onTap(Offset offset) async {
+  void onTap(Offset offset) {
     // Convert the screen point to a map point.
     final mapPoint = _mapViewController.screenToLocation(screen: offset);
 
@@ -340,19 +308,17 @@ class _CreateBuffersAroundPointsState extends State<CreateBuffersAroundPoints>
       geometry1: _boundaryPolygon,
       geometry2: mapPoint!,
     )) {
-      setState(() {
-        _status = Status.outOfBoundsTap;
-      });
+      setState(() => _status = Status.outOfBoundsTap);
       return;
     }
 
     // Use the current buffer radius value from the slider.
-    setState(() {
-      addBuffer(point: mapPoint, radius: _bufferRadius);
-      drawBuffers(unionized: _shouldUnion);
-      _status = Status.bufferCreated;
-    });
+    addBuffer(point: mapPoint, radius: _bufferRadius);
+    drawBuffers(unionized: _shouldUnion);
+
+    setState(() => _status = Status.bufferCreated);
   }
+
   void drawBuffers({required bool unionized}) {
     // Clear existing buffers before drawing.
     bufferGraphicsOverlay.graphics.clear();
@@ -382,13 +348,14 @@ class _CreateBuffersAroundPointsState extends State<CreateBuffersAroundPoints>
     }
 
     // Add the buffers to the bufferGraphicsOverlay.
-    for (final buffer in bufferPolygons) {
+    for (final bufferPolygon in bufferPolygons) {
       bufferGraphicsOverlay.graphics.add(
-        Graphic(geometry: buffer, symbol: bufferFillSymbol),
+        Graphic(geometry: bufferPolygon, symbol: bufferFillSymbol),
       );
     }
   }
 
+  // Clears the buffer points.
   void clearBufferPoints() {
     _bufferPoints.clear();
     bufferGraphicsOverlay.graphics.clear();
@@ -398,9 +365,7 @@ class _CreateBuffersAroundPointsState extends State<CreateBuffersAroundPoints>
   void addBuffer({required ArcGISPoint point, required double radius}) {
     // Ensure the radius is within a valid range before adding the buffer.
     if (radius <= 0 || radius > 300) {
-      setState(() {
-        _status = Status.invalidInput;
-      });
+      setState(() => _status = Status.invalidInput);
       return;
     }
     // Convert the radius from miles to feet directly.
@@ -419,28 +384,13 @@ class PointAndRadius {
 }
 
 enum Status {
-  addPoints,
-  bufferCreated,
-  outOfBoundsTap,
-  invalidInput,
-  noPoints,
-}
+  addPoints('Tap on the map to add buffers.'),
+  bufferCreated('Buffer created.'),
+  outOfBoundsTap('Tap within the boundary to add buffer.'),
+  invalidInput('Enter a value between 0 and 300 to create a buffer.'),
+  noPoints('Add a point to draw the buffers.');
 
-extension StatusExtension on Status {
-  String get label {
-    switch (this) {
-      case Status.addPoints:
-        return 'Tap on the map to add buffers.';
-      case Status.bufferCreated:
-        return 'Buffer created.';
-      case Status.outOfBoundsTap:
-        return 'Tap within the boundary to add buffer.';
-      case Status.invalidInput:
-        return 'Enter a value between 0 and 300 to create a buffer.';
-      case Status.noPoints:
-        return 'Add a point to draw the buffers.';
-      default:
-        return '';
-    }
-  }
+  final String label;
+
+  const Status(this.label);
 }
