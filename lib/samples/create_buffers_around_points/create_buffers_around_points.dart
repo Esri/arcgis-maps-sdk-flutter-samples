@@ -142,6 +142,59 @@ class _CreateBuffersAroundPointsState extends State<CreateBuffersAroundPoints>
     );
   }
 
+  void onMapViewReady() {
+    // Initialize the boundary polygon and the symbols.
+    _boundaryPolygon = _makeBoundaryPolygon();
+    _initializeSymbols();
+
+    // Create a map with the spatial reference as the basemap and add it to our map controller.
+    final map =
+    ArcGISMap(spatialReference: statePlanNorthCentralTexasSpatialReference);
+
+    // Add some base layers (counties, cities, highways).
+    final mapServiceUri = Uri.parse(
+      'https://sampleserver6.arcgisonline.com/arcgis/rest/services/USA/MapServer',
+    );
+
+    // Create a map image layer from the uri.
+    final usaLayer = ArcGISMapImageLayer.withUri(mapServiceUri);
+
+    // Add the map image layer to the map.
+    map.operationalLayers.add(usaLayer);
+
+    // Set the map on the map view controller.
+    _mapViewController.arcGISMap = map;
+
+    // Set the viewpoint of the map to our boundary polygon extent.
+    _mapViewController
+        .setViewpoint(Viewpoint.fromTargetExtent(_boundaryPolygon.extent));
+
+    _loadGraphicsOverlays();
+
+    // Set the ready state variable to true to enable the sample UI.
+    setState(() => _ready = true);
+  }
+
+  void onTap(Offset offset) {
+    // Convert the screen point to a map point.
+    final mapPoint = _mapViewController.screenToLocation(screen: offset);
+
+    // Ensure the map point is within the boundary.
+    if (!GeometryEngine.contains(
+      geometry1: _boundaryPolygon,
+      geometry2: mapPoint!,
+    )) {
+      setState(() => _status = Status.outOfBoundsTap);
+      return;
+    }
+
+    // Use the current buffer radius value from the slider.
+    addBuffer(point: mapPoint, radius: _bufferRadius);
+    drawBuffers(unionized: _shouldUnion);
+
+    setState(() => _status = Status.bufferCreated);
+  }
+
   void _initializeSymbols() {
     // Initialize the fill symbol for the buffer.
     bufferFillSymbol
@@ -233,39 +286,6 @@ class _CreateBuffersAroundPointsState extends State<CreateBuffersAroundPoints>
     );
   }
 
-  void onMapViewReady() {
-    // Initialize the boundary polygon and the symbols.
-    _boundaryPolygon = _makeBoundaryPolygon();
-    _initializeSymbols();
-
-    // Create a map with the spatial reference as the basemap and add it to our map controller.
-    final map =
-        ArcGISMap(spatialReference: statePlanNorthCentralTexasSpatialReference);
-
-    // Add some base layers (counties, cities, highways).
-    final mapServiceUri = Uri.parse(
-      'https://sampleserver6.arcgisonline.com/arcgis/rest/services/USA/MapServer',
-    );
-
-    // Create a map image layer from the uri.
-    final usaLayer = ArcGISMapImageLayer.withUri(mapServiceUri);
-
-    // Add the map image layer to the map.
-    map.operationalLayers.add(usaLayer);
-
-    // Set the map on the map view controller.
-    _mapViewController.arcGISMap = map;
-
-    // Set the viewpoint of the map to our boundary polygon extent.
-    _mapViewController
-        .setViewpoint(Viewpoint.fromTargetExtent(_boundaryPolygon.extent));
-
-    _loadGraphicsOverlays();
-
-    // Set the ready state variable to true to enable the sample UI.
-    setState(() => _ready = true);
-  }
-
   void _loadGraphicsOverlays() {
     // Create a graphics overlay to show the spatial reference's valid area:
     final boundaryGraphicsOverlay = GraphicsOverlay();
@@ -311,26 +331,6 @@ class _CreateBuffersAroundPointsState extends State<CreateBuffersAroundPoints>
     ) as Polygon;
 
     return boundaryPolygon;
-  }
-
-  void onTap(Offset offset) {
-    // Convert the screen point to a map point.
-    final mapPoint = _mapViewController.screenToLocation(screen: offset);
-
-    // Ensure the map point is within the boundary.
-    if (!GeometryEngine.contains(
-      geometry1: _boundaryPolygon,
-      geometry2: mapPoint!,
-    )) {
-      setState(() => _status = Status.outOfBoundsTap);
-      return;
-    }
-
-    // Use the current buffer radius value from the slider.
-    addBuffer(point: mapPoint, radius: _bufferRadius);
-    drawBuffers(unionized: _shouldUnion);
-
-    setState(() => _status = Status.bufferCreated);
   }
 
   void drawBuffers({required bool unionized}) {
