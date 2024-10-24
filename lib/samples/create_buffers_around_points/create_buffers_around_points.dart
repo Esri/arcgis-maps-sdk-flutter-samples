@@ -74,25 +74,6 @@ class _CreateBuffersAroundPointsState extends State<CreateBuffersAroundPoints>
           children: [
             Column(
               children: [
-                // Display a banner with instructions at the top.
-                SafeArea(
-                  child: IgnorePointer(
-                    child: Container(
-                      padding: const EdgeInsets.all(10),
-                      color: Colors.white.withOpacity(0.7),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            _status.label,
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(color: Colors.black),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
                 Expanded(
                   // Add a map view to the widget tree and set a controller.
                   child: ArcGISMapView(
@@ -132,6 +113,25 @@ class _CreateBuffersAroundPointsState extends State<CreateBuffersAroundPoints>
                 child: ColoredBox(
                   color: Colors.white30,
                   child: Center(child: CircularProgressIndicator()),
+                ),
+              ),
+            ),
+            // Display a banner with instructions at the top.
+            SafeArea(
+              child: IgnorePointer(
+                child: Container(
+                  padding: const EdgeInsets.all(10),
+                  color: Colors.white.withOpacity(0.7),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        _status.label,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(color: Colors.black),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
