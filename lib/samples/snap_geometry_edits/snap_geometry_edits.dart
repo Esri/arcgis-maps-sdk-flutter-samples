@@ -60,7 +60,7 @@ class _SnapGeometryEditsState extends State<SnapGeometryEdits>
   var _geometryEditorIsStarted = false;
   var _geometryEditorHasSelectedElement = false;
   var _snappingEnabled = false;
-  var _geometryGuidesEnabled = true;
+  var _geometryGuidesEnabled = false;
   var _featureSnappingEnabled = true;
 
   // A flag for controlling the visibility of the editing toolbar.
@@ -207,6 +207,9 @@ class _SnapGeometryEditsState extends State<SnapGeometryEdits>
     // Enable snapping on the geometry editor.
     _geometryEditor.snapSettings.isEnabled = true;
     setState(() => _snappingEnabled = true);
+    // Enable geometry guides on the geometry editor.
+    _geometryEditor.snapSettings.isGeometryGuidesEnabled = true;
+    setState(() => _geometryGuidesEnabled = true);
     // Create a list of snap source settings for each geometry type and graphics overlay.
     for (final sourceSettings in _geometryEditor.snapSettings.sourceSettings) {
       // Enable all the source settings initially.
