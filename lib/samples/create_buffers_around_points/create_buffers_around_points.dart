@@ -138,7 +138,7 @@ class _CreateBuffersAroundPointsState extends State<CreateBuffersAroundPoints>
           ],
         ),
       ),
-      bottomSheet: _showSettings? buildSettings(context, setState) : null,
+      bottomSheet: _showSettings ? buildSettings(context, setState) : null,
     );
   }
 
@@ -149,7 +149,7 @@ class _CreateBuffersAroundPointsState extends State<CreateBuffersAroundPoints>
 
     // Create a map with the spatial reference as the basemap and add it to our map controller.
     final map =
-    ArcGISMap(spatialReference: statePlanNorthCentralTexasSpatialReference);
+        ArcGISMap(spatialReference: statePlanNorthCentralTexasSpatialReference);
 
     // Add some base layers (counties, cities, highways).
     final mapServiceUri = Uri.parse(
