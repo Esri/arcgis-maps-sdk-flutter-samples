@@ -14,6 +14,7 @@
 //
 
 import 'package:arcgis_maps/arcgis_maps.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_state_support.dart';
 import 'package:flutter/material.dart';
 
 class SetInitialViewpoint extends StatefulWidget {
@@ -23,48 +24,23 @@ class SetInitialViewpoint extends StatefulWidget {
   State<SetInitialViewpoint> createState() => _SetInitialViewpointState();
 }
 
-class _SetInitialViewpointState extends State<SetInitialViewpoint> {
+class _SetInitialViewpointState extends State<SetInitialViewpoint>
+    with SampleStateSupport {
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
-
-  // A flag for when the map view is ready and controls can be used.
-  var _ready = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        top: false,
-        child: Stack(
-          children: [
-            Column(
-              children: [
-                Expanded(
-                  // Add a map view to the widget tree and set a controller.
-                  child: ArcGISMapView(
-                    controllerProvider: () => _mapViewController,
-                    onMapViewReady: onMapViewReady,
-                  ),
-                ),
-              ],
-            ),
-            // Display a progress indicator and prevent interaction until state is ready.
-            Visibility(
-              visible: !_ready,
-              child: const SizedBox.expand(
-                child: ColoredBox(
-                  color: Colors.white30,
-                  child: Center(child: CircularProgressIndicator()),
-                ),
-              ),
-            ),
-          ],
-        ),
+      body: ArcGISMapView(
+        controllerProvider: () => _mapViewController,
+        onMapViewReady: onMapViewReady,
       ),
     );
   }
 
   void onMapViewReady() {
+    // Create a map with a topographic basemap style.
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic);
     // Create an initial envelope.
     final initialEnvelope = Envelope.fromXY(
@@ -74,12 +50,9 @@ class _SetInitialViewpointState extends State<SetInitialViewpoint> {
       yMax: 34.037,
       spatialReference: SpatialReference.wgs84,
     );
-    // Create and set the initial viewpoint to the map
-    final initialViewPoint = Viewpoint.fromTargetExtent(initialEnvelope.extent);
-    map.initialViewpoint = initialViewPoint;
-    _mapViewController.arcGISMap = map;
+    // Create and set the initial viewpoint to the map.
+    map.initialViewpoint = Viewpoint.fromTargetExtent(initialEnvelope.extent);
 
-    // Set the ready state variable to true to enable the sample UI.
-    setState(() => _ready = true);
+    _mapViewController.arcGISMap = map;
   }
 }
