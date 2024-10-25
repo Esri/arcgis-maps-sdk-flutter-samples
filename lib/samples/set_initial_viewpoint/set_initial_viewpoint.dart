@@ -52,7 +52,7 @@ class _SetInitialViewpointState extends State<SetInitialViewpoint>
     );
     // Create and set the initial viewpoint to the map.
     map.initialViewpoint = Viewpoint.fromTargetExtent(initialEnvelope.extent);
-
+    // Set the map to the map view.
     _mapViewController.arcGISMap = map;
   }
 }
