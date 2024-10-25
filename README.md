@@ -2,19 +2,7 @@
 
 This repository contains Flutter sample code demonstrating the capabilities of ArcGIS Maps SDK for Flutter and how to use them in your own app. This SDK enables development of cross-platform GIS apps for mobile devices running iOS and Android.
 
-## Run the samples using the Beta package of ArcGIS Maps SDK for Flutter
-
-Visit [earlyadopter.esri.com](https://earlyadopter.esri.com/) and download the ArcGIS Maps SDK for Flutter package. Follow the instructions to unpack it.
-
-Clone or download this repository into the same parent directory as the `arcgis_maps_package`. Your file structure should be:
-
-```
-parent_directory
-   |
-   |__ arcgis-maps-sdk-flutter-samples
-   |
-   |__ arcgis_maps_package
-```
+## Configuring the samples
 
 Navigate to the `arcgis-maps-sdk-flutter-samples` directory.
 
@@ -42,10 +30,10 @@ Now you are ready to run the samples app!
 
 The app can be run on an iOS or Android simulator or device. Note: you will need to configure an API key to take full advantage of the samples in the app. See [Configuring API Keys](#configuring-api-keys).
 
-- Open the flutter project in VSCode
+- Open the arcgis-maps-sdk-flutter-samples directory in VSCode
 - Ensure a simulator is running or a device is connected to your development machine 
-- Open the "Run and Debug" sidebar
 - Select which device or simulator you wish to use in the lower right corner of the VSCode window
+- Open the "Run and Debug" sidebar
 - Select "Sample Viewer App (debug or release)"
   - Note that "Sample Viewer App (release)" can only be run on a device
 - Click the run button or press F5
@@ -54,7 +42,7 @@ The app can be run on an iOS or Android simulator or device. Note: you will need
 
 Individual samples can also be run on an iOS or Android simulator or device.
 
-- Open the flutter project in VSCode
+- Open the arcgis-maps-sdk-flutter-samples directory in VSCode
 - Ensure a simulator is running or a device is connected to your development machine
 - Select which device or simulator you wish to use in the lower right corner of the VSCode window
 - To run from VSCode, open `lib/utils/sample_runner.dart` and define the sample you want to run
