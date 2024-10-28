@@ -32,32 +32,12 @@ class _StyleGraphicsWithRendererState extends State<StyleGraphicsWithRenderer>
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
 
-  // A flag for when the map view is ready and controls can be used.
-  var _ready = false;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        top: false,
-        child: Stack(
-          children: [
-            ArcGISMapView(
-              controllerProvider: () => _mapViewController,
-              onMapViewReady: onMapViewReady,
-            ),
-            // Display a progress indicator and prevent interaction until state is ready.
-            Visibility(
-              visible: !_ready,
-              child: const SizedBox.expand(
-                child: ColoredBox(
-                  color: Colors.white30,
-                  child: Center(child: CircularProgressIndicator()),
-                ),
-              ),
-            ),
-          ],
-        ),
+      body: ArcGISMapView(
+        controllerProvider: () => _mapViewController,
+        onMapViewReady: onMapViewReady,
       ),
     );
   }
@@ -66,7 +46,7 @@ class _StyleGraphicsWithRendererState extends State<StyleGraphicsWithRenderer>
     // Create a map with a topographic basemap style.
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic);
 
-    // Add graphics overlays to the mapview controller
+    // Add graphics overlays to the mapview controller.
     _mapViewController.graphicsOverlays.add(getPointGraphicsOverlay());
     _mapViewController.graphicsOverlays.add(getLineGraphicsOverlay());
     _mapViewController.graphicsOverlays.add(getEllipseGraphicsOverlay());
@@ -84,9 +64,6 @@ class _StyleGraphicsWithRendererState extends State<StyleGraphicsWithRenderer>
     );
 
     _mapViewController.setViewpointGeometry(combinedExtent);
-
-    // Set the ready state variable to true to enable the sample UI.
-    setState(() => _ready = true);
   }
 
   GraphicsOverlay getPointGraphicsOverlay() {
@@ -122,7 +99,7 @@ class _StyleGraphicsWithRendererState extends State<StyleGraphicsWithRenderer>
     );
     // Create a graphics overlay for the line.
     final lineGraphicsOverlay = GraphicsOverlay();
-    // Create and assign a simple rendered to the graphics overlay.
+    // Create and assign a simple render to the graphics overlay.
     lineGraphicsOverlay.renderer = SimpleRenderer(symbol: lineSymbol);
 
     // Create a line with `Polyline` geometry.
@@ -217,13 +194,15 @@ class _StyleGraphicsWithRendererState extends State<StyleGraphicsWithRenderer>
     final leftCurveStart =
         ArcGISPoint(x: center.x, y: minY, spatialReference: spatialReference);
     final leftCurveEnd = ArcGISPoint(
-        x: minX,
-        y: minY + 0.75 * sideLength,
-        spatialReference: spatialReference);
+      x: minX,
+      y: minY + 0.75 * sideLength,
+      spatialReference: spatialReference,
+    );
     final leftControlPoint1 = ArcGISPoint(
-        x: center.x,
-        y: minY + 0.25 * sideLength,
-        spatialReference: spatialReference);
+      x: center.x,
+      y: minY + 0.25 * sideLength,
+      spatialReference: spatialReference,
+    );
     final leftControlPoint2 =
         ArcGISPoint(x: minX, y: center.y, spatialReference: spatialReference);
     final leftCurve = CubicBezierSegment(
@@ -236,9 +215,10 @@ class _StyleGraphicsWithRendererState extends State<StyleGraphicsWithRenderer>
 
     // Top left arc.
     final leftArcCenter = ArcGISPoint(
-        x: minX + 0.25 * sideLength,
-        y: minY + 0.75 * sideLength,
-        spatialReference: spatialReference);
+      x: minX + 0.25 * sideLength,
+      y: minY + 0.75 * sideLength,
+      spatialReference: spatialReference,
+    );
     final leftArc =
         EllipticArcSegment.circularEllipticArcWithCenterRadiusAndAngles(
       centerPoint: leftArcCenter,
@@ -250,9 +230,10 @@ class _StyleGraphicsWithRendererState extends State<StyleGraphicsWithRenderer>
 
     // Top right arc.
     final rightArcCenter = ArcGISPoint(
-        x: minX + 0.75 * sideLength,
-        y: minY + 0.75 * sideLength,
-        spatialReference: spatialReference);
+      x: minX + 0.75 * sideLength,
+      y: minY + 0.75 * sideLength,
+      spatialReference: spatialReference,
+    );
     final rightArc =
         EllipticArcSegment.circularEllipticArcWithCenterRadiusAndAngles(
       centerPoint: rightArcCenter,
@@ -264,12 +245,16 @@ class _StyleGraphicsWithRendererState extends State<StyleGraphicsWithRenderer>
 
     // Bottom right curve.
     final rightCurveStart = ArcGISPoint(
-        x: minX + sideLength,
-        y: minY + 0.75 * sideLength,
-        spatialReference: spatialReference);
+      x: minX + sideLength,
+      y: minY + 0.75 * sideLength,
+      spatialReference: spatialReference,
+    );
     final rightCurveEnd = leftCurveStart;
     final rightControlPoint1 = ArcGISPoint(
-        x: minX + sideLength, y: center.y, spatialReference: spatialReference);
+      x: minX + sideLength,
+      y: center.y,
+      spatialReference: spatialReference,
+    );
     final rightControlPoint2 = leftControlPoint1;
     final rightCurve = CubicBezierSegment(
       startPoint: rightCurveStart,

@@ -2,7 +2,7 @@
 
 A renderer allows you to change the style of all graphics in a graphics overlay by referencing a single symbol style. A renderer will only affect graphics that do not specify their own symbol style.
 
-![Image of add graphics with renderer](style_graphics_with_renderer.dart)
+![Image of style graphics with renderer](style_graphics_with_renderer.dart)
 
 ## Use case
 
@@ -14,10 +14,10 @@ Pan and zoom on the map to view graphics for points, lines, and polygons (includ
 
 ## How it works
 
-1. Create a `GraphicsOverlay` and add it to the `MapView`.
+1. Create a `GraphicsOverlay` and add it to the `ArcGISMapViewController`.
 2. Create a `Graphic`, specifying only a `Geometry`.
-3. Create a single `Symbol` such as a `SimpleMarkerSymbol`.
-4. Create a renderer with `SimpleRenderer(symbol:)`, passing in a `Symbol`.
+3. Create a single `ArcGISSymbol` such as a `SimpleMarkerSymbol`.
+4. Create a renderer with `SimpleRenderer()`, passing in a `Symbol`.
 5. Set the renderer for the `GraphicsOverlay`.
 
 ## Relevant API
