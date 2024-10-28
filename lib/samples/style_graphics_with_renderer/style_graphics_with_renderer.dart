@@ -160,7 +160,7 @@ class _StyleGraphicsWithRendererState extends State<StyleGraphicsWithRenderer>
     // Create and assign a simple renderer to the graphics overlay.
     curvedGraphicsOverlay.renderer = SimpleRenderer(symbol: curvedFillSymbol);
 
-    // Create a heart-shape graphic from ArcGISSegment's.
+    // Create a heart-shape graphic from Segment.
     final origin = ArcGISPoint(
       x: 40e5,
       y: 5e5,
