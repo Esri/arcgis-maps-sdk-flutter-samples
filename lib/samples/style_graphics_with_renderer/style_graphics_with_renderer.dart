@@ -174,7 +174,7 @@ class _StyleGraphicsWithRendererState extends State<StyleGraphicsWithRenderer>
     return curvedGraphicsOverlay;
   }
 
-  Geometry? getHeartGeometry({
+  Geometry getHeartGeometry({
     required ArcGISPoint center,
     required double sideLength,
   }) {
