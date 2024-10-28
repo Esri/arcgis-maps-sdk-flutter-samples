@@ -180,7 +180,7 @@ class _StyleGraphicsWithRendererState extends State<StyleGraphicsWithRenderer>
   }) {
     // The side length should be always greater than 0.
     if (sideLength <= 0) {
-      return null;
+      throw ArgumentError.value(sideLength, 'sideLength', 'Must be positive');
     }
 
     final spatialReference = center.spatialReference;
