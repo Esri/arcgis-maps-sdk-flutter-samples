@@ -40,7 +40,10 @@ class _CreateBuffersAroundPointsState extends State<CreateBuffersAroundPoints>
   late Polygon _boundaryPolygon;
 
   // List of tap points.
-  final _bufferPoints = <PointAndRadius>[];
+  final _bufferPoints = <ArcGISPoint>[];
+
+  // List of buffer radii
+  final _bufferRadii = <double>[];
 
   // Current status of the buffer.
   var _status = Status.addPoints;
@@ -55,14 +58,15 @@ class _CreateBuffersAroundPointsState extends State<CreateBuffersAroundPoints>
   var _showSettings = false;
 
   // Define the graphics overlays.
-  final bufferGraphicsOverlay = GraphicsOverlay();
-  final tapPointGraphicsOverlay = GraphicsOverlay();
+  final _bufferGraphicsOverlay = GraphicsOverlay();
+  final _tapPointGraphicsOverlay = GraphicsOverlay();
 
   // Fill symbols for buffer and tap points.
-  final bufferFillSymbol = SimpleFillSymbol();
-  final tapPointSymbol = SimpleMarkerSymbol();
+  final _bufferFillSymbol = SimpleFillSymbol();
+  final _tapPointSymbol = SimpleMarkerSymbol();
 
-  final statePlanNorthCentralTexasSpatialReference =
+  // Define the spatial reference required by the sample.
+  final _statePlaneNorthCentralTexasSpatialReference =
       SpatialReference(wkid: 32038);
 
   @override
@@ -85,6 +89,7 @@ class _CreateBuffersAroundPointsState extends State<CreateBuffersAroundPoints>
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
+                    // Conditionally display the settings.
                     ElevatedButton(
                       onPressed: () {
                         setState(() => _showSettings = !_showSettings);
@@ -103,7 +108,6 @@ class _CreateBuffersAroundPointsState extends State<CreateBuffersAroundPoints>
                     ),
                   ],
                 ),
-                // Conditionally display the settings.
               ],
             ),
             // Display a progress indicator and prevent interaction until state is ready.
@@ -147,9 +151,9 @@ class _CreateBuffersAroundPointsState extends State<CreateBuffersAroundPoints>
     _boundaryPolygon = _makeBoundaryPolygon();
     _initializeSymbols();
 
-    // Create a map with the spatial reference as the basemap and add it to our map controller.
-    final map =
-        ArcGISMap(spatialReference: statePlanNorthCentralTexasSpatialReference);
+    // Create a map with the defined spatial reference as the basemap and add it to our map controller.
+    final map = ArcGISMap(
+        spatialReference: _statePlaneNorthCentralTexasSpatialReference);
 
     // Add some base layers (counties, cities, highways).
     final mapServiceUri = Uri.parse(
@@ -165,11 +169,11 @@ class _CreateBuffersAroundPointsState extends State<CreateBuffersAroundPoints>
     // Set the map on the map view controller.
     _mapViewController.arcGISMap = map;
 
-    // Set the viewpoint of the map to our boundary polygon extent.
+    // Set the viewpoint of the map view to our boundary polygon extent.
     _mapViewController
         .setViewpoint(Viewpoint.fromTargetExtent(_boundaryPolygon.extent));
 
-    _loadGraphicsOverlays();
+    _configureGraphicsOverlays();
 
     // Set the ready state variable to true to enable the sample UI.
     setState(() => _ready = true);
@@ -197,7 +201,7 @@ class _CreateBuffersAroundPointsState extends State<CreateBuffersAroundPoints>
 
   void _initializeSymbols() {
     // Initialize the fill symbol for the buffer.
-    bufferFillSymbol
+    _bufferFillSymbol
       ..color = Colors.yellow.withOpacity(0.5)
       ..outline = SimpleLineSymbol(
         style: SimpleLineSymbolStyle.solid,
@@ -206,7 +210,7 @@ class _CreateBuffersAroundPointsState extends State<CreateBuffersAroundPoints>
       );
 
     // Initialize the tap point symbol.
-    tapPointSymbol
+    _tapPointSymbol
       ..style = SimpleMarkerSymbolStyle.circle
       ..color = Colors.red
       ..size = 10;
@@ -286,8 +290,8 @@ class _CreateBuffersAroundPointsState extends State<CreateBuffersAroundPoints>
     );
   }
 
-  void _loadGraphicsOverlays() {
-    // Create a graphics overlay to show the spatial reference's valid area:
+  void _configureGraphicsOverlays() {
+    // Create a graphics overlay to show the spatial reference's valid area.
     final boundaryGraphicsOverlay = GraphicsOverlay();
 
     // Add the graphics overlay to the mapView.
@@ -308,8 +312,8 @@ class _CreateBuffersAroundPointsState extends State<CreateBuffersAroundPoints>
     boundaryGraphicsOverlay.graphics.add(boundaryGraphic);
 
     // Add the buffer and tap points graphics overlays to the map view.
-    _mapViewController.graphicsOverlays.add(bufferGraphicsOverlay);
-    _mapViewController.graphicsOverlays.add(tapPointGraphicsOverlay);
+    _mapViewController.graphicsOverlays.add(_bufferGraphicsOverlay);
+    _mapViewController.graphicsOverlays.add(_tapPointGraphicsOverlay);
   }
 
   Polygon _makeBoundaryPolygon() {
@@ -323,11 +327,13 @@ class _CreateBuffersAroundPointsState extends State<CreateBuffersAroundPoints>
     polygonBuilder.addPointXY(x: -94.000, y: 34.580);
     polygonBuilder.addPointXY(x: -94.000, y: 31.720);
 
+    // Use the polygon builder to define a boundary geometry.
     final boundaryGeometry = polygonBuilder.toGeometry();
 
+    // Project the boundary geometry to the spatial reference used by the sample.
     final boundaryPolygon = GeometryEngine.project(
       boundaryGeometry,
-      outputSpatialReference: statePlanNorthCentralTexasSpatialReference,
+      outputSpatialReference: _statePlaneNorthCentralTexasSpatialReference,
     ) as Polygon;
 
     return boundaryPolygon;
@@ -335,36 +341,27 @@ class _CreateBuffersAroundPointsState extends State<CreateBuffersAroundPoints>
 
   void drawBuffers({required bool unionized}) {
     // Clear existing buffers before drawing.
-    bufferGraphicsOverlay.graphics.clear();
-    tapPointGraphicsOverlay.graphics.clear();
-
-    // Reduce the tap bufferPoints tuples into points and radii array
-    final points = <ArcGISPoint>[];
-    final radii = <double>[];
-
-    for (final pointAndRadius in _bufferPoints) {
-      points.add(pointAndRadius.point);
-      radii.add(pointAndRadius.radius);
-    }
+    _bufferGraphicsOverlay.graphics.clear();
+    _tapPointGraphicsOverlay.graphics.clear();
 
     // Create buffers.
     final bufferPolygons = GeometryEngine.bufferCollection(
-      geometries: points,
-      distances: radii,
+      geometries: _bufferPoints,
+      distances: _bufferRadii,
       unionResult: unionized,
     );
 
     // Add the tap points to the tapPointsGraphicsOverlay.
-    for (final point in points) {
-      tapPointGraphicsOverlay.graphics.add(
-        Graphic(geometry: point, symbol: tapPointSymbol),
+    for (final point in _bufferPoints) {
+      _tapPointGraphicsOverlay.graphics.add(
+        Graphic(geometry: point, symbol: _tapPointSymbol),
       );
     }
 
     // Add the buffers to the bufferGraphicsOverlay.
     for (final bufferPolygon in bufferPolygons) {
-      bufferGraphicsOverlay.graphics.add(
-        Graphic(geometry: bufferPolygon, symbol: bufferFillSymbol),
+      _bufferGraphicsOverlay.graphics.add(
+        Graphic(geometry: bufferPolygon, symbol: _bufferFillSymbol),
       );
     }
   }
@@ -372,8 +369,8 @@ class _CreateBuffersAroundPointsState extends State<CreateBuffersAroundPoints>
   // Clears the buffer points.
   void clearBufferPoints() {
     _bufferPoints.clear();
-    bufferGraphicsOverlay.graphics.clear();
-    tapPointGraphicsOverlay.graphics.clear();
+    _bufferGraphicsOverlay.graphics.clear();
+    _tapPointGraphicsOverlay.graphics.clear();
   }
 
   void addBuffer({required ArcGISPoint point, required double radius}) {
@@ -385,16 +382,10 @@ class _CreateBuffersAroundPointsState extends State<CreateBuffersAroundPoints>
     // Convert the radius from miles to feet directly.
     final radiusInFeet = radius * 5280;
 
-    // Add point with radius to bufferPoints list.
-    _bufferPoints.add(PointAndRadius(point: point, radius: radiusInFeet));
+    // Add point with radius to bufferPoints  and bufferRadii lists.
+    _bufferPoints.add(point);
+    _bufferRadii.add(radiusInFeet);
   }
-}
-
-class PointAndRadius {
-  final ArcGISPoint point;
-  final double radius;
-
-  PointAndRadius({required this.point, required this.radius});
 }
 
 enum Status {
