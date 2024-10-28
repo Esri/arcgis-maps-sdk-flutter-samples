@@ -42,7 +42,7 @@ class _CreateBuffersAroundPointsState extends State<CreateBuffersAroundPoints>
   // List of tap points.
   final _bufferPoints = <ArcGISPoint>[];
 
-  // List of buffer radii
+  // List of buffer radii.
   final _bufferRadii = <double>[];
 
   // Current status of the buffer.
@@ -151,9 +151,10 @@ class _CreateBuffersAroundPointsState extends State<CreateBuffersAroundPoints>
     _boundaryPolygon = _makeBoundaryPolygon();
     _initializeSymbols();
 
-    // Create a map with the defined spatial reference as the basemap and add it to our map controller.
+    // Create a map with the defined spatial reference and add it to our map controller.
     final map = ArcGISMap(
-        spatialReference: _statePlaneNorthCentralTexasSpatialReference);
+      spatialReference: _statePlaneNorthCentralTexasSpatialReference,
+    );
 
     // Add some base layers (counties, cities, highways).
     final mapServiceUri = Uri.parse(
@@ -294,7 +295,7 @@ class _CreateBuffersAroundPointsState extends State<CreateBuffersAroundPoints>
     // Create a graphics overlay to show the spatial reference's valid area.
     final boundaryGraphicsOverlay = GraphicsOverlay();
 
-    // Add the graphics overlay to the mapView.
+    // Add the graphics overlay to the map view.
     _mapViewController.graphicsOverlays.add(boundaryGraphicsOverlay);
 
     // Create a symbol for the graphics.
