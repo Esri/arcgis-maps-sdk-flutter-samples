@@ -2,6 +2,8 @@
 
 This repository contains Flutter sample code demonstrating the capabilities of ArcGIS Maps SDK for Flutter and how to use them in your own app. This SDK enables development of cross-platform GIS apps for mobile devices running iOS and Android.
 
+ArcGISMaps SDK for Flutter Samples can be configured on either a macOS development host to run samples on iOS and Android devices & simulators, or on a Windows development host to run samples on Android devices & simulators.
+
 ## Configuring the samples
 
 Navigate to the `arcgis-maps-sdk-flutter-samples` directory.
