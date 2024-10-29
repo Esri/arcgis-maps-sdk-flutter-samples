@@ -48,6 +48,7 @@ class _StyleGraphicsWithRendererState extends State<StyleGraphicsWithRenderer>
 
     // Add graphics overlays to the mapview controller.
     _mapViewController.graphicsOverlays.add(getPointGraphicsOverlay());
+    _mapViewController.graphicsOverlays.add(getSquarePolygonGraphicsOverlay());
     _mapViewController.graphicsOverlays.add(getLineGraphicsOverlay());
     _mapViewController.graphicsOverlays.add(getEllipseGraphicsOverlay());
     _mapViewController.graphicsOverlays.add(getCurvedPolygonGraphicsOverlay());
@@ -57,10 +58,10 @@ class _StyleGraphicsWithRendererState extends State<StyleGraphicsWithRenderer>
     // Combined extent of all the graphic overlays.
     final combinedExtent = Envelope.fromXY(
       spatialReference: SpatialReference.webMercator,
-      xMin: -1500000,
-      yMin: 000000,
-      xMax: 4500000,
-      yMax: 5500000,
+      xMin: -3000000,
+      yMin: -1000000,
+      xMax: 6000000,
+      yMax: 7000000,
     );
 
     _mapViewController.setViewpointGeometry(combinedExtent);
@@ -112,6 +113,28 @@ class _StyleGraphicsWithRendererState extends State<StyleGraphicsWithRenderer>
     lineGraphicsOverlay.graphics.add(lineGraphic);
 
     return lineGraphicsOverlay;
+  }
+
+  GraphicsOverlay getSquarePolygonGraphicsOverlay() {
+    // Create a simple fill symbol.
+    final squareSymbol = SimpleFillSymbol(color: Colors.yellow);
+    // Create a graphics overlay for the square polygons.
+    final squareGraphicsOverlay = GraphicsOverlay();
+    // Create and assign a simple renderer to the graphics overlay.
+    squareGraphicsOverlay.renderer = SimpleRenderer(symbol: squareSymbol);
+
+    // Create a polygon graphic with `Polygon` geometry.
+    final polygonBuilder =
+        PolygonBuilder(spatialReference: SpatialReference.webMercator);
+    polygonBuilder.addPoint(ArcGISPoint(x: -20e5, y: 20e5));
+    polygonBuilder.addPoint(ArcGISPoint(x: 20e5, y: 20e5));
+    polygonBuilder.addPoint(ArcGISPoint(x: 20e5, y: -20e5));
+    polygonBuilder.addPoint(ArcGISPoint(x: -20e5, y: -20e5));
+    final polygonGraphic = Graphic(geometry: polygonBuilder.toGeometry());
+    // Add the graphic to the overlay.
+    squareGraphicsOverlay.graphics.add(polygonGraphic);
+
+    return squareGraphicsOverlay;
   }
 
   GraphicsOverlay getEllipseGraphicsOverlay() {
