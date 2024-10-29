@@ -1,0 +1,35 @@
+{
+    "category": "Maps",
+    "description": "Generate multiple individual buffers or a single unioned buffer around multiple points.",
+    "ignore": false,
+    "images": [
+        "create_buffers_around_points.png"
+    ],
+    "keywords": [
+        "analysis",
+        "buffer",
+        "geometry",
+        "planar",
+        "ArcGISMap",
+        "ArcGISMapImageLayer",
+        "ArcGISMapView",
+        "GeometryEngine.bufferCollection",
+        "GeometryEngine.project",
+        "GraphicsOverlay",
+        "SpatialReference"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+        "ArcGISMap",
+        "ArcGISMapImageLayer",
+        "ArcGISMapView",
+        "GeometryEngine.bufferCollection",
+        "GeometryEngine.project",
+        "GraphicsOverlay",
+        "SpatialReference"
+    ],
+    "snippets": [
+        "create_buffers_around_points.dart"
+    ],
+    "title": "Create buffers around points"
+}

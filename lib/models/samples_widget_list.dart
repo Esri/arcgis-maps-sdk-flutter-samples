@@ -16,6 +16,7 @@ import 'package:arcgis_maps_sdk_flutter_samples/samples/authenticate_with_token/
 import 'package:arcgis_maps_sdk_flutter_samples/samples/change_viewpoint/change_viewpoint.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/control_annotation_sublayer_visibility/control_annotation_sublayer_visibility.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/create_and_edit_geometries/create_and_edit_geometries.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/samples/create_buffers_around_points/create_buffers_around_points.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/create_mobile_geodatabase/create_mobile_geodatabase.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/create_planar_and_geodetic_buffers/create_planar_and_geodetic_buffers.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/cut_geometry/cut_geometry.dart';
@@ -89,6 +90,7 @@ final sampleWidgets = {
   'control_annotation_sublayer_visibility': () =>
       const ControlAnnotationSublayerVisibility(),
   'create_and_edit_geometries': () => const CreateAndEditGeometries(),
+  'create_buffers_around_points': () => const CreateBuffersAroundPoints(),
   'create_mobile_geodatabase': () => const CreateMobileGeodatabase(),
   'create_planar_and_geodetic_buffers': () =>
       const CreatePlanarAndGeodeticBuffers(),
@@ -134,8 +136,8 @@ final sampleWidgets = {
   'show_magnifier': () => const ShowMagnifier(),
   'show_portal_user_info': () => const ShowPortalUserInfo(),
   'show_service_area': () => const ShowServiceArea(),
-  'show_wfs_layer_from_url': () => const ShowWfsLayerFromUrl(),
   'show_web_tiled_layer_from_url': () => const ShowWebTiledLayerFromUrl(),
+  'show_wfs_layer_from_url': () => const ShowWfsLayerFromUrl(),
   'show_wfs_layer_with_xml_query': () => const ShowWfsLayerWithXmlQuery(),
   'snap_geometry_edits': () => const SnapGeometryEdits(),
   'style_graphics_with_symbols': () => const StyleGraphicsWithSymbols(),
