@@ -17,7 +17,7 @@ Pan and zoom on the map to view graphics for points, lines, and polygons (includ
 1. Create a `GraphicsOverlay` and add it to the `ArcGISMapViewController`.
 2. Create a `Graphic`, specifying only a `Geometry`.
 3. Create a single `ArcGISSymbol` such as a `SimpleMarkerSymbol`.
-4. Create a renderer with `SimpleRenderer()`, passing in a `ArcGISSymbol`.
+4. Create a renderer with `SimpleRenderer()`, passing in an `ArcGISSymbol`.
 5. Set the renderer for the `GraphicsOverlay`.
 
 ## Relevant API

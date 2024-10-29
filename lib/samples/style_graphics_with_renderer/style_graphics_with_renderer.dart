@@ -53,6 +53,7 @@ class _StyleGraphicsWithRendererState extends State<StyleGraphicsWithRenderer>
     _mapViewController.graphicsOverlays.add(getEllipseGraphicsOverlay());
     _mapViewController.graphicsOverlays.add(getCurvedPolygonGraphicsOverlay());
 
+    // Set the map to the map view controller.
     _mapViewController.arcGISMap = map;
 
     // Combined extent of all the graphic overlays.
@@ -63,7 +64,7 @@ class _StyleGraphicsWithRendererState extends State<StyleGraphicsWithRenderer>
       xMax: 6000000,
       yMax: 7000000,
     );
-
+    // Set the viewpoint of the map view controller to the combined extent.
     _mapViewController.setViewpointGeometry(combinedExtent);
   }
 
@@ -79,7 +80,7 @@ class _StyleGraphicsWithRendererState extends State<StyleGraphicsWithRenderer>
     // Create and assign a simple renderer to the graphics overlay.
     pointGraphicsOverlay.renderer = SimpleRenderer(symbol: pointSymbol);
 
-    // Create a point graphic with `ArcGISPoint` geometry.
+    // Create a point graphic with a point geometry.
     final pointGeometry = ArcGISPoint(
       x: 40e5,
       y: 40e5,
@@ -103,7 +104,7 @@ class _StyleGraphicsWithRendererState extends State<StyleGraphicsWithRenderer>
     // Create and assign a simple render to the graphics overlay.
     lineGraphicsOverlay.renderer = SimpleRenderer(symbol: lineSymbol);
 
-    // Create a line with `Polyline` geometry.
+    // Create a line with a polyline geometry.
     final lineBuilder =
         PolylineBuilder(spatialReference: SpatialReference.webMercator);
     lineBuilder.addPointXY(x: -10e5, y: 40e5);
@@ -183,7 +184,7 @@ class _StyleGraphicsWithRendererState extends State<StyleGraphicsWithRenderer>
     // Create and assign a simple renderer to the graphics overlay.
     curvedGraphicsOverlay.renderer = SimpleRenderer(symbol: curvedFillSymbol);
 
-    // Create a heart-shape graphic from Segment.
+    // Create a heart shape graphic from a segment.
     final origin = ArcGISPoint(
       x: 40e5,
       y: 5e5,
