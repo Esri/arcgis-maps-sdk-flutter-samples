@@ -46,6 +46,7 @@ import 'package:arcgis_maps_sdk_flutter_samples/samples/query_related_features/q
 import 'package:arcgis_maps_sdk_flutter_samples/samples/query_table_statistics/query_table_statistics.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/select_features_in_feature_layer/select_features_in_feature_layer.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/set_basemap/set_basemap.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/samples/set_initial_viewpoint/set_initial_viewpoint.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/set_reference_scale/set_reference_scale.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/show_device_location/show_device_location.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/show_device_location_history/show_device_location_history.dart';
@@ -126,6 +127,7 @@ final sampleWidgets = {
   'select_features_in_feature_layer': () =>
       const SelectFeaturesInFeatureLayer(),
   'set_basemap': () => const SetBasemap(),
+  'set_initial_viewpoint': () => const SetInitialViewpoint(),
   'set_reference_scale': () => const SetReferenceScale(),
   'show_device_location': () => const ShowDeviceLocation(),
   'show_device_location_history': () => const ShowDeviceLocationHistory(),

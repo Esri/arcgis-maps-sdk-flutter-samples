@@ -1534,6 +1534,36 @@
     "title": "Set basemap",
     "key": "set_basemap"
   },
+  "set_initial_viewpoint": {
+    "category": "Maps",
+    "description": "Display the map at an initial viewpoint representing a bounding geometry.",
+    "ignore": false,
+    "images": [
+      "set_initial_viewpoint.png"
+    ],
+    "keywords": [
+      "envelope",
+      "extent",
+      "initial viewpoint",
+      "zoom",
+      "ArcGISMap",
+      "ArcGISMapView",
+      "Envelope",
+      "Viewpoint"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+      "ArcGISMap",
+      "ArcGISMapView",
+      "Envelope",
+      "Viewpoint"
+    ],
+    "snippets": [
+      "set_initial_viewpoint.dart"
+    ],
+    "title": "Set initial viewpoint",
+    "key": "set_initial_viewpoint"
+  },
   "set_reference_scale": {
     "category": "Maps",
     "description": "Set the map's reference scale and which feature layers should honor the reference scale.",
