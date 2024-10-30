@@ -370,6 +370,7 @@ class _CreateBuffersAroundPointsState extends State<CreateBuffersAroundPoints>
   // Clears the buffer points.
   void clearBufferPoints() {
     _bufferPoints.clear();
+    _bufferRadii.clear();
     _bufferGraphicsOverlay.graphics.clear();
     _tapPointGraphicsOverlay.graphics.clear();
   }
