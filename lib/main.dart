@@ -31,7 +31,15 @@ void main() {
   } else {
     ArcGISEnvironment.apiKey = apiKey;
   }
-  runApp(const SampleViewerApp());
+
+  runApp(
+    MaterialApp(
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+      ),
+      home: const SampleViewerApp(),
+    ),
+  );
 }
 
 class SampleViewerApp extends StatefulWidget {
@@ -71,53 +79,102 @@ class _SampleViewerAppState extends State<SampleViewerApp> {
 
   @override
   Widget build(BuildContext context) {
-    final ColorScheme colorScheme =
-        ColorScheme.fromSeed(seedColor: Colors.deepPurple);
     const title = 'ArcGIS Maps SDK for Flutter Samples';
 
-    return MaterialApp(
-      title: title,
-      theme: ThemeData(
-        colorScheme: colorScheme,
-        appBarTheme: AppBarTheme(backgroundColor: colorScheme.inversePrimary),
-      ),
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text(title),
-        ),
-        body: Column(
-          children: [
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8),
-              child: TextField(
-                focusNode: _searchFocusNode,
-                controller: _textEditingController,
-                onChanged: onSearchChanged,
-                autocorrect: false,
-                decoration: InputDecoration(
-                  hintText: 'Search...',
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      _searchHasFocus ? Icons.cancel : Icons.search,
-                    ),
-                    onPressed: onSearchSuffixPressed,
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(title),
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.info_outline),
+            onPressed: () => showModalBottomSheet(
+              context: context,
+              isScrollControlled: true,
+              isDismissible: true,
+              useSafeArea: true,
+              builder: (context) {
+                return FractionallySizedBox(
+                  heightFactor: 0.5,
+                  child: Column(
+                    children: [
+                      AppBar(
+                        title: const Text('About'),
+                        backgroundColor:
+                            Theme.of(context).colorScheme.inversePrimary,
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.vertical(
+                            top: Radius.circular(30.0),
+                          ),
+                        ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.all(20.0),
+                        child: Column(
+                          children: [
+                            const Text(
+                              title,
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 20.0),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                Text(
+                                  'Version',
+                                  style: TextStyle(
+                                    color: Theme.of(context).primaryColor,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                const Text(ArcGISEnvironment.version),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+      body: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: TextField(
+              focusNode: _searchFocusNode,
+              controller: _textEditingController,
+              onChanged: onSearchChanged,
+              autocorrect: false,
+              decoration: InputDecoration(
+                hintText: 'Search...',
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    _searchHasFocus ? Icons.cancel : Icons.search,
+                  ),
+                  onPressed: onSearchSuffixPressed,
                 ),
               ),
             ),
-            _ready
-                ? Expanded(
-                    child: Listener(
-                      onPointerDown: (_) =>
-                          FocusManager.instance.primaryFocus?.unfocus(),
-                      child: SampleListView(samples: _filteredSamples),
-                    ),
-                  )
-                : const Center(
-                    child: Text('Loading samples...'),
+          ),
+          _ready
+              ? Expanded(
+                  child: Listener(
+                    onPointerDown: (_) =>
+                        FocusManager.instance.primaryFocus?.unfocus(),
+                    child: SampleListView(samples: _filteredSamples),
                   ),
-          ],
-        ),
+                )
+              : const Center(
+                  child: Text('Loading samples...'),
+                ),
+        ],
       ),
     );
   }
