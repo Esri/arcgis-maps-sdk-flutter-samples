@@ -17,6 +17,7 @@
 import 'dart:convert';
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/models/sample.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/widgets/about_info.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'widgets/sample_list_view.dart';
@@ -110,30 +111,7 @@ class _SampleViewerAppState extends State<SampleViewerApp> {
                       ),
                       Container(
                         padding: const EdgeInsets.all(20.0),
-                        child: Column(
-                          children: [
-                            const Text(
-                              title,
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            const SizedBox(height: 20.0),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                Text(
-                                  'Version',
-                                  style: TextStyle(
-                                    color: Theme.of(context).primaryColor,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                const Text(ArcGISEnvironment.version),
-                              ],
-                            ),
-                          ],
-                        ),
+                        child: const AboutInfo(title: title),
                       ),
                     ],
                   ),
