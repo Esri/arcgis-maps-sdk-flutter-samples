@@ -49,8 +49,15 @@ class _FindRouteInMobileMapPackageState
         future: mobileMapPackagesFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
-            final maps =
-                snapshot.data?.expand((mmpk) => mmpk.maps).toList() ?? [];
+            final locatorTaskForMap = <ArcGISMap, LocatorTask?>{};
+            final maps = <ArcGISMap>[];
+            for (final mmpk in snapshot.data!) {
+              for (final map in mmpk.maps) {
+                maps.add(map);
+                locatorTaskForMap[map] = mmpk.locatorTask;
+              }
+            }
+
             return ListView.builder(
               padding: const EdgeInsets.all(8.0),
               itemCount: maps.length,
@@ -71,7 +78,10 @@ class _FindRouteInMobileMapPackageState
                       onTap: () {
                         Navigator.of(context).push(
                           MaterialPageRoute(
-                            builder: (context) => FindRouteInMap(map: map),
+                            builder: (context) => FindRouteInMap(
+                              map: map,
+                              locatorTask: locatorTaskForMap[map],
+                            ),
                           ),
                         );
                       },
@@ -114,9 +124,11 @@ class FindRouteInMap extends StatefulWidget {
   const FindRouteInMap({
     super.key,
     required this.map,
+    required this.locatorTask,
   });
 
   final ArcGISMap map;
+  final LocatorTask? locatorTask;
 
   @override
   State<FindRouteInMap> createState() => _FindRouteInMapState();
@@ -125,19 +137,73 @@ class FindRouteInMap extends StatefulWidget {
 class _FindRouteInMapState extends State<FindRouteInMap> {
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
+  final _markerOverlay = GraphicsOverlay();
+  // A flag for when the map view is ready and controls can be used.
+  var _ready = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text(widget.map.item?.name ?? '')),
-      body: ArcGISMapView(
-        controllerProvider: () => _mapViewController,
-        onMapViewReady: onMapViewReady,
+      body: Stack(
+        children: [
+          ArcGISMapView(
+            controllerProvider: () => _mapViewController,
+            onMapViewReady: onMapViewReady,
+            onTap: widget.locatorTask != null ? onTap : null,
+          ),
+          // Display a progress indicator and prevent interaction until state is ready.
+          Visibility(
+            visible: !_ready,
+            child: SizedBox.expand(
+              child: Container(
+                color: Colors.white30,
+                child: const Center(child: CircularProgressIndicator()),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
 
-  void onMapViewReady() {
+  void onMapViewReady() async {
     _mapViewController.arcGISMap = widget.map;
+
+    // Create a picture marker symbol using an image asset.
+    final image = await ArcGISImage.fromAsset('assets/pin_circle_red.png');
+    final pictureMarkerSymbol = PictureMarkerSymbol.withImage(image)
+      ..width = 35
+      ..height = 35;
+    pictureMarkerSymbol.offsetY = pictureMarkerSymbol.height / 2;
+    _markerOverlay.renderer = SimpleRenderer(symbol: pictureMarkerSymbol);
+    _mapViewController.graphicsOverlays.add(_markerOverlay);
+
+    setState(() => _ready = true);
+  }
+
+  void onTap(Offset localPosition) async {
+    final result = await _mapViewController.identifyGraphicsOverlay(
+      _markerOverlay,
+      screenPoint: localPosition,
+      tolerance: 12.0,
+    );
+    if (result.graphics.isEmpty) {
+      final location =
+          _mapViewController.screenToLocation(screen: localPosition);
+      if (location != null) {
+        _markerOverlay.graphics.add(Graphic(geometry: location));
+        reverseGeocode(location);
+      }
+    } else {
+      final location = result.graphics.first.geometry as ArcGISPoint?;
+      if (location != null) {
+        reverseGeocode(location);
+      }
+    }
+  }
+
+  void reverseGeocode(ArcGISPoint point) {
+    //fixme
   }
 }
