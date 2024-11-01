@@ -34,6 +34,7 @@ import 'package:arcgis_maps_sdk_flutter_samples/samples/filter_by_definition_exp
 import 'package:arcgis_maps_sdk_flutter_samples/samples/find_address_with_reverse_geocode/find_address_with_reverse_geocode.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/find_closest_facility_from_point/find_closest_facility_from_point.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/find_route/find_route.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/samples/find_route_in_mobile_map_package/find_route_in_mobile_map_package.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/generate_offline_map/generate_offline_map.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/group_layers_together/group_layers_together.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/identify_features_in_wms_layer/identify_features_in_wms_layer.dart';
@@ -115,6 +116,7 @@ final sampleWidgets = {
   'find_closest_facility_from_point': () =>
       const FindClosestFacilityFromPoint(),
   'find_route': () => const FindRoute(),
+  'find_route_in_mobile_map_package': () => const FindRouteInMobileMapPackage(),
   'generate_offline_map': () => const GenerateOfflineMap(),
   'group_layers_together': () => const GroupLayersTogether(),
   'identify_features_in_wms_layer': () => const IdentifyFeaturesInWmsLayer(),

@@ -582,18 +582,22 @@
       "buffer",
       "geometry",
       "planar",
-      "Geometry",
-      "GeometryEngine.buffer",
+      "ArcGISMap",
+      "ArcGISMapImageLayer",
+      "ArcGISMapView",
       "GeometryEngine.bufferCollection",
       "GeometryEngine.project",
+      "GraphicsOverlay",
       "SpatialReference"
     ],
     "redirect_from": [],
     "relevant_apis": [
-      "Geometry",
-      "GeometryEngine.buffer",
+      "ArcGISMap",
+      "ArcGISMapImageLayer",
+      "ArcGISMapView",
       "GeometryEngine.bufferCollection",
       "GeometryEngine.project",
+      "GraphicsOverlay",
       "SpatialReference"
     ],
     "snippets": [
@@ -1154,6 +1158,49 @@
     ],
     "title": "Find route",
     "key": "find_route"
+  },
+  "find_route_in_mobile_map_package": {
+    "category": "Maps",
+    "description": "Display maps and use locators to enable search and routing offline using a Mobile Map Package.",
+    "ignore": false,
+    "images": [
+      "find_route_in_mobile_map_package.png"
+    ],
+    "keywords": [
+      "disconnected",
+      "field mobility",
+      "geocode",
+      "network",
+      "network analysis",
+      "offline",
+      "routing",
+      "search",
+      "transportation",
+      "GeocodeResult",
+      "MobileMapPackage",
+      "ReverseGeocodeParameters",
+      "Route",
+      "RouteParameters",
+      "RouteResult",
+      "RouteTask",
+      "TransportationNetworkDataset"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+      "GeocodeResult",
+      "MobileMapPackage",
+      "ReverseGeocodeParameters",
+      "Route",
+      "RouteParameters",
+      "RouteResult",
+      "RouteTask",
+      "TransportationNetworkDataset"
+    ],
+    "snippets": [
+      "find_route_in_mobile_map_package.dart"
+    ],
+    "title": "Find route in mobile map package",
+    "key": "find_route_in_mobile_map_package"
   },
   "generate_offline_map": {
     "category": "Edit and Manage Data",
@@ -1981,6 +2028,64 @@
     ],
     "title": "Snap geometry edits",
     "key": "snap_geometry_edits"
+  },
+  "style_graphics_with_renderer": {
+    "category": "Maps",
+    "description": "A renderer allows you to change the style of all graphics in a graphics overlay by referencing a single symbol style. A renderer will only affect graphics that do not specify their own symbol style.",
+    "ignore": false,
+    "images": [
+      "style_graphics_with_renderer.png"
+    ],
+    "keywords": [
+      "arc",
+      "bezier",
+      "curve",
+      "display",
+      "ellipse",
+      "graphics",
+      "marker",
+      "overlay",
+      "renderer",
+      "segment",
+      "symbol",
+      "true curve",
+      "CubicBezierSegment",
+      "EllipticArcSegment",
+      "GeodesicEllipseParameters",
+      "Geometry",
+      "GeometryEngine.ellipseGeodesic",
+      "Graphic",
+      "GraphicsOverlay",
+      "MutablePart",
+      "PolygonBuilder",
+      "PolylineBuilder",
+      "SimpleFillSymbol",
+      "SimpleLineSymbol",
+      "SimpleMarkerSymbol",
+      "SimpleRenderer"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+      "CubicBezierSegment",
+      "EllipticArcSegment",
+      "GeodesicEllipseParameters",
+      "Geometry",
+      "GeometryEngine.ellipseGeodesic",
+      "Graphic",
+      "GraphicsOverlay",
+      "MutablePart",
+      "PolygonBuilder",
+      "PolylineBuilder",
+      "SimpleFillSymbol",
+      "SimpleLineSymbol",
+      "SimpleMarkerSymbol",
+      "SimpleRenderer"
+    ],
+    "snippets": [
+      "style_graphics_with_renderer.dart"
+    ],
+    "title": "Style graphics with renderer",
+    "key": "style_graphics_with_renderer"
   },
   "style_graphics_with_symbols": {
     "category": "Visualization",
