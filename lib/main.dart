@@ -100,7 +100,14 @@ class _SampleViewerAppState extends State<SampleViewerApp> {
                   child: Column(
                     children: [
                       AppBar(
+                        automaticallyImplyLeading: false,
                         title: const Text('About'),
+                        actions: [
+                          IconButton(
+                            icon: const Icon(Icons.close),
+                            onPressed: () => Navigator.pop(context),
+                          ),
+                        ],
                         backgroundColor:
                             Theme.of(context).colorScheme.inversePrimary,
                         shape: const RoundedRectangleBorder(
