@@ -33,7 +33,16 @@ class _ApplyStyleToWmsLayerState extends State<ApplyStyleToWmsLayer>
   var _ready = false;
 
   // Hold a reference to the layer to enable re-styling.
-  late WmsLayer _mnWmsLayer;
+  late WmsLayer _wmsLayer;
+
+  // String array to store the styles.
+  final _stylesTitles = [
+    'Default',
+    'Contrast stretch',
+  ];
+
+  // Create variable for holding sublayer style.
+  String? _selectedStyle;
 
   @override
   Widget build(BuildContext context) {
@@ -51,16 +60,8 @@ class _ApplyStyleToWmsLayerState extends State<ApplyStyleToWmsLayer>
                     onMapViewReady: onMapViewReady,
                   ),
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    // A button to perform a task.
-                    ElevatedButton(
-                      onPressed: performTask,
-                      child: const Text('Perform Task'),
-                    ),
-                  ],
-                ),
+                // Build the bottom menu.
+                buildBottomMenu(),
               ],
             ),
             // Display a progress indicator and prevent interaction until state is ready.
@@ -79,13 +80,64 @@ class _ApplyStyleToWmsLayerState extends State<ApplyStyleToWmsLayer>
     );
   }
 
+  Widget buildBottomMenu() {
+    return Center(
+      // A drop down button for selecting style.
+      child: DropdownButton(
+        alignment: Alignment.center,
+        hint: const Text(
+          'Choose a style',
+          style: TextStyle(
+            color: Colors.deepPurple,
+          ),
+        ),
+        icon: const Icon(Icons.arrow_drop_down),
+        iconEnabledColor: Colors.deepPurple,
+        iconDisabledColor: Colors.grey,
+        style: const TextStyle(color: Colors.deepPurple),
+        value: _selectedStyle,
+        items: _stylesTitles.map((items) {
+          return DropdownMenuItem(
+            value: items,
+            child: Text(items),
+          );
+        }).toList(),
+        onChanged: (style) {
+          if (style != null) {
+            changeStyle(style);
+          }
+        },
+      ),
+    );
+  }
+
+  void changeStyle(String style) async {
+    // Set the selected style.
+    setState(() => _selectedStyle = style);
+
+    // Get the available styles from the first sublayer.
+    final firstSublayer = _wmsLayer.sublayers.first as WmsSublayer;
+    final styles = firstSublayer.sublayerInfo.styles;
+
+    switch (style) {
+      case 'Default':
+        // Apply the first style to the first sublayer.
+        setState(() => firstSublayer.currentStyle = styles[0]);
+      case 'Contrast stretch':
+        // Apply the second style to the first sublayer.
+        setState(() => firstSublayer.currentStyle = styles[1]);
+      default:
+        throw StateError('Unknown style');
+    }
+  }
+
   void onMapViewReady() async {
     // Create a map with spatial reference appropriate for the service.
     final map = ArcGISMap(spatialReference: SpatialReference(wkid: 26915));
     map.minScale = 7000000.0;
     // Create a new WMS layer displaying the specified layers from the service.
     // The default styles are chosen by default.
-    _mnWmsLayer = WmsLayer.withUriAndLayerNames(
+    _wmsLayer = WmsLayer.withUriAndLayerNames(
       uri: Uri.parse(
         'https://imageserver.gisdata.mn.gov/cgi-bin/mncomp?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities',
       ),
@@ -93,27 +145,19 @@ class _ApplyStyleToWmsLayerState extends State<ApplyStyleToWmsLayer>
     );
 
     // Wait for the layer to load.
-    await _mnWmsLayer.load();
+    await _wmsLayer.load();
 
-    if (_mnWmsLayer.fullExtent != null) {
+    if (_wmsLayer.fullExtent != null) {
       // Center the map on the layer's contents.
-      map.initialViewpoint =
-          Viewpoint.fromTargetExtent(_mnWmsLayer.fullExtent!);
+      map.initialViewpoint = Viewpoint.fromTargetExtent(_wmsLayer.fullExtent!);
     }
 
     // Add the layer to the map.
-    map.operationalLayers.add(_mnWmsLayer);
+    map.operationalLayers.add(_wmsLayer);
 
     // Add the map to the view.
     _mapViewController.arcGISMap = map;
 
-    // Enable the buttons.
-    FirstStyleButton.IsEnabled = true;
-    SecondStyleButton.IsEnabled = true;
-    final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic);
-    _mapViewController.arcGISMap = map;
-    // Perform some long-running setup task.
-    await Future.delayed(const Duration(seconds: 10));
     // Set the ready state variable to true to enable the sample UI.
     setState(() => _ready = true);
   }
