@@ -2,7 +2,7 @@
 
 Change the style of a Web Map Service (WMS) layer.
 
-![Image of apply style to WMS layer](ApplyStyleToWmsLayer.jpg)
+![Image of apply style to WMS layer](apply_style_to_wms_layer.png)
 
 ## Use case
 
@@ -14,15 +14,16 @@ Once the layer loads, the toggle button will be enabled. Click it to toggle betw
 
 ## How it works
 
-1. Create a `WmsLayer` specifying the URL of the service and the layer names you want `new WmsLayer(url, names)`.
-2. When the layer is done loading, get it's list of style strings using `wmsLayer.getSublayers().get(0).getSublayerInfo().getStyles()`.
-3. Set one of the styles using `wmsLayer.getSublayers().get(0).setCurrentStyle(styleString)`.
+1. Create a `WmsLayer` specifying the URL of the service and the layer names you want `WmsLayer.withUriAndLayerNames(uri: Uri.parse(url), layerNames: names)`.
+2. When the layer is done loading, get one of its sublayer `wmsLayer.sublayers.first as WmsSublayer`.
+3. After obtaining one of its sub layers, get its list of style strings using `firstSublayer.sublayerInfo.styles`.
+4. Set one of the styles using `firstSublayer.currentStyle = styles[0]`.
 
 ## Relevant API
 
 * WmsLayer
 * WmsSublayer
-* WmsSublayerInfo
+* WmsLayerInfo
 
 ## About the data
 
