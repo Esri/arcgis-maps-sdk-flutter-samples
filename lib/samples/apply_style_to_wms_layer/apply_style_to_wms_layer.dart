@@ -138,10 +138,9 @@ class _ApplyStyleToWmsLayerState extends State<ApplyStyleToWmsLayer>
     ..minScale = 7000000.0;
     // Create a new WMS layer displaying the specified layers from the service.
     // The default styles are chosen by default.
+   const wmsLayerUri = 'https://imageserver.gisdata.mn.gov/cgi-bin/mncomp?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities';
     _wmsLayer = WmsLayer.withUriAndLayerNames(
-      uri: Uri.parse(
-        'https://imageserver.gisdata.mn.gov/cgi-bin/mncomp?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities',
-      ),
+      uri: Uri.parse(wmsLayerUri),
       layerNames: ['mncomp'],
     );
 
