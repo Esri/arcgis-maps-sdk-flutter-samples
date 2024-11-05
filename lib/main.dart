@@ -25,7 +25,7 @@ void main() {
   // Supply your apiKey using the --dart-define-from-file command line argument.
   const apiKey = String.fromEnvironment('API_KEY');
   // Alternatively, replace the above line with the following and hard-code your apiKey here:
-  // const apiKey = 'your_api_key_here';
+  // const apiKey = ''; // Your API Key here.
   if (apiKey.isEmpty) {
     throw Exception('apiKey undefined');
   } else {
