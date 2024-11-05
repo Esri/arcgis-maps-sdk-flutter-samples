@@ -135,10 +135,11 @@ class _ApplyStyleToWmsLayerState extends State<ApplyStyleToWmsLayer>
   void onMapViewReady() async {
     // Create a map with spatial reference appropriate for the service.
     final map = ArcGISMap(spatialReference: SpatialReference(wkid: 26915))
-    ..minScale = 7000000.0;
+      ..minScale = 7000000.0;
     // Create a new WMS layer displaying the specified layers from the service.
     // The default styles are chosen by default.
-   const wmsLayerUri = 'https://imageserver.gisdata.mn.gov/cgi-bin/mncomp?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities';
+    const wmsLayerUri =
+        'https://imageserver.gisdata.mn.gov/cgi-bin/mncomp?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities';
     _wmsLayer = WmsLayer.withUriAndLayerNames(
       uri: Uri.parse(wmsLayerUri),
       layerNames: ['mncomp'],
