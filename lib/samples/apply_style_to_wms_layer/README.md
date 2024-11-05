@@ -15,9 +15,8 @@ Once the layer loads, toggle between the first and second styles of the WMS laye
 ## How it works
 
 1. Create a `WmsLayer` specifying the URL of the service and the layer names you want `WmsLayer.withUriAndLayerNames(uri: Uri.parse(url), layerNames: names)`.
-2. When the layer is done loading, get one of its sublayer `wmsLayer.sublayers.first as WmsSublayer`.
-3. After obtaining one of its sub layers, get its list of style strings using `firstSublayer.sublayerInfo.styles`.
-4. Set one of the styles using `firstSublayer.currentStyle = styles[0]`.
+2. When the layer is done loading, get its list of style strings using `wmsLayer.layerInfos.styles`.
+3. Set one of the styles using `WmsSublayer.currentStyle = styles.first`.
 
 ## Relevant API
 
