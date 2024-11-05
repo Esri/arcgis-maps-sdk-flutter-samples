@@ -134,8 +134,8 @@ class _ApplyStyleToWmsLayerState extends State<ApplyStyleToWmsLayer>
 
   void onMapViewReady() async {
     // Create a map with spatial reference appropriate for the service.
-    final map = ArcGISMap(spatialReference: SpatialReference(wkid: 26915));
-    map.minScale = 7000000.0;
+    final map = ArcGISMap(spatialReference: SpatialReference(wkid: 26915))
+    ..minScale = 7000000.0;
     // Create a new WMS layer displaying the specified layers from the service.
     // The default styles are chosen by default.
     _wmsLayer = WmsLayer.withUriAndLayerNames(
