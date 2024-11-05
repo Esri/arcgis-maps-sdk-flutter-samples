@@ -1,3 +1,4 @@
+//
 // Copyright 2024 Esri
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -116,16 +117,16 @@ class _ApplyStyleToWmsLayerState extends State<ApplyStyleToWmsLayer>
     setState(() => _selectedStyle = style);
 
     // Get the available styles from the first sublayer.
-    final firstSublayer = _wmsLayer.sublayers.first as WmsSublayer;
-    final styles = firstSublayer.sublayerInfo.styles;
+    final styles = _wmsLayer.layerInfos.first.styles;
+    final wmsSublayer = _wmsLayer.sublayers.first as WmsSublayer;
 
     switch (style) {
       case 'Default':
         // Apply the first style to the first sublayer.
-        setState(() => firstSublayer.currentStyle = styles[0]);
+        setState(() => wmsSublayer.currentStyle = styles[0]);
       case 'Contrast stretch':
         // Apply the second style to the first sublayer.
-        setState(() => firstSublayer.currentStyle = styles[1]);
+        setState(() => wmsSublayer.currentStyle = styles[1]);
       default:
         throw StateError('Unknown style');
     }
