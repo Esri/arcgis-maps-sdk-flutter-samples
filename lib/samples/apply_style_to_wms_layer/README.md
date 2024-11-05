@@ -22,8 +22,8 @@ Once the layer loads, the toggle button will be enabled. Click it to toggle betw
 ## Relevant API
 
 * WmsLayer
-* WmsSublayer
 * WmsLayerInfo
+* WmsSublayer
 
 ## About the data
 
