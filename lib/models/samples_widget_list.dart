@@ -10,6 +10,7 @@ import 'package:arcgis_maps_sdk_flutter_samples/samples/add_wmts_layer/add_wmts_
 import 'package:arcgis_maps_sdk_flutter_samples/samples/apply_class_breaks_renderer_to_sublayer/apply_class_breaks_renderer_to_sublayer.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/apply_scheduled_updates_to_preplanned_map_area/apply_scheduled_updates_to_preplanned_map_area.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/apply_simple_renderer_to_feature_layer/apply_simple_renderer_to_feature_layer.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/samples/apply_style_to_wms_layer/apply_style_to_wms_layer.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/apply_unique_value_renderer/apply_unique_value_renderer.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/authenticate_with_oauth/authenticate_with_oauth.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/authenticate_with_token/authenticate_with_token.dart';
@@ -84,6 +85,7 @@ final sampleWidgets = {
       const ApplyScheduledUpdatesToPreplannedMapArea(),
   'apply_simple_renderer_to_feature_layer': () =>
       const ApplySimpleRendererToFeatureLayer(),
+  'apply_style_to_wms_layer': () => const ApplyStyleToWmsLayer(),
   'apply_unique_value_renderer': () => const ApplyUniqueValueRenderer(),
   'authenticate_with_oauth': () => const AuthenticateWithOAuth(),
   'authenticate_with_token': () => const AuthenticateWithToken(),

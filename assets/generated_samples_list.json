@@ -365,6 +365,34 @@
     "title": "Apply simple renderer to feature layer",
     "key": "apply_simple_renderer_to_feature_layer"
   },
+  "apply_style_to_wms_layer": {
+    "category": "Layers",
+    "description": "Change the style of a Web Map Service (WMS) layer.",
+    "ignore": false,
+    "images": [
+      "apply_style_to_wms_layer.png"
+    ],
+    "keywords": [
+      "WMS",
+      "imagery",
+      "styles",
+      "visualization",
+      "WmsLayer",
+      "WmsLayerInfo",
+      "WmsSublayer"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+      "WmsLayer",
+      "WmsLayerInfo",
+      "WmsSublayer"
+    ],
+    "snippets": [
+      "apply_style_to_wms_layer.dart"
+    ],
+    "title": "Apply style to WMS layer",
+    "key": "apply_style_to_wms_layer"
+  },
   "apply_unique_value_renderer": {
     "category": "Visualization",
     "description": "Render features in a layer using a distinct symbol for each unique attribute value.",
@@ -582,18 +610,22 @@
       "buffer",
       "geometry",
       "planar",
-      "Geometry",
-      "GeometryEngine.buffer",
+      "ArcGISMap",
+      "ArcGISMapImageLayer",
+      "ArcGISMapView",
       "GeometryEngine.bufferCollection",
       "GeometryEngine.project",
+      "GraphicsOverlay",
       "SpatialReference"
     ],
     "redirect_from": [],
     "relevant_apis": [
-      "Geometry",
-      "GeometryEngine.buffer",
+      "ArcGISMap",
+      "ArcGISMapImageLayer",
+      "ArcGISMapView",
       "GeometryEngine.bufferCollection",
       "GeometryEngine.project",
+      "GraphicsOverlay",
       "SpatialReference"
     ],
     "snippets": [
@@ -1981,6 +2013,64 @@
     ],
     "title": "Snap geometry edits",
     "key": "snap_geometry_edits"
+  },
+  "style_graphics_with_renderer": {
+    "category": "Maps",
+    "description": "A renderer allows you to change the style of all graphics in a graphics overlay by referencing a single symbol style. A renderer will only affect graphics that do not specify their own symbol style.",
+    "ignore": false,
+    "images": [
+      "style_graphics_with_renderer.png"
+    ],
+    "keywords": [
+      "arc",
+      "bezier",
+      "curve",
+      "display",
+      "ellipse",
+      "graphics",
+      "marker",
+      "overlay",
+      "renderer",
+      "segment",
+      "symbol",
+      "true curve",
+      "CubicBezierSegment",
+      "EllipticArcSegment",
+      "GeodesicEllipseParameters",
+      "Geometry",
+      "GeometryEngine.ellipseGeodesic",
+      "Graphic",
+      "GraphicsOverlay",
+      "MutablePart",
+      "PolygonBuilder",
+      "PolylineBuilder",
+      "SimpleFillSymbol",
+      "SimpleLineSymbol",
+      "SimpleMarkerSymbol",
+      "SimpleRenderer"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+      "CubicBezierSegment",
+      "EllipticArcSegment",
+      "GeodesicEllipseParameters",
+      "Geometry",
+      "GeometryEngine.ellipseGeodesic",
+      "Graphic",
+      "GraphicsOverlay",
+      "MutablePart",
+      "PolygonBuilder",
+      "PolylineBuilder",
+      "SimpleFillSymbol",
+      "SimpleLineSymbol",
+      "SimpleMarkerSymbol",
+      "SimpleRenderer"
+    ],
+    "snippets": [
+      "style_graphics_with_renderer.dart"
+    ],
+    "title": "Style graphics with renderer",
+    "key": "style_graphics_with_renderer"
   },
   "style_graphics_with_symbols": {
     "category": "Visualization",
