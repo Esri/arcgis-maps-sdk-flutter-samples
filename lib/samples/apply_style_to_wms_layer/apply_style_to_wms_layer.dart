@@ -112,7 +112,7 @@ class _ApplyStyleToWmsLayerState extends State<ApplyStyleToWmsLayer>
     );
   }
 
-  void changeStyle(String style) async {
+  void changeStyle(String style) {
     // Set the selected style.
     setState(() => _selectedStyle = style);
 
