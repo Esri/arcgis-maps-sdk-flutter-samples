@@ -213,6 +213,69 @@
     "title": "Add vector tiled layer",
     "key": "add_vector_tiled_layer"
   },
+  "add_web_tiled_layer": {
+    "category": "Layers",
+    "description": "Display a tiled web layer.",
+    "ignore": false,
+    "images": [
+      "add_web_tiled_layer.png"
+    ],
+    "keywords": [
+      "OGC",
+      "layer",
+      "tiled",
+      "tiles",
+      "Basemap",
+      "WebTiledLayer"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+      "Basemap",
+      "WebTiledLayer"
+    ],
+    "snippets": [
+      "add_web_tiled_layer.dart"
+    ],
+    "title": "Add web tiled layer",
+    "key": "add_web_tiled_layer"
+  },
+  "add_wfs_layer": {
+    "category": "Layers",
+    "description": "Display a layer from a WFS service using data from URL",
+    "ignore": false,
+    "images": [
+      "add_wfs_layer.png"
+    ],
+    "keywords": [
+      "OGC",
+      "WFS",
+      "browse",
+      "catalog",
+      "feature",
+      "interaction cache",
+      "layers",
+      "service",
+      "web",
+      "ArcGISMapView",
+      "ArcGISMapViewController.onNavigationChanged",
+      "FeatureLayer",
+      "WfsFeatureTable",
+      "WfsFeatureTable.populateFromService"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+      "ArcGISMapView",
+      "ArcGISMapViewController.onNavigationChanged",
+      "FeatureLayer",
+      "WfsFeatureTable",
+      "WfsFeatureTable.populateFromService"
+    ],
+    "snippets": [
+      "add_wfs_layer.dart"
+    ],
+    "title": "Add WFS layer",
+    "key": "add_wfs_layer"
+  },
   "add_wms_layer": {
     "category": "Layers",
     "description": "Display a WMS layer using a WMS service URL.",
@@ -1874,69 +1937,6 @@
     ],
     "title": "Show service area",
     "key": "show_service_area"
-  },
-  "show_web_tiled_layer_from_url": {
-    "category": "Layers",
-    "description": "Display a tiled web layer.",
-    "ignore": false,
-    "images": [
-      "show_web_tiled_layer_from_url.png"
-    ],
-    "keywords": [
-      "OGC",
-      "layer",
-      "tiled",
-      "tiles",
-      "Basemap",
-      "WebTiledLayer"
-    ],
-    "redirect_from": [],
-    "relevant_apis": [
-      "Basemap",
-      "WebTiledLayer"
-    ],
-    "snippets": [
-      "show_web_tiled_layer_from_url.dart"
-    ],
-    "title": "Show web tiled layer from URL",
-    "key": "show_web_tiled_layer_from_url"
-  },
-  "show_wfs_layer_from_url": {
-    "category": "Layers",
-    "description": "Display a layer from a WFS service using data from URL",
-    "ignore": false,
-    "images": [
-      "show_wfs_layer_from_url.png"
-    ],
-    "keywords": [
-      "OGC",
-      "WFS",
-      "browse",
-      "catalog",
-      "feature",
-      "interaction cache",
-      "layers",
-      "service",
-      "web",
-      "ArcGISMapView",
-      "ArcGISMapViewController.onNavigationChanged",
-      "FeatureLayer",
-      "WfsFeatureTable",
-      "WfsFeatureTable.populateFromService"
-    ],
-    "redirect_from": [],
-    "relevant_apis": [
-      "ArcGISMapView",
-      "ArcGISMapViewController.onNavigationChanged",
-      "FeatureLayer",
-      "WfsFeatureTable",
-      "WfsFeatureTable.populateFromService"
-    ],
-    "snippets": [
-      "show_wfs_layer_from_url.dart"
-    ],
-    "title": "Show WFS layer from URL",
-    "key": "show_wfs_layer_from_url"
   },
   "show_wfs_layer_with_xml_query": {
     "category": "Search and Query",

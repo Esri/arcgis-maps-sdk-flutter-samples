@@ -3,7 +3,7 @@
     "description": "Display a layer from a WFS service using data from URL",
     "ignore": false,
     "images": [
-        "show_wfs_layer_from_url.png"
+        "add_wfs_layer.png"
     ],
     "keywords": [
         "OGC",
@@ -30,7 +30,7 @@
         "WfsFeatureTable.populateFromService"
     ],
     "snippets": [
-        "show_wfs_layer_from_url.dart"
+        "add_wfs_layer.dart"
     ],
-    "title": "Show WFS layer from URL"
+    "title": "Add WFS layer"
 }

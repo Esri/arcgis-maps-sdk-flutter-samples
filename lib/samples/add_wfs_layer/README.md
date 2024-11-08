@@ -1,8 +1,8 @@
-# Show WFS layer from URL
+# Add WFS layer
 
 Display a layer from a WFS service using data from URL
 
-![Image of WFS layer from URL](show_wfs_layer_from_url.png)
+![Image of add WFS layer](add_wfs_layer.png)
 
 ## Use case
 
