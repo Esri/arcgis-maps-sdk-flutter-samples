@@ -1,8 +1,8 @@
-# Show web tiled layer from URL
+# Add web tiled layer
 
 Display a tiled web layer.
 
-![Image of show web tiled layer From Url](show_web_tiled_layer_from_url.png)
+![Image of add web tiled layer](add_web_tiled_layer.png)
 
 ## Use case
 

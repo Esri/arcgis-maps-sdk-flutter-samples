@@ -17,15 +17,14 @@ import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_state_support.dart';
 import 'package:flutter/material.dart';
 
-class ShowWebTiledLayerFromUrl extends StatefulWidget {
-  const ShowWebTiledLayerFromUrl({super.key});
+class AddWebTiledLayer extends StatefulWidget {
+  const AddWebTiledLayer({super.key});
 
   @override
-  State<ShowWebTiledLayerFromUrl> createState() =>
-      _ShowWebTiledLayerFromUrlState();
+  State<AddWebTiledLayer> createState() => _AddWebTiledLayerState();
 }
 
-class _ShowWebTiledLayerFromUrlState extends State<ShowWebTiledLayerFromUrl>
+class _AddWebTiledLayerState extends State<AddWebTiledLayer>
     with SampleStateSupport {
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();

@@ -17,15 +17,14 @@ import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_state_support.dart';
 import 'package:flutter/material.dart';
 
-class ShowWfsLayerFromUrl extends StatefulWidget {
-  const ShowWfsLayerFromUrl({super.key});
+class AddWfsLayer extends StatefulWidget {
+  const AddWfsLayer({super.key});
 
   @override
-  State<ShowWfsLayerFromUrl> createState() => _ShowWfsLayerFromUrlState();
+  State<AddWfsLayer> createState() => _AddWfsLayerState();
 }
 
-class _ShowWfsLayerFromUrlState extends State<ShowWfsLayerFromUrl>
-    with SampleStateSupport {
+class _AddWfsLayerState extends State<AddWfsLayer> with SampleStateSupport {
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
   // A flag for when the map view is ready and controls can be used.
@@ -105,8 +104,9 @@ class _ShowWfsLayerFromUrlState extends State<ShowWfsLayerFromUrl>
 
     // Create a WFS feature table from URI and name.
     _featureTable = WfsFeatureTable.withUriAndTableName(
-        uri: Uri.parse(wfsFeatureTableUri),
-        tableName: 'Seattle_Downtown_Features:Buildings',)
+      uri: Uri.parse(wfsFeatureTableUri),
+      tableName: 'Seattle_Downtown_Features:Buildings',
+    )
       // Set the axis order and feature request mode.
       ..axisOrder = OgcAxisOrder.noSwap
       ..featureRequestMode = FeatureRequestMode.manualCache;
@@ -140,14 +140,13 @@ class _ShowWfsLayerFromUrlState extends State<ShowWfsLayerFromUrl>
       ..geometry = currentExtent
       ..spatialRelationship = SpatialRelationship.intersects;
 
-      // Populate the table with the query, leaving existing table entries intact.
-      await _featureTable.populateFromService(
-        parameters: visibleExtentQuery,
-        clearCache: false,
-        outFields: [],
-      );
-      // Hide the loading indicator.
-      setState(() => _ready = true);
-
+    // Populate the table with the query, leaving existing table entries intact.
+    await _featureTable.populateFromService(
+      parameters: visibleExtentQuery,
+      clearCache: false,
+      outFields: [],
+    );
+    // Hide the loading indicator.
+    setState(() => _ready = true);
   }
 }
