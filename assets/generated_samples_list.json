@@ -34,7 +34,7 @@
     "key": "add_feature_collection_layer_from_table"
   },
   "add_feature_layer_with_time_offset": {
-    "category": "Maps",
+    "category": "Layers",
     "description": "Display a time-enabled feature layer with a time offset.",
     "ignore": false,
     "images": [
@@ -102,7 +102,7 @@
     "key": "add_feature_layers"
   },
   "add_map_image_layer": {
-    "category": "Maps",
+    "category": "Layers",
     "description": "Display a layer from an ArcGIS map image layer service.",
     "ignore": false,
     "images": [
@@ -2015,7 +2015,7 @@
     "key": "snap_geometry_edits"
   },
   "style_graphics_with_renderer": {
-    "category": "Maps",
+    "category": "Visualization",
     "description": "A renderer allows you to change the style of all graphics in a graphics overlay by referencing a single symbol style. A renderer will only affect graphics that do not specify their own symbol style.",
     "ignore": false,
     "images": [
