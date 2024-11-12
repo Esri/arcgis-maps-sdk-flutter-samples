@@ -2,7 +2,7 @@
 
 A renderer allows you to change the style of all graphics in a graphics overlay by referencing a single symbol style. A renderer will only affect graphics that do not specify their own symbol style.
 
-![Image of style graphics with renderer](style_graphics_with_renderer.dart)
+![Image of style graphics with renderer](style_graphics_with_renderer.png)
 
 ## Use case
 
