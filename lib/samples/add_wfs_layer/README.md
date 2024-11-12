@@ -1,6 +1,6 @@
 # Add WFS layer
 
-Display a layer from a WFS service using data from URL
+Display a layer from a WFS service, requesting only features for the current extent.
 
 ![Image of add WFS layer](add_wfs_layer.png)
 
