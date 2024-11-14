@@ -45,54 +45,56 @@ class _FindRouteInMobileMapPackageState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: FutureBuilder(
-        future: mobileMapPackagesFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
-            final locatorTaskForMap = <ArcGISMap, LocatorTask?>{};
-            final maps = <ArcGISMap>[];
-            for (final mmpk in snapshot.data!) {
-              for (final map in mmpk.maps) {
-                maps.add(map);
-                locatorTaskForMap[map] = mmpk.locatorTask;
+      body: SafeArea(
+        child: FutureBuilder(
+          future: mobileMapPackagesFuture,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.done) {
+              final locatorTaskForMap = <ArcGISMap, LocatorTask?>{};
+              final maps = <ArcGISMap>[];
+              for (final mmpk in snapshot.data!) {
+                for (final map in mmpk.maps) {
+                  maps.add(map);
+                  locatorTaskForMap[map] = mmpk.locatorTask;
+                }
               }
-            }
 
-            return ListView.builder(
-              padding: const EdgeInsets.all(8.0),
-              itemCount: maps.length,
-              itemBuilder: (context, index) {
-                final map = maps[index];
-                return Card(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 4.0),
-                    child: ListTile(
-                      leading: Image.memory(
-                        map.item?.thumbnail?.image?.getEncodedBuffer() ??
-                            Uint8List(0),
-                      ),
-                      title: Text(map.item?.name ?? ''),
-                      trailing: map.transportationNetworks.isNotEmpty
-                          ? const Icon(Icons.directions_outlined)
-                          : null,
-                      onTap: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => FindRouteInMap(
-                              map: map,
-                              locatorTask: locatorTaskForMap[map],
+              return ListView.builder(
+                padding: const EdgeInsets.all(8.0),
+                itemCount: maps.length,
+                itemBuilder: (context, index) {
+                  final map = maps[index];
+                  return Card(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 4.0),
+                      child: ListTile(
+                        leading: Image.memory(
+                          map.item?.thumbnail?.image?.getEncodedBuffer() ??
+                              Uint8List(0),
+                        ),
+                        title: Text(map.item?.name ?? ''),
+                        trailing: map.transportationNetworks.isNotEmpty
+                            ? const Icon(Icons.directions_outlined)
+                            : null,
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => FindRouteInMap(
+                                map: map,
+                                locatorTask: locatorTaskForMap[map],
+                              ),
                             ),
-                          ),
-                        );
-                      },
+                          );
+                        },
+                      ),
                     ),
-                  ),
-                );
-              },
-            );
-          }
-          return const Center(child: CircularProgressIndicator());
-        },
+                  );
+                },
+              );
+            }
+            return const Center(child: CircularProgressIndicator());
+          },
+        ),
       ),
     );
   }
