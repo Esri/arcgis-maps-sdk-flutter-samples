@@ -275,13 +275,13 @@ class _FindRouteInMapState extends State<FindRouteInMap> {
     if (graphicToSelect != null) {
       graphicToSelect.isSelected = true;
       setState(() => _selectedGraphic = graphicToSelect);
-      reverseGeocode(graphicToSelect);
+      await reverseGeocode(graphicToSelect);
     }
 
     await updateRoute();
   }
 
-  void reverseGeocode(Graphic graphic) async {
+  Future<void> reverseGeocode(Graphic graphic) async {
     final location = graphic.geometry as ArcGISPoint?;
     if (location == null) throw StateError('Graphic has no location');
 
