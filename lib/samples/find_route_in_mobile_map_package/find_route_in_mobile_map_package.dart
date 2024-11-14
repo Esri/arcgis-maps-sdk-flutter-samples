@@ -14,6 +14,7 @@
 //
 
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:flutter/material.dart';
@@ -29,6 +30,12 @@ class FindRouteInMobileMapPackage extends StatefulWidget {
   State<FindRouteInMobileMapPackage> createState() =>
       _FindRouteInMobileMapPackageState();
 }
+
+typedef SampleData = ({
+  ArcGISMap map,
+  Uint8List? thumbnail,
+  LocatorTask? locatorTask
+});
 
 class _FindRouteInMobileMapPackageState
     extends State<FindRouteInMobileMapPackage> with SampleStateSupport {
@@ -49,9 +56,9 @@ class _FindRouteInMobileMapPackageState
     for (final filename in ['SanFrancisco', 'Yellowstone']) {
       final mmpkFile = File('${appDir.absolute.path}/$filename.mmpk');
       final mmpk = MobileMapPackage.withFileUri(mmpkFile.uri);
-      await mmpk.load();
       mobileMapPackages.add(mmpk);
     }
+    await Future.wait(mobileMapPackages.map((mmpk) => mmpk.load()));
     return mobileMapPackages;
   }
 
@@ -63,39 +70,40 @@ class _FindRouteInMobileMapPackageState
           future: mobileMapPackages,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.done) {
-              final locatorTaskForMap = <ArcGISMap, LocatorTask?>{};
-              final maps = <ArcGISMap>[];
+              final sampleData = <SampleData>[];
               for (final mmpk in snapshot.data!) {
                 for (final map in mmpk.maps) {
-                  maps.add(map);
-                  locatorTaskForMap[map] = mmpk.locatorTask;
+                  sampleData.add(
+                    (
+                      map: map,
+                      thumbnail: map.item?.thumbnail?.image?.getEncodedBuffer(),
+                      locatorTask: mmpk.locatorTask,
+                    ),
+                  );
                 }
               }
 
               return ListView.builder(
                 padding: const EdgeInsets.all(8.0),
-                itemCount: maps.length,
+                itemCount: sampleData.length,
                 itemBuilder: (context, index) {
-                  final map = maps[index];
-                  final thumbnail =
-                      map.item?.thumbnail?.image?.getEncodedBuffer();
+                  final data = sampleData[index];
                   return Card(
                     child: Padding(
                       padding: const EdgeInsets.symmetric(vertical: 4.0),
                       child: ListTile(
-                        leading:
-                            thumbnail != null ? Image.memory(thumbnail) : null,
-                        title: Text(map.item?.name ?? ''),
-                        trailing: map.transportationNetworks.isNotEmpty
+                        leading: data.thumbnail != null
+                            ? Image.memory(data.thumbnail!)
+                            : null,
+                        title: Text(data.map.item?.name ?? ''),
+                        trailing: data.map.transportationNetworks.isNotEmpty
                             ? const Icon(Icons.directions_outlined)
                             : null,
                         onTap: () {
                           Navigator.of(context).push(
                             MaterialPageRoute(
-                              builder: (context) => FindRouteInMap(
-                                map: map,
-                                locatorTask: locatorTaskForMap[map],
-                              ),
+                              builder: (context) =>
+                                  FindRouteInMap(sampleData: data),
                             ),
                           );
                         },
@@ -116,12 +124,10 @@ class _FindRouteInMobileMapPackageState
 class FindRouteInMap extends StatefulWidget {
   const FindRouteInMap({
     super.key,
-    required this.map,
-    required this.locatorTask,
+    required this.sampleData,
   });
 
-  final ArcGISMap map;
-  final LocatorTask? locatorTask;
+  final SampleData sampleData;
 
   @override
   State<FindRouteInMap> createState() => _FindRouteInMapState();
@@ -143,7 +149,7 @@ class _FindRouteInMapState extends State<FindRouteInMap>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(widget.map.item?.name ?? '')),
+      appBar: AppBar(title: Text(widget.sampleData.map.item?.name ?? '')),
       body: SafeArea(
         left: false,
         top: false,
@@ -157,11 +163,11 @@ class _FindRouteInMapState extends State<FindRouteInMap>
                   child: ArcGISMapView(
                     controllerProvider: () => _mapViewController,
                     onMapViewReady: onMapViewReady,
-                    onTap: widget.locatorTask != null ? onTap : null,
+                    onTap: widget.sampleData.locatorTask != null ? onTap : null,
                   ),
                 ),
                 Visibility(
-                  visible: widget.locatorTask != null,
+                  visible: widget.sampleData.locatorTask != null,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
@@ -217,7 +223,8 @@ class _FindRouteInMapState extends State<FindRouteInMap>
   }
 
   void onMapViewReady() async {
-    _mapViewController.arcGISMap = widget.map;
+    final map = widget.sampleData.map;
+    _mapViewController.arcGISMap = map;
 
     // Create a picture marker symbol using an image asset.
     final image = await ArcGISImage.fromAsset('assets/pin_circle_red.png');
@@ -228,8 +235,8 @@ class _FindRouteInMapState extends State<FindRouteInMap>
     _markerOverlay.renderer = SimpleRenderer(symbol: pictureMarkerSymbol);
     _mapViewController.graphicsOverlays.add(_markerOverlay);
 
-    if (widget.map.transportationNetworks.isNotEmpty) {
-      final dataset = widget.map.transportationNetworks.first;
+    if (map.transportationNetworks.isNotEmpty) {
+      final dataset = map.transportationNetworks.first;
       _routeTask = RouteTask.withDataset(dataset);
       _routeParameters = await _routeTask!.createDefaultParameters();
 
@@ -283,7 +290,7 @@ class _FindRouteInMapState extends State<FindRouteInMap>
       ..resultAttributeNames.addAll(['StAddr', 'City', 'Region'])
       ..maxResults = 1;
 
-    final results = await widget.locatorTask!.reverseGeocode(
+    final results = await widget.sampleData.locatorTask!.reverseGeocode(
       location: graphic.geometry as ArcGISPoint,
       parameters: reverseGeocodeParameters,
     );
