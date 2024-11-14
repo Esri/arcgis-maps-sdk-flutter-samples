@@ -5,11 +5,14 @@ import 'package:arcgis_maps_sdk_flutter_samples/samples/add_map_image_layer/add_
 import 'package:arcgis_maps_sdk_flutter_samples/samples/add_tiled_layer/add_tiled_layer.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/add_tiled_layer_as_basemap/add_tiled_layer_as_basemap.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/add_vector_tiled_layer/add_vector_tiled_layer.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/samples/add_web_tiled_layer/add_web_tiled_layer.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/samples/add_wfs_layer/add_wfs_layer.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/add_wms_layer/add_wms_layer.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/add_wmts_layer/add_wmts_layer.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/apply_class_breaks_renderer_to_sublayer/apply_class_breaks_renderer_to_sublayer.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/apply_scheduled_updates_to_preplanned_map_area/apply_scheduled_updates_to_preplanned_map_area.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/apply_simple_renderer_to_feature_layer/apply_simple_renderer_to_feature_layer.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/samples/apply_style_to_wms_layer/apply_style_to_wms_layer.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/apply_unique_value_renderer/apply_unique_value_renderer.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/authenticate_with_oauth/authenticate_with_oauth.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/authenticate_with_token/authenticate_with_token.dart';
@@ -56,8 +59,6 @@ import 'package:arcgis_maps_sdk_flutter_samples/samples/show_legend/show_legend.
 import 'package:arcgis_maps_sdk_flutter_samples/samples/show_magnifier/show_magnifier.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/show_portal_user_info/show_portal_user_info.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/show_service_area/show_service_area.dart';
-import 'package:arcgis_maps_sdk_flutter_samples/samples/show_web_tiled_layer_from_url/show_web_tiled_layer_from_url.dart';
-import 'package:arcgis_maps_sdk_flutter_samples/samples/show_wfs_layer_from_url/show_wfs_layer_from_url.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/show_wfs_layer_with_xml_query/show_wfs_layer_with_xml_query.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/snap_geometry_edits/snap_geometry_edits.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/style_graphics_with_renderer/style_graphics_with_renderer.dart';
@@ -77,6 +78,8 @@ final sampleWidgets = {
   'add_tiled_layer': () => const AddTiledLayer(),
   'add_tiled_layer_as_basemap': () => const AddTiledLayerAsBasemap(),
   'add_vector_tiled_layer': () => const AddVectorTiledLayer(),
+  'add_web_tiled_layer': () => const AddWebTiledLayer(),
+  'add_wfs_layer': () => const AddWfsLayer(),
   'add_wms_layer': () => const AddWmsLayer(),
   'add_wmts_layer': () => const AddWmtsLayer(),
   'apply_class_breaks_renderer_to_sublayer': () =>
@@ -85,6 +88,7 @@ final sampleWidgets = {
       const ApplyScheduledUpdatesToPreplannedMapArea(),
   'apply_simple_renderer_to_feature_layer': () =>
       const ApplySimpleRendererToFeatureLayer(),
+  'apply_style_to_wms_layer': () => const ApplyStyleToWmsLayer(),
   'apply_unique_value_renderer': () => const ApplyUniqueValueRenderer(),
   'authenticate_with_oauth': () => const AuthenticateWithOAuth(),
   'authenticate_with_token': () => const AuthenticateWithToken(),
@@ -139,8 +143,6 @@ final sampleWidgets = {
   'show_magnifier': () => const ShowMagnifier(),
   'show_portal_user_info': () => const ShowPortalUserInfo(),
   'show_service_area': () => const ShowServiceArea(),
-  'show_web_tiled_layer_from_url': () => const ShowWebTiledLayerFromUrl(),
-  'show_wfs_layer_from_url': () => const ShowWfsLayerFromUrl(),
   'show_wfs_layer_with_xml_query': () => const ShowWfsLayerWithXmlQuery(),
   'snap_geometry_edits': () => const SnapGeometryEdits(),
   'style_graphics_with_renderer': () => const StyleGraphicsWithRenderer(),

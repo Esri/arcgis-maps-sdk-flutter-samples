@@ -3,7 +3,7 @@
     "description": "Display a tiled web layer.",
     "ignore": false,
     "images": [
-        "show_web_tiled_layer_from_url.png"
+        "add_web_tiled_layer.png"
     ],
     "keywords": [
         "OGC",
@@ -19,7 +19,7 @@
         "WebTiledLayer"
     ],
     "snippets": [
-        "show_web_tiled_layer_from_url.dart"
+        "add_web_tiled_layer.dart"
     ],
-    "title": "Show web tiled layer from URL"
+    "title": "Add web tiled layer"
 }
