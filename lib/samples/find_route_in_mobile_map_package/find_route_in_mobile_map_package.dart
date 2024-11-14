@@ -33,12 +33,26 @@ class FindRouteInMobileMapPackage extends StatefulWidget {
 class _FindRouteInMobileMapPackageState
     extends State<FindRouteInMobileMapPackage> with SampleStateSupport {
   //fixme comments throughout
-  Future<List<MobileMapPackage>>? mobileMapPackagesFuture;
+  final mobileMapPackages = loadMobileMapPackages();
 
-  @override
-  void initState() {
-    super.initState();
-    mobileMapPackagesFuture = loadMobileMapPackages();
+  static Future<List<MobileMapPackage>> loadMobileMapPackages() async {
+    await downloadSampleData(
+      [
+        'e1f3a7254cb845b09450f54937c16061',
+        '260eb6535c824209964cf281766ebe43',
+      ],
+    );
+
+    final appDir = await getApplicationDocumentsDirectory();
+
+    final mobileMapPackages = <MobileMapPackage>[];
+    for (final filename in ['SanFrancisco', 'Yellowstone']) {
+      final mmpkFile = File('${appDir.absolute.path}/$filename.mmpk');
+      final mmpk = MobileMapPackage.withFileUri(mmpkFile.uri);
+      await mmpk.load();
+      mobileMapPackages.add(mmpk);
+    }
+    return mobileMapPackages;
   }
 
   @override
@@ -46,7 +60,7 @@ class _FindRouteInMobileMapPackageState
     return Scaffold(
       body: SafeArea(
         child: FutureBuilder(
-          future: mobileMapPackagesFuture,
+          future: mobileMapPackages,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.done) {
               final locatorTaskForMap = <ArcGISMap, LocatorTask?>{};
@@ -97,26 +111,6 @@ class _FindRouteInMobileMapPackageState
       ),
     );
   }
-
-  Future<List<MobileMapPackage>> loadMobileMapPackages() async {
-    await downloadSampleData(
-      [
-        'e1f3a7254cb845b09450f54937c16061',
-        '260eb6535c824209964cf281766ebe43',
-      ],
-    );
-
-    final appDir = await getApplicationDocumentsDirectory();
-
-    final mobileMapPackages = <MobileMapPackage>[];
-    for (final filename in ['SanFrancisco', 'Yellowstone']) {
-      final mmpkFile = File('${appDir.absolute.path}/$filename.mmpk');
-      final mmpk = MobileMapPackage.withFileUri(mmpkFile.uri);
-      await mmpk.load();
-      mobileMapPackages.add(mmpk);
-    }
-    return mobileMapPackages;
-  }
 }
 
 class FindRouteInMap extends StatefulWidget {
@@ -133,7 +127,8 @@ class FindRouteInMap extends StatefulWidget {
   State<FindRouteInMap> createState() => _FindRouteInMapState();
 }
 
-class _FindRouteInMapState extends State<FindRouteInMap> {
+class _FindRouteInMapState extends State<FindRouteInMap>
+    with SampleStateSupport {
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
   final _markerOverlay = GraphicsOverlay();
