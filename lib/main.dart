@@ -71,8 +71,7 @@ class _SampleViewerAppState extends State<SampleViewerApp> {
 
   @override
   Widget build(BuildContext context) {
-    final ColorScheme colorScheme =
-        ColorScheme.fromSeed(seedColor: Colors.deepPurple);
+    final colorScheme = ColorScheme.fromSeed(seedColor: Colors.deepPurple);
     const title = 'ArcGIS Maps SDK for Flutter Samples';
 
     return MaterialApp(
