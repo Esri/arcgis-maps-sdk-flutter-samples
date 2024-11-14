@@ -138,8 +138,10 @@ class _FindRouteInMapState extends State<FindRouteInMap> {
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
   final _markerOverlay = GraphicsOverlay();
+  var _message = '';
   // A flag for when the map view is ready and controls can be used.
   var _ready = false;
+  Graphic? _selectedGraphic;
 
   @override
   Widget build(BuildContext context) {
@@ -151,6 +153,28 @@ class _FindRouteInMapState extends State<FindRouteInMap> {
             controllerProvider: () => _mapViewController,
             onMapViewReady: onMapViewReady,
             onTap: widget.locatorTask != null ? onTap : null,
+          ),
+          // Add a banner to show the results of the identify operation.
+          SafeArea(
+            child: IgnorePointer(
+              child: Visibility(
+                visible: _message.isNotEmpty,
+                child: Container(
+                  padding: const EdgeInsets.all(10),
+                  color: Colors.black.withOpacity(0.7),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        _message,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
           ),
           // Display a progress indicator and prevent interaction until state is ready.
           Visibility(
@@ -183,27 +207,56 @@ class _FindRouteInMapState extends State<FindRouteInMap> {
   }
 
   void onTap(Offset localPosition) async {
+    _selectedGraphic?.isSelected = false;
+    _selectedGraphic = null;
+
     final result = await _mapViewController.identifyGraphicsOverlay(
       _markerOverlay,
       screenPoint: localPosition,
       tolerance: 12.0,
     );
-    if (result.graphics.isEmpty) {
+
+    Graphic? graphicToSelect;
+    if (result.graphics.isNotEmpty) {
+      graphicToSelect = result.graphics.first;
+    } else {
       final location =
           _mapViewController.screenToLocation(screen: localPosition);
       if (location != null) {
-        _markerOverlay.graphics.add(Graphic(geometry: location));
-        reverseGeocode(location);
+        graphicToSelect = Graphic(geometry: location);
+        _markerOverlay.graphics.add(graphicToSelect);
       }
-    } else {
-      final location = result.graphics.first.geometry as ArcGISPoint?;
-      if (location != null) {
-        reverseGeocode(location);
-      }
+    }
+    if (graphicToSelect != null) {
+      graphicToSelect.isSelected = true;
+      _selectedGraphic = graphicToSelect;
+      reverseGeocode(graphicToSelect);
     }
   }
 
-  void reverseGeocode(ArcGISPoint point) {
-    //fixme
+  void reverseGeocode(Graphic graphic) async {
+    final location = graphic.geometry as ArcGISPoint?;
+    if (location == null) throw StateError('Graphic has no location');
+
+    final reverseGeocodeParameters = ReverseGeocodeParameters()
+      ..resultAttributeNames.addAll(['StAddr', 'City', 'Region'])
+      ..maxResults = 1;
+
+    final results = await widget.locatorTask!.reverseGeocode(
+      location: location,
+      parameters: reverseGeocodeParameters,
+    );
+
+    final String address;
+    if (results.isEmpty) {
+      address = 'No address found';
+    } else {
+      final attributes = results.first.attributes;
+      final street = attributes['StAddr'] as String? ?? '';
+      final city = attributes['City'] as String? ?? '';
+      final region = attributes['Region'] as String? ?? '';
+      address = '$street, $city, $region';
+    }
+    setState(() => _message = address);
   }
 }
