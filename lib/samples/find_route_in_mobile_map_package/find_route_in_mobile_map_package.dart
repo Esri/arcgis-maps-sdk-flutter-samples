@@ -308,7 +308,10 @@ class _FindRouteInMapState extends State<FindRouteInMap> {
   }
 
   Future<void> updateRoute() async {
-    if (_routeTask == null || _markerOverlay.graphics.length < 2) {
+    if (_routeTask == null ||
+        _routeParameters == null ||
+        _routeOverlay == null ||
+        _markerOverlay.graphics.length < 2) {
       _routeOverlay?.graphics.clear();
       return;
     }
