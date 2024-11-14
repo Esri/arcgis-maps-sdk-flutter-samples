@@ -136,7 +136,7 @@ class _FindRouteInMapState extends State<FindRouteInMap> {
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
   final _markerOverlay = GraphicsOverlay();
-  final _routeOverlay = GraphicsOverlay();
+  GraphicsOverlay? _routeOverlay;
   RouteTask? _routeTask;
   RouteParameters? _routeParameters;
   var _message = '';
@@ -164,18 +164,21 @@ class _FindRouteInMapState extends State<FindRouteInMap> {
                     onTap: widget.locatorTask != null ? onTap : null,
                   ),
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    ElevatedButton(
-                      onPressed: _selectedGraphic == null ? null : delete,
-                      child: const Text('Delete'),
-                    ),
-                    ElevatedButton(
-                      onPressed: reset,
-                      child: const Text('Reset'),
-                    ),
-                  ],
+                Visibility(
+                  visible: widget.locatorTask != null,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      ElevatedButton(
+                        onPressed: _selectedGraphic == null ? null : delete,
+                        child: const Text('Delete'),
+                      ),
+                      ElevatedButton(
+                        onPressed: reset,
+                        child: const Text('Reset'),
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
@@ -228,19 +231,21 @@ class _FindRouteInMapState extends State<FindRouteInMap> {
     pictureMarkerSymbol.offsetY = pictureMarkerSymbol.height / 2;
     _markerOverlay.renderer = SimpleRenderer(symbol: pictureMarkerSymbol);
 
-    final routeSymbol = SimpleLineSymbol(
-      style: SimpleLineSymbolStyle.solid,
-      color: const Color.fromARGB(255, 0, 0, 255),
-      width: 5.0,
-    );
-    _routeOverlay.renderer = SimpleRenderer(symbol: routeSymbol);
-
-    _mapViewController.graphicsOverlays.addAll([_markerOverlay, _routeOverlay]);
+    _mapViewController.graphicsOverlays.add(_markerOverlay);
 
     if (widget.map.transportationNetworks.isNotEmpty) {
-      _routeTask =
-          RouteTask.withDataset(widget.map.transportationNetworks.first);
-      _routeParameters = await _routeTask?.createDefaultParameters();
+      final dataset = widget.map.transportationNetworks.first;
+      _routeTask = RouteTask.withDataset(dataset);
+      _routeParameters = await _routeTask!.createDefaultParameters();
+
+      _routeOverlay = GraphicsOverlay();
+      final routeSymbol = SimpleLineSymbol(
+        style: SimpleLineSymbolStyle.solid,
+        color: const Color.fromARGB(255, 0, 0, 255),
+        width: 5.0,
+      );
+      _routeOverlay!.renderer = SimpleRenderer(symbol: routeSymbol);
+      _mapViewController.graphicsOverlays.add(_routeOverlay!);
     }
 
     setState(() => _ready = true);
@@ -303,10 +308,8 @@ class _FindRouteInMapState extends State<FindRouteInMap> {
   }
 
   Future<void> updateRoute() async {
-    if (_routeTask == null ||
-        _routeParameters == null ||
-        _markerOverlay.graphics.length < 2) {
-      _routeOverlay.graphics.clear();
+    if (_routeTask == null || _markerOverlay.graphics.length < 2) {
+      _routeOverlay?.graphics.clear();
       return;
     }
 
@@ -321,11 +324,11 @@ class _FindRouteInMapState extends State<FindRouteInMap> {
       if (result.routes.isNotEmpty) {
         final routeGeometry = result.routes.first.routeGeometry;
         final routeGraphic = Graphic(geometry: routeGeometry);
-        _routeOverlay.graphics.clear();
-        _routeOverlay.graphics.add(routeGraphic);
+        _routeOverlay!.graphics.clear();
+        _routeOverlay!.graphics.add(routeGraphic);
       }
     } on ArcGISException catch (e) {
-      _routeOverlay.graphics.clear();
+      _routeOverlay!.graphics.clear();
       showError(e);
     }
   }
@@ -343,7 +346,7 @@ class _FindRouteInMapState extends State<FindRouteInMap> {
     _selectedGraphic?.isSelected = false;
     setState(() => _selectedGraphic = null);
     _markerOverlay.graphics.clear();
-    _routeOverlay.graphics.clear();
+    _routeOverlay?.graphics.clear();
     setState(() => _message = '');
   }
 
