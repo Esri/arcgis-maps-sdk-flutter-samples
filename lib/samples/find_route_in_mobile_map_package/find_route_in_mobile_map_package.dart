@@ -14,7 +14,6 @@
 //
 
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:flutter/material.dart';
@@ -64,14 +63,14 @@ class _FindRouteInMobileMapPackageState
                 itemCount: maps.length,
                 itemBuilder: (context, index) {
                   final map = maps[index];
+                  final thumbnail =
+                      map.item?.thumbnail?.image?.getEncodedBuffer();
                   return Card(
                     child: Padding(
                       padding: const EdgeInsets.symmetric(vertical: 4.0),
                       child: ListTile(
-                        leading: Image.memory(
-                          map.item?.thumbnail?.image?.getEncodedBuffer() ??
-                              Uint8List(0),
-                        ),
+                        leading:
+                            thumbnail != null ? Image.memory(thumbnail) : null,
                         title: Text(map.item?.name ?? ''),
                         trailing: map.transportationNetworks.isNotEmpty
                             ? const Icon(Icons.directions_outlined)
@@ -232,7 +231,6 @@ class _FindRouteInMapState extends State<FindRouteInMap> {
       ..height = 35;
     pictureMarkerSymbol.offsetY = pictureMarkerSymbol.height / 2;
     _markerOverlay.renderer = SimpleRenderer(symbol: pictureMarkerSymbol);
-
     _mapViewController.graphicsOverlays.add(_markerOverlay);
 
     if (widget.map.transportationNetworks.isNotEmpty) {
@@ -240,13 +238,13 @@ class _FindRouteInMapState extends State<FindRouteInMap> {
       _routeTask = RouteTask.withDataset(dataset);
       _routeParameters = await _routeTask!.createDefaultParameters();
 
-      _routeOverlay = GraphicsOverlay();
       final routeSymbol = SimpleLineSymbol(
         style: SimpleLineSymbolStyle.solid,
         color: const Color.fromARGB(255, 0, 0, 255),
         width: 5.0,
       );
-      _routeOverlay!.renderer = SimpleRenderer(symbol: routeSymbol);
+      _routeOverlay = GraphicsOverlay()
+        ..renderer = SimpleRenderer(symbol: routeSymbol);
       _mapViewController.graphicsOverlays.add(_routeOverlay!);
     }
 
@@ -254,8 +252,10 @@ class _FindRouteInMapState extends State<FindRouteInMap> {
   }
 
   void onTap(Offset localPosition) async {
-    _selectedGraphic?.isSelected = false;
-    setState(() => _selectedGraphic = null);
+    if (_selectedGraphic != null) {
+      _selectedGraphic!.isSelected = false;
+      setState(() => _selectedGraphic = null);
+    }
 
     final result = await _mapViewController.identifyGraphicsOverlay(
       _markerOverlay,
@@ -284,15 +284,12 @@ class _FindRouteInMapState extends State<FindRouteInMap> {
   }
 
   Future<void> reverseGeocode(Graphic graphic) async {
-    final location = graphic.geometry as ArcGISPoint?;
-    if (location == null) throw StateError('Graphic has no location');
-
     final reverseGeocodeParameters = ReverseGeocodeParameters()
       ..resultAttributeNames.addAll(['StAddr', 'City', 'Region'])
       ..maxResults = 1;
 
     final results = await widget.locatorTask!.reverseGeocode(
-      location: location,
+      location: graphic.geometry as ArcGISPoint,
       parameters: reverseGeocodeParameters,
     );
 
@@ -328,9 +325,8 @@ class _FindRouteInMapState extends State<FindRouteInMap> {
       final result = await _routeTask!.solveRoute(_routeParameters!);
       if (result.routes.isNotEmpty) {
         final routeGeometry = result.routes.first.routeGeometry;
-        final routeGraphic = Graphic(geometry: routeGeometry);
         _routeOverlay!.graphics.clear();
-        _routeOverlay!.graphics.add(routeGraphic);
+        _routeOverlay!.graphics.add(Graphic(geometry: routeGeometry));
       }
     } on ArcGISException catch (e) {
       _routeOverlay!.graphics.clear();
