@@ -108,14 +108,12 @@ class _FindRouteInMobileMapPackageState
     final appDir = await getApplicationDocumentsDirectory();
 
     final mobileMapPackages = <MobileMapPackage>[];
-
     for (final filename in ['SanFrancisco', 'Yellowstone']) {
       final mmpkFile = File('${appDir.absolute.path}/$filename.mmpk');
       final mmpk = MobileMapPackage.withFileUri(mmpkFile.uri);
       await mmpk.load();
       mobileMapPackages.add(mmpk);
     }
-
     return mobileMapPackages;
   }
 }
@@ -138,6 +136,9 @@ class _FindRouteInMapState extends State<FindRouteInMap> {
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
   final _markerOverlay = GraphicsOverlay();
+  final _routeOverlay = GraphicsOverlay();
+  RouteTask? _routeTask;
+  RouteParameters? _routeParameters;
   var _message = '';
   // A flag for when the map view is ready and controls can be used.
   var _ready = false;
@@ -147,46 +148,71 @@ class _FindRouteInMapState extends State<FindRouteInMap> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text(widget.map.item?.name ?? '')),
-      body: Stack(
-        children: [
-          ArcGISMapView(
-            controllerProvider: () => _mapViewController,
-            onMapViewReady: onMapViewReady,
-            onTap: widget.locatorTask != null ? onTap : null,
-          ),
-          // Add a banner to show the results of the identify operation.
-          SafeArea(
-            child: IgnorePointer(
-              child: Visibility(
-                visible: _message.isNotEmpty,
-                child: Container(
-                  padding: const EdgeInsets.all(10),
-                  color: Colors.black.withOpacity(0.7),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        _message,
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(color: Colors.white),
-                      ),
-                    ],
+      body: SafeArea(
+        left: false,
+        top: false,
+        right: false,
+        child: Stack(
+          children: [
+            Column(
+              children: [
+                Expanded(
+                  // Add a map view to the widget tree and set a controller.
+                  child: ArcGISMapView(
+                    controllerProvider: () => _mapViewController,
+                    onMapViewReady: onMapViewReady,
+                    onTap: widget.locatorTask != null ? onTap : null,
+                  ),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    ElevatedButton(
+                      onPressed: _selectedGraphic == null ? null : delete,
+                      child: const Text('Delete'),
+                    ),
+                    ElevatedButton(
+                      onPressed: reset,
+                      child: const Text('Reset'),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            // Add a banner to show the results of the identify operation.
+            SafeArea(
+              child: IgnorePointer(
+                child: Visibility(
+                  visible: _message.isNotEmpty,
+                  child: Container(
+                    padding: const EdgeInsets.all(10),
+                    color: Colors.black.withOpacity(0.7),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          _message,
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(color: Colors.white),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
-          // Display a progress indicator and prevent interaction until state is ready.
-          Visibility(
-            visible: !_ready,
-            child: SizedBox.expand(
-              child: Container(
-                color: Colors.white30,
-                child: const Center(child: CircularProgressIndicator()),
+            // Display a progress indicator and prevent interaction until state is ready.
+            Visibility(
+              visible: !_ready,
+              child: SizedBox.expand(
+                child: Container(
+                  color: Colors.white30,
+                  child: const Center(child: CircularProgressIndicator()),
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -201,14 +227,28 @@ class _FindRouteInMapState extends State<FindRouteInMap> {
       ..height = 35;
     pictureMarkerSymbol.offsetY = pictureMarkerSymbol.height / 2;
     _markerOverlay.renderer = SimpleRenderer(symbol: pictureMarkerSymbol);
-    _mapViewController.graphicsOverlays.add(_markerOverlay);
+
+    final routeSymbol = SimpleLineSymbol(
+      style: SimpleLineSymbolStyle.solid,
+      color: const Color.fromARGB(255, 0, 0, 255),
+      width: 5.0,
+    );
+    _routeOverlay.renderer = SimpleRenderer(symbol: routeSymbol);
+
+    _mapViewController.graphicsOverlays.addAll([_markerOverlay, _routeOverlay]);
+
+    if (widget.map.transportationNetworks.isNotEmpty) {
+      _routeTask =
+          RouteTask.withDataset(widget.map.transportationNetworks.first);
+      _routeParameters = await _routeTask?.createDefaultParameters();
+    }
 
     setState(() => _ready = true);
   }
 
   void onTap(Offset localPosition) async {
     _selectedGraphic?.isSelected = false;
-    _selectedGraphic = null;
+    setState(() => _selectedGraphic = null);
 
     final result = await _mapViewController.identifyGraphicsOverlay(
       _markerOverlay,
@@ -229,9 +269,11 @@ class _FindRouteInMapState extends State<FindRouteInMap> {
     }
     if (graphicToSelect != null) {
       graphicToSelect.isSelected = true;
-      _selectedGraphic = graphicToSelect;
+      setState(() => _selectedGraphic = graphicToSelect);
       reverseGeocode(graphicToSelect);
     }
+
+    await updateRoute();
   }
 
   void reverseGeocode(Graphic graphic) async {
@@ -258,5 +300,59 @@ class _FindRouteInMapState extends State<FindRouteInMap> {
       address = '$street, $city, $region';
     }
     setState(() => _message = address);
+  }
+
+  Future<void> updateRoute() async {
+    if (_routeTask == null ||
+        _routeParameters == null ||
+        _markerOverlay.graphics.length < 2) {
+      _routeOverlay.graphics.clear();
+      return;
+    }
+
+    final stops = _markerOverlay.graphics
+        .map((g) => Stop(g.geometry! as ArcGISPoint))
+        .toList();
+    _routeParameters!.clearStops();
+    _routeParameters!.setStops(stops);
+
+    try {
+      final result = await _routeTask!.solveRoute(_routeParameters!);
+      if (result.routes.isNotEmpty) {
+        final routeGeometry = result.routes.first.routeGeometry;
+        final routeGraphic = Graphic(geometry: routeGeometry);
+        _routeOverlay.graphics.clear();
+        _routeOverlay.graphics.add(routeGraphic);
+      }
+    } on ArcGISException catch (e) {
+      _routeOverlay.graphics.clear();
+      showError(e);
+    }
+  }
+
+  void delete() async {
+    _markerOverlay.graphics.remove(_selectedGraphic);
+    setState(() {
+      _selectedGraphic = null;
+      _message = '';
+    });
+    await updateRoute();
+  }
+
+  void reset() {
+    _selectedGraphic?.isSelected = false;
+    setState(() => _selectedGraphic = null);
+    _markerOverlay.graphics.clear();
+    _routeOverlay.graphics.clear();
+    setState(() => _message = '');
+  }
+
+  void showError(ArcGISException e) {
+    if (mounted) {
+      showDialog(
+        context: context,
+        builder: (_) => AlertDialog(content: Text(e.message)),
+      );
+    }
   }
 }
