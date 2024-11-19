@@ -67,7 +67,7 @@ class _FindRouteInMobileMapPackageState
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        // Display a list of maps from the mobile map packages.
+        // Display a list of maps from the mobile map packages once loaded.
         child: FutureBuilder(
           future: mobileMapPackages,
           builder: (context, snapshot) {
