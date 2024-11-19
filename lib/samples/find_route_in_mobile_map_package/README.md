@@ -3,6 +3,7 @@
 Display maps and use locators to enable search and routing offline using a Mobile Map Package.
 
 ![Image of find route in mobile map package](find_route_in_mobile_map_package.png)
+![Image of Transportation map](find_route_in_mobile_map_package_transportation.png)
 
 ## Use case
 
