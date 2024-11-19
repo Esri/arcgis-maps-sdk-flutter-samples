@@ -207,6 +207,27 @@ class _DownloadVectorTilesToLocalCacheState
       },
     );
 
+    _exportVectorTilesJob?.onStatusChanged.listen(
+      (status) {
+        if (status == JobStatus.succeeded) {
+          setState(() => _progress = 100.0);
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: const Text('Downloaded vector tiles successfully'),
+                duration: const Duration(seconds: 5),
+                backgroundColor: Theme.of(context).colorScheme.secondary,
+              ),
+            );
+          }
+          // Dismiss the progress indicator.
+          setState(() {
+            _isJobStarted = false;
+          });
+        }
+      },
+    );
+
     try {
       // Start the export vector tiles job.
       final result = await _exportVectorTilesJob?.run();
@@ -218,11 +239,6 @@ class _DownloadVectorTilesToLocalCacheState
     } finally {
       _exportVectorTilesJob = null;
     }
-    // Dismiss the progress indicator.
-    setState(() {
-      _isJobStarted = false;
-      _progress = 0.0;
-    });
   }
 
   // Show an error dialog.
