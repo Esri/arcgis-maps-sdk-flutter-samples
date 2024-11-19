@@ -220,10 +220,6 @@ class _DownloadVectorTilesToLocalCacheState
               ),
             );
           }
-          // Dismiss the progress indicator.
-          setState(() {
-            _isJobStarted = false;
-          });
         }
       },
     );
@@ -239,6 +235,8 @@ class _DownloadVectorTilesToLocalCacheState
     } finally {
       _exportVectorTilesJob = null;
     }
+    // Dismiss the progress indicator.
+    setState(() => _isJobStarted = false);
   }
 
   // Show an error dialog.
