@@ -71,9 +71,18 @@ class _FindRouteInMobileMapPackageState
         child: FutureBuilder(
           future: mobileMapPackages,
           builder: (context, snapshot) {
-            // Show only a progress indicator until the mobile map packages finish loading.
+            // Show a progress indicator until the mobile map packages finish loading.
             if (snapshot.connectionState != ConnectionState.done) {
-              return const Center(child: CircularProgressIndicator());
+              return const Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    CircularProgressIndicator(),
+                    SizedBox(height: 20),
+                    Text('Downloading data...'),
+                  ],
+                ),
+              );
             }
 
             // Create a list of SampleData records for maps from the loaded mobile map packages.
