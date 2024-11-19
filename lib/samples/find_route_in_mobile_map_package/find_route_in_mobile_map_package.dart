@@ -89,6 +89,7 @@ class _FindRouteInMobileMapPackageState
             final sampleData = <SampleData>[];
             for (final mmpk in snapshot.data!) {
               for (final map in mmpk.maps) {
+                // For each map create a SampleData record defining the map itself, a thumbnail and the locator task from the mobile map package.
                 sampleData.add(
                   (
                     map: map,
