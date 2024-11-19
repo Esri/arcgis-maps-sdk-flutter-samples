@@ -401,11 +401,12 @@ class _FindRouteInMapState extends State<FindRouteInMap>
 
   void reset() {
     // Clear all location markers and the route overlay.
-    _selectedGraphic?.isSelected = false;
-    setState(() => _selectedGraphic = null);
     _markerOverlay.graphics.clear();
     _routeOverlay?.graphics.clear();
-    setState(() => _message = '');
+    setState(() {
+      _selectedGraphic = null;
+      _message = '';
+    });
   }
 
   void showError(ArcGISException e) {
