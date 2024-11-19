@@ -200,7 +200,8 @@ class _FindRouteInMapState extends State<FindRouteInMap>
                     children: [
                       // Add a button to delete the selected location marker.
                       ElevatedButton(
-                        onPressed: _selectedGraphic == null ? null : delete,
+                        onPressed:
+                            _selectedGraphic == null ? null : deleteMarker,
                         child: const Text('Delete Marker'),
                       ),
                       // Add a button to reset all location markers and routes.
@@ -386,7 +387,7 @@ class _FindRouteInMapState extends State<FindRouteInMap>
     }
   }
 
-  void delete() async {
+  void deleteMarker() async {
     // Remove the selected graphic from the location marker overlay.
     _markerOverlay.graphics.remove(_selectedGraphic);
     setState(() {
