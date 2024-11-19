@@ -33,10 +33,12 @@ void main() {
     ArcGISEnvironment.apiKey = apiKey;
   }
 
+  final colorScheme = ColorScheme.fromSeed(seedColor: Colors.deepPurple);
   runApp(
     MaterialApp(
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: colorScheme,
+        appBarTheme: AppBarTheme(backgroundColor: colorScheme.inversePrimary),
       ),
       home: const SampleViewerApp(),
     ),

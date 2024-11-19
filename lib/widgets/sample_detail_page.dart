@@ -14,7 +14,6 @@ class SampleDetailPage extends StatelessWidget {
           fit: BoxFit.scaleDown,
           child: Text(sample.title),
         ),
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       ),
       body: sample.getSampleWidget(),
     );
