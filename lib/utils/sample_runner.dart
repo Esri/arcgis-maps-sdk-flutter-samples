@@ -35,8 +35,14 @@ void main() {
   const sample = String.fromEnvironment('SAMPLE');
   // Alternatively, replace sample below with the directory name of the individual sample in snake case
   // const sample = 'display_map';
+
+  final colorScheme = ColorScheme.fromSeed(seedColor: Colors.deepPurple);
   runApp(
     MaterialApp(
+      theme: ThemeData(
+        colorScheme: colorScheme,
+        appBarTheme: AppBarTheme(backgroundColor: colorScheme.inversePrimary),
+      ),
       home: sampleWidgets[sample]!(),
     ),
   );

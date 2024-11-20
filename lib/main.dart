@@ -33,10 +33,12 @@ void main() {
     ArcGISEnvironment.apiKey = apiKey;
   }
 
+  final colorScheme = ColorScheme.fromSeed(seedColor: Colors.deepPurple);
   runApp(
     MaterialApp(
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: colorScheme,
+        appBarTheme: AppBarTheme(backgroundColor: colorScheme.inversePrimary),
       ),
       home: const SampleViewerApp(),
     ),
@@ -85,7 +87,6 @@ class _SampleViewerAppState extends State<SampleViewerApp> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(title),
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         actions: [
           IconButton(
             icon: const Icon(Icons.info_outline),
@@ -108,8 +109,6 @@ class _SampleViewerAppState extends State<SampleViewerApp> {
                             onPressed: () => Navigator.pop(context),
                           ),
                         ],
-                        backgroundColor:
-                            Theme.of(context).colorScheme.inversePrimary,
                         shape: const RoundedRectangleBorder(
                           borderRadius: BorderRadius.vertical(
                             top: Radius.circular(30.0),

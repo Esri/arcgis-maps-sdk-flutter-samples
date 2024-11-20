@@ -1250,6 +1250,49 @@
     "title": "Find route",
     "key": "find_route"
   },
+  "find_route_in_mobile_map_package": {
+    "category": "Maps",
+    "description": "Display maps and use locators to enable search and routing offline using a Mobile Map Package.",
+    "ignore": false,
+    "images": [
+      "find_route_in_mobile_map_package.png"
+    ],
+    "keywords": [
+      "disconnected",
+      "field mobility",
+      "geocode",
+      "network",
+      "network analysis",
+      "offline",
+      "routing",
+      "search",
+      "transportation",
+      "GeocodeResult",
+      "MobileMapPackage",
+      "ReverseGeocodeParameters",
+      "Route",
+      "RouteParameters",
+      "RouteResult",
+      "RouteTask",
+      "TransportationNetworkDataset"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+      "GeocodeResult",
+      "MobileMapPackage",
+      "ReverseGeocodeParameters",
+      "Route",
+      "RouteParameters",
+      "RouteResult",
+      "RouteTask",
+      "TransportationNetworkDataset"
+    ],
+    "snippets": [
+      "find_route_in_mobile_map_package.dart"
+    ],
+    "title": "Find route in mobile map package",
+    "key": "find_route_in_mobile_map_package"
+  },
   "generate_offline_map": {
     "category": "Edit and Manage Data",
     "description": "Take a web map offline.",
