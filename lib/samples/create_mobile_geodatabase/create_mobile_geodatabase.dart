@@ -291,7 +291,7 @@ class _CreateMobileGeodatabaseState extends State<CreateMobileGeodatabase>
                         label: Text('OID'),
                       ),
                       DataColumn(
-                        label: Text('Collection Timestamp'),
+                        label: Text('Collection Timestamp', overflow: TextOverflow.ellipsis,),
                       ),
                     ],
                     rows: dataRows,
