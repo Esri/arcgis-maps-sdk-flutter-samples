@@ -175,17 +175,28 @@ class _ShowServiceAreaState extends State<ShowServiceArea>
       _facilityGraphicsOverlay,
       _barrierGraphicsOverlay,
     ]);
-
-    // Create default service area parameters for using to solve a service area task.
-    _serviceAreaParameters = await _serviceAreaTask.createDefaultParameters();
-    // Note: returnPolygons defaults to true to return all service areas.
-    // Set the overlap behavior when there are results for multiple facilities.
-    _serviceAreaParameters.geometryAtOverlap =
-        ServiceAreaOverlapGeometry.dissolve;
-    // Customize impedance cutoffs for facilities (drive time minutes).
-    // Note: the defaults are initially set as 5, 10 and 15.
-    _serviceAreaParameters.defaultImpedanceCutoffs.clear();
-    _serviceAreaParameters.defaultImpedanceCutoffs.addAll([3, 8, 12]);
+   
+    try {
+       // Create default service area parameters for using to solve a service area task.
+      _serviceAreaParameters = await _serviceAreaTask.createDefaultParameters();
+      // Note: returnPolygons defaults to true to return all service areas.
+      // Set the overlap behavior when there are results for multiple facilities.
+      _serviceAreaParameters.geometryAtOverlap =
+          ServiceAreaOverlapGeometry.dissolve;
+      // Customize impedance cutoffs for facilities (drive time minutes).
+      // Note: the defaults are initially set as 5, 10 and 15.
+      _serviceAreaParameters.defaultImpedanceCutoffs.clear();
+      _serviceAreaParameters.defaultImpedanceCutoffs.addAll([3, 8, 12]);
+    } on Exception catch (e) {
+      if (mounted) {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            content: Text('Error creating service area parameters:\n $e'),
+          ),
+        );
+      }
+    }
 
     // Toggle the _ready flag to enable the UI.
     setState(() => _ready = true);
