@@ -1,0 +1,29 @@
+{
+    "category": "Layers",
+    "description": "Display dimension features from a mobile map package.",
+    "ignore": false,
+    "images": [
+        "display_dimensions.png"
+    ],
+    "keywords": [
+        "definition expression",
+        "dimension",
+        "distance",
+        "layer",
+        "length",
+        "mmpk",
+        "mobile map package",
+        "utility",
+        "DimensionLayer",
+        "MobileMapPackage"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+        "DimensionLayer",
+        "MobileMapPackage"
+    ],
+    "snippets": [
+        "display_dimensions.dart"
+    ],
+    "title": "Display dimensions"
+}

@@ -10,18 +10,24 @@ Feature clustering can be used to dynamically aggregate groups of points that ar
 
 ## How to use the sample
 
-Pan and zoom the map to view how clustering is dynamically updated. Toggle clustering off to view the original point features that make up the clustered elements.
+Pan and zoom the map to view how clustering is dynamically updated. Toggle clustering off to view the original point features that make up the clustered elements. When clustering is "On", you can tap on a clustered geoelement to view a list of contained geoelements.
 
 ## How it works
 
 1. Create a map from a web map `PortalItem`.
 2. Get the cluster enabled layer from the map's operational layers.
 3. Get the `FeatureReduction` from the feature layer and set the `enabled` bool to enable or disable clustering on the feature layer.
+4. When the user taps on the map view, call `identifyLayer()`, passing in the layer, map tap location and tolerance.
+5. Select the `AggregateGeoElement` from the resulting `IdentifyLayerResult` and call `getGeoElements()` to retrieve the containing `GeoElement` objects.
+6. Display the list of contained `GeoElement` objects in a dialog.
 
 ## Relevant API
 
+* AggregateGeoElement
 * FeatureLayer
 * FeatureReduction
+* GeoElement
+* IdentifyLayerResult
 
 ## About the data
 

@@ -110,7 +110,7 @@ class _FindAddressWithReverseGeocodeState
 
     // Normalize the point incase the tapped location crosses the international date line.
     final normalizedTapPoint =
-        GeometryEngine.normalizeCentralMeridian(geometry: mapTapPoint);
+        GeometryEngine.normalizeCentralMeridian(mapTapPoint);
     if (normalizedTapPoint == null) return;
 
     // Create a graphic object for the tapped point.

@@ -1,5 +1,5 @@
 {
-    "category": "Maps",
+    "category": "Layers",
     "description": "Display a time-enabled feature layer with a time offset.",
     "ignore": false,
     "images": [

@@ -1,0 +1,25 @@
+{
+    "category": "Layers",
+    "description": "Display a tiled web layer.",
+    "ignore": false,
+    "images": [
+        "add_web_tiled_layer.png"
+    ],
+    "keywords": [
+        "OGC",
+        "layer",
+        "tiled",
+        "tiles",
+        "Basemap",
+        "WebTiledLayer"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+        "Basemap",
+        "WebTiledLayer"
+    ],
+    "snippets": [
+        "add_web_tiled_layer.dart"
+    ],
+    "title": "Add web tiled layer"
+}

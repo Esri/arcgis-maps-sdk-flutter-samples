@@ -91,11 +91,11 @@ class _SelectFeaturesInFeatureLayerState
       final featureQueryResult = await _featureLayer.getSelectedFeatures();
       final selectedFeatures = featureQueryResult.features();
       for (final feature in selectedFeatures) {
-        _featureLayer.unselectFeature(feature: feature);
+        _featureLayer.unselectFeature(feature);
       }
     } else {
       // Select the identified features.
-      _featureLayer.selectFeatures(features: features);
+      _featureLayer.selectFeatures(features);
     }
   }
 }

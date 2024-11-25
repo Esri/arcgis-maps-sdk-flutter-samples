@@ -13,14 +13,14 @@
         "mobile",
         "navigation",
         "ArcGISMap",
-        "ArcGISMapView",
+        "ArcGISMapViewController",
         "LocationDisplay",
         "LocationDisplay.autoPanMode"
     ],
     "redirect_from": [],
     "relevant_apis": [
         "ArcGISMap",
-        "ArcGISMapView",
+        "ArcGISMapViewController",
         "LocationDisplay",
         "LocationDisplay.autoPanMode"
     ],

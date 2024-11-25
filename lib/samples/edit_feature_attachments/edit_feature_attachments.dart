@@ -88,7 +88,7 @@ class _EditFeatureAttachmentsState extends State<EditFeatureAttachments>
     final features =
         identifyLayerResult.geoElements.whereType<Feature>().toList();
     if (features.isNotEmpty) {
-      _featureLayer.selectFeatures(features: features);
+      _featureLayer.selectFeatures(features);
       final selectedFeature = features.first as ArcGISFeature;
       if (mounted) _showBottomSheet(selectedFeature);
     }
@@ -173,19 +173,18 @@ class _AttachmentsOptionsState extends State<AttachmentsOptions>
                       color: Colors.white,
                     ),
                   ),
-                  IconButton(
-                    icon: const Icon(Icons.close),
-                    onPressed: () => Navigator.pop(context),
-                  ),
-                  Visibility(
-                    visible: isLoading,
-                    child: const SizedBox(
+                 isLoading 
+                 ? const SizedBox(
                       height: 18,
                       width: 18,
                       child: CircularProgressIndicator(
                         color: Colors.white,
                       ),
-                    ),
+                    )
+                  : const SizedBox.shrink(),
+                  IconButton(
+                    icon: const Icon(Icons.close),
+                    onPressed: () => Navigator.pop(context),
                   ),
                 ],
               ),

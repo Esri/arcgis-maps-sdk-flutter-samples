@@ -22,9 +22,9 @@ Tap on the `Change Grid` button in the toolbar to open a settings view. You can 
 
 ## Relevant API
 
+* ArcGISMapView
 * Grid
 * LatitudeLongitudeGrid
-* ArcGISMapView
 * MGRSGrid
 * SimpleLineSymbol
 * TextSymbol

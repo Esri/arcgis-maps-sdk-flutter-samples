@@ -149,7 +149,7 @@ class _FilterByDefinitionExpressionOrDisplayFilterState
     _featureLayer.definitionExpression = _definitionExpression;
     // Get the current extent of the map view.
     final extent = _mapViewController
-        .getCurrentViewpoint(viewpointType: ViewpointType.boundingGeometry)
+        .getCurrentViewpoint(ViewpointType.boundingGeometry)
         ?.targetGeometry
         .extent;
 
@@ -158,8 +158,8 @@ class _FilterByDefinitionExpressionOrDisplayFilterState
     queryParameters.geometry = extent;
 
     // Query the feature count.
-    final featureCount = await _featureLayer.featureTable!
-        .queryFeatureCount(queryParameters: queryParameters);
+    final featureCount =
+        await _featureLayer.featureTable!.queryFeatureCount(queryParameters);
 
     // Show the feature count in an alert dialog.
     if (mounted) {

@@ -1,0 +1,36 @@
+{
+    "category": "Layers",
+    "description": "Display a layer from a WFS service using data from URL",
+    "ignore": false,
+    "images": [
+        "add_wfs_layer.png"
+    ],
+    "keywords": [
+        "OGC",
+        "WFS",
+        "browse",
+        "catalog",
+        "feature",
+        "interaction cache",
+        "layers",
+        "service",
+        "web",
+        "ArcGISMapView",
+        "ArcGISMapViewController.onNavigationChanged",
+        "FeatureLayer",
+        "WfsFeatureTable",
+        "WfsFeatureTable.populateFromService"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+        "ArcGISMapView",
+        "ArcGISMapViewController.onNavigationChanged",
+        "FeatureLayer",
+        "WfsFeatureTable",
+        "WfsFeatureTable.populateFromService"
+    ],
+    "snippets": [
+        "add_wfs_layer.dart"
+    ],
+    "title": "Add WFS layer"
+}

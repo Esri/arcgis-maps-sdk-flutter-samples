@@ -104,7 +104,7 @@ class _ApplyClassBreaksRendererToSublayerState
 
     // Load the image layer and counties sublayer.
     await imageLayer.load();
-    _countiesSublayer = imageLayer.arcGISMapImageSublayers.elementAt(2);
+    _countiesSublayer = imageLayer.mapImageSublayers.elementAt(2);
     await _countiesSublayer.load();
 
     // Set the ready state variable to true to enable the sample UI.

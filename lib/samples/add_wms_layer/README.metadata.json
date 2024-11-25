@@ -1,0 +1,25 @@
+{
+    "category": "Layers",
+    "description": "Display a WMS layer using a WMS service URL.",
+    "ignore": false,
+    "images": [
+        "add_wms_layer.png"
+    ],
+    "keywords": [
+        "OGC",
+        "web map service",
+        "ArcGISMap",
+        "ArcGISMapView",
+        "WmsLayer"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+        "ArcGISMap",
+        "ArcGISMapView",
+        "WmsLayer"
+    ],
+    "snippets": [
+        "add_wms_layer.dart"
+    ],
+    "title": "Add WMS layer"
+}

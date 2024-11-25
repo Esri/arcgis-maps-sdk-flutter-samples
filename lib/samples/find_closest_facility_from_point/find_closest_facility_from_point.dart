@@ -43,7 +43,7 @@ class _FindClosestFacilityFromPointState
     'https://services2.arcgis.com/ZQgQTuoyBrtmoGdP/ArcGIS/rest/services/San_Diego_Incidents/FeatureServer/0',
   );
   // Create a task for the closest facility service.
-  final _closestFacilityTask = ClosestFacilityTask.withUrl(
+  final _closestFacilityTask = ClosestFacilityTask.withUri(
     Uri.parse(
       'https://sampleserver6.arcgisonline.com/arcgis/rest/services/NetworkAnalysis/SanDiego/NAServer/ClosestFacility',
     ),
@@ -122,7 +122,7 @@ class _FindClosestFacilityFromPointState
         ServiceFeatureTable.withUri(_facilitiesLayerUri);
     // Create a marker symbol for the facilities.
     final facilitiesMarkerSymbol =
-        PictureMarkerSymbol.withUrl(_fireStationImageUri)
+        PictureMarkerSymbol.withUri(_fireStationImageUri)
           ..width = 30
           ..height = 30;
     // Create a feature layer for the facilities.
@@ -134,7 +134,7 @@ class _FindClosestFacilityFromPointState
     final incidentsFeatureTable =
         ServiceFeatureTable.withUri(_incidentsLayerUri);
     // Create a marker symbol for the incidents.
-    final incidentsMarkerSymbol = PictureMarkerSymbol.withUrl(_fireImageUri)
+    final incidentsMarkerSymbol = PictureMarkerSymbol.withUri(_fireImageUri)
       ..width = 30
       ..height = 30;
     // Create a feature layer for the incidents.
@@ -179,7 +179,7 @@ class _FindClosestFacilityFromPointState
   FeatureLayer buildFeatureLayer(Uri tableUri, Uri imageUri) {
     // Create a feature table and feature layer for the facilities or incidents.
     final featureTable = ServiceFeatureTable.withUri(tableUri);
-    final markerSymbol = PictureMarkerSymbol.withUrl(imageUri)
+    final markerSymbol = PictureMarkerSymbol.withUri(imageUri)
       ..width = 30
       ..height = 30;
     final featureLayer = FeatureLayer.withFeatureTable(featureTable)
@@ -212,7 +212,7 @@ class _FindClosestFacilityFromPointState
     setState(() => _ready = false);
     // Solve the closest facility task with the parameters.
     final result = await _closestFacilityTask.solveClosestFacility(
-      closestFacilityParameters: _closestFacilityParameters,
+      _closestFacilityParameters,
     );
     for (var incidentIdx = 0;
         incidentIdx < result.incidents.length;

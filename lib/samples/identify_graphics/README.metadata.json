@@ -1,0 +1,25 @@
+{
+    "category": "Visualization",
+    "description": "Display an alert message when a graphic is tapped.",
+    "ignore": false,
+    "images": [
+        "identify_graphics.png"
+    ],
+    "keywords": [
+        "graphics",
+        "identify",
+        "ArcGISMapView",
+        "Graphic",
+        "GraphicsOverlay"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+        "ArcGISMapView",
+        "Graphic",
+        "GraphicsOverlay"
+    ],
+    "snippets": [
+        "identify_graphics.dart"
+    ],
+    "title": "Identify graphics"
+}

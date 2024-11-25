@@ -133,8 +133,7 @@ class _QueryFeatureTableState extends State<QueryFeatureTable>
         "upper(STATE_NAME) LIKE '${stateName.toUpperCase().sqlEscape()}%'";
 
     // Query the feature table with the query parameters.
-    final queryResult =
-        await _featureTable.queryFeatures(parameters: queryParameters);
+    final queryResult = await _featureTable.queryFeatures(queryParameters);
 
     // Get the first feature from the query result.
     final iterator = queryResult.features().iterator;
@@ -147,7 +146,7 @@ class _QueryFeatureTableState extends State<QueryFeatureTable>
           paddingInDiPs: 20.0,
         );
       }
-      _featureLayer.selectFeature(feature: feature);
+      _featureLayer.selectFeature(feature);
     } else {
       // Show an alert dialog if no matching state is found.
       if (mounted) {

@@ -1,0 +1,27 @@
+{
+    "category": "Layers",
+    "description": "Change the style of a Web Map Service (WMS) layer.",
+    "ignore": false,
+    "images": [
+        "apply_style_to_wms_layer.png"
+    ],
+    "keywords": [
+        "WMS",
+        "imagery",
+        "styles",
+        "visualization",
+        "WmsLayer",
+        "WmsLayerInfo",
+        "WmsSublayer"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+        "WmsLayer",
+        "WmsLayerInfo",
+        "WmsSublayer"
+    ],
+    "snippets": [
+        "apply_style_to_wms_layer.dart"
+    ],
+    "title": "Apply style to WMS layer"
+}

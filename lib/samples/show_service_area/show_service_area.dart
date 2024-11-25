@@ -53,7 +53,7 @@ class _ShowServiceAreaState extends State<ShowServiceArea>
   ];
 
   // Create a service area task used to find service areas around a facility.
-  final _serviceAreaTask = ServiceAreaTask.withUrl(
+  final _serviceAreaTask = ServiceAreaTask.withUri(
     Uri.parse(
       'https://route-api.arcgis.com/arcgis/rest/services/World/ServiceAreas/NAServer/ServiceArea_World',
     ),
@@ -162,7 +162,7 @@ class _ShowServiceAreaState extends State<ShowServiceArea>
 
     // Apply a renderer to the facility graphics overlay.
     _facilityGraphicsOverlay.renderer = SimpleRenderer(
-      symbol: PictureMarkerSymbol.withUrl(
+      symbol: PictureMarkerSymbol.withUri(
         Uri.parse(
           'https://static.arcgis.com/images/Symbols/SafetyHealth/Hospital.png',
         ),
@@ -219,8 +219,7 @@ class _ShowServiceAreaState extends State<ShowServiceArea>
       // For each graphic in the facilities graphics overlay, add a facility to the parameters.
       final facilities = _facilityGraphicsOverlay.graphics
           .map(
-            (graphic) =>
-                ServiceAreaFacility(point: graphic.geometry as ArcGISPoint),
+            (graphic) => ServiceAreaFacility(graphic.geometry as ArcGISPoint),
           )
           .toList();
       _serviceAreaParameters.setFacilities(facilities);
@@ -228,14 +227,14 @@ class _ShowServiceAreaState extends State<ShowServiceArea>
       // For each graphic in the barriers graphics overlay, add a polygon barrier to the parameters.
       final barriers = _barrierGraphicsOverlay.graphics
           .map(
-            (graphic) => PolygonBarrier(polygon: graphic.geometry as Polygon),
+            (graphic) => PolygonBarrier(graphic.geometry as Polygon),
           )
           .toList();
       _serviceAreaParameters.setPolygonBarriers(barriers);
 
       // Solve the service area using the parameters.
       final serviceAreaResult = await _serviceAreaTask.solveServiceArea(
-        serviceAreaParameters: _serviceAreaParameters,
+        _serviceAreaParameters,
       );
 
       // Display service area polygons for each facility - since the service area parameters have

@@ -17,6 +17,7 @@
 import 'dart:convert';
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/models/sample.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/widgets/about_info.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'widgets/sample_list_view.dart';
@@ -25,13 +26,23 @@ void main() {
   // Supply your apiKey using the --dart-define-from-file command line argument.
   const apiKey = String.fromEnvironment('API_KEY');
   // Alternatively, replace the above line with the following and hard-code your apiKey here:
-  // const apiKey = 'your_api_key_here';
+  // const apiKey = ''; // Your API Key here.
   if (apiKey.isEmpty) {
     throw Exception('apiKey undefined');
   } else {
     ArcGISEnvironment.apiKey = apiKey;
   }
-  runApp(const SampleViewerApp());
+
+  final colorScheme = ColorScheme.fromSeed(seedColor: Colors.deepPurple);
+  runApp(
+    MaterialApp(
+      theme: ThemeData(
+        colorScheme: colorScheme,
+        appBarTheme: AppBarTheme(backgroundColor: colorScheme.inversePrimary),
+      ),
+      home: const SampleViewerApp(),
+    ),
+  );
 }
 
 class SampleViewerApp extends StatefulWidget {
@@ -71,53 +82,83 @@ class _SampleViewerAppState extends State<SampleViewerApp> {
 
   @override
   Widget build(BuildContext context) {
-    final ColorScheme colorScheme =
-        ColorScheme.fromSeed(seedColor: Colors.deepPurple);
     const title = 'ArcGIS Maps SDK for Flutter Samples';
 
-    return MaterialApp(
-      title: title,
-      theme: ThemeData(
-        colorScheme: colorScheme,
-        appBarTheme: AppBarTheme(backgroundColor: colorScheme.inversePrimary),
-      ),
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text(title),
-        ),
-        body: Column(
-          children: [
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8),
-              child: TextField(
-                focusNode: _searchFocusNode,
-                controller: _textEditingController,
-                onChanged: onSearchChanged,
-                autocorrect: false,
-                decoration: InputDecoration(
-                  hintText: 'Search...',
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      _searchHasFocus ? Icons.cancel : Icons.search,
-                    ),
-                    onPressed: onSearchSuffixPressed,
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(title),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.info_outline),
+            onPressed: () => showModalBottomSheet(
+              context: context,
+              isScrollControlled: true,
+              isDismissible: true,
+              useSafeArea: true,
+              builder: (context) {
+                return FractionallySizedBox(
+                  heightFactor: 0.5,
+                  child: Column(
+                    children: [
+                      AppBar(
+                        automaticallyImplyLeading: false,
+                        title: const Text('About'),
+                        actions: [
+                          IconButton(
+                            icon: const Icon(Icons.close),
+                            onPressed: () => Navigator.pop(context),
+                          ),
+                        ],
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.vertical(
+                            top: Radius.circular(30.0),
+                          ),
+                        ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.all(20.0),
+                        child: const AboutInfo(title: title),
+                      ),
+                    ],
                   ),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+      body: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: TextField(
+              focusNode: _searchFocusNode,
+              controller: _textEditingController,
+              onChanged: onSearchChanged,
+              autocorrect: false,
+              decoration: InputDecoration(
+                hintText: 'Search...',
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    _searchHasFocus ? Icons.cancel : Icons.search,
+                  ),
+                  onPressed: onSearchSuffixPressed,
                 ),
               ),
             ),
-            _ready
-                ? Expanded(
-                    child: Listener(
-                      onPointerDown: (_) =>
-                          FocusManager.instance.primaryFocus?.unfocus(),
-                      child: SampleListView(samples: _filteredSamples),
-                    ),
-                  )
-                : const Center(
-                    child: Text('Loading samples...'),
+          ),
+          _ready
+              ? Expanded(
+                  child: Listener(
+                    onPointerDown: (_) =>
+                        FocusManager.instance.primaryFocus?.unfocus(),
+                    child: SampleListView(samples: _filteredSamples),
                   ),
-          ],
-        ),
+                )
+              : const Center(
+                  child: Text('Loading samples...'),
+                ),
+        ],
       ),
     );
   }

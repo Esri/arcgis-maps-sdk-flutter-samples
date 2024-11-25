@@ -206,7 +206,7 @@ class _ManageBookmarksState extends State<ManageBookmarks> {
     final bookmark = Bookmark(
       name: name,
       viewpoint: _mapViewController.getCurrentViewpoint(
-        viewpointType: ViewpointType.centerAndScale,
+        ViewpointType.centerAndScale,
       ),
     );
     setState(() => _bookmarks.add(bookmark));
