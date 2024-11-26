@@ -131,7 +131,8 @@ class _AddFeatureCollectionLayerFromTableState
     );
 
     // Build a polyline.
-    final polylineBuilder = PolylineBuilder(spatialReference: SpatialReference(wkid: 4326));
+    final polylineBuilder =
+        PolylineBuilder(spatialReference: SpatialReference(wkid: 4326));
     polylineBuilder.addPoint(
       ArcGISPoint(
         x: -79.497238,
@@ -181,7 +182,8 @@ class _AddFeatureCollectionLayerFromTableState
     );
 
     // Build a polygon.
-    final polygonBuilder = PolygonBuilder(spatialReference: SpatialReference(wkid: 4326));
+    final polygonBuilder =
+        PolygonBuilder(spatialReference: SpatialReference(wkid: 4326));
     polygonBuilder.addPoint(
       ArcGISPoint(
         x: -79.497238,

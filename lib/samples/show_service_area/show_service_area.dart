@@ -175,9 +175,9 @@ class _ShowServiceAreaState extends State<ShowServiceArea>
       _facilityGraphicsOverlay,
       _barrierGraphicsOverlay,
     ]);
-   
+
     try {
-       // Create default service area parameters for using to solve a service area task.
+      // Create default service area parameters for using to solve a service area task.
       _serviceAreaParameters = await _serviceAreaTask.createDefaultParameters();
       // Note: returnPolygons defaults to true to return all service areas.
       // Set the overlap behavior when there are results for multiple facilities.

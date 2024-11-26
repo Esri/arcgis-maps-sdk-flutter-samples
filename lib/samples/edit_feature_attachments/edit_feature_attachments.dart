@@ -173,15 +173,15 @@ class _AttachmentsOptionsState extends State<AttachmentsOptions>
                       color: Colors.white,
                     ),
                   ),
-                 isLoading 
-                 ? const SizedBox(
-                      height: 18,
-                      width: 18,
-                      child: CircularProgressIndicator(
-                        color: Colors.white,
-                      ),
-                    )
-                  : const SizedBox.shrink(),
+                  isLoading
+                      ? const SizedBox(
+                          height: 18,
+                          width: 18,
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                          ),
+                        )
+                      : const SizedBox.shrink(),
                   IconButton(
                     icon: const Icon(Icons.close),
                     onPressed: () => Navigator.pop(context),
