@@ -87,6 +87,8 @@ class _AddFeatureLayersState extends State<AddFeatureLayers>
     return Scaffold(
       body: SafeArea(
         top: false,
+        left: false,
+        right: false,
         // Create a column with a map view and a dropdown button.
         child: Column(
           children: [

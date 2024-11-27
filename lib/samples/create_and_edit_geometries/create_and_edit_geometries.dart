@@ -78,6 +78,8 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
     return Scaffold(
       body: SafeArea(
         top: false,
+        left: false,
+        right: false,
         child: Stack(
           children: [
             Column(

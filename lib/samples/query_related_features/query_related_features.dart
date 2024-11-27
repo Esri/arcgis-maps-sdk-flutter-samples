@@ -35,6 +35,8 @@ class _QueryRelatedFeaturesState extends State<QueryRelatedFeatures>
     return Scaffold(
       body: SafeArea(
         top: false,
+        left: false,
+        right: false,
         child: Stack(
           children: [
             // Add a map view to the widget tree and set a controller.

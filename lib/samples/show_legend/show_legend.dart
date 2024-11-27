@@ -38,6 +38,8 @@ class _ShowLegendState extends State<ShowLegend> with SampleStateSupport {
     return Scaffold(
       body: SafeArea(
         top: false,
+        left: false,
+        right: false,
         child: Column(
           // Add the map view and dropdown button to a column.
           children: [

@@ -47,6 +47,8 @@ class _ShowGridState extends State<ShowGrid> with SampleStateSupport {
     return Scaffold(
       body: SafeArea(
         top: false,
+        left: false,
+        right: false,
         child: Stack(
           children: [
             Column(

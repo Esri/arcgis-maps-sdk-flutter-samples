@@ -78,6 +78,8 @@ class _SnapGeometryEditsState extends State<SnapGeometryEdits>
     return Scaffold(
       body: SafeArea(
         top: false,
+        left: false,
+        right: false,
         child: Stack(
           children: [
             Column(

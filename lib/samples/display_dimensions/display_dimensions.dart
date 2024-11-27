@@ -52,6 +52,8 @@ class _DisplayDimensionsState extends State<DisplayDimensions>
     return Scaffold(
       body: SafeArea(
         top: false,
+        left: false,
+        right: false,
         child: Stack(
           children: [
             Column(
