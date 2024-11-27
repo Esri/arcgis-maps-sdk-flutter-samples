@@ -68,6 +68,8 @@ class _SetReferenceScaleState extends State<SetReferenceScale>
     return Scaffold(
       body: SafeArea(
         top: false,
+        left: false,
+        right: false,
         // Add a column to the widget tree.
         child: Column(
           children: [

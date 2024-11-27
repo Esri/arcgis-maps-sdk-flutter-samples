@@ -54,6 +54,8 @@ class _GenerateOfflineMapState extends State<GenerateOfflineMap>
     return Scaffold(
       body: SafeArea(
         top: false,
+        left: false,
+        right: false,
         child: Stack(
           children: [
             Column(

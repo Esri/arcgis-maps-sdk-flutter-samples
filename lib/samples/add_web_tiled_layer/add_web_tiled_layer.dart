@@ -36,6 +36,8 @@ class _AddWebTiledLayerState extends State<AddWebTiledLayer>
     return Scaffold(
       body: SafeArea(
         top: false,
+        left: false,
+        right: false,
         child: Stack(
           children: [
             Column(

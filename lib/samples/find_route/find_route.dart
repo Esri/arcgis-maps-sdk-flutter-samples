@@ -55,6 +55,8 @@ class _FindRouteState extends State<FindRoute> with SampleStateSupport {
     return Scaffold(
       body: SafeArea(
         top: false,
+        left: false,
+        right: false,
         child: Stack(
           children: [
             // Create a column with buttons for generating the route and showing the directions.
