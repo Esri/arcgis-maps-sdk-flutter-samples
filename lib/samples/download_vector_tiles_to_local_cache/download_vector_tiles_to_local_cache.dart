@@ -222,13 +222,13 @@ class _DownloadVectorTilesToLocalCacheState
               backgroundColor: Theme.of(context).colorScheme.secondary,
             ),
           );
-        }
 
-        if (status == JobStatus.failed || status == JobStatus.succeeded) {
           // delay 5 seconds to dismiss the progress indicator.
-           Future.delayed(const Duration(seconds: 5), () {
+          Future.delayed(const Duration(seconds: 5), () {
             setState(() => _isJobStarted = false);
           });
+        } else if (status == JobStatus.failed) {
+          setState(() => _isJobStarted = false);
         }
       },
     );
