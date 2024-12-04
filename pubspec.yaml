@@ -21,9 +21,12 @@ dependencies:
   simple_html_css: ^5.0.0
   webview_flutter: ^4.8.0
   package_info_plus: ^8.1.0
+  build: ^2.4.1
+  build_config: ^1.1.1
 
 dev_dependencies:
   flutter_lints: ^4.0.0
+  build_runner: ^2.4.13
 
 flutter:
   uses-material-design: true

@@ -26,6 +26,12 @@ Note on Windows: this step requires permission to create symlinks. Either run th
 dart run arcgis_maps install
 ```
 
+Use `build_runner` to generate support code.
+
+```
+dart run build_runner build
+```
+
 Now you are ready to run the samples app!
 
 ## Running the Samples app
