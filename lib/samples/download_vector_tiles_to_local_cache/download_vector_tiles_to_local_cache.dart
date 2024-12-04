@@ -222,8 +222,7 @@ class _DownloadVectorTilesToLocalCacheState
               backgroundColor: Theme.of(context).colorScheme.secondary,
             ),
           );
-
-          // delay 5 seconds to dismiss the progress indicator.
+          // Hide the progress indicator after a 5 second delay so that the user can see the job completed.
           Future.delayed(
             const Duration(seconds: 5),
             () => setState(() => _isJobStarted = false),
