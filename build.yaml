@@ -1,7 +1,7 @@
 builders:
-  copyBuilder:
+  sampleCatalogBuilder:
     import: "package:arcgis_maps_sdk_flutter_samples/builder.dart"
-    builder_factories: ["copyBuilder"]
-    build_extensions: {".txt": [".txt.copy"]}
+    builder_factories: ["sampleCatalogBuilder"]
+    build_extensions: {"$package$": ["assets/generated_samples_list.json"]}
     build_to: source
     auto_apply: root_package
