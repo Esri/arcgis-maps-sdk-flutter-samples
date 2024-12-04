@@ -10,7 +10,6 @@ class SampleCatalogBuilder implements Builder {
   @override
   final buildExtensions = const {
     r'$package$': ['assets/generated_samples_list.json'],
-    //fixme add to .gitignore
   };
 
   @override
