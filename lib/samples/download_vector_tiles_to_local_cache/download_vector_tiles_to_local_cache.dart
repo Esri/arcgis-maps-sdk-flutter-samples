@@ -224,9 +224,10 @@ class _DownloadVectorTilesToLocalCacheState
           );
 
           // delay 5 seconds to dismiss the progress indicator.
-          Future.delayed(const Duration(seconds: 5), () {
-            setState(() => _isJobStarted = false);
-          });
+          Future.delayed(
+            const Duration(seconds: 5),
+            () => setState(() => _isJobStarted = false),
+          );
         } else if (status == JobStatus.failed) {
           setState(() => _isJobStarted = false);
         }
