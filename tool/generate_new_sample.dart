@@ -46,9 +46,6 @@ void createNewSample(String sampleCamelName) {
 
   // Create the sample file
   createNewSampleFile(sampleDirectory, sampleSnakeName, sampleCamelName);
-
-  // Add the sample to the samples_widget_list.dart file
-  addSampleToSamplesWidgetList(sampleRootDirectory);
 }
 
 // Convert a camel case string to snake case.
@@ -58,25 +55,6 @@ String camelToSnake(String input) {
     (Match match) => '${match.group(1)}_${match.group(2)!.toLowerCase()}',
   );
   return snakeCase.toLowerCase();
-}
-
-// Convert a snake case string to camel case.
-String snakeToCamel(String input) {
-  final camelCase = input.replaceAllMapped(
-    RegExp('(_[a-z])'),
-    (Match match) => match.group(0)!.toUpperCase().substring(1),
-  );
-  var newName = camelCase[0].toUpperCase() + camelCase.substring(1);
-  if (newName.contains('Oauth')) {
-    newName = newName.replaceFirst('Oauth', 'OAuth');
-  }
-  if (newName.contains('Ogc')) {
-    newName = newName.replaceFirst('Ogc', 'OGC');
-  }
-  if (newName.contains('Api')) {
-    newName = newName.replaceFirst('Api', 'API');
-  }
-  return newName;
 }
 
 // Create a new sample README.md file,
@@ -132,44 +110,6 @@ void createNewSampleFile(
     }
   }
   print('>A sample file $sampleCamelName.dart created');
-}
-
-// Regenerate the samples_widget_list.dart file
-void addSampleToSamplesWidgetList(Directory sampleRootDirectory) {
-  final ps = Platform.pathSeparator;
-  final samplesWidgetListFile = File(
-    '${sampleRootDirectory.parent.path}${ps}models${ps}samples_widget_list.dart',
-  );
-
-  final buffer = StringBuffer();
-  final sortedSampleNames = sampleRootDirectory
-      .listSync()
-      .whereType<Directory>()
-      .map((entity) => entity.path.split(ps).last)
-      .toList()
-    ..sort();
-
-  for (final sampleName in sortedSampleNames) {
-    buffer.writeln(
-      "import 'package:arcgis_maps_sdk_flutter_samples/samples/$sampleName/$sampleName.dart';",
-    );
-  }
-
-  buffer.writeln(
-    '\n// A list of all the Widgets for individual Samples.\n// Used by the Sample Viewer App to display the Widget when a sample is selected.\n// The key is the directory name for the sample which is in snake case. E.g. display_map',
-  );
-
-  buffer.writeln('final sampleWidgets = {');
-  for (final sampleName in sortedSampleNames) {
-    final camelCaseName = snakeToCamel(sampleName);
-    buffer.writeln("  '$sampleName': () => const $camelCaseName(),");
-  }
-  buffer.writeln('};');
-  samplesWidgetListFile.writeAsStringSync(buffer.toString());
-
-  // Run dart format on the file
-  Process.runSync('dart', ['format', samplesWidgetListFile.path]);
-  print('>The samples_widget_list.dart regenerated');
 }
 
 final copyright = '''

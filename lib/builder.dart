@@ -98,15 +98,14 @@ class SampleWidgetsBuilder implements Builder {
       buffer.writeln("  '$sampleName': () => const $camelCaseName(),");
     }
     buffer.writeln('};');
-    final input = buffer.toString();
 
-    // Run dart format on the file
+    // Run dart format on the buffer
     final formatProcess = await Process.start('dart', ['format']);
-    formatProcess.stdin.writeln(input);
+    formatProcess.stdin.writeln(buffer.toString());
     formatProcess.stdin.close();
     final output = await formatProcess.stdout.transform(utf8.decoder).join();
+
     return output;
-    //fixme remove from generate_new_sample.dart
   }
 
   // Convert a snake case string to camel case.
