@@ -6,6 +6,7 @@ import 'package:glob/glob.dart';
 
 Builder sampleCatalogBuilder(BuilderOptions options) => SampleCatalogBuilder();
 
+// Generates assets/generated_samples_list.json by combining all the README.metadata.json files.
 class SampleCatalogBuilder implements Builder {
   @override
   final buildExtensions = const {
@@ -53,6 +54,8 @@ class SampleCatalogBuilder implements Builder {
 
 Builder sampleWidgetsBuilder(BuilderOptions options) => SampleWidgetsBuilder();
 
+// Generates lib/models/samples_widget_list.dart by enumerating the samples directories
+// and creating a map of sample names to their corresponding Widgets.
 class SampleWidgetsBuilder implements Builder {
   @override
   final buildExtensions = const {

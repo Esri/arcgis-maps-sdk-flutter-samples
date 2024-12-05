@@ -14,6 +14,7 @@
 // limitations under the License.
 //
 
+// run `dart run build_runner build` to generate samples_widget_list.dart
 import 'package:arcgis_maps_sdk_flutter_samples/models/samples_widget_list.dart';
 import 'package:flutter/material.dart';
 
