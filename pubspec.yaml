@@ -11,9 +11,7 @@ dependencies:
   flutter:
     sdk: flutter
 
-  arcgis_maps:
-    path: ../arcgis_maps_package
-  
+  arcgis_maps: ^200.6.0
   async: ^2.11.0
   path_provider: ^2.1.2
   http: ^1.2.0
@@ -22,7 +20,7 @@ dependencies:
   share_plus: ^9.0.0
   simple_html_css: ^5.0.0
   webview_flutter: ^4.8.0
-  collection: ^1.18.0
+  package_info_plus: ^8.1.0
 
 dev_dependencies:
   flutter_lints: ^4.0.0

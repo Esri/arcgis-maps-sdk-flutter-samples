@@ -24,12 +24,12 @@ Tap a feature on the map to open a bottom sheet displaying the number of attachm
 
 ## Relevant API
 
-* applyEdits
-* fetchAttachments
-* deleteAttachment
 * addAttachment
+* applyEdits
 * ArcGISFeature
+* deleteAttachment
 * FeatureLayer
+* fetchAttachments
 * ServiceFeatureTable
 
 ## Additional information

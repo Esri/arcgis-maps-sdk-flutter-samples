@@ -70,6 +70,12 @@ String snakeToCamel(String input) {
   if (newName.contains('Oauth')) {
     newName = newName.replaceFirst('Oauth', 'OAuth');
   }
+  if (newName.contains('Ogc')) {
+    newName = newName.replaceFirst('Ogc', 'OGC');
+  }
+  if (newName.contains('Api')) {
+    newName = newName.replaceFirst('Api', 'API');
+  }
   return newName;
 }
 

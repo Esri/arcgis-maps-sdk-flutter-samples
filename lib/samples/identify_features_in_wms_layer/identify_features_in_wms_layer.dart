@@ -42,6 +42,8 @@ class _IdentifyFeaturesInWmsLayerState extends State<IdentifyFeaturesInWmsLayer>
     return Scaffold(
       body: SafeArea(
         top: false,
+        left: false,
+        right: false,
         child: Stack(
           children: [
             Column(
@@ -121,6 +123,9 @@ class _IdentifyFeaturesInWmsLayerState extends State<IdentifyFeaturesInWmsLayer>
   }
 
   void onTap(Offset localPosition) async {
+    // Prevent addtional taps until the identify operation is complete.
+    setState(() => _ready = false);
+
     // When the map view is tapped, perform an identify operation on the WMS layer.
     final identifyLayerResult = await _mapViewController.identifyLayer(
       _wmsLayer,
@@ -148,6 +153,9 @@ class _IdentifyFeaturesInWmsLayerState extends State<IdentifyFeaturesInWmsLayer>
         showResultsDialog();
       }
     }
+
+    // Allow additional taps.
+    setState(() => _ready = true);
   }
 
   void showResultsDialog() {

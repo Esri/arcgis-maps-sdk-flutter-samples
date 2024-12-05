@@ -51,6 +51,8 @@ class _CreateMobileGeodatabaseState extends State<CreateMobileGeodatabase>
     return Scaffold(
       body: SafeArea(
         top: false,
+        left: false,
+        right: false,
         child: Stack(
           children: [
             Column(
@@ -291,7 +293,10 @@ class _CreateMobileGeodatabaseState extends State<CreateMobileGeodatabase>
                         label: Text('OID'),
                       ),
                       DataColumn(
-                        label: Text('Collection Timestamp'),
+                        label: Text(
+                          'Collection Timestamp',
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
                     ],
                     rows: dataRows,

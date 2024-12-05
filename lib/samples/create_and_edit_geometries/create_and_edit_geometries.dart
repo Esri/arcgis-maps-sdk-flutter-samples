@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-import 'package:arcgis_maps/arcgis_maps.dart' hide FontStyle;
+import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_state_support.dart';
 import 'package:flutter/material.dart';
 
@@ -67,7 +67,7 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
   var _geometryEditorIsStarted = false;
   var _geometryEditorHasSelectedElement = false;
   // A flag for controlling the visibility of the editing toolbar.
-  var _showEditToolbar = false;
+  var _showEditToolbar = true;
   // A custom style for when the editing toolbar buttons are not enabled.
   final _buttonStyle = ElevatedButton.styleFrom(
     disabledBackgroundColor: Colors.white.withOpacity(0.6),
@@ -78,6 +78,8 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
     return Scaffold(
       body: SafeArea(
         top: false,
+        left: false,
+        right: false,
         child: Stack(
           children: [
             Column(

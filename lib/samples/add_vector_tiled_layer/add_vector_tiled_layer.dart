@@ -63,6 +63,8 @@ class _AddVectorTiledLayerState extends State<AddVectorTiledLayer>
     return Scaffold(
       body: SafeArea(
         top: false,
+        left: false,
+        right: false,
         child: Column(
           children: [
             Expanded(

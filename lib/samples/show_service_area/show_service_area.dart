@@ -53,7 +53,7 @@ class _ShowServiceAreaState extends State<ShowServiceArea>
   ];
 
   // Create a service area task used to find service areas around a facility.
-  final _serviceAreaTask = ServiceAreaTask.withUrl(
+  final _serviceAreaTask = ServiceAreaTask.withUri(
     Uri.parse(
       'https://route-api.arcgis.com/arcgis/rest/services/World/ServiceAreas/NAServer/ServiceArea_World',
     ),
@@ -73,6 +73,8 @@ class _ShowServiceAreaState extends State<ShowServiceArea>
     return Scaffold(
       body: SafeArea(
         top: false,
+        left: false,
+        right: false,
         child: Stack(
           children: [
             Column(
@@ -162,7 +164,7 @@ class _ShowServiceAreaState extends State<ShowServiceArea>
 
     // Apply a renderer to the facility graphics overlay.
     _facilityGraphicsOverlay.renderer = SimpleRenderer(
-      symbol: PictureMarkerSymbol.withUrl(
+      symbol: PictureMarkerSymbol.withUri(
         Uri.parse(
           'https://static.arcgis.com/images/Symbols/SafetyHealth/Hospital.png',
         ),
@@ -176,16 +178,27 @@ class _ShowServiceAreaState extends State<ShowServiceArea>
       _barrierGraphicsOverlay,
     ]);
 
-    // Create default service area parameters for using to solve a service area task.
-    _serviceAreaParameters = await _serviceAreaTask.createDefaultParameters();
-    // Note: returnPolygons defaults to true to return all service areas.
-    // Set the overlap behavior when there are results for multiple facilities.
-    _serviceAreaParameters.geometryAtOverlap =
-        ServiceAreaOverlapGeometry.dissolve;
-    // Customize impedance cutoffs for facilities (drive time minutes).
-    // Note: the defaults are initially set as 5, 10 and 15.
-    _serviceAreaParameters.defaultImpedanceCutoffs.clear();
-    _serviceAreaParameters.defaultImpedanceCutoffs.addAll([3, 8, 12]);
+    try {
+      // Create default service area parameters for using to solve a service area task.
+      _serviceAreaParameters = await _serviceAreaTask.createDefaultParameters();
+      // Note: returnPolygons defaults to true to return all service areas.
+      // Set the overlap behavior when there are results for multiple facilities.
+      _serviceAreaParameters.geometryAtOverlap =
+          ServiceAreaOverlapGeometry.dissolve;
+      // Customize impedance cutoffs for facilities (drive time minutes).
+      // Note: the defaults are initially set as 5, 10 and 15.
+      _serviceAreaParameters.defaultImpedanceCutoffs.clear();
+      _serviceAreaParameters.defaultImpedanceCutoffs.addAll([3, 8, 12]);
+    } on Exception catch (e) {
+      if (mounted) {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            content: Text('Error creating service area parameters:\n $e'),
+          ),
+        );
+      }
+    }
 
     // Toggle the _ready flag to enable the UI.
     setState(() => _ready = true);

@@ -54,6 +54,8 @@ class _GenerateOfflineMapState extends State<GenerateOfflineMap>
     return Scaffold(
       body: SafeArea(
         top: false,
+        left: false,
+        right: false,
         child: Stack(
           children: [
             Column(
@@ -207,13 +209,12 @@ class _GenerateOfflineMapState extends State<GenerateOfflineMap>
     setState(() => _progress = 0);
 
     // Create parameters specifying the region to take offline.
-    final minScale = _mapViewController.scale;
-    final maxScale = _mapViewController.arcGISMap?.maxScale ?? minScale + 1;
+    // Provides a min scale to avoid requesting a huge download. Note maxScale defaults to 0.0.
+    const minScale = 1e4;
     final parameters =
         await _offlineMapTask.createDefaultGenerateOfflineMapParameters(
       areaOfInterest: envelope,
       minScale: minScale,
-      maxScale: maxScale,
     );
     parameters.continueOnErrors = false;
 

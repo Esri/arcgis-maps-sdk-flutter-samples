@@ -34,7 +34,7 @@
     "key": "add_feature_collection_layer_from_table"
   },
   "add_feature_layer_with_time_offset": {
-    "category": "Maps",
+    "category": "Layers",
     "description": "Display a time-enabled feature layer with a time offset.",
     "ignore": false,
     "images": [
@@ -102,7 +102,7 @@
     "key": "add_feature_layers"
   },
   "add_map_image_layer": {
-    "category": "Maps",
+    "category": "Layers",
     "description": "Display a layer from an ArcGIS map image layer service.",
     "ignore": false,
     "images": [
@@ -212,6 +212,69 @@
     ],
     "title": "Add vector tiled layer",
     "key": "add_vector_tiled_layer"
+  },
+  "add_web_tiled_layer": {
+    "category": "Layers",
+    "description": "Display a tiled web layer.",
+    "ignore": false,
+    "images": [
+      "add_web_tiled_layer.png"
+    ],
+    "keywords": [
+      "OGC",
+      "layer",
+      "tiled",
+      "tiles",
+      "Basemap",
+      "WebTiledLayer"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+      "Basemap",
+      "WebTiledLayer"
+    ],
+    "snippets": [
+      "add_web_tiled_layer.dart"
+    ],
+    "title": "Add web tiled layer",
+    "key": "add_web_tiled_layer"
+  },
+  "add_wfs_layer": {
+    "category": "Layers",
+    "description": "Display a layer from a WFS service using data from URL",
+    "ignore": false,
+    "images": [
+      "add_wfs_layer.png"
+    ],
+    "keywords": [
+      "OGC",
+      "WFS",
+      "browse",
+      "catalog",
+      "feature",
+      "interaction cache",
+      "layers",
+      "service",
+      "web",
+      "ArcGISMapView",
+      "ArcGISMapViewController.onNavigationChanged",
+      "FeatureLayer",
+      "WfsFeatureTable",
+      "WfsFeatureTable.populateFromService"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+      "ArcGISMapView",
+      "ArcGISMapViewController.onNavigationChanged",
+      "FeatureLayer",
+      "WfsFeatureTable",
+      "WfsFeatureTable.populateFromService"
+    ],
+    "snippets": [
+      "add_wfs_layer.dart"
+    ],
+    "title": "Add WFS layer",
+    "key": "add_wfs_layer"
   },
   "add_wms_layer": {
     "category": "Layers",
@@ -365,6 +428,34 @@
     "title": "Apply simple renderer to feature layer",
     "key": "apply_simple_renderer_to_feature_layer"
   },
+  "apply_style_to_wms_layer": {
+    "category": "Layers",
+    "description": "Change the style of a Web Map Service (WMS) layer.",
+    "ignore": false,
+    "images": [
+      "apply_style_to_wms_layer.png"
+    ],
+    "keywords": [
+      "WMS",
+      "imagery",
+      "styles",
+      "visualization",
+      "WmsLayer",
+      "WmsLayerInfo",
+      "WmsSublayer"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+      "WmsLayer",
+      "WmsLayerInfo",
+      "WmsSublayer"
+    ],
+    "snippets": [
+      "apply_style_to_wms_layer.dart"
+    ],
+    "title": "Apply style to WMS layer",
+    "key": "apply_style_to_wms_layer"
+  },
   "apply_unique_value_renderer": {
     "category": "Visualization",
     "description": "Render features in a layer using a distinct symbol for each unique attribute value.",
@@ -472,6 +563,70 @@
     "title": "Authenticate with token",
     "key": "authenticate_with_token"
   },
+  "change_viewpoint": {
+    "category": "Maps",
+    "description": "Set the map view to a new viewpoint.",
+    "ignore": false,
+    "images": [
+      "change_viewpoint.png"
+    ],
+    "keywords": [
+      "animate",
+      "extent",
+      "pan",
+      "rotate",
+      "scale",
+      "view",
+      "zoom",
+      "ArcGISMap",
+      "ArcGISMapView",
+      "ArcGISPoint",
+      "Geometry",
+      "Viewpoint"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+      "ArcGISMap",
+      "ArcGISMapView",
+      "ArcGISPoint",
+      "Geometry",
+      "Viewpoint"
+    ],
+    "snippets": [
+      "change_viewpoint.dart"
+    ],
+    "title": "Change viewpoint",
+    "key": "change_viewpoint"
+  },
+  "control_annotation_sublayer_visibility": {
+    "category": "Layers",
+    "description": "Use annotation sublayers to gain finer control of annotation layer subtypes.",
+    "ignore": false,
+    "images": [
+      "control_annotation_sublayer_visibility.png"
+    ],
+    "keywords": [
+      "annotation",
+      "scale",
+      "text",
+      "utilities",
+      "visualization",
+      "AnnotationLayer",
+      "AnnotationSublayer",
+      "LayerContent"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+      "AnnotationLayer",
+      "AnnotationSublayer",
+      "LayerContent"
+    ],
+    "snippets": [
+      "control_annotation_sublayer_visibility.dart"
+    ],
+    "title": "Control annotation sublayer visibility",
+    "key": "control_annotation_sublayer_visibility"
+  },
   "create_and_edit_geometries": {
     "category": "Maps",
     "description": "Use the Geometry Editor to create new point, multipoint, polyline, or polygon geometries or to edit existing geometries by interacting with a map view.",
@@ -505,6 +660,42 @@
     ],
     "title": "Create and edit geometries",
     "key": "create_and_edit_geometries"
+  },
+  "create_buffers_around_points": {
+    "category": "Maps",
+    "description": "Generate multiple individual buffers or a single unioned buffer around multiple points.",
+    "ignore": false,
+    "images": [
+      "create_buffers_around_points.png"
+    ],
+    "keywords": [
+      "analysis",
+      "buffer",
+      "geometry",
+      "planar",
+      "ArcGISMap",
+      "ArcGISMapImageLayer",
+      "ArcGISMapView",
+      "GeometryEngine.bufferCollection",
+      "GeometryEngine.project",
+      "GraphicsOverlay",
+      "SpatialReference"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+      "ArcGISMap",
+      "ArcGISMapImageLayer",
+      "ArcGISMapView",
+      "GeometryEngine.bufferCollection",
+      "GeometryEngine.project",
+      "GraphicsOverlay",
+      "SpatialReference"
+    ],
+    "snippets": [
+      "create_buffers_around_points.dart"
+    ],
+    "title": "Create buffers around points",
+    "key": "create_buffers_around_points"
   },
   "create_mobile_geodatabase": {
     "category": "Edit and Manage Data",
@@ -1059,6 +1250,49 @@
     "title": "Find route",
     "key": "find_route"
   },
+  "find_route_in_mobile_map_package": {
+    "category": "Maps",
+    "description": "Display maps and use locators to enable search and routing offline using a Mobile Map Package.",
+    "ignore": false,
+    "images": [
+      "find_route_in_mobile_map_package.png"
+    ],
+    "keywords": [
+      "disconnected",
+      "field mobility",
+      "geocode",
+      "network",
+      "network analysis",
+      "offline",
+      "routing",
+      "search",
+      "transportation",
+      "GeocodeResult",
+      "MobileMapPackage",
+      "ReverseGeocodeParameters",
+      "Route",
+      "RouteParameters",
+      "RouteResult",
+      "RouteTask",
+      "TransportationNetworkDataset"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+      "GeocodeResult",
+      "MobileMapPackage",
+      "ReverseGeocodeParameters",
+      "Route",
+      "RouteParameters",
+      "RouteResult",
+      "RouteTask",
+      "TransportationNetworkDataset"
+    ],
+    "snippets": [
+      "find_route_in_mobile_map_package.dart"
+    ],
+    "title": "Find route in mobile map package",
+    "key": "find_route_in_mobile_map_package"
+  },
   "generate_offline_map": {
     "category": "Edit and Manage Data",
     "description": "Take a web map offline.",
@@ -1228,6 +1462,53 @@
     "title": "Manage bookmarks",
     "key": "manage_bookmarks"
   },
+  "manage_features": {
+    "category": "Edit and Manage Data",
+    "description": "Create, update, and delete features to manage a feature layer.",
+    "ignore": false,
+    "images": [
+      "manage_features.png"
+    ],
+    "keywords": [
+      "amend",
+      "attribute",
+      "create",
+      "delete",
+      "deletion",
+      "details",
+      "edit",
+      "editing",
+      "feature",
+      "feature layer",
+      "feature table",
+      "geodatabase",
+      "information",
+      "moving",
+      "online service",
+      "service",
+      "update",
+      "updating",
+      "value",
+      "Feature",
+      "FeatureEditResult",
+      "FeatureLayer",
+      "ServiceFeatureTable",
+      "ServiceGeodatabase"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+      "Feature",
+      "FeatureEditResult",
+      "FeatureLayer",
+      "ServiceFeatureTable",
+      "ServiceGeodatabase"
+    ],
+    "snippets": [
+      "manage_features.dart"
+    ],
+    "title": "Manage features",
+    "key": "manage_features"
+  },
   "query_feature_table": {
     "category": "Search and Query",
     "description": "Find features in a feature table which match an SQL query.",
@@ -1272,16 +1553,16 @@
       "search",
       "ArcGISFeature",
       "ArcGISFeatureTable",
+      "ArcGISFeatureTable.queryRelatedFeatures",
       "FeatureQueryResult",
-      "FeatureTable.queryRelatedFeatures",
       "RelatedFeatureQueryResult"
     ],
     "redirect_from": [],
     "relevant_apis": [
       "ArcGISFeature",
       "ArcGISFeatureTable",
+      "ArcGISFeatureTable.queryRelatedFeatures",
       "FeatureQueryResult",
-      "FeatureTable.queryRelatedFeatures",
       "RelatedFeatureQueryResult"
     ],
     "snippets": [
@@ -1391,6 +1672,36 @@
     "title": "Set basemap",
     "key": "set_basemap"
   },
+  "set_initial_viewpoint": {
+    "category": "Maps",
+    "description": "Display the map at an initial viewpoint representing a bounding geometry.",
+    "ignore": false,
+    "images": [
+      "set_initial_viewpoint.png"
+    ],
+    "keywords": [
+      "envelope",
+      "extent",
+      "initial viewpoint",
+      "zoom",
+      "ArcGISMap",
+      "ArcGISMapView",
+      "Envelope",
+      "Viewpoint"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+      "ArcGISMap",
+      "ArcGISMapView",
+      "Envelope",
+      "Viewpoint"
+    ],
+    "snippets": [
+      "set_initial_viewpoint.dart"
+    ],
+    "title": "Set initial viewpoint",
+    "key": "set_initial_viewpoint"
+  },
   "set_reference_scale": {
     "category": "Maps",
     "description": "Set the map's reference scale and which feature layers should honor the reference scale.",
@@ -1431,14 +1742,14 @@
       "mobile",
       "navigation",
       "ArcGISMap",
-      "ArcGISMapView",
+      "ArcGISMapViewController",
       "LocationDisplay",
       "LocationDisplay.autoPanMode"
     ],
     "redirect_from": [],
     "relevant_apis": [
       "ArcGISMap",
-      "ArcGISMapView",
+      "ArcGISMapViewController",
       "LocationDisplay",
       "LocationDisplay.autoPanMode"
     ],
@@ -1670,11 +1981,46 @@
     "title": "Show service area",
     "key": "show_service_area"
   },
+  "show_wfs_layer_with_xml_query": {
+    "category": "Search and Query",
+    "description": "Load a WFS feature table using an XML query.",
+    "ignore": false,
+    "images": [
+      "show_wfs_layer_with_xml_query.png"
+    ],
+    "keywords": [
+      "OGC",
+      "WFS",
+      "XML",
+      "feature",
+      "query",
+      "service",
+      "web",
+      "FeatureLayer",
+      "WfsFeatureTable",
+      "WfsFeatureTable.axisOrder",
+      "WfsFeatureTable.populateFromServiceWithXml"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+      "FeatureLayer",
+      "WfsFeatureTable",
+      "WfsFeatureTable.axisOrder",
+      "WfsFeatureTable.populateFromServiceWithXml"
+    ],
+    "snippets": [
+      "show_wfs_layer_with_xml_query.dart"
+    ],
+    "title": "Show WFS layer with XML query",
+    "key": "show_wfs_layer_with_xml_query"
+  },
   "snap_geometry_edits": {
     "category": "Maps",
     "description": "Use the Geometry Editor to edit a geometry and align it to existing geometries on a map.",
     "ignore": false,
-    "images": [],
+    "images": [
+      "snap_geometry_edits.png"
+    ],
     "keywords": [
       "edit",
       "feature",
@@ -1710,6 +2056,102 @@
     ],
     "title": "Snap geometry edits",
     "key": "snap_geometry_edits"
+  },
+  "style_graphics_with_renderer": {
+    "category": "Visualization",
+    "description": "A renderer allows you to change the style of all graphics in a graphics overlay by referencing a single symbol style. A renderer will only affect graphics that do not specify their own symbol style.",
+    "ignore": false,
+    "images": [
+      "style_graphics_with_renderer.png"
+    ],
+    "keywords": [
+      "arc",
+      "bezier",
+      "curve",
+      "display",
+      "ellipse",
+      "graphics",
+      "marker",
+      "overlay",
+      "renderer",
+      "segment",
+      "symbol",
+      "true curve",
+      "CubicBezierSegment",
+      "EllipticArcSegment",
+      "GeodesicEllipseParameters",
+      "Geometry",
+      "GeometryEngine.ellipseGeodesic",
+      "Graphic",
+      "GraphicsOverlay",
+      "MutablePart",
+      "PolygonBuilder",
+      "PolylineBuilder",
+      "SimpleFillSymbol",
+      "SimpleLineSymbol",
+      "SimpleMarkerSymbol",
+      "SimpleRenderer"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+      "CubicBezierSegment",
+      "EllipticArcSegment",
+      "GeodesicEllipseParameters",
+      "Geometry",
+      "GeometryEngine.ellipseGeodesic",
+      "Graphic",
+      "GraphicsOverlay",
+      "MutablePart",
+      "PolygonBuilder",
+      "PolylineBuilder",
+      "SimpleFillSymbol",
+      "SimpleLineSymbol",
+      "SimpleMarkerSymbol",
+      "SimpleRenderer"
+    ],
+    "snippets": [
+      "style_graphics_with_renderer.dart"
+    ],
+    "title": "Style graphics with renderer",
+    "key": "style_graphics_with_renderer"
+  },
+  "style_graphics_with_symbols": {
+    "category": "Visualization",
+    "description": "Use a symbol style to display a graphic on a graphics overlay.",
+    "ignore": false,
+    "images": [
+      "style_graphics_with_symbols.png"
+    ],
+    "keywords": [
+      "display",
+      "fill",
+      "graphics",
+      "line",
+      "marker",
+      "overlay",
+      "point",
+      "symbol",
+      "Geometry",
+      "Graphic",
+      "GraphicsOverlay",
+      "SimpleFillSymbol",
+      "SimpleLineSymbol",
+      "SimpleMarkerSymbol"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+      "Geometry",
+      "Graphic",
+      "GraphicsOverlay",
+      "SimpleFillSymbol",
+      "SimpleLineSymbol",
+      "SimpleMarkerSymbol"
+    ],
+    "snippets": [
+      "style_graphics_with_symbols.dart"
+    ],
+    "title": "Style graphics with symbols",
+    "key": "style_graphics_with_symbols"
   },
   "style_point_with_simple_marker_symbol": {
     "category": "Visualization",

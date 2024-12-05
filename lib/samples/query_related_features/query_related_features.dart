@@ -35,6 +35,8 @@ class _QueryRelatedFeaturesState extends State<QueryRelatedFeatures>
     return Scaffold(
       body: SafeArea(
         top: false,
+        left: false,
+        right: false,
         child: Stack(
           children: [
             // Add a map view to the widget tree and set a controller.
@@ -62,85 +64,84 @@ class _QueryRelatedFeaturesState extends State<QueryRelatedFeatures>
   }
 
   Widget buildLayerData(BuildContext context) {
-    return _loadingFeatures
-        ? const CircularProgressIndicator()
-        : Container(
-            constraints: BoxConstraints(
-              maxHeight: MediaQuery.sizeOf(context).height * 0.4,
-            ),
-            padding: EdgeInsets.fromLTRB(
-              20.0,
-              5.0,
-              20.0,
-              max(
-                20.0,
-                View.of(context).viewPadding.bottom /
-                    View.of(context).devicePixelRatio,
-              ),
-            ),
-            width: double.infinity,
-            child: Column(
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: Text(
+    return Container(
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.sizeOf(context).height * 0.4,
+      ),
+      padding: EdgeInsets.fromLTRB(
+        20.0,
+        5.0,
+        20.0,
+        max(
+          20.0,
+          View.of(context).viewPadding.bottom /
+              View.of(context).devicePixelRatio,
+        ),
+      ),
+      width: double.infinity,
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: _loadingFeatures
+                    ? const Center(child: CircularProgressIndicator())
+                    : Text(
                         _selectedParkName,
                         style: Theme.of(context).textTheme.titleLarge,
                       ),
-                    ),
-                    IconButton(
-                      alignment: Alignment.centerRight,
-                      icon: const Icon(Icons.close),
-                      onPressed: () =>
-                          setState(() => _layerDataVisible = false),
-                    ),
-                  ],
-                ),
-                const Divider(),
-                Flexible(
-                  child: SingleChildScrollView(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          'Alaska National Parks Preserves',
-                          style: Theme.of(context).textTheme.titleMedium,
-                        ),
-                        const Divider(),
-                        // Display the list of feature preserves for the selected park.
-                        for (final preserve in _featurePreserves)
-                          ListTile(
-                            dense: true,
-                            contentPadding: EdgeInsets.zero,
-                            title: Text(
-                              preserve,
-                              style: Theme.of(context).textTheme.titleSmall,
-                            ),
-                          ),
-                        const Divider(),
-                        Text(
-                          'Alaska National Parks Species',
-                          style: Theme.of(context).textTheme.titleMedium,
-                        ),
-                        const Divider(),
-                        // Display the list of feature species for the selected park.
-                        for (final species in _featureSpecies)
-                          ListTile(
-                            dense: true,
-                            contentPadding: EdgeInsets.zero,
-                            title: Text(
-                              species,
-                              style: Theme.of(context).textTheme.titleSmall,
-                            ),
-                          ),
-                      ],
-                    ),
+              ),
+              IconButton(
+                alignment: Alignment.centerRight,
+                icon: const Icon(Icons.close),
+                onPressed: () => setState(() => _layerDataVisible = false),
+              ),
+            ],
+          ),
+          const Divider(),
+          Flexible(
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'Alaska National Parks Preserves',
+                    style: Theme.of(context).textTheme.titleMedium,
                   ),
-                ),
-              ],
+                  const Divider(),
+                  // Display the list of feature preserves for the selected park.
+                  for (final preserve in _featurePreserves)
+                    ListTile(
+                      dense: true,
+                      contentPadding: EdgeInsets.zero,
+                      title: Text(
+                        preserve,
+                        style: Theme.of(context).textTheme.titleSmall,
+                      ),
+                    ),
+                  const Divider(),
+                  Text(
+                    'Alaska National Parks Species',
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                  const Divider(),
+                  // Display the list of feature species for the selected park.
+                  for (final species in _featureSpecies)
+                    ListTile(
+                      dense: true,
+                      contentPadding: EdgeInsets.zero,
+                      title: Text(
+                        species,
+                        style: Theme.of(context).textTheme.titleSmall,
+                      ),
+                    ),
+                ],
+              ),
             ),
-          );
+          ),
+        ],
+      ),
+    );
   }
 
   void onMapViewReady() async {
@@ -212,6 +213,11 @@ class _QueryRelatedFeaturesState extends State<QueryRelatedFeatures>
 
     // If there are features identified, show the bottom sheet to display the
     // attachment information for the selected feature.
+    setState(() {
+      _selectedParkName = '';
+      _featurePreserves = [];
+      _featureSpecies = [];
+    });
     final features =
         identifyLayerResult.geoElements.whereType<Feature>().toList();
     if (features.isNotEmpty) {
