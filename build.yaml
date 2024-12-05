@@ -5,3 +5,10 @@ builders:
     build_extensions: {"$package$": ["assets/generated_samples_list.json"]}
     build_to: source
     auto_apply: root_package
+
+  sampleWidgetsBuilder:
+    import: "package:arcgis_maps_sdk_flutter_samples/builder.dart"
+    builder_factories: ["sampleWidgetsBuilder"]
+    build_extensions: {"$package$": ["lib/models/samples_widget_list.dart.new"]}
+    build_to: source
+    auto_apply: root_package
