@@ -56,7 +56,7 @@ Builder sampleWidgetsBuilder(BuilderOptions options) => SampleWidgetsBuilder();
 class SampleWidgetsBuilder implements Builder {
   @override
   final buildExtensions = const {
-    r'$package$': ['lib/models/samples_widget_list.dart.new'],
+    r'$package$': ['lib/models/samples_widget_list.dart'],
   };
 
   @override
@@ -69,7 +69,7 @@ class SampleWidgetsBuilder implements Builder {
     }
     final output = AssetId(
       buildStep.inputId.package,
-      'lib/models/samples_widget_list.dart.new',
+      'lib/models/samples_widget_list.dart',
     );
     return buildStep.writeAsString(output, await createSource(samples));
   }
@@ -106,8 +106,6 @@ class SampleWidgetsBuilder implements Builder {
     formatProcess.stdin.close();
     final output = await formatProcess.stdout.transform(utf8.decoder).join();
     return output;
-    //fixme remove checked-in file
-    //fixme add to .gitignore
     //fixme remove from generate_new_sample.dart
   }
 
