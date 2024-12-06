@@ -14,10 +14,16 @@ cd arcgis-maps-sdk-flutter-samples
 
 Initialize the project using the provided script.
 
-Note on Windows: this step requires permission to create symlinks. Either run this step in an elevated "Administrator" command prompt, or go to "Settings > Update & Security > For developers" and turn on "Developer Mode".
+On macOS:
 
 ```
 ./initialize.sh
+```
+
+On Windows: this step requires permission to create symlinks. Either run this step in an elevated "Administrator" command prompt, or go to "Settings > Update & Security > For developers" and turn on "Developer Mode".
+
+```
+.\initialize.bat
 ```
 
 Now you are ready to run the samples app!

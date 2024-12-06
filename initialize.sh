@@ -8,3 +8,6 @@ dart run arcgis_maps install
 
 # Generate support code.
 dart run build_runner build
+
+# Format generated code.
+dart format lib/models/samples_widget_list.dart

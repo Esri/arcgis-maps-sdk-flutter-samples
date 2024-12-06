@@ -49,7 +49,7 @@ class SampleCatalogBuilder implements Builder {
     for (final metadataFilename in metadataFiles) {
       final metadataFile = File(metadataFilename);
       final directoryName =
-          metadataFile.parent.path.split(Platform.pathSeparator).last;
+          metadataFile.parent.path.split('/').last;
       // Get the json string for the sample.
       final sampleJsonContent = jsonDecode(metadataFile.readAsStringSync());
       // Add a key/value pair that is used by the Sample Viewer app.
@@ -94,10 +94,9 @@ class SampleWidgetsBuilder implements Builder {
   }
 
   Future<String> createSource(List<String> samples) async {
-    final ps = Platform.pathSeparator;
     final buffer = StringBuffer();
     final sortedSampleNames = samples
-        .map((filepath) => File(filepath).parent.path.split(ps).last)
+        .map((filepath) => File(filepath).parent.path.split('/').last)
         .toList()
       ..sort();
 
@@ -117,14 +116,7 @@ class SampleWidgetsBuilder implements Builder {
       buffer.writeln("  '$sampleName': () => const $camelCaseName(),");
     }
     buffer.writeln('};');
-
-    // Run dart format on the buffer
-    final formatProcess = await Process.start('dart', ['format']);
-    formatProcess.stdin.writeln(buffer.toString());
-    formatProcess.stdin.close();
-    final output = await formatProcess.stdout.transform(utf8.decoder).join();
-
-    return output;
+    return buffer.toString();
   }
 
   // Convert a snake case string to camel case.
