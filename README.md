@@ -12,24 +12,12 @@ Navigate to the `arcgis-maps-sdk-flutter-samples` directory.
 cd arcgis-maps-sdk-flutter-samples
 ```
 
-Use `flutter pub upgrade` to configure the dependencies.
-
-```
-flutter pub upgrade
-```
-
-Install arcgis_maps_core.
+Initialize the project using the provided script.
 
 Note on Windows: this step requires permission to create symlinks. Either run this step in an elevated "Administrator" command prompt, or go to "Settings > Update & Security > For developers" and turn on "Developer Mode".
 
 ```
-dart run arcgis_maps install
-```
-
-Use `build_runner` to generate support code.
-
-```
-dart run build_runner build
+./initialize.sh
 ```
 
 Now you are ready to run the samples app!
