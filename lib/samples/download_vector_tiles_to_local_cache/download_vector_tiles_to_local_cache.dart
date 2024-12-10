@@ -173,8 +173,11 @@ class _DownloadVectorTilesToLocalCacheState
       return;
     }
 
-    // Show the progress indicator to start the download process.
-    setState(() => _isJobStarted = true);
+    // Show the progress indicator to start the download process and reset the progress.
+    setState(() {
+      _isJobStarted = true;
+      _progress = 0.0;
+    });
 
     // Create an export vector tiles task.
     final vectorTilesExportTask = ExportVectorTilesTask.withUri(layer.uri!);
@@ -211,17 +214,21 @@ class _DownloadVectorTilesToLocalCacheState
 
     _exportVectorTilesJob?.onStatusChanged.listen(
       (status) {
-        if (status == JobStatus.succeeded) {
-          setState(() => _progress = 100.0);
-          if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: const Text('Downloaded vector tiles successfully'),
-                duration: const Duration(seconds: 5),
-                backgroundColor: Theme.of(context).colorScheme.secondary,
-              ),
-            );
-          }
+        if (status == JobStatus.succeeded && mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: const Text('Downloaded vector tiles successfully'),
+              duration: const Duration(seconds: 5),
+              backgroundColor: Theme.of(context).colorScheme.secondary,
+            ),
+          );
+          // Hide the progress indicator after a 5 second delay so that the user can see the job completed.
+          Future.delayed(
+            const Duration(seconds: 5),
+            () => setState(() => _isJobStarted = false),
+          );
+        } else if (status == JobStatus.failed) {
+          setState(() => _isJobStarted = false);
         }
       },
     );
@@ -237,8 +244,6 @@ class _DownloadVectorTilesToLocalCacheState
     } finally {
       _exportVectorTilesJob = null;
     }
-    // Dismiss the progress indicator.
-    setState(() => _isJobStarted = false);
   }
 
   // Show an error dialog.
