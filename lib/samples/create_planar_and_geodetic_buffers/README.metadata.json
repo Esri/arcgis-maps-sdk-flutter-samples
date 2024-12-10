@@ -9,7 +9,7 @@
         "analysis",
         "buffer",
         "euclidean",
-        "geodetic",
+        "geodesic",
         "geometry",
         "planar",
         "GeometryEngine.buffer",
