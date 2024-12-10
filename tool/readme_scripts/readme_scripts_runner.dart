@@ -46,9 +46,7 @@ void main(List<String> args) {
       // If -all flag passed, check all samples.
       directory = Directory(samplesDir);
       checkIfDirExists(directory);
-      sampleDirectories.addAll(
-        directory.listSync().whereType<Directory>().map((f) => f).toList(),
-      );
+      sampleDirectories.addAll(directory.listSync().whereType<Directory>());
     } else {
       // Use provided sample e.g. display_map.
       directory = Directory('$samplesDir/${args[0]}');
