@@ -241,7 +241,7 @@
   },
   "add_wfs_layer": {
     "category": "Layers",
-    "description": "Display a layer from a WFS service using data from URL",
+    "description": "Display a layer from a WFS service, requesting only features for the current extent.",
     "ignore": false,
     "images": [
       "add_wfs_layer.png"
@@ -1228,8 +1228,8 @@
       "routing",
       "shortest path",
       "turn-by-turn",
+      "ArcGISRoute",
       "DirectionManeuver",
-      "Route",
       "RouteParameters",
       "RouteResult",
       "RouteTask",
@@ -1237,8 +1237,8 @@
     ],
     "redirect_from": [],
     "relevant_apis": [
+      "ArcGISRoute",
       "DirectionManeuver",
-      "Route",
       "RouteParameters",
       "RouteResult",
       "RouteTask",
@@ -1255,7 +1255,8 @@
     "description": "Display maps and use locators to enable search and routing offline using a Mobile Map Package.",
     "ignore": false,
     "images": [
-      "find_route_in_mobile_map_package.png"
+      "find_route_in_mobile_map_package.png",
+      "find_route_in_mobile_map_package_transportation.png"
     ],
     "keywords": [
       "disconnected",
