@@ -16,7 +16,6 @@
 
 // ignore_for_file: avoid_print
 
-import 'dart:convert';
 import 'dart:io';
 
 void main(List<String> arguments) async {
@@ -31,13 +30,14 @@ void main(List<String> arguments) async {
 
 Future<void> runDart(List<String> arguments) async {
   final command = 'dart ${arguments.join(' ')}';
-  final executable = Platform.environment['DART'] ?? 'dart';
-  final process = await Process.start(executable, arguments);
-  final exitCode = await process.exitCode;
-  await process.stdout.map(utf8.decode).forEach(print);
-  await process.stderr.map(utf8.decode).forEach(print);
+  final executable = Platform.isWindows
+      ? '${Platform.environment['FLUTTER_ROOT']}\\bin\\dart.bat'
+      : '${Platform.environment['FLUTTER_ROOT']}/bin/dart';
+  final result = await Process.run(executable, arguments);
+  print(result.stdout);
+  print(result.stderr);
   print('> "$command" succeeded\n');
-  if (exitCode != 0) {
-    throw Exception('"$command" failed with exit code "$exitCode"');
+  if (result.exitCode != 0) {
+    throw Exception('"$command" failed with exit code "{result.}exitCode}"');
   }
 }
