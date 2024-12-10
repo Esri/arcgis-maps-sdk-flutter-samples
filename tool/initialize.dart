@@ -36,8 +36,8 @@ Future<void> runDart(List<String> arguments) async {
   final result = await Process.run(executable, arguments);
   print(result.stdout);
   print(result.stderr);
-  print('> "$command" succeeded\n');
   if (result.exitCode != 0) {
-    throw Exception('"$command" failed with exit code "{result.}exitCode}"');
+    throw Exception('"$command" failed with exit code "${result.exitCode}"');
   }
+  print('> "$command" succeeded\n');
 }
