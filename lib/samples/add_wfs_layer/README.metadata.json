@@ -1,6 +1,6 @@
 {
     "category": "Layers",
-    "description": "Display a layer from a WFS service using data from URL",
+    "description": "Display a layer from a WFS service, requesting only features for the current extent.",
     "ignore": false,
     "images": [
         "add_wfs_layer.png"
