@@ -20,12 +20,12 @@ For simplicity, the sample comes loaded with a start and end stop. You can tap o
 3. Set `returnStops` and `returnDirections` on the parameters to true.
 4. Add `Stop`s to the parameters `stops` collection for each destination.
 5. Solve the route using `routeTask.solveRoute(routeParameters)` to get a `RouteResult`.
-6. Iterate through the result's `Route`s, which contains a list of `ArcGISRoute` objects. To display the route, create a graphic using the geometry from `route.routeGeometry`. To display directions, use `route.directionManeuvers`, and for each `DirectionManeuver`, display `DirectionManeuver.directionText`.
+6. Iterate through the result's `routes` property, which contains a list of `ArcGISRoute` objects. To display the route, create a graphic using the geometry from `route.routeGeometry`. To display directions, use `route.directionManeuvers`, and for each `DirectionManeuver`, display `DirectionManeuver.directionText`.
 
 ## Relevant API
 
-* DirectionManeuver
 * ArcGISRoute
+* DirectionManeuver
 * RouteParameters
 * RouteResult
 * RouteTask
