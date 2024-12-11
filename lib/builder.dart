@@ -48,8 +48,7 @@ class SampleCatalogBuilder implements Builder {
     final samples = <String, dynamic>{};
     for (final metadataFilename in metadataFiles) {
       final metadataFile = File(metadataFilename);
-      final directoryName =
-          metadataFile.parent.path.split('/').last;
+      final directoryName = metadataFile.parent.path.split('/').last;
       // Get the json string for the sample.
       final sampleJsonContent = jsonDecode(metadataFile.readAsStringSync());
       // Add a key/value pair that is used by the Sample Viewer app.
