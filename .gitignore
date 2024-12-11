@@ -52,3 +52,5 @@ env.json
 
 arcgis_maps_core
 *.so
+/assets/generated_samples_list.json
+/lib/models/samples_widget_list.dart
