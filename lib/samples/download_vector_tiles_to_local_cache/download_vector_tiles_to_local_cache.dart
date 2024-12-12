@@ -17,6 +17,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:arcgis_maps/arcgis_maps.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -92,17 +93,7 @@ class _DownloadVectorTilesToLocalCacheState
               ],
             ),
             // Display a progress indicator and prevent interaction until state is ready.
-            Visibility(
-              visible: !_ready,
-              child: SizedBox.expand(
-                child: Container(
-                  color: Colors.white30,
-                  child: const Center(
-                    child: CircularProgressIndicator(),
-                  ),
-                ),
-              ),
-            ),
+            LoadingIndicator(visible: !_ready),
             // Display a progress indicator and a cancel button during the offline map generation.
             Visibility(
               visible: _isJobStarted,

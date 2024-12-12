@@ -17,6 +17,7 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:arcgis_maps/arcgis_maps.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_data.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_state_support.dart';
 import 'package:flutter/material.dart';
@@ -81,15 +82,7 @@ class _ControlAnnotationSublayerVisibilityState
               ],
             ),
             // Display a progress indicator and prevent interaction until state is ready.
-            Visibility(
-              visible: !_ready,
-              child: const SizedBox.expand(
-                child: ColoredBox(
-                  color: Colors.white30,
-                  child: Center(child: CircularProgressIndicator()),
-                ),
-              ),
-            ),
+            LoadingIndicator(visible: !_ready),
           ],
         ),
       ),

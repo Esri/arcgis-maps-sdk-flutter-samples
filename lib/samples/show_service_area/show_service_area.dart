@@ -15,6 +15,7 @@
 //
 
 import 'package:arcgis_maps/arcgis_maps.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
 
 import '../../utils/sample_state_support.dart';
@@ -128,15 +129,7 @@ class _ShowServiceAreaState extends State<ShowServiceArea>
               ],
             ),
             // Display a progress indicator when the ready flag is false - this will indicate the map is loading or the service area task is in progress.
-            Visibility(
-              visible: !_ready || _taskInProgress,
-              child: SizedBox.expand(
-                child: Container(
-                  color: Colors.white30,
-                  child: const Center(child: CircularProgressIndicator()),
-                ),
-              ),
-            ),
+            LoadingIndicator(visible: !_ready || _taskInProgress),
           ],
         ),
       ),
