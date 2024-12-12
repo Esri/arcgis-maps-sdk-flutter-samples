@@ -67,7 +67,7 @@ class _GroupLayersTogetherState extends State<GroupLayersTogether>
               ],
             ),
             // Display a progress indicator and prevent interaction until state is ready.
-            LoadingIndicator(isVisible: !_ready),
+            LoadingIndicator(visible: !_ready),
           ],
         ),
       ),

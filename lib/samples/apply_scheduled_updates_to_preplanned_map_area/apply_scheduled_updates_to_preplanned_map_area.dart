@@ -94,7 +94,7 @@ class _ApplyScheduledUpdatesToPreplannedMapAreaState
               ],
             ),
             // Display a progress indicator and prevent interaction before state is ready.
-            LoadingIndicator(isVisible: !_ready),
+            LoadingIndicator(visible: !_ready),
           ],
         ),
       ),

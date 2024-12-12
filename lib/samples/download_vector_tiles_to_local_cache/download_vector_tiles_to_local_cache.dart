@@ -93,7 +93,7 @@ class _DownloadVectorTilesToLocalCacheState
               ],
             ),
             // Display a progress indicator and prevent interaction until state is ready.
-            LoadingIndicator(isVisible: !_ready),
+            LoadingIndicator(visible: !_ready),
             // Display a progress indicator and a cancel button during the offline map generation.
             Visibility(
               visible: _isJobStarted,

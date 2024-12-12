@@ -129,7 +129,7 @@ class _ShowServiceAreaState extends State<ShowServiceArea>
               ],
             ),
             // Display a progress indicator when the ready flag is false - this will indicate the map is loading or the service area task is in progress.
-            LoadingIndicator(isVisible: !_ready || _taskInProgress),
+            LoadingIndicator(visible: !_ready || _taskInProgress),
           ],
         ),
       ),
