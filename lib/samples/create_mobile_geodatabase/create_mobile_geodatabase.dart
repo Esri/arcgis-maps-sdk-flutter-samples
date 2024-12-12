@@ -114,17 +114,7 @@ class _CreateMobileGeodatabaseState extends State<CreateMobileGeodatabase>
             ),
             // Display a progress indicator and prevent interaction
             // until state is ready.
-            Visibility(
-              visible: !_ready,
-              child: SizedBox.expand(
-                child: Container(
-                  color: Colors.white30,
-                  child: const Center(
-                    child: CircularProgressIndicator(),
-                  ),
-                ),
-              ),
-            ),
+           
           ],
         ),
       ),
