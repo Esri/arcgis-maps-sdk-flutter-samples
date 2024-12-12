@@ -78,33 +78,9 @@ class _GroupLayersTogetherState extends State<GroupLayersTogether>
 
   // The build method for the Settings bottom sheet.
   Widget buildSettings(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.fromLTRB(
-        20.0,
-        0.0,
-        20.0,
-        max(
-          20.0,
-          View.of(context).viewPadding.bottom /
-              View.of(context).devicePixelRatio,
-        ),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Row(
-            children: [
-              Text(
-                'Settings',
-                style: Theme.of(context).textTheme.titleLarge,
-              ),
-              const Spacer(),
-              IconButton(
-                icon: const Icon(Icons.close),
-                onPressed: () => setState(() => _settingsVisible = false),
-              ),
-            ],
-          ),
+    return BottomSheetSettings(
+      onSettingsPressed: () => setState(() => _settingsVisible = false),
+      additionalWidgets: (context) => [
           Container(
             constraints: BoxConstraints(
               maxHeight: MediaQuery.sizeOf(context).height * 0.4,
@@ -121,7 +97,7 @@ class _GroupLayersTogetherState extends State<GroupLayersTogether>
             ),
           ),
         ],
-      ),
+      
     );
   }
 

@@ -94,99 +94,74 @@ class _CreatePlanarAndGeodeticBuffersState
 
   // The build method for the Settings bottom sheet.
   Widget buildSettings(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.fromLTRB(
-        20.0,
-        20.0,
-        20.0,
-        max(
-          20.0,
-          View.of(context).viewPadding.bottom /
-              View.of(context).devicePixelRatio,
+    return BottomSheetSettings(
+      onSettingsPressed: () => setState(() => _settingsVisible = false),
+      additionalWidgets: (context) => [
+        Row(
+          children: [
+            const Text('Buffer Radius (miles)'),
+            const Spacer(),
+            Text(
+              _bufferRadius.round().toString(),
+              textAlign: TextAlign.right,
+            ),
+          ],
         ),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Row(
-            children: [
-              Text(
-                'Settings',
-                style: Theme.of(context).textTheme.titleLarge,
+        Row(
+          children: [
+            Expanded(
+              // A slider to adjust the buffer radius.
+              child: Slider(
+                value: _bufferRadius,
+                min: 200.0,
+                max: 2000.0,
+                onChanged: (value) => setState(() => _bufferRadius = value),
               ),
-              const Spacer(),
-              IconButton(
-                icon: const Icon(Icons.close),
-                onPressed: () => setState(() => _settingsVisible = false),
-              ),
-            ],
-          ),
-          Row(
-            children: [
-              const Text('Buffer Radius (miles)'),
-              const Spacer(),
-              Text(
-                _bufferRadius.round().toString(),
-                textAlign: TextAlign.right,
-              ),
-            ],
-          ),
-          Row(
-            children: [
-              Expanded(
-                // A slider to adjust the buffer radius.
-                child: Slider(
-                  value: _bufferRadius,
-                  min: 200.0,
-                  max: 2000.0,
-                  onChanged: (value) => setState(() => _bufferRadius = value),
+            ),
+          ],
+        ),
+        Row(
+          children: [
+            SizedBox(
+              width: 30.0,
+              height: 30.0,
+              child: Container(
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.green,
                 ),
-              ),
-            ],
-          ),
-          Row(
-            children: [
-              SizedBox(
-                width: 30.0,
-                height: 30.0,
-                child: Container(
-                  decoration: const BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.green,
-                  ),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(color: Colors.black, width: 2.0),
-                      color: Colors.red.withAlpha(127),
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 10.0),
-              const Text('Planar Buffer'),
-            ],
-          ),
-          const SizedBox(height: 10.0),
-          Row(
-            children: [
-              SizedBox(
-                width: 30.0,
-                height: 30.0,
                 child: Container(
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     border: Border.all(color: Colors.black, width: 2.0),
-                    color: Colors.green,
+                    color: Colors.red.withAlpha(127),
                   ),
                 ),
               ),
-              const SizedBox(width: 10.0),
-              const Text('Geodetic Buffer'),
-            ],
-          ),
-        ],
-      ),
+            ),
+            const SizedBox(width: 10.0),
+            const Text('Planar Buffer'),
+          ],
+        ),
+        const SizedBox(height: 10.0),
+        Row(
+          children: [
+            SizedBox(
+              width: 30.0,
+              height: 30.0,
+              child: Container(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(color: Colors.black, width: 2.0),
+                  color: Colors.green,
+                ),
+              ),
+            ),
+            const SizedBox(width: 10.0),
+            const Text('Geodetic Buffer'),
+          ],
+        ),
+      ],
     );
   }
 

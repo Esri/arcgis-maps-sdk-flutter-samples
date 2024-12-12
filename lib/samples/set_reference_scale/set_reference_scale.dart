@@ -14,9 +14,8 @@
 // limitations under the License.
 //
 
-import 'dart:math';
-
 import 'package:arcgis_maps/arcgis_maps.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
 
 import '../../utils/sample_state_support.dart';
@@ -129,153 +128,127 @@ class _SetReferenceScaleState extends State<SetReferenceScale>
   }
 
   Widget buildSettings(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.fromLTRB(
-        20.0,
-        20.0,
-        20.0,
-        max(
-          20.0,
-          View.of(context).viewPadding.bottom /
-              View.of(context).devicePixelRatio,
-        ),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // Add a row with the settings title and close button.
-          Row(
-            children: [
-              Text(
-                'Settings',
-                style: Theme.of(context).textTheme.titleLarge,
-              ),
-              const Spacer(),
-              IconButton(
-                icon: const Icon(Icons.close),
-                onPressed: () => setState(() => _bottomSheetVisible = false),
-              ),
-            ],
+    return BottomSheetSettings(
+      onSettingsPressed: () => setState(() => _bottomSheetVisible = false),
+      additionalWidgets: (context) => [
+        // Add a container with a scrollable column for the settings.
+        Container(
+          constraints: BoxConstraints(
+            maxHeight: MediaQuery.sizeOf(context).height * 0.4,
           ),
-          // Add a container with a scrollable column for the settings.
-          Container(
-            constraints: BoxConstraints(
-              maxHeight: MediaQuery.sizeOf(context).height * 0.4,
-            ),
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  Row(
-                    children: [
-                      Text(
-                        'Reference Scale',
-                        style: Theme.of(context).textTheme.titleMedium,
-                      ),
-                      const Spacer(),
-                      // Add a dropdown button for setting a new reference scale.
-                      DropdownButton(
-                        underline: Container(),
-                        style: Theme.of(context).textTheme.titleSmall,
-                        isDense: true,
-                        alignment: Alignment.center,
-                        // Set the selected scale
-                        value: _scale,
-                        icon: const Icon(
-                          Icons.arrow_drop_down,
-                          color: Colors.deepPurple,
-                        ),
-                        // Set the callback to update the selected scale.
-                        onChanged: (newScale) {
-                          setState(() {
-                            _scale = newScale!;
-                            _map.referenceScale = _scale;
-                          });
-                        },
-                        items: _referenceScaleList,
-                      ),
-                    ],
-                  ),
-                  const Divider(),
-                  Row(
-                    children: [
-                      Text(
-                        'Apply Reference Scale to Layers',
-                        style: Theme.of(context).textTheme.titleMedium,
-                      ),
-                    ],
-                  ),
-                  // Add a list of checkboxes for selecting feature layers that will honor the reference scale.
-                  Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      // Create a checkbox for each feature layer.
-                      for (final layer in _allFeatureLayers)
-                        CheckboxListTile(
-                          dense: true,
-                          value: _selectedFeatureLayers.contains(layer),
-                          onChanged: (value) {
-                            setState(() {
-                              // Update the selected feature layers list.
-                              if (value ?? false) {
-                                _selectedFeatureLayers.add(layer);
-                              } else {
-                                _selectedFeatureLayers.remove(layer);
-                              }
-                            });
-
-                            // Get the matching layer from the map.
-                            var matchingLayer = _map.operationalLayers
-                                .where((element) => element.name == layer)
-                                .first as FeatureLayer;
-
-                            // Set the layer property based on the checkbox value.
-                            _selectedFeatureLayers.contains(matchingLayer.name)
-                                ? matchingLayer.scaleSymbols = true
-                                : matchingLayer.scaleSymbols = false;
-                          },
-                          // Set the title of the checkbox to the layer name.
-                          title: Text(
-                            layer,
-                            style: Theme.of(context).textTheme.titleSmall,
-                          ),
-                        ),
-                    ],
-                  ),
-                  const Divider(),
-                  Row(
-                    children: [
-                      // Add text to display the current map scale.
-                      Text(
-                        'Map Scale',
-                        style: Theme.of(context).textTheme.titleMedium,
-                      ),
-                      const Spacer(),
-                      Text(
-                        formatAsScale(_mapViewController.scale),
-                        style: Theme.of(context).textTheme.titleSmall,
-                      ),
-                    ],
-                  ),
-                  // Add a button to set the map scale to the reference scale.
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 20.0),
-                    child: ElevatedButton(
-                      onPressed: () {
-                        // Set the map scale to the reference scale and close the settings dialog.
-                        _mapViewController.setViewpointScale(
-                          _map.referenceScale,
-                        );
-                        setState(() => _bottomSheetVisible = false);
-                      },
-                      child: const Text('Set to Reference Scale'),
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    Text(
+                      'Reference Scale',
+                      style: Theme.of(context).textTheme.titleMedium,
                     ),
+                    const Spacer(),
+                    // Add a dropdown button for setting a new reference scale.
+                    DropdownButton(
+                      underline: Container(),
+                      style: Theme.of(context).textTheme.titleSmall,
+                      isDense: true,
+                      alignment: Alignment.center,
+                      // Set the selected scale
+                      value: _scale,
+                      icon: const Icon(
+                        Icons.arrow_drop_down,
+                        color: Colors.deepPurple,
+                      ),
+                      // Set the callback to update the selected scale.
+                      onChanged: (newScale) {
+                        setState(() {
+                          _scale = newScale!;
+                          _map.referenceScale = _scale;
+                        });
+                      },
+                      items: _referenceScaleList,
+                    ),
+                  ],
+                ),
+                const Divider(),
+                Row(
+                  children: [
+                    Text(
+                      'Apply Reference Scale to Layers',
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                  ],
+                ),
+                // Add a list of checkboxes for selecting feature layers that will honor the reference scale.
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Create a checkbox for each feature layer.
+                    for (final layer in _allFeatureLayers)
+                      CheckboxListTile(
+                        dense: true,
+                        value: _selectedFeatureLayers.contains(layer),
+                        onChanged: (value) {
+                          setState(() {
+                            // Update the selected feature layers list.
+                            if (value ?? false) {
+                              _selectedFeatureLayers.add(layer);
+                            } else {
+                              _selectedFeatureLayers.remove(layer);
+                            }
+                          });
+
+                          // Get the matching layer from the map.
+                          var matchingLayer = _map.operationalLayers
+                              .where((element) => element.name == layer)
+                              .first as FeatureLayer;
+
+                          // Set the layer property based on the checkbox value.
+                          _selectedFeatureLayers.contains(matchingLayer.name)
+                              ? matchingLayer.scaleSymbols = true
+                              : matchingLayer.scaleSymbols = false;
+                        },
+                        // Set the title of the checkbox to the layer name.
+                        title: Text(
+                          layer,
+                          style: Theme.of(context).textTheme.titleSmall,
+                        ),
+                      ),
+                  ],
+                ),
+                const Divider(),
+                Row(
+                  children: [
+                    // Add text to display the current map scale.
+                    Text(
+                      'Map Scale',
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                    const Spacer(),
+                    Text(
+                      formatAsScale(_mapViewController.scale),
+                      style: Theme.of(context).textTheme.titleSmall,
+                    ),
+                  ],
+                ),
+                // Add a button to set the map scale to the reference scale.
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 20.0),
+                  child: ElevatedButton(
+                    onPressed: () {
+                      // Set the map scale to the reference scale and close the settings dialog.
+                      _mapViewController.setViewpointScale(
+                        _map.referenceScale,
+                      );
+                      setState(() => _bottomSheetVisible = false);
+                    },
+                    child: const Text('Set to Reference Scale'),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
