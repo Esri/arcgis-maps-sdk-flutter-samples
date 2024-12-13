@@ -81,23 +81,22 @@ class _GroupLayersTogetherState extends State<GroupLayersTogether>
     return BottomSheetSettings(
       onSettingsPressed: () => setState(() => _settingsVisible = false),
       additionalWidgets: (context) => [
-          Container(
-            constraints: BoxConstraints(
-              maxHeight: MediaQuery.sizeOf(context).height * 0.4,
-            ),
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: _mapViewController.arcGISMap?.operationalLayers
-                        .whereType<GroupLayer>()
-                        .map(buildGroupLayerSettings)
-                        .toList() ??
-                    [],
-              ),
+        Container(
+          constraints: BoxConstraints(
+            maxHeight: MediaQuery.sizeOf(context).height * 0.4,
+          ),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: _mapViewController.arcGISMap?.operationalLayers
+                      .whereType<GroupLayer>()
+                      .map(buildGroupLayerSettings)
+                      .toList() ??
+                  [],
             ),
           ),
-        ],
-      
+        ),
+      ],
     );
   }
 
