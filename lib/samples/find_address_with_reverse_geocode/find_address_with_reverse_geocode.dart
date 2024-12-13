@@ -128,13 +128,7 @@ class _FindAddressWithReverseGeocodeState
     final combinedString =
         resultStrings.where((str) => str.isNotEmpty).join(', ');
 
-    if (mounted) {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(content: Text(combinedString));
-        },
-      );
-    }
+    showMessageDialog(combinedString);
+    
   }
 }

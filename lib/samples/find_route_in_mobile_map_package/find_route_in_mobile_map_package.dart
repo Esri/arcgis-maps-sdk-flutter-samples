@@ -376,7 +376,8 @@ class _FindRouteInMapState extends State<FindRouteInMap>
     } on ArcGISException catch (e) {
       // If an error occurs, clear the route overlay and display the error.
       _routeOverlay!.graphics.clear();
-      showError(e);
+     
+      showMessageDialog(e.message);
     }
   }
 
@@ -400,14 +401,5 @@ class _FindRouteInMapState extends State<FindRouteInMap>
       _selectedGraphic = null;
       _message = '';
     });
-  }
-
-  void showError(ArcGISException e) {
-    if (mounted) {
-      showDialog(
-        context: context,
-        builder: (_) => AlertDialog(content: Text(e.message)),
-      );
-    }
   }
 }

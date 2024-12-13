@@ -413,18 +413,6 @@ class _ManageFeaturesState extends State<ManageFeatures>
         return 'Select a feature management operation.';
     }
   }
-
-  void showMessageDialog(String message) {
-    // Show a dialog with the provided message.
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          content: Text(message),
-        );
-      },
-    );
-  }
 }
 
 // Create an enumeration to define the feature management options.

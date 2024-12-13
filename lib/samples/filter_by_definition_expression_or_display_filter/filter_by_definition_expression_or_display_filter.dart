@@ -15,6 +15,7 @@
 //
 
 import 'package:arcgis_maps/arcgis_maps.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
 
 import '../../utils/sample_state_support.dart';
@@ -164,23 +165,7 @@ class _FilterByDefinitionExpressionOrDisplayFilterState
         await _featureLayer.featureTable!.queryFeatureCount(queryParameters);
 
     // Show the feature count in an alert dialog.
-    if (mounted) {
-      showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: const Text(
-              'Current Feature Count',
-              style: TextStyle(fontSize: 20),
-              textAlign: TextAlign.center,
-            ),
-            content: Text(
-              '$featureCount features',
-              textAlign: TextAlign.center,
-            ),
-          );
-        },
-      );
-    }
+    showMessageDialog('$featureCount features', title: 'Current Feature Count');
+    
   }
 }

@@ -167,9 +167,8 @@ class _CreateMobileGeodatabaseState extends State<CreateMobileGeodatabase>
       _geodatabase = await Geodatabase.create(fileUri: geodatabaseFile.uri);
       await _createGeodatabaseFeatureTable();
     } catch (e) {
-      _showDialog(
-        'Error',
-        e.toString(),
+      showMessageDialog(
+        e.toString(), title: 'Error',
       );
     }
     return Future.value();
@@ -209,9 +208,8 @@ class _CreateMobileGeodatabaseState extends State<CreateMobileGeodatabase>
       );
       setState(() => _featureCount = _featureTable!.numberOfFeatures);
     } catch (e) {
-      _showDialog(
-        'Error',
-        e.toString(),
+      showMessageDialog(
+        e.toString(), title: 'Error',
       );
     }
     return Future.value();
@@ -327,18 +325,5 @@ class _CreateMobileGeodatabaseState extends State<CreateMobileGeodatabase>
 
     // Create a new mobile geodatabase and feature table to start again.
     _setupGeodatabase();
-  }
-
-  // Display a dialog with a title and message.
-  void _showDialog(String title, String message) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text(title),
-          content: Text(message),
-        );
-      },
-    );
   }
 }
