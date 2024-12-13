@@ -95,8 +95,8 @@ class _CreatePlanarAndGeodeticBuffersState
   // The build method for the Settings bottom sheet.
   Widget buildSettings(BuildContext context) {
     return BottomSheetSettings(
-      onSettingsPressed: () => setState(() => _settingsVisible = false),
-      additionalWidgets: (context) => [
+      onCloseIconPressed: () => setState(() => _settingsVisible = false),
+      settingsWidgets: (context) => [
         Row(
           children: [
             const Text('Buffer Radius (miles)'),

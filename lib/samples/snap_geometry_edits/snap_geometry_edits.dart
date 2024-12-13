@@ -411,8 +411,8 @@ class _SnapGeometryEditsState extends State<SnapGeometryEdits>
 
   Widget buildSnapSettings(BuildContext context) {
     return BottomSheetSettings(
-      onSettingsPressed: () => setState(() => _snapSettingsVisible = false),
-      additionalWidgets: (context) => [
+      onCloseIconPressed: () => setState(() => _snapSettingsVisible = false),
+      settingsWidgets: (context) => [
         Container(
           constraints: BoxConstraints(
             maxHeight: MediaQuery.sizeOf(context).height * 0.4,

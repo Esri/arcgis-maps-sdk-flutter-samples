@@ -18,13 +18,19 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 
+///
+/// The widget has a column layout with a title and a close icon button on the top. 
+/// The rest of area will be filled with the widgets returned by the [settingsWidgets] function.
+///  - [onCloseIconPressed] is called when the close icon is pressed.
+///  - [settingsWidgets] is a list of widgets to display in the container.
+/// 
 class BottomSheetSettings extends StatelessWidget {
-  final VoidCallback onSettingsPressed;
-  final List<Widget> Function(BuildContext) additionalWidgets;
+  final VoidCallback onCloseIconPressed;
+  final List<Widget> Function(BuildContext) settingsWidgets;
 
   const BottomSheetSettings({
-    required this.onSettingsPressed,
-    required this.additionalWidgets,
+    required this.onCloseIconPressed,
+    required this.settingsWidgets,
     super.key,
   });
 
@@ -33,7 +39,7 @@ class BottomSheetSettings extends StatelessWidget {
      return Container(
       padding: EdgeInsets.fromLTRB(
         20.0,
-        10.0,
+        20.0,
         20.0,
         max(
           20.0,
@@ -53,12 +59,12 @@ class BottomSheetSettings extends StatelessWidget {
               const Spacer(),
               IconButton(
                 icon: const Icon(Icons.close),
-                onPressed: onSettingsPressed,
+                onPressed: onCloseIconPressed,
               ),
             ],
           ),
-          // Display the additional widgets .
-          ...additionalWidgets(context),
+          // Display the setting widgets.
+          ...settingsWidgets(context),
         ],
       ),
     );

@@ -213,8 +213,8 @@ class _CreateBuffersAroundPointsState extends State<CreateBuffersAroundPoints>
   // The build method for the settings.
   Widget buildSettings(BuildContext context, StateSetter setState) {
     return BottomSheetSettings(
-      onSettingsPressed: () => setState(() => _showSettings = false),
-      additionalWidgets: (context) => [
+      onCloseIconPressed: () => setState(() => _showSettings = false),
+      settingsWidgets: (context) => [
         Row(
           children: [
             const Text('Buffer Radius (miles)'),

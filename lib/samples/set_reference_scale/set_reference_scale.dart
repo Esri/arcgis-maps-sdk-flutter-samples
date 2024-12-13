@@ -129,8 +129,8 @@ class _SetReferenceScaleState extends State<SetReferenceScale>
 
   Widget buildSettings(BuildContext context) {
     return BottomSheetSettings(
-      onSettingsPressed: () => setState(() => _bottomSheetVisible = false),
-      additionalWidgets: (context) => [
+      onCloseIconPressed: () => setState(() => _bottomSheetVisible = false),
+      settingsWidgets: (context) => [
         // Add a container with a scrollable column for the settings.
         Container(
           constraints: BoxConstraints(
