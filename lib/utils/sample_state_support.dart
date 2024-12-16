@@ -28,7 +28,7 @@ mixin SampleStateSupport<T extends StatefulWidget> on State<T> {
   /// Shows an alert dialog with the given [message].
   void showMessageDialog(String message, {String title = 'Info', bool showOK = false}) {
     if (mounted) {
-      showAlertDialog(context,  message, title: title, showOK: showOK);
+      showAlertDialog(context,  message, title: title, displayOkButton: showOK);
     }
   }
 }

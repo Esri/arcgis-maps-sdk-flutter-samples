@@ -16,11 +16,18 @@
 
 import 'package:flutter/material.dart';
 
+/// 
+/// Shows an alert dialog with a message.
+/// - [context]: The context in which the dialog is shown.
+/// - [message]: The message to display in the dialog.
+/// - [title]: (Optional) The title of the dialog.
+/// - [showOK]: (Optional) A boolean value to determine if the dialog should show an OK button.
+
 Future<void> showAlertDialog(
   BuildContext context,
   String message, {
   String title = 'Alert',
-  bool showOK = false,
+  bool displayOkButton = false,
 }) {
   // if the context State object is in the widget tree.
   return showDialog(
@@ -31,7 +38,7 @@ Future<void> showAlertDialog(
         style: Theme.of(context).textTheme.titleMedium,
       ),
       content: Text(message),
-      actions: showOK
+      actions: displayOkButton
           ? [
               TextButton(
                 onPressed: () => Navigator.pop(context, 'OK'),
