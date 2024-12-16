@@ -14,4 +14,5 @@
 // limitations under the License.
 //
 
+export 'bottom_sheet_settings.dart';
 export 'loading_indicator.dart';

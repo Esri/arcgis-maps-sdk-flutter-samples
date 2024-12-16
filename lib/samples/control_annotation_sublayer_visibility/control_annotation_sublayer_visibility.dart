@@ -92,69 +92,44 @@ class _ControlAnnotationSublayerVisibilityState
 
   // The build method for the Settings bottom sheet.
   Widget buildSettings(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.fromLTRB(
-        20.0,
-        20.0,
-        20.0,
-        max(
-          20.0,
-          View.of(context).viewPadding.bottom /
-              View.of(context).devicePixelRatio,
+    return BottomSheetSettings(
+      onCloseIconPressed: () => setState(() => _settingsVisible = false),
+      settingsWidgets: (context) => [
+        Row(
+          children: [
+            Text(
+              _openLabel,
+              style: TextStyle(color: _openLabelColor),
+            ),
+            const Spacer(),
+            Switch(
+              value: _openSublayer.isVisible,
+              onChanged: (value) {
+                // Set the visibility of the open sub layer.
+                setState(() => _openSublayer.isVisible = value);
+              },
+            ),
+          ],
         ),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Row(
-            children: [
-              Text(
-                'Settings',
-                style: Theme.of(context).textTheme.titleLarge,
-              ),
-              const Spacer(),
-              IconButton(
-                icon: const Icon(Icons.close),
-                onPressed: () => setState(() => _settingsVisible = false),
-              ),
-            ],
-          ),
-          Row(
-            children: [
-              Text(
-                _openLabel,
-                style: TextStyle(color: _openLabelColor),
-              ),
-              const Spacer(),
-              Switch(
-                value: _openSublayer.isVisible,
-                onChanged: (value) {
-                  // Set the visibility of the open sub layer.
-                  setState(() => _openSublayer.isVisible = value);
-                },
-              ),
-            ],
-          ),
-          Row(
-            children: [
-              Text(
-                _closedLabel,
-              ),
-              const Spacer(),
-              Switch(
-                value: _closedSublayer.isVisible,
-                onChanged: (value) {
-                  // Set the visibility of the closed sub layer.
-                  setState(() => _closedSublayer.isVisible = value);
-                },
-              ),
-            ],
-          ),
-          Text(
-            _currentScaleLabel,
-          ),
-        ],
-      ),
+        Row(
+          children: [
+            Text(
+              _closedLabel,
+            ),
+            const Spacer(),
+            Switch(
+              value: _closedSublayer.isVisible,
+              onChanged: (value) {
+                // Set the visibility of the closed sub layer.
+                setState(() => _closedSublayer.isVisible = value);
+              },
+            ),
+          ],
+        ),
+        Text(
+          _currentScaleLabel,
+        ),
+      ],
     );
   }
 

@@ -212,75 +212,48 @@ class _CreateBuffersAroundPointsState extends State<CreateBuffersAroundPoints>
 
   // The build method for the settings.
   Widget buildSettings(BuildContext context, StateSetter setState) {
-    return Container(
-      padding: EdgeInsets.fromLTRB(
-        20.0,
-        0.0,
-        20.0,
-        max(
-          20.0,
-          View.of(context).viewPadding.bottom /
-              View.of(context).devicePixelRatio,
+    return BottomSheetSettings(
+      onCloseIconPressed: () => setState(() => _showSettings = false),
+      settingsWidgets: (context) => [
+        Row(
+          children: [
+            const Text('Buffer Radius (miles)'),
+            const Spacer(),
+            Text(
+              _bufferRadius.round().toString(),
+              textAlign: TextAlign.right,
+            ),
+          ],
         ),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Row(
-            children: [
-              Text(
-                'Settings',
-                style: Theme.of(context).textTheme.titleLarge,
+        Row(
+          children: [
+            Expanded(
+              // A slider to adjust the buffer radius.
+              child: Slider(
+                value: _bufferRadius,
+                min: 10,
+                max: 300,
+                onChanged: (value) => setState(() => _bufferRadius = value),
               ),
-              const Spacer(),
-              IconButton(
-                onPressed: () {
-                  setState(() => _showSettings = false);
-                },
-                icon: const Icon(Icons.close),
-              ),
-            ],
-          ),
-          Row(
-            children: [
-              const Text('Buffer Radius (miles)'),
-              const Spacer(),
-              Text(
-                _bufferRadius.round().toString(),
-                textAlign: TextAlign.right,
-              ),
-            ],
-          ),
-          Row(
-            children: [
-              Expanded(
-                // A slider to adjust the buffer radius.
-                child: Slider(
-                  value: _bufferRadius,
-                  min: 10,
-                  max: 300,
-                  onChanged: (value) => setState(() => _bufferRadius = value),
-                ),
-              ),
-            ],
-          ),
-          Row(
-            children: [
-              Text(_shouldUnion ? 'Union Enabled' : 'Union Disabled'),
-              const Spacer(),
-              Switch(
-                value: _shouldUnion,
-                onChanged: (value) {
-                  setState(() => _shouldUnion = value);
-                  if (_bufferPoints.isNotEmpty) {
-                    drawBuffers(unionized: _shouldUnion);
-                  }
-                },
-              ),
-            ],
-          ),
-        ],
-      ),
+            ),
+          ],
+        ),
+        Row(
+          children: [
+            Text(_shouldUnion ? 'Union Enabled' : 'Union Disabled'),
+            const Spacer(),
+            Switch(
+              value: _shouldUnion,
+              onChanged: (value) {
+                setState(() => _shouldUnion = value);
+                if (_bufferPoints.isNotEmpty) {
+                  drawBuffers(unionized: _shouldUnion);
+                }
+              },
+            ),
+          ],
+        ),
+      ],
     );
   }
 

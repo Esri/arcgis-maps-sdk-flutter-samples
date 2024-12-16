@@ -13,7 +13,6 @@
 // limitations under the License.
 //
 
-import 'dart:math';
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_state_support.dart';
@@ -411,168 +410,142 @@ class _SnapGeometryEditsState extends State<SnapGeometryEdits>
   }
 
   Widget buildSnapSettings(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.fromLTRB(
-        20.0,
-        0.0,
-        20.0,
-        max(
-          20.0,
-          View.of(context).viewPadding.bottom /
-              View.of(context).devicePixelRatio,
+    return BottomSheetSettings(
+      onCloseIconPressed: () => setState(() => _snapSettingsVisible = false),
+      settingsWidgets: (context) => [
+        Container(
+          constraints: BoxConstraints(
+            maxHeight: MediaQuery.sizeOf(context).height * 0.4,
+            maxWidth: MediaQuery.sizeOf(context).height * 0.8,
+          ),
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Snap Settings',
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                    // Add a checkbox to toggle all snapping options.
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text('Enable all'),
+                        Checkbox(
+                          value: _snappingEnabled &&
+                              _geometryGuidesEnabled &&
+                              _featureSnappingEnabled,
+                          onChanged: (allEnabled) {
+                            if (allEnabled != null) {
+                              _geometryEditor.snapSettings.isEnabled =
+                                  allEnabled;
+                              _geometryEditor.snapSettings
+                                  .isGeometryGuidesEnabled = allEnabled;
+                              _geometryEditor.snapSettings
+                                  .isFeatureSnappingEnabled = allEnabled;
+                              setState(() {
+                                _snappingEnabled = allEnabled;
+                                _geometryGuidesEnabled = allEnabled;
+                                _featureSnappingEnabled = allEnabled;
+                              });
+                            }
+                          },
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                // Add a checkbox to toggle whether snapping is enabled.
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text('Snapping enabled'),
+                    Checkbox(
+                      value: _snappingEnabled,
+                      onChanged: (snappingEnabled) {
+                        if (snappingEnabled != null) {
+                          _geometryEditor.snapSettings.isEnabled =
+                              snappingEnabled;
+                          setState(() => _snappingEnabled = snappingEnabled);
+                        }
+                      },
+                    ),
+                  ],
+                ),
+                // Add a checkbox to toggle whether geometry guides are enabled.
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text('Geometry guides'),
+                    Checkbox(
+                      value: _geometryGuidesEnabled,
+                      onChanged: (geometryGuidesEnabled) {
+                        if (geometryGuidesEnabled != null) {
+                          _geometryEditor.snapSettings.isGeometryGuidesEnabled =
+                              geometryGuidesEnabled;
+                          setState(
+                            () =>
+                                _geometryGuidesEnabled = geometryGuidesEnabled,
+                          );
+                        }
+                      },
+                    ),
+                  ],
+                ),
+                // Add a checkbox to toggle whether feature snapping is enabled.
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text('Feature snapping'),
+                    Checkbox(
+                      value: _featureSnappingEnabled,
+                      onChanged: (featureSnappingEnabled) {
+                        if (featureSnappingEnabled != null) {
+                          _geometryEditor
+                                  .snapSettings.isFeatureSnappingEnabled =
+                              featureSnappingEnabled;
+                          setState(
+                            () => _featureSnappingEnabled =
+                                featureSnappingEnabled,
+                          );
+                        }
+                      },
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Select snap sources',
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20),
+                // Add checkboxes for enabling the point layers as snap sources.
+                buildSnapSourcesSelection(
+                  'Point layers',
+                  _pointLayerSnapSources,
+                ),
+                // Add checkboxes for the polyline layers as snap sources.
+                buildSnapSourcesSelection(
+                  'Polyline layers',
+                  _polylineLayerSnapSources,
+                ),
+                // Add checkboxes for the graphics overlay as snap sources.
+                buildSnapSourcesSelection(
+                  'Graphics Overlay',
+                  _graphicsOverlaySnapSources,
+                ),
+              ],
+            ),
+          ),
         ),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Row(
-            children: [
-              Text(
-                'Settings',
-                style: Theme.of(context).textTheme.titleLarge,
-              ),
-              const Spacer(),
-              IconButton(
-                icon: const Icon(Icons.close),
-                onPressed: () => setState(() => _snapSettingsVisible = false),
-              ),
-            ],
-          ),
-          Container(
-            constraints: BoxConstraints(
-              maxHeight: MediaQuery.sizeOf(context).height * 0.4,
-              maxWidth: MediaQuery.sizeOf(context).height * 0.8,
-            ),
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Snap Settings',
-                        style: Theme.of(context).textTheme.titleMedium,
-                      ),
-                      // Add a checkbox to toggle all snapping options.
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Text('Enable all'),
-                          Checkbox(
-                            value: _snappingEnabled &&
-                                _geometryGuidesEnabled &&
-                                _featureSnappingEnabled,
-                            onChanged: (allEnabled) {
-                              if (allEnabled != null) {
-                                _geometryEditor.snapSettings.isEnabled =
-                                    allEnabled;
-                                _geometryEditor.snapSettings
-                                    .isGeometryGuidesEnabled = allEnabled;
-                                _geometryEditor.snapSettings
-                                    .isFeatureSnappingEnabled = allEnabled;
-                                setState(() {
-                                  _snappingEnabled = allEnabled;
-                                  _geometryGuidesEnabled = allEnabled;
-                                  _featureSnappingEnabled = allEnabled;
-                                });
-                              }
-                            },
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  // Add a checkbox to toggle whether snapping is enabled.
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text('Snapping enabled'),
-                      Checkbox(
-                        value: _snappingEnabled,
-                        onChanged: (snappingEnabled) {
-                          if (snappingEnabled != null) {
-                            _geometryEditor.snapSettings.isEnabled =
-                                snappingEnabled;
-                            setState(() => _snappingEnabled = snappingEnabled);
-                          }
-                        },
-                      ),
-                    ],
-                  ),
-                  // Add a checkbox to toggle whether geometry guides are enabled.
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text('Geometry guides'),
-                      Checkbox(
-                        value: _geometryGuidesEnabled,
-                        onChanged: (geometryGuidesEnabled) {
-                          if (geometryGuidesEnabled != null) {
-                            _geometryEditor
-                                    .snapSettings.isGeometryGuidesEnabled =
-                                geometryGuidesEnabled;
-                            setState(
-                              () => _geometryGuidesEnabled =
-                                  geometryGuidesEnabled,
-                            );
-                          }
-                        },
-                      ),
-                    ],
-                  ),
-                  // Add a checkbox to toggle whether feature snapping is enabled.
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text('Feature snapping'),
-                      Checkbox(
-                        value: _featureSnappingEnabled,
-                        onChanged: (featureSnappingEnabled) {
-                          if (featureSnappingEnabled != null) {
-                            _geometryEditor
-                                    .snapSettings.isFeatureSnappingEnabled =
-                                featureSnappingEnabled;
-                            setState(
-                              () => _featureSnappingEnabled =
-                                  featureSnappingEnabled,
-                            );
-                          }
-                        },
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 20),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Select snap sources',
-                        style: Theme.of(context).textTheme.titleLarge,
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 20),
-                  // Add checkboxes for enabling the point layers as snap sources.
-                  buildSnapSourcesSelection(
-                    'Point layers',
-                    _pointLayerSnapSources,
-                  ),
-                  // Add checkboxes for the polyline layers as snap sources.
-                  buildSnapSourcesSelection(
-                    'Polyline layers',
-                    _polylineLayerSnapSources,
-                  ),
-                  // Add checkboxes for the graphics overlay as snap sources.
-                  buildSnapSourcesSelection(
-                    'Graphics Overlay',
-                    _graphicsOverlaySnapSources,
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
+      ],
     );
   }
 

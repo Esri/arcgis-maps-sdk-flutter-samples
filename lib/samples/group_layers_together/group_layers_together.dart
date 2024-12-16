@@ -78,50 +78,25 @@ class _GroupLayersTogetherState extends State<GroupLayersTogether>
 
   // The build method for the Settings bottom sheet.
   Widget buildSettings(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.fromLTRB(
-        20.0,
-        0.0,
-        20.0,
-        max(
-          20.0,
-          View.of(context).viewPadding.bottom /
-              View.of(context).devicePixelRatio,
+    return BottomSheetSettings(
+      onCloseIconPressed: () => setState(() => _settingsVisible = false),
+      settingsWidgets: (context) => [
+        Container(
+          constraints: BoxConstraints(
+            maxHeight: MediaQuery.sizeOf(context).height * 0.4,
+          ),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: _mapViewController.arcGISMap?.operationalLayers
+                      .whereType<GroupLayer>()
+                      .map(buildGroupLayerSettings)
+                      .toList() ??
+                  [],
+            ),
+          ),
         ),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Row(
-            children: [
-              Text(
-                'Settings',
-                style: Theme.of(context).textTheme.titleLarge,
-              ),
-              const Spacer(),
-              IconButton(
-                icon: const Icon(Icons.close),
-                onPressed: () => setState(() => _settingsVisible = false),
-              ),
-            ],
-          ),
-          Container(
-            constraints: BoxConstraints(
-              maxHeight: MediaQuery.sizeOf(context).height * 0.4,
-            ),
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: _mapViewController.arcGISMap?.operationalLayers
-                        .whereType<GroupLayer>()
-                        .map(buildGroupLayerSettings)
-                        .toList() ??
-                    [],
-              ),
-            ),
-          ),
-        ],
-      ),
+      ],
     );
   }
 

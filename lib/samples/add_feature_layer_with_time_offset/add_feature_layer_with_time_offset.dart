@@ -14,7 +14,6 @@
 // limitations under the License.
 //
 
-import 'dart:math';
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
@@ -87,67 +86,43 @@ class _AddFeatureLayerWithTimeOffsetState
 
   // The build method for the Settings bottom sheet.
   Widget buildSettings(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.fromLTRB(
-        20.0,
-        0.0,
-        20.0,
-        max(
-          20.0,
-          View.of(context).viewPadding.bottom /
-              View.of(context).devicePixelRatio,
+    return BottomSheetSettings(
+      onCloseIconPressed: () => setState(() => _settingsVisible = false),
+      settingsWidgets: (context) => [
+        // Display the current date range.
+        Text(_dateRangeMessage),
+        Row(
+          children: [
+            Expanded(
+              // A slider to adjust the interval.
+              child: Slider(
+                value: _intervalFraction,
+                onChanged: (value) {
+                  setState(() => _intervalFraction = value);
+                  updateTimeExtent();
+                },
+              ),
+            ),
+          ],
         ),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Row(
-            children: [
-              Text(
-                'Settings',
-                style: Theme.of(context).textTheme.titleLarge,
-              ),
-              const Spacer(),
-              IconButton(
-                icon: const Icon(Icons.close),
-                onPressed: () => setState(() => _settingsVisible = false),
-              ),
-            ],
-          ),
-          // Display the current date range.
-          Text(_dateRangeMessage),
-          Row(
-            children: [
-              Expanded(
-                // A slider to adjust the interval.
-                child: Slider(
-                  value: _intervalFraction,
-                  onChanged: (value) {
-                    setState(() => _intervalFraction = value);
-                    updateTimeExtent();
-                  },
+        Row(
+          children: [
+            SizedBox(
+              width: 20.0,
+              height: 20.0,
+              child: Container(
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.red,
                 ),
               ),
-            ],
-          ),
-          Row(
-            children: [
-              SizedBox(
-                width: 20.0,
-                height: 20.0,
-                child: Container(
-                  decoration: const BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.red,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 10.0),
-              const Text('Hurricane tracks, offset 10 days'),
-            ],
-          ),
-          const SizedBox(height: 10.0),
-          Row(
+            ),
+            const SizedBox(width: 10.0),
+            const Text('Hurricane tracks, offset 10 days'),
+          ],
+        ),
+        const SizedBox(height: 10.0),
+        Row(
             children: [
               SizedBox(
                 width: 20.0,
@@ -163,8 +138,7 @@ class _AddFeatureLayerWithTimeOffsetState
               const Text('Hurricane tracks, no offset'),
             ],
           ),
-        ],
-      ),
+      ],
     );
   }
 
