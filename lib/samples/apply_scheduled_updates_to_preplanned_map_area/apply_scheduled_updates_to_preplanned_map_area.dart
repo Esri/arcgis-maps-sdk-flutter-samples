@@ -160,10 +160,10 @@ class _ApplyScheduledUpdatesToPreplannedMapAreaState
     try {
       await _mobileMapPackage!.load();
     } catch (err) {
-        showMessageDialog(
-          'Mobile Map Package failed to load with error: {$err}',
-          title: 'Error',
-        );
+      showMessageDialog(
+        'Mobile Map Package failed to load with error: {$err}',
+        title: 'Error',
+      );
       return false;
     }
 

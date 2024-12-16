@@ -376,7 +376,7 @@ class _FindRouteInMapState extends State<FindRouteInMap>
     } on ArcGISException catch (e) {
       // If an error occurs, clear the route overlay and display the error.
       _routeOverlay!.graphics.clear();
-     
+
       showMessageDialog(e.message, title: 'Error');
     }
   }

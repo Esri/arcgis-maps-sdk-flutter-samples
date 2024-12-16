@@ -115,11 +115,13 @@ class _DisplayClustersState extends State<DisplayClusters>
         });
       } else {
         showMessageDialog(
-          'Feature layer does not have feature reduction enabled.', title: 'Warning',
+          'Feature layer does not have feature reduction enabled.',
+          title: 'Warning',
         );
       }
     } else {
-      showMessageDialog('Unable to access a feature layer on the web map.', title: 'Warning');
+      showMessageDialog('Unable to access a feature layer on the web map.',
+          title: 'Warning');
     }
   }
 

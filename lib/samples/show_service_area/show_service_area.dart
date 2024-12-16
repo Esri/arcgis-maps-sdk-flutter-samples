@@ -183,7 +183,7 @@ class _ShowServiceAreaState extends State<ShowServiceArea>
       _serviceAreaParameters.defaultImpedanceCutoffs.clear();
       _serviceAreaParameters.defaultImpedanceCutoffs.addAll([3, 8, 12]);
     } on Exception catch (e) {
-        showMessageDialog('Error creating service area parameters:\n $e');
+      showMessageDialog('Error creating service area parameters:\n $e');
     }
 
     // Toggle the _ready flag to enable the UI.
@@ -253,7 +253,10 @@ class _ShowServiceAreaState extends State<ShowServiceArea>
       // Re-enable the UI once the service area task is finished.
       setState(() => _taskInProgress = false);
     } else {
-      showMessageDialog('At least 1 facility is required to perform a service area calculation.', showOK: true,);
+      showMessageDialog(
+        'At least 1 facility is required to perform a service area calculation.',
+        showOK: true,
+      );
     }
   }
 

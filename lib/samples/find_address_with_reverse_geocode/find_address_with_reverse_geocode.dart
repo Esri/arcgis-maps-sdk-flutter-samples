@@ -129,6 +129,5 @@ class _FindAddressWithReverseGeocodeState
         resultStrings.where((str) => str.isNotEmpty).join(', ');
 
     showMessageDialog(combinedString);
-    
   }
 }

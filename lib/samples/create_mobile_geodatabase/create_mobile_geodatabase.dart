@@ -114,7 +114,6 @@ class _CreateMobileGeodatabaseState extends State<CreateMobileGeodatabase>
             ),
             // Display a progress indicator and prevent interaction
             // until state is ready.
-           
           ],
         ),
       ),
@@ -168,7 +167,8 @@ class _CreateMobileGeodatabaseState extends State<CreateMobileGeodatabase>
       await _createGeodatabaseFeatureTable();
     } catch (e) {
       showMessageDialog(
-        e.toString(), title: 'Error',
+        e.toString(),
+        title: 'Error',
       );
     }
     return Future.value();
@@ -209,7 +209,8 @@ class _CreateMobileGeodatabaseState extends State<CreateMobileGeodatabase>
       setState(() => _featureCount = _featureTable!.numberOfFeatures);
     } catch (e) {
       showMessageDialog(
-        e.toString(), title: 'Error',
+        e.toString(),
+        title: 'Error',
       );
     }
     return Future.value();

@@ -123,21 +123,21 @@ class _AddFeatureLayerWithTimeOffsetState
         ),
         const SizedBox(height: 10.0),
         Row(
-            children: [
-              SizedBox(
-                width: 20.0,
-                height: 20.0,
-                child: Container(
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.blue.shade900,
-                  ),
+          children: [
+            SizedBox(
+              width: 20.0,
+              height: 20.0,
+              child: Container(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.blue.shade900,
                 ),
               ),
-              const SizedBox(width: 10.0),
-              const Text('Hurricane tracks, no offset'),
-            ],
-          ),
+            ),
+            const SizedBox(width: 10.0),
+            const Text('Hurricane tracks, no offset'),
+          ],
+        ),
       ],
     );
   }

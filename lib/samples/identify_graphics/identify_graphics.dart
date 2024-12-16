@@ -25,7 +25,8 @@ class IdentifyGraphics extends StatefulWidget {
   State<IdentifyGraphics> createState() => _IdentifyGraphicsState();
 }
 
-class _IdentifyGraphicsState extends State<IdentifyGraphics>  with SampleStateSupport {
+class _IdentifyGraphicsState extends State<IdentifyGraphics>
+    with SampleStateSupport {
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
   // Graphic to store the polygon.
@@ -107,7 +108,8 @@ class _IdentifyGraphicsState extends State<IdentifyGraphics>  with SampleStateSu
     if (identifyGraphicsOverlay.graphics.isNotEmpty) {
       final identifiedGraphic = identifyGraphicsOverlay.graphics.first;
       if (identifiedGraphic == _graphic) {
-        showMessageDialog('Tapped on Graphic', title: 'Identify Graphics', showOK: true);
+        showMessageDialog('Tapped on Graphic',
+            title: 'Identify Graphics', showOK: true);
       }
     }
   }

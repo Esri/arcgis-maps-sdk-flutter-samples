@@ -166,6 +166,5 @@ class _FilterByDefinitionExpressionOrDisplayFilterState
 
     // Show the feature count in an alert dialog.
     showMessageDialog('$featureCount features', title: 'Current Feature Count');
-    
   }
 }
