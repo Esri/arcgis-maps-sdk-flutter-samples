@@ -213,9 +213,7 @@ class _FindRouteState extends State<FindRoute> with SampleStateSupport {
     // Solve the route using the route parameters.
     final routeResult = await _routeTask.solveRoute(_routeParameters);
     if (routeResult.routes.isEmpty) {
-      if (mounted) {
-        showAlertDialog('No routes have been generated.', title: 'Info');
-      }
+      showMessageDialog('No routes have been generated.');
       return;
     }
 
@@ -275,23 +273,6 @@ class _FindRouteState extends State<FindRoute> with SampleStateSupport {
         return Text(_directions[index].directionText);
       },
       separatorBuilder: (context, index) => const Divider(),
-    );
-  }
-
-  Future<void> showAlertDialog(String message, {String title = 'Alert'}) {
-    // Show an alert dialog.
-    return showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(title),
-        content: Text(message),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, 'OK'),
-            child: const Text('OK'),
-          ),
-        ],
-      ),
     );
   }
 }

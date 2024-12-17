@@ -115,7 +115,7 @@ class _EditFeatureAttachmentsState extends State<EditFeatureAttachments>
       // Apply the edits to the service.
       await serviceFeatureTable.applyEdits();
     } catch (e) {
-      if (mounted) _showErrorDialog(context, e);
+      showMessageDialog(e.toString(), title: 'Error', showOK: true);
     }
     return Future.value();
   }
@@ -341,7 +341,7 @@ class _AttachmentsOptionsState extends State<AttachmentsOptions>
         isLoading = false;
       });
     } catch (e) {
-      if (mounted) _showErrorDialog(context, e);
+      showMessageDialog(e.toString(), title: 'Error', showOK: true);
       setState(() => isLoading = false);
     }
   }
@@ -361,21 +361,4 @@ class _AttachmentsOptionsState extends State<AttachmentsOptions>
         return 'application/octet-stream';
     }
   }
-}
-
-// Show an error dialog.
-void _showErrorDialog(BuildContext context, dynamic error) {
-  showDialog(
-    context: context,
-    builder: (context) => AlertDialog(
-      title: const Text('Error'),
-      content: Text(error.toString()),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: const Text('OK'),
-        ),
-      ],
-    ),
-  );
 }

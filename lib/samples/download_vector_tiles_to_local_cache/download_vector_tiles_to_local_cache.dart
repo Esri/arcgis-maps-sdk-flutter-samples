@@ -160,7 +160,8 @@ class _DownloadVectorTilesToLocalCacheState
         layer == null ||
         layer is! ArcGISVectorTiledLayer ||
         layer.uri == null) {
-      _showErrorDialog('Invalid download area or layer');
+      showMessageDialog(
+          'Failed to download vector tiles: Invalid download area or layer');
       return;
     }
 
@@ -231,31 +232,10 @@ class _DownloadVectorTilesToLocalCacheState
       // If the job succeeded, load the downloaded caches into the map view.
       _loadExportedVectorTiles(result);
     } on ArcGISException catch (e) {
-      _showErrorDialog(e.message);
+      showMessageDialog('Failed to download vector tiles: ${e.message}');
     } finally {
       _exportVectorTilesJob = null;
     }
-  }
-
-  // Show an error dialog.
-  void _showErrorDialog(String message) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text('Info', style: Theme.of(context).textTheme.titleMedium),
-        content: Text(
-          'Failed to download vector tiles:\n$message',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            child: const Text('Close'),
-          ),
-        ],
-      ),
-    );
   }
 
   // Calculate the Envelope of the outlined region.
@@ -305,7 +285,8 @@ class _DownloadVectorTilesToLocalCacheState
     final vectorTilesCache = result?.vectorTileCache;
     final itemResourceCache = result?.itemResourceCache;
     if (vectorTilesCache == null || itemResourceCache == null) {
-      _showErrorDialog('Invalid vector tiles cache or item resource cache');
+      showMessageDialog(
+          'Failed to download vector tiles: Invalid vector tiles cache or item resource cache');
       return;
     }
     // Create a new vector tile layer with the downloaded vector tiles.

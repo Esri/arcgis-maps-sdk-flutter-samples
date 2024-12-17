@@ -168,14 +168,7 @@ class _ShowDeviceLocationHistoryState extends State<ShowDeviceLocationHistory>
     try {
       await _locationDataSource.start();
     } on ArcGISException catch (e) {
-      if (mounted) {
-        showDialog(
-          context: context,
-          builder: (_) => AlertDialog(
-            content: Text(e.message),
-          ),
-        );
-      }
+      showMessageDialog(e.message);
     }
 
     // Listen for location changes.

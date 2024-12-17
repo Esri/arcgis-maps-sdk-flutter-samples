@@ -15,6 +15,7 @@
 
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_state_support.dart';
 import 'package:flutter/material.dart';
 
 class IdentifyGraphics extends StatefulWidget {
@@ -24,7 +25,8 @@ class IdentifyGraphics extends StatefulWidget {
   State<IdentifyGraphics> createState() => _IdentifyGraphicsState();
 }
 
-class _IdentifyGraphicsState extends State<IdentifyGraphics> {
+class _IdentifyGraphicsState extends State<IdentifyGraphics>
+    with SampleStateSupport {
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
   // Graphic to store the polygon.
@@ -106,24 +108,8 @@ class _IdentifyGraphicsState extends State<IdentifyGraphics> {
     if (identifyGraphicsOverlay.graphics.isNotEmpty) {
       final identifiedGraphic = identifyGraphicsOverlay.graphics.first;
       if (identifiedGraphic == _graphic) {
-        if (mounted) {
-          showDialog(
-            context: context,
-            builder: (context) {
-              // Display an alert dialog when the graphic is tapped.
-              return AlertDialog(
-                alignment: Alignment.center,
-                content: const Text('Tapped on Graphic'),
-                actions: [
-                  TextButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    child: const Text('OK'),
-                  ),
-                ],
-              );
-            },
-          );
-        }
+        showMessageDialog('Tapped on Graphic',
+            title: 'Identify Graphics', showOK: true);
       }
     }
   }

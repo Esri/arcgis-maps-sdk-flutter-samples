@@ -114,12 +114,14 @@ class _DisplayClustersState extends State<DisplayClusters>
           _featureReductionEnabled = _featureLayer.featureReduction!.enabled;
         });
       } else {
-        showWarningDialog(
+        showMessageDialog(
           'Feature layer does not have feature reduction enabled.',
+          title: 'Warning',
         );
       }
     } else {
-      showWarningDialog('Unable to access a feature layer on the web map.');
+      showMessageDialog('Unable to access a feature layer on the web map.',
+          title: 'Warning');
     }
   }
 
@@ -192,20 +194,5 @@ class _DisplayClustersState extends State<DisplayClusters>
       featureReduction.enabled = !featureReduction.enabled;
       setState(() => _featureReductionEnabled = featureReduction.enabled);
     }
-  }
-
-  void showWarningDialog(String message) {
-    // Show a dialog with the provided message.
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text('Warning'),
-          content: Text(
-            '$message Could not load sample.',
-          ),
-        );
-      },
-    );
   }
 }

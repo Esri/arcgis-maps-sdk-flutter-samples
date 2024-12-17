@@ -207,19 +207,7 @@ class _QueryTableStatisticsState extends State<QueryTableStatistics>
       });
     }
     // Display the statistics in a dialog.
-    if (mounted) {
-      showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: Text(
-              'Statistical Query Results',
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
-            content: Text(statistics.join('\n')),
-          );
-        },
-      );
-    }
+    showMessageDialog(statistics.join('\n'),
+        title: 'Statistical Query Results');
   }
 }

@@ -18,7 +18,7 @@ import 'package:flutter/material.dart';
 
 ///
 /// A widget that displays a circular progress indicator when [visible] is true.
-/// - [visible] : A boolean value to determine the visibility of the loading 
+/// - [visible] : A boolean value to determine the visibility of the loading
 ///                 indicator.
 class LoadingIndicator extends StatelessWidget {
   final bool visible;

@@ -128,12 +128,10 @@ class _ApplyScheduledUpdatesToPreplannedMapAreaState
         await _loadMapPackageMap();
       }
     } catch (err) {
-      if (mounted) {
-        _showAlertDialog(
-          'The offline map sync failed with error: {$err}.',
-          title: 'Error',
-        );
-      }
+      showMessageDialog(
+        'The offline map sync failed with error: {$err}.',
+        title: 'Error',
+      );
     } finally {
       // Refresh the update status.
       await _checkForUpdates();
@@ -162,19 +160,15 @@ class _ApplyScheduledUpdatesToPreplannedMapAreaState
     try {
       await _mobileMapPackage!.load();
     } catch (err) {
-      if (mounted) {
-        _showAlertDialog(
-          'Mobile Map Package failed to load with error: {$err}',
-          title: 'Error',
-        );
-      }
+      showMessageDialog(
+        'Mobile Map Package failed to load with error: {$err}',
+        title: 'Error',
+      );
       return false;
     }
 
     if (_mobileMapPackage!.maps.isEmpty) {
-      if (mounted) {
-        _showAlertDialog('Mobile map package contains no maps.');
-      }
+      showMessageDialog('Mobile map package contains no maps.');
       return false;
     }
 
@@ -210,22 +204,5 @@ class _ApplyScheduledUpdatesToPreplannedMapAreaState
 
     // Load the map package from the extracted map package.
     await _loadMapPackageMap();
-  }
-
-  // Utility function to show an alert dialog with a provided message.
-  Future<void> _showAlertDialog(String message, {String title = 'Alert'}) {
-    return showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(title),
-        content: Text(message),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, 'OK'),
-            child: const Text('OK'),
-          ),
-        ],
-      ),
-    );
   }
 }

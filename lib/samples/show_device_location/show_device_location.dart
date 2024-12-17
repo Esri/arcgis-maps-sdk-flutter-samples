@@ -204,12 +204,7 @@ class _ShowDeviceLocationState extends State<ShowDeviceLocation>
     try {
       await _locationDataSource.start();
     } on ArcGISException catch (e) {
-      if (mounted) {
-        showDialog(
-          context: context,
-          builder: (_) => AlertDialog(content: Text(e.message)),
-        );
-      }
+      showMessageDialog(e.message);
     }
 
     // Set the ready state variable to true to enable the UI.

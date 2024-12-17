@@ -14,7 +14,6 @@
 //
 
 import 'dart:io';
-import 'dart:math';
 
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
@@ -195,17 +194,5 @@ class _ControlAnnotationSublayerVisibilityState
         'There was an error loading the data required for the sample.',
       );
     }
-  }
-
-  void showMessageDialog(String message) {
-    // Show a dialog with the provided message.
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          content: Text(message),
-        );
-      },
-    );
   }
 }
