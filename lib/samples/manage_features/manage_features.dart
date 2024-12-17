@@ -98,17 +98,17 @@ class _ManageFeaturesState extends State<ManageFeatures>
                           // Create a dropdown button to select a feature management operation.
                           DropdownButton(
                             alignment: Alignment.center,
-                            hint: const Text(
+                            hint: Text(
                               'Select operation',
-                              style: TextStyle(color: Colors.deepPurple),
+                              style: Theme.of(context).textTheme.labelMedium,
                             ),
                             value: _selectedOperation,
-                            icon: const Icon(
+                            icon: Icon(
                               Icons.arrow_drop_down,
-                              color: Colors.deepPurple,
+                              color: Theme.of(context).colorScheme.primary,
                             ),
                             elevation: 16,
-                            style: const TextStyle(color: Colors.deepPurple),
+                            style: Theme.of(context).textTheme.labelMedium,
                             // Set the onChanged callback to update the selected operation.
                             onChanged: (operation) =>
                                 setState(() => _selectedOperation = operation),
@@ -364,9 +364,9 @@ class _ManageFeaturesState extends State<ManageFeatures>
         // Create a dropdown button for updating the attribute value of the selected feature.
         return DropdownButton(
           alignment: Alignment.center,
-          hint: const Text(
+          hint: Text(
             'Select attribute value',
-            style: TextStyle(color: Colors.deepPurple),
+            style: Theme.of(context).textTheme.labelMedium,
           ),
           disabledHint: const Text(
             'Select a feature',
@@ -376,9 +376,9 @@ class _ManageFeaturesState extends State<ManageFeatures>
           ),
           value: _selectedDamageType,
           icon: const Icon(Icons.arrow_drop_down),
-          style: const TextStyle(color: Colors.deepPurple),
-          iconEnabledColor: Colors.deepPurple,
-          iconDisabledColor: Colors.grey,
+          style: Theme.of(context).textTheme.labelMedium,
+          iconEnabledColor: Theme.of(context).colorScheme.primary,
+          iconDisabledColor: Theme.of(context).disabledColor,
           onChanged: _selectedFeature != null
               ? (String? damageType) {
                   if (damageType != null) {

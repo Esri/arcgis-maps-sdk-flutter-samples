@@ -281,16 +281,14 @@ class _SnapGeometryEditsState extends State<SnapGeometryEdits>
         // A drop down button for selecting geometry type.
         DropdownButton(
           alignment: Alignment.center,
-          hint: const Text(
+          hint: Text(
             'Geometry Type',
-            style: TextStyle(
-              color: Colors.deepPurple,
-            ),
+            style: Theme.of(context).textTheme.labelMedium,
           ),
           icon: const Icon(Icons.arrow_drop_down),
-          iconEnabledColor: Colors.deepPurple,
-          iconDisabledColor: Colors.grey,
-          style: const TextStyle(color: Colors.deepPurple),
+          iconEnabledColor: Theme.of(context).primaryColor,
+          iconDisabledColor: Theme.of(context).disabledColor,
+          style: Theme.of(context).textTheme.labelMedium,
           value: _selectedGeometryType,
           items: _geometryTypeMenuItems,
           // If the geometry editor is already started then we fully disable the DropDownButton and prevent editing with another geometry type.
@@ -305,12 +303,12 @@ class _SnapGeometryEditsState extends State<SnapGeometryEdits>
         // A drop down button for selecting a tool.
         DropdownButton(
           alignment: Alignment.center,
-          hint: const Text(
+          hint: Text(
             'Tool',
-            style: TextStyle(color: Colors.deepPurple),
+            style: Theme.of(context).textTheme.labelMedium,
           ),
-          iconEnabledColor: Colors.deepPurple,
-          style: const TextStyle(color: Colors.deepPurple),
+          iconEnabledColor: Theme.of(context).colorScheme.primary,
+          style: Theme.of(context).textTheme.labelMedium,
           value: _selectedTool,
           items: _toolMenuItems,
           onChanged: (tool) {
@@ -323,7 +321,7 @@ class _SnapGeometryEditsState extends State<SnapGeometryEdits>
         // A button to toggle the visibility of the editing toolbar.
         IconButton(
           onPressed: () => setState(() => _showEditToolbar = !_showEditToolbar),
-          icon: const Icon(Icons.edit, color: Colors.deepPurple),
+          icon: Icon(Icons.edit, color: Theme.of(context).primaryColor),
         ),
       ],
     );

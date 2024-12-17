@@ -55,14 +55,12 @@ class _ShowLegendState extends State<ShowLegend> with SampleStateSupport {
               child: DropdownButton(
                 menuMaxHeight: 200,
                 alignment: Alignment.center,
-                hint: const Text(
+                hint: Text(
                   'Legend',
-                  style: TextStyle(
-                    color: Colors.deepPurple,
-                  ),
+                  style: Theme.of(context).textTheme.labelMedium,
                 ),
                 elevation: 16,
-                style: const TextStyle(color: Colors.deepPurple),
+                style: Theme.of(context).textTheme.labelMedium,
                 // No need to set up onChanged callback.
                 onChanged: (_) {},
                 items: _legendsDropDown,

@@ -34,3 +34,7 @@ final sampleViewerTheme = ThemeData(
     labelMedium : TextStyle(color: Colors.deepPurple),
   ),
 );
+
+extension CustomColorScheme on ColorScheme {
+  Color get circleColor => const Color(0xFFFF0000); // Default to red
+}

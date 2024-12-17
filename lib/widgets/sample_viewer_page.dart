@@ -18,6 +18,7 @@
 import 'dart:convert';
 import 'package:arcgis_maps_sdk_flutter_samples/models/category.dart' as arcgis_category;
 import 'package:arcgis_maps_sdk_flutter_samples/models/sample.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/widgets/theme_data.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
