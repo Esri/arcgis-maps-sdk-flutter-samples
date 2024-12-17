@@ -16,8 +16,6 @@
 
 import 'package:flutter/material.dart';
 
-const applicationTitle = 'ArcGIS Maps SDK for Flutter Samples';
-
 final colorScheme = ColorScheme.fromSeed(seedColor: Colors.deepPurple);
 
 final sampleViewerTheme = ThemeData(
@@ -31,10 +29,26 @@ final sampleViewerTheme = ThemeData(
   
   // text theme
   textTheme: const TextTheme(
-    labelMedium : TextStyle(color: Colors.deepPurple),
+    labelMedium: TextStyle(color: Colors.deepPurple),
+  ),
+
+  // button theme
+  elevatedButtonTheme: ElevatedButtonThemeData(
+    style: ElevatedButton.styleFrom(
+      disabledBackgroundColor: Colors.white.withOpacity(0.6),
+    ),
   ),
 );
 
+extension CustomTextTheme on TextTheme {
+  TextStyle get customErrorStyle => const TextStyle(color: Colors.red);
+  TextStyle get customLabelStyle => const TextStyle(
+        fontSize: 18,
+        fontWeight: FontWeight.bold,
+        color: Colors.white,
+      );
+}
+
 extension CustomColorScheme on ColorScheme {
-  Color get circleColor => const Color(0xFFFF0000); // Default to red
+  Color get circleColor => const Color(0xFFFF0000);
 }

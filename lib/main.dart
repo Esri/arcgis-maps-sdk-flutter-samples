@@ -18,6 +18,7 @@ import 'dart:convert';
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/models/sample.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/widgets/about_info.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/widgets/theme_data.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'widgets/sample_list_view.dart';
@@ -33,13 +34,9 @@ void main() {
     ArcGISEnvironment.apiKey = apiKey;
   }
 
-  final colorScheme = ColorScheme.fromSeed(seedColor: Colors.deepPurple);
   runApp(
     MaterialApp(
-      theme: ThemeData(
-        colorScheme: colorScheme,
-        appBarTheme: AppBarTheme(backgroundColor: colorScheme.inversePrimary),
-      ),
+      theme: sampleViewerTheme,
       home: const SampleViewerApp(),
     ),
   );

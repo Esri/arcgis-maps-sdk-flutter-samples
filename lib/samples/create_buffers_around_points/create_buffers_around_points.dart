@@ -123,7 +123,7 @@ class _CreateBuffersAroundPointsState extends State<CreateBuffersAroundPoints>
                       Text(
                         _status.label,
                         textAlign: TextAlign.center,
-                        style: const TextStyle(color: Colors.black),
+                        style: Theme.of(context).textTheme.labelMedium,
                       ),
                     ],
                   ),

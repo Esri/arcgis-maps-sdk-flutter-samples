@@ -17,6 +17,7 @@
 import 'dart:io';
 
 import 'package:arcgis_maps/arcgis_maps.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/widgets/theme_data.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 
@@ -160,18 +161,14 @@ class _AttachmentsOptionsState extends State<AttachmentsOptions>
           children: [
             // Display the damage type and a close button.
             Container(
-              color: Colors.purple,
+              color: Theme.of(context).primaryColor,
               padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
                     'Damage Type: $damageType',
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
+                    style: Theme.of(context).textTheme.customLabelStyle,
                   ),
                   isLoading
                       ? const SizedBox(
