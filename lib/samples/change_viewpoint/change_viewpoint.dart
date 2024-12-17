@@ -117,16 +117,14 @@ class _ChangeViewpointState extends State<ChangeViewpoint>
       // A drop down button for selecting viewpoint.
       child: DropdownButton(
         alignment: Alignment.center,
-        hint: const Text(
+        hint: Text(
           'Select viewpoint',
-          style: TextStyle(
-            color: Colors.deepPurple,
-          ),
+          style: Theme.of(context).textTheme.titleMedium,
         ),
         icon: const Icon(Icons.arrow_drop_down),
-        iconEnabledColor: Colors.deepPurple,
-        iconDisabledColor: Colors.grey,
-        style: const TextStyle(color: Colors.deepPurple),
+        iconEnabledColor: Theme.of(context).primaryColor,
+        iconDisabledColor: Theme.of(context).disabledColor,
+        style: TextStyle(color: Theme.of(context).primaryColor),
         value: _selectedViewpoint,
         items: _viewpointTitles.map((items) {
           return DropdownMenuItem(

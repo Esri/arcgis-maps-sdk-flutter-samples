@@ -14,22 +14,23 @@
 // limitations under the License.
 //
 
-import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
 
-/// A mixin that overrides `setState` to first check if the widget is mounted.
-/// (Calling `setState` on an unmounted widget causes an exception.)
-mixin SampleStateSupport<T extends StatefulWidget> on State<T> {
-  @override
-  void setState(VoidCallback fn) {
-    if (mounted) super.setState(fn);
-  }
+const applicationTitle = 'ArcGIS Maps SDK for Flutter Samples';
 
-  /// Shows an alert dialog with the given [message].
-  void showMessageDialog(String message,
-      {String title = 'Info', bool showOK = false,}) {
-    if (mounted) {
-      showAlertDialog(context, message, title: title, showOK: showOK);
-    }
-  }
-}
+final colorScheme = ColorScheme.fromSeed(seedColor: Colors.deepPurple);
+
+final sampleViewerTheme = ThemeData(
+  // color scheme
+  primaryColor: colorScheme.primary,
+  disabledColor: Colors.grey,
+  colorScheme: colorScheme,
+  
+  // application bar theme
+  appBarTheme: AppBarTheme(backgroundColor: colorScheme.inversePrimary),
+  
+  // text theme
+  textTheme: const TextTheme(
+    labelMedium : TextStyle(color: Colors.deepPurple),
+  ),
+);

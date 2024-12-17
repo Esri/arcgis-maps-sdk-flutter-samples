@@ -20,7 +20,6 @@ import 'package:flutter/material.dart';
 
 class SampleListView extends StatelessWidget {
   const SampleListView({super.key, required this.samples});
-
   final List<Sample> samples;
 
   @override
