@@ -121,7 +121,7 @@ class _DisplayClustersState extends State<DisplayClusters>
       }
     } else {
       showMessageDialog('Unable to access a feature layer on the web map.',
-          title: 'Warning');
+          title: 'Warning',);
     }
   }
 
