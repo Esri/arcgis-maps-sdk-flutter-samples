@@ -24,6 +24,7 @@ import 'package:flutter/services.dart';
 
 import 'sample_list_view.dart';
 
+// ignore: must_be_immutable
 class SampleViewerPage extends StatefulWidget {
   arcgis_category.Category? category;
   SampleViewerPage({super.key});

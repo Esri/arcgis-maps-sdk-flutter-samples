@@ -25,16 +25,32 @@ final sampleViewerTheme = ThemeData(
   primaryColor: colorScheme.primary,
   disabledColor: Colors.grey,
   colorScheme: colorScheme,
-  
+
   // application bar theme
   appBarTheme: AppBarTheme(backgroundColor: colorScheme.inversePrimary),
-  
+
   // text theme
   textTheme: const TextTheme(
-    labelMedium : TextStyle(color: Colors.deepPurple),
+    labelMedium: TextStyle(color: Colors.deepPurple),
+  ),
+
+  // button theme
+  elevatedButtonTheme: ElevatedButtonThemeData(
+    style: ElevatedButton.styleFrom(
+      disabledBackgroundColor: Colors.white.withOpacity(0.6),
+    ),
   ),
 );
 
+extension CustomTextTheme on TextTheme {
+  TextStyle get customErrorStyle => const TextStyle(color: Colors.red);
+  TextStyle get customLabelStyle => const TextStyle(
+        fontSize: 18,
+        fontWeight: FontWeight.bold,
+        color: Colors.white,
+      );
+}
+
 extension CustomColorScheme on ColorScheme {
-  Color get circleColor => const Color(0xFFFF0000); // Default to red
+  Color get circleColor => const Color(0xFFFF0000);
 }

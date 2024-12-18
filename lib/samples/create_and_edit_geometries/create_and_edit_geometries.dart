@@ -68,10 +68,6 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
   var _geometryEditorHasSelectedElement = false;
   // A flag for controlling the visibility of the editing toolbar.
   var _showEditToolbar = true;
-  // A custom style for when the editing toolbar buttons are not enabled.
-  final _buttonStyle = ElevatedButton.styleFrom(
-    disabledBackgroundColor: Colors.white.withOpacity(0.6),
-  );
 
   @override
   Widget build(BuildContext context) {
@@ -397,7 +393,7 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
                   Tooltip(
                     message: 'Undo',
                     child: ElevatedButton(
-                      style: _buttonStyle,
+                      style: Theme.of(context).elevatedButtonTheme.style,
                       onPressed:
                           _geometryEditorIsStarted && _geometryEditorCanUndo
                               ? () => _geometryEditor.undo()
@@ -410,7 +406,7 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
                   Tooltip(
                     message: 'Redo',
                     child: ElevatedButton(
-                      style: _buttonStyle,
+                      style: Theme.of(context).elevatedButtonTheme.style,
                       onPressed:
                           _geometryEditorIsStarted && _geometryEditorCanRedo
                               ? () => _geometryEditor.redo()
@@ -426,7 +422,7 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
                   Tooltip(
                     message: 'Stop and save edits',
                     child: ElevatedButton(
-                      style: _buttonStyle,
+                      style: Theme.of(context).elevatedButtonTheme.style,
                       onPressed: _geometryEditorIsStarted ? stopAndSave : null,
                       child: const Icon(Icons.save),
                     ),
@@ -436,7 +432,7 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
                   Tooltip(
                     message: 'Delete selected element',
                     child: ElevatedButton(
-                      style: _buttonStyle,
+                      style: Theme.of(context).elevatedButtonTheme.style,
                       onPressed: _geometryEditorIsStarted &&
                               _geometryEditorHasSelectedElement &&
                               _geometryEditor.selectedElement != null &&
@@ -454,7 +450,7 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
                   Tooltip(
                     message: 'Stop and discard edits',
                     child: ElevatedButton(
-                      style: _buttonStyle,
+                      style: Theme.of(context).elevatedButtonTheme.style,
                       onPressed:
                           _geometryEditorIsStarted ? stopAndDiscardEdits : null,
                       child: const Icon(Icons.not_interested_sharp),
@@ -465,7 +461,7 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
                   Tooltip(
                     message: 'Delete all graphics',
                     child: ElevatedButton(
-                      style: _buttonStyle,
+                      style: Theme.of(context).elevatedButtonTheme.style,
                       onPressed: !_geometryEditorIsStarted
                           ? () => _graphicsOverlay.graphics.clear()
                           : null,
@@ -476,7 +472,7 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
               ),
               // A button to toggle the scale mode setting of the geometry editor tools.
               ElevatedButton(
-                style: _buttonStyle,
+                style: Theme.of(context).elevatedButtonTheme.style,
                 // Scale mode is not compatible with point geometry types or the reticle vertex tool.
                 onPressed: _selectedGeometryType == GeometryType.point ||
                         _selectedTool == _reticleVertexTool
