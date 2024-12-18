@@ -80,7 +80,8 @@ final List<Category> sampleCategories = [
   Category(
     title: SampleCategory.routingAndLogistics.title,
     icon: Icons.route,
-    backgroundImage: 'assets/category_images/routing_and_logistics_background.webp',
+    backgroundImage:
+        'assets/category_images/routing_and_logistics_background.webp',
   ),
   // Category(
   //   title: SampleCategory.scenes.title,

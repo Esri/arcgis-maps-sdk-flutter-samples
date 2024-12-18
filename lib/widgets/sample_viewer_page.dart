@@ -1,4 +1,3 @@
-
 //
 // Copyright 2024 Esri
 //
@@ -16,7 +15,8 @@
 //
 
 import 'dart:convert';
-import 'package:arcgis_maps_sdk_flutter_samples/models/category.dart' as arcgis_category;
+import 'package:arcgis_maps_sdk_flutter_samples/models/category.dart'
+    as arcgis_category;
 import 'package:arcgis_maps_sdk_flutter_samples/models/sample.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/widgets/theme_data.dart';
 import 'package:flutter/material.dart';
@@ -51,7 +51,7 @@ class _SampleViewerPageState extends State<SampleViewerPage> {
           setState(() => _searchHasFocus = _searchFocusNode.hasFocus);
         }
       },
-    ); 
+    );
   }
 
   @override
@@ -66,7 +66,6 @@ class _SampleViewerPageState extends State<SampleViewerPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(applicationTitle),
-       
       ),
       body: Column(
         children: [
@@ -124,7 +123,7 @@ class _SampleViewerPageState extends State<SampleViewerPage> {
     // _filteredSamples = _allSamples;
     if (widget.category != null) {
       setState(() {
-         _filteredSamples = getSamplesByCategory(widget.category!);
+        _filteredSamples = getSamplesByCategory(widget.category!);
       });
     }
     setState(() => _ready = true);
@@ -151,7 +150,7 @@ class _SampleViewerPageState extends State<SampleViewerPage> {
   }
 
   List<Sample> getSamplesByCategory(arcgis_category.Category category) {
-    return _allSamples.where((sample) { 
+    return _allSamples.where((sample) {
       return sample.category.toLowerCase() == category.title.toLowerCase();
     }).toList();
   }
