@@ -229,7 +229,7 @@ class _FindRouteInMapState extends State<FindRouteInMap>
                         Text(
                           _message,
                           textAlign: TextAlign.center,
-                          style: const TextStyle(color: Colors.white),
+                          style: Theme.of(context).textTheme.customWhiteStyle,
                         ),
                       ],
                     ),

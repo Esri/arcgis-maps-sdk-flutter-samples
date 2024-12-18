@@ -47,6 +47,7 @@ extension CustomTextTheme on TextTheme {
         fontWeight: FontWeight.bold,
         color: Colors.white,
       );
+  TextStyle get customWhiteStyle => const TextStyle(color: Colors.white);
 }
 
 extension CustomColorScheme on ColorScheme {

@@ -61,7 +61,7 @@ class _IdentifyLayerFeaturesState extends State<IdentifyLayerFeatures>
                       Text(
                         _message,
                         textAlign: TextAlign.center,
-                        style: const TextStyle(color: Colors.white),
+                        style: Theme.of(context).textTheme.customWhiteStyle,
                       ),
                     ],
                   ),

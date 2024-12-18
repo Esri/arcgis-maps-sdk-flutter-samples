@@ -15,7 +15,7 @@
 //
 
 import 'package:arcgis_maps/arcgis_maps.dart';
-import 'package:arcgis_maps_sdk_flutter_samples/widgets/theme_data.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/common/theme_data.dart';
 import 'package:flutter/material.dart';
 
 import '../../utils/sample_state_support.dart';

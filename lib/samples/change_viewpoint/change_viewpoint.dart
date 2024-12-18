@@ -124,7 +124,7 @@ class _ChangeViewpointState extends State<ChangeViewpoint>
         icon: const Icon(Icons.arrow_drop_down),
         iconEnabledColor: Theme.of(context).primaryColor,
         iconDisabledColor: Theme.of(context).disabledColor,
-        style: TextStyle(color: Theme.of(context).primaryColor),
+        style: Theme.of(context).textTheme.titleMedium,
         value: _selectedViewpoint,
         items: _viewpointTitles.map((items) {
           return DropdownMenuItem(

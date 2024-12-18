@@ -207,7 +207,9 @@ class _QueryTableStatisticsState extends State<QueryTableStatistics>
       });
     }
     // Display the statistics in a dialog.
-    showMessageDialog(statistics.join('\n'),
-        title: 'Statistical Query Results');
+    showMessageDialog(
+      statistics.join('\n'),
+      title: 'Statistical Query Results',
+    );
   }
 }

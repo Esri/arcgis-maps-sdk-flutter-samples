@@ -15,12 +15,14 @@
 //
 
 import 'dart:convert';
+
 import 'package:arcgis_maps/arcgis_maps.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/common/theme_data.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/models/sample.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/widgets/about_info.dart';
-import 'package:arcgis_maps_sdk_flutter_samples/widgets/theme_data.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
 import 'widgets/sample_list_view.dart';
 
 void main() {
