@@ -161,7 +161,8 @@ class _DownloadVectorTilesToLocalCacheState
         layer is! ArcGISVectorTiledLayer ||
         layer.uri == null) {
       showMessageDialog(
-          'Failed to download vector tiles: Invalid download area or layer');
+        'Failed to download vector tiles: Invalid download area or layer',
+      );
       return;
     }
 
@@ -286,7 +287,8 @@ class _DownloadVectorTilesToLocalCacheState
     final itemResourceCache = result?.itemResourceCache;
     if (vectorTilesCache == null || itemResourceCache == null) {
       showMessageDialog(
-          'Failed to download vector tiles: Invalid vector tiles cache or item resource cache');
+        'Failed to download vector tiles: Invalid vector tiles cache or item resource cache',
+      );
       return;
     }
     // Create a new vector tile layer with the downloaded vector tiles.

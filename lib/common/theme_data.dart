@@ -41,12 +41,14 @@ final sampleViewerTheme = ThemeData(
 );
 
 extension CustomTextTheme on TextTheme {
-  TextStyle get customErrorStyle => const TextStyle(color: Colors.red);
+  
   TextStyle get customLabelStyle => const TextStyle(
         fontSize: 18,
         fontWeight: FontWeight.bold,
         color: Colors.white,
       );
+
+  TextStyle get customErrorStyle => const TextStyle(color: Colors.red);
   TextStyle get customWhiteStyle => const TextStyle(color: Colors.white);
 }
 
