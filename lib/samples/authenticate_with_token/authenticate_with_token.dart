@@ -15,9 +15,8 @@
 //
 
 import 'package:arcgis_maps/arcgis_maps.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_state_support.dart';
 import 'package:flutter/material.dart';
-
-import '../../utils/sample_state_support.dart';
 
 class AuthenticateWithToken extends StatefulWidget {
   const AuthenticateWithToken({super.key});
@@ -97,8 +96,8 @@ class LoginWidget extends StatefulWidget {
   final ArcGISAuthenticationChallenge challenge;
 
   const LoginWidget({
-    super.key,
     required this.challenge,
+    super.key,
   });
 
   @override

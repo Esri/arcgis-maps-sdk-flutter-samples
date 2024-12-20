@@ -108,8 +108,11 @@ class _IdentifyGraphicsState extends State<IdentifyGraphics>
     if (identifyGraphicsOverlay.graphics.isNotEmpty) {
       final identifiedGraphic = identifyGraphicsOverlay.graphics.first;
       if (identifiedGraphic == _graphic) {
-        showMessageDialog('Tapped on Graphic',
-            title: 'Identify Graphics', showOK: true);
+        showMessageDialog(
+          'Tapped on Graphic',
+          title: 'Identify Graphics',
+          showOK: true,
+        );
       }
     }
   }

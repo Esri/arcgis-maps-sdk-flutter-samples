@@ -15,9 +15,8 @@
 //
 
 import 'package:arcgis_maps/arcgis_maps.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_state_support.dart';
 import 'package:flutter/material.dart';
-
-import '../../utils/sample_state_support.dart';
 
 class ShowGrid extends StatefulWidget {
   const ShowGrid({super.key});
@@ -231,7 +230,6 @@ class GridOptions extends StatefulWidget {
   final MapViewGrids grids;
 
   const GridOptions({
-    super.key,
     required this.grids,
     required this.onGridChanged,
     required this.onGridColorChanged,
@@ -239,6 +237,7 @@ class GridOptions extends StatefulWidget {
     required this.onLabelPositionChanged,
     required this.onLabelFormatChanged,
     required this.onLabelVisibilityChanged,
+    super.key,
   });
 
   @override
@@ -274,9 +273,10 @@ class _GridOptionsState extends State<GridOptions> with SampleStateSupport {
       child: ListBody(
         children: [
           _buildGridDropdown(),
-          isLabelFormatVisible
-              ? _buildLatLongLabelFormatDropdown()
-              : Container(),
+          if (isLabelFormatVisible)
+            _buildLatLongLabelFormatDropdown()
+          else
+            Container(),
           _buildGridColorDropdown(),
           _buildLabelColorDropdown(),
           _buildLabelPositionDropdown(),
@@ -291,7 +291,7 @@ class _GridOptionsState extends State<GridOptions> with SampleStateSupport {
     required T value,
     required String labelText,
     required List<T> items,
-    required Function onChanged,
+    required Function(T) onChanged,
   }) {
     return DropdownButtonFormField(
       value: value,
@@ -356,7 +356,7 @@ class _GridOptionsState extends State<GridOptions> with SampleStateSupport {
       labelText: 'Label Color',
       items: GridColorType.values,
       onChanged: (newColor) {
-        widget.onLabelColorChanged(newColor!);
+        widget.onLabelColorChanged(newColor);
         setState(() => gridLabelColorType = newColor);
       },
     );

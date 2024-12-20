@@ -18,9 +18,9 @@ import 'dart:convert';
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/models/sample.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/widgets/about_info.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/widgets/sample_list_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'widgets/sample_list_view.dart';
 
 void main() {
   // Supply your apiKey using the --dart-define-from-file command line argument.
@@ -147,17 +147,18 @@ class _SampleViewerAppState extends State<SampleViewerApp> {
               ),
             ),
           ),
-          _ready
-              ? Expanded(
-                  child: Listener(
-                    onPointerDown: (_) =>
-                        FocusManager.instance.primaryFocus?.unfocus(),
-                    child: SampleListView(samples: _filteredSamples),
-                  ),
-                )
-              : const Center(
-                  child: Text('Loading samples...'),
-                ),
+          if (_ready)
+            Expanded(
+              child: Listener(
+                onPointerDown: (_) =>
+                    FocusManager.instance.primaryFocus?.unfocus(),
+                child: SampleListView(samples: _filteredSamples),
+              ),
+            )
+          else
+            const Center(
+              child: Text('Loading samples...'),
+            ),
         ],
       ),
     );
@@ -176,7 +177,7 @@ class _SampleViewerAppState extends State<SampleViewerApp> {
   void loadSamples() async {
     final jsonString =
         await rootBundle.loadString('assets/generated_samples_list.json');
-    final sampleData = jsonDecode(jsonString);
+    final sampleData = jsonDecode(jsonString) as Map<String, dynamic>;
     for (final s in sampleData.entries) {
       _allSamples.add(Sample.fromJson(s.value));
     }

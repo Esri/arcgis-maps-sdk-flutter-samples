@@ -2,7 +2,7 @@ import 'package:arcgis_maps_sdk_flutter_samples/models/sample.dart';
 import 'package:flutter/material.dart';
 
 class SampleDetailPage extends StatelessWidget {
-  const SampleDetailPage({super.key, required this.sample});
+  const SampleDetailPage({required this.sample, super.key});
 
   final Sample sample;
 

@@ -1,10 +1,9 @@
 import 'dart:typed_data';
 
 import 'package:arcgis_maps/arcgis_maps.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_state_support.dart';
 import 'package:flutter/material.dart';
 import 'package:simple_html_css/simple_html_css.dart';
-
-import '../../utils/sample_state_support.dart';
 
 class ShowPortalUserInfo extends StatefulWidget {
   const ShowPortalUserInfo({super.key});
@@ -120,9 +119,10 @@ class _ShowPortalUserInfoState extends State<ShowPortalUserInfo>
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
                   const SizedBox(height: 20.0),
-                  _userThumbnail != null
-                      ? Image.memory(_userThumbnail!)
-                      : const Icon(Icons.person),
+                  if (_userThumbnail != null)
+                    Image.memory(_userThumbnail!)
+                  else
+                    const Icon(Icons.person),
                   Text('Full name', style: titleStyle),
                   Text(_portal.user?.fullName ?? ''),
                   Text('Username', style: titleStyle),
@@ -134,9 +134,10 @@ class _ShowPortalUserInfoState extends State<ShowPortalUserInfo>
                   Text('Access', style: titleStyle),
                   Text(_portal.user?.access.name ?? ''),
                   const Divider(),
-                  _organizationThumbnail != null
-                      ? Image.memory(_organizationThumbnail!)
-                      : const Icon(Icons.domain),
+                  if (_organizationThumbnail != null)
+                    Image.memory(_organizationThumbnail!)
+                  else
+                    const Icon(Icons.domain),
                   Text('Organization', style: titleStyle),
                   Text(_portal.portalInfo?.organizationName ?? ''),
                   Text('Can find external content', style: titleStyle),

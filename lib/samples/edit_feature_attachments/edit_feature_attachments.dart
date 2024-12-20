@@ -17,10 +17,9 @@
 import 'dart:io';
 
 import 'package:arcgis_maps/arcgis_maps.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_state_support.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-
-import '../../utils/sample_state_support.dart';
 
 class EditFeatureAttachments extends StatefulWidget {
   const EditFeatureAttachments({super.key});
@@ -129,9 +128,9 @@ class AttachmentsOptions extends StatefulWidget {
   final Function(ArcGISFeature) applyEdits;
 
   const AttachmentsOptions({
-    super.key,
     required this.arcGISFeature,
     required this.applyEdits,
+    super.key,
   });
 
   @override
@@ -173,15 +172,16 @@ class _AttachmentsOptionsState extends State<AttachmentsOptions>
                       color: Colors.white,
                     ),
                   ),
-                  isLoading
-                      ? const SizedBox(
-                          height: 18,
-                          width: 18,
-                          child: CircularProgressIndicator(
-                            color: Colors.white,
-                          ),
-                        )
-                      : const SizedBox.shrink(),
+                  if (isLoading)
+                    const SizedBox(
+                      height: 18,
+                      width: 18,
+                      child: CircularProgressIndicator(
+                        color: Colors.white,
+                      ),
+                    )
+                  else
+                    const SizedBox.shrink(),
                   IconButton(
                     icon: const Icon(Icons.close),
                     onPressed: () => Navigator.pop(context),

@@ -16,9 +16,8 @@
 
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_state_support.dart';
 import 'package:flutter/material.dart';
-
-import '../../utils/sample_state_support.dart';
 
 class FindAddressWithReverseGeocode extends StatefulWidget {
   const FindAddressWithReverseGeocode({super.key});
@@ -121,9 +120,9 @@ class _FindAddressWithReverseGeocodeState
 
     // Get attributes from the first result and display a formatted address in a dialog.
     final firstResult = reverseGeocodeResult.first;
-    final cityString = firstResult.attributes['City'] ?? '';
-    final addressString = firstResult.attributes['Address'] ?? '';
-    final stateString = firstResult.attributes['RegionAbbr'] ?? '';
+    final cityString = firstResult.attributes['City'] as String? ?? '';
+    final addressString = firstResult.attributes['Address'] as String? ?? '';
+    final stateString = firstResult.attributes['RegionAbbr'] as String? ?? '';
     final resultStrings = [addressString, cityString, stateString];
     final combinedString =
         resultStrings.where((str) => str.isNotEmpty).join(', ');

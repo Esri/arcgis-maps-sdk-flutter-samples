@@ -15,9 +15,8 @@
 //
 
 import 'package:arcgis_maps/arcgis_maps.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_state_support.dart';
 import 'package:flutter/material.dart';
-
-import '../../utils/sample_state_support.dart';
 
 class ShowLegend extends StatefulWidget {
   const ShowLegend({super.key});
@@ -142,11 +141,12 @@ class _ShowLegendState extends State<ShowLegend> with SampleStateSupport {
             child: Row(
               children: [
                 // Add the legend image to the dropdown list if the image exists.
-                arcGISImage != null
-                    ? Image.memory(
-                        arcGISImage.getEncodedBuffer(),
-                      )
-                    : Container(),
+                if (arcGISImage != null)
+                  Image.memory(
+                    arcGISImage.getEncodedBuffer(),
+                  )
+                else
+                  Container(),
                 const SizedBox(width: 8),
                 // Add the legend name to the dropdown list.
                 Text(

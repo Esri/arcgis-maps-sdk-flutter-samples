@@ -16,9 +16,8 @@
 
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_state_support.dart';
 import 'package:flutter/material.dart';
-
-import '../../utils/sample_state_support.dart';
 
 class DisplayClusters extends StatefulWidget {
   const DisplayClusters({super.key});
@@ -120,8 +119,10 @@ class _DisplayClustersState extends State<DisplayClusters>
         );
       }
     } else {
-      showMessageDialog('Unable to access a feature layer on the web map.',
-          title: 'Warning');
+      showMessageDialog(
+        'Unable to access a feature layer on the web map.',
+        title: 'Warning',
+      );
     }
   }
 

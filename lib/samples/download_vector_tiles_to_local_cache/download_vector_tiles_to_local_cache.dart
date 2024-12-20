@@ -16,12 +16,12 @@
 
 import 'dart:async';
 import 'dart:io';
+
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_state_support.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
-
-import '../../utils/sample_state_support.dart';
 
 class DownloadVectorTilesToLocalCache extends StatefulWidget {
   const DownloadVectorTilesToLocalCache({super.key});
@@ -161,7 +161,8 @@ class _DownloadVectorTilesToLocalCacheState
         layer is! ArcGISVectorTiledLayer ||
         layer.uri == null) {
       showMessageDialog(
-          'Failed to download vector tiles: Invalid download area or layer');
+        'Failed to download vector tiles: Invalid download area or layer',
+      );
       return;
     }
 
@@ -286,7 +287,8 @@ class _DownloadVectorTilesToLocalCacheState
     final itemResourceCache = result?.itemResourceCache;
     if (vectorTilesCache == null || itemResourceCache == null) {
       showMessageDialog(
-          'Failed to download vector tiles: Invalid vector tiles cache or item resource cache');
+        'Failed to download vector tiles: Invalid vector tiles cache or item resource cache',
+      );
       return;
     }
     // Create a new vector tile layer with the downloaded vector tiles.

@@ -19,8 +19,8 @@ import 'package:package_info_plus/package_info_plus.dart';
 
 class AboutInfo extends StatefulWidget {
   const AboutInfo({
-    super.key,
     required this.title,
+    super.key,
   });
 
   final String title;
