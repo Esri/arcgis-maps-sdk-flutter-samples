@@ -102,12 +102,9 @@ class _QueryFeatureTableState extends State<QueryFeatureTable>
 
     // Create a renderer with a fill symbol and apply to the feature layer.
     final lineSymbol = SimpleLineSymbol(
-      style: SimpleLineSymbolStyle.solid,
       color: Colors.black,
-      width: 1,
     );
     final fillSymbol = SimpleFillSymbol(
-      style: SimpleFillSymbolStyle.solid,
       color: Colors.yellow,
       outline: lineSymbol,
     );

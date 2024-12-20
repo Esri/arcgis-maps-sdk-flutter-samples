@@ -87,7 +87,6 @@ class _DisplayOGCAPICollectionState extends State<DisplayOGCAPICollection>
     // Apply a renderer.
     featureLayer.renderer = SimpleRenderer(
       symbol: SimpleLineSymbol(
-        style: SimpleLineSymbolStyle.solid,
         color: Colors.blue,
         width: 3,
       ),

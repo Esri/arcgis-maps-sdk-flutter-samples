@@ -124,7 +124,6 @@ class _IdentifyFeaturesInWmsLayerState extends State<IdentifyFeaturesInWmsLayer>
       _wmsLayer,
       screenPoint: localPosition,
       tolerance: 12.0,
-      maximumResults: 1,
     );
 
     // Check if there are any features identified.

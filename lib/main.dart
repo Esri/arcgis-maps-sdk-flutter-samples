@@ -93,7 +93,6 @@ class _SampleViewerAppState extends State<SampleViewerApp> {
             onPressed: () => showModalBottomSheet(
               context: context,
               isScrollControlled: true,
-              isDismissible: true,
               useSafeArea: true,
               builder: (context) {
                 return FractionallySizedBox(

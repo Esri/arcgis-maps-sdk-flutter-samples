@@ -189,8 +189,7 @@ class _DownloadPreplannedMapAreaState extends State<DownloadPreplannedMapArea>
             itemCount: _preplannedMapAreas.length,
             itemBuilder: (context, index) {
               return Padding(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 5.0, horizontal: 0.0),
+                padding: const EdgeInsets.symmetric(vertical: 5.0),
                 child: buildMapAreaListTile(
                   _preplannedMapAreas.keys.toList()[index],
                 ),

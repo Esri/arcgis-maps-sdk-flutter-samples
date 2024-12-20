@@ -112,8 +112,6 @@ class _ShowGridState extends State<ShowGrid> with SampleStateSupport {
       for (int i = 0; i < grid.levelCount; i++) {
         final lineSymbol = SimpleLineSymbol(
           color: colorType.value,
-          width: 1.0,
-          style: SimpleLineSymbolStyle.solid,
         );
         grid.setLineSymbol(level: i, lineSymbol: lineSymbol);
       }

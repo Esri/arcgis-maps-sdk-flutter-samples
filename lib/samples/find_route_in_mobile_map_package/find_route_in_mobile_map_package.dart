@@ -267,7 +267,6 @@ class _FindRouteInMapState extends State<FindRouteInMap>
 
       // Create a symbol to represent the route.
       final routeSymbol = SimpleLineSymbol(
-        style: SimpleLineSymbolStyle.solid,
         color: const Color.fromARGB(255, 0, 0, 255),
         width: 5.0,
       );

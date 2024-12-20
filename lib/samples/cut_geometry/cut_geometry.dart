@@ -194,7 +194,6 @@ class _CutGeometryState extends State<CutGeometry> with SampleStateSupport {
         outline: SimpleLineSymbol(
           color: Colors.blue,
           width: 4.0,
-          style: SimpleLineSymbolStyle.solid,
         ),
       ),
     );

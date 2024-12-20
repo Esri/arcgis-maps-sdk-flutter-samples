@@ -217,7 +217,6 @@ class _ManageFeaturesState extends State<ManageFeatures>
       _damageFeatureLayer,
       screenPoint: localPosition,
       tolerance: 12.0,
-      maximumResults: 1,
     );
 
     if (identifyResult.geoElements.isNotEmpty) {

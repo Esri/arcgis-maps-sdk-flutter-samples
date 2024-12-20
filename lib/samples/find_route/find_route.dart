@@ -73,7 +73,6 @@ class _FindRouteState extends State<FindRoute> with SampleStateSupport {
                   height: 60,
                   // Add the buttons to the column.
                   child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       // Create a button to generate the route.
@@ -135,12 +134,10 @@ class _FindRouteState extends State<FindRoute> with SampleStateSupport {
   void initStops() {
     // Create symbols to use for the start and end stops of the route.
     final routeStartCircleSymbol = SimpleMarkerSymbol(
-      style: SimpleMarkerSymbolStyle.circle,
       color: Colors.blue,
       size: 15.0,
     );
     final routeEndCircleSymbol = SimpleMarkerSymbol(
-      style: SimpleMarkerSymbolStyle.circle,
       color: Colors.blue,
       size: 15.0,
     );
@@ -201,7 +198,6 @@ class _FindRouteState extends State<FindRoute> with SampleStateSupport {
   Future<void> generateRoute() async {
     // Create the symbol for the route line.
     final routeLineSymbol = SimpleLineSymbol(
-      style: SimpleLineSymbolStyle.solid,
       color: Colors.blue,
       width: 5.0,
     );

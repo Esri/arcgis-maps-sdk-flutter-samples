@@ -173,7 +173,6 @@ class _AddFeatureCollectionLayerFromTableState
         style: SimpleFillSymbolStyle.diagonalCross,
         color: Colors.cyan,
         outline: SimpleLineSymbol(
-          style: SimpleLineSymbolStyle.solid,
           color: Colors.blue,
           width: 2,
         ),

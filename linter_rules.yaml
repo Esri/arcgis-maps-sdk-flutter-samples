@@ -20,8 +20,10 @@ linter:
     avoid_js_rounded_ints: true
     avoid_multiple_declarations_per_line: true
     avoid_null_checks_in_equality_operators: true
+    avoid_positional_boolean_parameters: false # some Widget callbacks require positional parameters (e.g., Switch.onChanged)
     avoid_print: true
     avoid_private_typedef_functions: true
+    avoid_redundant_argument_values: true
     avoid_relative_lib_imports: true
     avoid_renaming_method_parameters: true
     avoid_return_types_on_setters: true

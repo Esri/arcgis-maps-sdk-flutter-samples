@@ -76,7 +76,6 @@ class _IdentifyGraphicsState extends State<IdentifyGraphics>
     _graphic = Graphic(
       geometry: polygonBuilder.toGeometry(),
       symbol: SimpleFillSymbol(
-        style: SimpleFillSymbolStyle.solid,
         color: Colors.yellow,
       ),
     );

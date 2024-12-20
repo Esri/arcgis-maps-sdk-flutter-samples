@@ -131,7 +131,7 @@ class _CreatePlanarAndGeodeticBuffersState
                 child: Container(
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    border: Border.all(color: Colors.black, width: 2.0),
+                    border: Border.all(width: 2.0),
                     color: Colors.red.withAlpha(127),
                   ),
                 ),
@@ -150,7 +150,7 @@ class _CreatePlanarAndGeodeticBuffersState
               child: Container(
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  border: Border.all(color: Colors.black, width: 2.0),
+                  border: Border.all(width: 2.0),
                   color: Colors.green,
                 ),
               ),
@@ -167,10 +167,8 @@ class _CreatePlanarAndGeodeticBuffersState
     // Configure the graphics overlay for the geodetic buffers.
     _geodeticOverlay.renderer = SimpleRenderer(
       symbol: SimpleFillSymbol(
-        style: SimpleFillSymbolStyle.solid,
         color: Colors.green,
         outline: SimpleLineSymbol(
-          style: SimpleLineSymbolStyle.solid,
           color: Colors.black,
           width: 2.0,
         ),
@@ -181,10 +179,8 @@ class _CreatePlanarAndGeodeticBuffersState
     // Configure the graphics overlay for the planar buffers.
     _planarOverlay.renderer = SimpleRenderer(
       symbol: SimpleFillSymbol(
-        style: SimpleFillSymbolStyle.solid,
         color: Colors.red,
         outline: SimpleLineSymbol(
-          style: SimpleLineSymbolStyle.solid,
           color: Colors.black,
           width: 2.0,
         ),

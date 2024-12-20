@@ -72,7 +72,6 @@ class _CreateBuffersAroundPointsState extends State<CreateBuffersAroundPoints>
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        top: true,
         child: Stack(
           children: [
             Column(
@@ -196,7 +195,6 @@ class _CreateBuffersAroundPointsState extends State<CreateBuffersAroundPoints>
     _bufferFillSymbol
       ..color = Colors.yellow.withOpacity(0.5)
       ..outline = SimpleLineSymbol(
-        style: SimpleLineSymbolStyle.solid,
         color: Colors.green,
         width: 3,
       );

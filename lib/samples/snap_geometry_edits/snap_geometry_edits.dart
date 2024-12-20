@@ -337,9 +337,7 @@ class _SnapGeometryEditsState extends State<SnapGeometryEdits>
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           Column(
-            mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.end,
-            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               // A button to toggle the visibility of the snap settings.
               ElevatedButton(
@@ -517,7 +515,6 @@ class _SnapGeometryEditsState extends State<SnapGeometryEdits>
                 ),
                 const SizedBox(height: 20),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Text(
                       'Select snap sources',

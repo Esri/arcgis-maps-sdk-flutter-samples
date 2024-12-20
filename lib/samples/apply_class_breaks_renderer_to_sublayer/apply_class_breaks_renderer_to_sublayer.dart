@@ -122,32 +122,25 @@ class _ApplyClassBreaksRendererToSublayerState
 
     // Create symbols for the class breaks.
     final outline = SimpleLineSymbol(
-      style: SimpleLineSymbolStyle.solid,
       color: Colors.grey,
-      width: 1,
     );
     final classSymbol1 = SimpleFillSymbol(
-      style: SimpleFillSymbolStyle.solid,
       color: blue1,
       outline: outline,
     );
     final classSymbol2 = SimpleFillSymbol(
-      style: SimpleFillSymbolStyle.solid,
       color: blue2,
       outline: outline,
     );
     final classSymbol3 = SimpleFillSymbol(
-      style: SimpleFillSymbolStyle.solid,
       color: blue3,
       outline: outline,
     );
     final classSymbol4 = SimpleFillSymbol(
-      style: SimpleFillSymbolStyle.solid,
       color: blue4,
       outline: outline,
     );
     final classSymbol5 = SimpleFillSymbol(
-      style: SimpleFillSymbolStyle.solid,
       color: blue5,
       outline: outline,
     );

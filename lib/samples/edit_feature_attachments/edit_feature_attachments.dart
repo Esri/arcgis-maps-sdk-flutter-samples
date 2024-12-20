@@ -79,7 +79,6 @@ class _EditFeatureAttachmentsState extends State<EditFeatureAttachments>
       _featureLayer,
       screenPoint: localPosition,
       tolerance: 5.0,
-      maximumResults: 1,
     );
 
     // If there are features identified, show the bottom sheet to display the
@@ -304,7 +303,6 @@ class _AttachmentsOptionsState extends State<AttachmentsOptions>
   // Add an attachment to the selected feature by FilePicker.
   void addAttachment() async {
     final result = await FilePicker.platform.pickFiles(
-      allowMultiple: false,
       type: FileType.custom,
       allowedExtensions: ['png', 'jpg', 'jpeg', 'pdf', 'txt'],
     );

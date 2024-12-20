@@ -60,7 +60,6 @@ class _FindClosestFacilityFromPointState
   late final ClosestFacilityParameters _closestFacilityParameters;
   // Create a symbol for the route line.
   final _routeLineSymbol = SimpleLineSymbol(
-    style: SimpleLineSymbolStyle.solid,
     color: Colors.blue,
     width: 5.0,
   );

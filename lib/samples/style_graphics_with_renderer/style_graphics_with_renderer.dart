@@ -159,7 +159,6 @@ class _StyleGraphicsWithRendererState extends State<StyleGraphicsWithRenderer>
       linearUnit: LinearUnit(unitId: LinearUnitId.kilometers),
       maxPointCount: 100,
       maxSegmentLength: 20,
-      geometryType: GeometryType.polygon,
       semiAxis1Length: 200,
       semiAxis2Length: 400,
     );

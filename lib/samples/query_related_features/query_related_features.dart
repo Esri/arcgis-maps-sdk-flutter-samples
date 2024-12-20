@@ -200,7 +200,6 @@ class _QueryRelatedFeaturesState extends State<QueryRelatedFeatures>
       _alaskaNationalParksLayer,
       screenPoint: offset,
       tolerance: 12.0,
-      maximumResults: 1,
     );
 
     // If there are features identified, show the bottom sheet to display the

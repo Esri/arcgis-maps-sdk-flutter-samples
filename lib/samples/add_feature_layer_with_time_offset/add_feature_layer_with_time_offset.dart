@@ -163,7 +163,6 @@ class _AddFeatureLayerWithTimeOffsetState
     final featureLayer = FeatureLayer.withFeatureTable(featureTable);
     featureLayer.renderer = SimpleRenderer(
       symbol: SimpleMarkerSymbol(
-        style: SimpleMarkerSymbolStyle.circle,
         color: Colors.blue.shade900,
         size: 10.0,
       ),
@@ -175,7 +174,6 @@ class _AddFeatureLayerWithTimeOffsetState
         FeatureLayer.withFeatureTable(offsetFeatureTable);
     offsetFeatureLayer.renderer = SimpleRenderer(
       symbol: SimpleMarkerSymbol(
-        style: SimpleMarkerSymbolStyle.circle,
         color: Colors.red,
         size: 10.0,
       ),

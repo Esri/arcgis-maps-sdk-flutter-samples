@@ -110,7 +110,6 @@ class _ShowServiceAreaState extends State<ShowServiceArea>
                             _segmentedButtonSelection = newSelection.first;
                           });
                         },
-                        multiSelectionEnabled: false,
                         showSelectedIcon: false,
                       ),
                       // Create buttons for calculating the service area and resetting.

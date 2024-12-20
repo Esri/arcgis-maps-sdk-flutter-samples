@@ -274,7 +274,6 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
         );
       } else {
         return DropdownMenuItem(
-          enabled: true,
           value: type,
           child: Text(type.name.capitalize()),
         );
@@ -304,7 +303,6 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
     return tools.keys.map((tool) {
       if (tool == _vertexTool || tool == _reticleVertexTool) {
         return DropdownMenuItem(
-          enabled: true,
           value: tool,
           child: Text(tools[tool] ?? 'Unknown Tool'),
         );
@@ -389,9 +387,7 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           Column(
-            mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.end,
-            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Row(
                 children: [
@@ -512,22 +508,18 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
       size: 10,
     );
     _multipointSymbol = SimpleMarkerSymbol(
-      style: SimpleMarkerSymbolStyle.circle,
       color: Colors.yellow,
       size: 5,
     );
     _polylineSymbol = SimpleLineSymbol(
-      style: SimpleLineSymbolStyle.solid,
       color: Colors.blue,
       width: 2,
     );
     final outlineSymbol = SimpleLineSymbol(
       style: SimpleLineSymbolStyle.dash,
       color: Colors.black,
-      width: 1,
     );
     _polygonSymbol = SimpleFillSymbol(
-      style: SimpleFillSymbolStyle.solid,
       color: Colors.red.withOpacity(0.3),
       outline: outlineSymbol,
     );

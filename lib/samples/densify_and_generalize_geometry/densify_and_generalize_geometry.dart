@@ -241,7 +241,6 @@ class _DensifyAndGeneralizeGeometryState
     final originalPointGraphic = Graphic(
       geometry: multipoint,
       symbol: SimpleMarkerSymbol(
-        style: SimpleMarkerSymbolStyle.circle,
         color: Colors.red,
         size: 7.0,
       ),
@@ -258,14 +257,12 @@ class _DensifyAndGeneralizeGeometryState
     // Create graphics for displaying the resultant points and lines.
     _resultPointsGraphic = Graphic(
       symbol: SimpleMarkerSymbol(
-        style: SimpleMarkerSymbolStyle.circle,
         color: Colors.purple,
         size: 7.0,
       ),
     );
     _resultPolylineGraphic = Graphic(
       symbol: SimpleLineSymbol(
-        style: SimpleLineSymbolStyle.solid,
         color: Colors.purple,
         width: 3.0,
       ),

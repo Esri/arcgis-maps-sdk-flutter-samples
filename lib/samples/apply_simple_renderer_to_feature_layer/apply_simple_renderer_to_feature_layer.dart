@@ -106,7 +106,6 @@ class _ApplySimpleRendererToFeatureLayerState
   void overrideRenderer() {
     // Set a new renderer for the feature layer
     final markerSymbol = SimpleMarkerSymbol(
-      style: SimpleMarkerSymbolStyle.circle,
       color: Colors.blue,
       size: 5,
     );

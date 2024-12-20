@@ -88,7 +88,6 @@ class _StyleGraphicsWithSymbolsState extends State<StyleGraphicsWithSymbols>
   void _createPoints() {
     // Create a red circle simple marker symbol.
     final redCircleSymbol = SimpleMarkerSymbol(
-      style: SimpleMarkerSymbolStyle.circle,
       color: Colors.red,
       size: 10,
     );
@@ -168,7 +167,6 @@ class _StyleGraphicsWithSymbolsState extends State<StyleGraphicsWithSymbols>
     final outlineSymbol = SimpleLineSymbol(
       style: SimpleLineSymbolStyle.dash,
       color: Colors.green,
-      width: 1,
     );
 
     // Create a green mesh simple fill symbol.

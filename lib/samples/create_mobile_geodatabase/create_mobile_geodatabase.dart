@@ -261,9 +261,7 @@ class _CreateMobileGeodatabaseState extends State<CreateMobileGeodatabase>
         barrierColor: Colors.transparent,
         builder: (context) {
           return SimpleDialog(
-            shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.zero,
-            ),
+            shape: const RoundedRectangleBorder(),
             children: [
               Padding(
                 padding: const EdgeInsets.fromLTRB(
@@ -273,7 +271,6 @@ class _CreateMobileGeodatabaseState extends State<CreateMobileGeodatabase>
                   10,
                 ),
                 child: SingleChildScrollView(
-                  scrollDirection: Axis.vertical,
                   child: DataTable(
                     border: TableBorder.all(),
                     columns: const [

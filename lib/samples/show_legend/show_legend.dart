@@ -129,7 +129,6 @@ class _ShowLegendState extends State<ShowLegend> with SampleStateSupport {
         if (legend.symbol != null) {
           arcGISImage = await legend.symbol!.createSwatch(
             screenScale: screenScale,
-            backgroundColor: Colors.transparent,
             width: symbolSize.width,
             height: symbolSize.height,
           );
