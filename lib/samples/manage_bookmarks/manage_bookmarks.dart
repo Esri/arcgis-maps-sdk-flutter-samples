@@ -189,7 +189,7 @@ class _ManageBookmarksState extends State<ManageBookmarks> {
     setState(() => _ready = true);
   }
 
-  void addBookmark() async {
+  Future<void> addBookmark() async {
     // Show a dialog to get the name of the bookmark.
     final name = await showDialog<String>(
       context: context,

@@ -244,7 +244,7 @@ class _FindRouteInMapState extends State<FindRouteInMap>
     );
   }
 
-  void onMapViewReady() async {
+  Future<void> onMapViewReady() async {
     final map = widget.sampleData.map;
     _mapViewController.arcGISMap = map;
 
@@ -279,7 +279,7 @@ class _FindRouteInMapState extends State<FindRouteInMap>
     setState(() => _ready = true);
   }
 
-  void onTap(Offset localPosition) async {
+  Future<void> onTap(Offset localPosition) async {
     // Deselect any previously selected graphic.
     if (_selectedGraphic != null) {
       _selectedGraphic!.isSelected = false;
@@ -379,7 +379,7 @@ class _FindRouteInMapState extends State<FindRouteInMap>
     }
   }
 
-  void deleteMarker() async {
+  Future<void> deleteMarker() async {
     // Remove the selected graphic from the location marker overlay.
     _markerOverlay.graphics.remove(_selectedGraphic);
     setState(() {

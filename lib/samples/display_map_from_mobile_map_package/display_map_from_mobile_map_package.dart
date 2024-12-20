@@ -55,7 +55,7 @@ class _DisplayMapFromMobileMapPackageState
     );
   }
 
-  void onMapViewReady() async {
+  Future<void> onMapViewReady() async {
     await downloadSampleData(['e1f3a7254cb845b09450f54937c16061']);
     final appDir = await getApplicationDocumentsDirectory();
 

@@ -73,7 +73,7 @@ class _ShowLegendState extends State<ShowLegend> with SampleStateSupport {
     );
   }
 
-  void onMapViewReady() async {
+  Future<void> onMapViewReady() async {
     // Get the screen scale.
     final screenScale = MediaQuery.of(context).devicePixelRatio;
     // Create an image layer.

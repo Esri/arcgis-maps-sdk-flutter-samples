@@ -70,7 +70,7 @@ class _EditFeatureAttachmentsState extends State<EditFeatureAttachments>
     _mapViewController.arcGISMap = map;
   }
 
-  void onTap(Offset localPosition) async {
+  Future<void> onTap(Offset localPosition) async {
     // Clear the selection on the feature layer.
     _featureLayer.clearSelection();
 
@@ -247,7 +247,7 @@ class _AttachmentsOptionsState extends State<AttachmentsOptions>
   }
 
   // Delete an attachment from the selected feature.
-  void deleteAttachment(Attachment attachment) async {
+  Future<void> deleteAttachment(Attachment attachment) async {
     setState(() => isLoading = true);
     await widget.arcGISFeature.deleteAttachment(attachment);
     await widget.applyEdits(widget.arcGISFeature);
@@ -257,7 +257,7 @@ class _AttachmentsOptionsState extends State<AttachmentsOptions>
   }
 
   // View an attachment from the selected feature in a dialog.
-  void viewAttachment(Attachment attachment) async {
+  Future<void> viewAttachment(Attachment attachment) async {
     setState(() => isLoading = true);
 
     final data = await attachment.fetchData();
@@ -301,7 +301,7 @@ class _AttachmentsOptionsState extends State<AttachmentsOptions>
   }
 
   // Add an attachment to the selected feature by FilePicker.
-  void addAttachment() async {
+  Future<void> addAttachment() async {
     final result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
       allowedExtensions: ['png', 'jpg', 'jpeg', 'pdf', 'txt'],

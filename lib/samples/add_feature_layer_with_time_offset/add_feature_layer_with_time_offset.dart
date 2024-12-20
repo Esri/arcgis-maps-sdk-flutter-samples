@@ -141,7 +141,7 @@ class _AddFeatureLayerWithTimeOffsetState
     );
   }
 
-  void onMapViewReady() async {
+  Future<void> onMapViewReady() async {
     // Create a map with the oceans basemap style and an initial viewpoint.
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISOceans);
     map.initialViewpoint = Viewpoint.fromCenter(

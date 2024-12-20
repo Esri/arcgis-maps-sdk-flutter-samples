@@ -176,7 +176,7 @@ class _ShowDeviceLocationState extends State<ShowDeviceLocation>
     );
   }
 
-  void onMapViewReady() async {
+  Future<void> onMapViewReady() async {
     // Create a map with the Navigation Night basemap style.
     _mapViewController.arcGISMap =
         ArcGISMap.withBasemapStyle(BasemapStyle.arcGISNavigationNight);

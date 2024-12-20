@@ -131,7 +131,7 @@ class _ManageFeaturesState extends State<ManageFeatures>
     );
   }
 
-  void onMapViewReady() async {
+  Future<void> onMapViewReady() async {
     try {
       // Create and load a service geodatabase from a service URL.
       const featureServiceUri =
@@ -184,7 +184,7 @@ class _ManageFeaturesState extends State<ManageFeatures>
     }
   }
 
-  void onTap(Offset localPosition) async {
+  Future<void> onTap(Offset localPosition) async {
     // Configure actions when a user taps on the map, depending on the selected operation.
     if (_selectedOperation == FeatureManagementOperation.create) {
       // Create a feature if create is selected.
@@ -315,7 +315,7 @@ class _ManageFeaturesState extends State<ManageFeatures>
     }
   }
 
-  void updateAttribute(Feature feature, String damageType) async {
+  Future<void> updateAttribute(Feature feature, String damageType) async {
     // Disable the UI while the async operations are in progress.
     setState(() => _ready = false);
     // Update the damage type field to the selected value.

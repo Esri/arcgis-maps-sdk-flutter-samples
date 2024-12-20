@@ -110,7 +110,7 @@ class _DownloadPreplannedMapAreaState extends State<DownloadPreplannedMapArea>
     );
   }
 
-  void onMapViewReady() async {
+  Future<void> onMapViewReady() async {
     // Configure the directory to download offline maps to.
     _downloadDirectory = await createDownloadDirectory();
 
@@ -248,7 +248,7 @@ class _DownloadPreplannedMapAreaState extends State<DownloadPreplannedMapArea>
   }
 
   // Download an offline map for a provided preplanned map area.
-  void downloadOfflineMap(PreplannedMapArea mapArea) async {
+  Future<void> downloadOfflineMap(PreplannedMapArea mapArea) async {
     // Create default parameters using the map area.
     final defaultDownloadParams = await _offlineMapTask
         .createDefaultDownloadPreplannedOfflineMapParameters(mapArea);

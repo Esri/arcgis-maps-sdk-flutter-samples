@@ -104,7 +104,7 @@ class _ShowDeviceLocationHistoryState extends State<ShowDeviceLocationHistory>
   }
 
   // The method is called when the map view is ready to be used.
-  void onMapViewReady() async {
+  Future<void> onMapViewReady() async {
     // Create a map with the ArcGIS Navigation basemap style.
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISNavigation);
     // Set the initial viewpoint.

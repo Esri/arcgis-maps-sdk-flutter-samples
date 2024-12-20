@@ -172,7 +172,7 @@ class _QueryTableStatisticsState extends State<QueryTableStatistics>
   }
 
   // Query statistics from the service feature table.
-  void queryStatistics() async {
+  Future<void> queryStatistics() async {
     // Create a statistics query parameters object.
     final statisticsQueryParameters =
         StatisticsQueryParameters(statisticDefinitions: _statisticDefinitions);

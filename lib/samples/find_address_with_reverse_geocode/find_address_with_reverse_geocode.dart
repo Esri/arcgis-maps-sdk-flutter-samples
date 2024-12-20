@@ -66,7 +66,7 @@ class _FindAddressWithReverseGeocodeState
     );
   }
 
-  void onMapViewReady() async {
+  Future<void> onMapViewReady() async {
     // Create a map with the topographic basemap style and set to the map view.
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic);
     _mapViewController.arcGISMap = map;
@@ -91,7 +91,7 @@ class _FindAddressWithReverseGeocodeState
     setState(() => _ready = true);
   }
 
-  void onTap(Offset localPosition) async {
+  Future<void> onTap(Offset localPosition) async {
     // Remove already existing graphics.
     if (_graphicsOverlay.graphics.isNotEmpty) _graphicsOverlay.graphics.clear();
 

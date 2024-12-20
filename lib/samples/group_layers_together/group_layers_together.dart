@@ -150,7 +150,7 @@ class _GroupLayersTogetherState extends State<GroupLayersTogether>
     );
   }
 
-  void onMapViewReady() async {
+  Future<void> onMapViewReady() async {
     // Create a Group Layer for the Project Area Group.
     final projectAreaGroupLayer = GroupLayer()..name = 'Project Area Group';
     // Create a Feature Layer for the Project Area.

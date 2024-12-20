@@ -100,7 +100,7 @@ class _ApplyScheduledUpdatesToPreplannedMapAreaState
     );
   }
 
-  void onMapViewReady() async {
+  Future<void> onMapViewReady() async {
     // Set the path to the map package data.
     final appDir = await getApplicationDocumentsDirectory();
     _dataUri = Uri.parse('${appDir.absolute.path}/canyonlands');

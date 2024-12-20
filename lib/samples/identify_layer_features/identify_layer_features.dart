@@ -75,7 +75,7 @@ class _IdentifyLayerFeaturesState extends State<IdentifyLayerFeatures>
     );
   }
 
-  void onMapViewReady() async {
+  Future<void> onMapViewReady() async {
     // Create a feature layer of damaged property data.
     final serviceFeatureTable = ServiceFeatureTable.withUri(
       Uri.parse(
@@ -119,7 +119,7 @@ class _IdentifyLayerFeaturesState extends State<IdentifyLayerFeatures>
     });
   }
 
-  void onTap(Offset localPosition) async {
+  Future<void> onTap(Offset localPosition) async {
     // Identify features at the tapped location.
     final identifyLayerResults = await _mapViewController.identifyLayers(
       screenPoint: localPosition,

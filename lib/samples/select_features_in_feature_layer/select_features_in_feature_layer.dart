@@ -70,7 +70,7 @@ class _SelectFeaturesInFeatureLayerState
     _mapViewController.arcGISMap = map;
   }
 
-  void onTap(Offset localPosition) async {
+  Future<void> onTap(Offset localPosition) async {
     // Clear the selection on the feature layer.
     _featureLayer.clearSelection();
 

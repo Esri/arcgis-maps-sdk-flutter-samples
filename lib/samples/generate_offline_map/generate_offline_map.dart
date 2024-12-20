@@ -145,7 +145,7 @@ class _GenerateOfflineMapState extends State<GenerateOfflineMap>
     );
   }
 
-  void onMapViewReady() async {
+  Future<void> onMapViewReady() async {
     // Create the map from a portal item.
     final portalItem = PortalItem.withPortalAndItemId(
       portal: Portal.arcGISOnline(),
@@ -192,7 +192,7 @@ class _GenerateOfflineMapState extends State<GenerateOfflineMap>
   }
 
   // Take the selected region offline.
-  void takeOffline() async {
+  Future<void> takeOffline() async {
     // Get the Envelope of the outlined region.
     final envelope = outlineEnvelope();
     if (envelope == null) return;

@@ -106,7 +106,7 @@ class _FindClosestFacilityFromPointState
     );
   }
 
-  void onMapViewReady() async {
+  Future<void> onMapViewReady() async {
     // Create a map with the ArcGIS Streets basemap style.
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISStreets);
 
@@ -201,7 +201,7 @@ class _FindClosestFacilityFromPointState
     return parameters;
   }
 
-  void solveRoutes() async {
+  Future<void> solveRoutes() async {
     setState(() => _ready = false);
     // Solve the closest facility task with the parameters.
     final result = await _closestFacilityTask.solveClosestFacility(

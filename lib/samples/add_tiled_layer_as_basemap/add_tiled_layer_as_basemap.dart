@@ -52,7 +52,7 @@ class AddTiledLayerAsBasemapState extends State<AddTiledLayerAsBasemap>
     );
   }
 
-  void onMapViewReady() async {
+  Future<void> onMapViewReady() async {
     await downloadSampleData(['e4a398afe9a945f3b0f4dca1e4faccb5']);
     final appDir = await getApplicationDocumentsDirectory();
 

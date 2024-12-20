@@ -61,7 +61,7 @@ class _DisplayOGCAPICollectionState extends State<DisplayOGCAPICollection>
     );
   }
 
-  void onMapViewReady() async {
+  Future<void> onMapViewReady() async {
     // Create a map with a basemap style and add to the map view controller.
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic);
     _mapViewController.arcGISMap = map;

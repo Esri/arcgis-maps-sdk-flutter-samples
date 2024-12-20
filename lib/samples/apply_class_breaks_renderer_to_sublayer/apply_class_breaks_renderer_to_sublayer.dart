@@ -76,7 +76,7 @@ class _ApplyClassBreaksRendererToSublayerState
     );
   }
 
-  void onMapViewReady() async {
+  Future<void> onMapViewReady() async {
     // Create an image layer.
     final imageLayer = ArcGISMapImageLayer.withUri(
       Uri.parse(
@@ -105,7 +105,7 @@ class _ApplyClassBreaksRendererToSublayerState
     setState(() => _ready = true);
   }
 
-  void renderLayer() async {
+  Future<void> renderLayer() async {
     // Apply class breaks renderer.
     _countiesSublayer.renderer = createPopulationClassBreaksRenderer();
     // Update the rendered state.

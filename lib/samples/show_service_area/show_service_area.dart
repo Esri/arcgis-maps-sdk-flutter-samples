@@ -134,7 +134,7 @@ class _ShowServiceAreaState extends State<ShowServiceArea>
     );
   }
 
-  void onMapViewReady() async {
+  Future<void> onMapViewReady() async {
     // Create a map with the light gray basemap style and an initial viewpoint.
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISLightGray)
       ..initialViewpoint = Viewpoint.withLatLongScale(
@@ -205,7 +205,7 @@ class _ShowServiceAreaState extends State<ShowServiceArea>
     }
   }
 
-  void solveServiceArea() async {
+  Future<void> solveServiceArea() async {
     // Require at least 1 facility to perform a service area calculation.
     if (_facilityGraphicsOverlay.graphics.isNotEmpty) {
       // Disable the UI while the service area is calculated.

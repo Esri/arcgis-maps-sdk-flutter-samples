@@ -111,7 +111,7 @@ class _DisplayDimensionsState extends State<DisplayDimensions>
     );
   }
 
-  void onMapViewReady() async {
+  Future<void> onMapViewReady() async {
     // Download the mobile map package.
     await downloadSampleData(['f5ff6f5556a945bca87ca513b8729a1e']);
 

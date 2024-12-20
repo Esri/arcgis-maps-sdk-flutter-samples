@@ -141,7 +141,7 @@ class _DownloadVectorTilesToLocalCacheState
   }
 
   // Cancel the export vector tiles job.
-  void cancelDownloadingJob() async {
+  Future<void> cancelDownloadingJob() async {
     setState(() => _progress = 0.0);
     setState(() => _isJobStarted = false);
 
@@ -151,7 +151,7 @@ class _DownloadVectorTilesToLocalCacheState
   }
 
   // Start to download the vector tiles for the outlined region.
-  void startDownloadVectorTiles() async {
+  Future<void> startDownloadVectorTiles() async {
     // Get the download area.
     final downloadArea = downloadAreaEnvelope();
     // Get the ArcGISVectorTiledLayer which the vector tiles cache will be downloaded from.

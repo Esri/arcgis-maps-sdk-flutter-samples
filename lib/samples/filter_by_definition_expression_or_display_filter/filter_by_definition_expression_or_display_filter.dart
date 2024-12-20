@@ -109,7 +109,7 @@ class _FilterByDefinitionExpressionOrDisplayFilterState
     _mapViewController.arcGISMap = map;
   }
 
-  void applyDefinitionExpression() async {
+  Future<void> applyDefinitionExpression() async {
     // Remove the display filter.
     _displayFilterDefinition = null;
     // Apply a definition expression to the feature layer.
@@ -118,7 +118,7 @@ class _FilterByDefinitionExpressionOrDisplayFilterState
     await calculateFeatureCount();
   }
 
-  void applyDisplayFilter() async {
+  Future<void> applyDisplayFilter() async {
     // Remove the definition expression.
     _definitionExpression = '';
     // Apply a display filter to the feature layer.
@@ -137,7 +137,7 @@ class _FilterByDefinitionExpressionOrDisplayFilterState
     await calculateFeatureCount();
   }
 
-  void reset() async {
+  Future<void> reset() async {
     // Remove the definition expression and display filter.
     _displayFilterDefinition = null;
     _definitionExpression = '';

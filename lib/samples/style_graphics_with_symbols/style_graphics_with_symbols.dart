@@ -236,7 +236,7 @@ class _StyleGraphicsWithSymbolsState extends State<StyleGraphicsWithSymbols>
     _graphicsOverlay.graphics.addAll([bassRockGraphic, craigleithGraphic]);
   }
 
-  void _setExtent() async {
+  Future<void> _setExtent() async {
     // Create a new envelope builder using the same spatial reference as the graphics.
     final myEnvelopeBuilder =
         EnvelopeBuilder(spatialReference: SpatialReference.wgs84);

@@ -68,7 +68,7 @@ class _AuthenticateWithTokenState extends State<AuthenticateWithToken>
     );
   }
 
-  void onMapViewReady() async {
+  Future<void> onMapViewReady() async {
     // Set a portal item map that has a secure layer (traffic).
     // Loading the secure layer will trigger an authentication challenge.
     _mapViewController.arcGISMap = ArcGISMap.withItem(
@@ -80,7 +80,7 @@ class _AuthenticateWithTokenState extends State<AuthenticateWithToken>
   }
 
   @override
-  void handleArcGISAuthenticationChallenge(
+  Future<void> handleArcGISAuthenticationChallenge(
     ArcGISAuthenticationChallenge challenge,
   ) async {
     // Show a login dialog to handle the authentication challenge.
@@ -179,7 +179,7 @@ class _LoginWidgetState extends State<LoginWidget> {
     );
   }
 
-  void login() async {
+  Future<void> login() async {
     setState(() => _error = null);
 
     // Username and password are required.

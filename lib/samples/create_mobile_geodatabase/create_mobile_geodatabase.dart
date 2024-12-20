@@ -128,7 +128,7 @@ class _CreateMobileGeodatabaseState extends State<CreateMobileGeodatabase>
   }
 
   // When the map view is ready, create a map and set the viewpoint.
-  void onMapViewReady() async {
+  Future<void> onMapViewReady() async {
     _map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic);
     _mapViewController.arcGISMap = _map;
     _mapViewController.setViewpoint(
@@ -216,7 +216,7 @@ class _CreateMobileGeodatabaseState extends State<CreateMobileGeodatabase>
   }
 
   // Add a feature to the feature table.
-  void _addFeature(ArcGISPoint point) async {
+  Future<void> _addFeature(ArcGISPoint point) async {
     if (_featureTable == null) {
       return;
     }
@@ -233,7 +233,7 @@ class _CreateMobileGeodatabaseState extends State<CreateMobileGeodatabase>
   }
 
   // Display the attribute table in a dialog.
-  void _displayTable() async {
+  Future<void> _displayTable() async {
     final queryResult = await _featureTable?.queryFeatures(QueryParameters());
 
     final dataRows = <DataRow>[];
@@ -311,7 +311,7 @@ class _CreateMobileGeodatabaseState extends State<CreateMobileGeodatabase>
   }
 
   // Call platform share sheet and share the mobile geodatabase file URI.
-  void _shareGeodatabaseUri() async {
+  Future<void> _shareGeodatabaseUri() async {
     _geodatabase?.close();
 
     // Open the platform share sheet and share the mobile geodatabase file URI.

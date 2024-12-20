@@ -136,7 +136,7 @@ class _QueryRelatedFeaturesState extends State<QueryRelatedFeatures>
     );
   }
 
-  void onMapViewReady() async {
+  Future<void> onMapViewReady() async {
     // Create a map with a topographic basemap style.
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic);
 
@@ -191,7 +191,7 @@ class _QueryRelatedFeaturesState extends State<QueryRelatedFeatures>
     setState(() => _ready = true);
   }
 
-  void onTap(Offset offset) async {
+  Future<void> onTap(Offset offset) async {
     // Clear the selection on the feature layer.
     _alaskaNationalParksLayer.clearSelection();
 
@@ -229,7 +229,7 @@ class _QueryRelatedFeaturesState extends State<QueryRelatedFeatures>
   }
 
   // Query for related features given the origin feature.
-  void queryRelatedFeatures(ArcGISFeature selectedPark) async {
+  Future<void> queryRelatedFeatures(ArcGISFeature selectedPark) async {
     // Query for related features.
     final selectedParkTable = selectedPark.featureTable as ServiceFeatureTable;
     final relatedFeatureQueryResult =

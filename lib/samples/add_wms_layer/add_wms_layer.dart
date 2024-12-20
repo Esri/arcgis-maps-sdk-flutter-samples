@@ -39,7 +39,7 @@ class _AddWmsLayerState extends State<AddWmsLayer> with SampleStateSupport {
     );
   }
 
-  void onMapViewReady() async {
+  Future<void> onMapViewReady() async {
     // Create a map with a basemap style.
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISLightGray);
     // Set the map to the map view controller.

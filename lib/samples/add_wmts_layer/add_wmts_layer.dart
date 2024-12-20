@@ -80,7 +80,7 @@ class _AddWmtsLayerState extends State<AddWmtsLayer> with SampleStateSupport {
     );
   }
 
-  void onMapViewReady() async {
+  Future<void> onMapViewReady() async {
     // Initially display the map with the URI constructor.
     createWmtsLayerFromUri();
     // Set the ready state variable to true to enable the sample UI.
@@ -103,7 +103,7 @@ class _AddWmtsLayerState extends State<AddWmtsLayer> with SampleStateSupport {
     setState(() => _fromUriActive = true);
   }
 
-  void createWmtsLayerFromLayerInfo() async {
+  Future<void> createWmtsLayerFromLayerInfo() async {
     // Set the ready state variable to false to disable the sample UI.
     setState(() => _ready = false);
     // Create a map.

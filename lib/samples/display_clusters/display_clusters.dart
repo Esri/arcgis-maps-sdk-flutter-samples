@@ -85,7 +85,7 @@ class _DisplayClustersState extends State<DisplayClusters>
     );
   }
 
-  void onMapViewReady() async {
+  Future<void> onMapViewReady() async {
     // Get the power plants web map from the default portal.
     final portal = Portal.arcGISOnline();
     final portalItem = PortalItem.withPortalAndItemId(
@@ -126,7 +126,7 @@ class _DisplayClustersState extends State<DisplayClusters>
     }
   }
 
-  void onTap(Offset localPosition) async {
+  Future<void> onTap(Offset localPosition) async {
     // Clear any existing selected features.
     _featureLayer.clearSelection();
     // Perform an identify result on the map view controller, using the feature layer and tapped location.

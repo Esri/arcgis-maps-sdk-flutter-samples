@@ -113,7 +113,7 @@ class _SnapGeometryEditsState extends State<SnapGeometryEdits>
     );
   }
 
-  void onMapViewReady() async {
+  Future<void> onMapViewReady() async {
     // Create a map with a URL to a web map.
     const webMapUri =
         'https://www.arcgis.com/home/item.html?id=b95fe18073bc4f7788f0375af2bb445e';
@@ -170,7 +170,7 @@ class _SnapGeometryEditsState extends State<SnapGeometryEdits>
     }
   }
 
-  void onTap(Offset localPosition) async {
+  Future<void> onTap(Offset localPosition) async {
     // Perform an identify operation on the graphics overlay at the tapped location.
     final identifyResult = await _mapViewController.identifyGraphicsOverlay(
       _graphicsOverlay,

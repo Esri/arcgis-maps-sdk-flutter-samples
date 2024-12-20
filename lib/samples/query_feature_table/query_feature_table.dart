@@ -91,7 +91,7 @@ class _QueryFeatureTableState extends State<QueryFeatureTable>
     );
   }
 
-  void onMapViewReady() async {
+  Future<void> onMapViewReady() async {
     // Create a map with the topographic basemap style and set to the map view.
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic);
 
@@ -118,7 +118,7 @@ class _QueryFeatureTableState extends State<QueryFeatureTable>
     _mapViewController.arcGISMap = map;
   }
 
-  void onSearchSubmitted(String value) async {
+  Future<void> onSearchSubmitted(String value) async {
     // Clear the selection.
     _featureLayer.clearSelection();
 

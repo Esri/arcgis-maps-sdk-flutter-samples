@@ -48,7 +48,7 @@ class _ShowPortalUserInfoState extends State<ShowPortalUserInfo>
   }
 
   @override
-  void dispose() async {
+  Future<void> dispose() async {
     // We do not want to handle authentication challenges outside of this sample,
     // so we remove this as the challenge handler.
     ArcGISEnvironment
@@ -67,7 +67,7 @@ class _ShowPortalUserInfoState extends State<ShowPortalUserInfo>
   }
 
   @override
-  void handleArcGISAuthenticationChallenge(
+  Future<void> handleArcGISAuthenticationChallenge(
     ArcGISAuthenticationChallenge challenge,
   ) async {
     try {

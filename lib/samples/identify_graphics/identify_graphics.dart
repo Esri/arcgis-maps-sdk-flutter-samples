@@ -60,7 +60,7 @@ class _IdentifyGraphicsState extends State<IdentifyGraphics>
     );
   }
 
-  void onMapViewReady() async {
+  Future<void> onMapViewReady() async {
     // Create a map with a topographic basemap.
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic);
     // Create a polygon geometry.
@@ -94,7 +94,7 @@ class _IdentifyGraphicsState extends State<IdentifyGraphics>
     setState(() => _ready = true);
   }
 
-  void onTap(Offset offset) async {
+  Future<void> onTap(Offset offset) async {
     // Identify the graphics overlay at the tapped point.
     final identifyGraphicsOverlay =
         await _mapViewController.identifyGraphicsOverlay(

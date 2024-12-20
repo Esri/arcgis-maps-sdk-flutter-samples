@@ -109,7 +109,7 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
     );
   }
 
-  void onMapViewReady() async {
+  Future<void> onMapViewReady() async {
     // Create a map with an imagery basemap style.
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISImageryStandard);
     // Set the map to the map view controller.
@@ -152,7 +152,7 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
     _mapViewController.geometryEditor = _geometryEditor;
   }
 
-  void onTap(Offset localPosition) async {
+  Future<void> onTap(Offset localPosition) async {
     // Perform an identify operation on the graphics overlay at the tapped location.
     final identifyResult = await _mapViewController.identifyGraphicsOverlay(
       _graphicsOverlay,

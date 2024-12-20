@@ -104,7 +104,7 @@ class _FindRouteState extends State<FindRoute> with SampleStateSupport {
     );
   }
 
-  void onMapViewReady() async {
+  Future<void> onMapViewReady() async {
     initMap();
     initStops();
     await initRouteParameters();

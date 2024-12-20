@@ -93,7 +93,7 @@ class _SetReferenceScaleState extends State<SetReferenceScale>
     );
   }
 
-  void onMapViewReady() async {
+  Future<void> onMapViewReady() async {
     // Create a portal item.
     final portal = Portal.arcGISOnline();
     final portalItem = PortalItem.withPortalAndItemId(
