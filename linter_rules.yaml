@@ -74,9 +74,11 @@ linter:
     library_names: true
     library_prefixes: true
     library_private_types_in_public_api: true
+    lines_longer_than_80_chars: false # we rely on `dart format`, which doesn't adjust comments and long strings (which is fine)
     literal_only_boolean_expressions: true
     missing_whitespace_between_adjacent_strings: true
     no_adjacent_strings_in_list: true
+    no_default_cases: true
     no_duplicate_case_values: true
     no_leading_underscores_for_library_prefixes: true
     no_leading_underscores_for_local_identifiers: true
@@ -86,6 +88,7 @@ linter:
     noop_primitive_operations: true
     null_check_on_nullable_type_parameter: true
     null_closures: true
+    omit_local_variable_types: true
     one_member_abstracts: true
     only_throw_errors: true
     overridden_fields: true

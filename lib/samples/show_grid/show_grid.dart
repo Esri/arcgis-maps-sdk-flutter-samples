@@ -109,7 +109,7 @@ class _ShowGridState extends State<ShowGrid> with SampleStateSupport {
     _gridColorType = colorType;
     if (_mapViewController.grid != null) {
       final grid = _mapViewController.grid!;
-      for (int i = 0; i < grid.levelCount; i++) {
+      for (var i = 0; i < grid.levelCount; i++) {
         final lineSymbol = SimpleLineSymbol(
           color: colorType.value,
         );
@@ -131,7 +131,7 @@ class _ShowGridState extends State<ShowGrid> with SampleStateSupport {
     _gridLabelColorType = colorType;
     if (_mapViewController.grid != null) {
       final grid = _mapViewController.grid!;
-      for (int i = 0; i < grid.levelCount; i++) {
+      for (var i = 0; i < grid.levelCount; i++) {
         final textSymbol = TextSymbol(
           color: colorType.value,
           size: 14.0,

@@ -391,13 +391,13 @@ class _ManageFeaturesState extends State<ManageFeatures>
       case FeatureManagementOperation.geometry:
         // Display instructions for updating feature geometry.
         return const Text('Tap on the map to move a selected feature.');
-      default:
+      case null:
         // Display default instructions.
         return const Text('Select a feature management operation.');
     }
   }
 
-  String getLabel(FeatureManagementOperation operation) {
+  String getLabel(FeatureManagementOperation? operation) {
     // Return a UI friendly string for each feature management operation.
     switch (operation) {
       case FeatureManagementOperation.create:
@@ -408,7 +408,7 @@ class _ManageFeaturesState extends State<ManageFeatures>
         return 'Update attribute';
       case FeatureManagementOperation.geometry:
         return 'Update geometry';
-      default:
+      case null:
         return 'Select a feature management operation.';
     }
   }

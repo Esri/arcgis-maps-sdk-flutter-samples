@@ -61,49 +61,48 @@ class _SetBasemapState extends State<SetBasemap> with SampleStateSupport {
           child: FutureBuilder(
             future: _loadBasemapsFuture,
             builder: (context, snapshot) {
-              switch (snapshot.connectionState) {
-                case ConnectionState.done:
-                  // Create a grid view to display basemaps.
-                  return GridView.count(
-                    crossAxisCount: 2,
-                    children: _basemaps.keys
-                        .map(
-                          // Create a list tile for each basemap.
-                          (basemap) => ListTile(
-                            title: Column(
-                              children: [
-                                Container(
-                                  // Add a border to the selected basemap.
-                                  decoration: _selectedBasemap == basemap
-                                      ? BoxDecoration(
-                                          border: Border.all(
-                                            color: Colors.blue,
-                                            width: 4,
-                                          ),
-                                        )
-                                      : null,
-                                  // Display the basemap image.
-                                  child: _basemaps[basemap] ?? _defaultImage,
-                                ),
-                                Text(
-                                  basemap.name,
-                                  textAlign: TextAlign.center,
-                                ),
-                              ],
-                            ),
-                            // Update the map with the selected basemap.
-                            onTap: () {
-                              _selectedBasemap = basemap;
-                              updateMap(basemap);
-                              _scaffoldStateKey.currentState!.closeEndDrawer();
-                            },
+              if (snapshot.connectionState == ConnectionState.done) {
+                // Create a grid view to display basemaps.
+                return GridView.count(
+                  crossAxisCount: 2,
+                  children: _basemaps.keys
+                      .map(
+                        // Create a list tile for each basemap.
+                        (basemap) => ListTile(
+                          title: Column(
+                            children: [
+                              Container(
+                                // Add a border to the selected basemap.
+                                decoration: _selectedBasemap == basemap
+                                    ? BoxDecoration(
+                                        border: Border.all(
+                                          color: Colors.blue,
+                                          width: 4,
+                                        ),
+                                      )
+                                    : null,
+                                // Display the basemap image.
+                                child: _basemaps[basemap] ?? _defaultImage,
+                              ),
+                              Text(
+                                basemap.name,
+                                textAlign: TextAlign.center,
+                              ),
+                            ],
                           ),
-                        )
-                        .toList(),
-                  );
-                default:
-                  // Display a loading message while loading basemaps.
-                  return const Center(child: Text('Loading basemaps...'));
+                          // Update the map with the selected basemap.
+                          onTap: () {
+                            _selectedBasemap = basemap;
+                            updateMap(basemap);
+                            _scaffoldStateKey.currentState!.closeEndDrawer();
+                          },
+                        ),
+                      )
+                      .toList(),
+                );
+              } else {
+                // Display a loading message while loading basemaps.
+                return const Center(child: Text('Loading basemaps...'));
               }
             },
           ),
