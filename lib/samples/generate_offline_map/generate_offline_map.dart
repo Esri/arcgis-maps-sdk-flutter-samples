@@ -170,14 +170,14 @@ class _GenerateOfflineMapState extends State<GenerateOfflineMap>
     if (outlineContext == null || mapContext == null) return null;
 
     // Get the global screen rect of the outlined region.
-    final outlineRenderBox = outlineContext.findRenderObject() as RenderBox;
+    final outlineRenderBox = outlineContext.findRenderObject() as RenderBox?;
     final outlineGlobalScreenRect =
-        outlineRenderBox.localToGlobal(Offset.zero) & outlineRenderBox.size;
+        outlineRenderBox!.localToGlobal(Offset.zero) & outlineRenderBox.size;
 
     // Convert the global screen rect to a rect local to the map view.
-    final mapRenderBox = mapContext.findRenderObject() as RenderBox;
-    final mapLocalScreenRect =
-        outlineGlobalScreenRect.shift(-mapRenderBox.localToGlobal(Offset.zero));
+    final mapRenderBox = mapContext.findRenderObject() as RenderBox?;
+    final mapLocalScreenRect = outlineGlobalScreenRect
+        .shift(-mapRenderBox!.localToGlobal(Offset.zero));
 
     // Convert the local screen rect to map coordinates.
     final locationTopLeft =

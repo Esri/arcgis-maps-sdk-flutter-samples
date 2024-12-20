@@ -326,7 +326,7 @@ class _FindRouteInMapState extends State<FindRouteInMap>
 
     // Perform the reverse geocode operation.
     final results = await widget.sampleData.locatorTask!.reverseGeocode(
-      location: graphic.geometry as ArcGISPoint,
+      location: graphic.geometry! as ArcGISPoint,
       parameters: reverseGeocodeParameters,
     );
 

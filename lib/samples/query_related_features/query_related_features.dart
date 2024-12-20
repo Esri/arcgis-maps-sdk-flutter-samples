@@ -231,7 +231,7 @@ class _QueryRelatedFeaturesState extends State<QueryRelatedFeatures>
   // Query for related features given the origin feature.
   Future<void> queryRelatedFeatures(ArcGISFeature selectedPark) async {
     // Query for related features.
-    final selectedParkTable = selectedPark.featureTable as ServiceFeatureTable;
+    final selectedParkTable = selectedPark.featureTable! as ServiceFeatureTable;
     final relatedFeatureQueryResult =
         await selectedParkTable.queryRelatedFeatures(feature: selectedPark);
 
@@ -242,7 +242,7 @@ class _QueryRelatedFeaturesState extends State<QueryRelatedFeatures>
       for (final feature in result.features()) {
         final relatedFeature = feature as ArcGISFeature;
         // Get a reference to the feature's table.
-        final relatedTable = feature.featureTable as ArcGISFeatureTable;
+        final relatedTable = feature.featureTable! as ArcGISFeatureTable;
 
         // Get the display field name - this is the name of the field that is intended for display.
         final displayFieldName = relatedTable.layerInfo!.displayFieldName;

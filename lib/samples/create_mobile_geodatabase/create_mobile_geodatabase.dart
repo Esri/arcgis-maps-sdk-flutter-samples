@@ -202,9 +202,7 @@ class _CreateMobileGeodatabaseState extends State<CreateMobileGeodatabase>
     try {
       _featureTable = await _geodatabase!.createTable(tableDescription);
       _map.operationalLayers.clear();
-      _map.operationalLayers.add(
-        FeatureLayer.withFeatureTable(_featureTable as GeodatabaseFeatureTable),
-      );
+      _map.operationalLayers.add(FeatureLayer.withFeatureTable(_featureTable!));
       setState(() => _featureCount = _featureTable!.numberOfFeatures);
     } catch (e) {
       showMessageDialog(
