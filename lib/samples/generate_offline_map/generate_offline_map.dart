@@ -237,7 +237,7 @@ class _GenerateOfflineMapState extends State<GenerateOfflineMap>
       // Get the offline map and display it.
       _mapViewController.arcGISMap = result.offlineMap;
       _generateOfflineMapJob = null;
-    } catch (e) {
+    } on ArcGISException {
       // If an error happens (such as cancellation), reset state.
       _generateOfflineMapJob = null;
       setState(() => _progress = null);

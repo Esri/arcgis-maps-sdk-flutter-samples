@@ -112,7 +112,7 @@ class _EditFeatureAttachmentsState extends State<EditFeatureAttachments>
       await serviceFeatureTable.updateFeature(selectedFeature);
       // Apply the edits to the service.
       await serviceFeatureTable.applyEdits();
-    } catch (e) {
+    } on ArcGISException catch (e) {
       showMessageDialog(e.toString(), title: 'Error', showOK: true);
     }
     return Future.value();
@@ -334,7 +334,7 @@ class _AttachmentsOptionsState extends State<AttachmentsOptions>
         _attachments = fetchedAttachments;
         _isLoading = false;
       });
-    } catch (e) {
+    } on ArcGISException catch (e) {
       showMessageDialog(e.toString(), title: 'Error', showOK: true);
       setState(() => _isLoading = false);
     }

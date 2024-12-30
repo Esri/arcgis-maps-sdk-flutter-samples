@@ -13,6 +13,7 @@
 // limitations under the License.
 //
 
+// As a command line tool, we want to use print for output
 // ignore_for_file: avoid_print
 
 import 'dart:io';

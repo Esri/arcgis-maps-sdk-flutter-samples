@@ -126,9 +126,9 @@ class _ApplyScheduledUpdatesToPreplannedMapAreaState
       if (result != null && result.isMobileMapPackageReopenRequired) {
         await _loadMapPackageMap();
       }
-    } catch (err) {
+    } on ArcGISException catch (e) {
       showMessageDialog(
-        'The offline map sync failed with error: {$err}.',
+        'The offline map sync failed with error: {$e}.',
         title: 'Error',
       );
     } finally {
@@ -158,9 +158,9 @@ class _ApplyScheduledUpdatesToPreplannedMapAreaState
     // Try to load the map package.
     try {
       await _mobileMapPackage!.load();
-    } catch (err) {
+    } on ArcGISException catch (e) {
       showMessageDialog(
-        'Mobile Map Package failed to load with error: {$err}',
+        'Mobile Map Package failed to load with error: {$e}',
         title: 'Error',
       );
       return false;

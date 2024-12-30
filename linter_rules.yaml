@@ -7,6 +7,7 @@ linter:
     always_use_package_imports: true
     annotate_overrides: true
     avoid_bool_literals_in_conditional_expressions: true
+    avoid_catches_without_on_clauses: true
     avoid_catching_errors: true
     avoid_double_and_int_checks: false # this is only relevant when compiling to JavaScript
     avoid_dynamic_calls: true
@@ -19,7 +20,6 @@ linter:
     avoid_init_to_null: true
     avoid_js_rounded_ints: true
     avoid_multiple_declarations_per_line: true
-    avoid_null_checks_in_equality_operators: true
     avoid_positional_boolean_parameters: false # some Widget callbacks require positional parameters (e.g., Switch.onChanged)
     avoid_print: true
     avoid_private_typedef_functions: true
@@ -56,6 +56,7 @@ linter:
     depend_on_referenced_packages: true
     deprecated_consistency: true
     directives_ordering: true
+    document_ignores: true
     empty_catches: true
     empty_constructor_bodies: true
     empty_statements: true
@@ -68,14 +69,15 @@ linter:
     implementation_imports: true
     implicit_reopen: true
     invalid_case_patterns: true
+    invalid_runtime_check_with_js_interop_types: true
     join_return_with_assignment: true
     leading_newlines_in_multiline_strings: true
     library_annotations: true
-    library_names: true
     library_prefixes: true
     library_private_types_in_public_api: true
     lines_longer_than_80_chars: false # we rely on `dart format`, which doesn't adjust comments and long strings (which is fine)
     literal_only_boolean_expressions: true
+    missing_code_block_language_in_doc_comment: true
     missing_whitespace_between_adjacent_strings: true
     no_adjacent_strings_in_list: true
     no_default_cases: true
@@ -84,6 +86,8 @@ linter:
     no_leading_underscores_for_local_identifiers: true
     no_logic_in_create_state: true
     no_runtimeType_toString: true
+    no_self_assignments: true
+    no_wildcard_variable_uses: true
     non_constant_identifier_names: true
     noop_primitive_operations: true
     null_check_on_nullable_type_parameter: true
@@ -92,9 +96,7 @@ linter:
     one_member_abstracts: true
     only_throw_errors: true
     overridden_fields: true
-    package_api_docs: true
     package_names: true
-    package_prefixed_library_names: true
     parameter_assignments: true
     prefer_adjacent_string_concatenation: true
     prefer_asserts_in_initializer_lists: true
@@ -128,7 +130,6 @@ linter:
     prefer_single_quotes: true
     prefer_spread_collections: true
     prefer_typing_uninitialized_variables: true
-    prefer_void_to_null: true
     provide_deprecation_message: true
     public_member_api_docs: false # documenting all public members would be low-value clutter
     recursive_getters: true
@@ -146,7 +147,9 @@ linter:
     tighten_type_of_initializing_formals: true
     type_annotate_public_apis: true
     type_init_formals: true
+    type_literal_in_constant_pattern: true
     unawaited_futures: true
+    unintended_html_in_doc_comment: true
     unnecessary_await_in_return: true
     unnecessary_breaks: true
     unnecessary_brace_in_string_interps: true
@@ -156,6 +159,7 @@ linter:
     unnecessary_lambdas: true
     unnecessary_late: true
     unnecessary_library_directive: true
+    unnecessary_library_name: true
     unnecessary_new: true
     unnecessary_null_aware_assignments: true
     unnecessary_null_checks: true
