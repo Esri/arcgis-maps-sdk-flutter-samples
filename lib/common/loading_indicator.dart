@@ -21,9 +21,8 @@ import 'package:flutter/material.dart';
 /// - [visible] : A boolean value to determine the visibility of the loading
 ///                 indicator.
 class LoadingIndicator extends StatelessWidget {
-  final bool visible;
-
   const LoadingIndicator({required this.visible, super.key});
+  final bool visible;
 
   @override
   Widget build(BuildContext context) {

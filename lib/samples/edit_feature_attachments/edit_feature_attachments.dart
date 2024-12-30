@@ -58,11 +58,11 @@ class _EditFeatureAttachmentsState extends State<EditFeatureAttachments>
     // Set the initial viewpoint for the map.
     map.initialViewpoint = Viewpoint.fromCenter(
       ArcGISPoint(
-        x: -95.0,
-        y: 40.0,
+        x: -95,
+        y: 40,
         spatialReference: SpatialReference.wgs84,
       ),
-      scale: 1e8,
+      scale: 100000000,
     );
 
     // Add the feature layer to the map.
@@ -78,7 +78,7 @@ class _EditFeatureAttachmentsState extends State<EditFeatureAttachments>
     final identifyLayerResult = await _mapViewController.identifyLayer(
       _featureLayer,
       screenPoint: localPosition,
-      tolerance: 5.0,
+      tolerance: 5,
     );
 
     // If there are features identified, show the bottom sheet to display the
@@ -123,14 +123,13 @@ class _EditFeatureAttachmentsState extends State<EditFeatureAttachments>
 // A widget to display the attachment information for the selected feature.
 //
 class AttachmentsOptions extends StatefulWidget {
-  final ArcGISFeature arcGISFeature;
-  final Function(ArcGISFeature) applyEdits;
-
   const AttachmentsOptions({
     required this.arcGISFeature,
     required this.applyEdits,
     super.key,
   });
+  final ArcGISFeature arcGISFeature;
+  final Function(ArcGISFeature) applyEdits;
 
   @override
   State<AttachmentsOptions> createState() => _AttachmentsOptionsState();
@@ -139,14 +138,14 @@ class AttachmentsOptions extends StatefulWidget {
 // State class for the AttachmentsOptions.
 class _AttachmentsOptionsState extends State<AttachmentsOptions>
     with SampleStateSupport {
-  late final String damageType;
-  var attachments = <Attachment>[];
-  var isLoading = false;
+  late final String _damageType;
+  var _attachments = <Attachment>[];
+  var _isLoading = false;
 
   @override
   void initState() {
     super.initState();
-    damageType = widget.arcGISFeature.attributes['typdamage'];
+    _damageType = widget.arcGISFeature.attributes['typdamage'];
     _loadAttachments();
   }
 
@@ -164,14 +163,14 @@ class _AttachmentsOptionsState extends State<AttachmentsOptions>
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'Damage Type: $damageType',
+                    'Damage Type: $_damageType',
                     style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
                     ),
                   ),
-                  if (isLoading)
+                  if (_isLoading)
                     const SizedBox(
                       height: 18,
                       width: 18,
@@ -195,7 +194,7 @@ class _AttachmentsOptionsState extends State<AttachmentsOptions>
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('Number of Attachments: ${attachments.length}'),
+                  Text('Number of Attachments: ${_attachments.length}'),
                   ElevatedButton(
                     onPressed: addAttachment,
                     child: const Text('Add Attachment'),
@@ -212,25 +211,25 @@ class _AttachmentsOptionsState extends State<AttachmentsOptions>
               child: Column(
                 children: [
                   ListView.builder(
-                    itemCount: attachments.length,
+                    itemCount: _attachments.length,
                     shrinkWrap: true,
                     padding: const EdgeInsets.all(2),
                     itemBuilder: (context, index) {
                       return ListTile(
-                        title: Text(attachments[index].name),
-                        subtitle: Text(attachments[index].contentType),
+                        title: Text(_attachments[index].name),
+                        subtitle: Text(_attachments[index].contentType),
                         trailing: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             IconButton(
                               icon: const Icon(Icons.remove_red_eye),
                               onPressed: () =>
-                                  viewAttachment(attachments[index]),
+                                  viewAttachment(_attachments[index]),
                             ),
                             IconButton(
                               icon: const Icon(Icons.delete),
                               onPressed: () =>
-                                  deleteAttachment(attachments[index]),
+                                  deleteAttachment(_attachments[index]),
                             ),
                           ],
                         ),
@@ -248,24 +247,23 @@ class _AttachmentsOptionsState extends State<AttachmentsOptions>
 
   // Delete an attachment from the selected feature.
   Future<void> deleteAttachment(Attachment attachment) async {
-    setState(() => isLoading = true);
+    setState(() => _isLoading = true);
     await widget.arcGISFeature.deleteAttachment(attachment);
     await widget.applyEdits(widget.arcGISFeature);
 
-    _loadAttachments();
-    setState(() => isLoading = false);
+    await _loadAttachments();
   }
 
   // View an attachment from the selected feature in a dialog.
   Future<void> viewAttachment(Attachment attachment) async {
-    setState(() => isLoading = true);
+    setState(() => _isLoading = true);
 
     final data = await attachment.fetchData();
-    setState(() => isLoading = false);
+    setState(() => _isLoading = false);
 
     // Display the attachment image/pdf file in a dialog.
     if (mounted) {
-      showDialog(
+      await showDialog(
         context: context,
         builder: (context) {
           return AlertDialog(
@@ -308,7 +306,7 @@ class _AttachmentsOptionsState extends State<AttachmentsOptions>
     );
 
     if (result != null) {
-      setState(() => isLoading = true);
+      setState(() => _isLoading = true);
 
       final platformFile = result.files.single;
       final file = File(platformFile.path!);
@@ -324,23 +322,21 @@ class _AttachmentsOptionsState extends State<AttachmentsOptions>
         data: fileBytes,
       );
       await widget.applyEdits(widget.arcGISFeature);
-      _loadAttachments();
-
-      setState(() => isLoading = false);
+      await _loadAttachments();
     }
   }
 
   // Load and update the attachments for the selected feature.
   Future<void> _loadAttachments() async {
     try {
-      var fetchedAttachments = await widget.arcGISFeature.fetchAttachments();
+      final fetchedAttachments = await widget.arcGISFeature.fetchAttachments();
       setState(() {
-        attachments = fetchedAttachments;
-        isLoading = false;
+        _attachments = fetchedAttachments;
+        _isLoading = false;
       });
     } catch (e) {
       showMessageDialog(e.toString(), title: 'Error', showOK: true);
-      setState(() => isLoading = false);
+      setState(() => _isLoading = false);
     }
   }
 

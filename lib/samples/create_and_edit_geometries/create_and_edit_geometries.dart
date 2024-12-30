@@ -157,7 +157,7 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
     final identifyResult = await _mapViewController.identifyGraphicsOverlay(
       _graphicsOverlay,
       screenPoint: localPosition,
-      tolerance: 12.0,
+      tolerance: 12,
     );
 
     // Get the features from the identify result.
@@ -398,7 +398,7 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
                       style: _buttonStyle,
                       onPressed:
                           _geometryEditorIsStarted && _geometryEditorCanUndo
-                              ? () => _geometryEditor.undo()
+                              ? _geometryEditor.undo
                               : null,
                       child: const Icon(Icons.undo),
                     ),
@@ -411,7 +411,7 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
                       style: _buttonStyle,
                       onPressed:
                           _geometryEditorIsStarted && _geometryEditorCanRedo
-                              ? () => _geometryEditor.redo()
+                              ? _geometryEditor.redo
                               : null,
                       child: const Icon(Icons.redo),
                     ),
@@ -439,7 +439,7 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
                               _geometryEditorHasSelectedElement &&
                               _geometryEditor.selectedElement != null &&
                               _geometryEditor.selectedElement!.canDelete
-                          ? () => _geometryEditor.deleteSelectedElement()
+                          ? _geometryEditor.deleteSelectedElement
                           : null,
                       child: const Icon(Icons.clear),
                     ),

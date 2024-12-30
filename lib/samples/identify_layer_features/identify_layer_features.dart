@@ -123,7 +123,7 @@ class _IdentifyLayerFeaturesState extends State<IdentifyLayerFeatures>
     // Identify features at the tapped location.
     final identifyLayerResults = await _mapViewController.identifyLayers(
       screenPoint: localPosition,
-      tolerance: 12.0,
+      tolerance: 12,
       maximumResultsPerLayer: 10,
     );
 

@@ -137,9 +137,9 @@ class _QueryFeatureTableState extends State<QueryFeatureTable>
       final feature = iterator.current;
       if (feature.geometry != null) {
         // Set the viewpoint to the feature's extent.
-        _mapViewController.setViewpointGeometry(
+        await _mapViewController.setViewpointGeometry(
           feature.geometry!.extent,
-          paddingInDiPs: 20.0,
+          paddingInDiPs: 20,
         );
       }
       _featureLayer.selectFeature(feature);
@@ -156,7 +156,7 @@ class _QueryFeatureTableState extends State<QueryFeatureTable>
 
   void dismissSearch() {
     // Clear the text field and dismiss the keyboard.
-    setState(() => _textEditingController.clear());
+    _textEditingController.clear();
     FocusManager.instance.primaryFocus?.unfocus();
   }
 }

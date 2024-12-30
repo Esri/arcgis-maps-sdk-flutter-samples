@@ -62,7 +62,7 @@ class _SelectFeaturesInFeatureLayerState
         y: 50.838570,
         spatialReference: SpatialReference.wgs84,
       ),
-      scale: 5e7,
+      scale: 50000000,
     );
     // Add the feature layer to the map.
     map.operationalLayers.add(_featureLayer);

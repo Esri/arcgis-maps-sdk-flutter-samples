@@ -134,8 +134,8 @@ class _CreateMobileGeodatabaseState extends State<CreateMobileGeodatabase>
     _mapViewController.setViewpoint(
       Viewpoint.withLatLongScale(
         latitude: 41.5,
-        longitude: -100.0,
-        scale: 100000000.0,
+        longitude: -100,
+        scale: 100000000,
       ),
     );
     // Create the mobile geodatabase with a feature table to track
@@ -254,7 +254,7 @@ class _CreateMobileGeodatabaseState extends State<CreateMobileGeodatabase>
       );
     }
     if (mounted) {
-      showDialog(
+      await showDialog(
         context: context,
         barrierColor: Colors.transparent,
         builder: (context) {
@@ -297,7 +297,7 @@ class _CreateMobileGeodatabaseState extends State<CreateMobileGeodatabase>
                   'Attribute table loaded from the mobile geodatabase '
                   'file. File can be loaded on ArcGIS Pro or ArcGIS Maps SDK.',
                   style: TextStyle(
-                    fontSize: 12.0,
+                    fontSize: 12,
                   ),
                 ),
               ),
@@ -319,6 +319,6 @@ class _CreateMobileGeodatabaseState extends State<CreateMobileGeodatabase>
     );
 
     // Create a new mobile geodatabase and feature table to start again.
-    _setupGeodatabase();
+    await _setupGeodatabase();
   }
 }

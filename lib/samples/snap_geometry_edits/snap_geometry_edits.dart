@@ -175,7 +175,7 @@ class _SnapGeometryEditsState extends State<SnapGeometryEdits>
     final identifyResult = await _mapViewController.identifyGraphicsOverlay(
       _graphicsOverlay,
       screenPoint: localPosition,
-      tolerance: 12.0,
+      tolerance: 12,
     );
 
     // Get the graphics from the identify result.
@@ -354,7 +354,7 @@ class _SnapGeometryEditsState extends State<SnapGeometryEdits>
                       style: _buttonStyle,
                       onPressed:
                           _geometryEditorIsStarted && _geometryEditorCanUndo
-                              ? () => _geometryEditor.undo()
+                              ? _geometryEditor.undo
                               : null,
                       child: const Icon(Icons.undo),
                     ),
@@ -369,7 +369,7 @@ class _SnapGeometryEditsState extends State<SnapGeometryEdits>
                               _geometryEditorHasSelectedElement &&
                               _geometryEditor.selectedElement != null &&
                               _geometryEditor.selectedElement!.canDelete
-                          ? () => _geometryEditor.deleteSelectedElement()
+                          ? _geometryEditor.deleteSelectedElement
                           : null,
                       child: const Icon(Icons.clear),
                     ),

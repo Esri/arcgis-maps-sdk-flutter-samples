@@ -311,13 +311,13 @@ class _DownloadVectorTilesToLocalCacheState
     return IgnorePointer(
       child: SafeArea(
         child: Container(
-          margin: const EdgeInsets.fromLTRB(30.0, 30.0, 30.0, 50.0),
+          margin: const EdgeInsets.fromLTRB(30, 30, 30, 50),
           child: Container(
             key: _outlineKey,
             decoration: BoxDecoration(
               border: Border.all(
                 color: Colors.red,
-                width: 2.0,
+                width: 2,
               ),
             ),
           ),

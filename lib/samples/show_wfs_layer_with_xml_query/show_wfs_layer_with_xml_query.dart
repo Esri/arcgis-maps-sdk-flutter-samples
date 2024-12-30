@@ -99,6 +99,6 @@ class _ShowWfsLayerWithXmlQueryState extends State<ShowWfsLayerWithXmlQuery>
     );
 
     // Zoom to the full extent of the feature layer.
-    _mapViewController.setViewpointGeometry(featureLayer.fullExtent!);
+    await _mapViewController.setViewpointGeometry(featureLayer.fullExtent!);
   }
 }

@@ -246,11 +246,10 @@ int runMetadataCheck(String dirPath) {
 }
 
 class FailedCheck {
-  String name;
-  ProcessResult? result;
-
   FailedCheck({
     required this.name,
     required this.result,
   });
+  String name;
+  ProcessResult? result;
 }

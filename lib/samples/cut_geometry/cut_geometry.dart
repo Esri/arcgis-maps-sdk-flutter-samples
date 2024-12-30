@@ -193,7 +193,7 @@ class _CutGeometryState extends State<CutGeometry> with SampleStateSupport {
         color: Colors.blue.withOpacity(0.5),
         outline: SimpleLineSymbol(
           color: Colors.blue,
-          width: 4.0,
+          width: 4,
         ),
       ),
     );
@@ -219,7 +219,7 @@ class _CutGeometryState extends State<CutGeometry> with SampleStateSupport {
       geometry: borderPolylineBuilder.toGeometry(),
       symbol: SimpleLineSymbol(
         color: Colors.red,
-        width: 4.0,
+        width: 4,
         style: SimpleLineSymbolStyle.dot,
       ),
     );

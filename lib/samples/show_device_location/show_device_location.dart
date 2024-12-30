@@ -98,11 +98,11 @@ class _ShowDeviceLocationState extends State<ShowDeviceLocation>
   Widget buildSettings(BuildContext context) {
     return Container(
       padding: EdgeInsets.fromLTRB(
-        20.0,
-        20.0,
-        20.0,
+        20,
+        20,
+        20,
         max(
-          20.0,
+          20,
           View.of(context).viewPadding.bottom /
               View.of(context).devicePixelRatio,
         ),

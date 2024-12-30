@@ -22,13 +22,6 @@ import 'package:flutter/material.dart';
 /// The metadata is taken from the sample's README.metadata.json data via generated_samples_list.json.
 /// The Widget for each sample is pulled from the samples_widget_list.dart.
 class Sample {
-  final String _category;
-  final String _description;
-  final List<String> _snippets;
-  final String _title;
-  final List<String> _keywords;
-  final Widget _sampleWidget;
-
   Sample.fromJson(Map<String, dynamic> json)
       : _category = json['category'],
         _description = json['description'],
@@ -36,6 +29,12 @@ class Sample {
         _title = json['title'],
         _keywords = List<String>.from(json['keywords']),
         _sampleWidget = sampleWidgets[json['key']]!();
+  final String _category;
+  final String _description;
+  final List<String> _snippets;
+  final String _title;
+  final List<String> _keywords;
+  final Widget _sampleWidget;
 
   String get title => _title;
 

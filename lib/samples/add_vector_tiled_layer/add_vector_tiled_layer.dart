@@ -29,9 +29,10 @@ enum VectorTiledItem {
     '86f556a2d1fd468181855a35e344567f',
   );
 
+  const VectorTiledItem(this.label, this.itemId);
+
   final String label;
   final String itemId;
-  const VectorTiledItem(this.label, this.itemId);
 
   // A menu item for this selection.
   DropdownMenuItem<VectorTiledItem> get menuItem =>

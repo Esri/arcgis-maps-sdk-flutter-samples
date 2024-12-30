@@ -133,7 +133,7 @@ class _DisplayClustersState extends State<DisplayClusters>
     final identifyLayerResult = await _mapViewController.identifyLayer(
       _featureLayer,
       screenPoint: localPosition,
-      tolerance: 12.0,
+      tolerance: 12,
     );
     // Get the aggregate geoelements from the identify result.
     final aggregateGeoElements =

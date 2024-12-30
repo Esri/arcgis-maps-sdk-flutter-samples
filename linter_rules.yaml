@@ -109,6 +109,7 @@ linter:
     prefer_contains: true
     prefer_final_fields: true
     prefer_final_in_for_each: true
+    prefer_final_locals: true
     prefer_for_elements_to_map_fromIterable: true
     prefer_function_declarations_over_variables: true
     prefer_generic_function_type_aliases: true
@@ -116,6 +117,7 @@ linter:
     prefer_if_null_operators: true
     prefer_initializing_formals: true
     prefer_inlined_adds: true
+    prefer_int_literals: true
     prefer_interpolation_to_compose_strings: true
     prefer_is_empty: true
     prefer_is_not_empty: true
@@ -128,6 +130,7 @@ linter:
     prefer_typing_uninitialized_variables: true
     prefer_void_to_null: true
     provide_deprecation_message: true
+    public_member_api_docs: false # documenting all public members would be low-value clutter
     recursive_getters: true
     require_trailing_commas: true
     secure_pubspec_urls: true
@@ -135,17 +138,22 @@ linter:
     sized_box_shrink_expand: true
     slash_for_doc_comments: true
     sort_child_properties_last: true
+    sort_constructors_first: true
+    sort_pub_dependencies: true
     sort_unnamed_constructors_first: true
     test_types_in_equals: true
     throw_in_finally: true
     tighten_type_of_initializing_formals: true
+    type_annotate_public_apis: true
     type_init_formals: true
+    unawaited_futures: true
     unnecessary_await_in_return: true
     unnecessary_breaks: true
     unnecessary_brace_in_string_interps: true
     unnecessary_const: true
     unnecessary_constructor_name: true
     unnecessary_getters_setters: true
+    unnecessary_lambdas: true
     unnecessary_late: true
     unnecessary_library_directive: true
     unnecessary_new: true
@@ -156,6 +164,7 @@ linter:
     unnecessary_overrides: true
     unnecessary_parenthesis: true
     unnecessary_raw_strings: true
+    unnecessary_statements: true
     unnecessary_string_escapes: true
     unnecessary_string_interpolations: true
     unnecessary_this: true
@@ -173,6 +182,7 @@ linter:
     use_named_constants: true
     use_raw_strings: true
     use_rethrow_when_possible: true
+    use_setters_to_change_properties: true
     use_string_buffers: true
     use_string_in_part_of_directives: true
     use_super_parameters: true

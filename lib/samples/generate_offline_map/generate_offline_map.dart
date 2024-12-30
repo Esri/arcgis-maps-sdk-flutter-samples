@@ -76,17 +76,17 @@ class _GenerateOfflineMapState extends State<GenerateOfflineMap>
                           child: SafeArea(
                             child: Container(
                               margin: const EdgeInsets.fromLTRB(
-                                30.0,
-                                30.0,
-                                30.0,
-                                50.0,
+                                30,
+                                30,
+                                30,
+                                50,
                               ),
                               child: Container(
                                 key: _outlineKey,
                                 decoration: BoxDecoration(
                                   border: Border.all(
                                     color: Colors.red,
-                                    width: 2.0,
+                                    width: 2,
                                   ),
                                 ),
                               ),
@@ -115,10 +115,10 @@ class _GenerateOfflineMapState extends State<GenerateOfflineMap>
               child: Center(
                 child: Container(
                   width: MediaQuery.of(context).size.width / 2,
-                  padding: const EdgeInsets.all(20.0),
+                  padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
                     color: Colors.white,
-                    borderRadius: BorderRadius.circular(10.0),
+                    borderRadius: BorderRadius.circular(10),
                   ),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
@@ -128,7 +128,7 @@ class _GenerateOfflineMapState extends State<GenerateOfflineMap>
                       LinearProgressIndicator(
                         value: _progress != null ? _progress! / 100.0 : 0.0,
                       ),
-                      const SizedBox(height: 20.0),
+                      const SizedBox(height: 20),
                       // Add a button to cancel the job.
                       ElevatedButton(
                         onPressed: () => _generateOfflineMapJob?.cancel(),

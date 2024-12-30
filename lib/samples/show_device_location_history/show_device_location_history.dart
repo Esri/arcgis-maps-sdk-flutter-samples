@@ -114,7 +114,7 @@ class _ShowDeviceLocationHistoryState extends State<ShowDeviceLocationHistory>
         y: 32.154089,
         spatialReference: SpatialReference.wgs84,
       ),
-      scale: 2e4,
+      scale: 20000,
     );
     // Add the map to the map view controller.
     _mapViewController.arcGISMap = map;
@@ -127,13 +127,13 @@ class _ShowDeviceLocationHistoryState extends State<ShowDeviceLocationHistory>
     _locationHistoryLineOverlay.renderer = SimpleRenderer(
       symbol: SimpleLineSymbol(
         color: Colors.red[100]!,
-        width: 2.0,
+        width: 2,
       ),
     );
     _locationHistoryPointOverlay.renderer = SimpleRenderer(
       symbol: SimpleMarkerSymbol(
         color: Colors.red,
-        size: 10.0,
+        size: 10,
       ),
     );
     // Wait for the map to be displayed before starting the location display.

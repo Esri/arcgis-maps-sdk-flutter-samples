@@ -110,12 +110,12 @@ class _SampleViewerAppState extends State<SampleViewerApp> {
                         ],
                         shape: const RoundedRectangleBorder(
                           borderRadius: BorderRadius.vertical(
-                            top: Radius.circular(30.0),
+                            top: Radius.circular(30),
                           ),
                         ),
                       ),
                       Container(
-                        padding: const EdgeInsets.all(20.0),
+                        padding: const EdgeInsets.all(20),
                         child: const AboutInfo(title: title),
                       ),
                     ],

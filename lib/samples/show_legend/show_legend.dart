@@ -166,11 +166,11 @@ class _ShowLegendState extends State<ShowLegend> with SampleStateSupport {
     // Set the initial viewpoint of the map.
     _map.initialViewpoint = Viewpoint.fromCenter(
       ArcGISPoint(
-        x: -11e6,
-        y: 6e6,
+        x: -11000000,
+        y: 6000000,
         spatialReference: SpatialReference.webMercator,
       ),
-      scale: 9e7,
+      scale: 90000000,
     );
   }
 }

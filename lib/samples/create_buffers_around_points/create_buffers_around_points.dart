@@ -287,8 +287,8 @@ class _CreateBuffersAroundPointsState extends State<CreateBuffersAroundPoints>
     // Add points to define the boundary where the spatial reference is valid for planar buffers.
     polygonBuilder.addPointXY(x: -103.070, y: 31.720);
     polygonBuilder.addPointXY(x: -103.070, y: 34.580);
-    polygonBuilder.addPointXY(x: -94.000, y: 34.580);
-    polygonBuilder.addPointXY(x: -94.000, y: 31.720);
+    polygonBuilder.addPointXY(x: -94, y: 34.580);
+    polygonBuilder.addPointXY(x: -94, y: 31.720);
 
     // Use the polygon builder to define a boundary geometry.
     final boundaryGeometry = polygonBuilder.toGeometry();
@@ -359,7 +359,7 @@ enum Status {
   invalidInput('Enter a value between 0 and 300 to create a buffer.'),
   noPoints('Add a point to draw the buffers.');
 
-  final String label;
-
   const Status(this.label);
+
+  final String label;
 }

@@ -43,7 +43,7 @@ class _FindAddressWithReverseGeocodeState
       y: 34.058,
       spatialReference: SpatialReference.wgs84,
     ),
-    scale: 5e4,
+    scale: 50000,
   );
   // A flag for when the map view is ready and controls can be used.
   var _ready = false;

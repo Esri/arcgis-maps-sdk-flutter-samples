@@ -102,14 +102,14 @@ class _FindRouteInMobileMapPackageState
 
             // Display the maps in a list.
             return ListView.builder(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.all(8),
               itemCount: sampleData.length,
               // For each map, create a card with its thumbnail and name.
               itemBuilder: (context, index) {
                 final data = sampleData[index];
                 return Card(
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 4.0),
+                    padding: const EdgeInsets.symmetric(vertical: 4),
                     child: ListTile(
                       leading: data.thumbnail != null
                           ? Image.memory(data.thumbnail!)
@@ -268,7 +268,7 @@ class _FindRouteInMapState extends State<FindRouteInMap>
       // Create a symbol to represent the route.
       final routeSymbol = SimpleLineSymbol(
         color: const Color.fromARGB(255, 0, 0, 255),
-        width: 5.0,
+        width: 5,
       );
       // Create a graphics overlay to display the route and add it to the list of overlays.
       _routeOverlay = GraphicsOverlay()
@@ -290,7 +290,7 @@ class _FindRouteInMapState extends State<FindRouteInMap>
     final result = await _mapViewController.identifyGraphicsOverlay(
       _markerOverlay,
       screenPoint: localPosition,
-      tolerance: 12.0,
+      tolerance: 12,
     );
 
     Graphic? graphicToSelect;

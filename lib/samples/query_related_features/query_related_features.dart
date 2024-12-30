@@ -61,11 +61,11 @@ class _QueryRelatedFeaturesState extends State<QueryRelatedFeatures>
         maxHeight: MediaQuery.sizeOf(context).height * 0.4,
       ),
       padding: EdgeInsets.fromLTRB(
-        20.0,
-        5.0,
-        20.0,
+        20,
+        5,
+        20,
         max(
-          20.0,
+          20,
           View.of(context).viewPadding.bottom /
               View.of(context).devicePixelRatio,
         ),
@@ -199,7 +199,7 @@ class _QueryRelatedFeaturesState extends State<QueryRelatedFeatures>
     final identifyLayerResult = await _mapViewController.identifyLayer(
       _alaskaNationalParksLayer,
       screenPoint: offset,
-      tolerance: 12.0,
+      tolerance: 12,
     );
 
     // If there are features identified, show the bottom sheet to display the
@@ -219,7 +219,7 @@ class _QueryRelatedFeaturesState extends State<QueryRelatedFeatures>
         _loadingFeatures = true;
       });
       // Query for related features.
-      queryRelatedFeatures(selectedFeature);
+      await queryRelatedFeatures(selectedFeature);
     } else {
       setState(() {
         _layerDataVisible = false;

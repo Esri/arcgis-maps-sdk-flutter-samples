@@ -93,12 +93,11 @@ class _AuthenticateWithTokenState extends State<AuthenticateWithToken>
 
 // A widget that handles an authentication challenge by prompting the user to log in.
 class LoginWidget extends StatefulWidget {
-  final ArcGISAuthenticationChallenge challenge;
-
   const LoginWidget({
     required this.challenge,
     super.key,
   });
+  final ArcGISAuthenticationChallenge challenge;
 
   @override
   State<LoginWidget> createState() => _LoginWidgetState();
@@ -129,7 +128,7 @@ class _LoginWidgetState extends State<LoginWidget> {
   Widget build(BuildContext context) {
     return Dialog(
       child: Padding(
-        padding: const EdgeInsets.all(20.0),
+        padding: const EdgeInsets.all(20),
         child: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -152,7 +151,7 @@ class _LoginWidgetState extends State<LoginWidget> {
                 obscureText: true,
                 decoration: const InputDecoration(hintText: 'Password'),
               ),
-              const SizedBox(height: 10.0),
+              const SizedBox(height: 10),
               // Buttons to cancel or log in.
               Row(
                 children: [

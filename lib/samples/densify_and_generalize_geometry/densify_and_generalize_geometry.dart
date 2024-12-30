@@ -96,11 +96,11 @@ class _DensifyAndGeneralizeGeometryState
   Widget buildSettings(BuildContext context) {
     return Container(
       padding: EdgeInsets.fromLTRB(
-        20.0,
-        20.0,
-        20.0,
+        20,
+        20,
+        20,
         max(
-          20.0,
+          20,
           View.of(context).viewPadding.bottom /
               View.of(context).devicePixelRatio,
         ),
@@ -149,8 +149,8 @@ class _DensifyAndGeneralizeGeometryState
               Expanded(
                 child: Slider(
                   value: _maxDeviation,
-                  min: 1.0,
-                  max: 250.0,
+                  min: 1,
+                  max: 250,
                   onChanged: _generalize
                       ? (value) {
                           setState(() => _maxDeviation = value);
@@ -190,8 +190,8 @@ class _DensifyAndGeneralizeGeometryState
               Expanded(
                 child: Slider(
                   value: _maxSegmentLength,
-                  min: 50.0,
-                  max: 500.0,
+                  min: 50,
+                  max: 500,
                   onChanged: _densify
                       ? (value) {
                           setState(() => _maxSegmentLength = value);
@@ -242,7 +242,7 @@ class _DensifyAndGeneralizeGeometryState
       geometry: multipoint,
       symbol: SimpleMarkerSymbol(
         color: Colors.red,
-        size: 7.0,
+        size: 7,
       ),
     );
     final originalPolylineGraphic = Graphic(
@@ -250,7 +250,7 @@ class _DensifyAndGeneralizeGeometryState
       symbol: SimpleLineSymbol(
         style: SimpleLineSymbolStyle.dot,
         color: Colors.red,
-        width: 3.0,
+        width: 3,
       ),
     );
 
@@ -258,13 +258,13 @@ class _DensifyAndGeneralizeGeometryState
     _resultPointsGraphic = Graphic(
       symbol: SimpleMarkerSymbol(
         color: Colors.purple,
-        size: 7.0,
+        size: 7,
       ),
     );
     _resultPolylineGraphic = Graphic(
       symbol: SimpleLineSymbol(
         color: Colors.purple,
-        width: 3.0,
+        width: 3,
       ),
     );
 

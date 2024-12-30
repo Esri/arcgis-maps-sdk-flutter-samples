@@ -85,11 +85,11 @@ class _ManageBookmarksState extends State<ManageBookmarks> {
   Widget buildBookmarks(BuildContext context) {
     return Container(
       padding: EdgeInsets.fromLTRB(
-        20.0,
-        20.0,
-        20.0,
+        20,
+        20,
+        20,
         max(
-          20.0,
+          20,
           View.of(context).viewPadding.bottom /
               View.of(context).devicePixelRatio,
         ),
@@ -152,7 +152,7 @@ class _ManageBookmarksState extends State<ManageBookmarks> {
         viewpoint: Viewpoint.withLatLongScale(
           latitude: 44.525,
           longitude: -110.838,
-          scale: 6e3,
+          scale: 6000,
         ),
       ),
       Bookmark(
@@ -160,7 +160,7 @@ class _ManageBookmarksState extends State<ManageBookmarks> {
         viewpoint: Viewpoint.withLatLongScale(
           latitude: -33.867,
           longitude: -63.985,
-          scale: 4e4,
+          scale: 40000,
         ),
       ),
       Bookmark(
@@ -168,7 +168,7 @@ class _ManageBookmarksState extends State<ManageBookmarks> {
         viewpoint: Viewpoint.withLatLongScale(
           latitude: 27.380,
           longitude: 33.632,
-          scale: 6e3,
+          scale: 6000,
         ),
       ),
       Bookmark(
@@ -176,7 +176,7 @@ class _ManageBookmarksState extends State<ManageBookmarks> {
         viewpoint: Viewpoint.withLatLongScale(
           latitude: 37.401,
           longitude: -116.867,
-          scale: 6e3,
+          scale: 6000,
         ),
       ),
     ]);

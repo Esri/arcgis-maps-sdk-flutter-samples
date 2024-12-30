@@ -275,7 +275,7 @@ class _AddFeatureLayersState extends State<AddFeatureLayers>
       Viewpoint.withLatLongScale(
         latitude: 56.641344,
         longitude: -3.889066,
-        scale: 6e6,
+        scale: 6000000,
       ),
     );
   }

@@ -107,8 +107,8 @@ class _AddFeatureLayerWithTimeOffsetState
         Row(
           children: [
             SizedBox(
-              width: 20.0,
-              height: 20.0,
+              width: 20,
+              height: 20,
               child: Container(
                 decoration: const BoxDecoration(
                   shape: BoxShape.circle,
@@ -116,16 +116,16 @@ class _AddFeatureLayerWithTimeOffsetState
                 ),
               ),
             ),
-            const SizedBox(width: 10.0),
+            const SizedBox(width: 10),
             const Text('Hurricane tracks, offset 10 days'),
           ],
         ),
-        const SizedBox(height: 10.0),
+        const SizedBox(height: 10),
         Row(
           children: [
             SizedBox(
-              width: 20.0,
-              height: 20.0,
+              width: 20,
+              height: 20,
               child: Container(
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
@@ -133,7 +133,7 @@ class _AddFeatureLayerWithTimeOffsetState
                 ),
               ),
             ),
-            const SizedBox(width: 10.0),
+            const SizedBox(width: 10),
             const Text('Hurricane tracks, no offset'),
           ],
         ),
@@ -150,7 +150,7 @@ class _AddFeatureLayerWithTimeOffsetState
         y: 2500000,
         spatialReference: SpatialReference.webMercator,
       ),
-      scale: 1e8,
+      scale: 100000000,
     );
 
     // The URL of the feature layer showing hurricanes.
@@ -164,7 +164,7 @@ class _AddFeatureLayerWithTimeOffsetState
     featureLayer.renderer = SimpleRenderer(
       symbol: SimpleMarkerSymbol(
         color: Colors.blue.shade900,
-        size: 10.0,
+        size: 10,
       ),
     );
 
@@ -175,7 +175,7 @@ class _AddFeatureLayerWithTimeOffsetState
     offsetFeatureLayer.renderer = SimpleRenderer(
       symbol: SimpleMarkerSymbol(
         color: Colors.red,
-        size: 10.0,
+        size: 10,
       ),
     );
     offsetFeatureLayer.timeOffset =

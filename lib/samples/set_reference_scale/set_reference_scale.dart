@@ -112,11 +112,10 @@ class _SetReferenceScaleState extends State<SetReferenceScale>
         _map.operationalLayers.map((layer) => layer.name).toList();
 
     // Get the feature layers that have scale symbols enabled and add them to the selected feature layers list.
-    for (final layer in _map.operationalLayers) {
-      layer as FeatureLayer;
-      layer.scaleSymbols == true
-          ? _selectedFeatureLayers.add(layer.name)
-          : null;
+    for (final layer in _map.operationalLayers.whereType<FeatureLayer>()) {
+      if (layer.scaleSymbols) {
+        _selectedFeatureLayers.add(layer.name);
+      }
     }
 
     // Set the map view controller's map to the ArcGIS map.
@@ -197,7 +196,7 @@ class _SetReferenceScaleState extends State<SetReferenceScale>
                           });
 
                           // Get the matching layer from the map.
-                          var matchingLayer = _map.operationalLayers
+                          final matchingLayer = _map.operationalLayers
                               .where((element) => element.name == layer)
                               .first as FeatureLayer;
 
@@ -231,7 +230,7 @@ class _SetReferenceScaleState extends State<SetReferenceScale>
                 ),
                 // Add a button to set the map scale to the reference scale.
                 Padding(
-                  padding: const EdgeInsets.only(bottom: 20.0),
+                  padding: const EdgeInsets.only(bottom: 20),
                   child: ElevatedButton(
                     onPressed: () {
                       // Set the map scale to the reference scale and close the settings dialog.

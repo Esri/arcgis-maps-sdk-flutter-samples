@@ -252,7 +252,7 @@ class _StyleGraphicsWithSymbolsState extends State<StyleGraphicsWithSymbols>
 
     // Adjust the viewable area of the map to encompass all of the graphics in the
     // graphics overlay plus an extra 30% margin for better viewing.
-    _mapViewController.setViewpointAnimated(
+    await _mapViewController.setViewpointAnimated(
       Viewpoint.fromTargetExtent(myEnvelopeBuilder.extent),
     );
   }

@@ -61,7 +61,7 @@ class _FindClosestFacilityFromPointState
   // Create a symbol for the route line.
   final _routeLineSymbol = SimpleLineSymbol(
     color: Colors.blue,
-    width: 5.0,
+    width: 5,
   );
 
   @override
@@ -157,7 +157,7 @@ class _FindClosestFacilityFromPointState
     );
 
     // Set the viewpoint geometry on the map view controller.
-    _mapViewController.setViewpointGeometry(mapExtent, paddingInDiPs: 30);
+    await _mapViewController.setViewpointGeometry(mapExtent, paddingInDiPs: 30);
 
     // Generate the closest facility parameters.
     _closestFacilityParameters = await generateClosestFacilityParameters(

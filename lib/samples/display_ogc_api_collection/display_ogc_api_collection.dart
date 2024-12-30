@@ -13,6 +13,8 @@
 // limitations under the License.
 //
 
+import 'dart:async';
+
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_state_support.dart';
@@ -123,12 +125,14 @@ class _DisplayOGCAPICollectionState extends State<DisplayOGCAPICollection>
     // Zoom to a small area within the dataset by default.
     final datasetExtent = ogcFeatureCollectionTable.extent;
     if (datasetExtent != null) {
-      _mapViewController.setViewpointAnimated(
-        Viewpoint.fromTargetExtent(
-          Envelope.fromCenter(
-            datasetExtent.center,
-            width: datasetExtent.width / 3,
-            height: datasetExtent.height / 3,
+      unawaited(
+        _mapViewController.setViewpointAnimated(
+          Viewpoint.fromTargetExtent(
+            Envelope.fromCenter(
+              datasetExtent.center,
+              width: datasetExtent.width / 3,
+              height: datasetExtent.height / 3,
+            ),
           ),
         ),
       );

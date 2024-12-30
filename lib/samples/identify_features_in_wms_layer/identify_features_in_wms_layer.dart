@@ -123,7 +123,7 @@ class _IdentifyFeaturesInWmsLayerState extends State<IdentifyFeaturesInWmsLayer>
     final identifyLayerResult = await _mapViewController.identifyLayer(
       _wmsLayer,
       screenPoint: localPosition,
-      tolerance: 12.0,
+      tolerance: 12,
     );
 
     // Check if there are any features identified.

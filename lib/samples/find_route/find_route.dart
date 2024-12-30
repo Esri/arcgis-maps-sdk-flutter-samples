@@ -77,8 +77,7 @@ class _FindRouteState extends State<FindRoute> with SampleStateSupport {
                     children: [
                       // Create a button to generate the route.
                       ElevatedButton(
-                        onPressed:
-                            _routeGenerated ? null : () => generateRoute(),
+                        onPressed: _routeGenerated ? null : generateRoute,
                         child: const Text('Route'),
                       ),
                       // Create a button to show the directions.
@@ -86,7 +85,7 @@ class _FindRouteState extends State<FindRoute> with SampleStateSupport {
                         onPressed: _routeGenerated
                             ? () => showDialog(
                                   context: context,
-                                  builder: (context) => showDirections(context),
+                                  builder: showDirections,
                                 )
                             : null,
                         child: const Text('Directions'),
@@ -122,7 +121,7 @@ class _FindRouteState extends State<FindRoute> with SampleStateSupport {
         y: 3858170.2368,
         spatialReference: SpatialReference.webMercator,
       ),
-      scale: 1e5,
+      scale: 100000,
     );
     // Set the map to the map view controller.
     _mapViewController.arcGISMap = map;
@@ -135,16 +134,16 @@ class _FindRouteState extends State<FindRoute> with SampleStateSupport {
     // Create symbols to use for the start and end stops of the route.
     final routeStartCircleSymbol = SimpleMarkerSymbol(
       color: Colors.blue,
-      size: 15.0,
+      size: 15,
     );
     final routeEndCircleSymbol = SimpleMarkerSymbol(
       color: Colors.blue,
-      size: 15.0,
+      size: 15,
     );
     final routeStartNumberSymbol =
-        TextSymbol(text: '1', color: Colors.white, size: 10.0);
+        TextSymbol(text: '1', color: Colors.white, size: 10);
     final routeEndNumberSymbol =
-        TextSymbol(text: '2', color: Colors.white, size: 10.0);
+        TextSymbol(text: '2', color: Colors.white, size: 10);
 
     // Configure pre-defined start and end points for the route.
     final startPoint = ArcGISPoint(
@@ -199,7 +198,7 @@ class _FindRouteState extends State<FindRoute> with SampleStateSupport {
     // Create the symbol for the route line.
     final routeLineSymbol = SimpleLineSymbol(
       color: Colors.blue,
-      width: 5.0,
+      width: 5,
     );
 
     // Reset the route.

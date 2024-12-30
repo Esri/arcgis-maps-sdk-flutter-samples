@@ -93,7 +93,7 @@ class _SetBasemapState extends State<SetBasemap> with SampleStateSupport {
                           // Update the map with the selected basemap.
                           onTap: () {
                             _selectedBasemap = basemap;
-                            updateMap(basemap);
+                            _arcGISMap.basemap = basemap;
                             _scaffoldStateKey.currentState!.closeEndDrawer();
                           },
                         ),
@@ -134,11 +134,6 @@ class _SetBasemapState extends State<SetBasemap> with SampleStateSupport {
   void onMapViewReady() {
     // Set the map view controller's map to the ArcGIS map.
     _mapViewController.arcGISMap = _arcGISMap;
-  }
-
-  void updateMap(Basemap basemap) {
-    // Update the map view with the selected basemap.
-    _arcGISMap.basemap = basemap;
   }
 
   Future loadBasemaps() async {

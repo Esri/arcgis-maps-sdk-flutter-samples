@@ -170,7 +170,7 @@ class _ManageFeaturesState extends State<ManageFeatures>
             y: 4500000,
             spatialReference: SpatialReference.webMercator,
           ),
-          scale: 3e7,
+          scale: 30000000,
         ),
       );
       // Set the ready state variable to true to enable the sample UI.
@@ -216,7 +216,7 @@ class _ManageFeaturesState extends State<ManageFeatures>
     final identifyResult = await _mapViewController.identifyLayer(
       _damageFeatureLayer,
       screenPoint: localPosition,
-      tolerance: 12.0,
+      tolerance: 12,
     );
 
     if (identifyResult.geoElements.isNotEmpty) {

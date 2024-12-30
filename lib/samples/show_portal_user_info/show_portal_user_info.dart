@@ -118,7 +118,7 @@ class _ShowPortalUserInfoState extends State<ShowPortalUserInfo>
                     '${_portal.user?.fullName} Profile',
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
-                  const SizedBox(height: 20.0),
+                  const SizedBox(height: 20),
                   if (_userThumbnail != null)
                     Image.memory(_userThumbnail!)
                   else
@@ -146,7 +146,7 @@ class _ShowPortalUserInfoState extends State<ShowPortalUserInfo>
                   Text('${_portal.portalInfo?.canSharePublic}'),
                   Text('Description', style: titleStyle),
                   Padding(
-                    padding: const EdgeInsets.only(left: 10.0),
+                    padding: const EdgeInsets.only(left: 10),
                     child: RichText(
                       text: HTML.toTextSpan(
                         context,
