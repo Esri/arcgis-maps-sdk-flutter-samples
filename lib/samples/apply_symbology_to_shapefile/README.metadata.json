@@ -1,0 +1,32 @@
+{
+    "category": "Edit and Manage Data",
+    "description": "Display a shapefile with custom symbology.",
+    "ignore": false,
+    "images": [
+        "apply_symbology_to_shapefile.png"
+    ],
+    "keywords": [
+        "package",
+        "shape file",
+        "shapefile",
+        "symbology",
+        "visualization",
+        "FeatureLayer",
+        "ShapefileFeatureTable",
+        "SimpleFillSymbol",
+        "SimpleLineSymbol",
+        "SimpleRenderer"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+        "FeatureLayer",
+        "ShapefileFeatureTable",
+        "SimpleFillSymbol",
+        "SimpleLineSymbol",
+        "SimpleRenderer"
+    ],
+    "snippets": [
+        "apply_symbology_to_shapefile.dart"
+    ],
+    "title": "Apply symbology to shapefile"
+}
