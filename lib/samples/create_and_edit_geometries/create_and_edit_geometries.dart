@@ -367,7 +367,7 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
         // A button to toggle the visibility of the editing toolbar.
         IconButton(
           onPressed: () => setState(() => _showEditToolbar = !_showEditToolbar),
-          icon: Icon(Icons.edit, color: Theme.of(context).colorScheme.primary),
+          icon: const Icon(Icons.edit),
         ),
       ],
     );
