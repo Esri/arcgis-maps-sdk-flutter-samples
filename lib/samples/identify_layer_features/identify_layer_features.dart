@@ -16,9 +16,8 @@
 
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_state_support.dart';
 import 'package:flutter/material.dart';
-
-import '../../utils/sample_state_support.dart';
 
 class IdentifyLayerFeatures extends StatefulWidget {
   const IdentifyLayerFeatures({super.key});
@@ -76,7 +75,7 @@ class _IdentifyLayerFeaturesState extends State<IdentifyLayerFeatures>
     );
   }
 
-  void onMapViewReady() async {
+  Future<void> onMapViewReady() async {
     // Create a feature layer of damaged property data.
     final serviceFeatureTable = ServiceFeatureTable.withUri(
       Uri.parse(
@@ -120,11 +119,11 @@ class _IdentifyLayerFeaturesState extends State<IdentifyLayerFeatures>
     });
   }
 
-  void onTap(Offset localPosition) async {
+  Future<void> onTap(Offset localPosition) async {
     // Identify features at the tapped location.
     final identifyLayerResults = await _mapViewController.identifyLayers(
       screenPoint: localPosition,
-      tolerance: 12.0,
+      tolerance: 12,
       maximumResultsPerLayer: 10,
     );
 

@@ -15,15 +15,12 @@
 //
 
 import 'dart:convert';
-
 import 'package:arcgis_maps/arcgis_maps.dart';
-import 'package:arcgis_maps_sdk_flutter_samples/common/theme_data.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/models/sample.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/widgets/about_info.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/widgets/sample_list_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
-import 'widgets/sample_list_view.dart';
 
 void main() {
   // Supply your apiKey using the --dart-define-from-file command line argument.
@@ -36,9 +33,13 @@ void main() {
     ArcGISEnvironment.apiKey = apiKey;
   }
 
+  final colorScheme = ColorScheme.fromSeed(seedColor: Colors.deepPurple);
   runApp(
     MaterialApp(
-      theme: sampleViewerTheme,
+      theme: ThemeData(
+        colorScheme: colorScheme,
+        appBarTheme: AppBarTheme(backgroundColor: colorScheme.inversePrimary),
+      ),
       home: const SampleViewerApp(),
     ),
   );
@@ -92,7 +93,6 @@ class _SampleViewerAppState extends State<SampleViewerApp> {
             onPressed: () => showModalBottomSheet(
               context: context,
               isScrollControlled: true,
-              isDismissible: true,
               useSafeArea: true,
               builder: (context) {
                 return FractionallySizedBox(
@@ -110,12 +110,12 @@ class _SampleViewerAppState extends State<SampleViewerApp> {
                         ],
                         shape: const RoundedRectangleBorder(
                           borderRadius: BorderRadius.vertical(
-                            top: Radius.circular(30.0),
+                            top: Radius.circular(30),
                           ),
                         ),
                       ),
                       Container(
-                        padding: const EdgeInsets.all(20.0),
+                        padding: const EdgeInsets.all(20),
                         child: const AboutInfo(title: title),
                       ),
                     ],
@@ -146,17 +146,18 @@ class _SampleViewerAppState extends State<SampleViewerApp> {
               ),
             ),
           ),
-          _ready
-              ? Expanded(
-                  child: Listener(
-                    onPointerDown: (_) =>
-                        FocusManager.instance.primaryFocus?.unfocus(),
-                    child: SampleListView(samples: _filteredSamples),
-                  ),
-                )
-              : const Center(
-                  child: Text('Loading samples...'),
-                ),
+          if (_ready)
+            Expanded(
+              child: Listener(
+                onPointerDown: (_) =>
+                    FocusManager.instance.primaryFocus?.unfocus(),
+                child: SampleListView(samples: _filteredSamples),
+              ),
+            )
+          else
+            const Center(
+              child: Text('Loading samples...'),
+            ),
         ],
       ),
     );
@@ -172,10 +173,10 @@ class _SampleViewerAppState extends State<SampleViewerApp> {
     }
   }
 
-  void loadSamples() async {
+  Future<void> loadSamples() async {
     final jsonString =
         await rootBundle.loadString('assets/generated_samples_list.json');
-    final sampleData = jsonDecode(jsonString);
+    final sampleData = jsonDecode(jsonString) as Map<String, dynamic>;
     for (final s in sampleData.entries) {
       _allSamples.add(Sample.fromJson(s.value));
     }

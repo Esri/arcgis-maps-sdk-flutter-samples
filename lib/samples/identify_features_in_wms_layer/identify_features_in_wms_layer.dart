@@ -86,7 +86,7 @@ class _IdentifyFeaturesInWmsLayerState extends State<IdentifyFeaturesInWmsLayer>
     );
   }
 
-  void onMapViewReady() async {
+  Future<void> onMapViewReady() async {
     // Create a map with a basemap and set to the map view controller.
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISDarkGrayBase);
     _mapViewController.arcGISMap = map;
@@ -115,7 +115,7 @@ class _IdentifyFeaturesInWmsLayerState extends State<IdentifyFeaturesInWmsLayer>
     setState(() => _ready = true);
   }
 
-  void onTap(Offset localPosition) async {
+  Future<void> onTap(Offset localPosition) async {
     // Prevent addtional taps until the identify operation is complete.
     setState(() => _ready = false);
 
@@ -123,8 +123,7 @@ class _IdentifyFeaturesInWmsLayerState extends State<IdentifyFeaturesInWmsLayer>
     final identifyLayerResult = await _mapViewController.identifyLayer(
       _wmsLayer,
       screenPoint: localPosition,
-      tolerance: 12.0,
-      maximumResults: 1,
+      tolerance: 12,
     );
 
     // Check if there are any features identified.

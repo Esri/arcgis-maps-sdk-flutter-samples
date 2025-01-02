@@ -131,7 +131,7 @@ class _ManageFeaturesState extends State<ManageFeatures>
     );
   }
 
-  void onMapViewReady() async {
+  Future<void> onMapViewReady() async {
     try {
       // Create and load a service geodatabase from a service URL.
       const featureServiceUri =
@@ -170,7 +170,7 @@ class _ManageFeaturesState extends State<ManageFeatures>
             y: 4500000,
             spatialReference: SpatialReference.webMercator,
           ),
-          scale: 3e7,
+          scale: 30000000,
         ),
       );
       // Set the ready state variable to true to enable the sample UI.
@@ -184,7 +184,7 @@ class _ManageFeaturesState extends State<ManageFeatures>
     }
   }
 
-  void onTap(Offset localPosition) async {
+  Future<void> onTap(Offset localPosition) async {
     // Configure actions when a user taps on the map, depending on the selected operation.
     if (_selectedOperation == FeatureManagementOperation.create) {
       // Create a feature if create is selected.
@@ -216,8 +216,7 @@ class _ManageFeaturesState extends State<ManageFeatures>
     final identifyResult = await _mapViewController.identifyLayer(
       _damageFeatureLayer,
       screenPoint: localPosition,
-      tolerance: 12.0,
-      maximumResults: 1,
+      tolerance: 12,
     );
 
     if (identifyResult.geoElements.isNotEmpty) {
@@ -316,7 +315,7 @@ class _ManageFeaturesState extends State<ManageFeatures>
     }
   }
 
-  void updateAttribute(Feature feature, String damageType) async {
+  Future<void> updateAttribute(Feature feature, String damageType) async {
     // Disable the UI while the async operations are in progress.
     setState(() => _ready = false);
     // Update the damage type field to the selected value.
@@ -392,13 +391,13 @@ class _ManageFeaturesState extends State<ManageFeatures>
       case FeatureManagementOperation.geometry:
         // Display instructions for updating feature geometry.
         return const Text('Tap on the map to move a selected feature.');
-      default:
+      case null:
         // Display default instructions.
         return const Text('Select a feature management operation.');
     }
   }
 
-  String getLabel(FeatureManagementOperation operation) {
+  String getLabel(FeatureManagementOperation? operation) {
     // Return a UI friendly string for each feature management operation.
     switch (operation) {
       case FeatureManagementOperation.create:
@@ -409,7 +408,7 @@ class _ManageFeaturesState extends State<ManageFeatures>
         return 'Update attribute';
       case FeatureManagementOperation.geometry:
         return 'Update geometry';
-      default:
+      case null:
         return 'Select a feature management operation.';
     }
   }

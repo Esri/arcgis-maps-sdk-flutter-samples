@@ -125,7 +125,7 @@ class _ApplyStyleToWmsLayerState extends State<ApplyStyleToWmsLayer>
     }
   }
 
-  void onMapViewReady() async {
+  Future<void> onMapViewReady() async {
     // Create a map with spatial reference appropriate for the service.
     final map = ArcGISMap(spatialReference: SpatialReference(wkid: 26915))
       ..minScale = 7000000.0;

@@ -35,7 +35,7 @@ class ShowMagnifier extends StatelessWidget {
               y: 32.154089,
               spatialReference: SpatialReference.wgs84,
             ),
-            scale: 2e4,
+            scale: 20000,
           )
           // Set the magnifier enabled property to true to show the magnifier on long press.
           ..magnifierEnabled = true,

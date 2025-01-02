@@ -15,8 +15,8 @@
 
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_state_support.dart';
 import 'package:flutter/material.dart';
-import '../../utils/sample_state_support.dart';
 
 class StyleGraphicsWithSymbols extends StatefulWidget {
   const StyleGraphicsWithSymbols({super.key});
@@ -88,7 +88,6 @@ class _StyleGraphicsWithSymbolsState extends State<StyleGraphicsWithSymbols>
   void _createPoints() {
     // Create a red circle simple marker symbol.
     final redCircleSymbol = SimpleMarkerSymbol(
-      style: SimpleMarkerSymbolStyle.circle,
       color: Colors.red,
       size: 10,
     );
@@ -168,7 +167,6 @@ class _StyleGraphicsWithSymbolsState extends State<StyleGraphicsWithSymbols>
     final outlineSymbol = SimpleLineSymbol(
       style: SimpleLineSymbolStyle.dash,
       color: Colors.green,
-      width: 1,
     );
 
     // Create a green mesh simple fill symbol.
@@ -238,7 +236,7 @@ class _StyleGraphicsWithSymbolsState extends State<StyleGraphicsWithSymbols>
     _graphicsOverlay.graphics.addAll([bassRockGraphic, craigleithGraphic]);
   }
 
-  void _setExtent() async {
+  Future<void> _setExtent() async {
     // Create a new envelope builder using the same spatial reference as the graphics.
     final myEnvelopeBuilder =
         EnvelopeBuilder(spatialReference: SpatialReference.wgs84);
@@ -254,7 +252,7 @@ class _StyleGraphicsWithSymbolsState extends State<StyleGraphicsWithSymbols>
 
     // Adjust the viewable area of the map to encompass all of the graphics in the
     // graphics overlay plus an extra 30% margin for better viewing.
-    _mapViewController.setViewpointAnimated(
+    await _mapViewController.setViewpointAnimated(
       Viewpoint.fromTargetExtent(myEnvelopeBuilder.extent),
     );
   }

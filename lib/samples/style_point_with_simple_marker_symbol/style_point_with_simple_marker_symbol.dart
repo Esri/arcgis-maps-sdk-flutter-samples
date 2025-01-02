@@ -15,9 +15,8 @@
 //
 
 import 'package:arcgis_maps/arcgis_maps.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_state_support.dart';
 import 'package:flutter/material.dart';
-
-import '../../utils/sample_state_support.dart';
 
 class StylePointWithSimpleMarkerSymbol extends StatefulWidget {
   const StylePointWithSimpleMarkerSymbol({super.key});
@@ -66,9 +65,8 @@ class _StylePointWithSimpleMarkerSymbolState
 
     // Create a simple marker symbol with a style, color and size.
     final simpleMarkerSymbol = SimpleMarkerSymbol(
-      style: SimpleMarkerSymbolStyle.circle,
       color: Colors.red,
-      size: 10.0,
+      size: 10,
     );
 
     // Create a graphic using the point and simple marker symbol.

@@ -16,9 +16,8 @@
 
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_state_support.dart';
 import 'package:flutter/material.dart';
-
-import '../../utils/sample_state_support.dart';
 
 class DisplayClusters extends StatefulWidget {
   const DisplayClusters({super.key});
@@ -86,7 +85,7 @@ class _DisplayClustersState extends State<DisplayClusters>
     );
   }
 
-  void onMapViewReady() async {
+  Future<void> onMapViewReady() async {
     // Get the power plants web map from the default portal.
     final portal = Portal.arcGISOnline();
     final portalItem = PortalItem.withPortalAndItemId(
@@ -127,14 +126,14 @@ class _DisplayClustersState extends State<DisplayClusters>
     }
   }
 
-  void onTap(Offset localPosition) async {
+  Future<void> onTap(Offset localPosition) async {
     // Clear any existing selected features.
     _featureLayer.clearSelection();
     // Perform an identify result on the map view controller, using the feature layer and tapped location.
     final identifyLayerResult = await _mapViewController.identifyLayer(
       _featureLayer,
       screenPoint: localPosition,
-      tolerance: 12.0,
+      tolerance: 12,
     );
     // Get the aggregate geoelements from the identify result.
     final aggregateGeoElements =

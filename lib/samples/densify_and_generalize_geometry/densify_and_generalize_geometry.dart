@@ -15,11 +15,11 @@
 //
 
 import 'dart:math';
+
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_state_support.dart';
 import 'package:flutter/material.dart';
-
-import '../../utils/sample_state_support.dart';
 
 class DensifyAndGeneralizeGeometry extends StatefulWidget {
   const DensifyAndGeneralizeGeometry({super.key});
@@ -96,11 +96,11 @@ class _DensifyAndGeneralizeGeometryState
   Widget buildSettings(BuildContext context) {
     return Container(
       padding: EdgeInsets.fromLTRB(
-        20.0,
-        20.0,
-        20.0,
+        20,
+        20,
+        20,
         max(
-          20.0,
+          20,
           View.of(context).viewPadding.bottom /
               View.of(context).devicePixelRatio,
         ),
@@ -149,8 +149,8 @@ class _DensifyAndGeneralizeGeometryState
               Expanded(
                 child: Slider(
                   value: _maxDeviation,
-                  min: 1.0,
-                  max: 250.0,
+                  min: 1,
+                  max: 250,
                   onChanged: _generalize
                       ? (value) {
                           setState(() => _maxDeviation = value);
@@ -190,8 +190,8 @@ class _DensifyAndGeneralizeGeometryState
               Expanded(
                 child: Slider(
                   value: _maxSegmentLength,
-                  min: 50.0,
-                  max: 500.0,
+                  min: 50,
+                  max: 500,
                   onChanged: _densify
                       ? (value) {
                           setState(() => _maxSegmentLength = value);
@@ -241,9 +241,8 @@ class _DensifyAndGeneralizeGeometryState
     final originalPointGraphic = Graphic(
       geometry: multipoint,
       symbol: SimpleMarkerSymbol(
-        style: SimpleMarkerSymbolStyle.circle,
         color: Colors.red,
-        size: 7.0,
+        size: 7,
       ),
     );
     final originalPolylineGraphic = Graphic(
@@ -251,23 +250,21 @@ class _DensifyAndGeneralizeGeometryState
       symbol: SimpleLineSymbol(
         style: SimpleLineSymbolStyle.dot,
         color: Colors.red,
-        width: 3.0,
+        width: 3,
       ),
     );
 
     // Create graphics for displaying the resultant points and lines.
     _resultPointsGraphic = Graphic(
       symbol: SimpleMarkerSymbol(
-        style: SimpleMarkerSymbolStyle.circle,
         color: Colors.purple,
-        size: 7.0,
+        size: 7,
       ),
     );
     _resultPolylineGraphic = Graphic(
       symbol: SimpleLineSymbol(
-        style: SimpleLineSymbolStyle.solid,
         color: Colors.purple,
-        width: 3.0,
+        width: 3,
       ),
     );
 

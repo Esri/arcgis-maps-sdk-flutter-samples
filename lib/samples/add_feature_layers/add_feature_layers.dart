@@ -17,11 +17,10 @@
 import 'dart:io';
 
 import 'package:arcgis_maps/arcgis_maps.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_data.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_state_support.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
-
-import '../../utils/sample_data.dart';
-import '../../utils/sample_state_support.dart';
 
 // Create an enumeration to define the feature layer sources.
 enum Source { url, portalItem, geodatabase, geopackage, shapefile }
@@ -128,7 +127,7 @@ class _AddFeatureLayersState extends State<AddFeatureLayers>
     );
   }
 
-  void _onMapViewReady() async {
+  Future<void> _onMapViewReady() async {
     // Set the map on the map view controller.
     _mapViewController.arcGISMap = _map;
   }
@@ -156,7 +155,7 @@ class _AddFeatureLayersState extends State<AddFeatureLayers>
     );
   }
 
-  void loadGeodatabase() async {
+  Future<void> loadGeodatabase() async {
     // Download the sample data.
     await downloadSampleData(['cb1b20748a9f4d128dad8a87244e3e37']);
     // Get the application documents directory.
@@ -193,7 +192,7 @@ class _AddFeatureLayersState extends State<AddFeatureLayers>
     }
   }
 
-  void loadPortalItem() async {
+  Future<void> loadPortalItem() async {
     // Set the portal.
     final portal = Portal.arcGISOnline();
     // Create the portal item with the item ID for the Portland tree service data.
@@ -220,7 +219,7 @@ class _AddFeatureLayersState extends State<AddFeatureLayers>
     );
   }
 
-  void loadGeopackage() async {
+  Future<void> loadGeopackage() async {
     // Download the sample data.
     await downloadSampleData(['68ec42517cdd439e81b036210483e8e7']);
     // Get the application documents directory.
@@ -251,7 +250,7 @@ class _AddFeatureLayersState extends State<AddFeatureLayers>
   }
 
   /// Load a feature layer with a local shapefile.
-  void loadShapefile() async {
+  Future<void> loadShapefile() async {
     // Download the sample data.
     await downloadSampleData(['15a7cbd3af1e47cfa5d2c6b93dc44fc2']);
     // Get the application documents directory.
@@ -274,7 +273,7 @@ class _AddFeatureLayersState extends State<AddFeatureLayers>
       Viewpoint.withLatLongScale(
         latitude: 56.641344,
         longitude: -3.889066,
-        scale: 6e6,
+        scale: 6000000,
       ),
     );
   }

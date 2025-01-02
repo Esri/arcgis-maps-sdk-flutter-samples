@@ -108,7 +108,7 @@ class _SnapGeometryEditsState extends State<SnapGeometryEdits>
     );
   }
 
-  void onMapViewReady() async {
+  Future<void> onMapViewReady() async {
     // Create a map with a URL to a web map.
     const webMapUri =
         'https://www.arcgis.com/home/item.html?id=b95fe18073bc4f7788f0375af2bb445e';
@@ -165,12 +165,12 @@ class _SnapGeometryEditsState extends State<SnapGeometryEdits>
     }
   }
 
-  void onTap(Offset localPosition) async {
+  Future<void> onTap(Offset localPosition) async {
     // Perform an identify operation on the graphics overlay at the tapped location.
     final identifyResult = await _mapViewController.identifyGraphicsOverlay(
       _graphicsOverlay,
       screenPoint: localPosition,
-      tolerance: 12.0,
+      tolerance: 12,
     );
 
     // Get the graphics from the identify result.
@@ -330,9 +330,7 @@ class _SnapGeometryEditsState extends State<SnapGeometryEdits>
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           Column(
-            mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.end,
-            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               // A button to toggle the visibility of the snap settings.
               ElevatedButton(
@@ -349,7 +347,7 @@ class _SnapGeometryEditsState extends State<SnapGeometryEdits>
                       style: Theme.of(context).elevatedButtonTheme.style,
                       onPressed:
                           _geometryEditorIsStarted && _geometryEditorCanUndo
-                              ? () => _geometryEditor.undo()
+                              ? _geometryEditor.undo
                               : null,
                       child: const Icon(Icons.undo),
                     ),
@@ -364,7 +362,7 @@ class _SnapGeometryEditsState extends State<SnapGeometryEdits>
                               _geometryEditorHasSelectedElement &&
                               _geometryEditor.selectedElement != null &&
                               _geometryEditor.selectedElement!.canDelete
-                          ? () => _geometryEditor.deleteSelectedElement()
+                          ? _geometryEditor.deleteSelectedElement
                           : null,
                       child: const Icon(Icons.clear),
                     ),
@@ -510,7 +508,6 @@ class _SnapGeometryEditsState extends State<SnapGeometryEdits>
                 ),
                 const SizedBox(height: 20),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Text(
                       'Select snap sources',

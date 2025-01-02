@@ -16,9 +16,8 @@
 
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_state_support.dart';
 import 'package:flutter/material.dart';
-
-import '../../utils/sample_state_support.dart';
 
 class ShowServiceArea extends StatefulWidget {
   const ShowServiceArea({super.key});
@@ -111,7 +110,6 @@ class _ShowServiceAreaState extends State<ShowServiceArea>
                             _segmentedButtonSelection = newSelection.first;
                           });
                         },
-                        multiSelectionEnabled: false,
                         showSelectedIcon: false,
                       ),
                       // Create buttons for calculating the service area and resetting.
@@ -136,7 +134,7 @@ class _ShowServiceAreaState extends State<ShowServiceArea>
     );
   }
 
-  void onMapViewReady() async {
+  Future<void> onMapViewReady() async {
     // Create a map with the light gray basemap style and an initial viewpoint.
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISLightGray)
       ..initialViewpoint = Viewpoint.withLatLongScale(
@@ -207,7 +205,7 @@ class _ShowServiceAreaState extends State<ShowServiceArea>
     }
   }
 
-  void solveServiceArea() async {
+  Future<void> solveServiceArea() async {
     // Require at least 1 facility to perform a service area calculation.
     if (_facilityGraphicsOverlay.graphics.isNotEmpty) {
       // Disable the UI while the service area is calculated.
@@ -218,7 +216,7 @@ class _ShowServiceAreaState extends State<ShowServiceArea>
       // For each graphic in the facilities graphics overlay, add a facility to the parameters.
       final facilities = _facilityGraphicsOverlay.graphics
           .map(
-            (graphic) => ServiceAreaFacility(graphic.geometry as ArcGISPoint),
+            (graphic) => ServiceAreaFacility(graphic.geometry! as ArcGISPoint),
           )
           .toList();
       _serviceAreaParameters.setFacilities(facilities);
@@ -226,7 +224,7 @@ class _ShowServiceAreaState extends State<ShowServiceArea>
       // For each graphic in the barriers graphics overlay, add a polygon barrier to the parameters.
       final barriers = _barrierGraphicsOverlay.graphics
           .map(
-            (graphic) => PolygonBarrier(graphic.geometry as Polygon),
+            (graphic) => PolygonBarrier(graphic.geometry! as Polygon),
           )
           .toList();
       _serviceAreaParameters.setPolygonBarriers(barriers);

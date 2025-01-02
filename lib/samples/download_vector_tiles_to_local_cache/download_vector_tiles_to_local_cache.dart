@@ -16,12 +16,12 @@
 
 import 'dart:async';
 import 'dart:io';
+
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_state_support.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
-
-import '../../utils/sample_state_support.dart';
 
 class DownloadVectorTilesToLocalCache extends StatefulWidget {
   const DownloadVectorTilesToLocalCache({super.key});
@@ -141,7 +141,7 @@ class _DownloadVectorTilesToLocalCacheState
   }
 
   // Cancel the export vector tiles job.
-  void cancelDownloadingJob() async {
+  Future<void> cancelDownloadingJob() async {
     setState(() => _progress = 0.0);
     setState(() => _isJobStarted = false);
 
@@ -151,7 +151,7 @@ class _DownloadVectorTilesToLocalCacheState
   }
 
   // Start to download the vector tiles for the outlined region.
-  void startDownloadVectorTiles() async {
+  Future<void> startDownloadVectorTiles() async {
     // Get the download area.
     final downloadArea = downloadAreaEnvelope();
     // Get the ArcGISVectorTiledLayer which the vector tiles cache will be downloaded from.
@@ -246,14 +246,14 @@ class _DownloadVectorTilesToLocalCacheState
     if (outlineContext == null || mapContext == null) return null;
 
     // Get the global screen rect of the outlined region.
-    final outlineRenderBox = outlineContext.findRenderObject() as RenderBox;
+    final outlineRenderBox = outlineContext.findRenderObject() as RenderBox?;
     final outlineGlobalScreenRect =
-        outlineRenderBox.localToGlobal(Offset.zero) & outlineRenderBox.size;
+        outlineRenderBox!.localToGlobal(Offset.zero) & outlineRenderBox.size;
 
     // Convert the global screen rect to a rect local to the map view.
-    final mapRenderBox = mapContext.findRenderObject() as RenderBox;
-    final mapLocalScreenRect =
-        outlineGlobalScreenRect.shift(-mapRenderBox.localToGlobal(Offset.zero));
+    final mapRenderBox = mapContext.findRenderObject() as RenderBox?;
+    final mapLocalScreenRect = outlineGlobalScreenRect
+        .shift(-mapRenderBox!.localToGlobal(Offset.zero));
 
     // Convert the local screen rect to map coordinates.
     final locationTopLeft =
@@ -311,13 +311,13 @@ class _DownloadVectorTilesToLocalCacheState
     return IgnorePointer(
       child: SafeArea(
         child: Container(
-          margin: const EdgeInsets.fromLTRB(30.0, 30.0, 30.0, 50.0),
+          margin: const EdgeInsets.fromLTRB(30, 30, 30, 50),
           child: Container(
             key: _outlineKey,
             decoration: BoxDecoration(
               border: Border.all(
                 color: Colors.red,
-                width: 2.0,
+                width: 2,
               ),
             ),
           ),

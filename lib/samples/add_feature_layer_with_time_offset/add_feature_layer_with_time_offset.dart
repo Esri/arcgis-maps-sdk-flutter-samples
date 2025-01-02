@@ -16,9 +16,8 @@
 
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_state_support.dart';
 import 'package:flutter/material.dart';
-
-import '../../utils/sample_state_support.dart';
 
 class AddFeatureLayerWithTimeOffset extends StatefulWidget {
   const AddFeatureLayerWithTimeOffset({super.key});
@@ -108,8 +107,8 @@ class _AddFeatureLayerWithTimeOffsetState
         Row(
           children: [
             SizedBox(
-              width: 20.0,
-              height: 20.0,
+              width: 20,
+              height: 20,
               child: Container(
                 decoration: const BoxDecoration(
                   shape: BoxShape.circle,
@@ -117,16 +116,16 @@ class _AddFeatureLayerWithTimeOffsetState
                 ),
               ),
             ),
-            const SizedBox(width: 10.0),
+            const SizedBox(width: 10),
             const Text('Hurricane tracks, offset 10 days'),
           ],
         ),
-        const SizedBox(height: 10.0),
+        const SizedBox(height: 10),
         Row(
           children: [
             SizedBox(
-              width: 20.0,
-              height: 20.0,
+              width: 20,
+              height: 20,
               child: Container(
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
@@ -134,7 +133,7 @@ class _AddFeatureLayerWithTimeOffsetState
                 ),
               ),
             ),
-            const SizedBox(width: 10.0),
+            const SizedBox(width: 10),
             const Text('Hurricane tracks, no offset'),
           ],
         ),
@@ -142,7 +141,7 @@ class _AddFeatureLayerWithTimeOffsetState
     );
   }
 
-  void onMapViewReady() async {
+  Future<void> onMapViewReady() async {
     // Create a map with the oceans basemap style and an initial viewpoint.
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISOceans);
     map.initialViewpoint = Viewpoint.fromCenter(
@@ -151,7 +150,7 @@ class _AddFeatureLayerWithTimeOffsetState
         y: 2500000,
         spatialReference: SpatialReference.webMercator,
       ),
-      scale: 1e8,
+      scale: 100000000,
     );
 
     // The URL of the feature layer showing hurricanes.
@@ -164,9 +163,8 @@ class _AddFeatureLayerWithTimeOffsetState
     final featureLayer = FeatureLayer.withFeatureTable(featureTable);
     featureLayer.renderer = SimpleRenderer(
       symbol: SimpleMarkerSymbol(
-        style: SimpleMarkerSymbolStyle.circle,
         color: Colors.blue.shade900,
-        size: 10.0,
+        size: 10,
       ),
     );
 
@@ -176,9 +174,8 @@ class _AddFeatureLayerWithTimeOffsetState
         FeatureLayer.withFeatureTable(offsetFeatureTable);
     offsetFeatureLayer.renderer = SimpleRenderer(
       symbol: SimpleMarkerSymbol(
-        style: SimpleMarkerSymbolStyle.circle,
         color: Colors.red,
-        size: 10.0,
+        size: 10,
       ),
     );
     offsetFeatureLayer.timeOffset =

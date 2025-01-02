@@ -105,7 +105,7 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
     );
   }
 
-  void onMapViewReady() async {
+  Future<void> onMapViewReady() async {
     // Create a map with an imagery basemap style.
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISImageryStandard);
     // Set the map to the map view controller.
@@ -148,12 +148,12 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
     _mapViewController.geometryEditor = _geometryEditor;
   }
 
-  void onTap(Offset localPosition) async {
+  Future<void> onTap(Offset localPosition) async {
     // Perform an identify operation on the graphics overlay at the tapped location.
     final identifyResult = await _mapViewController.identifyGraphicsOverlay(
       _graphicsOverlay,
       screenPoint: localPosition,
-      tolerance: 12.0,
+      tolerance: 12,
     );
 
     // Get the features from the identify result.
@@ -270,7 +270,6 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
         );
       } else {
         return DropdownMenuItem(
-          enabled: true,
           value: type,
           child: Text(type.name.capitalize()),
         );
@@ -300,7 +299,6 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
     return tools.keys.map((tool) {
       if (tool == _vertexTool || tool == _reticleVertexTool) {
         return DropdownMenuItem(
-          enabled: true,
           value: tool,
           child: Text(tools[tool] ?? 'Unknown Tool'),
         );
@@ -383,9 +381,7 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           Column(
-            mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.end,
-            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Row(
                 children: [
@@ -396,7 +392,7 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
                       style: Theme.of(context).elevatedButtonTheme.style,
                       onPressed:
                           _geometryEditorIsStarted && _geometryEditorCanUndo
-                              ? () => _geometryEditor.undo()
+                              ? _geometryEditor.undo
                               : null,
                       child: const Icon(Icons.undo),
                     ),
@@ -409,7 +405,7 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
                       style: Theme.of(context).elevatedButtonTheme.style,
                       onPressed:
                           _geometryEditorIsStarted && _geometryEditorCanRedo
-                              ? () => _geometryEditor.redo()
+                              ? _geometryEditor.redo
                               : null,
                       child: const Icon(Icons.redo),
                     ),
@@ -437,7 +433,7 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
                               _geometryEditorHasSelectedElement &&
                               _geometryEditor.selectedElement != null &&
                               _geometryEditor.selectedElement!.canDelete
-                          ? () => _geometryEditor.deleteSelectedElement()
+                          ? _geometryEditor.deleteSelectedElement
                           : null,
                       child: const Icon(Icons.clear),
                     ),
@@ -506,22 +502,18 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
       size: 10,
     );
     _multipointSymbol = SimpleMarkerSymbol(
-      style: SimpleMarkerSymbolStyle.circle,
       color: Colors.yellow,
       size: 5,
     );
     _polylineSymbol = SimpleLineSymbol(
-      style: SimpleLineSymbolStyle.solid,
       color: Colors.blue,
       width: 2,
     );
     final outlineSymbol = SimpleLineSymbol(
       style: SimpleLineSymbolStyle.dash,
       color: Colors.black,
-      width: 1,
     );
     _polygonSymbol = SimpleFillSymbol(
-      style: SimpleFillSymbolStyle.solid,
       color: Colors.red.withOpacity(0.3),
       outline: outlineSymbol,
     );

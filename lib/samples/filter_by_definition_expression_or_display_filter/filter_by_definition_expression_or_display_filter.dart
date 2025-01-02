@@ -15,9 +15,8 @@
 //
 
 import 'package:arcgis_maps/arcgis_maps.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_state_support.dart';
 import 'package:flutter/material.dart';
-
-import '../../utils/sample_state_support.dart';
 
 class FilterByDefinitionExpressionOrDisplayFilter extends StatefulWidget {
   const FilterByDefinitionExpressionOrDisplayFilter({super.key});
@@ -110,7 +109,7 @@ class _FilterByDefinitionExpressionOrDisplayFilterState
     _mapViewController.arcGISMap = map;
   }
 
-  void applyDefinitionExpression() async {
+  Future<void> applyDefinitionExpression() async {
     // Remove the display filter.
     _displayFilterDefinition = null;
     // Apply a definition expression to the feature layer.
@@ -119,7 +118,7 @@ class _FilterByDefinitionExpressionOrDisplayFilterState
     await calculateFeatureCount();
   }
 
-  void applyDisplayFilter() async {
+  Future<void> applyDisplayFilter() async {
     // Remove the definition expression.
     _definitionExpression = '';
     // Apply a display filter to the feature layer.
@@ -138,7 +137,7 @@ class _FilterByDefinitionExpressionOrDisplayFilterState
     await calculateFeatureCount();
   }
 
-  void reset() async {
+  Future<void> reset() async {
     // Remove the definition expression and display filter.
     _displayFilterDefinition = null;
     _definitionExpression = '';

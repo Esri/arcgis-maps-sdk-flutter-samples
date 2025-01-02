@@ -41,7 +41,7 @@ class _AddMapImageLayerState extends State<AddMapImageLayer>
     );
   }
 
-  void onMapViewReady() async {
+  Future<void> onMapViewReady() async {
     // Create a map with a map image layer.
     final map = ArcGISMap();
     // Create a map image layer with a uri.

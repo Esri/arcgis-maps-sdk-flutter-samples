@@ -16,9 +16,8 @@
 
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_state_support.dart';
 import 'package:flutter/material.dart';
-
-import '../../utils/sample_state_support.dart';
 
 class FindClosestFacilityFromPoint extends StatefulWidget {
   const FindClosestFacilityFromPoint({super.key});
@@ -61,9 +60,8 @@ class _FindClosestFacilityFromPointState
   late final ClosestFacilityParameters _closestFacilityParameters;
   // Create a symbol for the route line.
   final _routeLineSymbol = SimpleLineSymbol(
-    style: SimpleLineSymbolStyle.solid,
     color: Colors.blue,
-    width: 5.0,
+    width: 5,
   );
 
   @override
@@ -108,7 +106,7 @@ class _FindClosestFacilityFromPointState
     );
   }
 
-  void onMapViewReady() async {
+  Future<void> onMapViewReady() async {
     // Create a map with the ArcGIS Streets basemap style.
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISStreets);
 
@@ -159,7 +157,7 @@ class _FindClosestFacilityFromPointState
     );
 
     // Set the viewpoint geometry on the map view controller.
-    _mapViewController.setViewpointGeometry(mapExtent, paddingInDiPs: 30);
+    await _mapViewController.setViewpointGeometry(mapExtent, paddingInDiPs: 30);
 
     // Generate the closest facility parameters.
     _closestFacilityParameters = await generateClosestFacilityParameters(
@@ -203,7 +201,7 @@ class _FindClosestFacilityFromPointState
     return parameters;
   }
 
-  void solveRoutes() async {
+  Future<void> solveRoutes() async {
     setState(() => _ready = false);
     // Solve the closest facility task with the parameters.
     final result = await _closestFacilityTask.solveClosestFacility(

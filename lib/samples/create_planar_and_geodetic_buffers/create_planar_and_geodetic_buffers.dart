@@ -16,9 +16,8 @@
 
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_state_support.dart';
 import 'package:flutter/material.dart';
-
-import '../../utils/sample_state_support.dart';
 
 class CreatePlanarAndGeodeticBuffers extends StatefulWidget {
   const CreatePlanarAndGeodeticBuffers({super.key});
@@ -112,8 +111,8 @@ class _CreatePlanarAndGeodeticBuffersState
               // A slider to adjust the buffer radius.
               child: Slider(
                 value: _bufferRadius,
-                min: 200.0,
-                max: 2000.0,
+                min: 200,
+                max: 2000,
                 onChanged: (value) => setState(() => _bufferRadius = value),
               ),
             ),
@@ -122,8 +121,8 @@ class _CreatePlanarAndGeodeticBuffersState
         Row(
           children: [
             SizedBox(
-              width: 30.0,
-              height: 30.0,
+              width: 30,
+              height: 30,
               child: Container(
                 decoration: const BoxDecoration(
                   shape: BoxShape.circle,
@@ -132,31 +131,31 @@ class _CreatePlanarAndGeodeticBuffersState
                 child: Container(
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    border: Border.all(color: Colors.black, width: 2.0),
+                    border: Border.all(width: 2),
                     color: Colors.red.withAlpha(127),
                   ),
                 ),
               ),
             ),
-            const SizedBox(width: 10.0),
+            const SizedBox(width: 10),
             const Text('Planar Buffer'),
           ],
         ),
-        const SizedBox(height: 10.0),
+        const SizedBox(height: 10),
         Row(
           children: [
             SizedBox(
-              width: 30.0,
-              height: 30.0,
+              width: 30,
+              height: 30,
               child: Container(
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  border: Border.all(color: Colors.black, width: 2.0),
+                  border: Border.all(width: 2),
                   color: Colors.green,
                 ),
               ),
             ),
-            const SizedBox(width: 10.0),
+            const SizedBox(width: 10),
             const Text('Geodetic Buffer'),
           ],
         ),
@@ -168,12 +167,10 @@ class _CreatePlanarAndGeodeticBuffersState
     // Configure the graphics overlay for the geodetic buffers.
     _geodeticOverlay.renderer = SimpleRenderer(
       symbol: SimpleFillSymbol(
-        style: SimpleFillSymbolStyle.solid,
         color: Colors.green,
         outline: SimpleLineSymbol(
-          style: SimpleLineSymbolStyle.solid,
           color: Colors.black,
-          width: 2.0,
+          width: 2,
         ),
       ),
     );
@@ -182,12 +179,10 @@ class _CreatePlanarAndGeodeticBuffersState
     // Configure the graphics overlay for the planar buffers.
     _planarOverlay.renderer = SimpleRenderer(
       symbol: SimpleFillSymbol(
-        style: SimpleFillSymbolStyle.solid,
         color: Colors.red,
         outline: SimpleLineSymbol(
-          style: SimpleLineSymbolStyle.solid,
           color: Colors.black,
-          width: 2.0,
+          width: 2,
         ),
       ),
     );
@@ -198,7 +193,7 @@ class _CreatePlanarAndGeodeticBuffersState
       symbol: SimpleMarkerSymbol(
         style: SimpleMarkerSymbolStyle.cross,
         color: Colors.white,
-        size: 14.0,
+        size: 14,
       ),
     );
 
