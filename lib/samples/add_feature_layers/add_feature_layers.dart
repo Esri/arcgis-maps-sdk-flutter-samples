@@ -107,10 +107,7 @@ class _AddFeatureLayersState extends State<AddFeatureLayers>
               ),
               // Set the selected feature layer source.
               value: _selectedFeatureLayerSource,
-              icon: Icon(
-                Icons.arrow_drop_down,
-                color: Theme.of(context).colorScheme.primary,
-              ),
+              icon: const Icon(Icons.arrow_drop_down),
               elevation: 16,
               style: Theme.of(context).textTheme.labelMedium,
               // Set the onChanged callback to update the selected feature layer source.

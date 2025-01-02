@@ -38,10 +38,14 @@ final sampleViewerTheme = ThemeData(
       disabledBackgroundColor: Colors.white.withOpacity(0.6),
     ),
   ),
+
+  // icon theme
+  iconTheme: IconThemeData(
+    color: colorScheme.primary,
+  ),
 );
 
 extension CustomTextTheme on TextTheme {
-  
   TextStyle get customLabelStyle => const TextStyle(
         fontSize: 18,
         fontWeight: FontWeight.bold,
