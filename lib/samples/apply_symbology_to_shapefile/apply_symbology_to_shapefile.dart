@@ -83,7 +83,7 @@ class _ApplySymbologyToShapefileState extends State<ApplySymbologyToShapefile>
     );
   }
 
-  void onMapViewReady() async {
+  Future<void> onMapViewReady() async {
     // Create a map with the topographic basemap style and an initial viewpoint.
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic);
     map.initialViewpoint = Viewpoint.fromCenter(
@@ -135,9 +135,9 @@ class _ApplySymbologyToShapefileState extends State<ApplySymbologyToShapefile>
   }
 
   // Set the renderer.
-  void updateRenderer(bool value) {
-    setState(() => _alternate = value);
-    if (_shapefileFeatureLayer.renderer == _defaultRenderer) {
+  void updateRenderer(bool alternate) {
+    setState(() => _alternate = alternate);
+    if (_alternate) {
       _shapefileFeatureLayer.renderer = _alternateRenderer;
     } else {
       _shapefileFeatureLayer.renderer = _defaultRenderer;
