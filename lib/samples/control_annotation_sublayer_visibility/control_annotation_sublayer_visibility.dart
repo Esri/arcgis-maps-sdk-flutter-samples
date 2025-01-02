@@ -132,7 +132,7 @@ class _ControlAnnotationSublayerVisibilityState
     );
   }
 
-  void onMapViewReady() async {
+  Future<void> onMapViewReady() async {
     try {
       await downloadSampleData(['b87307dcfb26411eb2e92e1627cb615b']);
       final appDir = await getApplicationDocumentsDirectory();

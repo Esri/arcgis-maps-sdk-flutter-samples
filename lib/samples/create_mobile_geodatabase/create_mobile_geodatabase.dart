@@ -17,11 +17,10 @@
 import 'dart:io';
 
 import 'package:arcgis_maps/arcgis_maps.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_state_support.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
-
-import '../../utils/sample_state_support.dart';
 
 class CreateMobileGeodatabase extends StatefulWidget {
   const CreateMobileGeodatabase({super.key});
@@ -129,14 +128,14 @@ class _CreateMobileGeodatabaseState extends State<CreateMobileGeodatabase>
   }
 
   // When the map view is ready, create a map and set the viewpoint.
-  void onMapViewReady() async {
+  Future<void> onMapViewReady() async {
     _map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic);
     _mapViewController.arcGISMap = _map;
     _mapViewController.setViewpoint(
       Viewpoint.withLatLongScale(
         latitude: 41.5,
-        longitude: -100.0,
-        scale: 100000000.0,
+        longitude: -100,
+        scale: 100000000,
       ),
     );
     // Create the mobile geodatabase with a feature table to track
@@ -165,7 +164,7 @@ class _CreateMobileGeodatabaseState extends State<CreateMobileGeodatabase>
     try {
       _geodatabase = await Geodatabase.create(fileUri: geodatabaseFile.uri);
       await _createGeodatabaseFeatureTable();
-    } catch (e) {
+    } on Exception catch (e) {
       showMessageDialog(
         e.toString(),
         title: 'Error',
@@ -203,11 +202,9 @@ class _CreateMobileGeodatabaseState extends State<CreateMobileGeodatabase>
     try {
       _featureTable = await _geodatabase!.createTable(tableDescription);
       _map.operationalLayers.clear();
-      _map.operationalLayers.add(
-        FeatureLayer.withFeatureTable(_featureTable as GeodatabaseFeatureTable),
-      );
+      _map.operationalLayers.add(FeatureLayer.withFeatureTable(_featureTable!));
       setState(() => _featureCount = _featureTable!.numberOfFeatures);
-    } catch (e) {
+    } on ArcGISException catch (e) {
       showMessageDialog(
         e.toString(),
         title: 'Error',
@@ -217,7 +214,7 @@ class _CreateMobileGeodatabaseState extends State<CreateMobileGeodatabase>
   }
 
   // Add a feature to the feature table.
-  void _addFeature(ArcGISPoint point) async {
+  Future<void> _addFeature(ArcGISPoint point) async {
     if (_featureTable == null) {
       return;
     }
@@ -234,7 +231,7 @@ class _CreateMobileGeodatabaseState extends State<CreateMobileGeodatabase>
   }
 
   // Display the attribute table in a dialog.
-  void _displayTable() async {
+  Future<void> _displayTable() async {
     final queryResult = await _featureTable?.queryFeatures(QueryParameters());
 
     final dataRows = <DataRow>[];
@@ -257,14 +254,12 @@ class _CreateMobileGeodatabaseState extends State<CreateMobileGeodatabase>
       );
     }
     if (mounted) {
-      showDialog(
+      await showDialog(
         context: context,
         barrierColor: Colors.transparent,
         builder: (context) {
           return SimpleDialog(
-            shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.zero,
-            ),
+            shape: const RoundedRectangleBorder(),
             children: [
               Padding(
                 padding: const EdgeInsets.fromLTRB(
@@ -274,7 +269,6 @@ class _CreateMobileGeodatabaseState extends State<CreateMobileGeodatabase>
                   10,
                 ),
                 child: SingleChildScrollView(
-                  scrollDirection: Axis.vertical,
                   child: DataTable(
                     border: TableBorder.all(),
                     columns: const [
@@ -303,7 +297,7 @@ class _CreateMobileGeodatabaseState extends State<CreateMobileGeodatabase>
                   'Attribute table loaded from the mobile geodatabase '
                   'file. File can be loaded on ArcGIS Pro or ArcGIS Maps SDK.',
                   style: TextStyle(
-                    fontSize: 12.0,
+                    fontSize: 12,
                   ),
                 ),
               ),
@@ -315,7 +309,7 @@ class _CreateMobileGeodatabaseState extends State<CreateMobileGeodatabase>
   }
 
   // Call platform share sheet and share the mobile geodatabase file URI.
-  void _shareGeodatabaseUri() async {
+  Future<void> _shareGeodatabaseUri() async {
     _geodatabase?.close();
 
     // Open the platform share sheet and share the mobile geodatabase file URI.
@@ -325,6 +319,6 @@ class _CreateMobileGeodatabaseState extends State<CreateMobileGeodatabase>
     );
 
     // Create a new mobile geodatabase and feature table to start again.
-    _setupGeodatabase();
+    await _setupGeodatabase();
   }
 }

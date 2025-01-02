@@ -15,13 +15,13 @@
 //
 
 import 'dart:io';
+
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_data.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_state_support.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
-
-import '../../utils/sample_data.dart';
-import '../../utils/sample_state_support.dart';
 
 class ApplyScheduledUpdatesToPreplannedMapArea extends StatefulWidget {
   const ApplyScheduledUpdatesToPreplannedMapArea({super.key});
@@ -62,7 +62,6 @@ class _ApplyScheduledUpdatesToPreplannedMapAreaState
         child: Stack(
           children: [
             Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Expanded(
                   // Add a map view to the widget tree and set a controller.
@@ -101,7 +100,7 @@ class _ApplyScheduledUpdatesToPreplannedMapAreaState
     );
   }
 
-  void onMapViewReady() async {
+  Future<void> onMapViewReady() async {
     // Set the path to the map package data.
     final appDir = await getApplicationDocumentsDirectory();
     _dataUri = Uri.parse('${appDir.absolute.path}/canyonlands');
@@ -127,9 +126,9 @@ class _ApplyScheduledUpdatesToPreplannedMapAreaState
       if (result != null && result.isMobileMapPackageReopenRequired) {
         await _loadMapPackageMap();
       }
-    } catch (err) {
+    } on ArcGISException catch (e) {
       showMessageDialog(
-        'The offline map sync failed with error: {$err}.',
+        'The offline map sync failed with error: {$e}.',
         title: 'Error',
       );
     } finally {
@@ -159,9 +158,9 @@ class _ApplyScheduledUpdatesToPreplannedMapAreaState
     // Try to load the map package.
     try {
       await _mobileMapPackage!.load();
-    } catch (err) {
+    } on ArcGISException catch (e) {
       showMessageDialog(
-        'Mobile Map Package failed to load with error: {$err}',
+        'Mobile Map Package failed to load with error: {$e}',
         title: 'Error',
       );
       return false;

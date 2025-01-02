@@ -57,7 +57,7 @@ class _ShowWfsLayerWithXmlQueryState extends State<ShowWfsLayerWithXmlQuery>
     );
   }
 
-  void onMapViewReady() async {
+  Future<void> onMapViewReady() async {
     // Create a map with the ArcGIS Navigation basemap style and set to the map view.
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISNavigation);
     _mapViewController.arcGISMap = map;
@@ -99,6 +99,6 @@ class _ShowWfsLayerWithXmlQueryState extends State<ShowWfsLayerWithXmlQuery>
     );
 
     // Zoom to the full extent of the feature layer.
-    _mapViewController.setViewpointGeometry(featureLayer.fullExtent!);
+    await _mapViewController.setViewpointGeometry(featureLayer.fullExtent!);
   }
 }

@@ -15,8 +15,8 @@
 
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_state_support.dart';
 import 'package:flutter/material.dart';
-import '../../utils/sample_state_support.dart';
 
 class ChangeViewpoint extends StatefulWidget {
   const ChangeViewpoint({super.key});
@@ -82,7 +82,7 @@ class _ChangeViewpointState extends State<ChangeViewpoint>
     );
   }
 
-  void onMapViewReady() async {
+  Future<void> onMapViewReady() async {
     // Create new Map with basemap and initial location.
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic);
     // Assign the map to the ArcGISMapView.
@@ -143,7 +143,7 @@ class _ChangeViewpointState extends State<ChangeViewpoint>
     );
   }
 
-  void changeViewpoint(String viewpoint) async {
+  Future<void> changeViewpoint(String viewpoint) async {
     // Set the selected viewpoint.
     setState(() => _selectedViewpoint = viewpoint);
 

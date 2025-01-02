@@ -60,7 +60,7 @@ class _IdentifyGraphicsState extends State<IdentifyGraphics>
     );
   }
 
-  void onMapViewReady() async {
+  Future<void> onMapViewReady() async {
     // Create a map with a topographic basemap.
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic);
     // Create a polygon geometry.
@@ -68,15 +68,14 @@ class _IdentifyGraphicsState extends State<IdentifyGraphics>
       spatialReference: _mapViewController.spatialReference,
     );
     // Add points to the polygon.
-    polygonBuilder.addPointXY(x: -20e5, y: 20e5);
-    polygonBuilder.addPointXY(x: 20e5, y: 20e5);
-    polygonBuilder.addPointXY(x: 20e5, y: -20e5);
-    polygonBuilder.addPointXY(x: -20e5, y: -20e5);
+    polygonBuilder.addPointXY(x: -2000000, y: 2000000);
+    polygonBuilder.addPointXY(x: 2000000, y: 2000000);
+    polygonBuilder.addPointXY(x: 2000000, y: -2000000);
+    polygonBuilder.addPointXY(x: -2000000, y: -2000000);
     // Create a graphic with the polygon geometry and a yellow fill symbol.
     _graphic = Graphic(
       geometry: polygonBuilder.toGeometry(),
       symbol: SimpleFillSymbol(
-        style: SimpleFillSymbolStyle.solid,
         color: Colors.yellow,
       ),
     );
@@ -95,21 +94,24 @@ class _IdentifyGraphicsState extends State<IdentifyGraphics>
     setState(() => _ready = true);
   }
 
-  void onTap(Offset offset) async {
+  Future<void> onTap(Offset offset) async {
     // Identify the graphics overlay at the tapped point.
     final identifyGraphicsOverlay =
         await _mapViewController.identifyGraphicsOverlay(
       _graphicsOverlay,
       screenPoint: offset,
-      tolerance: 12.0,
+      tolerance: 12,
       maximumResults: 10,
     );
     // Check if the identified graphic is the same as the sample graphic.
     if (identifyGraphicsOverlay.graphics.isNotEmpty) {
       final identifiedGraphic = identifyGraphicsOverlay.graphics.first;
       if (identifiedGraphic == _graphic) {
-        showMessageDialog('Tapped on Graphic',
-            title: 'Identify Graphics', showOK: true);
+        showMessageDialog(
+          'Tapped on Graphic',
+          title: 'Identify Graphics',
+          showOK: true,
+        );
       }
     }
   }

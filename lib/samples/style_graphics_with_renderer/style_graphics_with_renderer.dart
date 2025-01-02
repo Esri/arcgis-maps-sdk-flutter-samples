@@ -82,8 +82,8 @@ class _StyleGraphicsWithRendererState extends State<StyleGraphicsWithRenderer>
 
     // Create a point graphic with a point geometry.
     final pointGeometry = ArcGISPoint(
-      x: 40e5,
-      y: 40e5,
+      x: 4000000,
+      y: 4000000,
       spatialReference: SpatialReference.webMercator,
     );
     final pointGraphic = Graphic(geometry: pointGeometry);
@@ -107,8 +107,8 @@ class _StyleGraphicsWithRendererState extends State<StyleGraphicsWithRenderer>
     // Create a line with a polyline geometry.
     final lineBuilder =
         PolylineBuilder(spatialReference: SpatialReference.webMercator);
-    lineBuilder.addPointXY(x: -10e5, y: 40e5);
-    lineBuilder.addPointXY(x: 20e5, y: 50e5);
+    lineBuilder.addPointXY(x: -1000000, y: 4000000);
+    lineBuilder.addPointXY(x: 2000000, y: 5000000);
     final lineGraphic = Graphic(geometry: lineBuilder.toGeometry());
     // Add the graphic to the graphics overlay.
     lineGraphicsOverlay.graphics.add(lineGraphic);
@@ -127,10 +127,10 @@ class _StyleGraphicsWithRendererState extends State<StyleGraphicsWithRenderer>
     // Create a polygon graphic with `Polygon` geometry.
     final polygonBuilder =
         PolygonBuilder(spatialReference: SpatialReference.webMercator);
-    polygonBuilder.addPoint(ArcGISPoint(x: -20e5, y: 20e5));
-    polygonBuilder.addPoint(ArcGISPoint(x: 20e5, y: 20e5));
-    polygonBuilder.addPoint(ArcGISPoint(x: 20e5, y: -20e5));
-    polygonBuilder.addPoint(ArcGISPoint(x: -20e5, y: -20e5));
+    polygonBuilder.addPoint(ArcGISPoint(x: -2000000, y: 2000000));
+    polygonBuilder.addPoint(ArcGISPoint(x: 2000000, y: 2000000));
+    polygonBuilder.addPoint(ArcGISPoint(x: 2000000, y: -2000000));
+    polygonBuilder.addPoint(ArcGISPoint(x: -2000000, y: -2000000));
     final polygonGraphic = Graphic(geometry: polygonBuilder.toGeometry());
     // Add the graphic to the overlay.
     squareGraphicsOverlay.graphics.add(polygonGraphic);
@@ -148,8 +148,8 @@ class _StyleGraphicsWithRendererState extends State<StyleGraphicsWithRenderer>
 
     // Create an ellipse graphic.
     final ellipseCenter = ArcGISPoint(
-      x: 40e5,
-      y: 25e5,
+      x: 4000000,
+      y: 2500000,
       spatialReference: SpatialReference.webMercator,
     );
     final parameters = GeodesicEllipseParameters(
@@ -159,7 +159,6 @@ class _StyleGraphicsWithRendererState extends State<StyleGraphicsWithRenderer>
       linearUnit: LinearUnit(unitId: LinearUnitId.kilometers),
       maxPointCount: 100,
       maxSegmentLength: 20,
-      geometryType: GeometryType.polygon,
       semiAxis1Length: 200,
       semiAxis2Length: 400,
     );
@@ -186,11 +185,11 @@ class _StyleGraphicsWithRendererState extends State<StyleGraphicsWithRenderer>
 
     // Create a heart shape graphic from a segment.
     final origin = ArcGISPoint(
-      x: 40e5,
-      y: 5e5,
+      x: 4000000,
+      y: 500000,
       spatialReference: SpatialReference.webMercator,
     );
-    final heartGeometry = getHeartGeometry(center: origin, sideLength: 10e5);
+    final heartGeometry = getHeartGeometry(center: origin, sideLength: 1000000);
     final heartGraphic = Graphic(geometry: heartGeometry);
 
     // Add the graphic to the overlay.

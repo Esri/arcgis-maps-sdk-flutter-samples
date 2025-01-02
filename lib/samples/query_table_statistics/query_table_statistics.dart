@@ -18,9 +18,8 @@ import 'dart:math';
 
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_state_support.dart';
 import 'package:flutter/material.dart';
-
-import '../../utils/sample_state_support.dart';
 
 class QueryTableStatistics extends StatefulWidget {
   const QueryTableStatistics({super.key});
@@ -98,11 +97,11 @@ class _QueryTableStatisticsState extends State<QueryTableStatistics>
   Widget querySettings(BuildContext context) {
     return Container(
       padding: EdgeInsets.fromLTRB(
-        20.0,
-        20.0,
-        20.0,
+        20,
+        20,
+        20,
         max(
-          20.0,
+          20,
           View.of(context).viewPadding.bottom /
               View.of(context).devicePixelRatio,
         ),
@@ -173,7 +172,7 @@ class _QueryTableStatisticsState extends State<QueryTableStatistics>
   }
 
   // Query statistics from the service feature table.
-  void queryStatistics() async {
+  Future<void> queryStatistics() async {
     // Create a statistics query parameters object.
     final statisticsQueryParameters =
         StatisticsQueryParameters(statisticDefinitions: _statisticDefinitions);
@@ -200,14 +199,17 @@ class _QueryTableStatisticsState extends State<QueryTableStatistics>
       record.statistics.forEach((key, value) {
         final displayName =
             key.toLowerCase() == 'count_pop' ? 'CITY_COUNT' : key;
+        final n = value as num?;
         final displayValue = key.toLowerCase() == 'count_pop'
-            ? value.toStringAsFixed(0)
-            : value.toStringAsFixed(2);
+            ? n?.toStringAsFixed(0)
+            : n?.toStringAsFixed(2);
         statistics.add('[$displayName]  $displayValue');
       });
     }
     // Display the statistics in a dialog.
-    showMessageDialog(statistics.join('\n'),
-        title: 'Statistical Query Results');
+    showMessageDialog(
+      statistics.join('\n'),
+      title: 'Statistical Query Results',
+    );
   }
 }

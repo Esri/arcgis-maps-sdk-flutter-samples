@@ -14,15 +14,15 @@
 // limitations under the License.
 //
 
+import 'dart:async';
 import 'dart:io';
 import 'dart:math';
 
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_state_support.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
-
-import '../../utils/sample_state_support.dart';
 
 class DownloadPreplannedMapArea extends StatefulWidget {
   const DownloadPreplannedMapArea({super.key});
@@ -86,7 +86,7 @@ class _DownloadPreplannedMapAreaState extends State<DownloadPreplannedMapArea>
             ),
             // Display the name of the current map.
             Container(
-              padding: const EdgeInsets.all(10.0),
+              padding: const EdgeInsets.all(10),
               color: Colors.black.withOpacity(0.7),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -111,7 +111,7 @@ class _DownloadPreplannedMapAreaState extends State<DownloadPreplannedMapArea>
     );
   }
 
-  void onMapViewReady() async {
+  Future<void> onMapViewReady() async {
     // Configure the directory to download offline maps to.
     _downloadDirectory = await createDownloadDirectory();
 
@@ -146,11 +146,11 @@ class _DownloadPreplannedMapAreaState extends State<DownloadPreplannedMapArea>
   Widget buildMapSelectionSheet(BuildContext context) {
     return Container(
       padding: EdgeInsets.fromLTRB(
-        20.0,
-        20.0,
-        20.0,
+        20,
+        20,
+        20,
         max(
-          20.0,
+          20,
           View.of(context).viewPadding.bottom /
               View.of(context).devicePixelRatio,
         ),
@@ -168,7 +168,7 @@ class _DownloadPreplannedMapAreaState extends State<DownloadPreplannedMapArea>
               ),
             ],
           ),
-          const SizedBox(height: 10.0),
+          const SizedBox(height: 10),
           // Create a list tile for the web map.
           ListTile(
             title: const Text('Web Map (online)'),
@@ -179,19 +179,18 @@ class _DownloadPreplannedMapAreaState extends State<DownloadPreplannedMapArea>
                 ? setMapAndViewpoint(_webMap)
                 : null,
           ),
-          const SizedBox(height: 20.0),
+          const SizedBox(height: 20),
           Text(
             'Preplanned Map Areas:',
             style: Theme.of(context).textTheme.titleMedium,
           ),
-          const SizedBox(height: 20.0),
+          const SizedBox(height: 20),
           ListView.builder(
             shrinkWrap: true,
             itemCount: _preplannedMapAreas.length,
             itemBuilder: (context, index) {
               return Padding(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 5.0, horizontal: 0.0),
+                padding: const EdgeInsets.symmetric(vertical: 5),
                 child: buildMapAreaListTile(
                   _preplannedMapAreas.keys.toList()[index],
                 ),
@@ -250,7 +249,7 @@ class _DownloadPreplannedMapAreaState extends State<DownloadPreplannedMapArea>
   }
 
   // Download an offline map for a provided preplanned map area.
-  void downloadOfflineMap(PreplannedMapArea mapArea) async {
+  Future<void> downloadOfflineMap(PreplannedMapArea mapArea) async {
     // Create default parameters using the map area.
     final defaultDownloadParams = await _offlineMapTask
         .createDefaultDownloadPreplannedOfflineMapParameters(mapArea);
@@ -275,7 +274,7 @@ class _DownloadPreplannedMapAreaState extends State<DownloadPreplannedMapArea>
     setState(() => _preplannedMapAreas[mapArea] = downloadMapJob);
     // Update the UI when the progress changes.
     downloadMapJob.onProgressChanged.listen((_) => setState(() {}));
-    downloadMapJob.run();
+    unawaited(downloadMapJob.run());
   }
 
   // Create the directory for downloading offline map areas into.

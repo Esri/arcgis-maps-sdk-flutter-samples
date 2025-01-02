@@ -13,12 +13,10 @@
 // limitations under the License.
 //
 
-import 'dart:math';
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_state_support.dart';
 import 'package:flutter/material.dart';
-
-import '../../utils/sample_state_support.dart';
 
 class GroupLayersTogether extends StatefulWidget {
   const GroupLayersTogether({super.key});
@@ -152,7 +150,7 @@ class _GroupLayersTogetherState extends State<GroupLayersTogether>
     );
   }
 
-  void onMapViewReady() async {
+  Future<void> onMapViewReady() async {
     // Create a Group Layer for the Project Area Group.
     final projectAreaGroupLayer = GroupLayer()..name = 'Project Area Group';
     // Create a Feature Layer for the Project Area.

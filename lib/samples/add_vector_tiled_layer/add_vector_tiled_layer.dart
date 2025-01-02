@@ -15,9 +15,8 @@
 //
 
 import 'package:arcgis_maps/arcgis_maps.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_state_support.dart';
 import 'package:flutter/material.dart';
-
-import '../../utils/sample_state_support.dart';
 
 // An enumeration of vector tiled layers to choose from.
 enum VectorTiledItem {
@@ -30,9 +29,10 @@ enum VectorTiledItem {
     '86f556a2d1fd468181855a35e344567f',
   );
 
+  const VectorTiledItem(this.label, this.itemId);
+
   final String label;
   final String itemId;
-  const VectorTiledItem(this.label, this.itemId);
 
   // A menu item for this selection.
   DropdownMenuItem<VectorTiledItem> get menuItem =>

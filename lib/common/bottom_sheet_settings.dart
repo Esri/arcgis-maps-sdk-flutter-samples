@@ -25,24 +25,23 @@ import 'package:flutter/material.dart';
 ///  - [settingsWidgets] is a list of widgets to display in the container.
 ///
 class BottomSheetSettings extends StatelessWidget {
-  final VoidCallback onCloseIconPressed;
-  final List<Widget> Function(BuildContext) settingsWidgets;
-
   const BottomSheetSettings({
     required this.onCloseIconPressed,
     required this.settingsWidgets,
     super.key,
   });
+  final VoidCallback onCloseIconPressed;
+  final List<Widget> Function(BuildContext) settingsWidgets;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.fromLTRB(
-        20.0,
-        20.0,
-        20.0,
+        20,
+        20,
+        20,
         max(
-          20.0,
+          20,
           View.of(context).viewPadding.bottom /
               View.of(context).devicePixelRatio,
         ),

@@ -61,7 +61,7 @@ class _AddWfsLayerState extends State<AddWfsLayer> with SampleStateSupport {
     );
   }
 
-  void onMapViewReady() async {
+  Future<void> onMapViewReady() async {
     // Create a map with the ArcGIS Navigation basemap style and set to the map view.
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISNavigation);
     // Set the map to _mapViewController.

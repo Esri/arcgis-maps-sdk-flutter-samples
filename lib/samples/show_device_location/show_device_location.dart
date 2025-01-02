@@ -19,9 +19,8 @@ import 'dart:math';
 
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_state_support.dart';
 import 'package:flutter/material.dart';
-
-import '../../utils/sample_state_support.dart';
 
 class ShowDeviceLocation extends StatefulWidget {
   const ShowDeviceLocation({super.key});
@@ -99,11 +98,11 @@ class _ShowDeviceLocationState extends State<ShowDeviceLocation>
   Widget buildSettings(BuildContext context) {
     return Container(
       padding: EdgeInsets.fromLTRB(
-        20.0,
-        20.0,
-        20.0,
+        20,
+        20,
+        20,
         max(
-          20.0,
+          20,
           View.of(context).viewPadding.bottom /
               View.of(context).devicePixelRatio,
         ),
@@ -177,7 +176,7 @@ class _ShowDeviceLocationState extends State<ShowDeviceLocation>
     );
   }
 
-  void onMapViewReady() async {
+  Future<void> onMapViewReady() async {
     // Create a map with the Navigation Night basemap style.
     _mapViewController.arcGISMap =
         ArcGISMap.withBasemapStyle(BasemapStyle.arcGISNavigationNight);

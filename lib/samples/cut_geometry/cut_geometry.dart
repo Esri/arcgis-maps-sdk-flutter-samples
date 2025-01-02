@@ -16,9 +16,8 @@
 
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_state_support.dart';
 import 'package:flutter/material.dart';
-
-import '../../utils/sample_state_support.dart';
 
 class CutGeometry extends StatefulWidget {
   const CutGeometry({super.key});
@@ -194,8 +193,7 @@ class _CutGeometryState extends State<CutGeometry> with SampleStateSupport {
         color: Colors.blue.withOpacity(0.5),
         outline: SimpleLineSymbol(
           color: Colors.blue,
-          width: 4.0,
-          style: SimpleLineSymbolStyle.solid,
+          width: 4,
         ),
       ),
     );
@@ -221,7 +219,7 @@ class _CutGeometryState extends State<CutGeometry> with SampleStateSupport {
       geometry: borderPolylineBuilder.toGeometry(),
       symbol: SimpleLineSymbol(
         color: Colors.red,
-        width: 4.0,
+        width: 4,
         style: SimpleLineSymbolStyle.dot,
       ),
     );
