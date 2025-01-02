@@ -316,7 +316,7 @@ class _SnapGeometryEditsState extends State<SnapGeometryEdits>
         // A button to toggle the visibility of the editing toolbar.
         IconButton(
           onPressed: () => setState(() => _showEditToolbar = !_showEditToolbar),
-          icon: Icon(Icons.edit, color: Theme.of(context).primaryColor),
+          icon: const Icon(Icons.edit),
         ),
       ],
     );

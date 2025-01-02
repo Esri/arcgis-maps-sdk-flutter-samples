@@ -103,10 +103,7 @@ class _ManageFeaturesState extends State<ManageFeatures>
                               style: Theme.of(context).textTheme.labelMedium,
                             ),
                             value: _selectedOperation,
-                            icon: Icon(
-                              Icons.arrow_drop_down,
-                              color: Theme.of(context).colorScheme.primary,
-                            ),
+                            icon: const Icon(Icons.arrow_drop_down),
                             elevation: 16,
                             style: Theme.of(context).textTheme.labelMedium,
                             // Set the onChanged callback to update the selected operation.

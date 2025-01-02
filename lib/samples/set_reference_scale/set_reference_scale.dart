@@ -152,10 +152,7 @@ class _SetReferenceScaleState extends State<SetReferenceScale>
                       alignment: Alignment.center,
                       // Set the selected scale
                       value: _scale,
-                      icon: Icon(
-                        Icons.arrow_drop_down,
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
+                      icon: const Icon(Icons.arrow_drop_down),
                       // Set the callback to update the selected scale.
                       onChanged: (newScale) {
                         setState(() {
