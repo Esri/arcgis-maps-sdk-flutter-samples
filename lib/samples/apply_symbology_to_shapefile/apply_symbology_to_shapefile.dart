@@ -43,7 +43,7 @@ class _ApplySymbologyToShapefileState extends State<ApplySymbologyToShapefile>
   // Hold reference to alternate renderer to enable switching.
   SimpleRenderer? _alternateRenderer;
   // Create variable for holding state relating to the renderer.
-  bool _alternate = false;
+  var _alternate = false;
 
   @override
   Widget build(BuildContext context) {
@@ -69,10 +69,7 @@ class _ApplySymbologyToShapefileState extends State<ApplySymbologyToShapefile>
                     const Text('Alternate renderer'),
                     Switch(
                       value: _alternate,
-                      onChanged: (value) {
-                        setState(() => _alternate = value);
-                        updateRenderer();
-                      },
+                      onChanged: updateRenderer,
                     ),
                   ],
                 ),
@@ -109,10 +106,8 @@ class _ApplySymbologyToShapefileState extends State<ApplySymbologyToShapefile>
     final shapefileFeatureTable =
         ShapefileFeatureTable.withFileUri(shapefile.uri);
     // Create a feature layer for the Shapefile feature table.
-    setState(
-      () => _shapefileFeatureLayer =
-          FeatureLayer.withFeatureTable(shapefileFeatureTable),
-    );
+    _shapefileFeatureLayer =
+        FeatureLayer.withFeatureTable(shapefileFeatureTable);
     // Clear the operational layers and add the feature layer to the map.
     map.operationalLayers.clear();
     map.operationalLayers.add(_shapefileFeatureLayer);
@@ -128,11 +123,11 @@ class _ApplySymbologyToShapefileState extends State<ApplySymbologyToShapefile>
       outline: lineSymbol,
     );
     // Create the alternate renderer.
-    setState(() => _alternateRenderer = SimpleRenderer(symbol: fillSymbol));
+    _alternateRenderer = SimpleRenderer(symbol: fillSymbol);
     // Wait for the layer to load so that it will be assigned a default renderer.
     await _shapefileFeatureLayer.load();
     // Hold a reference to the default renderer (to enable switching between the renderers).
-    setState(() => _defaultRenderer = _shapefileFeatureLayer.renderer);
+    _defaultRenderer = _shapefileFeatureLayer.renderer;
 
     _mapViewController.arcGISMap = map;
     // Set the ready state variable to true to enable the sample UI.
@@ -140,11 +135,12 @@ class _ApplySymbologyToShapefileState extends State<ApplySymbologyToShapefile>
   }
 
   // Set the renderer.
-  void updateRenderer() async {
+  void updateRenderer(bool value) {
+    setState(() => _alternate = value);
     if (_shapefileFeatureLayer.renderer == _defaultRenderer) {
-      setState(() => _shapefileFeatureLayer.renderer = _alternateRenderer);
+      _shapefileFeatureLayer.renderer = _alternateRenderer;
     } else {
-      setState(() => _shapefileFeatureLayer.renderer = _defaultRenderer);
+      _shapefileFeatureLayer.renderer = _defaultRenderer;
     }
   }
 }

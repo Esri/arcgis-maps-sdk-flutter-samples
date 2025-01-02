@@ -10,12 +10,12 @@ Feature layers created from shapefiles do not possess any rendering information,
 
 ## How to use the sample
 
-Click the button to apply a new symbology renderer to the feature layer created from the shapefile.
+Tap the button to apply a new symbology renderer to the feature layer created from the shapefile.
 
 ## How it works
 
 1. Create a `ShapefileFeatureTable` using the shapefile name.
-2. Create a `FeatureLayer` and associate it with the `ShapeFileFeatureTable`.
+2. Create a `FeatureLayer` and associate it with the `ShapefileFeatureTable`.
 3. Create a `SimpleRenderer` to override the default symbology. The simple renderer takes a symbol and applies that to all features in a layer.
 4. Apply the renderer to the `FeatureLayer` by setting the renderer.
 
