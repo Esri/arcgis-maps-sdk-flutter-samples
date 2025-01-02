@@ -334,7 +334,6 @@ class _SnapGeometryEditsState extends State<SnapGeometryEdits>
             children: [
               // A button to toggle the visibility of the snap settings.
               ElevatedButton(
-                style: Theme.of(context).elevatedButtonTheme.style,
                 onPressed: () => setState(() => _snapSettingsVisible = true),
                 child: const Text('Show snap settings'),
               ),
@@ -344,7 +343,6 @@ class _SnapGeometryEditsState extends State<SnapGeometryEdits>
                   Tooltip(
                     message: 'Undo',
                     child: ElevatedButton(
-                      style: Theme.of(context).elevatedButtonTheme.style,
                       onPressed:
                           _geometryEditorIsStarted && _geometryEditorCanUndo
                               ? _geometryEditor.undo
@@ -357,7 +355,6 @@ class _SnapGeometryEditsState extends State<SnapGeometryEdits>
                   Tooltip(
                     message: 'Delete selected element',
                     child: ElevatedButton(
-                      style: Theme.of(context).elevatedButtonTheme.style,
                       onPressed: _geometryEditorIsStarted &&
                               _geometryEditorHasSelectedElement &&
                               _geometryEditor.selectedElement != null &&
@@ -375,7 +372,6 @@ class _SnapGeometryEditsState extends State<SnapGeometryEdits>
                   Tooltip(
                     message: 'Stop and save edits',
                     child: ElevatedButton(
-                      style: Theme.of(context).elevatedButtonTheme.style,
                       onPressed: _geometryEditorIsStarted ? stopAndSave : null,
                       child: const Icon(Icons.save),
                     ),
@@ -385,7 +381,6 @@ class _SnapGeometryEditsState extends State<SnapGeometryEdits>
                   Tooltip(
                     message: 'Stop and discard edits',
                     child: ElevatedButton(
-                      style: Theme.of(context).elevatedButtonTheme.style,
                       onPressed:
                           _geometryEditorIsStarted ? stopAndDiscardEdits : null,
                       child: const Icon(Icons.not_interested_sharp),

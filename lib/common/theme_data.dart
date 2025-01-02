@@ -38,6 +38,9 @@ final sampleViewerTheme = ThemeData(
       disabledBackgroundColor: Colors.white.withOpacity(0.6),
     ),
   ),
+  floatingActionButtonTheme: FloatingActionButtonThemeData(
+    backgroundColor: colorScheme.primary,
+  ),
 
   // icon theme
   iconTheme: IconThemeData(

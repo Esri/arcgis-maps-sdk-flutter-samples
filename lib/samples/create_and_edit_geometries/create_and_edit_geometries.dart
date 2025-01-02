@@ -389,7 +389,6 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
                   Tooltip(
                     message: 'Undo',
                     child: ElevatedButton(
-                      style: Theme.of(context).elevatedButtonTheme.style,
                       onPressed:
                           _geometryEditorIsStarted && _geometryEditorCanUndo
                               ? _geometryEditor.undo
@@ -402,7 +401,6 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
                   Tooltip(
                     message: 'Redo',
                     child: ElevatedButton(
-                      style: Theme.of(context).elevatedButtonTheme.style,
                       onPressed:
                           _geometryEditorIsStarted && _geometryEditorCanRedo
                               ? _geometryEditor.redo
@@ -418,7 +416,6 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
                   Tooltip(
                     message: 'Stop and save edits',
                     child: ElevatedButton(
-                      style: Theme.of(context).elevatedButtonTheme.style,
                       onPressed: _geometryEditorIsStarted ? stopAndSave : null,
                       child: const Icon(Icons.save),
                     ),
@@ -428,7 +425,6 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
                   Tooltip(
                     message: 'Delete selected element',
                     child: ElevatedButton(
-                      style: Theme.of(context).elevatedButtonTheme.style,
                       onPressed: _geometryEditorIsStarted &&
                               _geometryEditorHasSelectedElement &&
                               _geometryEditor.selectedElement != null &&
@@ -446,7 +442,6 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
                   Tooltip(
                     message: 'Stop and discard edits',
                     child: ElevatedButton(
-                      style: Theme.of(context).elevatedButtonTheme.style,
                       onPressed:
                           _geometryEditorIsStarted ? stopAndDiscardEdits : null,
                       child: const Icon(Icons.not_interested_sharp),
@@ -457,7 +452,6 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
                   Tooltip(
                     message: 'Delete all graphics',
                     child: ElevatedButton(
-                      style: Theme.of(context).elevatedButtonTheme.style,
                       onPressed: !_geometryEditorIsStarted
                           ? () => _graphicsOverlay.graphics.clear()
                           : null,
@@ -468,7 +462,6 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
               ),
               // A button to toggle the scale mode setting of the geometry editor tools.
               ElevatedButton(
-                style: Theme.of(context).elevatedButtonTheme.style,
                 // Scale mode is not compatible with point geometry types or the reticle vertex tool.
                 onPressed: _selectedGeometryType == GeometryType.point ||
                         _selectedTool == _reticleVertexTool
