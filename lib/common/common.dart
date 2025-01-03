@@ -17,3 +17,4 @@
 export 'bottom_sheet_settings.dart';
 export 'dialogs.dart';
 export 'loading_indicator.dart';
+export 'theme_data.dart';

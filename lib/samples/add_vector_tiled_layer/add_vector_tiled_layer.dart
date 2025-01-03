@@ -77,11 +77,8 @@ class _AddVectorTiledLayerState extends State<AddVectorTiledLayer>
             Center(
               // Add a dropdown button to select a vector tiled layer.
               child: DropdownButton(
-                icon: const Icon(
-                  Icons.arrow_drop_down,
-                  color: Colors.deepPurple,
-                ),
-                style: const TextStyle(color: Colors.deepPurple),
+                icon: const Icon(Icons.arrow_drop_down),
+                style: Theme.of(context).textTheme.labelMedium,
                 alignment: Alignment.center,
                 value: _selection,
                 items: _selectionMenuItems,

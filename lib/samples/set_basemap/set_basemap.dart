@@ -122,7 +122,6 @@ class _SetBasemapState extends State<SetBasemap> with SampleStateSupport {
             child: FloatingActionButton(
               onPressed: () => _scaffoldStateKey.currentState!.openEndDrawer(),
               shape: const RoundedRectangleBorder(),
-              backgroundColor: Colors.deepPurple,
               child: const Icon(Icons.map),
             ),
           ),

@@ -101,9 +101,7 @@ class _CreateMobileGeodatabaseState extends State<CreateMobileGeodatabase>
                   ),
                   child: ElevatedButton.icon(
                     onPressed: _featureCount > 0 ? _shareGeodatabaseUri : null,
-                    icon: const Icon(
-                      Icons.share,
-                    ),
+                    icon: const Icon(Icons.share),
                     label: const Text(
                       'Share Mobile Geodatabase',
                     ),

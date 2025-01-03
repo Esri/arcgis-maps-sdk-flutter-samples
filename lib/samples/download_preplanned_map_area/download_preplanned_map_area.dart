@@ -95,7 +95,7 @@ class _DownloadPreplannedMapAreaState extends State<DownloadPreplannedMapArea>
                     // Use the name of the item if available.
                     _mapViewController.arcGISMap?.item?.title ?? '',
                     textAlign: TextAlign.center,
-                    style: const TextStyle(color: Colors.white),
+                    style: Theme.of(context).textTheme.customWhiteStyle,
                   ),
                 ],
               ),

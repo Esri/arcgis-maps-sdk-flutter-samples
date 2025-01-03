@@ -68,11 +68,6 @@ class _SnapGeometryEditsState extends State<SnapGeometryEdits>
   // A flag for controlling the visibility of the snap settings.
   var _snapSettingsVisible = false;
 
-  // A custom style for when the editing toolbar buttons are not enabled.
-  final _buttonStyle = ElevatedButton.styleFrom(
-    disabledBackgroundColor: Colors.white.withOpacity(0.6),
-  );
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -281,16 +276,14 @@ class _SnapGeometryEditsState extends State<SnapGeometryEdits>
         // A drop down button for selecting geometry type.
         DropdownButton(
           alignment: Alignment.center,
-          hint: const Text(
+          hint: Text(
             'Geometry Type',
-            style: TextStyle(
-              color: Colors.deepPurple,
-            ),
+            style: Theme.of(context).textTheme.labelMedium,
           ),
           icon: const Icon(Icons.arrow_drop_down),
-          iconEnabledColor: Colors.deepPurple,
-          iconDisabledColor: Colors.grey,
-          style: const TextStyle(color: Colors.deepPurple),
+          iconEnabledColor: Theme.of(context).primaryColor,
+          iconDisabledColor: Theme.of(context).disabledColor,
+          style: Theme.of(context).textTheme.labelMedium,
           value: _selectedGeometryType,
           items: _geometryTypeMenuItems,
           // If the geometry editor is already started then we fully disable the DropDownButton and prevent editing with another geometry type.
@@ -305,12 +298,12 @@ class _SnapGeometryEditsState extends State<SnapGeometryEdits>
         // A drop down button for selecting a tool.
         DropdownButton(
           alignment: Alignment.center,
-          hint: const Text(
+          hint: Text(
             'Tool',
-            style: TextStyle(color: Colors.deepPurple),
+            style: Theme.of(context).textTheme.labelMedium,
           ),
-          iconEnabledColor: Colors.deepPurple,
-          style: const TextStyle(color: Colors.deepPurple),
+          iconEnabledColor: Theme.of(context).colorScheme.primary,
+          style: Theme.of(context).textTheme.labelMedium,
           value: _selectedTool,
           items: _toolMenuItems,
           onChanged: (tool) {
@@ -323,7 +316,7 @@ class _SnapGeometryEditsState extends State<SnapGeometryEdits>
         // A button to toggle the visibility of the editing toolbar.
         IconButton(
           onPressed: () => setState(() => _showEditToolbar = !_showEditToolbar),
-          icon: const Icon(Icons.edit, color: Colors.deepPurple),
+          icon: const Icon(Icons.edit),
         ),
       ],
     );
@@ -341,7 +334,6 @@ class _SnapGeometryEditsState extends State<SnapGeometryEdits>
             children: [
               // A button to toggle the visibility of the snap settings.
               ElevatedButton(
-                style: _buttonStyle,
                 onPressed: () => setState(() => _snapSettingsVisible = true),
                 child: const Text('Show snap settings'),
               ),
@@ -351,7 +343,6 @@ class _SnapGeometryEditsState extends State<SnapGeometryEdits>
                   Tooltip(
                     message: 'Undo',
                     child: ElevatedButton(
-                      style: _buttonStyle,
                       onPressed:
                           _geometryEditorIsStarted && _geometryEditorCanUndo
                               ? _geometryEditor.undo
@@ -364,7 +355,6 @@ class _SnapGeometryEditsState extends State<SnapGeometryEdits>
                   Tooltip(
                     message: 'Delete selected element',
                     child: ElevatedButton(
-                      style: _buttonStyle,
                       onPressed: _geometryEditorIsStarted &&
                               _geometryEditorHasSelectedElement &&
                               _geometryEditor.selectedElement != null &&
@@ -382,7 +372,6 @@ class _SnapGeometryEditsState extends State<SnapGeometryEdits>
                   Tooltip(
                     message: 'Stop and save edits',
                     child: ElevatedButton(
-                      style: _buttonStyle,
                       onPressed: _geometryEditorIsStarted ? stopAndSave : null,
                       child: const Icon(Icons.save),
                     ),
@@ -392,7 +381,6 @@ class _SnapGeometryEditsState extends State<SnapGeometryEdits>
                   Tooltip(
                     message: 'Stop and discard edits',
                     child: ElevatedButton(
-                      style: _buttonStyle,
                       onPressed:
                           _geometryEditorIsStarted ? stopAndDiscardEdits : null,
                       child: const Icon(Icons.not_interested_sharp),
