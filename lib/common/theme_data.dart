@@ -56,4 +56,6 @@ extension CustomTextTheme on TextTheme {
       );
 
   TextStyle get customErrorStyle => const TextStyle(color: Colors.red);
+
+  TextStyle get customWhiteStyle => const TextStyle(color: Colors.white);
 }
