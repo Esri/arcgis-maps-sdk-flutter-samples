@@ -14,14 +14,14 @@
 // limitations under the License.
 //
 
-import 'dart:convert';
 import 'package:arcgis_maps/arcgis_maps.dart';
-import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
-import 'package:arcgis_maps_sdk_flutter_samples/models/sample.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/common/theme_data.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/models/category.dart'
+    as arcgis_category;
 import 'package:arcgis_maps_sdk_flutter_samples/widgets/about_info.dart';
-import 'package:arcgis_maps_sdk_flutter_samples/widgets/sample_list_view.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/widgets/category_card.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/widgets/sample_viewer_page.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 void main() {
   // Supply your apiKey using the --dart-define-from-file command line argument.
@@ -37,53 +37,22 @@ void main() {
   runApp(
     MaterialApp(
       theme: sampleViewerTheme,
-      home: const SampleViewerApp(),
+      home: SampleViewerApp(),
     ),
   );
 }
 
-class SampleViewerApp extends StatefulWidget {
-  const SampleViewerApp({super.key});
+class SampleViewerApp extends StatelessWidget {
+  SampleViewerApp({super.key});
 
-  @override
-  State<SampleViewerApp> createState() => _SampleViewerAppState();
-}
-
-class _SampleViewerAppState extends State<SampleViewerApp> {
-  final _allSamples = <Sample>[];
-  final _searchFocusNode = FocusNode();
-  final _textEditingController = TextEditingController();
-  var _filteredSamples = <Sample>[];
-  bool _ready = false;
-  bool _searchHasFocus = false;
-
-  @override
-  void initState() {
-    super.initState();
-    loadSamples();
-    _searchFocusNode.addListener(
-      () {
-        if (_searchFocusNode.hasFocus != _searchHasFocus) {
-          setState(() => _searchHasFocus = _searchFocusNode.hasFocus);
-        }
-      },
-    );
-  }
-
-  @override
-  void dispose() {
-    _textEditingController.dispose();
-    _searchFocusNode.dispose();
-    super.dispose();
-  }
+  final sampleViewerPage = SampleViewerPage();
+  final double cardSpacing = 8;
 
   @override
   Widget build(BuildContext context) {
-    const title = 'ArcGIS Maps SDK for Flutter Samples';
-
     return Scaffold(
       appBar: AppBar(
-        title: const Text(title),
+        title: const Text('Categories'),
         actions: [
           IconButton(
             icon: const Icon(Icons.info_outline),
@@ -113,7 +82,7 @@ class _SampleViewerAppState extends State<SampleViewerApp> {
                       ),
                       Container(
                         padding: const EdgeInsets.all(20),
-                        child: const AboutInfo(title: title),
+                        child: const AboutInfo(title: applicationTitle),
                       ),
                     ],
                   ),
@@ -123,81 +92,62 @@ class _SampleViewerAppState extends State<SampleViewerApp> {
           ),
         ],
       ),
-      body: Column(
-        children: [
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8),
-            child: TextField(
-              focusNode: _searchFocusNode,
-              controller: _textEditingController,
-              onChanged: onSearchChanged,
-              autocorrect: false,
-              decoration: InputDecoration(
-                hintText: 'Search...',
-                suffixIcon: IconButton(
-                  icon: Icon(
-                    _searchHasFocus ? Icons.cancel : Icons.search,
-                  ),
-                  onPressed: onSearchSuffixPressed,
-                ),
+      body: Padding(
+        padding: const EdgeInsets.fromLTRB(8, 8, 0, 0),
+        child: OrientationBuilder(
+          builder: (context, orientation) {
+            return SingleChildScrollView(
+              child: Wrap(
+                spacing: cardSpacing,
+                runSpacing: cardSpacing,
+                children: _buildCategoryCards(context, orientation),
               ),
-            ),
-          ),
-          if (_ready)
-            Expanded(
-              child: Listener(
-                onPointerDown: (_) =>
-                    FocusManager.instance.primaryFocus?.unfocus(),
-                child: SampleListView(samples: _filteredSamples),
-              ),
-            )
-          else
-            const Center(
-              child: Text('Loading samples...'),
-            ),
-        ],
+            );
+          },
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => sampleViewerPage),
+          );
+        },
+        child: const Icon(Icons.search),
       ),
     );
   }
 
-  void onSearchSuffixPressed() {
-    if (_searchHasFocus) {
-      _textEditingController.clear();
-      FocusManager.instance.primaryFocus?.unfocus();
-      onSearchChanged('');
-    } else {
-      _searchFocusNode.requestFocus();
+  List<Widget> _buildCategoryCards(BuildContext context, Orientation orientation) {
+    var cardSize = MediaQuery.of(context).size.width / 2 - cardSpacing * 2;
+    if (orientation == Orientation.landscape) {
+      cardSize = MediaQuery.of(context).size.height / 2 - cardSpacing * 2;
     }
+    return List<Widget>.generate(
+      arcgis_category.sampleCategories.length,
+      (i) => SizedBox(
+        height: cardSize,
+        width: cardSize,
+        child: CategoryCard(
+          category: arcgis_category.sampleCategories[i],
+          onClick: () => _onCategoryClick(
+            context,
+            arcgis_category.sampleCategories[i],
+          ),
+        ),
+      ),
+    );
   }
 
-  Future<void> loadSamples() async {
-    final jsonString =
-        await rootBundle.loadString('assets/generated_samples_list.json');
-    final sampleData = jsonDecode(jsonString) as Map<String, dynamic>;
-    for (final s in sampleData.entries) {
-      _allSamples.add(Sample.fromJson(s.value));
-    }
-    _filteredSamples = _allSamples;
-    setState(() => _ready = true);
-  }
-
-  void onSearchChanged(String searchText) {
-    final List<Sample> results;
-    if (searchText.isEmpty) {
-      results = _allSamples;
-    } else {
-      results = _allSamples.where(
-        (sample) {
-          final lowerSearchText = searchText.toLowerCase();
-          return sample.title.toLowerCase().contains(lowerSearchText) ||
-              sample.category.toLowerCase().contains(lowerSearchText) ||
-              sample.keywords.any(
-                (keyword) => keyword.toLowerCase().contains(lowerSearchText),
-              );
-        },
-      ).toList();
-    }
-
-    setState(() => _filteredSamples = results);
+  void _onCategoryClick(
+    BuildContext context,
+    arcgis_category.Category category,
+  ) {
+    sampleViewerPage.category = category;
+    sampleViewerPage.isSearchable = false;
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => sampleViewerPage),
+    );
   }
 }
