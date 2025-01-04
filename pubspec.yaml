@@ -24,6 +24,7 @@ dependencies:
   build: ^2.4.1
   build_config: ^1.1.1
   glob: ^2.1.2
+  connectivity_plus: ^6.1.1
 
 dev_dependencies:
   flutter_lints: ^4.0.0
