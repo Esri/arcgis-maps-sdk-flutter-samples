@@ -252,7 +252,7 @@ class _GenerateOfflineMapState extends State<GenerateOfflineMap>
       });
 
       // If the exception is not due to user cancellation (code 17), show the details of the error in a dialog.
-      if (e.code != 17 && mounted) await showAlertDialog(context, 'Network connection is unavailable.');
+      if (e.code != 17 && mounted) await showAlertDialog(context, e.message);
       return;
     }
 
