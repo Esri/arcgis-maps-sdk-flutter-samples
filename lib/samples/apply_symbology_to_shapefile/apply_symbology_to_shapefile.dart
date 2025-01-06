@@ -113,12 +113,9 @@ class _ApplySymbologyToShapefileState extends State<ApplySymbologyToShapefile>
     map.operationalLayers.add(_shapefileFeatureLayer);
     // Create the symbology for the alternate renderer.
     final lineSymbol = SimpleLineSymbol(
-      style: SimpleLineSymbolStyle.solid,
       color: Colors.red,
-      width: 1.0,
     );
     final fillSymbol = SimpleFillSymbol(
-      style: SimpleFillSymbolStyle.solid,
       color: Colors.yellow,
       outline: lineSymbol,
     );
