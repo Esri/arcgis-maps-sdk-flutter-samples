@@ -242,15 +242,6 @@ class _GenerateOfflineMapState extends State<GenerateOfflineMap>
       _generateOfflineMapJob = null;
       setState(() => _progress = null);
 
-      // Cancelation:
-      // ArcGISException: code=17; User canceled.; Job canceled.
-
-      // If an error happens (such as cancellation), reset state.
-      setState(() {
-        _generateOfflineMapJob = null;
-        _progress = null;
-      });
-
       // If the exception is not due to user cancellation (code 17), show the details of the error in a dialog.
       if (e.code != 17 && mounted) await showAlertDialog(context, e.message);
       return;
