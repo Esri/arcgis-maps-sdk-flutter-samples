@@ -3,7 +3,7 @@
     "description": "Create, query and edit a specific server version using service geodatabase.",
     "ignore": false,
     "images": [
-        "editWithBranchVersioning.png"
+        "edit_with_branch_versioning.png"
     ],
     "keywords": [
         "branch versioning",
