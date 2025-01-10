@@ -43,10 +43,8 @@ void main() {
 }
 
 class SampleViewerApp extends StatelessWidget {
-  SampleViewerApp({super.key});
-
-  final sampleViewerPage = SampleViewerPage();
-  final double cardSpacing = 6;
+  const SampleViewerApp({super.key, this.cardSpacing = 6});
+  final double cardSpacing;
 
   @override
   Widget build(BuildContext context) {
@@ -108,11 +106,9 @@ class SampleViewerApp extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          sampleViewerPage.category = null;
-          sampleViewerPage.isSearchable = true;
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => sampleViewerPage),
+            MaterialPageRoute(builder: (context) => const SampleViewerPage()),
           );
         },
         child: const Icon(Icons.search),
@@ -145,11 +141,9 @@ class SampleViewerApp extends StatelessWidget {
     BuildContext context,
     arcgis_category.Category category,
   ) {
-    sampleViewerPage.category = category;
-    sampleViewerPage.isSearchable = false;
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => sampleViewerPage),
+      MaterialPageRoute(builder: (context) => SampleViewerPage(category: category, isSearchable: false)),
     );
   }
 }

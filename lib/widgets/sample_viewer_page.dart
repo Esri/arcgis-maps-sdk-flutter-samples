@@ -24,9 +24,9 @@ import 'package:flutter/services.dart';
 
 /// A page that displays a list of sample categories.
 class SampleViewerPage extends StatefulWidget {
-  SampleViewerPage({super.key});
-  arcgis_category.Category? category;
-  bool isSearchable = true;
+  const SampleViewerPage({super.key, this.category, this.isSearchable = true});
+  final arcgis_category.Category? category;
+  final bool isSearchable;
 
   @override
   State<SampleViewerPage> createState() => _SampleViewerPageState();
