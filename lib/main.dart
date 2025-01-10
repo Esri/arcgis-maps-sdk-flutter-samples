@@ -42,9 +42,15 @@ void main() {
   );
 }
 
-class SampleViewerApp extends StatelessWidget {
-  const SampleViewerApp({super.key, this.cardSpacing = 6});
-  final double cardSpacing;
+class SampleViewerApp extends StatefulWidget {
+  const SampleViewerApp({super.key});
+
+  @override
+  State<SampleViewerApp> createState() => _SampleViewerAppState();
+}
+
+class _SampleViewerAppState extends State<SampleViewerApp> {
+  static const double cardSpacing = 6;
 
   @override
   Widget build(BuildContext context) {
