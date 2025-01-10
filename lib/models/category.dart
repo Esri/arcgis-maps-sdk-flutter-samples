@@ -42,7 +42,6 @@ enum SampleCategory {
   // utilityNetworks('Utility Networks'),
   visualization('Visualization');
   // favorites('Favorites');
-
   const SampleCategory(this.title);
   final String title;
 }

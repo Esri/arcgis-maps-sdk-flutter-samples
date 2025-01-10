@@ -1,5 +1,5 @@
 //
-// Copyright 2024 Esri
+// Copyright 2025 Esri
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -33,28 +33,31 @@ class CategoryCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
       ),
       elevation: 4,
-      child: InkWell(
-        onTap: onClick,
-        child: Stack(
-          alignment: Alignment.center,
-          children: [
-            CategoryBackground(category: category),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                CategoryIconBackground(category: category),
-                Text(
-                  category.title,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(16),
+        child: InkWell(
+          onTap: onClick,
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              CategoryBackground(category: category),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CategoryIconBackground(category: category),
+                  Text(
+                    category.title,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    textAlign: TextAlign.center,
                   ),
-                  //textAlign: TextAlign.center,
-                ),
-              ],
-            ),
-          ],
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
