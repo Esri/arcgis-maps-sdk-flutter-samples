@@ -17,9 +17,7 @@
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
-const String applicationTitle = 'ArcGIS Maps SDK Flutter Samples';
 class AboutInfo extends StatefulWidget {
-
   const AboutInfo({
     required this.title,
     super.key,

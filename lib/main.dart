@@ -48,6 +48,7 @@ class SampleViewerApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const String applicationTitle = 'ArcGIS Maps SDK Flutter Samples';
     return Scaffold(
       appBar: AppBar(
         title: const Text('Categories'),
