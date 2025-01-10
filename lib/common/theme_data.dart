@@ -56,9 +56,6 @@ extension CustomTextTheme on TextTheme {
       );
 
   TextStyle get customErrorStyle => const TextStyle(color: Colors.red);
-  TextStyle get customWhiteStyle => const TextStyle(color: Colors.white);
-}
 
-extension CustomColorScheme on ColorScheme {
-  Color get circleColor => const Color(0xFFFF0000);
+  TextStyle get customWhiteStyle => const TextStyle(color: Colors.white);
 }

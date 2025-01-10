@@ -15,6 +15,7 @@
 //
 
 import 'package:arcgis_maps/arcgis_maps.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_state_support.dart';
 import 'package:flutter/material.dart';
 
@@ -169,7 +170,7 @@ class _LoginWidgetState extends State<LoginWidget> {
               // Display an error message if there is one.
               Text(
                 _error ?? '',
-                style: const TextStyle(color: Colors.red),
+                style: Theme.of(context).textTheme.customErrorStyle,
               ),
             ],
           ),
