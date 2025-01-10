@@ -15,8 +15,9 @@
 //
 
 import 'package:arcgis_maps/arcgis_maps.dart';
-import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_state_support.dart';
 import 'package:flutter/material.dart';
+
+import '../../utils/sample_state_support.dart';
 
 class AddFeatureCollectionLayerFromTable extends StatefulWidget {
   const AddFeatureCollectionLayerFromTable({super.key});
@@ -130,8 +131,7 @@ class _AddFeatureCollectionLayerFromTableState
     );
 
     // Build a polyline.
-    final polylineBuilder =
-        PolylineBuilder(spatialReference: SpatialReference(wkid: 4326));
+    final polylineBuilder = PolylineBuilder(spatialReference: SpatialReference(wkid: 4326));
     polylineBuilder.addPoint(
       ArcGISPoint(
         x: -79.497238,
@@ -173,6 +173,7 @@ class _AddFeatureCollectionLayerFromTableState
         style: SimpleFillSymbolStyle.diagonalCross,
         color: Colors.cyan,
         outline: SimpleLineSymbol(
+          style: SimpleLineSymbolStyle.solid,
           color: Colors.blue,
           width: 2,
         ),
@@ -180,8 +181,7 @@ class _AddFeatureCollectionLayerFromTableState
     );
 
     // Build a polygon.
-    final polygonBuilder =
-        PolygonBuilder(spatialReference: SpatialReference(wkid: 4326));
+    final polygonBuilder = PolygonBuilder(spatialReference: SpatialReference(wkid: 4326));
     polygonBuilder.addPoint(
       ArcGISPoint(
         x: -79.497238,

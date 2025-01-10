@@ -15,7 +15,6 @@
 //
 
 import 'package:arcgis_maps/arcgis_maps.dart';
-import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_state_support.dart';
 import 'package:flutter/material.dart';
 
@@ -51,8 +50,6 @@ class _ApplyStyleToWmsLayerState extends State<ApplyStyleToWmsLayer>
     return Scaffold(
       body: SafeArea(
         top: false,
-        left: false,
-        right: false,
         child: Stack(
           children: [
             Column(
@@ -69,7 +66,15 @@ class _ApplyStyleToWmsLayerState extends State<ApplyStyleToWmsLayer>
               ],
             ),
             // Display a progress indicator and prevent interaction until state is ready.
-            LoadingIndicator(visible: !_ready),
+            Visibility(
+              visible: !_ready,
+              child: const SizedBox.expand(
+                child: ColoredBox(
+                  color: Colors.white30,
+                  child: Center(child: CircularProgressIndicator()),
+                ),
+              ),
+            ),
           ],
         ),
       ),
@@ -81,14 +86,16 @@ class _ApplyStyleToWmsLayerState extends State<ApplyStyleToWmsLayer>
       // A drop down button for selecting style.
       child: DropdownButton(
         alignment: Alignment.center,
-        hint: Text(
+        hint: const Text(
           'Choose a style',
-          style: Theme.of(context).textTheme.labelMedium,
+          style: TextStyle(
+            color: Colors.deepPurple,
+          ),
         ),
         icon: const Icon(Icons.arrow_drop_down),
-        iconEnabledColor: Theme.of(context).primaryColor,
-        iconDisabledColor: Theme.of(context).disabledColor,
-        style: Theme.of(context).textTheme.labelMedium,
+        iconEnabledColor: Colors.deepPurple,
+        iconDisabledColor: Colors.grey,
+        style: const TextStyle(color: Colors.deepPurple),
         value: _selectedStyle,
         items: _stylesTitles.map((items) {
           return DropdownMenuItem(
@@ -125,7 +132,7 @@ class _ApplyStyleToWmsLayerState extends State<ApplyStyleToWmsLayer>
     }
   }
 
-  Future<void> onMapViewReady() async {
+  void onMapViewReady() async {
     // Create a map with spatial reference appropriate for the service.
     final map = ArcGISMap(spatialReference: SpatialReference(wkid: 26915))
       ..minScale = 7000000.0;

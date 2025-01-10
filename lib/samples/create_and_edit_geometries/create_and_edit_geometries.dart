@@ -68,14 +68,16 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
   var _geometryEditorHasSelectedElement = false;
   // A flag for controlling the visibility of the editing toolbar.
   var _showEditToolbar = true;
+  // A custom style for when the editing toolbar buttons are not enabled.
+  final _buttonStyle = ElevatedButton.styleFrom(
+    disabledBackgroundColor: Colors.white.withOpacity(0.6),
+  );
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
         top: false,
-        left: false,
-        right: false,
         child: Stack(
           children: [
             Column(
@@ -105,7 +107,7 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
     );
   }
 
-  Future<void> onMapViewReady() async {
+  void onMapViewReady() async {
     // Create a map with an imagery basemap style.
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISImageryStandard);
     // Set the map to the map view controller.
@@ -148,12 +150,12 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
     _mapViewController.geometryEditor = _geometryEditor;
   }
 
-  Future<void> onTap(Offset localPosition) async {
+  void onTap(Offset localPosition) async {
     // Perform an identify operation on the graphics overlay at the tapped location.
     final identifyResult = await _mapViewController.identifyGraphicsOverlay(
       _graphicsOverlay,
       screenPoint: localPosition,
-      tolerance: 12,
+      tolerance: 12.0,
     );
 
     // Get the features from the identify result.
@@ -270,6 +272,7 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
         );
       } else {
         return DropdownMenuItem(
+          enabled: true,
           value: type,
           child: Text(type.name.capitalize()),
         );
@@ -299,6 +302,7 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
     return tools.keys.map((tool) {
       if (tool == _vertexTool || tool == _reticleVertexTool) {
         return DropdownMenuItem(
+          enabled: true,
           value: tool,
           child: Text(tools[tool] ?? 'Unknown Tool'),
         );
@@ -327,14 +331,16 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
         // A drop down button for selecting geometry type.
         DropdownButton(
           alignment: Alignment.center,
-          hint: Text(
+          hint: const Text(
             'Geometry Type',
-            style: Theme.of(context).textTheme.labelMedium,
+            style: TextStyle(
+              color: Colors.deepPurple,
+            ),
           ),
           icon: const Icon(Icons.arrow_drop_down),
-          iconEnabledColor: Theme.of(context).colorScheme.primary,
-          iconDisabledColor: Theme.of(context).disabledColor,
-          style: Theme.of(context).textTheme.labelMedium,
+          iconEnabledColor: Colors.deepPurple,
+          iconDisabledColor: Colors.grey,
+          style: const TextStyle(color: Colors.deepPurple),
           value: _selectedGeometryType,
           items: configureGeometryTypeMenuItems(),
           // If the geometry editor is already started then we fully disable the DropDownButton and prevent editing with another geometry type.
@@ -349,12 +355,12 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
         // A drop down button for selecting a tool.
         DropdownButton(
           alignment: Alignment.center,
-          hint: Text(
+          hint: const Text(
             'Tool',
-            style: Theme.of(context).textTheme.labelMedium,
+            style: TextStyle(color: Colors.deepPurple),
           ),
-          iconEnabledColor: Theme.of(context).colorScheme.primary,
-          style: Theme.of(context).textTheme.labelMedium,
+          iconEnabledColor: Colors.deepPurple,
+          style: const TextStyle(color: Colors.deepPurple),
           value: _selectedTool,
           items: configureToolMenuItems(),
           onChanged: (tool) {
@@ -367,7 +373,7 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
         // A button to toggle the visibility of the editing toolbar.
         IconButton(
           onPressed: () => setState(() => _showEditToolbar = !_showEditToolbar),
-          icon: const Icon(Icons.edit),
+          icon: const Icon(Icons.edit, color: Colors.deepPurple),
         ),
       ],
     );
@@ -381,7 +387,9 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           Column(
+            mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.end,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Row(
                 children: [
@@ -389,9 +397,10 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
                   Tooltip(
                     message: 'Undo',
                     child: ElevatedButton(
+                      style: _buttonStyle,
                       onPressed:
                           _geometryEditorIsStarted && _geometryEditorCanUndo
-                              ? _geometryEditor.undo
+                              ? () => _geometryEditor.undo()
                               : null,
                       child: const Icon(Icons.undo),
                     ),
@@ -401,9 +410,10 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
                   Tooltip(
                     message: 'Redo',
                     child: ElevatedButton(
+                      style: _buttonStyle,
                       onPressed:
                           _geometryEditorIsStarted && _geometryEditorCanRedo
-                              ? _geometryEditor.redo
+                              ? () => _geometryEditor.redo()
                               : null,
                       child: const Icon(Icons.redo),
                     ),
@@ -416,6 +426,7 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
                   Tooltip(
                     message: 'Stop and save edits',
                     child: ElevatedButton(
+                      style: _buttonStyle,
                       onPressed: _geometryEditorIsStarted ? stopAndSave : null,
                       child: const Icon(Icons.save),
                     ),
@@ -425,11 +436,12 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
                   Tooltip(
                     message: 'Delete selected element',
                     child: ElevatedButton(
+                      style: _buttonStyle,
                       onPressed: _geometryEditorIsStarted &&
                               _geometryEditorHasSelectedElement &&
                               _geometryEditor.selectedElement != null &&
                               _geometryEditor.selectedElement!.canDelete
-                          ? _geometryEditor.deleteSelectedElement
+                          ? () => _geometryEditor.deleteSelectedElement()
                           : null,
                       child: const Icon(Icons.clear),
                     ),
@@ -442,6 +454,7 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
                   Tooltip(
                     message: 'Stop and discard edits',
                     child: ElevatedButton(
+                      style: _buttonStyle,
                       onPressed:
                           _geometryEditorIsStarted ? stopAndDiscardEdits : null,
                       child: const Icon(Icons.not_interested_sharp),
@@ -452,6 +465,7 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
                   Tooltip(
                     message: 'Delete all graphics',
                     child: ElevatedButton(
+                      style: _buttonStyle,
                       onPressed: !_geometryEditorIsStarted
                           ? () => _graphicsOverlay.graphics.clear()
                           : null,
@@ -462,6 +476,7 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
               ),
               // A button to toggle the scale mode setting of the geometry editor tools.
               ElevatedButton(
+                style: _buttonStyle,
                 // Scale mode is not compatible with point geometry types or the reticle vertex tool.
                 onPressed: _selectedGeometryType == GeometryType.point ||
                         _selectedTool == _reticleVertexTool
@@ -495,18 +510,22 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
       size: 10,
     );
     _multipointSymbol = SimpleMarkerSymbol(
+      style: SimpleMarkerSymbolStyle.circle,
       color: Colors.yellow,
       size: 5,
     );
     _polylineSymbol = SimpleLineSymbol(
+      style: SimpleLineSymbolStyle.solid,
       color: Colors.blue,
       width: 2,
     );
     final outlineSymbol = SimpleLineSymbol(
       style: SimpleLineSymbolStyle.dash,
       color: Colors.black,
+      width: 1,
     );
     _polygonSymbol = SimpleFillSymbol(
+      style: SimpleFillSymbolStyle.solid,
       color: Colors.red.withOpacity(0.3),
       outline: outlineSymbol,
     );

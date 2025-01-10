@@ -15,8 +15,9 @@
 //
 
 import 'package:arcgis_maps/arcgis_maps.dart';
-import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_state_support.dart';
 import 'package:flutter/material.dart';
+
+import '../../utils/sample_state_support.dart';
 
 class ApplyUniqueValueRenderer extends StatefulWidget {
   const ApplyUniqueValueRenderer({super.key});
@@ -67,20 +68,24 @@ class _ApplyUniqueValueRendererState extends State<ApplyUniqueValueRenderer>
   /// Configure a unique value renderer.
   Renderer? _configureUniqueValueRenderer() {
     final stateOutlineSymbol = SimpleLineSymbol(
+      style: SimpleLineSymbolStyle.solid,
       color: Colors.white,
       width: 0.7,
     );
 
     // Create fill symbols for each region.
     final pacificFillSymbol = SimpleFillSymbol(
+      style: SimpleFillSymbolStyle.solid,
       color: const Color.fromARGB(255, 0, 0, 255),
       outline: stateOutlineSymbol,
     );
     final mountainFillSymbol = SimpleFillSymbol(
+      style: SimpleFillSymbolStyle.solid,
       color: const Color.fromARGB(255, 0, 255, 0),
       outline: stateOutlineSymbol,
     );
     final westSouthCentralFillSymbol = SimpleFillSymbol(
+      style: SimpleFillSymbolStyle.solid,
       color: const Color.fromARGB(255, 250, 125, 0),
       outline: stateOutlineSymbol,
     );
@@ -108,6 +113,7 @@ class _ApplyUniqueValueRendererState extends State<ApplyUniqueValueRenderer>
     final defaultFillSymbol = SimpleFillSymbol(
       style: SimpleFillSymbolStyle.cross,
       color: Colors.grey,
+      outline: null,
     );
 
     // Create a unique value renderer with the unique values.

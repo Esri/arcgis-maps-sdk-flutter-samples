@@ -15,9 +15,9 @@
 //
 
 import 'package:arcgis_maps/arcgis_maps.dart';
-import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
-import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_state_support.dart';
 import 'package:flutter/material.dart';
+
+import '../../utils/sample_state_support.dart';
 
 class DisplayClusters extends StatefulWidget {
   const DisplayClusters({super.key});
@@ -42,8 +42,6 @@ class _DisplayClustersState extends State<DisplayClusters>
     return Scaffold(
       body: SafeArea(
         top: false,
-        left: false,
-        right: false,
         child: Stack(
           children: [
             Column(
@@ -78,14 +76,22 @@ class _DisplayClustersState extends State<DisplayClusters>
               ],
             ),
             // Display a progress indicator and prevent interaction until state is ready.
-            LoadingIndicator(visible: !_ready),
+            Visibility(
+              visible: !_ready,
+              child: SizedBox.expand(
+                child: Container(
+                  color: Colors.white30,
+                  child: const Center(child: CircularProgressIndicator()),
+                ),
+              ),
+            ),
           ],
         ),
       ),
     );
   }
 
-  Future<void> onMapViewReady() async {
+  void onMapViewReady() async {
     // Get the power plants web map from the default portal.
     final portal = Portal.arcGISOnline();
     final portalItem = PortalItem.withPortalAndItemId(
@@ -113,27 +119,23 @@ class _DisplayClustersState extends State<DisplayClusters>
           _featureReductionEnabled = _featureLayer.featureReduction!.enabled;
         });
       } else {
-        showMessageDialog(
+        showWarningDialog(
           'Feature layer does not have feature reduction enabled.',
-          title: 'Warning',
         );
       }
     } else {
-      showMessageDialog(
-        'Unable to access a feature layer on the web map.',
-        title: 'Warning',
-      );
+      showWarningDialog('Unable to access a feature layer on the web map.');
     }
   }
 
-  Future<void> onTap(Offset localPosition) async {
+  void onTap(Offset localPosition) async {
     // Clear any existing selected features.
     _featureLayer.clearSelection();
     // Perform an identify result on the map view controller, using the feature layer and tapped location.
     final identifyLayerResult = await _mapViewController.identifyLayer(
       _featureLayer,
       screenPoint: localPosition,
-      tolerance: 12,
+      tolerance: 12.0,
     );
     // Get the aggregate geoelements from the identify result.
     final aggregateGeoElements =
@@ -195,5 +197,20 @@ class _DisplayClustersState extends State<DisplayClusters>
       featureReduction.enabled = !featureReduction.enabled;
       setState(() => _featureReductionEnabled = featureReduction.enabled);
     }
+  }
+
+  void showWarningDialog(String message) {
+    // Show a dialog with the provided message.
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Warning'),
+          content: Text(
+            '$message Could not load sample.',
+          ),
+        );
+      },
+    );
   }
 }

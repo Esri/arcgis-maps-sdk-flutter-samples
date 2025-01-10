@@ -15,8 +15,9 @@
 //
 
 import 'package:arcgis_maps/arcgis_maps.dart';
-import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_state_support.dart';
 import 'package:flutter/material.dart';
+
+import '../../utils/sample_state_support.dart';
 
 class QueryFeatureTable extends StatefulWidget {
   const QueryFeatureTable({super.key});
@@ -91,7 +92,7 @@ class _QueryFeatureTableState extends State<QueryFeatureTable>
     );
   }
 
-  Future<void> onMapViewReady() async {
+  void onMapViewReady() async {
     // Create a map with the topographic basemap style and set to the map view.
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic);
 
@@ -102,9 +103,12 @@ class _QueryFeatureTableState extends State<QueryFeatureTable>
 
     // Create a renderer with a fill symbol and apply to the feature layer.
     final lineSymbol = SimpleLineSymbol(
+      style: SimpleLineSymbolStyle.solid,
       color: Colors.black,
+      width: 1,
     );
     final fillSymbol = SimpleFillSymbol(
+      style: SimpleFillSymbolStyle.solid,
       color: Colors.yellow,
       outline: lineSymbol,
     );
@@ -118,7 +122,7 @@ class _QueryFeatureTableState extends State<QueryFeatureTable>
     _mapViewController.arcGISMap = map;
   }
 
-  Future<void> onSearchSubmitted(String value) async {
+  void onSearchSubmitted(String value) async {
     // Clear the selection.
     _featureLayer.clearSelection();
 
@@ -137,9 +141,9 @@ class _QueryFeatureTableState extends State<QueryFeatureTable>
       final feature = iterator.current;
       if (feature.geometry != null) {
         // Set the viewpoint to the feature's extent.
-        await _mapViewController.setViewpointGeometry(
+        _mapViewController.setViewpointGeometry(
           feature.geometry!.extent,
-          paddingInDiPs: 20,
+          paddingInDiPs: 20.0,
         );
       }
       _featureLayer.selectFeature(feature);
@@ -148,15 +152,21 @@ class _QueryFeatureTableState extends State<QueryFeatureTable>
       if (mounted) {
         // Set the viewpoint to the initial viewpoint.
         _mapViewController.setViewpoint(_initialViewpoint);
-
-        showMessageDialog('No matching State found.');
+        showDialog(
+          context: context,
+          builder: (context) {
+            return const AlertDialog(
+              content: Text('No matching State found.'),
+            );
+          },
+        );
       }
     }
   }
 
   void dismissSearch() {
     // Clear the text field and dismiss the keyboard.
-    _textEditingController.clear();
+    setState(() => _textEditingController.clear());
     FocusManager.instance.primaryFocus?.unfocus();
   }
 }

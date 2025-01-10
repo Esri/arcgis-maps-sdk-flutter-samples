@@ -15,8 +15,9 @@
 //
 
 import 'package:arcgis_maps/arcgis_maps.dart';
-import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_state_support.dart';
 import 'package:flutter/material.dart';
+
+import '../../utils/sample_state_support.dart';
 
 class ShowGrid extends StatefulWidget {
   const ShowGrid({super.key});
@@ -46,8 +47,6 @@ class _ShowGridState extends State<ShowGrid> with SampleStateSupport {
     return Scaffold(
       body: SafeArea(
         top: false,
-        left: false,
-        right: false,
         child: Stack(
           children: [
             Column(
@@ -96,11 +95,11 @@ class _ShowGridState extends State<ShowGrid> with SampleStateSupport {
     _mapViewController.grid = grid;
     if (grid is LatitudeLongitudeGrid) {
       grid.labelFormat = LatitudeLongitudeGridLabelFormat.decimalDegrees;
-      _mapViewController.setViewpointCenter(_center, scale: 23227);
+      _mapViewController.setViewpointCenter(_center, scale: 23227.0);
     } else if (grid is UtmGrid) {
-      _mapViewController.setViewpointCenter(_center, scale: 10000000);
+      _mapViewController.setViewpointCenter(_center, scale: 10000000.0);
     } else if (grid is UsngGrid || grid is MgrsGrid) {
-      _mapViewController.setViewpointCenter(_center, scale: 23227);
+      _mapViewController.setViewpointCenter(_center, scale: 23227.0);
     }
   }
 
@@ -109,9 +108,11 @@ class _ShowGridState extends State<ShowGrid> with SampleStateSupport {
     _gridColorType = colorType;
     if (_mapViewController.grid != null) {
       final grid = _mapViewController.grid!;
-      for (var i = 0; i < grid.levelCount; i++) {
+      for (int i = 0; i < grid.levelCount; i++) {
         final lineSymbol = SimpleLineSymbol(
           color: colorType.value,
+          width: 1.0,
+          style: SimpleLineSymbolStyle.solid,
         );
         grid.setLineSymbol(level: i, lineSymbol: lineSymbol);
       }
@@ -131,10 +132,10 @@ class _ShowGridState extends State<ShowGrid> with SampleStateSupport {
     _gridLabelColorType = colorType;
     if (_mapViewController.grid != null) {
       final grid = _mapViewController.grid!;
-      for (var i = 0; i < grid.levelCount; i++) {
+      for (int i = 0; i < grid.levelCount; i++) {
         final textSymbol = TextSymbol(
           color: colorType.value,
-          size: 14,
+          size: 14.0,
           horizontalAlignment: HorizontalAlignment.left,
           verticalAlignment: VerticalAlignment.bottom,
         )
@@ -173,7 +174,7 @@ class _ShowGridState extends State<ShowGrid> with SampleStateSupport {
           alignment: Alignment.bottomCenter,
           child: Material(
             child: Padding(
-              padding: const EdgeInsets.all(10),
+              padding: const EdgeInsets.all(10.0),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -219,16 +220,6 @@ class _ShowGridState extends State<ShowGrid> with SampleStateSupport {
 /// A widget that displays grid options.
 ///
 class GridOptions extends StatefulWidget {
-  const GridOptions({
-    required this.grids,
-    required this.onGridChanged,
-    required this.onGridColorChanged,
-    required this.onLabelColorChanged,
-    required this.onLabelPositionChanged,
-    required this.onLabelFormatChanged,
-    required this.onLabelVisibilityChanged,
-    super.key,
-  });
   final Function(GridType) onGridChanged;
   final Function(GridColorType) onGridColorChanged;
   final Function(GridColorType) onLabelColorChanged;
@@ -236,6 +227,17 @@ class GridOptions extends StatefulWidget {
   final Function(LatLongLabelFormatType) onLabelFormatChanged;
   final Function(bool) onLabelVisibilityChanged;
   final MapViewGrids grids;
+
+  const GridOptions({
+    super.key,
+    required this.grids,
+    required this.onGridChanged,
+    required this.onGridColorChanged,
+    required this.onLabelColorChanged,
+    required this.onLabelPositionChanged,
+    required this.onLabelFormatChanged,
+    required this.onLabelVisibilityChanged,
+  });
 
   @override
   State<GridOptions> createState() => _GridOptionsState();
@@ -270,10 +272,9 @@ class _GridOptionsState extends State<GridOptions> with SampleStateSupport {
       child: ListBody(
         children: [
           _buildGridDropdown(),
-          if (isLabelFormatVisible)
-            _buildLatLongLabelFormatDropdown()
-          else
-            Container(),
+          isLabelFormatVisible
+              ? _buildLatLongLabelFormatDropdown()
+              : Container(),
           _buildGridColorDropdown(),
           _buildLabelColorDropdown(),
           _buildLabelPositionDropdown(),
@@ -288,7 +289,7 @@ class _GridOptionsState extends State<GridOptions> with SampleStateSupport {
     required T value,
     required String labelText,
     required List<T> items,
-    required Function(T) onChanged,
+    required Function onChanged,
   }) {
     return DropdownButtonFormField(
       value: value,
@@ -353,7 +354,7 @@ class _GridOptionsState extends State<GridOptions> with SampleStateSupport {
       labelText: 'Label Color',
       items: GridColorType.values,
       onChanged: (newColor) {
-        widget.onLabelColorChanged(newColor);
+        widget.onLabelColorChanged(newColor!);
         setState(() => gridLabelColorType = newColor);
       },
     );
@@ -403,6 +404,12 @@ class _GridOptionsState extends State<GridOptions> with SampleStateSupport {
 // A data class that holds the grid options.
 //
 class MapViewGrids {
+  final GridType gridType;
+  final GridColorType gridColorType;
+  final GridColorType labelColorType;
+  final GridLabelPositionType labelPositionType;
+  final LatLongLabelFormatType labelFormatType;
+  final bool labelVisible;
   MapViewGrids({
     required this.gridType,
     required this.gridColorType,
@@ -411,12 +418,6 @@ class MapViewGrids {
     required this.labelFormatType,
     required this.labelVisible,
   });
-  final GridType gridType;
-  final GridColorType gridColorType;
-  final GridColorType labelColorType;
-  final GridLabelPositionType labelPositionType;
-  final LatLongLabelFormatType labelFormatType;
-  final bool labelVisible;
 }
 
 // An enum of grid label positions.
@@ -429,11 +430,9 @@ enum GridLabelPositionType {
   topRight('TopRight', GridLabelPosition.topRight),
   geographic('Geographic', GridLabelPosition.geographic);
 
-  const GridLabelPositionType(this.name, this.value);
-
   final String name;
   final GridLabelPosition value;
-
+  const GridLabelPositionType(this.name, this.value);
   @override
   String toString() => name;
 }
@@ -445,11 +444,9 @@ enum GridColorType {
   green('Green', Colors.green),
   yellow('Yellow', Colors.yellow);
 
-  const GridColorType(this.name, this.value);
-
   final String name;
   final Color value;
-
+  const GridColorType(this.name, this.value);
   @override
   String toString() => name;
 }
@@ -465,11 +462,9 @@ enum LatLongLabelFormatType {
     LatitudeLongitudeGridLabelFormat.degreesMinutesSeconds,
   );
 
-  const LatLongLabelFormatType(this.name, this.value);
-
   final String name;
   final LatitudeLongitudeGridLabelFormat value;
-
+  const LatLongLabelFormatType(this.name, this.value);
   @override
   String toString() => name;
 }
@@ -481,10 +476,7 @@ enum GridType {
   utm('UTM'),
   usng('USNG');
 
-  const GridType(this.name);
-
   final String name;
-
   Grid get value {
     switch (this) {
       case GridType.latitudeLongitude:
@@ -498,6 +490,7 @@ enum GridType {
     }
   }
 
+  const GridType(this.name);
   @override
   String toString() => name;
 }

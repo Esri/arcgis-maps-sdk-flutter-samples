@@ -16,11 +16,11 @@
 import 'dart:io';
 
 import 'package:arcgis_maps/arcgis_maps.dart';
-import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
-import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_data.dart';
-import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_state_support.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
+
+import '../../utils/sample_data.dart';
+import '../../utils/sample_state_support.dart';
 
 class DisplayDimensions extends StatefulWidget {
   const DisplayDimensions({super.key});
@@ -52,8 +52,6 @@ class _DisplayDimensionsState extends State<DisplayDimensions>
     return Scaffold(
       body: SafeArea(
         top: false,
-        left: false,
-        right: false,
         child: Stack(
           children: [
             Column(
@@ -104,14 +102,22 @@ class _DisplayDimensionsState extends State<DisplayDimensions>
               ],
             ),
             // Display a progress indicator and prevent interaction until state is ready.
-            LoadingIndicator(visible: !_ready),
+            Visibility(
+              visible: !_ready,
+              child: const SizedBox.expand(
+                child: ColoredBox(
+                  color: Colors.white30,
+                  child: Center(child: CircularProgressIndicator()),
+                ),
+              ),
+            ),
           ],
         ),
       ),
     );
   }
 
-  Future<void> onMapViewReady() async {
+  void onMapViewReady() async {
     // Download the mobile map package.
     await downloadSampleData(['f5ff6f5556a945bca87ca513b8729a1e']);
 

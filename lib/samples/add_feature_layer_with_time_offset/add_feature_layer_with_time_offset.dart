@@ -14,10 +14,11 @@
 // limitations under the License.
 //
 
+import 'dart:math';
 import 'package:arcgis_maps/arcgis_maps.dart';
-import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
-import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_state_support.dart';
 import 'package:flutter/material.dart';
+
+import '../../utils/sample_state_support.dart';
 
 class AddFeatureLayerWithTimeOffset extends StatefulWidget {
   const AddFeatureLayerWithTimeOffset({super.key});
@@ -48,8 +49,6 @@ class _AddFeatureLayerWithTimeOffsetState
     return Scaffold(
       body: SafeArea(
         top: false,
-        left: false,
-        right: false,
         child: Stack(
           children: [
             Column(
@@ -74,7 +73,15 @@ class _AddFeatureLayerWithTimeOffsetState
               ],
             ),
             // Display a progress indicator and prevent interaction until state is ready.
-            LoadingIndicator(visible: !_ready),
+            Visibility(
+              visible: !_ready,
+              child: SizedBox.expand(
+                child: Container(
+                  color: Colors.white30,
+                  child: const Center(child: CircularProgressIndicator()),
+                ),
+              ),
+            ),
           ],
         ),
       ),
@@ -85,63 +92,88 @@ class _AddFeatureLayerWithTimeOffsetState
 
   // The build method for the Settings bottom sheet.
   Widget buildSettings(BuildContext context) {
-    return BottomSheetSettings(
-      onCloseIconPressed: () => setState(() => _settingsVisible = false),
-      settingsWidgets: (context) => [
-        // Display the current date range.
-        Text(_dateRangeMessage),
-        Row(
-          children: [
-            Expanded(
-              // A slider to adjust the interval.
-              child: Slider(
-                value: _intervalFraction,
-                onChanged: (value) {
-                  setState(() => _intervalFraction = value);
-                  updateTimeExtent();
-                },
-              ),
-            ),
-          ],
+    return Container(
+      padding: EdgeInsets.fromLTRB(
+        20.0,
+        0.0,
+        20.0,
+        max(
+          20.0,
+          View.of(context).viewPadding.bottom /
+              View.of(context).devicePixelRatio,
         ),
-        Row(
-          children: [
-            SizedBox(
-              width: 20,
-              height: 20,
-              child: Container(
-                decoration: const BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.red,
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
+            children: [
+              Text(
+                'Settings',
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
+              const Spacer(),
+              IconButton(
+                icon: const Icon(Icons.close),
+                onPressed: () => setState(() => _settingsVisible = false),
+              ),
+            ],
+          ),
+          // Display the current date range.
+          Text(_dateRangeMessage),
+          Row(
+            children: [
+              Expanded(
+                // A slider to adjust the interval.
+                child: Slider(
+                  value: _intervalFraction,
+                  onChanged: (value) {
+                    setState(() => _intervalFraction = value);
+                    updateTimeExtent();
+                  },
                 ),
               ),
-            ),
-            const SizedBox(width: 10),
-            const Text('Hurricane tracks, offset 10 days'),
-          ],
-        ),
-        const SizedBox(height: 10),
-        Row(
-          children: [
-            SizedBox(
-              width: 20,
-              height: 20,
-              child: Container(
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.blue.shade900,
+            ],
+          ),
+          Row(
+            children: [
+              SizedBox(
+                width: 20.0,
+                height: 20.0,
+                child: Container(
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.red,
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(width: 10),
-            const Text('Hurricane tracks, no offset'),
-          ],
-        ),
-      ],
+              const SizedBox(width: 10.0),
+              const Text('Hurricane tracks, offset 10 days'),
+            ],
+          ),
+          const SizedBox(height: 10.0),
+          Row(
+            children: [
+              SizedBox(
+                width: 20.0,
+                height: 20.0,
+                child: Container(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.blue.shade900,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 10.0),
+              const Text('Hurricane tracks, no offset'),
+            ],
+          ),
+        ],
+      ),
     );
   }
 
-  Future<void> onMapViewReady() async {
+  void onMapViewReady() async {
     // Create a map with the oceans basemap style and an initial viewpoint.
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISOceans);
     map.initialViewpoint = Viewpoint.fromCenter(
@@ -150,7 +182,7 @@ class _AddFeatureLayerWithTimeOffsetState
         y: 2500000,
         spatialReference: SpatialReference.webMercator,
       ),
-      scale: 100000000,
+      scale: 1e8,
     );
 
     // The URL of the feature layer showing hurricanes.
@@ -163,8 +195,9 @@ class _AddFeatureLayerWithTimeOffsetState
     final featureLayer = FeatureLayer.withFeatureTable(featureTable);
     featureLayer.renderer = SimpleRenderer(
       symbol: SimpleMarkerSymbol(
+        style: SimpleMarkerSymbolStyle.circle,
         color: Colors.blue.shade900,
-        size: 10,
+        size: 10.0,
       ),
     );
 
@@ -174,8 +207,9 @@ class _AddFeatureLayerWithTimeOffsetState
         FeatureLayer.withFeatureTable(offsetFeatureTable);
     offsetFeatureLayer.renderer = SimpleRenderer(
       symbol: SimpleMarkerSymbol(
+        style: SimpleMarkerSymbolStyle.circle,
         color: Colors.red,
-        size: 10,
+        size: 10.0,
       ),
     );
     offsetFeatureLayer.timeOffset =

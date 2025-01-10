@@ -14,8 +14,9 @@
 // limitations under the License.
 //
 
+import 'dart:math';
+
 import 'package:arcgis_maps/arcgis_maps.dart';
-import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_state_support.dart';
 import 'package:flutter/material.dart';
 
@@ -72,6 +73,7 @@ class _CreateBuffersAroundPointsState extends State<CreateBuffersAroundPoints>
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
+        top: true,
         child: Stack(
           children: [
             Column(
@@ -109,7 +111,15 @@ class _CreateBuffersAroundPointsState extends State<CreateBuffersAroundPoints>
               ],
             ),
             // Display a progress indicator and prevent interaction until state is ready.
-            LoadingIndicator(visible: !_ready),
+            Visibility(
+              visible: !_ready,
+              child: const SizedBox.expand(
+                child: ColoredBox(
+                  color: Colors.white30,
+                  child: Center(child: CircularProgressIndicator()),
+                ),
+              ),
+            ),
             // Display a banner with instructions at the top.
             SafeArea(
               child: IgnorePointer(
@@ -122,7 +132,7 @@ class _CreateBuffersAroundPointsState extends State<CreateBuffersAroundPoints>
                       Text(
                         _status.label,
                         textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.labelMedium,
+                        style: const TextStyle(color: Colors.black),
                       ),
                     ],
                   ),
@@ -195,6 +205,7 @@ class _CreateBuffersAroundPointsState extends State<CreateBuffersAroundPoints>
     _bufferFillSymbol
       ..color = Colors.yellow.withOpacity(0.5)
       ..outline = SimpleLineSymbol(
+        style: SimpleLineSymbolStyle.solid,
         color: Colors.green,
         width: 3,
       );
@@ -208,48 +219,75 @@ class _CreateBuffersAroundPointsState extends State<CreateBuffersAroundPoints>
 
   // The build method for the settings.
   Widget buildSettings(BuildContext context, StateSetter setState) {
-    return BottomSheetSettings(
-      onCloseIconPressed: () => setState(() => _showSettings = false),
-      settingsWidgets: (context) => [
-        Row(
-          children: [
-            const Text('Buffer Radius (miles)'),
-            const Spacer(),
-            Text(
-              _bufferRadius.round().toString(),
-              textAlign: TextAlign.right,
-            ),
-          ],
+    return Container(
+      padding: EdgeInsets.fromLTRB(
+        20.0,
+        0.0,
+        20.0,
+        max(
+          20.0,
+          View.of(context).viewPadding.bottom /
+              View.of(context).devicePixelRatio,
         ),
-        Row(
-          children: [
-            Expanded(
-              // A slider to adjust the buffer radius.
-              child: Slider(
-                value: _bufferRadius,
-                min: 10,
-                max: 300,
-                onChanged: (value) => setState(() => _bufferRadius = value),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
+            children: [
+              Text(
+                'Settings',
+                style: Theme.of(context).textTheme.titleLarge,
               ),
-            ),
-          ],
-        ),
-        Row(
-          children: [
-            Text(_shouldUnion ? 'Union Enabled' : 'Union Disabled'),
-            const Spacer(),
-            Switch(
-              value: _shouldUnion,
-              onChanged: (value) {
-                setState(() => _shouldUnion = value);
-                if (_bufferPoints.isNotEmpty) {
-                  drawBuffers(unionized: _shouldUnion);
-                }
-              },
-            ),
-          ],
-        ),
-      ],
+              const Spacer(),
+              IconButton(
+                onPressed: () {
+                  setState(() => _showSettings = false);
+                },
+                icon: const Icon(Icons.close),
+              ),
+            ],
+          ),
+          Row(
+            children: [
+              const Text('Buffer Radius (miles)'),
+              const Spacer(),
+              Text(
+                _bufferRadius.round().toString(),
+                textAlign: TextAlign.right,
+              ),
+            ],
+          ),
+          Row(
+            children: [
+              Expanded(
+                // A slider to adjust the buffer radius.
+                child: Slider(
+                  value: _bufferRadius,
+                  min: 10,
+                  max: 300,
+                  onChanged: (value) => setState(() => _bufferRadius = value),
+                ),
+              ),
+            ],
+          ),
+          Row(
+            children: [
+              Text(_shouldUnion ? 'Union Enabled' : 'Union Disabled'),
+              const Spacer(),
+              Switch(
+                value: _shouldUnion,
+                onChanged: (value) {
+                  setState(() => _shouldUnion = value);
+                  if (_bufferPoints.isNotEmpty) {
+                    drawBuffers(unionized: _shouldUnion);
+                  }
+                },
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 
@@ -287,8 +325,8 @@ class _CreateBuffersAroundPointsState extends State<CreateBuffersAroundPoints>
     // Add points to define the boundary where the spatial reference is valid for planar buffers.
     polygonBuilder.addPointXY(x: -103.070, y: 31.720);
     polygonBuilder.addPointXY(x: -103.070, y: 34.580);
-    polygonBuilder.addPointXY(x: -94, y: 34.580);
-    polygonBuilder.addPointXY(x: -94, y: 31.720);
+    polygonBuilder.addPointXY(x: -94.000, y: 34.580);
+    polygonBuilder.addPointXY(x: -94.000, y: 31.720);
 
     // Use the polygon builder to define a boundary geometry.
     final boundaryGeometry = polygonBuilder.toGeometry();
@@ -359,7 +397,7 @@ enum Status {
   invalidInput('Enter a value between 0 and 300 to create a buffer.'),
   noPoints('Add a point to draw the buffers.');
 
-  const Status(this.label);
-
   final String label;
+
+  const Status(this.label);
 }

@@ -14,7 +14,6 @@
 //
 
 import 'package:arcgis_maps/arcgis_maps.dart';
-import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_state_support.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -51,13 +50,21 @@ class _ShowWfsLayerWithXmlQueryState extends State<ShowWfsLayerWithXmlQuery>
             ],
           ),
           // Display a progress indicator and prevent interaction until state is ready.
-          LoadingIndicator(visible: !_ready),
+          Visibility(
+            visible: !_ready,
+            child: const SizedBox.expand(
+              child: ColoredBox(
+                color: Colors.white30,
+                child: Center(child: CircularProgressIndicator()),
+              ),
+            ),
+          ),
         ],
       ),
     );
   }
 
-  Future<void> onMapViewReady() async {
+  void onMapViewReady() async {
     // Create a map with the ArcGIS Navigation basemap style and set to the map view.
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISNavigation);
     _mapViewController.arcGISMap = map;
@@ -99,6 +106,6 @@ class _ShowWfsLayerWithXmlQueryState extends State<ShowWfsLayerWithXmlQuery>
     );
 
     // Zoom to the full extent of the feature layer.
-    await _mapViewController.setViewpointGeometry(featureLayer.fullExtent!);
+    _mapViewController.setViewpointGeometry(featureLayer.fullExtent!);
   }
 }

@@ -15,8 +15,9 @@
 //
 
 import 'package:arcgis_maps/arcgis_maps.dart';
-import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_state_support.dart';
 import 'package:flutter/material.dart';
+
+import '../../utils/sample_state_support.dart';
 
 class FilterByDefinitionExpressionOrDisplayFilter extends StatefulWidget {
   const FilterByDefinitionExpressionOrDisplayFilter({super.key});
@@ -49,8 +50,6 @@ class _FilterByDefinitionExpressionOrDisplayFilterState
     return Scaffold(
       body: SafeArea(
         top: false,
-        left: false,
-        right: false,
         child: Column(
           children: [
             Expanded(
@@ -109,7 +108,7 @@ class _FilterByDefinitionExpressionOrDisplayFilterState
     _mapViewController.arcGISMap = map;
   }
 
-  Future<void> applyDefinitionExpression() async {
+  void applyDefinitionExpression() async {
     // Remove the display filter.
     _displayFilterDefinition = null;
     // Apply a definition expression to the feature layer.
@@ -118,7 +117,7 @@ class _FilterByDefinitionExpressionOrDisplayFilterState
     await calculateFeatureCount();
   }
 
-  Future<void> applyDisplayFilter() async {
+  void applyDisplayFilter() async {
     // Remove the definition expression.
     _definitionExpression = '';
     // Apply a display filter to the feature layer.
@@ -137,7 +136,7 @@ class _FilterByDefinitionExpressionOrDisplayFilterState
     await calculateFeatureCount();
   }
 
-  Future<void> reset() async {
+  void reset() async {
     // Remove the definition expression and display filter.
     _displayFilterDefinition = null;
     _definitionExpression = '';
@@ -163,6 +162,23 @@ class _FilterByDefinitionExpressionOrDisplayFilterState
         await _featureLayer.featureTable!.queryFeatureCount(queryParameters);
 
     // Show the feature count in an alert dialog.
-    showMessageDialog('$featureCount features', title: 'Current Feature Count');
+    if (mounted) {
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text(
+              'Current Feature Count',
+              style: TextStyle(fontSize: 20),
+              textAlign: TextAlign.center,
+            ),
+            content: Text(
+              '$featureCount features',
+              textAlign: TextAlign.center,
+            ),
+          );
+        },
+      );
+    }
   }
 }

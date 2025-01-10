@@ -15,9 +15,9 @@
 //
 
 import 'package:arcgis_maps/arcgis_maps.dart';
-import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
-import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_state_support.dart';
 import 'package:flutter/material.dart';
+
+import '../../utils/sample_state_support.dart';
 
 class CutGeometry extends StatefulWidget {
   const CutGeometry({super.key});
@@ -48,8 +48,6 @@ class _CutGeometryState extends State<CutGeometry> with SampleStateSupport {
     return Scaffold(
       body: SafeArea(
         top: false,
-        left: false,
-        right: false,
         child: Stack(
           children: [
             Column(
@@ -76,7 +74,15 @@ class _CutGeometryState extends State<CutGeometry> with SampleStateSupport {
               ],
             ),
             // Display a progress indicator and prevent interaction until state is ready.
-            LoadingIndicator(visible: !_ready),
+            Visibility(
+              visible: !_ready,
+              child: SizedBox.expand(
+                child: Container(
+                  color: Colors.white30,
+                  child: const Center(child: CircularProgressIndicator()),
+                ),
+              ),
+            ),
           ],
         ),
       ),
@@ -193,7 +199,8 @@ class _CutGeometryState extends State<CutGeometry> with SampleStateSupport {
         color: Colors.blue.withOpacity(0.5),
         outline: SimpleLineSymbol(
           color: Colors.blue,
-          width: 4,
+          width: 4.0,
+          style: SimpleLineSymbolStyle.solid,
         ),
       ),
     );
@@ -219,7 +226,7 @@ class _CutGeometryState extends State<CutGeometry> with SampleStateSupport {
       geometry: borderPolylineBuilder.toGeometry(),
       symbol: SimpleLineSymbol(
         color: Colors.red,
-        width: 4,
+        width: 4.0,
         style: SimpleLineSymbolStyle.dot,
       ),
     );

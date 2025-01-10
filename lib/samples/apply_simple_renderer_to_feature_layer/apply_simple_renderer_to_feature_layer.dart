@@ -15,9 +15,9 @@
 //
 
 import 'package:arcgis_maps/arcgis_maps.dart';
-import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
-import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_state_support.dart';
 import 'package:flutter/material.dart';
+
+import '../../utils/sample_state_support.dart';
 
 class ApplySimpleRendererToFeatureLayer extends StatefulWidget {
   const ApplySimpleRendererToFeatureLayer({super.key});
@@ -43,8 +43,6 @@ class _ApplySimpleRendererToFeatureLayerState
     return Scaffold(
       body: SafeArea(
         top: false,
-        left: false,
-        right: false,
         child: Stack(
           children: [
             Column(
@@ -69,7 +67,15 @@ class _ApplySimpleRendererToFeatureLayerState
               ],
             ),
             // Display a progress indicator and prevent interaction before state is ready.
-            LoadingIndicator(visible: !_ready),
+            Visibility(
+              visible: !_ready,
+              child: SizedBox.expand(
+                child: Container(
+                  color: Colors.white30,
+                  child: const Center(child: CircularProgressIndicator()),
+                ),
+              ),
+            ),
           ],
         ),
       ),
@@ -106,6 +112,7 @@ class _ApplySimpleRendererToFeatureLayerState
   void overrideRenderer() {
     // Set a new renderer for the feature layer
     final markerSymbol = SimpleMarkerSymbol(
+      style: SimpleMarkerSymbolStyle.circle,
       color: Colors.blue,
       size: 5,
     );

@@ -19,7 +19,7 @@ import 'package:arcgis_maps_sdk_flutter_samples/widgets/sample_detail_page.dart'
 import 'package:flutter/material.dart';
 
 class SampleListView extends StatelessWidget {
-  const SampleListView({required this.samples, super.key});
+  const SampleListView({super.key, required this.samples});
 
   final List<Sample> samples;
 

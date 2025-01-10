@@ -15,9 +15,9 @@
 //
 
 import 'package:arcgis_maps/arcgis_maps.dart';
-import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
-import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_state_support.dart';
 import 'package:flutter/material.dart';
+
+import '../../utils/sample_state_support.dart';
 
 class ApplyClassBreaksRendererToSublayer extends StatefulWidget {
   const ApplyClassBreaksRendererToSublayer({super.key});
@@ -45,8 +45,6 @@ class _ApplyClassBreaksRendererToSublayerState
     return Scaffold(
       body: SafeArea(
         top: false,
-        left: false,
-        right: false,
         child: Stack(
           children: [
             Column(
@@ -69,14 +67,22 @@ class _ApplyClassBreaksRendererToSublayerState
               ],
             ),
             // Display a progress indicator and prevent interaction until state is ready.
-            LoadingIndicator(visible: !_ready),
+            Visibility(
+              visible: !_ready,
+              child: SizedBox.expand(
+                child: Container(
+                  color: Colors.white30,
+                  child: const Center(child: CircularProgressIndicator()),
+                ),
+              ),
+            ),
           ],
         ),
       ),
     );
   }
 
-  Future<void> onMapViewReady() async {
+  void onMapViewReady() async {
     // Create an image layer.
     final imageLayer = ArcGISMapImageLayer.withUri(
       Uri.parse(
@@ -105,7 +111,7 @@ class _ApplyClassBreaksRendererToSublayerState
     setState(() => _ready = true);
   }
 
-  Future<void> renderLayer() async {
+  void renderLayer() async {
     // Apply class breaks renderer.
     _countiesSublayer.renderer = createPopulationClassBreaksRenderer();
     // Update the rendered state.
@@ -122,25 +128,32 @@ class _ApplyClassBreaksRendererToSublayerState
 
     // Create symbols for the class breaks.
     final outline = SimpleLineSymbol(
+      style: SimpleLineSymbolStyle.solid,
       color: Colors.grey,
+      width: 1,
     );
     final classSymbol1 = SimpleFillSymbol(
+      style: SimpleFillSymbolStyle.solid,
       color: blue1,
       outline: outline,
     );
     final classSymbol2 = SimpleFillSymbol(
+      style: SimpleFillSymbolStyle.solid,
       color: blue2,
       outline: outline,
     );
     final classSymbol3 = SimpleFillSymbol(
+      style: SimpleFillSymbolStyle.solid,
       color: blue3,
       outline: outline,
     );
     final classSymbol4 = SimpleFillSymbol(
+      style: SimpleFillSymbolStyle.solid,
       color: blue4,
       outline: outline,
     );
     final classSymbol5 = SimpleFillSymbol(
+      style: SimpleFillSymbolStyle.solid,
       color: blue5,
       outline: outline,
     );

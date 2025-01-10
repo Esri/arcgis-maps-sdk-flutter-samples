@@ -15,8 +15,9 @@
 //
 
 import 'package:arcgis_maps/arcgis_maps.dart';
-import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_state_support.dart';
 import 'package:flutter/material.dart';
+
+import '../../utils/sample_state_support.dart';
 
 class AuthenticateWithOAuth extends StatefulWidget {
   const AuthenticateWithOAuth({super.key});
@@ -53,7 +54,7 @@ class _AuthenticateWithOAuthState extends State<AuthenticateWithOAuth>
   }
 
   @override
-  Future<void> dispose() async {
+  void dispose() async {
     // We do not want to handle authentication challenges outside of this sample,
     // so we remove this as the challenge handler.
     ArcGISEnvironment
@@ -94,7 +95,7 @@ class _AuthenticateWithOAuthState extends State<AuthenticateWithOAuth>
   }
 
   @override
-  Future<void> handleArcGISAuthenticationChallenge(
+  void handleArcGISAuthenticationChallenge(
     ArcGISAuthenticationChallenge challenge,
   ) async {
     try {

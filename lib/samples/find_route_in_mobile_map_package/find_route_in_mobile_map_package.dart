@@ -17,11 +17,11 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:arcgis_maps/arcgis_maps.dart';
-import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
-import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_data.dart';
-import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_state_support.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
+
+import '../../utils/sample_data.dart';
+import '../../utils/sample_state_support.dart';
 
 class FindRouteInMobileMapPackage extends StatefulWidget {
   const FindRouteInMobileMapPackage({super.key});
@@ -102,14 +102,14 @@ class _FindRouteInMobileMapPackageState
 
             // Display the maps in a list.
             return ListView.builder(
-              padding: const EdgeInsets.all(8),
+              padding: const EdgeInsets.all(8.0),
               itemCount: sampleData.length,
               // For each map, create a card with its thumbnail and name.
               itemBuilder: (context, index) {
                 final data = sampleData[index];
                 return Card(
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 4),
+                    padding: const EdgeInsets.symmetric(vertical: 4.0),
                     child: ListTile(
                       leading: data.thumbnail != null
                           ? Image.memory(data.thumbnail!)
@@ -143,8 +143,8 @@ class _FindRouteInMobileMapPackageState
 // A page for a specific map loaded from a mobile map package.
 class FindRouteInMap extends StatefulWidget {
   const FindRouteInMap({
-    required this.sampleData,
     super.key,
+    required this.sampleData,
   });
 
   final SampleData sampleData;
@@ -228,7 +228,7 @@ class _FindRouteInMapState extends State<FindRouteInMap>
                         Text(
                           _message,
                           textAlign: TextAlign.center,
-                          style: Theme.of(context).textTheme.customWhiteStyle,
+                          style: const TextStyle(color: Colors.white),
                         ),
                       ],
                     ),
@@ -237,14 +237,22 @@ class _FindRouteInMapState extends State<FindRouteInMap>
               ),
             ),
             // Display a progress indicator and prevent interaction until state is ready.
-            LoadingIndicator(visible: !_ready),
+            Visibility(
+              visible: !_ready,
+              child: SizedBox.expand(
+                child: Container(
+                  color: Colors.white30,
+                  child: const Center(child: CircularProgressIndicator()),
+                ),
+              ),
+            ),
           ],
         ),
       ),
     );
   }
 
-  Future<void> onMapViewReady() async {
+  void onMapViewReady() async {
     final map = widget.sampleData.map;
     _mapViewController.arcGISMap = map;
 
@@ -267,8 +275,9 @@ class _FindRouteInMapState extends State<FindRouteInMap>
 
       // Create a symbol to represent the route.
       final routeSymbol = SimpleLineSymbol(
+        style: SimpleLineSymbolStyle.solid,
         color: const Color.fromARGB(255, 0, 0, 255),
-        width: 5,
+        width: 5.0,
       );
       // Create a graphics overlay to display the route and add it to the list of overlays.
       _routeOverlay = GraphicsOverlay()
@@ -279,7 +288,7 @@ class _FindRouteInMapState extends State<FindRouteInMap>
     setState(() => _ready = true);
   }
 
-  Future<void> onTap(Offset localPosition) async {
+  void onTap(Offset localPosition) async {
     // Deselect any previously selected graphic.
     if (_selectedGraphic != null) {
       _selectedGraphic!.isSelected = false;
@@ -290,7 +299,7 @@ class _FindRouteInMapState extends State<FindRouteInMap>
     final result = await _mapViewController.identifyGraphicsOverlay(
       _markerOverlay,
       screenPoint: localPosition,
-      tolerance: 12,
+      tolerance: 12.0,
     );
 
     Graphic? graphicToSelect;
@@ -326,7 +335,7 @@ class _FindRouteInMapState extends State<FindRouteInMap>
 
     // Perform the reverse geocode operation.
     final results = await widget.sampleData.locatorTask!.reverseGeocode(
-      location: graphic.geometry! as ArcGISPoint,
+      location: graphic.geometry as ArcGISPoint,
       parameters: reverseGeocodeParameters,
     );
 
@@ -374,12 +383,11 @@ class _FindRouteInMapState extends State<FindRouteInMap>
     } on ArcGISException catch (e) {
       // If an error occurs, clear the route overlay and display the error.
       _routeOverlay!.graphics.clear();
-
-      showMessageDialog(e.message, title: 'Error');
+      showError(e);
     }
   }
 
-  Future<void> deleteMarker() async {
+  void deleteMarker() async {
     // Remove the selected graphic from the location marker overlay.
     _markerOverlay.graphics.remove(_selectedGraphic);
     setState(() {
@@ -399,5 +407,14 @@ class _FindRouteInMapState extends State<FindRouteInMap>
       _selectedGraphic = null;
       _message = '';
     });
+  }
+
+  void showError(ArcGISException e) {
+    if (mounted) {
+      showDialog(
+        context: context,
+        builder: (_) => AlertDialog(content: Text(e.message)),
+      );
+    }
   }
 }

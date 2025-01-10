@@ -15,9 +15,9 @@
 //
 
 import 'package:arcgis_maps/arcgis_maps.dart';
-import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
-import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_state_support.dart';
 import 'package:flutter/material.dart';
+
+import '../../utils/sample_state_support.dart';
 
 class FindRoute extends StatefulWidget {
   const FindRoute({super.key});
@@ -55,8 +55,6 @@ class _FindRouteState extends State<FindRoute> with SampleStateSupport {
     return Scaffold(
       body: SafeArea(
         top: false,
-        left: false,
-        right: false,
         child: Stack(
           children: [
             // Create a column with buttons for generating the route and showing the directions.
@@ -73,11 +71,13 @@ class _FindRouteState extends State<FindRoute> with SampleStateSupport {
                   height: 60,
                   // Add the buttons to the column.
                   child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       // Create a button to generate the route.
                       ElevatedButton(
-                        onPressed: _routeGenerated ? null : generateRoute,
+                        onPressed:
+                            _routeGenerated ? null : () => generateRoute(),
                         child: const Text('Route'),
                       ),
                       // Create a button to show the directions.
@@ -85,7 +85,7 @@ class _FindRouteState extends State<FindRoute> with SampleStateSupport {
                         onPressed: _routeGenerated
                             ? () => showDialog(
                                   context: context,
-                                  builder: showDirections,
+                                  builder: (context) => showDirections(context),
                                 )
                             : null,
                         child: const Text('Directions'),
@@ -96,14 +96,22 @@ class _FindRouteState extends State<FindRoute> with SampleStateSupport {
               ],
             ),
             // Display a progress indicator and prevent interaction until state is ready.
-            LoadingIndicator(visible: !_ready),
+            Visibility(
+              visible: !_ready,
+              child: SizedBox.expand(
+                child: Container(
+                  color: Colors.white30,
+                  child: const Center(child: CircularProgressIndicator()),
+                ),
+              ),
+            ),
           ],
         ),
       ),
     );
   }
 
-  Future<void> onMapViewReady() async {
+  void onMapViewReady() async {
     initMap();
     initStops();
     await initRouteParameters();
@@ -121,7 +129,7 @@ class _FindRouteState extends State<FindRoute> with SampleStateSupport {
         y: 3858170.2368,
         spatialReference: SpatialReference.webMercator,
       ),
-      scale: 100000,
+      scale: 1e5,
     );
     // Set the map to the map view controller.
     _mapViewController.arcGISMap = map;
@@ -133,17 +141,19 @@ class _FindRouteState extends State<FindRoute> with SampleStateSupport {
   void initStops() {
     // Create symbols to use for the start and end stops of the route.
     final routeStartCircleSymbol = SimpleMarkerSymbol(
+      style: SimpleMarkerSymbolStyle.circle,
       color: Colors.blue,
-      size: 15,
+      size: 15.0,
     );
     final routeEndCircleSymbol = SimpleMarkerSymbol(
+      style: SimpleMarkerSymbolStyle.circle,
       color: Colors.blue,
-      size: 15,
+      size: 15.0,
     );
     final routeStartNumberSymbol =
-        TextSymbol(text: '1', color: Colors.white, size: 10);
+        TextSymbol(text: '1', color: Colors.white, size: 10.0);
     final routeEndNumberSymbol =
-        TextSymbol(text: '2', color: Colors.white, size: 10);
+        TextSymbol(text: '2', color: Colors.white, size: 10.0);
 
     // Configure pre-defined start and end points for the route.
     final startPoint = ArcGISPoint(
@@ -197,8 +207,9 @@ class _FindRouteState extends State<FindRoute> with SampleStateSupport {
   Future<void> generateRoute() async {
     // Create the symbol for the route line.
     final routeLineSymbol = SimpleLineSymbol(
+      style: SimpleLineSymbolStyle.solid,
       color: Colors.blue,
-      width: 5,
+      width: 5.0,
     );
 
     // Reset the route.
@@ -207,7 +218,9 @@ class _FindRouteState extends State<FindRoute> with SampleStateSupport {
     // Solve the route using the route parameters.
     final routeResult = await _routeTask.solveRoute(_routeParameters);
     if (routeResult.routes.isEmpty) {
-      showMessageDialog('No routes have been generated.');
+      if (mounted) {
+        showAlertDialog('No routes have been generated.', title: 'Info');
+      }
       return;
     }
 
@@ -267,6 +280,23 @@ class _FindRouteState extends State<FindRoute> with SampleStateSupport {
         return Text(_directions[index].directionText);
       },
       separatorBuilder: (context, index) => const Divider(),
+    );
+  }
+
+  Future<void> showAlertDialog(String message, {String title = 'Alert'}) {
+    // Show an alert dialog.
+    return showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(title),
+        content: Text(message),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, 'OK'),
+            child: const Text('OK'),
+          ),
+        ],
+      ),
     );
   }
 }

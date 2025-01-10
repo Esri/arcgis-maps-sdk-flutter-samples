@@ -15,8 +15,9 @@
 //
 
 import 'package:arcgis_maps/arcgis_maps.dart';
-import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_state_support.dart';
 import 'package:flutter/material.dart';
+
+import '../../utils/sample_state_support.dart';
 
 class AuthenticateWithToken extends StatefulWidget {
   const AuthenticateWithToken({super.key});
@@ -68,7 +69,7 @@ class _AuthenticateWithTokenState extends State<AuthenticateWithToken>
     );
   }
 
-  Future<void> onMapViewReady() async {
+  void onMapViewReady() async {
     // Set a portal item map that has a secure layer (traffic).
     // Loading the secure layer will trigger an authentication challenge.
     _mapViewController.arcGISMap = ArcGISMap.withItem(
@@ -80,7 +81,7 @@ class _AuthenticateWithTokenState extends State<AuthenticateWithToken>
   }
 
   @override
-  Future<void> handleArcGISAuthenticationChallenge(
+  void handleArcGISAuthenticationChallenge(
     ArcGISAuthenticationChallenge challenge,
   ) async {
     // Show a login dialog to handle the authentication challenge.
@@ -93,11 +94,12 @@ class _AuthenticateWithTokenState extends State<AuthenticateWithToken>
 
 // A widget that handles an authentication challenge by prompting the user to log in.
 class LoginWidget extends StatefulWidget {
-  const LoginWidget({
-    required this.challenge,
-    super.key,
-  });
   final ArcGISAuthenticationChallenge challenge;
+
+  const LoginWidget({
+    super.key,
+    required this.challenge,
+  });
 
   @override
   State<LoginWidget> createState() => _LoginWidgetState();
@@ -128,7 +130,7 @@ class _LoginWidgetState extends State<LoginWidget> {
   Widget build(BuildContext context) {
     return Dialog(
       child: Padding(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(20.0),
         child: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -151,7 +153,7 @@ class _LoginWidgetState extends State<LoginWidget> {
                 obscureText: true,
                 decoration: const InputDecoration(hintText: 'Password'),
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: 10.0),
               // Buttons to cancel or log in.
               Row(
                 children: [
@@ -178,7 +180,7 @@ class _LoginWidgetState extends State<LoginWidget> {
     );
   }
 
-  Future<void> login() async {
+  void login() async {
     setState(() => _error = null);
 
     // Username and password are required.

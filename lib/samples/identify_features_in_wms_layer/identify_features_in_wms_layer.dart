@@ -14,7 +14,6 @@
 //
 
 import 'package:arcgis_maps/arcgis_maps.dart';
-import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_state_support.dart';
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -43,8 +42,6 @@ class _IdentifyFeaturesInWmsLayerState extends State<IdentifyFeaturesInWmsLayer>
     return Scaffold(
       body: SafeArea(
         top: false,
-        left: false,
-        right: false,
         child: Stack(
           children: [
             Column(
@@ -79,14 +76,22 @@ class _IdentifyFeaturesInWmsLayerState extends State<IdentifyFeaturesInWmsLayer>
               ),
             ),
             // Display a progress indicator and prevent interaction until state is ready.
-            LoadingIndicator(visible: !_ready),
+            Visibility(
+              visible: !_ready,
+              child: const SizedBox.expand(
+                child: ColoredBox(
+                  color: Colors.white30,
+                  child: Center(child: CircularProgressIndicator()),
+                ),
+              ),
+            ),
           ],
         ),
       ),
     );
   }
 
-  Future<void> onMapViewReady() async {
+  void onMapViewReady() async {
     // Create a map with a basemap and set to the map view controller.
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISDarkGrayBase);
     _mapViewController.arcGISMap = map;
@@ -115,7 +120,7 @@ class _IdentifyFeaturesInWmsLayerState extends State<IdentifyFeaturesInWmsLayer>
     setState(() => _ready = true);
   }
 
-  Future<void> onTap(Offset localPosition) async {
+  void onTap(Offset localPosition) async {
     // Prevent addtional taps until the identify operation is complete.
     setState(() => _ready = false);
 
@@ -123,7 +128,8 @@ class _IdentifyFeaturesInWmsLayerState extends State<IdentifyFeaturesInWmsLayer>
     final identifyLayerResult = await _mapViewController.identifyLayer(
       _wmsLayer,
       screenPoint: localPosition,
-      tolerance: 12,
+      tolerance: 12.0,
+      maximumResults: 1,
     );
 
     // Check if there are any features identified.

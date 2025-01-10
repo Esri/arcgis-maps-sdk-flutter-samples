@@ -17,12 +17,10 @@
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
-const String applicationTitle = 'ArcGIS Maps SDK Flutter Samples';
 class AboutInfo extends StatefulWidget {
-
   const AboutInfo({
-    required this.title,
     super.key,
+    required this.title,
   });
 
   final String title;
@@ -44,7 +42,7 @@ class _AboutInfoState extends State<AboutInfo> {
             fontWeight: FontWeight.bold,
           ),
         ),
-        const SizedBox(height: 20),
+        const SizedBox(height: 20.0),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [

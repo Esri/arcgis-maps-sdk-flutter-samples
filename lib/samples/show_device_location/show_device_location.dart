@@ -18,9 +18,9 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:arcgis_maps/arcgis_maps.dart';
-import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
-import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_state_support.dart';
 import 'package:flutter/material.dart';
+
+import '../../utils/sample_state_support.dart';
 
 class ShowDeviceLocation extends StatefulWidget {
   const ShowDeviceLocation({super.key});
@@ -61,8 +61,6 @@ class _ShowDeviceLocationState extends State<ShowDeviceLocation>
     return Scaffold(
       body: SafeArea(
         top: false,
-        left: false,
-        right: false,
         child: Stack(
           children: [
             Column(
@@ -85,7 +83,15 @@ class _ShowDeviceLocationState extends State<ShowDeviceLocation>
               ],
             ),
             // Display a progress indicator and prevent interaction until state is ready.
-            LoadingIndicator(visible: !_ready),
+            Visibility(
+              visible: !_ready,
+              child: SizedBox.expand(
+                child: Container(
+                  color: Colors.white30,
+                  child: const Center(child: CircularProgressIndicator()),
+                ),
+              ),
+            ),
           ],
         ),
       ),
@@ -98,11 +104,11 @@ class _ShowDeviceLocationState extends State<ShowDeviceLocation>
   Widget buildSettings(BuildContext context) {
     return Container(
       padding: EdgeInsets.fromLTRB(
-        20,
-        20,
-        20,
+        20.0,
+        20.0,
+        20.0,
         max(
-          20,
+          20.0,
           View.of(context).viewPadding.bottom /
               View.of(context).devicePixelRatio,
         ),
@@ -176,7 +182,7 @@ class _ShowDeviceLocationState extends State<ShowDeviceLocation>
     );
   }
 
-  Future<void> onMapViewReady() async {
+  void onMapViewReady() async {
     // Create a map with the Navigation Night basemap style.
     _mapViewController.arcGISMap =
         ArcGISMap.withBasemapStyle(BasemapStyle.arcGISNavigationNight);
@@ -203,7 +209,12 @@ class _ShowDeviceLocationState extends State<ShowDeviceLocation>
     try {
       await _locationDataSource.start();
     } on ArcGISException catch (e) {
-      showMessageDialog(e.message);
+      if (mounted) {
+        showDialog(
+          context: context,
+          builder: (_) => AlertDialog(content: Text(e.message)),
+        );
+      }
     }
 
     // Set the ready state variable to true to enable the UI.

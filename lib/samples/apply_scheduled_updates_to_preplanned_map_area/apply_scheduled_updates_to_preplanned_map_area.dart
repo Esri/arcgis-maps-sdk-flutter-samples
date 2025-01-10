@@ -15,13 +15,12 @@
 //
 
 import 'dart:io';
-
 import 'package:arcgis_maps/arcgis_maps.dart';
-import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
-import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_data.dart';
-import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_state_support.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
+
+import '../../utils/sample_data.dart';
+import '../../utils/sample_state_support.dart';
 
 class ApplyScheduledUpdatesToPreplannedMapArea extends StatefulWidget {
   const ApplyScheduledUpdatesToPreplannedMapArea({super.key});
@@ -57,11 +56,10 @@ class _ApplyScheduledUpdatesToPreplannedMapAreaState
     return Scaffold(
       body: SafeArea(
         top: false,
-        left: false,
-        right: false,
         child: Stack(
           children: [
             Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Expanded(
                   // Add a map view to the widget tree and set a controller.
@@ -93,14 +91,22 @@ class _ApplyScheduledUpdatesToPreplannedMapAreaState
               ],
             ),
             // Display a progress indicator and prevent interaction before state is ready.
-            LoadingIndicator(visible: !_ready),
+            Visibility(
+              visible: !_ready,
+              child: SizedBox.expand(
+                child: Container(
+                  color: Colors.white30,
+                  child: const Center(child: CircularProgressIndicator()),
+                ),
+              ),
+            ),
           ],
         ),
       ),
     );
   }
 
-  Future<void> onMapViewReady() async {
+  void onMapViewReady() async {
     // Set the path to the map package data.
     final appDir = await getApplicationDocumentsDirectory();
     _dataUri = Uri.parse('${appDir.absolute.path}/canyonlands');
@@ -126,11 +132,13 @@ class _ApplyScheduledUpdatesToPreplannedMapAreaState
       if (result != null && result.isMobileMapPackageReopenRequired) {
         await _loadMapPackageMap();
       }
-    } on ArcGISException catch (e) {
-      showMessageDialog(
-        'The offline map sync failed with error: {$e}.',
-        title: 'Error',
-      );
+    } catch (err) {
+      if (mounted) {
+        _showAlertDialog(
+          'The offline map sync failed with error: {$err}.',
+          title: 'Error',
+        );
+      }
     } finally {
       // Refresh the update status.
       await _checkForUpdates();
@@ -158,16 +166,20 @@ class _ApplyScheduledUpdatesToPreplannedMapAreaState
     // Try to load the map package.
     try {
       await _mobileMapPackage!.load();
-    } on ArcGISException catch (e) {
-      showMessageDialog(
-        'Mobile Map Package failed to load with error: {$e}',
-        title: 'Error',
-      );
+    } catch (err) {
+      if (mounted) {
+        _showAlertDialog(
+          'Mobile Map Package failed to load with error: {$err}',
+          title: 'Error',
+        );
+      }
       return false;
     }
 
     if (_mobileMapPackage!.maps.isEmpty) {
-      showMessageDialog('Mobile map package contains no maps.');
+      if (mounted) {
+        _showAlertDialog('Mobile map package contains no maps.');
+      }
       return false;
     }
 
@@ -203,5 +215,22 @@ class _ApplyScheduledUpdatesToPreplannedMapAreaState
 
     // Load the map package from the extracted map package.
     await _loadMapPackageMap();
+  }
+
+  // Utility function to show an alert dialog with a provided message.
+  Future<void> _showAlertDialog(String message, {String title = 'Alert'}) {
+    return showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(title),
+        content: Text(message),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, 'OK'),
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
   }
 }

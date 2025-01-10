@@ -16,12 +16,11 @@
 
 import 'dart:async';
 import 'dart:io';
-
 import 'package:arcgis_maps/arcgis_maps.dart';
-import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
-import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_state_support.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
+
+import '../../utils/sample_state_support.dart';
 
 class DownloadVectorTilesToLocalCache extends StatefulWidget {
   const DownloadVectorTilesToLocalCache({super.key});
@@ -55,8 +54,6 @@ class _DownloadVectorTilesToLocalCacheState
     return Scaffold(
       body: SafeArea(
         top: false,
-        left: false,
-        right: false,
         child: Stack(
           children: [
             Column(
@@ -93,7 +90,17 @@ class _DownloadVectorTilesToLocalCacheState
               ],
             ),
             // Display a progress indicator and prevent interaction until state is ready.
-            LoadingIndicator(visible: !_ready),
+            Visibility(
+              visible: !_ready,
+              child: SizedBox.expand(
+                child: Container(
+                  color: Colors.white30,
+                  child: const Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                ),
+              ),
+            ),
             // Display a progress indicator and a cancel button during the offline map generation.
             Visibility(
               visible: _isJobStarted,
@@ -141,7 +148,7 @@ class _DownloadVectorTilesToLocalCacheState
   }
 
   // Cancel the export vector tiles job.
-  Future<void> cancelDownloadingJob() async {
+  void cancelDownloadingJob() async {
     setState(() => _progress = 0.0);
     setState(() => _isJobStarted = false);
 
@@ -151,7 +158,7 @@ class _DownloadVectorTilesToLocalCacheState
   }
 
   // Start to download the vector tiles for the outlined region.
-  Future<void> startDownloadVectorTiles() async {
+  void startDownloadVectorTiles() async {
     // Get the download area.
     final downloadArea = downloadAreaEnvelope();
     // Get the ArcGISVectorTiledLayer which the vector tiles cache will be downloaded from.
@@ -160,17 +167,12 @@ class _DownloadVectorTilesToLocalCacheState
         layer == null ||
         layer is! ArcGISVectorTiledLayer ||
         layer.uri == null) {
-      showMessageDialog(
-        'Failed to download vector tiles: Invalid download area or layer',
-      );
+      _showErrorDialog('Invalid download area or layer');
       return;
     }
 
-    // Show the progress indicator to start the download process and reset the progress.
-    setState(() {
-      _isJobStarted = true;
-      _progress = 0.0;
-    });
+    // Show the progress indicator to start the download process.
+    setState(() => _isJobStarted = true);
 
     // Create an export vector tiles task.
     final vectorTilesExportTask = ExportVectorTilesTask.withUri(layer.uri!);
@@ -207,21 +209,17 @@ class _DownloadVectorTilesToLocalCacheState
 
     _exportVectorTilesJob?.onStatusChanged.listen(
       (status) {
-        if (status == JobStatus.succeeded && mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: const Text('Downloaded vector tiles successfully'),
-              duration: const Duration(seconds: 5),
-              backgroundColor: Theme.of(context).colorScheme.secondary,
-            ),
-          );
-          // Hide the progress indicator after a 5 second delay so that the user can see the job completed.
-          Future.delayed(
-            const Duration(seconds: 5),
-            () => setState(() => _isJobStarted = false),
-          );
-        } else if (status == JobStatus.failed) {
-          setState(() => _isJobStarted = false);
+        if (status == JobStatus.succeeded) {
+          setState(() => _progress = 100.0);
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: const Text('Downloaded vector tiles successfully'),
+                duration: const Duration(seconds: 5),
+                backgroundColor: Theme.of(context).colorScheme.secondary,
+              ),
+            );
+          }
         }
       },
     );
@@ -233,10 +231,33 @@ class _DownloadVectorTilesToLocalCacheState
       // If the job succeeded, load the downloaded caches into the map view.
       _loadExportedVectorTiles(result);
     } on ArcGISException catch (e) {
-      showMessageDialog('Failed to download vector tiles: ${e.message}');
+      _showErrorDialog(e.message);
     } finally {
       _exportVectorTilesJob = null;
     }
+    // Dismiss the progress indicator.
+    setState(() => _isJobStarted = false);
+  }
+
+  // Show an error dialog.
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Info', style: Theme.of(context).textTheme.titleMedium),
+        content: Text(
+          'Failed to download vector tiles:\n$message',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: const Text('Close'),
+          ),
+        ],
+      ),
+    );
   }
 
   // Calculate the Envelope of the outlined region.
@@ -246,14 +267,14 @@ class _DownloadVectorTilesToLocalCacheState
     if (outlineContext == null || mapContext == null) return null;
 
     // Get the global screen rect of the outlined region.
-    final outlineRenderBox = outlineContext.findRenderObject() as RenderBox?;
+    final outlineRenderBox = outlineContext.findRenderObject() as RenderBox;
     final outlineGlobalScreenRect =
-        outlineRenderBox!.localToGlobal(Offset.zero) & outlineRenderBox.size;
+        outlineRenderBox.localToGlobal(Offset.zero) & outlineRenderBox.size;
 
     // Convert the global screen rect to a rect local to the map view.
-    final mapRenderBox = mapContext.findRenderObject() as RenderBox?;
-    final mapLocalScreenRect = outlineGlobalScreenRect
-        .shift(-mapRenderBox!.localToGlobal(Offset.zero));
+    final mapRenderBox = mapContext.findRenderObject() as RenderBox;
+    final mapLocalScreenRect =
+        outlineGlobalScreenRect.shift(-mapRenderBox.localToGlobal(Offset.zero));
 
     // Convert the local screen rect to map coordinates.
     final locationTopLeft =
@@ -286,9 +307,7 @@ class _DownloadVectorTilesToLocalCacheState
     final vectorTilesCache = result?.vectorTileCache;
     final itemResourceCache = result?.itemResourceCache;
     if (vectorTilesCache == null || itemResourceCache == null) {
-      showMessageDialog(
-        'Failed to download vector tiles: Invalid vector tiles cache or item resource cache',
-      );
+      _showErrorDialog('Invalid vector tiles cache or item resource cache');
       return;
     }
     // Create a new vector tile layer with the downloaded vector tiles.
@@ -311,13 +330,13 @@ class _DownloadVectorTilesToLocalCacheState
     return IgnorePointer(
       child: SafeArea(
         child: Container(
-          margin: const EdgeInsets.fromLTRB(30, 30, 30, 50),
+          margin: const EdgeInsets.fromLTRB(30.0, 30.0, 30.0, 50.0),
           child: Container(
             key: _outlineKey,
             decoration: BoxDecoration(
               border: Border.all(
                 color: Colors.red,
-                width: 2,
+                width: 2.0,
               ),
             ),
           ),

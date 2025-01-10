@@ -14,8 +14,6 @@
 //
 
 import 'package:arcgis_maps/arcgis_maps.dart';
-import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
-import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_state_support.dart';
 import 'package:flutter/material.dart';
 
 class IdentifyGraphics extends StatefulWidget {
@@ -25,8 +23,7 @@ class IdentifyGraphics extends StatefulWidget {
   State<IdentifyGraphics> createState() => _IdentifyGraphicsState();
 }
 
-class _IdentifyGraphicsState extends State<IdentifyGraphics>
-    with SampleStateSupport {
+class _IdentifyGraphicsState extends State<IdentifyGraphics> {
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
   // Graphic to store the polygon.
@@ -54,13 +51,21 @@ class _IdentifyGraphicsState extends State<IdentifyGraphics>
             ],
           ),
           // Display a progress indicator and prevent interaction until state is ready.
-          LoadingIndicator(visible: !_ready),
+          Visibility(
+            visible: !_ready,
+            child: const SizedBox.expand(
+              child: ColoredBox(
+                color: Colors.white30,
+                child: Center(child: CircularProgressIndicator()),
+              ),
+            ),
+          ),
         ],
       ),
     );
   }
 
-  Future<void> onMapViewReady() async {
+  void onMapViewReady() async {
     // Create a map with a topographic basemap.
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic);
     // Create a polygon geometry.
@@ -68,14 +73,15 @@ class _IdentifyGraphicsState extends State<IdentifyGraphics>
       spatialReference: _mapViewController.spatialReference,
     );
     // Add points to the polygon.
-    polygonBuilder.addPointXY(x: -2000000, y: 2000000);
-    polygonBuilder.addPointXY(x: 2000000, y: 2000000);
-    polygonBuilder.addPointXY(x: 2000000, y: -2000000);
-    polygonBuilder.addPointXY(x: -2000000, y: -2000000);
+    polygonBuilder.addPointXY(x: -20e5, y: 20e5);
+    polygonBuilder.addPointXY(x: 20e5, y: 20e5);
+    polygonBuilder.addPointXY(x: 20e5, y: -20e5);
+    polygonBuilder.addPointXY(x: -20e5, y: -20e5);
     // Create a graphic with the polygon geometry and a yellow fill symbol.
     _graphic = Graphic(
       geometry: polygonBuilder.toGeometry(),
       symbol: SimpleFillSymbol(
+        style: SimpleFillSymbolStyle.solid,
         color: Colors.yellow,
       ),
     );
@@ -94,24 +100,37 @@ class _IdentifyGraphicsState extends State<IdentifyGraphics>
     setState(() => _ready = true);
   }
 
-  Future<void> onTap(Offset offset) async {
+  void onTap(Offset offset) async {
     // Identify the graphics overlay at the tapped point.
     final identifyGraphicsOverlay =
         await _mapViewController.identifyGraphicsOverlay(
       _graphicsOverlay,
       screenPoint: offset,
-      tolerance: 12,
+      tolerance: 12.0,
       maximumResults: 10,
     );
     // Check if the identified graphic is the same as the sample graphic.
     if (identifyGraphicsOverlay.graphics.isNotEmpty) {
       final identifiedGraphic = identifyGraphicsOverlay.graphics.first;
       if (identifiedGraphic == _graphic) {
-        showMessageDialog(
-          'Tapped on Graphic',
-          title: 'Identify Graphics',
-          showOK: true,
-        );
+        if (mounted) {
+          showDialog(
+            context: context,
+            builder: (context) {
+              // Display an alert dialog when the graphic is tapped.
+              return AlertDialog(
+                alignment: Alignment.center,
+                content: const Text('Tapped on Graphic'),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: const Text('OK'),
+                  ),
+                ],
+              );
+            },
+          );
+        }
       }
     }
   }

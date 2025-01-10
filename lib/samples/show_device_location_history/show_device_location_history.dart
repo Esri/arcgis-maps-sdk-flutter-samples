@@ -17,10 +17,10 @@
 import 'dart:async';
 
 import 'package:arcgis_maps/arcgis_maps.dart';
-import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
-import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_state_support.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
+import '../../utils/sample_state_support.dart';
 
 class ShowDeviceLocationHistory extends StatefulWidget {
   const ShowDeviceLocationHistory({super.key});
@@ -66,8 +66,6 @@ class _ShowDeviceLocationHistoryState extends State<ShowDeviceLocationHistory>
     return Scaffold(
       body: SafeArea(
         top: false,
-        left: false,
-        right: false,
         child: Stack(
           children: [
             Column(
@@ -96,7 +94,15 @@ class _ShowDeviceLocationHistoryState extends State<ShowDeviceLocationHistory>
               ],
             ),
             // Display a progress indicator and prevent interaction until state is ready.
-            LoadingIndicator(visible: !_ready),
+            Visibility(
+              visible: !_ready,
+              child: SizedBox.expand(
+                child: Container(
+                  color: Colors.white30,
+                  child: const Center(child: CircularProgressIndicator()),
+                ),
+              ),
+            ),
           ],
         ),
       ),
@@ -104,7 +110,7 @@ class _ShowDeviceLocationHistoryState extends State<ShowDeviceLocationHistory>
   }
 
   // The method is called when the map view is ready to be used.
-  Future<void> onMapViewReady() async {
+  void onMapViewReady() async {
     // Create a map with the ArcGIS Navigation basemap style.
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISNavigation);
     // Set the initial viewpoint.
@@ -114,7 +120,7 @@ class _ShowDeviceLocationHistoryState extends State<ShowDeviceLocationHistory>
         y: 32.154089,
         spatialReference: SpatialReference.wgs84,
       ),
-      scale: 20000,
+      scale: 2e4,
     );
     // Add the map to the map view controller.
     _mapViewController.arcGISMap = map;
@@ -127,13 +133,13 @@ class _ShowDeviceLocationHistoryState extends State<ShowDeviceLocationHistory>
     _locationHistoryLineOverlay.renderer = SimpleRenderer(
       symbol: SimpleLineSymbol(
         color: Colors.red[100]!,
-        width: 2,
+        width: 2.0,
       ),
     );
     _locationHistoryPointOverlay.renderer = SimpleRenderer(
       symbol: SimpleMarkerSymbol(
         color: Colors.red,
-        size: 10,
+        size: 10.0,
       ),
     );
     // Wait for the map to be displayed before starting the location display.
@@ -167,7 +173,14 @@ class _ShowDeviceLocationHistoryState extends State<ShowDeviceLocationHistory>
     try {
       await _locationDataSource.start();
     } on ArcGISException catch (e) {
-      showMessageDialog(e.message);
+      if (mounted) {
+        showDialog(
+          context: context,
+          builder: (_) => AlertDialog(
+            content: Text(e.message),
+          ),
+        );
+      }
     }
 
     // Listen for location changes.

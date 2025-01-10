@@ -15,9 +15,9 @@
 //
 
 import 'package:arcgis_maps/arcgis_maps.dart';
-import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
-import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_state_support.dart';
 import 'package:flutter/material.dart';
+
+import '../../utils/sample_state_support.dart';
 
 class IdentifyLayerFeatures extends StatefulWidget {
   const IdentifyLayerFeatures({super.key});
@@ -60,7 +60,7 @@ class _IdentifyLayerFeaturesState extends State<IdentifyLayerFeatures>
                       Text(
                         _message,
                         textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.customWhiteStyle,
+                        style: const TextStyle(color: Colors.white),
                       ),
                     ],
                   ),
@@ -69,13 +69,21 @@ class _IdentifyLayerFeaturesState extends State<IdentifyLayerFeatures>
             ),
           ),
           // Display a progress indicator and prevent interaction until state is ready.
-          LoadingIndicator(visible: !_ready),
+          Visibility(
+            visible: !_ready,
+            child: SizedBox.expand(
+              child: Container(
+                color: Colors.white30,
+                child: const Center(child: CircularProgressIndicator()),
+              ),
+            ),
+          ),
         ],
       ),
     );
   }
 
-  Future<void> onMapViewReady() async {
+  void onMapViewReady() async {
     // Create a feature layer of damaged property data.
     final serviceFeatureTable = ServiceFeatureTable.withUri(
       Uri.parse(
@@ -119,11 +127,11 @@ class _IdentifyLayerFeaturesState extends State<IdentifyLayerFeatures>
     });
   }
 
-  Future<void> onTap(Offset localPosition) async {
+  void onTap(Offset localPosition) async {
     // Identify features at the tapped location.
     final identifyLayerResults = await _mapViewController.identifyLayers(
       screenPoint: localPosition,
-      tolerance: 12,
+      tolerance: 12.0,
       maximumResultsPerLayer: 10,
     );
 

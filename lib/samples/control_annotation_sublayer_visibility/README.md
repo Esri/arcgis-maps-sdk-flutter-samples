@@ -24,9 +24,9 @@ Use the switches to manually set "Open" and "Closed" annotation sublayers visibi
 
 ## How it works
 
-1. Load a `MobileMapPackage` that contains `AnnotationSublayer`.
-2. Get the sublayers from the map package's layers by calling `Sublayer.subLayerContents`.
-3. You can toggle the visibility of each sublayer manually using `Sublayer.isVisible` property.
+1. Load a `MobileMapPackage` that contains `AnnotationSublayer`. 
+2. Get the sublayers from the map package's layers by calling `Sublayer.subLayerContents`. 
+3. You can toggle the visibility of each sublayer manually using `Sublayer.isVisible` property. 
 4. To determine if a sublayer is visible at the current scale of the `ArcGISMapView`,
    use `Sublayer.isVisibleAtScale(ArcGISMapViewController.scale)`, by passing in the map's current
    scale.

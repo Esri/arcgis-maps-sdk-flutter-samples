@@ -14,7 +14,6 @@
 //
 
 import 'package:arcgis_maps/arcgis_maps.dart';
-import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_state_support.dart';
 import 'package:flutter/material.dart';
 
@@ -74,8 +73,6 @@ class _ManageFeaturesState extends State<ManageFeatures>
     return Scaffold(
       body: SafeArea(
         top: false,
-        left: false,
-        right: false,
         child: Stack(
           children: [
             Column(
@@ -98,14 +95,17 @@ class _ManageFeaturesState extends State<ManageFeatures>
                           // Create a dropdown button to select a feature management operation.
                           DropdownButton(
                             alignment: Alignment.center,
-                            hint: Text(
+                            hint: const Text(
                               'Select operation',
-                              style: Theme.of(context).textTheme.labelMedium,
+                              style: TextStyle(color: Colors.deepPurple),
                             ),
                             value: _selectedOperation,
-                            icon: const Icon(Icons.arrow_drop_down),
+                            icon: const Icon(
+                              Icons.arrow_drop_down,
+                              color: Colors.deepPurple,
+                            ),
                             elevation: 16,
-                            style: Theme.of(context).textTheme.labelMedium,
+                            style: const TextStyle(color: Colors.deepPurple),
                             // Set the onChanged callback to update the selected operation.
                             onChanged: (operation) =>
                                 setState(() => _selectedOperation = operation),
@@ -121,14 +121,22 @@ class _ManageFeaturesState extends State<ManageFeatures>
               ],
             ),
             // Display a progress indicator and prevent interaction until state is ready.
-            LoadingIndicator(visible: !_ready),
+            Visibility(
+              visible: !_ready,
+              child: const SizedBox.expand(
+                child: ColoredBox(
+                  color: Colors.white30,
+                  child: Center(child: CircularProgressIndicator()),
+                ),
+              ),
+            ),
           ],
         ),
       ),
     );
   }
 
-  Future<void> onMapViewReady() async {
+  void onMapViewReady() async {
     try {
       // Create and load a service geodatabase from a service URL.
       const featureServiceUri =
@@ -167,7 +175,7 @@ class _ManageFeaturesState extends State<ManageFeatures>
             y: 4500000,
             spatialReference: SpatialReference.webMercator,
           ),
-          scale: 30000000,
+          scale: 3e7,
         ),
       );
       // Set the ready state variable to true to enable the sample UI.
@@ -181,7 +189,7 @@ class _ManageFeaturesState extends State<ManageFeatures>
     }
   }
 
-  Future<void> onTap(Offset localPosition) async {
+  void onTap(Offset localPosition) async {
     // Configure actions when a user taps on the map, depending on the selected operation.
     if (_selectedOperation == FeatureManagementOperation.create) {
       // Create a feature if create is selected.
@@ -213,7 +221,8 @@ class _ManageFeaturesState extends State<ManageFeatures>
     final identifyResult = await _mapViewController.identifyLayer(
       _damageFeatureLayer,
       screenPoint: localPosition,
-      tolerance: 12,
+      tolerance: 12.0,
+      maximumResults: 1,
     );
 
     if (identifyResult.geoElements.isNotEmpty) {
@@ -312,7 +321,7 @@ class _ManageFeaturesState extends State<ManageFeatures>
     }
   }
 
-  Future<void> updateAttribute(Feature feature, String damageType) async {
+  void updateAttribute(Feature feature, String damageType) async {
     // Disable the UI while the async operations are in progress.
     setState(() => _ready = false);
     // Update the damage type field to the selected value.
@@ -360,9 +369,9 @@ class _ManageFeaturesState extends State<ManageFeatures>
         // Create a dropdown button for updating the attribute value of the selected feature.
         return DropdownButton(
           alignment: Alignment.center,
-          hint: Text(
+          hint: const Text(
             'Select attribute value',
-            style: Theme.of(context).textTheme.labelMedium,
+            style: TextStyle(color: Colors.deepPurple),
           ),
           disabledHint: const Text(
             'Select a feature',
@@ -372,9 +381,9 @@ class _ManageFeaturesState extends State<ManageFeatures>
           ),
           value: _selectedDamageType,
           icon: const Icon(Icons.arrow_drop_down),
-          style: Theme.of(context).textTheme.labelMedium,
-          iconEnabledColor: Theme.of(context).colorScheme.primary,
-          iconDisabledColor: Theme.of(context).disabledColor,
+          style: const TextStyle(color: Colors.deepPurple),
+          iconEnabledColor: Colors.deepPurple,
+          iconDisabledColor: Colors.grey,
           onChanged: _selectedFeature != null
               ? (String? damageType) {
                   if (damageType != null) {
@@ -388,13 +397,13 @@ class _ManageFeaturesState extends State<ManageFeatures>
       case FeatureManagementOperation.geometry:
         // Display instructions for updating feature geometry.
         return const Text('Tap on the map to move a selected feature.');
-      case null:
+      default:
         // Display default instructions.
         return const Text('Select a feature management operation.');
     }
   }
 
-  String getLabel(FeatureManagementOperation? operation) {
+  String getLabel(FeatureManagementOperation operation) {
     // Return a UI friendly string for each feature management operation.
     switch (operation) {
       case FeatureManagementOperation.create:
@@ -405,9 +414,21 @@ class _ManageFeaturesState extends State<ManageFeatures>
         return 'Update attribute';
       case FeatureManagementOperation.geometry:
         return 'Update geometry';
-      case null:
+      default:
         return 'Select a feature management operation.';
     }
+  }
+
+  void showMessageDialog(String message) {
+    // Show a dialog with the provided message.
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          content: Text(message),
+        );
+      },
+    );
   }
 }
 

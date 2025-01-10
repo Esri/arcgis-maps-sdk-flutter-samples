@@ -14,9 +14,8 @@
 //
 
 import 'package:arcgis_maps/arcgis_maps.dart';
-import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
-import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_state_support.dart';
 import 'package:flutter/material.dart';
+import '../../utils/sample_state_support.dart';
 
 class ChangeViewpoint extends StatefulWidget {
   const ChangeViewpoint({super.key});
@@ -57,8 +56,6 @@ class _ChangeViewpointState extends State<ChangeViewpoint>
     return Scaffold(
       body: SafeArea(
         top: false,
-        left: false,
-        right: false,
         child: Stack(
           children: [
             Column(
@@ -75,14 +72,22 @@ class _ChangeViewpointState extends State<ChangeViewpoint>
               ],
             ),
             // Display a progress indicator and prevent interaction until state is ready.
-            LoadingIndicator(visible: !_ready),
+            Visibility(
+              visible: !_ready,
+              child: const SizedBox.expand(
+                child: ColoredBox(
+                  color: Colors.white30,
+                  child: Center(child: CircularProgressIndicator()),
+                ),
+              ),
+            ),
           ],
         ),
       ),
     );
   }
 
-  Future<void> onMapViewReady() async {
+  void onMapViewReady() async {
     // Create new Map with basemap and initial location.
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic);
     // Assign the map to the ArcGISMapView.
@@ -117,14 +122,16 @@ class _ChangeViewpointState extends State<ChangeViewpoint>
       // A drop down button for selecting viewpoint.
       child: DropdownButton(
         alignment: Alignment.center,
-        hint: Text(
+        hint: const Text(
           'Select viewpoint',
-          style: Theme.of(context).textTheme.titleMedium,
+          style: TextStyle(
+            color: Colors.deepPurple,
+          ),
         ),
         icon: const Icon(Icons.arrow_drop_down),
-        iconEnabledColor: Theme.of(context).primaryColor,
-        iconDisabledColor: Theme.of(context).disabledColor,
-        style: Theme.of(context).textTheme.titleMedium,
+        iconEnabledColor: Colors.deepPurple,
+        iconDisabledColor: Colors.grey,
+        style: const TextStyle(color: Colors.deepPurple),
         value: _selectedViewpoint,
         items: _viewpointTitles.map((items) {
           return DropdownMenuItem(
@@ -141,7 +148,7 @@ class _ChangeViewpointState extends State<ChangeViewpoint>
     );
   }
 
-  Future<void> changeViewpoint(String viewpoint) async {
+  void changeViewpoint(String viewpoint) async {
     // Set the selected viewpoint.
     setState(() => _selectedViewpoint = viewpoint);
 

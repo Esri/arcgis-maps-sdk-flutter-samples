@@ -15,8 +15,9 @@
 //
 
 import 'package:arcgis_maps/arcgis_maps.dart';
-import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_state_support.dart';
 import 'package:flutter/material.dart';
+
+import '../../utils/sample_state_support.dart';
 
 // An enumeration of vector tiled layers to choose from.
 enum VectorTiledItem {
@@ -29,10 +30,9 @@ enum VectorTiledItem {
     '86f556a2d1fd468181855a35e344567f',
   );
 
-  const VectorTiledItem(this.label, this.itemId);
-
   final String label;
   final String itemId;
+  const VectorTiledItem(this.label, this.itemId);
 
   // A menu item for this selection.
   DropdownMenuItem<VectorTiledItem> get menuItem =>
@@ -63,8 +63,6 @@ class _AddVectorTiledLayerState extends State<AddVectorTiledLayer>
     return Scaffold(
       body: SafeArea(
         top: false,
-        left: false,
-        right: false,
         child: Column(
           children: [
             Expanded(
@@ -77,8 +75,11 @@ class _AddVectorTiledLayerState extends State<AddVectorTiledLayer>
             Center(
               // Add a dropdown button to select a vector tiled layer.
               child: DropdownButton(
-                icon: const Icon(Icons.arrow_drop_down),
-                style: Theme.of(context).textTheme.labelMedium,
+                icon: const Icon(
+                  Icons.arrow_drop_down,
+                  color: Colors.deepPurple,
+                ),
+                style: const TextStyle(color: Colors.deepPurple),
                 alignment: Alignment.center,
                 value: _selection,
                 items: _selectionMenuItems,

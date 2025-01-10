@@ -15,7 +15,6 @@
 //
 
 import 'package:arcgis_maps/arcgis_maps.dart';
-import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/models/samples_widget_list.dart';
 import 'package:flutter/material.dart';
 
@@ -37,9 +36,13 @@ void main() {
   // Alternatively, replace sample below with the directory name of the individual sample in snake case
   // const sample = 'display_map';
 
+  final colorScheme = ColorScheme.fromSeed(seedColor: Colors.deepPurple);
   runApp(
     MaterialApp(
-      theme: sampleViewerTheme,
+      theme: ThemeData(
+        colorScheme: colorScheme,
+        appBarTheme: AppBarTheme(backgroundColor: colorScheme.inversePrimary),
+      ),
       home: sampleWidgets[sample]!(),
     ),
   );

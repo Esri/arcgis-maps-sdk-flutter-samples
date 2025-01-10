@@ -1,9 +1,9 @@
 import 'dart:math';
 
 import 'package:arcgis_maps/arcgis_maps.dart';
-import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
-import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_state_support.dart';
 import 'package:flutter/material.dart';
+
+import '../../utils/sample_state_support.dart';
 
 class QueryRelatedFeatures extends StatefulWidget {
   const QueryRelatedFeatures({super.key});
@@ -35,8 +35,6 @@ class _QueryRelatedFeaturesState extends State<QueryRelatedFeatures>
     return Scaffold(
       body: SafeArea(
         top: false,
-        left: false,
-        right: false,
         child: Stack(
           children: [
             // Add a map view to the widget tree and set a controller.
@@ -46,7 +44,15 @@ class _QueryRelatedFeaturesState extends State<QueryRelatedFeatures>
               onTap: onTap,
             ),
             // Display a progress indicator and prevent interaction until state is ready.
-            LoadingIndicator(visible: !_ready),
+            Visibility(
+              visible: !_ready,
+              child: SizedBox.expand(
+                child: Container(
+                  color: Colors.white30,
+                  child: const Center(child: CircularProgressIndicator()),
+                ),
+              ),
+            ),
           ],
         ),
       ),
@@ -61,11 +67,11 @@ class _QueryRelatedFeaturesState extends State<QueryRelatedFeatures>
         maxHeight: MediaQuery.sizeOf(context).height * 0.4,
       ),
       padding: EdgeInsets.fromLTRB(
-        20,
-        5,
-        20,
+        20.0,
+        5.0,
+        20.0,
         max(
-          20,
+          20.0,
           View.of(context).viewPadding.bottom /
               View.of(context).devicePixelRatio,
         ),
@@ -136,7 +142,7 @@ class _QueryRelatedFeaturesState extends State<QueryRelatedFeatures>
     );
   }
 
-  Future<void> onMapViewReady() async {
+  void onMapViewReady() async {
     // Create a map with a topographic basemap style.
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic);
 
@@ -191,7 +197,7 @@ class _QueryRelatedFeaturesState extends State<QueryRelatedFeatures>
     setState(() => _ready = true);
   }
 
-  Future<void> onTap(Offset offset) async {
+  void onTap(Offset offset) async {
     // Clear the selection on the feature layer.
     _alaskaNationalParksLayer.clearSelection();
 
@@ -199,7 +205,8 @@ class _QueryRelatedFeaturesState extends State<QueryRelatedFeatures>
     final identifyLayerResult = await _mapViewController.identifyLayer(
       _alaskaNationalParksLayer,
       screenPoint: offset,
-      tolerance: 12,
+      tolerance: 12.0,
+      maximumResults: 1,
     );
 
     // If there are features identified, show the bottom sheet to display the
@@ -219,7 +226,7 @@ class _QueryRelatedFeaturesState extends State<QueryRelatedFeatures>
         _loadingFeatures = true;
       });
       // Query for related features.
-      await queryRelatedFeatures(selectedFeature);
+      queryRelatedFeatures(selectedFeature);
     } else {
       setState(() {
         _layerDataVisible = false;
@@ -229,9 +236,9 @@ class _QueryRelatedFeaturesState extends State<QueryRelatedFeatures>
   }
 
   // Query for related features given the origin feature.
-  Future<void> queryRelatedFeatures(ArcGISFeature selectedPark) async {
+  void queryRelatedFeatures(ArcGISFeature selectedPark) async {
     // Query for related features.
-    final selectedParkTable = selectedPark.featureTable! as ServiceFeatureTable;
+    final selectedParkTable = selectedPark.featureTable as ServiceFeatureTable;
     final relatedFeatureQueryResult =
         await selectedParkTable.queryRelatedFeatures(feature: selectedPark);
 
@@ -242,7 +249,7 @@ class _QueryRelatedFeaturesState extends State<QueryRelatedFeatures>
       for (final feature in result.features()) {
         final relatedFeature = feature as ArcGISFeature;
         // Get a reference to the feature's table.
-        final relatedTable = feature.featureTable! as ArcGISFeatureTable;
+        final relatedTable = feature.featureTable as ArcGISFeatureTable;
 
         // Get the display field name - this is the name of the field that is intended for display.
         final displayFieldName = relatedTable.layerInfo!.displayFieldName;

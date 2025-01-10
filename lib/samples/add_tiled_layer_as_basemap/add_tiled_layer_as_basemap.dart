@@ -15,11 +15,11 @@
 //
 
 import 'package:arcgis_maps/arcgis_maps.dart';
-import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_data.dart';
-import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_state_support.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
+
+import '../../utils/sample_state_support.dart';
 
 class AddTiledLayerAsBasemap extends StatefulWidget {
   const AddTiledLayerAsBasemap({super.key});
@@ -46,13 +46,21 @@ class AddTiledLayerAsBasemapState extends State<AddTiledLayerAsBasemap>
             onMapViewReady: onMapViewReady,
           ),
           // Display a progress indicator and prevent interaction until state is ready.
-          LoadingIndicator(visible: !_ready),
+          Visibility(
+            visible: !_ready,
+            child: SizedBox.expand(
+              child: Container(
+                color: Colors.white30,
+                child: const Center(child: CircularProgressIndicator()),
+              ),
+            ),
+          ),
         ],
       ),
     );
   }
 
-  Future<void> onMapViewReady() async {
+  void onMapViewReady() async {
     await downloadSampleData(['e4a398afe9a945f3b0f4dca1e4faccb5']);
     final appDir = await getApplicationDocumentsDirectory();
 

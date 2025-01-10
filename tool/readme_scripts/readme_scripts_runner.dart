@@ -13,197 +13,149 @@
 // limitations under the License.
 //
 
-// As a command line tool, we want to use print for output
 // ignore_for_file: avoid_print
 
 import 'dart:io';
 
 const checkmark = '\u2713';
-const crossmark = '\u2716';
 const lReadme = 'readme.md';
 const lMetadata = 'readme.metadata.json';
-const samplesDir = 'lib/samples';
-final failedChecks = <FailedCheck>[];
 
 /// Pass in the directory to a sample to run the checks
-/// dart run tool/readme_scripts/readme_scripts_runner.dart display_map
-/// Or pass -all to run the checks on all samples
-/// dart run tool/readme_scripts/readme_scripts_runner.dart -all
+/// dart run readme_scripts_runner.dart "path/to/samples/display_map"
 /// If creating a new metadata file from an existing readme, pass in the category as the second arg:
-/// dart run tool/readme_scripts/readme_scripts_runner.dart display_map "Maps"
+/// dart run readme_scripts_runner.dart "path/to/samples/display_map" "Maps"
 /// The list of valid categories can be found at common-samples/designs/categories.md
 void main(List<String> args) {
-  final sampleDirectories = <Directory>[];
-  String? currentDirPath;
+  var filePaths = <String>[];
+  String? dirPath;
   String? readmeFile;
   String? metadataFile;
   String? category;
-
   print('** Checking for sample files **');
 
+  // Get all the files in the provided path.
   if (args.isNotEmpty) {
-    Directory? directory;
-    if (args[0] == '-all') {
-      // If -all flag passed, check all samples.
-      directory = Directory(samplesDir);
-      checkIfDirExists(directory);
-      sampleDirectories.addAll(directory.listSync().whereType<Directory>());
-    } else {
-      // Use provided sample e.g. display_map.
-      directory = Directory('$samplesDir/${args[0]}');
-      checkIfDirExists(directory);
-      sampleDirectories.add(directory);
-    }
+    dirPath = args[0];
     if (args.length == 2) {
-      // If category provided as second arg use it.
       category = args[1];
     } else {
-      // Else use empty string.
       category = '';
     }
+    final directory = Directory(dirPath);
+    if (directory.existsSync()) {
+      filePaths = getFilePaths(directory);
+      if (filePaths.isEmpty) {
+        print('No files identified, please check the provided path.');
+        exit(1);
+      }
+    } else {
+      print('The directory does not exist: $dirPath.');
+      exit(1);
+    }
   } else {
-    print(
-      'Invalid arguments, please provide the path to a valid sample directory.',
-    );
+    print('Invalid arguments, please provide the path to a sample directory.');
     exit(1);
   }
 
   var returnCode = 0;
 
-  for (final dir in sampleDirectories) {
-    // Loop through the list of sample directories.
-    currentDirPath = dir.path;
-    print('\nCurrent sample: $currentDirPath');
-    final sampleFiles = getSampleFilePaths(dir);
-    if (sampleFiles.isEmpty) {
-      print('No files identified, please check the provided path.');
-      exit(1);
-    }
-    for (final filePath in sampleFiles) {
-      // Loop through each file in the sample directory.
-      final pathParts = filePath.split(Platform.pathSeparator);
-      final filename = pathParts.last;
-      final lFilename = filename.toLowerCase();
+  for (final filePath in filePaths) {
+    final pathParts = filePath.split(Platform.pathSeparator);
+    final filename = pathParts.last;
+    final lFilename = filename.toLowerCase();
 
-      // Skip any files that aren't the readme or metadata files.
-      if (lFilename != lReadme && lFilename != lMetadata) {
-        continue;
+    // Skip any files that aren't the readme or metadata files.
+    if (lFilename != lReadme && lFilename != lMetadata) {
+      continue;
+    }
+
+    if (lFilename == lReadme) {
+      // Exit if readme filename capitalization is incorrect.
+      if (filename != 'README.md') {
+        print(
+          'Error: readme file has wrong capitalization in filename. Should be: README.md',
+        );
+        returnCode++;
       }
+      // Get the readme file.
+      readmeFile = filename;
+    }
 
-      if (lFilename == lReadme) {
-        // Exit if readme filename capitalization is incorrect.
-        if (filename != 'README.md') {
-          print(
-            'Error: readme file has wrong capitalization in filename. Should be: README.md',
-          );
-          returnCode++;
-        }
-        // Get the readme file.
-        readmeFile = filename;
+    // Get the metadata file.
+    if (lFilename == lMetadata) {
+      // Exit if metadata filename capitalization is incorrect.
+      if (filename != 'README.metadata.json') {
+        print(
+          'Error: metadata file has wrong capitalization in filename. Should be: README.metadata.json',
+        );
+        returnCode++;
       }
-
-      if (lFilename == lMetadata) {
-        // Exit if metadata filename capitalization is incorrect.
-        if (filename != 'README.metadata.json') {
-          print(
-            'Error: metadata file has wrong capitalization in filename. Should be: README.metadata.json',
-          );
-          returnCode++;
-        }
-        // Get the metadata file.
-        metadataFile = filePath;
-      }
+      metadataFile = filePath;
     }
-
-    // Check the readme exists.
-    if (readmeFile == null) {
-      print(
-        'Error: README.md does not exist. Please create and re-run the script.',
-      );
-      failedChecks.add(
-        FailedCheck(
-          name: 'README does not exist for $currentDirPath',
-          result: null,
-        ),
-      );
-      break;
-    }
-
-    // Run readme checks.
-    // Check filename capitalization.
-    // Run the markdown linter style checker on the readme.
-    returnCode += runMdlStyleChecker(currentDirPath);
-
-    // Run the readme content check.
-    returnCode += runReadmeCheck(currentDirPath);
-
-    // If the metadata file doesn't exist, create it from the readme.
-    if (metadataFile == null) {
-      returnCode += createMetadataFromReadme(currentDirPath, category);
-      // Run the metadata content check.
-      returnCode += runMetadataCheck(currentDirPath);
-    } else {
-      // Run the metadata content check.
-      returnCode += runMetadataCheck(currentDirPath);
-    }
-
-    // Reset files.
-    readmeFile = null;
-    metadataFile = null;
   }
 
-  if (failedChecks.isNotEmpty) {
-    print('\n**********\n**** Failures: \n**********\n');
-    printFailedChecks();
+  // Check the readme exists.
+  if (readmeFile == null) {
+    print(
+      'Error: README.md does not exist. Please create and re-run the script.',
+    );
+    returnCode++;
+  }
+
+  // Run readme checks.
+  // Check filename capitalization.
+  // Run the markdown linter style checker on the readme.
+  returnCode += runMdlStyleChecker(dirPath);
+
+  // Run the readme content check.
+  returnCode += runReadmeCheck(dirPath);
+
+  // If the metadata file doesn't exist, create it from the readme.
+  if (metadataFile == null) {
+    returnCode += createMetadataFromReadme(dirPath, category);
+    // Run the metadata content check.
+    returnCode += runMetadataCheck(dirPath);
   } else {
-    print('\nAll checks passed!');
+    // Run the metadata content check.
+    returnCode += runMetadataCheck(dirPath);
   }
+
   exit(returnCode);
 }
 
-void checkIfDirExists(Directory directory) {
-  if (!directory.existsSync()) {
-    print('The directory does not exist: ${directory.path}.');
-    exit(1);
-  }
+int createMetadataFromReadme(String dirPath, String category) {
+  print('**** Creating README.metadata.json from README.md ****');
+  final result = Process.runSync(
+    'python3',
+    ['create_metadata_from_README.py', '-s', dirPath, '-c', category],
+  );
+  printScriptOutput('create readme from metadata script', result);
+  return result.exitCode;
 }
 
-List<String> getSampleFilePaths(Directory directory) {
-  // return the files in the individual sample directory
+List<String> getFilePaths(Directory directory) {
   return directory.listSync().whereType<File>().map((f) => f.path).toList();
 }
 
 void printScriptOutput(String name, ProcessResult result) {
   final stdout = result.stdout;
   final stderr = result.stderr;
+  if (stdout != '') {
+    print(stdout);
+  }
+  if (stderr != '') {
+    print(stderr);
+  }
   if (stdout == '' && stderr == '') {
     print('$checkmark $name passed.');
-  } else {
-    print('$crossmark $name failed.');
-    failedChecks.add(FailedCheck(name: name, result: result));
-  }
-}
-
-void printFailedChecks() {
-  for (final check in failedChecks) {
-    print('**** ${check.name} ****');
-    final stdout = check.result?.stdout;
-    final stderr = check.result?.stderr;
-    if (stdout != null && stdout != '') {
-      print(stdout);
-    }
-    if (stderr != null && stderr != '') {
-      print(stderr);
-    }
   }
 }
 
 int runMdlStyleChecker(String dirPath) {
   print('**** Running mdl (markdown linter) style checker ****');
-  final result = Process.runSync(
-    'mdl',
-    ['--style', './tool/readme_scripts/style.rb', '$dirPath/README.md'],
-  );
+  final result =
+      Process.runSync('mdl', ['--style', 'style.rb', '$dirPath/README.md']);
 
   printScriptOutput('mdl style check', result);
 
@@ -212,45 +164,16 @@ int runMdlStyleChecker(String dirPath) {
 
 int runReadmeCheck(String dirPath) {
   print('**** README checker ****');
-  final result = Process.runSync(
-    'python3',
-    ['./tool/readme_scripts/readme_checker.py', '-s', dirPath],
-  );
+  final result =
+      Process.runSync('python3', ['readme_checker.py', '-s', dirPath]);
   printScriptOutput('README checker', result);
-  return result.exitCode;
-}
-
-int createMetadataFromReadme(String dirPath, String category) {
-  print('**** Creating README.metadata.json from README.md ****');
-  final result = Process.runSync(
-    'python3',
-    [
-      './tool/readme_scripts/create_metadata_from_README.py',
-      '-s',
-      dirPath,
-      '-c',
-      category,
-    ],
-  );
-  printScriptOutput('create readme from metadata script', result);
   return result.exitCode;
 }
 
 int runMetadataCheck(String dirPath) {
   print('**** Metadata checker ****');
-  final result = Process.runSync(
-    'python3',
-    ['./tool/readme_scripts/metadata_checker.py', '-s', dirPath],
-  );
+  final result =
+      Process.runSync('python3', ['metadata_checker.py', '-s', dirPath]);
   printScriptOutput('Metadata checker', result);
   return result.exitCode;
-}
-
-class FailedCheck {
-  FailedCheck({
-    required this.name,
-    required this.result,
-  });
-  String name;
-  ProcessResult? result;
 }

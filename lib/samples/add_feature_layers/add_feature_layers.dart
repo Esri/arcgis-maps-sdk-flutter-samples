@@ -17,10 +17,11 @@
 import 'dart:io';
 
 import 'package:arcgis_maps/arcgis_maps.dart';
-import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_data.dart';
-import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_state_support.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
+
+import '../../utils/sample_data.dart';
+import '../../utils/sample_state_support.dart';
 
 // Create an enumeration to define the feature layer sources.
 enum Source { url, portalItem, geodatabase, geopackage, shapefile }
@@ -86,8 +87,6 @@ class _AddFeatureLayersState extends State<AddFeatureLayers>
     return Scaffold(
       body: SafeArea(
         top: false,
-        left: false,
-        right: false,
         // Create a column with a map view and a dropdown button.
         child: Column(
           children: [
@@ -101,15 +100,20 @@ class _AddFeatureLayersState extends State<AddFeatureLayers>
             // Create a dropdown button to select a feature layer source.
             DropdownButton(
               alignment: Alignment.center,
-              hint: Text(
+              hint: const Text(
                 'Select a feature layer source',
-                style: Theme.of(context).textTheme.labelMedium,
+                style: TextStyle(
+                  color: Colors.deepPurple,
+                ),
               ),
               // Set the selected feature layer source.
               value: _selectedFeatureLayerSource,
-              icon: const Icon(Icons.arrow_drop_down),
+              icon: const Icon(
+                Icons.arrow_drop_down,
+                color: Colors.deepPurple,
+              ),
               elevation: 16,
-              style: Theme.of(context).textTheme.labelMedium,
+              style: const TextStyle(color: Colors.deepPurple),
               // Set the onChanged callback to update the selected feature layer source.
               onChanged: (featureLayerSource) {
                 setState(() {
@@ -124,7 +128,7 @@ class _AddFeatureLayersState extends State<AddFeatureLayers>
     );
   }
 
-  Future<void> _onMapViewReady() async {
+  void _onMapViewReady() async {
     // Set the map on the map view controller.
     _mapViewController.arcGISMap = _map;
   }
@@ -152,7 +156,7 @@ class _AddFeatureLayersState extends State<AddFeatureLayers>
     );
   }
 
-  Future<void> loadGeodatabase() async {
+  void loadGeodatabase() async {
     // Download the sample data.
     await downloadSampleData(['cb1b20748a9f4d128dad8a87244e3e37']);
     // Get the application documents directory.
@@ -189,7 +193,7 @@ class _AddFeatureLayersState extends State<AddFeatureLayers>
     }
   }
 
-  Future<void> loadPortalItem() async {
+  void loadPortalItem() async {
     // Set the portal.
     final portal = Portal.arcGISOnline();
     // Create the portal item with the item ID for the Portland tree service data.
@@ -216,7 +220,7 @@ class _AddFeatureLayersState extends State<AddFeatureLayers>
     );
   }
 
-  Future<void> loadGeopackage() async {
+  void loadGeopackage() async {
     // Download the sample data.
     await downloadSampleData(['68ec42517cdd439e81b036210483e8e7']);
     // Get the application documents directory.
@@ -247,7 +251,7 @@ class _AddFeatureLayersState extends State<AddFeatureLayers>
   }
 
   /// Load a feature layer with a local shapefile.
-  Future<void> loadShapefile() async {
+  void loadShapefile() async {
     // Download the sample data.
     await downloadSampleData(['15a7cbd3af1e47cfa5d2c6b93dc44fc2']);
     // Get the application documents directory.
@@ -270,7 +274,7 @@ class _AddFeatureLayersState extends State<AddFeatureLayers>
       Viewpoint.withLatLongScale(
         latitude: 56.641344,
         longitude: -3.889066,
-        scale: 6000000,
+        scale: 6e6,
       ),
     );
   }

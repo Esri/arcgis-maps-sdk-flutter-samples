@@ -15,8 +15,9 @@
 //
 
 import 'package:arcgis_maps/arcgis_maps.dart';
-import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_state_support.dart';
 import 'package:flutter/material.dart';
+
+import '../../utils/sample_state_support.dart';
 
 class ShowLegend extends StatefulWidget {
   const ShowLegend({super.key});
@@ -37,8 +38,6 @@ class _ShowLegendState extends State<ShowLegend> with SampleStateSupport {
     return Scaffold(
       body: SafeArea(
         top: false,
-        left: false,
-        right: false,
         child: Column(
           // Add the map view and dropdown button to a column.
           children: [
@@ -54,12 +53,14 @@ class _ShowLegendState extends State<ShowLegend> with SampleStateSupport {
               child: DropdownButton(
                 menuMaxHeight: 200,
                 alignment: Alignment.center,
-                hint: Text(
+                hint: const Text(
                   'Legend',
-                  style: Theme.of(context).textTheme.labelMedium,
+                  style: TextStyle(
+                    color: Colors.deepPurple,
+                  ),
                 ),
                 elevation: 16,
-                style: Theme.of(context).textTheme.labelMedium,
+                style: const TextStyle(color: Colors.deepPurple),
                 // No need to set up onChanged callback.
                 onChanged: (_) {},
                 items: _legendsDropDown,
@@ -71,7 +72,7 @@ class _ShowLegendState extends State<ShowLegend> with SampleStateSupport {
     );
   }
 
-  Future<void> onMapViewReady() async {
+  void onMapViewReady() async {
     // Get the screen scale.
     final screenScale = MediaQuery.of(context).devicePixelRatio;
     // Create an image layer.
@@ -127,6 +128,7 @@ class _ShowLegendState extends State<ShowLegend> with SampleStateSupport {
         if (legend.symbol != null) {
           arcGISImage = await legend.symbol!.createSwatch(
             screenScale: screenScale,
+            backgroundColor: Colors.transparent,
             width: symbolSize.width,
             height: symbolSize.height,
           );
@@ -138,12 +140,11 @@ class _ShowLegendState extends State<ShowLegend> with SampleStateSupport {
             child: Row(
               children: [
                 // Add the legend image to the dropdown list if the image exists.
-                if (arcGISImage != null)
-                  Image.memory(
-                    arcGISImage.getEncodedBuffer(),
-                  )
-                else
-                  Container(),
+                arcGISImage != null
+                    ? Image.memory(
+                        arcGISImage.getEncodedBuffer(),
+                      )
+                    : Container(),
                 const SizedBox(width: 8),
                 // Add the legend name to the dropdown list.
                 Text(
@@ -164,11 +165,11 @@ class _ShowLegendState extends State<ShowLegend> with SampleStateSupport {
     // Set the initial viewpoint of the map.
     _map.initialViewpoint = Viewpoint.fromCenter(
       ArcGISPoint(
-        x: -11000000,
-        y: 6000000,
+        x: -11e6,
+        y: 6e6,
         spatialReference: SpatialReference.webMercator,
       ),
-      scale: 90000000,
+      scale: 9e7,
     );
   }
 }

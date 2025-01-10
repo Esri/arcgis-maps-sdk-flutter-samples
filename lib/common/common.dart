@@ -14,7 +14,20 @@
 // limitations under the License.
 //
 
+<<<<<<<< HEAD:lib/common/common.dart
 export 'bottom_sheet_settings.dart';
 export 'dialogs.dart';
 export 'loading_indicator.dart';
 export 'theme_data.dart';
+========
+import 'package:flutter/material.dart';
+
+/// A mixin that overrides `setState` to first check if the widget is mounted.
+/// (Calling `setState` on an unmounted widget causes an exception.)
+mixin SampleStateSupport<T extends StatefulWidget> on State<T> {
+  @override
+  void setState(VoidCallback fn) {
+    if (mounted) super.setState(fn);
+  }
+}
+>>>>>>>> main:lib/utils/sample_state_support.dart
