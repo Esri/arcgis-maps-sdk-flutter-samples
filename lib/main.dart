@@ -46,7 +46,7 @@ class SampleViewerApp extends StatelessWidget {
   SampleViewerApp({super.key});
 
   final sampleViewerPage = SampleViewerPage();
-  final double cardSpacing = 8;
+  final double cardSpacing = 6;
 
   @override
   Widget build(BuildContext context) {
@@ -93,7 +93,7 @@ class SampleViewerApp extends StatelessWidget {
         ],
       ),
       body: Padding(
-        padding: const EdgeInsets.fromLTRB(8, 8, 0, 0),
+        padding: EdgeInsets.fromLTRB(cardSpacing, cardSpacing, 0, 0),
         child: OrientationBuilder(
           builder: (context, orientation) {
             return SingleChildScrollView(
@@ -108,6 +108,8 @@ class SampleViewerApp extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
+          sampleViewerPage.category = null;
+          sampleViewerPage.isSearchable = true;
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => sampleViewerPage),
