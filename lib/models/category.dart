@@ -16,6 +16,7 @@
 
 import 'package:flutter/material.dart';
 
+/// A data object representing a category.
 class Category {
   Category({
     required this.title,
