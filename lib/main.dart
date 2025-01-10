@@ -37,7 +37,7 @@ void main() {
   runApp(
     MaterialApp(
       theme: sampleViewerTheme,
-      home: SampleViewerApp(),
+      home: const SampleViewerApp(),
     ),
   );
 }
