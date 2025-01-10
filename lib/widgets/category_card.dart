@@ -65,7 +65,6 @@ class CategoryCard extends StatelessWidget {
 }
 
 class CategoryIconBackground extends StatelessWidget {
-
   const CategoryIconBackground({
     required this.category, super.key,
   });
@@ -89,7 +88,6 @@ class CategoryIconBackground extends StatelessWidget {
 }
 
 class CategoryBackground extends StatelessWidget {
-
   const CategoryBackground({
     required this.category, super.key,
   });
