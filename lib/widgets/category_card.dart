@@ -17,13 +17,13 @@
 import 'package:arcgis_maps_sdk_flutter_samples/models/category.dart';
 import 'package:flutter/material.dart';
 
-/// A card widget that displays a category.
+/// A card widget that displays a SampleCategory.
 class CategoryCard extends StatelessWidget {
    const CategoryCard({
     required this.category, required this.onClick, super.key,
   });
 
-  final Category category;
+  final SampleCategory category;
   final VoidCallback onClick;
 
   @override
@@ -68,7 +68,7 @@ class CategoryIconBackground extends StatelessWidget {
   const CategoryIconBackground({
     required this.category, super.key,
   });
-  final Category category;
+  final SampleCategory category;
 
   @override
   Widget build(BuildContext context) {
@@ -91,7 +91,7 @@ class CategoryBackground extends StatelessWidget {
   const CategoryBackground({
     required this.category, super.key,
   });
-  final Category category;
+  final SampleCategory category;
 
   @override
   Widget build(BuildContext context) {

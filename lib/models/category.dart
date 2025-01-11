@@ -16,102 +16,56 @@
 
 import 'package:flutter/material.dart';
 
-/// A data object representing a category.
-class Category {
-  Category({
-    required this.title,
-    required this.icon,
-    required this.backgroundImage,
-  });
+enum SampleCategory {
+  all(
+    'All',
+    Icons.apps,
+    'assets/category_images/all_background.webp',
+  ),
+  analysis(
+    'Analysis',
+    Icons.analytics,
+    'assets/category_images/analysis_background.webp',
+  ),
+  cloudAndPortal(
+    'Cloud and Portal',
+    Icons.cloud,
+    'assets/category_images/cloud_background.webp',
+  ),
+  editAndManageData(
+    'Edit and Manage Data',
+    Icons.edit,
+    'assets/category_images/manage_data_background.webp',
+  ),
+  layers(
+    'Layers',
+    Icons.layers,
+    'assets/category_images/layers_background.webp',
+  ),
+  maps(
+    'Maps',
+    Icons.map,
+    'assets/category_images/maps_and_scenes_background.webp',
+  ),
+  routingAndLogistics(
+    'Routing and Logistics',
+    Icons.route,
+    'assets/category_images/routing_and_logistics_background.webp',
+  ),
+  searchAndQuery(
+    'Search and Query',
+    Icons.search,
+    'assets/category_images/search_and_query_background.webp',
+  ),
+  visualization(
+    'Visualization',
+    Icons.visibility,
+    'assets/category_images/visualization_background.webp',
+  ),
+  ;
 
+  const SampleCategory(this.title, this.icon, this.backgroundImage);
   final String title;
   final IconData icon;
   final String backgroundImage;
 }
-
-enum SampleCategory {
-  all('All'),
-  analysis('Analysis'),
-  // augmentedReality('Augmented Reality'),
-  cloudAndPortal('Cloud and Portal'),
-  editAndManageData('Edit and Manage Data'),
-  layers('Layers'),
-  maps('Maps'),
-  routingAndLogistics('Routing and Logistics'),
-  // scenes('Scenes'),
-  searchAndQuery('Search and Query'),
-  // utilityNetworks('Utility Networks'),
-  visualization('Visualization');
-  // favorites('Favorites');
-  const SampleCategory(this.title);
-  final String title;
-}
-
-final List<Category> sampleCategories = [
-  Category(
-    title: SampleCategory.all.title,
-    icon: Icons.apps,
-    backgroundImage: 'assets/category_images/all_background.webp',
-  ),
-  Category(
-    title: SampleCategory.analysis.title,
-    icon: Icons.analytics,
-    backgroundImage: 'assets/category_images/analysis_background.webp',
-  ),
-  // Category(
-  //   title: SampleCategory.augmentedReality.title,
-  //   icon: Icons.view_in_ar,
-  //   backgroundImage: 'assets/category_images/augmented_reality_background.webp',
-  // ),
-  Category(
-    title: SampleCategory.cloudAndPortal.title,
-    icon: Icons.cloud,
-    backgroundImage: 'assets/category_images/cloud_background.webp',
-  ),
-  Category(
-    title: SampleCategory.editAndManageData.title,
-    icon: Icons.edit,
-    backgroundImage: 'assets/category_images/manage_data_background.webp',
-  ),
-  Category(
-    title: SampleCategory.layers.title,
-    icon: Icons.layers,
-    backgroundImage: 'assets/category_images/layers_background.webp',
-  ),
-  Category(
-    title: SampleCategory.maps.title,
-    icon: Icons.map,
-    backgroundImage: 'assets/category_images/maps_and_scenes_background.webp',
-  ),
-  Category(
-    title: SampleCategory.routingAndLogistics.title,
-    icon: Icons.route,
-    backgroundImage:
-        'assets/category_images/routing_and_logistics_background.webp',
-  ),
-  // Category(
-  //   title: SampleCategory.scenes.title,
-  //   icon: Icons.landscape,
-  //   backgroundImage: 'assets/category_images/scenes_background.webp',
-  // ),
-  Category(
-    title: SampleCategory.searchAndQuery.title,
-    icon: Icons.search,
-    backgroundImage: 'assets/category_images/search_and_query_background.webp',
-  ),
-  // Category(
-  //   title: SampleCategory.utilityNetworks.title,
-  //   icon: Icons.electrical_services,
-  //   backgroundImage: 'assets/category_images/utility_background.webp',
-  // ),
-  Category(
-    title: SampleCategory.visualization.title,
-    icon: Icons.visibility,
-    backgroundImage: 'assets/category_images/visualization_background.webp',
-  ),
-  // Category(
-  //   title: SampleCategory.favorites.title,
-  //   icon: Icons.favorite,
-  //   backgroundImage: 'assets/category_images/maps_and_scenes_background.webp',
-  // ),
-];

@@ -16,8 +16,7 @@
 
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/theme_data.dart';
-import 'package:arcgis_maps_sdk_flutter_samples/models/category.dart'
-    as arcgis_category;
+import 'package:arcgis_maps_sdk_flutter_samples/models/category.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/widgets/about_info.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/widgets/category_card.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/widgets/sample_viewer_page.dart';
@@ -98,7 +97,7 @@ class _SampleViewerAppState extends State<SampleViewerApp> {
         ],
       ),
       body: Padding(
-        padding: EdgeInsets.fromLTRB(cardSpacing, cardSpacing, 0, 0),
+        padding: const EdgeInsets.fromLTRB(cardSpacing, cardSpacing, 0, 0),
         child: OrientationBuilder(
           builder: (context, orientation) {
             return SingleChildScrollView(
@@ -129,15 +128,15 @@ class _SampleViewerAppState extends State<SampleViewerApp> {
       cardSize = MediaQuery.of(context).size.height / 2 - cardSpacing * 2;
     }
     return List<Widget>.generate(
-      arcgis_category.sampleCategories.length,
+      SampleCategory.values.length,
       (i) => SizedBox(
         height: cardSize,
         width: cardSize,
         child: CategoryCard(
-          category: arcgis_category.sampleCategories[i],
+          category: SampleCategory.values[i],
           onClick: () => _onCategoryClick(
             context,
-            arcgis_category.sampleCategories[i],
+            SampleCategory.values[i],
           ),
         ),
       ),
@@ -146,7 +145,7 @@ class _SampleViewerAppState extends State<SampleViewerApp> {
 
   void _onCategoryClick(
     BuildContext context,
-    arcgis_category.Category category,
+    SampleCategory category,
   ) {
     Navigator.push(
       context,

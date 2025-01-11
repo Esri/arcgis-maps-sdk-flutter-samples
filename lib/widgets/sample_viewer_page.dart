@@ -15,8 +15,7 @@
 //
 
 import 'dart:convert';
-import 'package:arcgis_maps_sdk_flutter_samples/models/category.dart'
-    as arcgis_category;
+import 'package:arcgis_maps_sdk_flutter_samples/models/category.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/models/sample.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/widgets/sample_list_view.dart';
 import 'package:flutter/material.dart';
@@ -25,7 +24,7 @@ import 'package:flutter/services.dart';
 /// A page that displays a list of sample categories.
 class SampleViewerPage extends StatefulWidget {
   const SampleViewerPage({super.key, this.category, this.isSearchable = true});
-  final arcgis_category.Category? category;
+  final SampleCategory? category;
   final bool isSearchable;
 
   @override
@@ -126,7 +125,7 @@ class _SampleViewerPageState extends State<SampleViewerPage> {
 
     if (widget.category != null) {
       setState(() {
-        _filteredSamples = getSamplesByCategory(widget.category!);
+        _filteredSamples = getSamplesByCategory(widget.category);
       });
     }
     setState(() => _ready = true);
@@ -152,8 +151,11 @@ class _SampleViewerPageState extends State<SampleViewerPage> {
     setState(() => _filteredSamples = results);
   }
 
-  List<Sample> getSamplesByCategory(arcgis_category.Category category) {
-    if (category.title == arcgis_category.SampleCategory.all.title) {
+  List<Sample> getSamplesByCategory(SampleCategory? category) {
+    if (category == null) {
+      return [];
+    }
+    if (category.title == SampleCategory.all.title) {
       return _allSamples;
     }
 
