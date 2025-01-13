@@ -53,7 +53,7 @@ class _SampleViewerAppState extends State<SampleViewerApp> {
 
   @override
   Widget build(BuildContext context) {
-    const applicationTitle = 'ArcGIS Maps SDK Flutter Samples';
+    const applicationTitle = 'ArcGIS Maps SDK for Flutter Samples';
     return Scaffold(
       appBar: AppBar(
         title: const Text('Categories'),
