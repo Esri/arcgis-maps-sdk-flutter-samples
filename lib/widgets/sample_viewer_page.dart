@@ -36,8 +36,8 @@ class _SampleViewerPageState extends State<SampleViewerPage> {
   final _searchFocusNode = FocusNode();
   final _textEditingController = TextEditingController();
   var _filteredSamples = <Sample>[];
-  bool _ready = false;
-  bool _searchHasFocus = false;
+  var _ready = false;
+  var _searchHasFocus = false;
 
   @override
   void initState() {
@@ -132,22 +132,41 @@ class _SampleViewerPageState extends State<SampleViewerPage> {
   }
 
   void onSearchChanged(String searchText) {
-    final List<Sample> results;
+    var results = <Sample>[];
+    // restore the initial list of samples if the search text is empty
     if (searchText.isEmpty) {
-      results = _allSamples;
+      if (widget.category == null) {
+        results = [];
+      } else if (widget.category == SampleCategory.all) {
+        results = _allSamples;
+      } else if (widget.category != null) {
+        results = getSamplesByCategory(widget.category);
+      }
     } else {
-      results = _allSamples.where(
-        (sample) {
-          final lowerSearchText = searchText.toLowerCase();
-          return sample.title.toLowerCase().contains(lowerSearchText) ||
-              sample.category.toLowerCase().contains(lowerSearchText) ||
-              sample.keywords.any(
-                (keyword) => keyword.toLowerCase().contains(lowerSearchText),
-              );
-        },
-      ).toList();
+      if (widget.category == null || widget.category == SampleCategory.all) {
+        results = _allSamples.where(
+          (sample) {
+            final lowerSearchText = searchText.toLowerCase();
+            return sample.title.toLowerCase().contains(lowerSearchText) ||
+                sample.category.toLowerCase().contains(lowerSearchText) ||
+                sample.keywords.any(
+                  (keyword) => keyword.toLowerCase().contains(lowerSearchText),
+                );
+          },
+        ).toList();
+      // if the category is not null, the only samples within the category are searched
+      } else if (widget.category != null) {
+        results = getSamplesByCategory(widget.category).where(
+          (sample) {
+            final lowerSearchText = searchText.toLowerCase();
+            return sample.title.toLowerCase().contains(lowerSearchText) ||
+                sample.keywords.any(
+                  (keyword) => keyword.toLowerCase().contains(lowerSearchText),
+                );
+          },
+        ).toList();
+      }
     }
-
     setState(() => _filteredSamples = results);
   }
 

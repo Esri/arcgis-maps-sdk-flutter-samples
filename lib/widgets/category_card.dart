@@ -14,6 +14,7 @@
 // limitations under the License.
 //
 
+import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/models/category.dart';
 import 'package:flutter/material.dart';
 
@@ -47,11 +48,7 @@ class CategoryCard extends StatelessWidget {
                   CategoryIconBackground(category: category),
                   Text(
                     category.title,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: Theme.of(context).textTheme.categoryCardLabelStyle,
                     textAlign: TextAlign.center,
                   ),
                 ],

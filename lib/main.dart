@@ -149,7 +149,7 @@ class _SampleViewerAppState extends State<SampleViewerApp> {
   ) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => SampleViewerPage(category: category, isSearchable: false)),
+      MaterialPageRoute(builder: (context) => SampleViewerPage(category: category)),
     );
   }
 }

@@ -39,7 +39,7 @@ final sampleViewerTheme = ThemeData(
     ),
   ),
   floatingActionButtonTheme: FloatingActionButtonThemeData(
-    backgroundColor: colorScheme.primary,
+    backgroundColor: colorScheme.primaryContainer,
   ),
 
   // icon theme
@@ -51,6 +51,12 @@ final sampleViewerTheme = ThemeData(
 extension CustomTextTheme on TextTheme {
   TextStyle get customLabelStyle => const TextStyle(
         fontSize: 18,
+        fontWeight: FontWeight.bold,
+        color: Colors.white,
+      );
+  
+  TextStyle get categoryCardLabelStyle => const TextStyle(
+        fontSize: 16,
         fontWeight: FontWeight.bold,
         color: Colors.white,
       );
