@@ -17,7 +17,7 @@ import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
 
-// ViewModel Class
+// A model class to manage the service data, branch versions, and features that are used in this sample.
 class EditWithBranchVersioningModel extends ChangeNotifier {
   EditWithBranchVersioningModel() {
     // Initialize the current version name.
@@ -41,7 +41,7 @@ class EditWithBranchVersioningModel extends ChangeNotifier {
       scale: 4000,
     );
 
-// A geodatabase connected to the damage assessment feature service.
+  // A geodatabase connected to the damage assessment feature service.
   final serviceGeodatabase = ServiceGeodatabase.withUri(
     Uri.parse(
       'https://sampleserver7.arcgisonline.com/server/rest/services/DamageAssessment/FeatureServer',
@@ -54,20 +54,19 @@ class EditWithBranchVersioningModel extends ChangeNotifier {
   // Update the current version name and notify listeners
   void updateCurrentVersionName() {
     currentVersionNameNotifier.value = serviceGeodatabase.versionName;
-    notifyListeners();
   }
 
   late FeatureLayer featureLayer;
   Feature? selectedFeature;
 
-// A Boolean value indicating whether the geodatabase's current version it's default version.
+  // A boolean value indicating whether the geodatabase's current version is its default version.
   bool get onDefaultVersion =>
       serviceGeodatabase.versionName == serviceGeodatabase.defaultVersionName;
 
   // A Boolean value indicating whether a version has been created.
   bool isVersionCreated = false;
 
-// Sets up the service geodatabase and feature layer.
+  // Sets up the service geodatabase and feature layer.
   Future<void> setUp() async {
     // Adds the credential to access the feature service for the service geodatabase.
     final credential = await getPublicSampleCredential();
@@ -76,7 +75,7 @@ class EditWithBranchVersioningModel extends ChangeNotifier {
     await serviceGeodatabase.load();
     existingVersionNames.add(serviceGeodatabase.defaultVersionName);
 
-    // Update the current version name after loading the service geodatabase
+    // Update the current version name after loading the service geodatabase.
     updateCurrentVersionName();
 
     // Creates a feature layer from the geodatabase and adds it to the map.
@@ -100,7 +99,7 @@ class EditWithBranchVersioningModel extends ChangeNotifier {
     return versionInfo.name;
   }
 
-// Switches the geodatabase version to a version with a given name.
+  // Switches the geodatabase version to a version with a given name.
   // - Parameter versionName: The name of the version to connect to.
   Future<void> switchToVersion(String versionName) async {
     if (onDefaultVersion) {
@@ -113,7 +112,7 @@ class EditWithBranchVersioningModel extends ChangeNotifier {
     }
     clearSelection();
     await serviceGeodatabase.switchVersion(versionName: versionName);
-// Update the current version name.
+    // Update the current version name.
     updateCurrentVersionName();
   }
 
@@ -131,19 +130,14 @@ class EditWithBranchVersioningModel extends ChangeNotifier {
 
   // Updates the selected feature in it's feature table.
   Future<void> updateFeature() async {
-    if (selectedFeature == null || selectedFeature!.featureTable == null) {
-      return;
-    }
-    try {
-      await selectedFeature!.featureTable!.updateFeature(selectedFeature!);
-      clearSelection();
-    } catch (e) {
-      print('Error updating feature: $e');
-    }
+    if (selectedFeature?.featureTable == null) return;
+    await selectedFeature!.featureTable!.updateFeature(selectedFeature!);
+    clearSelection();
   }
 
   Future<ArcGISCredential> getPublicSampleCredential() async {
     // The public credentials for the data in this sample.
+    // Note: Never hardcode login information in a production application. This is done solely for the sake of the sample.
     final credential = await TokenCredential.create(
       uri: Uri.parse(
         'https://sampleserver7.arcgisonline.com/server/rest/services/DamageAssessment/FeatureServer',
@@ -169,7 +163,7 @@ class _EditWithBranchVersioningState extends State<EditWithBranchVersioning> {
 
   // A flag for when the map view is ready and controls can be used.
   var _ready = false;
-  final model = EditWithBranchVersioningModel();
+  final _model = EditWithBranchVersioningModel();
 
   @override
   Widget build(BuildContext context) {
@@ -191,16 +185,18 @@ class _EditWithBranchVersioningState extends State<EditWithBranchVersioning> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    // A button to perform a task.
+                    // A button to open a bottom sheet for creating a new branch version.
                     ElevatedButton(
                       onPressed: () async {
-                        await showCreateVersionModalBottomSheet(context, model);
+                        await showCreateVersionModalBottomSheet(
+                            context, _model);
                       },
                       child: const Text('Create'),
                     ),
+                    // A button to select a version to switch to.
                     ElevatedButton(
-                      onPressed: model.isVersionCreated
-                          ? () => showSwitchVersionDialog(context, model)
+                      onPressed: _model.isVersionCreated
+                          ? () => showSwitchVersionDialog(context, _model)
                           : null,
                       child: const Text('Switch'),
                     ),
@@ -219,8 +215,8 @@ class _EditWithBranchVersioningState extends State<EditWithBranchVersioning> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      ValueListenableBuilder<String>(
-                        valueListenable: model.currentVersionNameNotifier,
+                      ValueListenableBuilder(
+                        valueListenable: _model.currentVersionNameNotifier,
                         builder: (context, currentVersionName, child) {
                           return Text(
                             currentVersionName,
@@ -241,29 +237,28 @@ class _EditWithBranchVersioningState extends State<EditWithBranchVersioning> {
   }
 
   Future<void> onMapViewReady() async {
-    await model.setUp();
-    final map = model.map;
-    _mapViewController.arcGISMap = map;
+    await _model.setUp();
+    _mapViewController.arcGISMap = _model.map;
 
     // Set the ready state variable to true to enable the sample UI.
     setState(() => _ready = true);
   }
 
   Future<void> onTap(Offset localPosition) async {
-    if (model.selectedFeature != null && !model.onDefaultVersion) {
+    if (_model.selectedFeature != null && !_model.onDefaultVersion) {
       final mapPoint =
           _mapViewController.screenToLocation(screen: localPosition);
 
       // Show the move confirmation dialog if a feature is already selected.
-      _showMoveConfirmationDialog(model.selectedFeature!, mapPoint!);
+      _showMoveConfirmationDialog(_model.selectedFeature!, mapPoint!);
     } else {
       // Clear the selection of the feature layer.
-      model.clearSelection();
+      _model.clearSelection();
     }
 
     // Do an identify on the feature layer and select a feature.
     final identifyLayerResult = await _mapViewController.identifyLayer(
-      model.featureLayer,
+      _model.featureLayer,
       screenPoint: localPosition,
       tolerance: 5,
     );
@@ -274,7 +269,7 @@ class _EditWithBranchVersioningState extends State<EditWithBranchVersioning> {
 
     if (features.isNotEmpty) {
       final selectedFeature = features.first;
-      model.selectFeature(selectedFeature);
+      _model.selectFeature(selectedFeature);
 
       // Show the bottom modal sheet with the feature's attributes.
       if (mounted) {
@@ -292,7 +287,7 @@ class _EditWithBranchVersioningState extends State<EditWithBranchVersioning> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      builder: (BuildContext context) {
+      builder: (context) {
         return Padding(
           padding: EdgeInsets.only(
             bottom: MediaQuery.of(context).viewInsets.bottom,
@@ -324,7 +319,7 @@ class _EditWithBranchVersioningState extends State<EditWithBranchVersioning> {
                       Text('Damage Type: ${damageType ?? 'Unknown'}'),
                       const Divider(),
                       TextButton(
-                        onPressed: model.onDefaultVersion
+                        onPressed: _model.onDefaultVersion
                             ? null
                             : () {
                                 Navigator.of(context).pop();
@@ -346,14 +341,14 @@ class _EditWithBranchVersioningState extends State<EditWithBranchVersioning> {
   void _showMoveConfirmationDialog(Feature feature, ArcGISPoint mapPoint) {
     showDialog(
       context: context,
-      builder: (BuildContext context) => AlertDialog(
+      builder: (context) => AlertDialog(
         title: const Text('Confirm Move'),
-        content: const Text('Do you want to move the selected feature ?'),
+        content: const Text('Do you want to move the selected feature?'),
         actions: [
           TextButton(
             onPressed: () {
               Navigator.of(context).pop();
-              model.clearSelection();
+              _model.clearSelection();
             },
             child: const Text('Cancel'),
           ),
@@ -362,7 +357,7 @@ class _EditWithBranchVersioningState extends State<EditWithBranchVersioning> {
               Navigator.of(context).pop();
               setState(() {
                 feature.geometry = mapPoint;
-                model.updateFeature();
+                _model.updateFeature();
               });
             },
             child: const Text('Move'),
@@ -374,27 +369,28 @@ class _EditWithBranchVersioningState extends State<EditWithBranchVersioning> {
 
   void _editDamageType(Feature feature) {
     showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text('Damage Type'),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: DamageType.values.map((damageType) {
-                return ListTile(
-                  title: Text(damageType.label),
-                  onTap: () {
-                    Navigator.of(context).pop();
-                    setState(() {
-                      feature.attributes['typdamage'] = damageType.name;
-                      model.updateFeature();
-                    });
-                  },
-                );
-              }).toList(),
-            ),
-          );
-        });
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Damage Type'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: DamageType.values.map((damageType) {
+              return ListTile(
+                title: Text(damageType.label),
+                onTap: () {
+                  Navigator.of(context).pop();
+                  setState(() {
+                    feature.attributes['typdamage'] = damageType.name;
+                    _model.updateFeature();
+                  });
+                },
+              );
+            }).toList(),
+          ),
+        );
+      },
+    );
   }
 
   Future<void> showCreateVersionModalBottomSheet(
@@ -408,9 +404,9 @@ class _EditWithBranchVersioningState extends State<EditWithBranchVersioning> {
     return showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
-      builder: (BuildContext context) {
+      builder: (context) {
         return StatefulBuilder(
-          builder: (BuildContext context, StateSetter setModalState) {
+          builder: (context, setModalState) {
             return Padding(
               padding: EdgeInsets.only(
                 bottom: MediaQuery.of(context).viewInsets.bottom,
@@ -433,9 +429,9 @@ class _EditWithBranchVersioningState extends State<EditWithBranchVersioning> {
                             decoration:
                                 const InputDecoration(labelText: 'Description'),
                           ),
-                          DropdownButton<VersionAccess>(
+                          DropdownButton(
                             value: selectedAccess,
-                            onChanged: (VersionAccess? newValue) {
+                            onChanged: (newValue) {
                               if (newValue != null) {
                                 setModalState(() {
                                   selectedAccess = newValue;
@@ -443,9 +439,8 @@ class _EditWithBranchVersioningState extends State<EditWithBranchVersioning> {
                               }
                             },
                             items: VersionAccess.values
-                                .map<DropdownMenuItem<VersionAccess>>(
-                                    (VersionAccess value) {
-                              return DropdownMenuItem<VersionAccess>(
+                                .map<DropdownMenuItem<VersionAccess>>((value) {
+                              return DropdownMenuItem(
                                 value: value,
                                 child: Text(value.name),
                               );
@@ -474,16 +469,32 @@ class _EditWithBranchVersioningState extends State<EditWithBranchVersioning> {
                                         model.isVersionCreated = true;
                                       });
                                       Navigator.of(context).pop();
-                                    } catch (e) {
+                                    } on ArcGISException catch (e) {
                                       Navigator.of(context).pop();
                                       // Show an error message if an exception occurs.
                                       await showDialog<void>(
                                         context: context,
-                                        builder: (BuildContext context) {
+                                        builder: (context) {
+                                          var errorMessageStrings = e
+                                              .additionalMessage
+                                              .split(RegExp(r'\s+'));
+
+                                          if (errorMessageStrings
+                                              .contains('Extended')) {
+                                            errorMessageStrings =
+                                                errorMessageStrings.sublist(
+                                              0,
+                                              errorMessageStrings.length - 4,
+                                            );
+                                          }
+                                          final cleanedMessage =
+                                              errorMessageStrings.join(' ');
                                           return AlertDialog(
                                             title: const Text('Error'),
-                                            content: Text('Error: $e'),
-                                            actions: <Widget>[
+                                            content: Text(
+                                              'Error: $cleanedMessage',
+                                            ),
+                                            actions: [
                                               TextButton(
                                                 onPressed: () =>
                                                     Navigator.of(context).pop(),
@@ -498,13 +509,13 @@ class _EditWithBranchVersioningState extends State<EditWithBranchVersioning> {
                                     // Show an error message if the fields are empty.
                                     await showDialog<void>(
                                       context: context,
-                                      builder: (BuildContext context) {
+                                      builder: (context) {
                                         return AlertDialog(
                                           title: const Text('Error'),
                                           content: const Text(
                                             'Name cannot be empty',
                                           ),
-                                          actions: <Widget>[
+                                          actions: [
                                             TextButton(
                                               onPressed: () =>
                                                   Navigator.of(context).pop(),
@@ -539,7 +550,7 @@ class _EditWithBranchVersioningState extends State<EditWithBranchVersioning> {
   ) async {
     return showDialog<void>(
       context: context,
-      builder: (BuildContext context) {
+      builder: (context) {
         return AlertDialog(
           title: const Text('Switch Version'),
           content: Column(
@@ -555,11 +566,11 @@ class _EditWithBranchVersioningState extends State<EditWithBranchVersioning> {
                     // Show an error message if an exception occurs.
                     await showDialog<void>(
                       context: context,
-                      builder: (BuildContext context) {
+                      builder: (context) {
                         return AlertDialog(
                           title: const Text('Error'),
                           content: Text('Error: $e'),
-                          actions: <Widget>[
+                          actions: [
                             TextButton(
                               onPressed: () => Navigator.of(context).pop(),
                               child: const Text('OK'),
@@ -573,7 +584,7 @@ class _EditWithBranchVersioningState extends State<EditWithBranchVersioning> {
               );
             }).toList(),
           ),
-          actions: <Widget>[
+          actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
               child: const Text('Cancel'),
