@@ -63,7 +63,7 @@ class _SampleViewerPageState extends State<SampleViewerPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('ArcGIS Maps SDK Flutter Samples'),
+        title: const Text('ArcGIS Maps SDK for Flutter Samples'),
       ),
       body: Column(
         children: [
