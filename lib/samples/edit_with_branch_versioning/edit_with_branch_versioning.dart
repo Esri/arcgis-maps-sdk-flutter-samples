@@ -17,139 +17,8 @@ import 'dart:math';
 
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_state_support.dart';
 import 'package:flutter/material.dart';
-
-// A model class to manage the service data, branch versions, and features that are used in this sample.
-class EditWithBranchVersioningModel extends ChangeNotifier {
-  EditWithBranchVersioningModel() {
-    // Initialize the current version name.
-    currentVersionNameNotifier.value = serviceGeodatabase.defaultVersionName;
-  }
-
-  // The names of the versions added by the user.
-  //
-  // - Note: To get a full list of versions, use `ServiceGeodatabase.versions`.
-  // In this sample, only the default version and versions created in current session are shown.
-  final existingVersionNames = <String>[];
-
-  // Initially centers the map's viewpoint on Naperville, IL, USA.
-  final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISStreets)
-    ..initialViewpoint = Viewpoint.fromCenter(
-      ArcGISPoint(
-        x: -9811970,
-        y: 5127180,
-        spatialReference: SpatialReference.webMercator,
-      ),
-      scale: 4000,
-    );
-
-  // A geodatabase connected to the damage assessment feature service.
-  final serviceGeodatabase = ServiceGeodatabase.withUri(
-    Uri.parse(
-      'https://sampleserver7.arcgisonline.com/server/rest/services/DamageAssessment/FeatureServer',
-    ),
-  );
-
-  // Use a ValueNotifier to track the current version name.
-  final currentVersionNameNotifier = ValueNotifier<String>('');
-
-  // Update the current version name and notify listeners
-  void updateCurrentVersionName() {
-    currentVersionNameNotifier.value = serviceGeodatabase.versionName;
-  }
-
-  late FeatureLayer featureLayer;
-  Feature? selectedFeature;
-
-  // A boolean value indicating whether the geodatabase's current version is its default version.
-  bool get onDefaultVersion =>
-      serviceGeodatabase.versionName == serviceGeodatabase.defaultVersionName;
-
-  // A boolean value indicating whether a version has been created.
-  bool isVersionCreated = false;
-
-  // Sets up the service geodatabase and feature layer.
-  Future<void> setUp() async {
-    // Adds the credential to access the feature service for the service geodatabase.
-    final credential = await getPublicSampleCredential();
-    ArcGISEnvironment.authenticationManager.arcGISCredentialStore
-        .add(credential: credential);
-    await serviceGeodatabase.load();
-    existingVersionNames.add(serviceGeodatabase.defaultVersionName);
-
-    // Update the current version name after loading the service geodatabase.
-    updateCurrentVersionName();
-
-    // Creates a feature layer from the geodatabase and adds it to the map.
-    final serviceFeatureTable = serviceGeodatabase.getTable(layerId: 0)!;
-    featureLayer = FeatureLayer.withFeatureTable(serviceFeatureTable);
-    map.operationalLayers.add(featureLayer);
-  }
-
-  // Creates a new version in the service using given parameters.
-  // - ServiceVersionParameters parameters: The properties of the new version.
-  // - Returns: The name of the created version.
-  Future<String> createVersion(ServiceVersionParameters parameters) async {
-    final versionInfo =
-        await serviceGeodatabase.createVersion(newVersion: parameters);
-    existingVersionNames.add(versionInfo.name);
-    // Set the flag to true when a version is created.
-    isVersionCreated = true;
-    // Switch to the newly created version.
-    await switchToVersion(versionInfo.name);
-
-    return versionInfo.name;
-  }
-
-  // Switches the geodatabase version to a version with a given name.
-  // - Parameter versionName: The name of the version to connect to.
-  Future<void> switchToVersion(String versionName) async {
-    if (onDefaultVersion) {
-      // Discards the local edits when on the default branch.
-      // Making edits on default branch is disabled, but this is left here for parity.
-      await serviceGeodatabase.undoLocalEdits();
-    } else {
-      // Applies the local edits when on a user created branch.
-      await serviceGeodatabase.applyEdits();
-    }
-    clearSelection();
-    await serviceGeodatabase.switchVersion(versionName: versionName);
-    // Update the current version name.
-    updateCurrentVersionName();
-  }
-
-  // Selects a feature on the feature layer.
-  void selectFeature(Feature feature) {
-    featureLayer.selectFeature(feature);
-    selectedFeature = feature;
-  }
-
-  // Clears the selected feature.
-  void clearSelection() {
-    featureLayer.clearSelection();
-    selectedFeature = null;
-  }
-
-  // Updates the selected feature in it's feature table.
-  Future<void> updateFeature() async {
-    if (selectedFeature?.featureTable == null) return;
-    await selectedFeature!.featureTable!.updateFeature(selectedFeature!);
-    clearSelection();
-  }
-
-  Future<ArcGISCredential> getPublicSampleCredential() async {
-    // The public credentials for the data in this sample.
-    // Note: Never hardcode login information in a production application. This is done solely for the sake of the sample.
-    final credential = await TokenCredential.create(
-      uri: Uri.parse(
-        'https://sampleserver7.arcgisonline.com/server/rest/services/DamageAssessment/FeatureServer',
-      ),
-      username: 'editor01',
-      password: 'S7#i2LWmYH75',
-    );
-    return credential;
-  }
-}
 
 class EditWithBranchVersioning extends StatefulWidget {
   const EditWithBranchVersioning({super.key});
@@ -159,13 +28,15 @@ class EditWithBranchVersioning extends StatefulWidget {
       _EditWithBranchVersioningState();
 }
 
-class _EditWithBranchVersioningState extends State<EditWithBranchVersioning> {
+class _EditWithBranchVersioningState extends State<EditWithBranchVersioning> with SampleStateSupport{
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
 
+  // Create an instance of the model class for this sample.
+  final _model = EditWithBranchVersioningModel();
+
   // A flag for when the map view is ready and controls can be used.
   var _ready = false;
-  final _model = EditWithBranchVersioningModel();
 
   // A boolean value indicating whether bottom feature sheet is available.
   bool _featureBottomSheetVisible = false;
@@ -175,6 +46,8 @@ class _EditWithBranchVersioningState extends State<EditWithBranchVersioning> {
     return Scaffold(
       body: SafeArea(
         top: false,
+        left: false,
+        right: false,
         child: Stack(
           children: [
             Column(
@@ -213,7 +86,7 @@ class _EditWithBranchVersioningState extends State<EditWithBranchVersioning> {
             ),
             // Display a progress indicator and prevent interaction until state is ready.
             LoadingIndicator(visible: !_ready),
-            // Display a banner with version at the top.
+            // Display a banner with the current version at the top.
             SafeArea(
               child: IgnorePointer(
                 child: Container(
@@ -226,7 +99,7 @@ class _EditWithBranchVersioningState extends State<EditWithBranchVersioning> {
                         valueListenable: _model.currentVersionNameNotifier,
                         builder: (context, currentVersionName, child) {
                           return Text(
-                            currentVersionName,
+                            'Version: $currentVersionName',
                             textAlign: TextAlign.center,
                             style: Theme.of(context).textTheme.labelMedium,
                           );
@@ -248,7 +121,10 @@ class _EditWithBranchVersioningState extends State<EditWithBranchVersioning> {
   }
 
   Future<void> onMapViewReady() async {
+    // Call the setUp method in the model class to configure the service geodatabase and feature layer.
     await _model.setUp();
+
+    // Set the configured map to the map view controller.
     _mapViewController.arcGISMap = _model.map;
 
     // Set the ready state variable to true to enable the sample UI.
@@ -262,6 +138,7 @@ class _EditWithBranchVersioningState extends State<EditWithBranchVersioning> {
 
       // Show the move confirmation dialog if a feature is already selected.
       _showMoveConfirmationDialog(_model.selectedFeature!, mapPoint!);
+      return;
     } else {
       // Clear the selection of the feature layer.
       _model.clearSelection();
@@ -291,6 +168,7 @@ class _EditWithBranchVersioningState extends State<EditWithBranchVersioning> {
   }
 
   Widget buildFeatureDetails(BuildContext context, Feature feature) {
+    // Get the required feature attributes.
     final placeName = feature.attributes['placename'] as String?;
     final damageType = feature.attributes['typdamage'] as String?;
 
@@ -317,8 +195,10 @@ class _EditWithBranchVersioningState extends State<EditWithBranchVersioning> {
               const Spacer(),
               IconButton(
                 icon: const Icon(Icons.close),
-                onPressed: () =>
-                    setState(() => _featureBottomSheetVisible = false),
+                onPressed: () => setState(() {
+                  _featureBottomSheetVisible = false;
+                  _model.clearSelection();
+                }),
               ),
             ],
           ),
@@ -351,9 +231,7 @@ class _EditWithBranchVersioningState extends State<EditWithBranchVersioning> {
             onPressed: () {
               Navigator.of(context).pop();
               _model.clearSelection();
-              setState(() {
-                _featureBottomSheetVisible = false;
-              });
+              setState(() => _featureBottomSheetVisible = false);
             },
             child: const Text('Cancel'),
           ),
@@ -363,10 +241,7 @@ class _EditWithBranchVersioningState extends State<EditWithBranchVersioning> {
               setState(() {
                 feature.geometry = mapPoint;
                 _model.updateFeature();
-
-                setState(() {
-                  _featureBottomSheetVisible = false;
-                });
+                setState(() => _featureBottomSheetVisible = false);
               });
             },
             child: const Text('Move'),
@@ -389,9 +264,12 @@ class _EditWithBranchVersioningState extends State<EditWithBranchVersioning> {
                 title: Text(damageType.label),
                 onTap: () {
                   Navigator.of(context).pop();
+
+                  // Update the feature's attribute with the selected value.
+                  feature.attributes['typdamage'] = damageType.name;
+                  _model.updateFeature();
+
                   setState(() {
-                    feature.attributes['typdamage'] = damageType.name;
-                    _model.updateFeature();
                     _featureBottomSheetVisible = false;
                   });
                 },
@@ -444,12 +322,14 @@ class _EditWithBranchVersioningState extends State<EditWithBranchVersioning> {
                             onChanged: (newValue) {
                               if (newValue != null) {
                                 setModalState(() {
+                                  // Update the selected access value when a new value is selected from the dropdown menu.
                                   selectedAccess = newValue;
                                 });
                               }
                             },
+                            // Display the version access values in a dropdown.
                             items: VersionAccess.values
-                                .map<DropdownMenuItem<VersionAccess>>((value) {
+                                .map((value) {
                               return DropdownMenuItem(
                                 value: value,
                                 child: Text(value.name),
@@ -465,6 +345,7 @@ class _EditWithBranchVersioningState extends State<EditWithBranchVersioning> {
                               ),
                               ElevatedButton(
                                 onPressed: () async {
+                                  // Create a new version by defining service version parameters from the user input.
                                   if (nameController.text.isNotEmpty) {
                                     final parameters =
                                         ServiceVersionParameters()
@@ -603,6 +484,138 @@ class _EditWithBranchVersioningState extends State<EditWithBranchVersioning> {
         );
       },
     );
+  }
+}
+
+// A model class to manage the service data, branch versions, and features that are used in this sample.
+class EditWithBranchVersioningModel extends ChangeNotifier {
+  EditWithBranchVersioningModel() {
+    // Initialize the current version name with the default version name from the service geodatabase.
+    currentVersionNameNotifier.value = serviceGeodatabase.defaultVersionName;
+  }
+
+  // The names of the versions added by the user.
+  //
+  // - Note: To get a full list of existing versions in the service geodatabase, use `ServiceGeodatabase.versions`.
+  // In this sample, only the default version and versions created in current session are shown.
+  final existingVersionNames = <String>[];
+
+  // Initially center the map's viewpoint on Naperville, IL, USA.
+  final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISStreets)
+    ..initialViewpoint = Viewpoint.fromCenter(
+      ArcGISPoint(
+        x: -9811970,
+        y: 5127180,
+        spatialReference: SpatialReference.webMercator,
+      ),
+      scale: 4000,
+    );
+
+  // Create a service geodatabase from a feature service URL.
+  final serviceGeodatabase = ServiceGeodatabase.withUri(
+    Uri.parse(
+      'https://sampleserver7.arcgisonline.com/server/rest/services/DamageAssessment/FeatureServer',
+    ),
+  );
+
+  // Use a ValueNotifier to track the current version name.
+  final currentVersionNameNotifier = ValueNotifier<String>('');
+
+  // Update the current version name and notify listeners.
+  void updateCurrentVersionName() {
+    currentVersionNameNotifier.value = serviceGeodatabase.versionName;
+  }
+
+  late FeatureLayer featureLayer;
+  Feature? selectedFeature;
+
+  // A boolean value indicating whether the geodatabase's current version is its default version.
+  bool get onDefaultVersion =>
+      serviceGeodatabase.versionName == serviceGeodatabase.defaultVersionName;
+
+  // A boolean value indicating whether a version has been created.
+  bool isVersionCreated = false;
+
+  // Sets up the service geodatabase and feature layer.
+  Future<void> setUp() async {
+    // Adds the credential to access the feature service for the service geodatabase.
+    final credential = await getPublicSampleCredential();
+    ArcGISEnvironment.authenticationManager.arcGISCredentialStore
+        .add(credential: credential);
+    await serviceGeodatabase.load();
+    existingVersionNames.add(serviceGeodatabase.defaultVersionName);
+
+    // Update the current version name after loading the service geodatabase.
+    updateCurrentVersionName();
+
+    // Creates a feature layer from the geodatabase and adds it to the map.
+    final serviceFeatureTable = serviceGeodatabase.getTable(layerId: 0)!;
+    featureLayer = FeatureLayer.withFeatureTable(serviceFeatureTable);
+    map.operationalLayers.add(featureLayer);
+  }
+
+  // Creates a new version in the service using given parameters.
+  // - ServiceVersionParameters parameters: The properties of the new version.
+  // - Returns: The name of the created version.
+  Future<String> createVersion(ServiceVersionParameters parameters) async {
+    final versionInfo =
+        await serviceGeodatabase.createVersion(newVersion: parameters);
+    existingVersionNames.add(versionInfo.name);
+    // Set the flag to true when a version is created.
+    isVersionCreated = true;
+    // Switch to the newly created version.
+    await switchToVersion(versionInfo.name);
+
+    return versionInfo.name;
+  }
+
+  // Switches the geodatabase version to a version with a given name.
+  // - Parameter versionName: The name of the version to connect to.
+  Future<void> switchToVersion(String versionName) async {
+    if (onDefaultVersion) {
+      // Discards the local edits when on the default branch.
+      // Making edits on default branch is disabled, but this is left here for parity.
+      await serviceGeodatabase.undoLocalEdits();
+    } else {
+      // Applies the local edits when on a user created branch.
+      await serviceGeodatabase.applyEdits();
+    }
+    clearSelection();
+    await serviceGeodatabase.switchVersion(versionName: versionName);
+    // Update the current version name.
+    updateCurrentVersionName();
+  }
+
+  // Selects a feature on the feature layer.
+  void selectFeature(Feature feature) {
+    featureLayer.selectFeature(feature);
+    selectedFeature = feature;
+  }
+
+  // Clears the selected feature.
+  void clearSelection() {
+    featureLayer.clearSelection();
+    selectedFeature = null;
+  }
+
+  // Updates the selected feature in it's feature table.
+  Future<void> updateFeature() async {
+    if (selectedFeature?.featureTable == null) return;
+    await selectedFeature!.featureTable!.updateFeature(selectedFeature!);
+    clearSelection();
+  }
+
+  Future<ArcGISCredential> getPublicSampleCredential() async {
+    // The public credentials for the data in this sample.
+    // Note: Never hardcode login information in a production application. This is done solely for the sake of the sample.
+    final credential = await TokenCredential.create(
+      uri: Uri.parse(
+        'https://sampleserver7.arcgisonline.com/server/rest/services/DamageAssessment/FeatureServer',
+      ),
+      username: 'editor01',
+      password: 'S7#i2LWmYH75',
+    );
+    return credential;
   }
 }
 
