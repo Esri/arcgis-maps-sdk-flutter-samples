@@ -21,6 +21,8 @@ import 'package:arcgis_maps_sdk_flutter_samples/widgets/sample_list_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+const applicationTitle = 'ArcGIS Maps SDK for Flutter Samples';
+
 /// A page that displays a list of sample categories.
 class SampleViewerPage extends StatefulWidget {
   const SampleViewerPage({super.key, this.category, this.isSearchable = true});
@@ -63,7 +65,10 @@ class _SampleViewerPageState extends State<SampleViewerPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('ArcGIS Maps SDK for Flutter Samples'),
+        title:
+            (widget.category != null && widget.category != SampleCategory.all)
+                ? Text(widget.category!.title)
+                : const Text(applicationTitle),
       ),
       body: Column(
         children: [

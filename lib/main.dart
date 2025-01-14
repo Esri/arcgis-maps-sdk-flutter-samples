@@ -53,10 +53,9 @@ class _SampleViewerAppState extends State<SampleViewerApp> {
 
   @override
   Widget build(BuildContext context) {
-    const applicationTitle = 'ArcGIS Maps SDK for Flutter Samples';
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Categories'),
+        title: const Text('Sample Categories'),
         actions: [
           IconButton(
             icon: const Icon(Icons.info_outline),
@@ -123,7 +122,9 @@ class _SampleViewerAppState extends State<SampleViewerApp> {
   }
 
   List<Widget> _buildCategoryCards(
-      BuildContext context, Orientation orientation) {
+    BuildContext context,
+    Orientation orientation,
+  ) {
     var cardSize = MediaQuery.of(context).size.width / 2 - cardSpacing * 2;
     if (orientation == Orientation.landscape) {
       cardSize = MediaQuery.of(context).size.height / 2 - cardSpacing * 2;
@@ -151,7 +152,8 @@ class _SampleViewerAppState extends State<SampleViewerApp> {
     Navigator.push(
       context,
       MaterialPageRoute(
-          builder: (context) => SampleViewerPage(category: category)),
+        builder: (context) => SampleViewerPage(category: category),
+      ),
     );
   }
 }
