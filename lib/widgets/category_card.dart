@@ -20,8 +20,10 @@ import 'package:flutter/material.dart';
 
 /// A card widget that displays a SampleCategory.
 class CategoryCard extends StatelessWidget {
-   const CategoryCard({
-    required this.category, required this.onClick, super.key,
+  const CategoryCard({
+    required this.category,
+    required this.onClick,
+    super.key,
   });
 
   final SampleCategory category;
@@ -63,7 +65,8 @@ class CategoryCard extends StatelessWidget {
 
 class CategoryIconBackground extends StatelessWidget {
   const CategoryIconBackground({
-    required this.category, super.key,
+    required this.category,
+    super.key,
   });
   final SampleCategory category;
 
@@ -86,7 +89,8 @@ class CategoryIconBackground extends StatelessWidget {
 
 class CategoryBackground extends StatelessWidget {
   const CategoryBackground({
-    required this.category, super.key,
+    required this.category,
+    super.key,
   });
   final SampleCategory category;
 

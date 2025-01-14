@@ -122,7 +122,8 @@ class _SampleViewerAppState extends State<SampleViewerApp> {
     );
   }
 
-  List<Widget> _buildCategoryCards(BuildContext context, Orientation orientation) {
+  List<Widget> _buildCategoryCards(
+      BuildContext context, Orientation orientation) {
     var cardSize = MediaQuery.of(context).size.width / 2 - cardSpacing * 2;
     if (orientation == Orientation.landscape) {
       cardSize = MediaQuery.of(context).size.height / 2 - cardSpacing * 2;
@@ -149,7 +150,8 @@ class _SampleViewerAppState extends State<SampleViewerApp> {
   ) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => SampleViewerPage(category: category)),
+      MaterialPageRoute(
+          builder: (context) => SampleViewerPage(category: category)),
     );
   }
 }

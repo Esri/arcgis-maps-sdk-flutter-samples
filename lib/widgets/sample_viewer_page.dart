@@ -118,7 +118,7 @@ class _SampleViewerPageState extends State<SampleViewerPage> {
   Future<void> loadSamples() async {
     final jsonString =
         await rootBundle.loadString('assets/generated_samples_list.json');
-    final sampleData = jsonDecode(jsonString);
+    final sampleData = jsonDecode(jsonString) as Map<String, dynamic>;
     for (final s in sampleData.entries) {
       _allSamples.add(Sample.fromJson(s.value));
     }
@@ -139,7 +139,7 @@ class _SampleViewerPageState extends State<SampleViewerPage> {
         results = [];
       } else if (widget.category == SampleCategory.all) {
         results = _allSamples;
-      } else if (widget.category != null) {
+      } else {
         results = getSamplesByCategory(widget.category);
       }
     } else {
@@ -154,8 +154,8 @@ class _SampleViewerPageState extends State<SampleViewerPage> {
                 );
           },
         ).toList();
-      // if the category is not null, the only samples within the category are searched
-      } else if (widget.category != null) {
+        // if the category is not null, the only samples within the category are searched
+      } else {
         results = getSamplesByCategory(widget.category).where(
           (sample) {
             final lowerSearchText = searchText.toLowerCase();

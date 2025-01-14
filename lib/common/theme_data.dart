@@ -23,10 +23,10 @@ final sampleViewerTheme = ThemeData(
   primaryColor: colorScheme.primary,
   disabledColor: Colors.grey,
   colorScheme: colorScheme,
-  
+
   // application bar theme
   appBarTheme: AppBarTheme(backgroundColor: colorScheme.inversePrimary),
-  
+
   // text theme
   textTheme: const TextTheme(
     labelMedium: TextStyle(color: Colors.deepPurple),
@@ -54,7 +54,7 @@ extension CustomTextTheme on TextTheme {
         fontWeight: FontWeight.bold,
         color: Colors.white,
       );
-  
+
   TextStyle get categoryCardLabelStyle => const TextStyle(
         fontSize: 16,
         fontWeight: FontWeight.bold,
