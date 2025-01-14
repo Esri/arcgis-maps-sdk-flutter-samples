@@ -13,6 +13,8 @@
 // limitations under the License.
 //
 
+import 'dart:math';
+
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
@@ -63,7 +65,7 @@ class EditWithBranchVersioningModel extends ChangeNotifier {
   bool get onDefaultVersion =>
       serviceGeodatabase.versionName == serviceGeodatabase.defaultVersionName;
 
-  // A Boolean value indicating whether a version has been created.
+  // A boolean value indicating whether a version has been created.
   bool isVersionCreated = false;
 
   // Sets up the service geodatabase and feature layer.
@@ -165,6 +167,9 @@ class _EditWithBranchVersioningState extends State<EditWithBranchVersioning> {
   var _ready = false;
   final _model = EditWithBranchVersioningModel();
 
+  // A boolean value indicating whether bottom feature sheet is available.
+  bool _featureBottomSheetVisible = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -189,7 +194,9 @@ class _EditWithBranchVersioningState extends State<EditWithBranchVersioning> {
                     ElevatedButton(
                       onPressed: () async {
                         await showCreateVersionModalBottomSheet(
-                            context, _model);
+                          context,
+                          _model,
+                        );
                       },
                       child: const Text('Create'),
                     ),
@@ -233,6 +240,10 @@ class _EditWithBranchVersioningState extends State<EditWithBranchVersioning> {
           ],
         ),
       ),
+      // The Feature Details bottom sheet.
+      bottomSheet: _featureBottomSheetVisible
+          ? buildFeatureDetails(context, _model.selectedFeature!)
+          : null,
     );
   }
 
@@ -268,73 +279,64 @@ class _EditWithBranchVersioningState extends State<EditWithBranchVersioning> {
         identifyLayerResult.geoElements.whereType<Feature>().toList();
 
     if (features.isNotEmpty) {
-      final selectedFeature = features.first;
-      _model.selectFeature(selectedFeature);
+      _model.selectFeature(features.first);
 
       // Show the bottom modal sheet with the feature's attributes.
       if (mounted) {
         setState(() {
-          _showBottomSheet(selectedFeature);
+          _featureBottomSheetVisible = true;
         });
       }
     }
   }
 
-  void _showBottomSheet(Feature feature) {
+  Widget buildFeatureDetails(BuildContext context, Feature feature) {
     final placeName = feature.attributes['placename'] as String?;
     final damageType = feature.attributes['typdamage'] as String?;
 
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      builder: (context) {
-        return Padding(
-          padding: EdgeInsets.only(
-            bottom: MediaQuery.of(context).viewInsets.bottom,
+    return Container(
+      padding: EdgeInsets.fromLTRB(
+        20,
+        20,
+        20,
+        max(
+          20,
+          View.of(context).viewPadding.bottom /
+              View.of(context).devicePixelRatio,
+        ),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
+            children: [
+              Text(
+                placeName ?? 'Feature Details',
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
+              const Spacer(),
+              IconButton(
+                icon: const Icon(Icons.close),
+                onPressed: () =>
+                    setState(() => _featureBottomSheetVisible = false),
+              ),
+            ],
           ),
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    children: [
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              placeName ?? 'Feature Details',
-                              style: Theme.of(context).textTheme.headlineSmall,
-                            ),
-                          ),
-                          IconButton(
-                            alignment: Alignment.centerRight,
-                            icon: const Icon(Icons.close),
-                            onPressed: () => Navigator.of(context).pop(),
-                          ),
-                        ],
-                      ),
-                      const Divider(),
-                      Text('Damage Type: ${damageType ?? 'Unknown'}'),
-                      const Divider(),
-                      TextButton(
-                        onPressed: _model.onDefaultVersion
-                            ? null
-                            : () {
-                                Navigator.of(context).pop();
-                                _editDamageType(feature);
-                              },
-                        child: const Text('Edit Damage Type'),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
+          const Divider(),
+          Text('Damage Type: ${damageType ?? 'Unknown'}'),
+          const Divider(),
+          TextButton(
+            onPressed: _model.onDefaultVersion
+                ? null
+                : () {
+                    setState(() {
+                      _editDamageType(feature);
+                    });
+                  },
+            child: const Text('Edit Damage Type'),
           ),
-        );
-      },
+        ],
+      ),
     );
   }
 
@@ -349,6 +351,9 @@ class _EditWithBranchVersioningState extends State<EditWithBranchVersioning> {
             onPressed: () {
               Navigator.of(context).pop();
               _model.clearSelection();
+              setState(() {
+                _featureBottomSheetVisible = false;
+              });
             },
             child: const Text('Cancel'),
           ),
@@ -358,6 +363,10 @@ class _EditWithBranchVersioningState extends State<EditWithBranchVersioning> {
               setState(() {
                 feature.geometry = mapPoint;
                 _model.updateFeature();
+
+                setState(() {
+                  _featureBottomSheetVisible = false;
+                });
               });
             },
             child: const Text('Move'),
@@ -383,6 +392,7 @@ class _EditWithBranchVersioningState extends State<EditWithBranchVersioning> {
                   setState(() {
                     feature.attributes['typdamage'] = damageType.name;
                     _model.updateFeature();
+                    _featureBottomSheetVisible = false;
                   });
                 },
               );
