@@ -14,6 +14,7 @@
 //
 
 import 'package:arcgis_maps/arcgis_maps.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_state_support.dart';
 import 'package:flutter/material.dart';
 
 class AddRasterFromService extends StatefulWidget {
@@ -23,51 +24,23 @@ class AddRasterFromService extends StatefulWidget {
   State<AddRasterFromService> createState() => _AddRasterFromServiceState();
 }
 
-class _AddRasterFromServiceState extends State<AddRasterFromService> {
+class _AddRasterFromServiceState extends State<AddRasterFromService>
+    with SampleStateSupport {
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
-
-  // A flag for when the map view is ready and controls can be used.
-  var _ready = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        top: false,
-        left: false,
-        right: false,
-        child: Stack(
-          children: [
-            Column(
-              children: [
-                Expanded(
-                  // Add a map view to the widget tree and set a controller.
-                  child: ArcGISMapView(
-                    controllerProvider: () => _mapViewController,
-                    onMapViewReady: onMapViewReady,
-                  ),
-                ),
-              ],
-            ),
-            // Display a progress indicator and prevent interaction until state is ready.
-            Visibility(
-              visible: !_ready,
-              child: const SizedBox.expand(
-                child: ColoredBox(
-                  color: Colors.white30,
-                  child: Center(child: CircularProgressIndicator()),
-                ),
-              ),
-            ),
-          ],
-        ),
+      body: ArcGISMapView(
+        controllerProvider: () => _mapViewController,
+        onMapViewReady: onMapViewReady,
       ),
     );
   }
 
-  Future<void> onMapViewReady() async {
-    // Create a map with the ArcGIS DarkGrayBase basemap style and set to the map view.
+  void onMapViewReady() {
+    // Set the map to the map view.
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISDarkGrayBase);
 
     // Set the map to _mapViewController.
@@ -98,8 +71,5 @@ class _AddRasterFromServiceState extends State<AddRasterFromService> {
 
     // Add Raster layer to the map.
     map.operationalLayers.add(rasterLayer);
-
-    // Set the ready state variable to true to enable the sample UI.
-    setState(() => _ready = true);
   }
 }
