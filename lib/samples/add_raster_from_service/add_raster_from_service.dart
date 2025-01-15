@@ -40,10 +40,10 @@ class _AddRasterFromServiceState extends State<AddRasterFromService>
   }
 
   void onMapViewReady() {
-    // Set the map to the map view.
+    // Create a map with the ArcGIS DarkGrayBase basemap style and set to the map view.
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISDarkGrayBase);
 
-    // Set the map to _mapViewController.
+    // Set the map to the map view.
     _mapViewController.arcGISMap = map;
 
     // Creates an initial viewpoint with a coordinate point centered on
@@ -59,7 +59,7 @@ class _AddRasterFromServiceState extends State<AddRasterFromService>
       ),
     );
 
-    //Creates a raster from an image service.
+    // Creates a raster from an image service.
     final imageServiceRaster = ImageServiceRaster(
       uri: Uri.parse(
         'https://gis.ngdc.noaa.gov/arcgis/rest/services/bag_hillshades_subsets/ImageServer',
