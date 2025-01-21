@@ -87,7 +87,7 @@ class _DownloadPreplannedMapAreaState extends State<DownloadPreplannedMapArea>
             // Display the name of the current map.
             Container(
               padding: const EdgeInsets.all(10),
-              color: Colors.black.withOpacity(0.7),
+              color: Colors.black.withValues(alpha: 0.7),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [

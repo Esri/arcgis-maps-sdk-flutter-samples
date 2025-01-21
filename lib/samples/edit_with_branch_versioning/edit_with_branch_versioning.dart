@@ -91,7 +91,7 @@ class _EditWithBranchVersioningState extends State<EditWithBranchVersioning> wit
               child: IgnorePointer(
                 child: Container(
                   padding: const EdgeInsets.all(10),
-                  color: Colors.white.withOpacity(0.7),
+                  color: Colors.white.withValues(alpha: 0.7),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [

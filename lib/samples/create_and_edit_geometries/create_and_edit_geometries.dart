@@ -507,7 +507,7 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
       color: Colors.black,
     );
     _polygonSymbol = SimpleFillSymbol(
-      color: Colors.red.withOpacity(0.3),
+      color: Colors.red.withValues(alpha: 0.3),
       outline: outlineSymbol,
     );
 

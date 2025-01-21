@@ -75,7 +75,7 @@ class CategoryIconBackground extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
-        color: Colors.black.withOpacity(0.8),
+        color: Colors.black.withValues(alpha: 0.8),
         shape: BoxShape.circle,
       ),
       child: Icon(
@@ -105,7 +105,7 @@ class CategoryBackground extends StatelessWidget {
           height: double.infinity,
         ),
         Container(
-          color: Colors.black.withOpacity(0.6),
+          color: Colors.black.withValues(alpha: 0.6),
         ),
       ],
     );

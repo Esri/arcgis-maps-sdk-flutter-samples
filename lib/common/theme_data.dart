@@ -35,7 +35,7 @@ final sampleViewerTheme = ThemeData(
   // button theme
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ElevatedButton.styleFrom(
-      disabledBackgroundColor: Colors.white.withOpacity(0.6),
+      disabledBackgroundColor: Colors.white.withValues(alpha: 0.6),
     ),
   ),
   floatingActionButtonTheme: FloatingActionButtonThemeData(

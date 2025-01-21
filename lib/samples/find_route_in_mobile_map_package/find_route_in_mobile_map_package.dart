@@ -221,7 +221,7 @@ class _FindRouteInMapState extends State<FindRouteInMap>
                   visible: _message.isNotEmpty,
                   child: Container(
                     padding: const EdgeInsets.all(10),
-                    color: Colors.black.withOpacity(0.7),
+                    color: Colors.black.withValues(alpha: 0.7),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
