@@ -175,7 +175,7 @@ class _ControlAnnotationSublayerVisibilityState
         // Check if the sublayer is visible at the current map scale.
         if (_openSublayer.isVisibleAtScale(_mapViewController.scale)) {
           setState(
-              () => _openLabelColor = Theme.of(context).colorScheme.primary);
+              () => _openLabelColor = Theme.of(context).colorScheme.primary,);
         } else {
           setState(() => _openLabelColor = null);
         }
