@@ -36,12 +36,17 @@ class _SetUpLocationDrivenGeotriggersState
   var _ready = false;
   // The simulated location data source this sample will use
   late final SimulatedLocationDataSource _locationDataSource;
-  StreamSubscription? _poiGeotriggerEventSubscription;
-  StreamSubscription? _sectionGeotriggerEventSubscription;
-  GeotriggerMonitor? _poiGeotriggerMonitor;
-  GeotriggerMonitor? _sectionsGeotriggerMonitor;
-  Feature? _currentSection;
-  final _currentPois = <Feature>[];
+
+  // Geotrigger names
+  final _poiGeotriggerName = 'POI Geotrigger';
+  final _sectionGeotriggerName = 'Section Geotrigger';
+
+  // Stream subscriptions for the geotrigger event changes
+  final _streamSubscriptions = <StreamSubscription>[];
+
+  // Feature names for the current section and nearby POIs
+  final _currentSections = <String>[];
+  final _currentPois = <String>[];
 
   // Service feature tables used for the FenceGeotriggers
   final _gardenSectionsTable = ServiceFeatureTable.withItem(
@@ -72,13 +77,10 @@ class _SetUpLocationDrivenGeotriggersState
     // Stop the location data source
     await _locationDataSource.stop();
 
-    // Stop the geotrigger monitors
-    _poiGeotriggerMonitor?.stop();
-    _sectionsGeotriggerMonitor?.stop();
-
     // Cancel the geotrigger event subscriptions
-    await _poiGeotriggerEventSubscription?.cancel();
-    await _sectionGeotriggerEventSubscription?.cancel();
+    for (final subscription in _streamSubscriptions) {
+      await subscription.cancel();
+    }
 
     super.dispose();
   }
@@ -128,8 +130,9 @@ class _SetUpLocationDrivenGeotriggersState
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              _currentSection?.attributes['name'] ??
-                  'Not currently in a section',
+              _currentSections.isEmpty
+                  ? 'Not currently in a section'
+                  : _currentSections.last,
             ),
           ],
         ),
@@ -149,16 +152,16 @@ class _SetUpLocationDrivenGeotriggersState
           mainAxisAlignment: MainAxisAlignment.center,
           children: _currentPois.isEmpty
               ? [const Text('No Points of Interest nearby')]
-              : _currentPois.map((feature) {
-                  Text(feature.attributes['name']);
-                }).toList() as List<Widget>,
+              : _currentPois.map((featureName) {
+                  return Text(featureName);
+                }).toList(),
         ),
       ],
     );
   }
 
   Future<void> onMapViewReady() async {
-    // final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic);
+    // Create the map based on a webmap and add it to the MapView
     final map = ArcGISMap.withUri(
       Uri.parse(
         'https://www.arcgis.com/home/item.html?id=6ab0e91dc39e478cae4f408e1a36a308',
@@ -180,47 +183,75 @@ class _SetUpLocationDrivenGeotriggersState
   // Sets up the Geotriggers and listens for Geotrigger events.
   Future<void> _setupGeotriggers() async {
     // Setup the points of interest Geotrigger
-    _poiGeotriggerMonitor =
-        createGeotriggerMonitor(_gardenPoisTable, bufferSize: 10.0);
-    _poiGeotriggerEventSubscription = _poiGeotriggerMonitor!
-        .onGeotriggerNotificationEvent
-        .listen(handlePoiGeotriggerEvent);
-    await _poiGeotriggerMonitor!.start();
+    await createGeotriggerMonitor(
+      featureTable: _gardenPoisTable,
+      bufferSize: 10,
+      name: _poiGeotriggerName,
+    );
 
     // Set up the sections Geotrigger
-    _sectionsGeotriggerMonitor = createGeotriggerMonitor(_gardenSectionsTable);
-    _sectionGeotriggerEventSubscription = _sectionsGeotriggerMonitor!
-        .onGeotriggerNotificationEvent
-        .listen(handleSectionGeotriggerEvent);
-    await _sectionsGeotriggerMonitor!.start();
+    await createGeotriggerMonitor(
+      featureTable: _gardenSectionsTable,
+      name: _sectionGeotriggerName,
+    );
   }
 
   // Creates a GeotriggerMonitor using the provided ServiceFeatureTable and
-  // optional buffer size.
-  GeotriggerMonitor createGeotriggerMonitor(
-    ServiceFeatureTable featureTable, {
+  // optional buffer size. The stream for changing events will be listened to,
+  //and the monitor started.
+  Future<void> createGeotriggerMonitor({
+    required ServiceFeatureTable featureTable,
+    required String name,
     double bufferSize = 0.0,
-  }) {
-    final fenceParameters = FeatureFenceParameters(featureTable: featureTable);
+  }) async {
+    // Set up the fence parameters
+    final fenceParameters = FeatureFenceParameters(
+      featureTable: featureTable,
+      bufferDistance: bufferSize,
+    );
+
+    // Create the geotrigger. The Arcade expression provides a convinient way to
+    // get the name of the triggering feature.
     final geotrigger = FenceGeotrigger(
       feed: LocationGeotriggerFeed(locationDataSource: _locationDataSource),
       ruleType: FenceRuleType.enterOrExit,
       fenceParameters: fenceParameters,
+      messageExpression: ArcadeExpression(expression: r'$fencefeature.name'),
+      name: name,
     );
 
-    return GeotriggerMonitor.withGeotrigger(geotrigger);
+    // Create the GeotriggerMonitor and listen to the onGeotriggerNotificationEvent stream
+    final monitor = GeotriggerMonitor.withGeotrigger(geotrigger);
+    final subscription =
+        monitor.onGeotriggerNotificationEvent.listen(handleGeotriggerEvent);
+    _streamSubscriptions.add(subscription);
+
+    // Start monitoring the Geotrigger
+    await monitor.start();
   }
 
-  void handlePoiGeotriggerEvent(GeotriggerNotificationInfo info) {
+  // Handles geotrigger event changes sent from the monitors
+  void handleGeotriggerEvent(GeotriggerNotificationInfo info) {
     final fenceInfo = info as FenceGeotriggerNotificationInfo;
-    print('Got POI event');
+
+    // Set which feature list to update based on which monitor triggered this event
+    final featureList =
+        fenceInfo.geotriggerMonitor.geotrigger.name == _poiGeotriggerName
+            ? _currentPois
+            : _currentSections;
+
+    // Add or remove the feature name from the list based on event type
+    setState(() {
+      switch (fenceInfo.fenceNotificationType) {
+        case FenceNotificationType.entered:
+          featureList.add(fenceInfo.message);
+        case FenceNotificationType.exited:
+          featureList.remove(fenceInfo.message);
+      }
+    });
   }
 
-  void handleSectionGeotriggerEvent(GeotriggerNotificationInfo info) {
-    final fenceInfo = info as FenceGeotriggerNotificationInfo;
-    print('Got Section event');
-  }
-
+  // Creates the path used for the SimulatedLocationDataSource.
   Polyline _createSamplePath() {
     final polylineCoordinates = [
       [-119.709881177746, 34.4570041646846],
