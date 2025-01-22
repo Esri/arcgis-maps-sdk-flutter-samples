@@ -361,9 +361,8 @@ class _EditWithBranchVersioningState extends State<EditWithBranchVersioning>
                                         Navigator.of(context).pop();
                                       });
                                     } on ArcGISException catch (e) {
-                                      setState(() async {
+                                      if (context.mounted) {
                                         Navigator.of(context).pop();
-
                                         // Show an error message if an exception occurs.
                                         await showDialog<void>(
                                           context: context,
@@ -398,7 +397,7 @@ class _EditWithBranchVersioningState extends State<EditWithBranchVersioning>
                                             );
                                           },
                                         );
-                                      });
+                                      }
                                     }
                                   } else {
                                     // Show an error message if the fields are empty.
@@ -460,8 +459,8 @@ class _EditWithBranchVersioningState extends State<EditWithBranchVersioning>
                     // catch ArcGISException when switching to a version fails.
                     // ignore: avoid_catches_without_on_clauses
                   } catch (e) {
-                    setState(() async {
-                      // Show an error message if an exception occurs.
+                    // Show an error message if an exception occurs.
+                    if (context.mounted) {
                       await showDialog<void>(
                         context: context,
                         builder: (context) {
@@ -477,7 +476,7 @@ class _EditWithBranchVersioningState extends State<EditWithBranchVersioning>
                           );
                         },
                       );
-                    });
+                    }
                   }
                 },
               );
