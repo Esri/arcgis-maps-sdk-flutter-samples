@@ -81,6 +81,7 @@ class _SetUpLocationDrivenGeotriggersState
     for (final subscription in _streamSubscriptions) {
       await subscription.cancel();
     }
+    _streamSubscriptions.clear();
 
     super.dispose();
   }
