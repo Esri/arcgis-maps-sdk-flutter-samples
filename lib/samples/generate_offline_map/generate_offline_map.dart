@@ -243,7 +243,9 @@ class _GenerateOfflineMapState extends State<GenerateOfflineMap>
       setState(() => _progress = null);
 
       // If the exception is not due to user cancellation (code 17), show the details of the error in a dialog.
-      if (e.errorType != ArcGISExceptionType.commonUserCanceled && mounted) await showAlertDialog(context, e.message);
+      if (e.errorType != ArcGISExceptionType.commonUserCanceled && mounted) {
+        await showAlertDialog(context, e.message);
+      }
       return;
     }
 

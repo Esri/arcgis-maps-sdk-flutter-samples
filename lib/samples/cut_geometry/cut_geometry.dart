@@ -190,7 +190,7 @@ class _CutGeometryState extends State<CutGeometry> with SampleStateSupport {
     _lakeGraphic = Graphic(
       geometry: lakePolygonBuilder.toGeometry(),
       symbol: SimpleFillSymbol(
-        color: Colors.blue.withOpacity(0.5),
+        color: Colors.blue.withValues(alpha: 0.5),
         outline: SimpleLineSymbol(
           color: Colors.blue,
           width: 4,

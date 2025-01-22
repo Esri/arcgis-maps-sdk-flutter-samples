@@ -115,7 +115,7 @@ class _CreateBuffersAroundPointsState extends State<CreateBuffersAroundPoints>
               child: IgnorePointer(
                 child: Container(
                   padding: const EdgeInsets.all(10),
-                  color: Colors.white.withOpacity(0.7),
+                  color: Colors.white.withValues(alpha: 0.7),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -193,7 +193,7 @@ class _CreateBuffersAroundPointsState extends State<CreateBuffersAroundPoints>
   void _initializeSymbols() {
     // Initialize the fill symbol for the buffer.
     _bufferFillSymbol
-      ..color = Colors.yellow.withOpacity(0.5)
+      ..color = Colors.yellow.withValues(alpha: 0.5)
       ..outline = SimpleLineSymbol(
         color: Colors.green,
         width: 3,

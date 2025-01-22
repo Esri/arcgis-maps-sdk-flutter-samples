@@ -28,7 +28,8 @@ class EditWithBranchVersioning extends StatefulWidget {
       _EditWithBranchVersioningState();
 }
 
-class _EditWithBranchVersioningState extends State<EditWithBranchVersioning> with SampleStateSupport{
+class _EditWithBranchVersioningState extends State<EditWithBranchVersioning>
+    with SampleStateSupport {
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
 
@@ -91,7 +92,7 @@ class _EditWithBranchVersioningState extends State<EditWithBranchVersioning> wit
               child: IgnorePointer(
                 child: Container(
                   padding: const EdgeInsets.all(10),
-                  color: Colors.white.withOpacity(0.7),
+                  color: Colors.white.withValues(alpha: 0.7),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -328,8 +329,7 @@ class _EditWithBranchVersioningState extends State<EditWithBranchVersioning> wit
                               }
                             },
                             // Display the version access values in a dropdown.
-                            items: VersionAccess.values
-                                .map((value) {
+                            items: VersionAccess.values.map((value) {
                               return DropdownMenuItem(
                                 value: value,
                                 child: Text(value.name),
@@ -359,42 +359,47 @@ class _EditWithBranchVersioningState extends State<EditWithBranchVersioning> wit
                                       setState(() {
                                         model.isVersionCreated = true;
                                       });
-                                      Navigator.of(context).pop();
+                                      if (context.mounted) {
+                                        Navigator.of(context).pop();
+                                      }
                                     } on ArcGISException catch (e) {
-                                      Navigator.of(context).pop();
-                                      // Show an error message if an exception occurs.
-                                      await showDialog<void>(
-                                        context: context,
-                                        builder: (context) {
-                                          var errorMessageStrings = e
-                                              .additionalMessage
-                                              .split(RegExp(r'\s+'));
+                                      if (context.mounted) {
+                                        Navigator.of(context).pop();
+                                        // Show an error message if an exception occurs.
+                                        await showDialog<void>(
+                                          context: context,
+                                          builder: (context) {
+                                            var errorMessageStrings = e
+                                                .additionalMessage
+                                                .split(RegExp(r'\s+'));
 
-                                          if (errorMessageStrings
-                                              .contains('Extended')) {
-                                            errorMessageStrings =
-                                                errorMessageStrings.sublist(
-                                              0,
-                                              errorMessageStrings.length - 4,
-                                            );
-                                          }
-                                          final cleanedMessage =
-                                              errorMessageStrings.join(' ');
-                                          return AlertDialog(
-                                            title: const Text('Error'),
-                                            content: Text(
-                                              'Error: $cleanedMessage',
-                                            ),
-                                            actions: [
-                                              TextButton(
-                                                onPressed: () =>
-                                                    Navigator.of(context).pop(),
-                                                child: const Text('OK'),
+                                            if (errorMessageStrings
+                                                .contains('Extended')) {
+                                              errorMessageStrings =
+                                                  errorMessageStrings.sublist(
+                                                0,
+                                                errorMessageStrings.length - 4,
+                                              );
+                                            }
+                                            final cleanedMessage =
+                                                errorMessageStrings.join(' ');
+                                            return AlertDialog(
+                                              title: const Text('Error'),
+                                              content: Text(
+                                                'Error: $cleanedMessage',
                                               ),
-                                            ],
-                                          );
-                                        },
-                                      );
+                                              actions: [
+                                                TextButton(
+                                                  onPressed: () =>
+                                                      Navigator.of(context)
+                                                          .pop(),
+                                                  child: const Text('OK'),
+                                                ),
+                                              ],
+                                            );
+                                          },
+                                        );
+                                      }
                                     }
                                   } else {
                                     // Show an error message if the fields are empty.
@@ -453,23 +458,27 @@ class _EditWithBranchVersioningState extends State<EditWithBranchVersioning> wit
                   Navigator.of(context).pop();
                   try {
                     await model.switchToVersion(versionName);
+                    // catch ArcGISException when switching to a version fails.
+                    // ignore: avoid_catches_without_on_clauses
                   } catch (e) {
                     // Show an error message if an exception occurs.
-                    await showDialog<void>(
-                      context: context,
-                      builder: (context) {
-                        return AlertDialog(
-                          title: const Text('Error'),
-                          content: Text('Error: $e'),
-                          actions: [
-                            TextButton(
-                              onPressed: () => Navigator.of(context).pop(),
-                              child: const Text('OK'),
-                            ),
-                          ],
-                        );
-                      },
-                    );
+                    if (context.mounted) {
+                      await showDialog<void>(
+                        context: context,
+                        builder: (context) {
+                          return AlertDialog(
+                            title: const Text('Error'),
+                            content: Text('Error: $e'),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.of(context).pop(),
+                                child: const Text('OK'),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    }
                   }
                 },
               );

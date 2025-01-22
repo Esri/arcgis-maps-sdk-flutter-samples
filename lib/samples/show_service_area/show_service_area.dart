@@ -39,16 +39,16 @@ class _ShowServiceAreaState extends State<ShowServiceArea>
   final _serviceAreaGraphicsOverlay = GraphicsOverlay();
   final _serviceAreaSymbols = [
     SimpleFillSymbol(
-      color: Colors.yellowAccent.withOpacity(0.4),
-      outline: SimpleLineSymbol(color: Colors.yellow.withOpacity(0.8)),
+      color: Colors.yellowAccent.withValues(alpha: 0.4),
+      outline: SimpleLineSymbol(color: Colors.yellow.withValues(alpha: 0.8)),
     ),
     SimpleFillSymbol(
-      color: Colors.orangeAccent.withOpacity(0.4),
-      outline: SimpleLineSymbol(color: Colors.orange.withOpacity(0.8)),
+      color: Colors.orangeAccent.withValues(alpha: 0.4),
+      outline: SimpleLineSymbol(color: Colors.orange.withValues(alpha: 0.8)),
     ),
     SimpleFillSymbol(
-      color: Colors.greenAccent.withOpacity(0.4),
-      outline: SimpleLineSymbol(color: Colors.green.withOpacity(0.8)),
+      color: Colors.greenAccent.withValues(alpha: 0.4),
+      outline: SimpleLineSymbol(color: Colors.green.withValues(alpha: 0.8)),
     ),
   ];
 
