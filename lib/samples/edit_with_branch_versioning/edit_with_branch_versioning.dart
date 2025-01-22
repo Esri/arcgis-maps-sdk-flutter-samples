@@ -358,8 +358,10 @@ class _EditWithBranchVersioningState extends State<EditWithBranchVersioning>
                                       await model.createVersion(parameters);
                                       setState(() {
                                         model.isVersionCreated = true;
-                                        Navigator.of(context).pop();
                                       });
+                                      if (context.mounted) {
+                                        Navigator.of(context).pop();
+                                      }
                                     } on ArcGISException catch (e) {
                                       if (context.mounted) {
                                         Navigator.of(context).pop();
