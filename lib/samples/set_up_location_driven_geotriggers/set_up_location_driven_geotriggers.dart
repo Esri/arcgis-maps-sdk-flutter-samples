@@ -14,6 +14,7 @@
 //
 
 import 'dart:async';
+import 'dart:collection';
 
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
@@ -44,9 +45,12 @@ class _SetUpLocationDrivenGeotriggersState
   // Stream subscriptions for the geotrigger event changes
   final _streamSubscriptions = <StreamSubscription>[];
 
-  // Feature names for the current section and nearby POIs
-  final _currentSections = <String>[];
-  final _currentPois = <String>[];
+  // Maps to contain current section and POI features. Keys are the feature
+  // name, values are the full Feature. Using LinkedHashMaps to maintain
+  // insertion order.
+  final _currentSections =
+      <String, Feature>{} as LinkedHashMap<String, Feature>;
+  final _currentPois = <String, Feature>{} as LinkedHashMap<String, Feature>;
 
   // Service feature tables used for the FenceGeotriggers
   final _gardenSectionsTable = ServiceFeatureTable.withItem(
@@ -104,11 +108,35 @@ class _SetUpLocationDrivenGeotriggersState
                     onMapViewReady: onMapViewReady,
                   ),
                 ),
-                Column(
+                const Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    buildCurrentGardenSection(context),
-                    buildCurrentPois(context),
+                    ElevatedButton(
+                      onPressed: null,
+                      child: Text('Section detail'),
+                    ),
+                    ElevatedButton(
+                      onPressed: null,
+                      child: Text('POIs detail'),
+                    ),
                   ],
+                ),
+              ],
+            ),
+            Column(
+              children: [
+                ColoredBox(
+                  color: const Color.fromARGB(200, 255, 255, 255),
+                  child: SafeArea(
+                    left: false,
+                    right: false,
+                    child: Column(
+                      children: [
+                        buildCurrentGardenSection(context),
+                        buildCurrentPois(context),
+                      ],
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -121,24 +149,26 @@ class _SetUpLocationDrivenGeotriggersState
   }
 
   Widget buildCurrentGardenSection(BuildContext context) {
-    return Column(
-      children: [
-        const Text(
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-          'Current Garden Section:',
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              _currentSections.isEmpty
-                  ? 'Not currently in a section'
-                  : _currentSections.last,
-            ),
-          ],
-        ),
-        const Divider(thickness: 2),
-      ],
+    return InkWell(
+      child: Column(
+        children: [
+          const Text(
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+            'Current Garden Section:',
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                _currentSections.isEmpty
+                    ? 'Not currently in a section'
+                    : _currentSections.keys.last,
+              ),
+            ],
+          ),
+          const Divider(thickness: 2),
+        ],
+      ),
     );
   }
 
@@ -153,11 +183,37 @@ class _SetUpLocationDrivenGeotriggersState
           mainAxisAlignment: MainAxisAlignment.center,
           children: _currentPois.isEmpty
               ? [const Text('No Points of Interest nearby')]
-              : _currentPois.map((featureName) {
+              : _currentPois.keys.map((featureName) {
                   return Text(featureName);
                 }).toList(),
         ),
       ],
+    );
+  }
+
+  Dialog showFeatureDetails(Feature feature) {
+    return Dialog(
+      child: Padding(
+        padding: const EdgeInsets.all(8),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              'Name of Feature',
+              style: Theme.of(context).textTheme.headlineMedium,
+            ),
+            const Expanded(
+              child: Center(child: Text('No directions to show.')),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text('Close'),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -236,7 +292,7 @@ class _SetUpLocationDrivenGeotriggersState
     final fenceInfo = info as FenceGeotriggerNotificationInfo;
 
     // Set which feature list to update based on which monitor triggered this event
-    final featureList =
+    final featureMap =
         fenceInfo.geotriggerMonitor.geotrigger.name == _poiGeotriggerName
             ? _currentPois
             : _currentSections;
@@ -245,9 +301,9 @@ class _SetUpLocationDrivenGeotriggersState
     setState(() {
       switch (fenceInfo.fenceNotificationType) {
         case FenceNotificationType.entered:
-          featureList.add(fenceInfo.message);
+          featureMap[fenceInfo.message] = fenceInfo.fenceGeoElement as Feature;
         case FenceNotificationType.exited:
-          featureList.remove(fenceInfo.message);
+          featureMap.remove(fenceInfo.message);
       }
     });
   }
