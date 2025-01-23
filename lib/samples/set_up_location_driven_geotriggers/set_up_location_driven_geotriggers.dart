@@ -230,7 +230,7 @@ class _SetUpLocationDrivenGeotriggersState
                 future: formatFeatureDescriptionHtml(features),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState != ConnectionState.done) {
-                    return const Text('Loading...');
+                    return const Center(child: Text('Loading...'));
                   }
                   final featureWebViewMap = snapshot.data!;
 
