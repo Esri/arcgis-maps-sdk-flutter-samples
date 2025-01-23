@@ -28,7 +28,8 @@ class EditWithBranchVersioning extends StatefulWidget {
       _EditWithBranchVersioningState();
 }
 
-class _EditWithBranchVersioningState extends State<EditWithBranchVersioning> with SampleStateSupport{
+class _EditWithBranchVersioningState extends State<EditWithBranchVersioning>
+    with SampleStateSupport {
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
 
@@ -91,7 +92,7 @@ class _EditWithBranchVersioningState extends State<EditWithBranchVersioning> wit
               child: IgnorePointer(
                 child: Container(
                   padding: const EdgeInsets.all(10),
-                  color: Colors.white.withOpacity(0.7),
+                  color: Colors.white.withValues(alpha: 0.7),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -266,7 +267,7 @@ class _EditWithBranchVersioningState extends State<EditWithBranchVersioning> wit
                   Navigator.of(context).pop();
 
                   // Update the feature's attribute with the selected value.
-                  feature.attributes['typdamage'] = damageType.name;
+                  feature.attributes['typdamage'] = damageType.label;
                   _model.updateFeature();
 
                   setState(() {
@@ -328,8 +329,7 @@ class _EditWithBranchVersioningState extends State<EditWithBranchVersioning> wit
                               }
                             },
                             // Display the version access values in a dropdown.
-                            items: VersionAccess.values
-                                .map((value) {
+                            items: VersionAccess.values.map((value) {
                               return DropdownMenuItem(
                                 value: value,
                                 child: Text(value.name),
