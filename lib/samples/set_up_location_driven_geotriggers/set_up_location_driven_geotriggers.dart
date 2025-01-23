@@ -20,6 +20,7 @@ import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_state_support.dart';
 import 'package:flutter/material.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
 class SetUpLocationDrivenGeotriggers extends StatefulWidget {
   const SetUpLocationDrivenGeotriggers({super.key});
@@ -225,7 +226,40 @@ class _SetUpLocationDrivenGeotriggersState
             ),
             const Divider(),
             Expanded(
-              child: buildListViewForFeatures(features),
+              child: FutureBuilder(
+                future: formatFeatureDescriptionHtml(features),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState != ConnectionState.done) {
+                    return const Text('Loading...');
+                  }
+                  final featureWebViewMap = snapshot.data!;
+
+                  return ListView.separated(
+                    padding: const EdgeInsets.all(8),
+                    separatorBuilder: (context, index) => const Divider(),
+                    itemCount: features.length,
+                    itemBuilder: (context, index) {
+                      final feature = features.elementAt(index);
+                      return Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            feature.attributes['name'],
+                            style: Theme.of(context).textTheme.headlineMedium,
+                          ),
+                          SizedBox(
+                            height: 250,
+                            width: MediaQuery.of(context).size.width * 0.75,
+                            child: WebViewWidget(
+                              controller: featureWebViewMap[feature]!,
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                },
+              ),
             ),
             TextButton(
               onPressed: () {
@@ -236,33 +270,6 @@ class _SetUpLocationDrivenGeotriggersState
           ],
         ),
       ),
-    );
-  }
-
-  ListView buildListViewForFeatures(List<Feature> features) {
-    // return FutureBuilder<ListView>(
-    //   future: () => 1,
-    //   builder: (context, snapshot) {
-    //   },
-    // );
-
-    return ListView.separated(
-      padding: const EdgeInsets.all(8),
-      separatorBuilder: (context, index) => const Divider(),
-      itemCount: features.length,
-      itemBuilder: (context, index) {
-        final feature = features.elementAt(index) as ArcGISFeature;
-        return Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              feature.attributes['name'],
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-            Text(feature.attributes['description']),
-          ],
-        );
-      },
     );
   }
 
@@ -355,6 +362,33 @@ class _SetUpLocationDrivenGeotriggersState
           featureMap.remove(fenceInfo.message);
       }
     });
+  }
+
+  Future<Map<Feature, WebViewController>> formatFeatureDescriptionHtml(
+    List<Feature> features,
+  ) async {
+    final map = <Feature, WebViewController>{};
+    for (final feature in features) {
+      final webViewController = WebViewController();
+      await webViewController.setBackgroundColor(
+        const Color.fromARGB(0, 255, 255, 255),
+      );
+
+      final description = feature.attributes['description'];
+      final htmlDescription = wrapDescriptionInHtml(description);
+      await webViewController.loadHtmlString(htmlDescription);
+      map[feature] = webViewController;
+    }
+
+    return map;
+  }
+
+  String wrapDescriptionInHtml(String description) {
+    var htmlDescription =
+        '<html><head><style>body{font-size:30px;}</style></head><body>';
+    htmlDescription += description;
+    htmlDescription += '</body></html>';
+    return htmlDescription;
   }
 
   // Creates the path used for the SimulatedLocationDataSource.
