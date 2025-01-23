@@ -14,6 +14,7 @@
 //
 
 import 'package:arcgis_maps/arcgis_maps.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_data.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
@@ -37,40 +38,21 @@ class _ApplyColormapRendererToRasterState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        top: false,
-        left: false,
-        right: false,
-        child: Stack(
-          children: [
-            Column(
-              children: [
-                Expanded(
-                  // Add a map view to the widget tree and set a controller.
-                  child: ArcGISMapView(
-                    controllerProvider: () => _mapViewController,
-                    onMapViewReady: onMapViewReady,
-                  ),
-                ),
-              ],
-            ),
-            // Display a progress indicator and prevent interaction until state is ready.
-            Visibility(
-              visible: !_ready,
-              child: const SizedBox.expand(
-                child: ColoredBox(
-                  color: Colors.white30,
-                  child: Center(child: CircularProgressIndicator()),
-                ),
-              ),
-            ),
-          ],
-        ),
+      body: Stack(
+        children: [
+          ArcGISMapView(
+            controllerProvider: () => _mapViewController,
+            onMapViewReady: onMapViewReady,
+          ),
+          // Display a progress indicator and prevent interaction until state is ready.
+          LoadingIndicator(visible: !_ready),
+        ],
       ),
     );
   }
 
   Future<void> onMapViewReady() async {
+    // Create a map with an imagery basemap style.
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISImageryStandard);
     _mapViewController.arcGISMap = map;
 
@@ -87,7 +69,7 @@ class _ApplyColormapRendererToRasterState
     // Create a Raster Layer.
     final rasterLayer = RasterLayer.withRaster(raster);
 
-    // Create a color map where values 0-149 are red (Color.RED) and 150-250 are yellow (Color.Yellow).
+    // Create a color map where values 0-149 are red and 150-250 are yellow.
     final colors = <Color>[];
     for (var i = 0; i <= 250; i++) {
       if (i < 150) {
@@ -98,7 +80,7 @@ class _ApplyColormapRendererToRasterState
     }
 
     // Create a color map renderer.
-    final colorMapRenderer =  ColormapRenderer.withColors(colors);
+    final colorMapRenderer = ColormapRenderer.withColors(colors);
 
     // Set the ColorMapRenderer on the Raster Layer.
     rasterLayer.renderer = colorMapRenderer;
@@ -107,8 +89,6 @@ class _ApplyColormapRendererToRasterState
     await rasterLayer.load();
     // Add the Raster Layer to the map.
     map.operationalLayers.add(rasterLayer);
-
-
     // Set the viewpoint to the center of the raster layer's full extent.
     final fullExtent = rasterLayer.fullExtent;
     if (fullExtent != null) {
@@ -116,9 +96,7 @@ class _ApplyColormapRendererToRasterState
       const scale = 80000.0;
       await _mapViewController.setViewpointCenter(center, scale: scale);
     }
-
     // Set the ready state variable to true to enable the sample UI.
     setState(() => _ready = true);
   }
-
 }
