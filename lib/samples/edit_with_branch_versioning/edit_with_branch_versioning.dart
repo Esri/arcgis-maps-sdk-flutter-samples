@@ -267,7 +267,7 @@ class _EditWithBranchVersioningState extends State<EditWithBranchVersioning>
                   Navigator.of(context).pop();
 
                   // Update the feature's attribute with the selected value.
-                  feature.attributes['typdamage'] = damageType.name;
+                  feature.attributes['typdamage'] = damageType.label;
                   _model.updateFeature();
 
                   setState(() {
