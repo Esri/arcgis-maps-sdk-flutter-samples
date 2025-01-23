@@ -169,6 +169,7 @@ class _SetUpLocationDrivenGeotriggersState
     );
   }
 
+  // Builds the widget to display the current Section
   Widget buildCurrentGardenSection(BuildContext context) {
     return Column(
       children: [
@@ -190,6 +191,7 @@ class _SetUpLocationDrivenGeotriggersState
     );
   }
 
+  // Builds the widget showing the list of nearby POIs
   Widget buildCurrentPois(BuildContext context) {
     return Column(
       children: [
@@ -209,6 +211,7 @@ class _SetUpLocationDrivenGeotriggersState
     );
   }
 
+  // Builds a Dialog that will show the details of a list of Section or POI features.
   Dialog showFeatureDetails({
     required BuildContext context,
     required String title,
@@ -364,6 +367,8 @@ class _SetUpLocationDrivenGeotriggersState
     });
   }
 
+  // Takes the description text from a feature and loads it into a WebViewController.
+  // This controller will be used to properly render the description text as HTML
   Future<Map<Feature, WebViewController>> formatFeatureDescriptionHtml(
     List<Feature> features,
   ) async {
@@ -383,6 +388,8 @@ class _SetUpLocationDrivenGeotriggersState
     return map;
   }
 
+  // Wraps the feature description HTML in complete HMTL tags and scales the font
+  // size to make the text easier to read.
   String wrapDescriptionInHtml(String description) {
     var htmlDescription =
         '<html><head><style>body{font-size:30px;}</style></head><body>';
