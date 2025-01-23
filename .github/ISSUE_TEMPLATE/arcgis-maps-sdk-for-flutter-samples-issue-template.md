@@ -1,6 +1,6 @@
 ---
-name: ArcGIS Maps SDK for Flutter Samples Issue Template
-about: Reporting an issue with the ArcGIS Maps SDK for Flutter Samples.
+name: I have a problem with ArcGIS Maps SDK for Flutter Samples
+about: Report an issue with our samples. Please report issues or feature requests for the SDK more generally to our Community Forum: https://community.esri.com/t5/flutter-maps-sdk-questions/bd-p/flutter-maps-sdk-questions
 title: ''
 labels: ''
 assignees: ''
