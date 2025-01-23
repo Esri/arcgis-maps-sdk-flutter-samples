@@ -2,7 +2,7 @@
 
 Apply a colormap renderer to a raster.
 
-![Image of apply colormap renderer to raster](apply_color_map_renderer_to_raster.png)
+![Image of apply colormap renderer to raster](apply_colormap_renderer_to_raster.png)
 
 ## Use case
 
@@ -27,9 +27,9 @@ Pan and zoom to explore the effect of the colormap applied to the raster.
 
 ## Offline data
 
-Link | Local Location
----------|-------|
-|[ShastaBW.tif raster](https://www.arcgis.com/home/item.html?id=cc68728b5904403ba637e1f1cd2995ae)| `<userhome>`/ArcGIS/Runtime/Data/raster/ShastaBW.tif |
+| Link                                                                                             | Local Location                                       |
+|--------------------------------------------------------------------------------------------------|------------------------------------------------------|
+| [ShastaBW.tif raster](https://www.arcgis.com/home/item.html?id=cc68728b5904403ba637e1f1cd2995ae) | `<userhome>`/ArcGIS/Runtime/Data/raster/ShastaBW.tif |
 
 ## About the data
 

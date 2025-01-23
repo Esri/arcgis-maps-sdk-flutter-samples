@@ -1,0 +1,28 @@
+{
+    "category": "Layers",
+    "description": "Apply a colormap renderer to a raster.",
+    "ignore": false,
+    "images": [
+        "apply_colormap_renderer_to_raster.png"
+    ],
+    "keywords": [
+        "colormap",
+        "data",
+        "raster",
+        "renderer",
+        "visualization",
+        "ColormapRenderer",
+        "Raster",
+        "RasterLayer"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+        "ColormapRenderer",
+        "Raster",
+        "RasterLayer"
+    ],
+    "snippets": [
+        "apply_colormap_renderer_to_raster.dart"
+    ],
+    "title": "Apply colormap renderer to raster"
+}

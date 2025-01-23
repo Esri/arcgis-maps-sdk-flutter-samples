@@ -18,16 +18,16 @@ import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_data.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 
-class ApplyColorMapRendererToRaster extends StatefulWidget {
-  const ApplyColorMapRendererToRaster({super.key});
+class ApplyColormapRendererToRaster extends StatefulWidget {
+  const ApplyColormapRendererToRaster({super.key});
 
   @override
-  State<ApplyColorMapRendererToRaster> createState() =>
-      _ApplyColorMapRendererToRasterState();
+  State<ApplyColormapRendererToRaster> createState() =>
+      _ApplyColormapRendererToRasterState();
 }
 
-class _ApplyColorMapRendererToRasterState
-    extends State<ApplyColorMapRendererToRaster> {
+class _ApplyColormapRendererToRasterState
+    extends State<ApplyColormapRendererToRaster> {
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
 
@@ -88,7 +88,7 @@ class _ApplyColorMapRendererToRasterState
     final rasterLayer = RasterLayer.withRaster(raster);
 
     // Create a color map where values 0-149 are red (Color.RED) and 150-250 are yellow (Color.Yellow).
-    var colors = <Color>[];
+    final colors = <Color>[];
     for (var i = 0; i <= 250; i++) {
       if (i < 150) {
         colors.add(const Color(0xFFFF0000));
