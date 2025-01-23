@@ -108,21 +108,40 @@ class _SetUpLocationDrivenGeotriggersState
                     onMapViewReady: onMapViewReady,
                   ),
                 ),
-                const Row(
+                Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     ElevatedButton(
-                      onPressed: null,
-                      child: Text('Section detail'),
+                      onPressed: _currentSections.isEmpty
+                          ? null
+                          : () => showDialog(
+                                context: context,
+                                builder: (context) => showFeatureDetails(
+                                  context: context,
+                                  title: 'Section Details:',
+                                  features: [_currentSections.values.last],
+                                ),
+                              ),
+                      child: const Text('Section detail'),
                     ),
                     ElevatedButton(
-                      onPressed: null,
-                      child: Text('POIs detail'),
+                      onPressed: _currentPois.isEmpty
+                          ? null
+                          : () => showDialog(
+                                context: context,
+                                builder: (context) => showFeatureDetails(
+                                  context: context,
+                                  title: 'POI Details:',
+                                  features: _currentPois.values.toList(),
+                                ),
+                              ),
+                      child: const Text('POIs detail'),
                     ),
                   ],
                 ),
               ],
             ),
+            // Current Section and POIs display
             Column(
               children: [
                 ColoredBox(
@@ -133,6 +152,7 @@ class _SetUpLocationDrivenGeotriggersState
                     child: Column(
                       children: [
                         buildCurrentGardenSection(context),
+                        const Divider(thickness: 2),
                         buildCurrentPois(context),
                       ],
                     ),
@@ -149,26 +169,23 @@ class _SetUpLocationDrivenGeotriggersState
   }
 
   Widget buildCurrentGardenSection(BuildContext context) {
-    return InkWell(
-      child: Column(
-        children: [
-          const Text(
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-            'Current Garden Section:',
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                _currentSections.isEmpty
-                    ? 'Not currently in a section'
-                    : _currentSections.keys.last,
-              ),
-            ],
-          ),
-          const Divider(thickness: 2),
-        ],
-      ),
+    return Column(
+      children: [
+        const Text(
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+          'Current Garden Section:',
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              _currentSections.isEmpty
+                  ? 'Not currently in a section'
+                  : _currentSections.keys.last,
+            ),
+          ],
+        ),
+      ],
     );
   }
 
@@ -191,7 +208,11 @@ class _SetUpLocationDrivenGeotriggersState
     );
   }
 
-  Dialog showFeatureDetails(Feature feature) {
+  Dialog showFeatureDetails({
+    required BuildContext context,
+    required String title,
+    required List<Feature> features,
+  }) {
     return Dialog(
       child: Padding(
         padding: const EdgeInsets.all(8),
@@ -199,11 +220,12 @@ class _SetUpLocationDrivenGeotriggersState
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              'Name of Feature',
+              title,
               style: Theme.of(context).textTheme.headlineMedium,
             ),
-            const Expanded(
-              child: Center(child: Text('No directions to show.')),
+            const Divider(),
+            Expanded(
+              child: buildListViewForFeatures(features),
             ),
             TextButton(
               onPressed: () {
@@ -214,6 +236,33 @@ class _SetUpLocationDrivenGeotriggersState
           ],
         ),
       ),
+    );
+  }
+
+  ListView buildListViewForFeatures(List<Feature> features) {
+    // return FutureBuilder<ListView>(
+    //   future: () => 1,
+    //   builder: (context, snapshot) {
+    //   },
+    // );
+
+    return ListView.separated(
+      padding: const EdgeInsets.all(8),
+      separatorBuilder: (context, index) => const Divider(),
+      itemCount: features.length,
+      itemBuilder: (context, index) {
+        final feature = features.elementAt(index) as ArcGISFeature;
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              feature.attributes['name'],
+              style: Theme.of(context).textTheme.headlineMedium,
+            ),
+            Text(feature.attributes['description']),
+          ],
+        );
+      },
     );
   }
 
