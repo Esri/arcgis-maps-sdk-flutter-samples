@@ -44,17 +44,16 @@ class _SetUpLocationDrivenGeotriggersState
   final _poiGeotriggerName = 'POI Geotrigger';
   final _sectionGeotriggerName = 'Section Geotrigger';
 
-  // Stream subscriptions for the geotrigger event changes
+  // Stream subscriptions for the geotrigger event changes.
   final _streamSubscriptions = <StreamSubscription>[];
 
   // Maps to contain current section and POI features. Keys are the feature
-  // name, values are the full Feature. Using LinkedHashMaps to maintain
-  // insertion order.
+  // name, values are the full Feature. Using LinkedHashMaps to maintain insertion order.
   final _currentSections =
       <String, Feature>{} as LinkedHashMap<String, Feature>;
   final _currentPois = <String, Feature>{} as LinkedHashMap<String, Feature>;
 
-  // Service feature tables used for the FenceGeotriggers
+  // Service feature tables used for the FenceGeotriggers.
   final _gardenSectionsTable = ServiceFeatureTable.withItem(
     PortalItem.withPortalAndItemId(
       portal: Portal.arcGISOnline(),
@@ -72,13 +71,13 @@ class _SetUpLocationDrivenGeotriggersState
 
   @override
   Future<void> dispose() async {
-    // Call the super before any asynchronous calls
+    // Call the super before any asynchronous calls.
     super.dispose();
 
     // Stop the location data source
     await _locationDataSource.stop();
 
-    // Cancel the geotrigger event subscriptions
+    // Cancel the geotrigger event subscriptions.
     for (final subscription in _streamSubscriptions) {
       await subscription.cancel();
     }
@@ -136,7 +135,7 @@ class _SetUpLocationDrivenGeotriggersState
                 ),
               ],
             ),
-            // Current Section and POIs display
+            // Current Section and POIs display.
             Column(
               children: [
                 ColoredBox(
@@ -164,7 +163,7 @@ class _SetUpLocationDrivenGeotriggersState
   }
 
   Future<void> onMapViewReady() async {
-    // Create the map based on a webmap and add it to the MapView
+    // Create the map based on a webmap and add it to the MapView.
     final map = ArcGISMap.withUri(
       Uri.parse(
         'https://www.arcgis.com/home/item.html?id=6ab0e91dc39e478cae4f408e1a36a308',
@@ -173,12 +172,12 @@ class _SetUpLocationDrivenGeotriggersState
     _mapViewController.arcGISMap = map;
 
     // Set the SimulatedLocationDataSource's simulated path, then add it to the
-    // MapView's LocationDisplay
+    // MapView's LocationDisplay.
     _locationDataSource.setLocationsWithPolyline(_createSamplePath());
     _mapViewController.locationDisplay.dataSource = _locationDataSource;
     await _locationDataSource.start();
 
-    // Setup the geotriggers
+    // Setup the geotriggers.
     await _setupGeotriggers();
 
     // Set the ready state variable to true to enable the sample UI.
@@ -188,14 +187,14 @@ class _SetUpLocationDrivenGeotriggersState
   // Sets up the Geotriggers, GeotriggerMonitors, and listens for Geotrigger
   // events.
   Future<void> _setupGeotriggers() async {
-    // Setup the points of interest Geotrigger monitor
+    // Setup the points of interest Geotrigger monitor.
     await createGeotriggerMonitor(
       featureTable: _gardenPoisTable,
       bufferSize: 10,
       name: _poiGeotriggerName,
     );
 
-    // Set up the sections Geotrigger monitor
+    // Set up the sections Geotrigger monitor.
     await createGeotriggerMonitor(
       featureTable: _gardenSectionsTable,
       name: _sectionGeotriggerName,
@@ -226,13 +225,13 @@ class _SetUpLocationDrivenGeotriggersState
       name: name,
     );
 
-    // Create the GeotriggerMonitor and listen to the onGeotriggerNotificationEvent stream
+    // Create the GeotriggerMonitor and listen to the onGeotriggerNotificationEvent stream.
     final monitor = GeotriggerMonitor(geotrigger);
     final subscription =
         monitor.onGeotriggerNotificationEvent.listen(handleGeotriggerEvent);
     _streamSubscriptions.add(subscription);
 
-    // Start monitoring the Geotrigger
+    // Start monitoring the Geotrigger.
     await monitor.start();
   }
 
@@ -240,13 +239,13 @@ class _SetUpLocationDrivenGeotriggersState
   void handleGeotriggerEvent(GeotriggerNotificationInfo info) {
     final fenceInfo = info as FenceGeotriggerNotificationInfo;
 
-    // Set which feature list to update based on which monitor triggered this event
+    // Set which feature list to update based on which monitor triggered this event.
     final featureMap =
         fenceInfo.geotriggerMonitor.geotrigger.name == _poiGeotriggerName
             ? _currentPois
             : _currentSections;
 
-    // Add or remove the feature name from the list based on event type
+    // Add or remove the feature name from the list based on event type.
     setState(() {
       switch (fenceInfo.fenceNotificationType) {
         case FenceNotificationType.entered:
@@ -257,7 +256,7 @@ class _SetUpLocationDrivenGeotriggersState
     });
   }
 
-  // Builds the widget to display the current Section
+  // Builds the widget to display the current Section.
   Widget buildCurrentGardenSection(BuildContext context) {
     return Column(
       children: [
@@ -279,7 +278,7 @@ class _SetUpLocationDrivenGeotriggersState
     );
   }
 
-  // Builds the widget showing the list of nearby POIs
+  // Builds the widget showing the list of nearby POIs.
   Widget buildCurrentPois(BuildContext context) {
     return Column(
       children: [
@@ -365,7 +364,7 @@ class _SetUpLocationDrivenGeotriggersState
   }
 
   // Takes the description text from a feature and loads it into a WebViewController.
-  // This controller will be used to properly render the description text as HTML
+  // This controller will be used to properly render the description text as HTML.
   Future<Map<Feature, WebViewController>> formatFeatureDescriptionHtml(
     List<Feature> features,
   ) async {
