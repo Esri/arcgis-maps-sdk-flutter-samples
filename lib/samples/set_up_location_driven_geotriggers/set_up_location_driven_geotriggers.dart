@@ -37,8 +37,7 @@ class _SetUpLocationDrivenGeotriggersState
   // A flag for when the map view is ready and controls can be used.
   var _ready = false;
   // The simulated location data source this sample will use.
-  final SimulatedLocationDataSource _locationDataSource =
-      SimulatedLocationDataSource();
+  final _locationDataSource = SimulatedLocationDataSource();
 
   // Geotrigger names
   final _poiGeotriggerName = 'POI Geotrigger';
@@ -104,6 +103,7 @@ class _SetUpLocationDrivenGeotriggersState
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
+                    // Button to show the details of the current Section
                     ElevatedButton(
                       onPressed: _currentSections.isEmpty
                           ? null
@@ -117,6 +117,7 @@ class _SetUpLocationDrivenGeotriggersState
                               ),
                       child: const Text('Section detail'),
                     ),
+                    // Button to show the details of the nearby POIs
                     ElevatedButton(
                       onPressed: _currentPois.isEmpty
                           ? null
@@ -214,7 +215,7 @@ class _SetUpLocationDrivenGeotriggersState
       bufferDistance: bufferSize,
     );
 
-    // Create the geotrigger. The Arcade expression provides a convinient way to
+    // Create the geotrigger. The Arcade expression provides a convenient way to
     // get the name of the triggering feature.
     final geotrigger = FenceGeotrigger(
       feed: LocationGeotriggerFeed(locationDataSource: _locationDataSource),
@@ -234,7 +235,7 @@ class _SetUpLocationDrivenGeotriggersState
     await monitor.start();
   }
 
-  // Handles geotrigger event changes sent from the monitors
+  // Handle geotrigger event changes sent from the monitors.
   void handleGeotriggerEvent(GeotriggerNotificationInfo info) {
     final fenceInfo = info as FenceGeotriggerNotificationInfo;
 
@@ -259,9 +260,9 @@ class _SetUpLocationDrivenGeotriggersState
   Widget buildCurrentGardenSection(BuildContext context) {
     return Column(
       children: [
-        const Text(
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+        Text(
           'Current Garden Section:',
+          style: Theme.of(context).textTheme.titleMedium,
         ),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -281,9 +282,9 @@ class _SetUpLocationDrivenGeotriggersState
   Widget buildCurrentPois(BuildContext context) {
     return Column(
       children: [
-        const Text(
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+        Text(
           'Points of Interest:',
+          style: Theme.of(context).textTheme.titleMedium,
         ),
         Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -383,7 +384,7 @@ class _SetUpLocationDrivenGeotriggersState
     return map;
   }
 
-  // Wraps the feature description HTML in complete HMTL tags and scales the font
+  // Wraps the feature description HTML in complete HTML tags and scales the font
   // size to make the text easier to read.
   String wrapDescriptionInHtml(String description) {
     var htmlDescription =
