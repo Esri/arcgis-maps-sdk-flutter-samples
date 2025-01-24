@@ -103,7 +103,7 @@ class _SetUpLocationDrivenGeotriggersState
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    // Button to show the details of the current Section
+                    // Button to show the details of the current Section.
                     ElevatedButton(
                       onPressed: _currentSections.isEmpty
                           ? null
@@ -117,7 +117,7 @@ class _SetUpLocationDrivenGeotriggersState
                               ),
                       child: const Text('Section detail'),
                     ),
-                    // Button to show the details of the nearby POIs
+                    // Button to show the details of the nearby POIs.
                     ElevatedButton(
                       onPressed: _currentPois.isEmpty
                           ? null
