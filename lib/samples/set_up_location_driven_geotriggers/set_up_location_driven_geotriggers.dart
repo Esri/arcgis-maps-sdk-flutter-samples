@@ -36,8 +36,9 @@ class _SetUpLocationDrivenGeotriggersState
   final _mapViewController = ArcGISMapView.createController();
   // A flag for when the map view is ready and controls can be used.
   var _ready = false;
-  // The simulated location data source this sample will use
-  late final SimulatedLocationDataSource _locationDataSource;
+  // The simulated location data source this sample will use.
+  final SimulatedLocationDataSource _locationDataSource =
+      SimulatedLocationDataSource();
 
   // Geotrigger names
   final _poiGeotriggerName = 'POI Geotrigger';
@@ -70,15 +71,10 @@ class _SetUpLocationDrivenGeotriggersState
   );
 
   @override
-  void initState() {
-    // Create the location data source and initialize with sample polyline path
-    _locationDataSource = SimulatedLocationDataSource()
-      ..setLocationsWithPolyline(_createSamplePath());
-    super.initState();
-  }
-
-  @override
   Future<void> dispose() async {
+    // Call the super before any asynchronous calls
+    super.dispose();
+
     // Stop the location data source
     await _locationDataSource.stop();
 
@@ -87,8 +83,6 @@ class _SetUpLocationDrivenGeotriggersState
       await subscription.cancel();
     }
     _streamSubscriptions.clear();
-
-    super.dispose();
   }
 
   @override
@@ -167,6 +161,100 @@ class _SetUpLocationDrivenGeotriggersState
         ),
       ),
     );
+  }
+
+  Future<void> onMapViewReady() async {
+    // Create the map based on a webmap and add it to the MapView
+    final map = ArcGISMap.withUri(
+      Uri.parse(
+        'https://www.arcgis.com/home/item.html?id=6ab0e91dc39e478cae4f408e1a36a308',
+      ),
+    );
+    _mapViewController.arcGISMap = map;
+
+    // Set the SimulatedLocationDataSource's simulated path, then add it to the
+    // MapView's LocationDisplay
+    _locationDataSource.setLocationsWithPolyline(_createSamplePath());
+    _mapViewController.locationDisplay.dataSource = _locationDataSource;
+    await _locationDataSource.start();
+
+    // Setup the geotriggers
+    await _setupGeotriggers();
+
+    // Set the ready state variable to true to enable the sample UI.
+    setState(() => _ready = true);
+  }
+
+  // Sets up the Geotriggers, GeotriggerMonitors, and listens for Geotrigger
+  // events.
+  Future<void> _setupGeotriggers() async {
+    // Setup the points of interest Geotrigger monitor
+    await createGeotriggerMonitor(
+      featureTable: _gardenPoisTable,
+      bufferSize: 10,
+      name: _poiGeotriggerName,
+    );
+
+    // Set up the sections Geotrigger monitor
+    await createGeotriggerMonitor(
+      featureTable: _gardenSectionsTable,
+      name: _sectionGeotriggerName,
+    );
+  }
+
+  // Creates a GeotriggerMonitor using the provided ServiceFeatureTable and
+  // optional buffer size. The stream for changing events will be listened to,
+  // and the monitor started.
+  Future<void> createGeotriggerMonitor({
+    required ServiceFeatureTable featureTable,
+    required String name,
+    double bufferSize = 0.0,
+  }) async {
+    // Set up the fence parameters
+    final fenceParameters = FeatureFenceParameters(
+      featureTable: featureTable,
+      bufferDistance: bufferSize,
+    );
+
+    // Create the geotrigger. The Arcade expression provides a convinient way to
+    // get the name of the triggering feature.
+    final geotrigger = FenceGeotrigger(
+      feed: LocationGeotriggerFeed(locationDataSource: _locationDataSource),
+      ruleType: FenceRuleType.enterOrExit,
+      fenceParameters: fenceParameters,
+      messageExpression: ArcadeExpression(expression: r'$fencefeature.name'),
+      name: name,
+    );
+
+    // Create the GeotriggerMonitor and listen to the onGeotriggerNotificationEvent stream
+    final monitor = GeotriggerMonitor(geotrigger);
+    final subscription =
+        monitor.onGeotriggerNotificationEvent.listen(handleGeotriggerEvent);
+    _streamSubscriptions.add(subscription);
+
+    // Start monitoring the Geotrigger
+    await monitor.start();
+  }
+
+  // Handles geotrigger event changes sent from the monitors
+  void handleGeotriggerEvent(GeotriggerNotificationInfo info) {
+    final fenceInfo = info as FenceGeotriggerNotificationInfo;
+
+    // Set which feature list to update based on which monitor triggered this event
+    final featureMap =
+        fenceInfo.geotriggerMonitor.geotrigger.name == _poiGeotriggerName
+            ? _currentPois
+            : _currentSections;
+
+    // Add or remove the feature name from the list based on event type
+    setState(() {
+      switch (fenceInfo.fenceNotificationType) {
+        case FenceNotificationType.entered:
+          featureMap[fenceInfo.message] = fenceInfo.fenceGeoElement as Feature;
+        case FenceNotificationType.exited:
+          featureMap.remove(fenceInfo.message);
+      }
+    });
   }
 
   // Builds the widget to display the current Section
@@ -274,97 +362,6 @@ class _SetUpLocationDrivenGeotriggersState
         ),
       ),
     );
-  }
-
-  Future<void> onMapViewReady() async {
-    // Create the map based on a webmap and add it to the MapView
-    final map = ArcGISMap.withUri(
-      Uri.parse(
-        'https://www.arcgis.com/home/item.html?id=6ab0e91dc39e478cae4f408e1a36a308',
-      ),
-    );
-    _mapViewController.arcGISMap = map;
-
-    // Set the location data source to the MapView's LocationDisplay
-    _mapViewController.locationDisplay.dataSource = _locationDataSource;
-    await _locationDataSource.start();
-
-    // Setup the geotriggers
-    await _setupGeotriggers();
-
-    // Set the ready state variable to true to enable the sample UI.
-    setState(() => _ready = true);
-  }
-
-  // Sets up the Geotriggers and listens for Geotrigger events.
-  Future<void> _setupGeotriggers() async {
-    // Setup the points of interest Geotrigger
-    await createGeotriggerMonitor(
-      featureTable: _gardenPoisTable,
-      bufferSize: 10,
-      name: _poiGeotriggerName,
-    );
-
-    // Set up the sections Geotrigger
-    await createGeotriggerMonitor(
-      featureTable: _gardenSectionsTable,
-      name: _sectionGeotriggerName,
-    );
-  }
-
-  // Creates a GeotriggerMonitor using the provided ServiceFeatureTable and
-  // optional buffer size. The stream for changing events will be listened to,
-  //and the monitor started.
-  Future<void> createGeotriggerMonitor({
-    required ServiceFeatureTable featureTable,
-    required String name,
-    double bufferSize = 0.0,
-  }) async {
-    // Set up the fence parameters
-    final fenceParameters = FeatureFenceParameters(
-      featureTable: featureTable,
-      bufferDistance: bufferSize,
-    );
-
-    // Create the geotrigger. The Arcade expression provides a convinient way to
-    // get the name of the triggering feature.
-    final geotrigger = FenceGeotrigger(
-      feed: LocationGeotriggerFeed(locationDataSource: _locationDataSource),
-      ruleType: FenceRuleType.enterOrExit,
-      fenceParameters: fenceParameters,
-      messageExpression: ArcadeExpression(expression: r'$fencefeature.name'),
-      name: name,
-    );
-
-    // Create the GeotriggerMonitor and listen to the onGeotriggerNotificationEvent stream
-    final monitor = GeotriggerMonitor.withGeotrigger(geotrigger);
-    final subscription =
-        monitor.onGeotriggerNotificationEvent.listen(handleGeotriggerEvent);
-    _streamSubscriptions.add(subscription);
-
-    // Start monitoring the Geotrigger
-    await monitor.start();
-  }
-
-  // Handles geotrigger event changes sent from the monitors
-  void handleGeotriggerEvent(GeotriggerNotificationInfo info) {
-    final fenceInfo = info as FenceGeotriggerNotificationInfo;
-
-    // Set which feature list to update based on which monitor triggered this event
-    final featureMap =
-        fenceInfo.geotriggerMonitor.geotrigger.name == _poiGeotriggerName
-            ? _currentPois
-            : _currentSections;
-
-    // Add or remove the feature name from the list based on event type
-    setState(() {
-      switch (fenceInfo.fenceNotificationType) {
-        case FenceNotificationType.entered:
-          featureMap[fenceInfo.message] = fenceInfo.fenceGeoElement as Feature;
-        case FenceNotificationType.exited:
-          featureMap.remove(fenceInfo.message);
-      }
-    });
   }
 
   // Takes the description text from a feature and loads it into a WebViewController.
