@@ -6,8 +6,10 @@ labels: ''
 assignees: ''
 
 ---
+Is your issue with one of our samples? 
+If so, please fill out the template below. 
 
-<!-- Is your issue with one of our samples? If so, please fill out the template below. If your issue is with the SDK more generally, a new feature request, or something from your own application, please reach out via our community forum: https://community.esri.com/t5/flutter-maps-sdk-questions/bd-p/flutter-maps-sdk-questions, or through your account manager at Esri -->
+If your issue is with the SDK more generally, a new feature request, or something from your own application, please reach out via our community forum: https://community.esri.com/t5/flutter-maps-sdk-questions/bd-p/flutter-maps-sdk-questions, or through your account manager at Esri.
 
 #### Sample
 
