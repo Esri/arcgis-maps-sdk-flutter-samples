@@ -70,18 +70,17 @@ class _SetUpLocationDrivenGeotriggersState
   );
 
   @override
-  Future<void> dispose() async {
-    // Call the super before any asynchronous calls.
-    super.dispose();
-
+  void dispose() {
     // Stop the location data source
-    await _locationDataSource.stop();
+    _locationDataSource.stop();
 
     // Cancel the geotrigger event subscriptions.
     for (final subscription in _streamSubscriptions) {
-      await subscription.cancel();
+      subscription.cancel();
     }
     _streamSubscriptions.clear();
+
+    super.dispose();
   }
 
   @override
