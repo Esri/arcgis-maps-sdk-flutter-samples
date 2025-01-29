@@ -298,7 +298,6 @@ class _SetUpLocationDrivenGeotriggersState
     );
   }
 
-  // Builds a Dialog that will show the details of a list of Section or POI features.
   Dialog showFeatureDetails({
     required BuildContext context,
     required String title,
@@ -308,6 +307,7 @@ class _SetUpLocationDrivenGeotriggersState
       child: Padding(
         padding: const EdgeInsets.all(8),
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
@@ -316,40 +316,7 @@ class _SetUpLocationDrivenGeotriggersState
             ),
             const Divider(),
             Expanded(
-              child: FutureBuilder(
-                future: formatFeatureDescriptionHtml(features),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState != ConnectionState.done) {
-                    return const Center(child: Text('Loading...'));
-                  }
-                  final featureWebViewMap = snapshot.data!;
-
-                  return ListView.separated(
-                    padding: const EdgeInsets.all(8),
-                    separatorBuilder: (context, index) => const Divider(),
-                    itemCount: features.length,
-                    itemBuilder: (context, index) {
-                      final feature = features.elementAt(index);
-                      return Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            feature.attributes['name'],
-                            style: Theme.of(context).textTheme.headlineMedium,
-                          ),
-                          SizedBox(
-                            height: 250,
-                            width: MediaQuery.of(context).size.width * 0.75,
-                            child: WebViewWidget(
-                              controller: featureWebViewMap[feature]!,
-                            ),
-                          ),
-                        ],
-                      );
-                    },
-                  );
-                },
-              ),
+              child: MultiFeatureDetails(features: features),
             ),
             TextButton(
               onPressed: () {
@@ -361,37 +328,6 @@ class _SetUpLocationDrivenGeotriggersState
         ),
       ),
     );
-  }
-
-  // Takes the description text from a feature and loads it into a WebViewController.
-  // This controller will be used to properly render the description text as HTML.
-  Future<Map<Feature, WebViewController>> formatFeatureDescriptionHtml(
-    List<Feature> features,
-  ) async {
-    final map = <Feature, WebViewController>{};
-    for (final feature in features) {
-      final webViewController = WebViewController();
-      await webViewController.setBackgroundColor(
-        const Color.fromARGB(0, 255, 255, 255),
-      );
-
-      final description = feature.attributes['description'];
-      final htmlDescription = wrapDescriptionInHtml(description);
-      await webViewController.loadHtmlString(htmlDescription);
-      map[feature] = webViewController;
-    }
-
-    return map;
-  }
-
-  // Wraps the feature description HTML in complete HTML tags and scales the font
-  // size to make the text easier to read.
-  String wrapDescriptionInHtml(String description) {
-    var htmlDescription =
-        '<html><head><style>body{font-size:30px;}</style></head><body>';
-    htmlDescription += description;
-    htmlDescription += '</body></html>';
-    return htmlDescription;
   }
 
   // Creates the path used for the SimulatedLocationDataSource.
@@ -603,5 +539,120 @@ class _SetUpLocationDrivenGeotriggersState
     }
 
     return polylineBuilder.toGeometry() as Polyline;
+  }
+}
+
+// Stateful widget to show the details of a list of Features. If showning more
+// than one feature, the user can tap through the list of features.
+class MultiFeatureDetails extends StatefulWidget {
+  const MultiFeatureDetails({required this.features, super.key});
+  final List<Feature> features;
+
+  @override
+  State<MultiFeatureDetails> createState() => MultiFeatureDetailsState();
+}
+
+class MultiFeatureDetailsState extends State<MultiFeatureDetails> {
+  var _featureIndex = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    final features = widget.features;
+
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Expanded(
+          child: features.isEmpty
+              ? const Text('No features to display.')
+              : FeatureDetails(
+                  feature: features[_featureIndex],
+                ),
+        ),
+        if (features.length > 1)
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              // Go to previous feature
+              ElevatedButton(
+                onPressed: _featureIndex == 0
+                    ? null
+                    : () => setState(() => _featureIndex -= 1),
+                child: const Text('Prev'),
+              ),
+              // Show current feature of total features
+              Text('${_featureIndex + 1}/${features.length}'),
+              // Go to next feature
+              ElevatedButton(
+                onPressed: _featureIndex == features.length - 1
+                    ? null
+                    : () => setState(() => _featureIndex += 1),
+                child: const Text('Next'),
+              ),
+            ],
+          ),
+      ],
+    );
+  }
+}
+
+// Stateless widget to display the details of a of a Feature.
+class FeatureDetails extends StatelessWidget {
+  FeatureDetails({required Feature feature, super.key}) : _feature = feature;
+
+  final Feature _feature;
+  final _webViewController = WebViewController();
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          _feature.attributes['name'],
+          style: Theme.of(context).textTheme.headlineMedium,
+        ),
+        Flexible(
+          // fit: FlexFit.loose,
+          child: FutureBuilder(
+            future: _formatFeatureDescriptionHtml(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState != ConnectionState.done) {
+                return const Center(child: Text('Loading...'));
+              }
+              return SizedBox(
+                height: MediaQuery.of(context).size.height,
+                width: MediaQuery.of(context).size.width * 0.75,
+                child: WebViewWidget(
+                  controller: _webViewController,
+                ),
+              );
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Future<void> _formatFeatureDescriptionHtml() async {
+    await _webViewController.setBackgroundColor(
+      const Color.fromARGB(0, 255, 255, 255),
+    );
+
+    final description = _feature.attributes['description'];
+    final htmlDescription = wrapDescriptionInHtml(description);
+    await _webViewController.loadHtmlString(htmlDescription);
+  }
+
+  // Wraps the feature description HTML in complete HTML tags and scales the font
+  // size to make the text easier to read.
+  String wrapDescriptionInHtml(String description) {
+    var htmlDescription =
+        '<html><head><style>body{font-size:30px;}</style></head><body>';
+    htmlDescription += description;
+    htmlDescription += '</body></html>';
+    return htmlDescription;
   }
 }
