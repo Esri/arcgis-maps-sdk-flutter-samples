@@ -642,17 +642,59 @@ class FeatureDetails extends StatelessWidget {
     );
 
     final description = _feature.attributes['description'];
-    final htmlDescription = wrapDescriptionInHtml(description);
+    final attachmentUrls = await _fetchAttachmentsForFeature(_feature);
+    final htmlDescription = wrapDescriptionInHtml(description, attachmentUrls);
     await _webViewController.loadHtmlString(htmlDescription);
+  }
+
+  // Creates a list of URL strings to attachment images for a given feature
+  Future<List<String>> _fetchAttachmentsForFeature(Feature feature) async {
+    final agsFeature = feature as ArcGISFeature;
+    final featureObjectId = feature.attributes['OBJECTID'];
+    final table = feature.featureTable! as ServiceFeatureTable;
+    final tableUriString = table.uri.toString();
+    final attachments = await agsFeature.fetchAttachments();
+    final attachmentUrls = <String>[];
+    for (final attachment in attachments) {
+      if (attachment.contentType.contains('image')) {
+        attachmentUrls.add(
+          '$tableUriString/$featureObjectId/attachments/${attachment.id}',
+        );
+      }
+    }
+
+    return attachmentUrls;
   }
 
   // Wraps the feature description HTML in complete HTML tags and scales the font
   // size to make the text easier to read.
-  String wrapDescriptionInHtml(String description) {
-    var htmlDescription =
-        '<html><head><style>body{font-size:30px;}</style></head><body>';
-    htmlDescription += description;
-    htmlDescription += '</body></html>';
-    return htmlDescription;
+  String wrapDescriptionInHtml(
+    String description,
+    List<String> attachmentUrls,
+  ) {
+    // HTML openning
+    final htmlDescription = StringBuffer(
+      '<html><head>',
+    );
+    // Add some style
+    htmlDescription.write(
+      '<style>body{font-size:30px;} img{display: block; margin-left: auto; margin-right: auto; width: 90%;}</style>',
+    );
+
+    // The body of the description
+    htmlDescription.write('</head><body>');
+    htmlDescription.write(description);
+
+    // Add <img> tags for the attachment images
+    if (attachmentUrls.isNotEmpty) {
+      for (final attachmentUrl in attachmentUrls) {
+        htmlDescription.write('<br><br>');
+        htmlDescription.write('<img src=$attachmentUrl >');
+      }
+    }
+
+    // HTML closing
+    htmlDescription.write('</body></html>');
+    return htmlDescription.toString();
   }
 }
