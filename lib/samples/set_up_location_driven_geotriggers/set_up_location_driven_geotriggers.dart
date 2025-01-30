@@ -615,10 +615,12 @@ class FeatureDetailsState extends State<FeatureDetails> {
   Feature get _feature {
     final feature = widget.feature;
     if (feature != _previousFeature) {
-      // Update the HTML for the WebViewController.
-      _htmlFormatter = _formatFeatureDescriptionHtml();
       // Record new feature for next run.
       _previousFeature = feature;
+      setState(() {
+        // Update the HTML for the WebViewController.
+        _htmlFormatter = _formatFeatureDescriptionHtml();
+      });
     }
     return feature;
   }
