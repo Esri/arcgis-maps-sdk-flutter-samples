@@ -70,7 +70,7 @@ class _SetUpLocationDrivenGeotriggersState
 
   @override
   void dispose() {
-    // Stop the location data source
+    // Stop the location data source.
     _locationDataSource.stop();
 
     // Cancel the geotrigger event subscriptions.
@@ -542,7 +542,7 @@ class _SetUpLocationDrivenGeotriggersState
   }
 }
 
-// Stateful widget to show the details of a list of Features. If showning more
+// Widget to show the details of a list of Features. If showing more
 // than one feature, the user can tap through the list of features.
 class MultiFeatureDetails extends StatefulWidget {
   const MultiFeatureDetails({required this.features, super.key});
@@ -564,6 +564,7 @@ class MultiFeatureDetailsState extends State<MultiFeatureDetails> {
       mainAxisSize: MainAxisSize.min,
       children: [
         Expanded(
+          // Build the details of the selected Feature.
           child: features.isEmpty
               ? const Text('No features to display.')
               : FeatureDetails(
@@ -574,16 +575,16 @@ class MultiFeatureDetailsState extends State<MultiFeatureDetails> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              // Go to previous feature
+              // Go to previous feature.
               ElevatedButton(
                 onPressed: _featureIndex == 0
                     ? null
                     : () => setState(() => _featureIndex -= 1),
                 child: const Text('Prev'),
               ),
-              // Show current feature of total features
+              // Show current feature of total features.
               Text('${_featureIndex + 1}/${features.length}'),
-              // Go to next feature
+              // Go to next feature.
               ElevatedButton(
                 onPressed: _featureIndex == features.length - 1
                     ? null
@@ -597,12 +598,30 @@ class MultiFeatureDetailsState extends State<MultiFeatureDetails> {
   }
 }
 
-// Stateless widget to display the details of a of a Feature.
-class FeatureDetails extends StatelessWidget {
-  FeatureDetails({required Feature feature, super.key}) : _feature = feature;
+// Widget to display the details of a single Feature.
+class FeatureDetails extends StatefulWidget {
+  const FeatureDetails({required this.feature, super.key});
+  final Feature feature;
 
-  final Feature _feature;
+  @override
+  State<StatefulWidget> createState() => FeatureDetailsState();
+}
+
+class FeatureDetailsState extends State<FeatureDetails> {
   final _webViewController = WebViewController();
+  Future<void> _htmlFormatter = Future<void>.value();
+  Feature? _previousFeature;
+
+  Feature get _feature {
+    final feature = widget.feature;
+    if (feature != _previousFeature) {
+      // Update the HTML for the WebViewController.
+      _htmlFormatter = _formatFeatureDescriptionHtml();
+      // Record new feature for next run.
+      _previousFeature = feature;
+    }
+    return feature;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -615,9 +634,8 @@ class FeatureDetails extends StatelessWidget {
           style: Theme.of(context).textTheme.headlineMedium,
         ),
         Flexible(
-          // fit: FlexFit.loose,
           child: FutureBuilder(
-            future: _formatFeatureDescriptionHtml(),
+            future: _htmlFormatter,
             builder: (context, snapshot) {
               if (snapshot.connectionState != ConnectionState.done) {
                 return const Center(child: Text('Loading...'));
@@ -642,18 +660,17 @@ class FeatureDetails extends StatelessWidget {
     );
 
     final description = _feature.attributes['description'];
-    final attachmentUrls = await _fetchAttachmentsForFeature(_feature);
-    final htmlDescription = wrapDescriptionInHtml(description, attachmentUrls);
+    final attachmentUrls = await _fetchAttachmentsForFeature();
+    final htmlDescription = _wrapDescriptionInHtml(description, attachmentUrls);
     await _webViewController.loadHtmlString(htmlDescription);
   }
 
-  // Creates a list of URL strings to attachment images for a given feature
-  Future<List<String>> _fetchAttachmentsForFeature(Feature feature) async {
-    final agsFeature = feature as ArcGISFeature;
-    final featureObjectId = feature.attributes['OBJECTID'];
-    final table = feature.featureTable! as ServiceFeatureTable;
+  // Creates a list of URL strings to attachment images for a given feature.
+  Future<List<String>> _fetchAttachmentsForFeature() async {
+    final featureObjectId = _feature.attributes['OBJECTID'];
+    final table = _feature.featureTable! as ServiceFeatureTable;
     final tableUriString = table.uri.toString();
-    final attachments = await agsFeature.fetchAttachments();
+    final attachments = await (_feature as ArcGISFeature).fetchAttachments();
     final attachmentUrls = <String>[];
     for (final attachment in attachments) {
       if (attachment.contentType.contains('image')) {
@@ -668,24 +685,24 @@ class FeatureDetails extends StatelessWidget {
 
   // Wraps the feature description HTML in complete HTML tags and scales the font
   // size to make the text easier to read.
-  String wrapDescriptionInHtml(
+  String _wrapDescriptionInHtml(
     String description,
     List<String> attachmentUrls,
   ) {
-    // HTML openning
+    // Add HTML openning.
     final htmlDescription = StringBuffer(
       '<html><head>',
     );
-    // Add some style
+    // Add some style.
     htmlDescription.write(
       '<style>body{font-size:30px;} img{display: block; margin-left: auto; margin-right: auto; width: 90%;}</style>',
     );
 
-    // The body of the description
+    // Add the body and description.
     htmlDescription.write('</head><body>');
     htmlDescription.write(description);
 
-    // Add <img> tags for the attachment images
+    // Add <img> tags for the attachment images.
     if (attachmentUrls.isNotEmpty) {
       for (final attachmentUrl in attachmentUrls) {
         htmlDescription.write('<br><br>');
@@ -693,7 +710,7 @@ class FeatureDetails extends StatelessWidget {
       }
     }
 
-    // HTML closing
+    // Add HTML closing.
     htmlDescription.write('</body></html>');
     return htmlDescription.toString();
   }
