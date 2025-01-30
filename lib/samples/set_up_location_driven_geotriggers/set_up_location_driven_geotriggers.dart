@@ -617,6 +617,7 @@ class FeatureDetailsState extends State<FeatureDetails> {
     if (feature != _previousFeature) {
       // Record new feature for next run.
       _previousFeature = feature;
+
       setState(() {
         // Update the HTML for the WebViewController.
         _htmlFormatter = _formatFeatureDescriptionHtml();
