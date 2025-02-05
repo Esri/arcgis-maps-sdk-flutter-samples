@@ -1,0 +1,34 @@
+{
+    "category": "Maps",
+    "description": "Parse NMEA sentences and use the results to show device location on the map.",
+    "ignore": false,
+    "images": [
+        "show_device_location_with_nmea_data_sources.png"
+    ],
+    "keywords": [
+        "GPS",
+        "NMEA",
+        "dongle",
+        "history",
+        "navigation",
+        "real-time",
+        "trace",
+        "AGSLocation",
+        "AGSLocationDisplay",
+        "AGSNMEALocationDataSource",
+        "AGSNMEASatelliteInfo",
+        "AGSSimulatedLocationDataSource \u203c\ufe0f remove this if you don't use a simulated data source"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+        "AGSLocation",
+        "AGSLocationDisplay",
+        "AGSNMEALocationDataSource",
+        "AGSNMEASatelliteInfo",
+        "AGSSimulatedLocationDataSource \u203c\ufe0f remove this if you don't use a simulated data source"
+    ],
+    "snippets": [
+        "show_device_location_with_nmea_data_sources.dart"
+    ],
+    "title": "Show device location with NMEA data sources"
+}
