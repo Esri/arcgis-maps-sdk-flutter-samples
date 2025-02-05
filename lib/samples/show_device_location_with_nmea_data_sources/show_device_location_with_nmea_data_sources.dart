@@ -47,10 +47,7 @@ class _ShowDeviceLocationWithNmeaDataSourcesState
   StreamSubscription? _autopanSubscription;
 
   // Strings for the NEMA details display
-  var _accuracy = '';
-  var _visibleSatellites = '';
-  var _navigationSystem = '';
-  var _satelliteIds = '';
+  NmeaLocation? _currentNmeaLocation;
 
   // A flag for when the map view is ready and controls can be used.
   var _ready = false;
@@ -122,15 +119,7 @@ class _ShowDeviceLocationWithNmeaDataSourcesState
                           horizontal: 10,
                           vertical: 5,
                         ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(_accuracy),
-                            Text(_visibleSatellites),
-                            Text(_navigationSystem),
-                            Text(_satelliteIds),
-                          ],
-                        ),
+                        child: _buildTopDetails(),
                       ),
                     ),
                   ),
@@ -169,6 +158,46 @@ class _ShowDeviceLocationWithNmeaDataSourcesState
     setState(() => _ready = true);
   }
 
+  Widget _buildTopDetails() {
+    if (_currentNmeaLocation == null) {
+      return const Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('Accuracy will be shown here.'),
+          Text('Satellite information will be shown here'),
+        ],
+      );
+    }
+    final accuracy =
+        'Accuracy: Horizontal: ${_currentNmeaLocation!.horizontalAccuracy.toStringAsFixed(3)}, Vertical: ${_currentNmeaLocation!.verticalAccuracy.toStringAsFixed(3)}';
+    final satellitesInView =
+        '${_currentNmeaLocation!.satellites.length} satellites are in view.';
+
+    final children = [
+      Text(accuracy),
+      Text(satellitesInView),
+    ];
+
+    final navigationSystems = <String>{};
+    final satelliteIds = <int>[];
+    if (_currentNmeaLocation!.satellites.isNotEmpty) {
+      for (final satellite in _currentNmeaLocation!.satellites) {
+        // Navigation system
+        navigationSystems.add(satellite.system.toString());
+        // Satellite Ids
+        satelliteIds.add(satellite.id);
+      }
+
+      children.add(Text('System(s): ${navigationSystems.join(', ')}'));
+      children.add(Text('IDs: ${satelliteIds.join(', ')}'));
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: children,
+    );
+  }
+
   Future<void> _startNmeaDataSource() async {
     // Subscribe to the simulator
     _nmeaDataSubscription ??=
@@ -178,25 +207,7 @@ class _ShowDeviceLocationWithNmeaDataSourcesState
     });
 
     _locationDataSource.onLocationChanged.listen((location) {
-      final nmeaLocation = location as NmeaLocation;
-      final navigationSystems = <String>{};
-      final satelliteIds = <int>[];
-
-      for (final satellite in nmeaLocation.satellites) {
-        // Navigation system
-        navigationSystems.add(satellite.system.toString());
-        // Satellite Ids
-        satelliteIds.add(satellite.id);
-      }
-
-      setState(() {
-        _accuracy =
-            'Accuracy: Horizontal: ${nmeaLocation.horizontalAccuracy.toStringAsFixed(3)}, Vertical: ${nmeaLocation.verticalAccuracy.toStringAsFixed(3)}';
-        _visibleSatellites =
-            '${nmeaLocation.satellites.length} satellites are in view.';
-        _navigationSystem = 'System(s): ${navigationSystems.join(', ')}';
-        _satelliteIds = 'IDs: ${satelliteIds.join(', ')}';
-      });
+      setState(() => _currentNmeaLocation = location as NmeaLocation);
     });
 
     await _locationDataSource.start();
