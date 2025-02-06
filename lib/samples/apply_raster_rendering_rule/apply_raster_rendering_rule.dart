@@ -15,6 +15,7 @@
 
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_state_support.dart';
 import 'package:flutter/material.dart';
 
 class ApplyRasterRenderingRule extends StatefulWidget {
@@ -25,12 +26,13 @@ class ApplyRasterRenderingRule extends StatefulWidget {
       _ApplyRasterRenderingRuleState();
 }
 
-class _ApplyRasterRenderingRuleState extends State<ApplyRasterRenderingRule> {
+class _ApplyRasterRenderingRuleState extends State<ApplyRasterRenderingRule>
+    with SampleStateSupport {
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
 
   // A map with a streets basemap.
-  final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISStreets);
+  final _map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISStreets);
 
   // The web URI to the "CharlotteLAS" image service containing LAS files for Charlotte, NC downtown area.
   final _charlotteLASUri = Uri.parse(
@@ -38,7 +40,7 @@ class _ApplyRasterRenderingRuleState extends State<ApplyRasterRenderingRule> {
   );
 
   // An array of raster layers, each with a different rendering rule.
-  List<RasterLayer> rasterLayers = [];
+  List<RasterLayer> _rasterLayers = [];
 
   // The selected raster layer from the dropdown menu.
   RasterLayer? _selectedRasterLayer;
@@ -93,7 +95,7 @@ class _ApplyRasterRenderingRuleState extends State<ApplyRasterRenderingRule> {
           setState(() => _selectedRasterLayer = rasterLayer);
           addLayer(rasterLayer!);
         },
-        items: rasterLayers.map((rasterLayer) {
+        items: _rasterLayers.map((rasterLayer) {
           return DropdownMenuItem(
             value: rasterLayer,
             child: Text(rasterLayer.name),
@@ -105,14 +107,14 @@ class _ApplyRasterRenderingRuleState extends State<ApplyRasterRenderingRule> {
 
   Future<void> onMapViewReady() async {
     // Set the map to the map view controller.
-    _mapViewController.arcGISMap = map;
+    _mapViewController.arcGISMap = _map;
 
     // Gets the raster layers when the sample opens.
-    rasterLayers = await getRasterLayers();
-    if (rasterLayers.isNotEmpty) {
+    _rasterLayers = await getRasterLayers();
+    if (_rasterLayers.isNotEmpty) {
       // Load the first raster layer.
-      await rasterLayers.first.load();
-      addLayer(rasterLayers.first);
+      await _rasterLayers.first.load();
+      addLayer(_rasterLayers.first);
     }
 
     setState(() => _ready = true);
@@ -121,8 +123,8 @@ class _ApplyRasterRenderingRuleState extends State<ApplyRasterRenderingRule> {
   // Sets a given layer on the map and zooms the viewpoint to the layer's extent.
   // - Parameter layer: The layer to set.
   void addLayer(Layer layer) {
-    map.operationalLayers.clear();
-    map.operationalLayers.add(layer);
+    _map.operationalLayers.clear();
+    _map.operationalLayers.add(layer);
 
     if (layer.fullExtent != null) {
       _viewpoint = Viewpoint.fromTargetExtent(layer.fullExtent! as Geometry);
