@@ -54,7 +54,6 @@ class NmeaSourceSimulator {
           // Join the sentences with a linefeed. Append an additional
           // linefeed to the end to properly terminate the last sentence.
           final groupedSentences = '${messageSentences.join('\n')}\n';
-          // final groupedSentences = messageSentences.join(r'\r\n') + r'\r\n';
           _sentencesByTimeBlock.add(groupedSentences);
           messageSentences.clear();
         }
