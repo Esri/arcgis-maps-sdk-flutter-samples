@@ -48,12 +48,12 @@ class _ShowDeviceLocationWithNmeaDataSourcesState
   SimulatedNmeaDataSource? _nmeaDataSimulator;
   StreamSubscription? _nmeaDataSubscription;
 
-  // Enables or disables the Recenter button.
+  // Enable or disable the Recenter button.
   var _enableRecenter = false;
   StreamSubscription? _autopanSubscription;
 
-  // A flag for when the NmeaLocationDataSource is running
-  var _dataSourceRunning = false;
+  // A flag for when the NmeaLocationDataSource is running.
+  var _locationDataSourceRunning = false;
 
   // A flag for when the map view is ready and controls can be used.
   var _ready = false;
@@ -111,14 +111,15 @@ class _ShowDeviceLocationWithNmeaDataSourcesState
                     ),
                     // Stop and reset the location data source.
                     ElevatedButton(
-                      onPressed: _dataSourceRunning ? _stopDataSource : null,
+                      onPressed:
+                          _locationDataSourceRunning ? _stopDataSource : null,
                       child: const Text('Reset'),
                     ),
                   ],
                 ),
               ],
             ),
-            // Widget to show top details
+            // Widget to show top details.
             NmeaLocationDetails(
               nmeaLocation: _currentNmeaLocation,
               nmeaSatelliteInfos: _currentSatelliteInfos,
@@ -182,7 +183,7 @@ class _ShowDeviceLocationWithNmeaDataSourcesState
     await _locationDataSource.start();
 
     // Set the running state to enable the Reset button.
-    setState(() => _dataSourceRunning = true);
+    setState(() => _locationDataSourceRunning = true);
   }
 
   Future<void> _stopDataSource() async {
@@ -199,13 +200,12 @@ class _ShowDeviceLocationWithNmeaDataSourcesState
     setState(() {
       _currentNmeaLocation = null;
       _currentSatelliteInfos = <NmeaSatelliteInfo>[];
-      _dataSourceRunning = false;
+      _locationDataSourceRunning = false;
     });
   }
 }
 
 // Widget that displays current location accuracy and NMEA satellite information.
-// If no location, placehoder text is shown.
 class NmeaLocationDetails extends StatelessWidget {
   const NmeaLocationDetails({
     required this.nmeaLocation,
@@ -249,7 +249,7 @@ class NmeaLocationDetails extends StatelessWidget {
       children.add(Text('IDs: ${satelliteIds.join(', ')}'));
     }
 
-    // Build and return the Widget
+    // Build and return the Widget.
     return Column(
       children: [
         ColoredBox(
