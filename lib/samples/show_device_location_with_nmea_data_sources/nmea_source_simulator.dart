@@ -51,8 +51,8 @@ class NmeaSourceSimulator {
       if (sentenceComponents[0].contains('GGA')) {
         if (messageSentences.isNotEmpty) {
           // Close out the prior block of sentences.
-          // Join the sentences with a return and linefeed. Append an additional
-          // return and linefeed to the end.
+          // Join the sentences with a linefeed. Append an additional
+          // linefeed to the end to properly terminate the last sentence.
           final groupedSentences = '${messageSentences.join('\n')}\n';
           // final groupedSentences = messageSentences.join(r'\r\n') + r'\r\n';
           _sentencesByTimeBlock.add(groupedSentences);

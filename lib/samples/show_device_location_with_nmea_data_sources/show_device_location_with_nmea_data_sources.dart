@@ -35,27 +35,33 @@ class _ShowDeviceLocationWithNmeaDataSourcesState
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
 
-  // Create the NMEA location data source
+  // Create the NMEA location data source.
   final _locationDataSource = NmeaLocationDataSource();
 
-  // Create the simulated NMEA data provider
+  // Subscriptions to location data source events and members to keep current data.
+  StreamSubscription? _locationSubscription;
+  NmeaLocation? _currentNmeaLocation;
+  StreamSubscription? _satelliteSubscription;
+  var _currentSatelliteInfos = <NmeaSatelliteInfo>[];
+
+  // Create the simulated NMEA data provider.
   final _nmeaDataSimulator = NmeaSourceSimulator();
   StreamSubscription? _nmeaDataSubscription;
 
-  // Enables or disables the Recenter button
+  // Enables or disables the Recenter button.
   var _enableRecenter = false;
   StreamSubscription? _autopanSubscription;
-
-  // Strings for the NEMA details display
-  NmeaLocation? _currentNmeaLocation;
 
   // A flag for when the map view is ready and controls can be used.
   var _ready = false;
 
   @override
   void dispose() {
+    // Cancel all the subscriptions.
     _nmeaDataSubscription?.cancel();
     _autopanSubscription?.cancel();
+    _locationSubscription?.cancel();
+    _satelliteSubscription?.cancel();
 
     super.dispose();
   }
@@ -93,7 +99,7 @@ class _ShowDeviceLocationWithNmeaDataSourcesState
                     ElevatedButton(
                       onPressed: _enableRecenter
                           ? () {
-                              // Set the autoPanMode to recenter
+                              // Set the autoPanMode to recenter.
                               _mapViewController.locationDisplay.autoPanMode =
                                   LocationDisplayAutoPanMode.recenter;
                             }
@@ -119,7 +125,10 @@ class _ShowDeviceLocationWithNmeaDataSourcesState
                           horizontal: 10,
                           vertical: 5,
                         ),
-                        child: _buildTopDetails(),
+                        child: NmeaLocationDetails(
+                          nmeaLocation: _currentNmeaLocation,
+                          nmeaSatelliteInfos: _currentSatelliteInfos,
+                        ),
                       ),
                     ),
                   ),
@@ -135,11 +144,11 @@ class _ShowDeviceLocationWithNmeaDataSourcesState
   }
 
   Future<void> onMapViewReady() async {
-    // Create a map and set it to the MapView
+    // Create a map and set it to the MapView.
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic);
     _mapViewController.arcGISMap = map;
 
-    // Use the NMEA location data source as the data source for the map
+    // Use the NMEA location data source as the data source for the map.
     _mapViewController.locationDisplay.dataSource = _locationDataSource;
 
     // Set the autoPanMode to recenter and listen for any changes.
@@ -158,8 +167,43 @@ class _ShowDeviceLocationWithNmeaDataSourcesState
     setState(() => _ready = true);
   }
 
-  Widget _buildTopDetails() {
-    if (_currentNmeaLocation == null) {
+  Future<void> _startNmeaDataSource() async {
+    // Subscribe to the simulator data.
+    _nmeaDataSubscription ??=
+        _nmeaDataSimulator.nmeaMessages.listen((nmeaDataString) {
+      final nmeaData = utf8.encoder.convert(nmeaDataString);
+      _locationDataSource.pushData(nmeaData);
+    });
+
+    // Subscribe to the location stream of the location data source.
+    _locationSubscription ??=
+        _locationDataSource.onLocationChanged.listen((location) {
+      setState(() => _currentNmeaLocation = location as NmeaLocation);
+    });
+
+    // Subscribe to the location data source's satellite changed stream.
+    _satelliteSubscription ??=
+        _locationDataSource.onSatellitesChanged.listen((satelliteInfos) {
+      setState(() => _currentSatelliteInfos = satelliteInfos);
+    });
+
+    await _locationDataSource.start();
+  }
+}
+
+class NmeaLocationDetails extends StatelessWidget {
+  const NmeaLocationDetails({
+    required this.nmeaLocation,
+    required this.nmeaSatelliteInfos,
+    super.key,
+  });
+
+  final NmeaLocation? nmeaLocation;
+  final List<NmeaSatelliteInfo> nmeaSatelliteInfos;
+
+  @override
+  Widget build(BuildContext context) {
+    if (nmeaLocation == null) {
       return const Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -168,10 +212,11 @@ class _ShowDeviceLocationWithNmeaDataSourcesState
         ],
       );
     }
+
     final accuracy =
-        'Accuracy: Horizontal: ${_currentNmeaLocation!.horizontalAccuracy.toStringAsFixed(3)}, Vertical: ${_currentNmeaLocation!.verticalAccuracy.toStringAsFixed(3)}';
+        'Accuracy: Horizontal: ${nmeaLocation!.horizontalAccuracy.toStringAsFixed(3)}, Vertical: ${nmeaLocation!.verticalAccuracy.toStringAsFixed(3)}';
     final satellitesInView =
-        '${_currentNmeaLocation!.satellites.length} satellites are in view.';
+        '${nmeaLocation!.satellites.length} satellites are in view.';
 
     final children = [
       Text(accuracy),
@@ -180,11 +225,11 @@ class _ShowDeviceLocationWithNmeaDataSourcesState
 
     final navigationSystems = <String>{};
     final satelliteIds = <int>[];
-    if (_currentNmeaLocation!.satellites.isNotEmpty) {
-      for (final satellite in _currentNmeaLocation!.satellites) {
-        // Navigation system
+    if (nmeaSatelliteInfos.isNotEmpty) {
+      for (final satellite in nmeaSatelliteInfos) {
+        // Navigation system.
         navigationSystems.add(satellite.system.toString());
-        // Satellite Ids
+        // Satellite Ids.
         satelliteIds.add(satellite.id);
       }
 
@@ -196,20 +241,5 @@ class _ShowDeviceLocationWithNmeaDataSourcesState
       crossAxisAlignment: CrossAxisAlignment.start,
       children: children,
     );
-  }
-
-  Future<void> _startNmeaDataSource() async {
-    // Subscribe to the simulator
-    _nmeaDataSubscription ??=
-        _nmeaDataSimulator.nmeaMessages.listen((nmeaDataString) {
-      final nmeaData = utf8.encoder.convert(nmeaDataString);
-      _locationDataSource.pushData(nmeaData);
-    });
-
-    _locationDataSource.onLocationChanged.listen((location) {
-      setState(() => _currentNmeaLocation = location as NmeaLocation);
-    });
-
-    await _locationDataSource.start();
   }
 }
