@@ -40,7 +40,7 @@ class _ShowDeviceLocationWithNmeaDataSourcesState
 
   // Subscriptions to location data source events and members to keep current data.
   StreamSubscription? _locationSubscription;
-  NmeaLocation? _currentNmeaLocation;
+  ArcGISLocation? _currentNmeaLocation;
   StreamSubscription? _satelliteSubscription;
   var _currentSatelliteInfos = <NmeaSatelliteInfo>[];
 
@@ -169,7 +169,7 @@ class _ShowDeviceLocationWithNmeaDataSourcesState
     // Subscribe to the location stream of the location data source.
     _locationSubscription ??=
         _locationDataSource.onLocationChanged.listen((location) {
-      setState(() => _currentNmeaLocation = location as NmeaLocation);
+      setState(() => _currentNmeaLocation = location);
     });
 
     // Subscribe to the location data source's satellite changed stream.
@@ -213,7 +213,7 @@ class NmeaLocationDetails extends StatelessWidget {
     super.key,
   });
 
-  final NmeaLocation? nmeaLocation;
+  final ArcGISLocation? nmeaLocation;
   final List<NmeaSatelliteInfo> nmeaSatelliteInfos;
 
   @override
