@@ -44,13 +44,16 @@ class _ShowDeviceLocationWithNmeaDataSourcesState
   StreamSubscription? _satelliteSubscription;
   var _currentSatelliteInfos = <NmeaSatelliteInfo>[];
 
-  // Create the simulated NMEA data provider.
-  final _nmeaDataSimulator = NmeaSourceSimulator();
+  // Simulated NMEA data provider members.
+  NmeaSourceSimulator? _nmeaDataSimulator;
   StreamSubscription? _nmeaDataSubscription;
 
   // Enables or disables the Recenter button.
   var _enableRecenter = false;
   StreamSubscription? _autopanSubscription;
+
+  // A flag for when the NmeaLocationDataSource is running
+  var _dataSourceRunning = false;
 
   // A flag for when the map view is ready and controls can be used.
   var _ready = false;
@@ -91,7 +94,7 @@ class _ShowDeviceLocationWithNmeaDataSourcesState
                     ElevatedButton(
                       onPressed: _locationDataSource.status ==
                               LocationDataSourceStatus.stopped
-                          ? _startNmeaDataSource
+                          ? _startDataSource
                           : null,
                       child: const Text('Start'),
                     ),
@@ -105,6 +108,11 @@ class _ShowDeviceLocationWithNmeaDataSourcesState
                             }
                           : null,
                       child: const Text('Recenter'),
+                    ),
+                    // Stop and reset the location data source.
+                    ElevatedButton(
+                      onPressed: _dataSourceRunning ? _stopDataSource : null,
+                      child: const Text('Reset'),
                     ),
                   ],
                 ),
@@ -147,10 +155,13 @@ class _ShowDeviceLocationWithNmeaDataSourcesState
     setState(() => _ready = true);
   }
 
-  Future<void> _startNmeaDataSource() async {
+  Future<void> _startDataSource() async {
+    // Create new instance of the NmeaSourceSimulator.
+    _nmeaDataSimulator ??= NmeaSourceSimulator();
+
     // Subscribe to the simulator data.
     _nmeaDataSubscription ??=
-        _nmeaDataSimulator.nmeaMessages.listen((nmeaDataString) {
+        _nmeaDataSimulator!.nmeaMessages.listen((nmeaDataString) {
       final nmeaData = utf8.encoder.convert(nmeaDataString);
       _locationDataSource.pushData(nmeaData);
     });
@@ -167,7 +178,29 @@ class _ShowDeviceLocationWithNmeaDataSourcesState
       setState(() => _currentSatelliteInfos = satelliteInfos);
     });
 
+    // Start the NMEALocationDataSource.
     await _locationDataSource.start();
+
+    // Set the running state to enable the Reset button.
+    setState(() => _dataSourceRunning = true);
+  }
+
+  Future<void> _stopDataSource() async {
+    // Stop the location data source.
+    await _locationDataSource.stop();
+
+    // Cancel simulator subscription and remove reference to NMEA source
+    // simulator and subscription.
+    await _nmeaDataSubscription?.cancel();
+    _nmeaDataSubscription = null;
+    _nmeaDataSimulator = null;
+
+    // Update the affected state variables.
+    setState(() {
+      _currentNmeaLocation = null;
+      _currentSatelliteInfos = <NmeaSatelliteInfo>[];
+      _dataSourceRunning = false;
+    });
   }
 }
 
@@ -225,7 +258,7 @@ class NmeaLocationDetails extends StatelessWidget {
             left: false,
             right: false,
             child: SizedBox(
-              width: MediaQuery.of(context).size.width,
+              width: MediaQuery.sizeOf(context).width,
               child: Padding(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 10,
