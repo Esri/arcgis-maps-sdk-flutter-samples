@@ -93,7 +93,7 @@ class _ApplyRasterRenderingRuleState extends State<ApplyRasterRenderingRule>
         value: _selectedRasterLayer,
         onChanged: (rasterLayer) {
           setState(() => _selectedRasterLayer = rasterLayer);
-          addLayer(rasterLayer!);
+          setLayer(rasterLayer!);
         },
         items: _rasterLayers.map((rasterLayer) {
           return DropdownMenuItem(
@@ -114,7 +114,7 @@ class _ApplyRasterRenderingRuleState extends State<ApplyRasterRenderingRule>
     if (_rasterLayers.isNotEmpty) {
       // Load the first raster layer.
       await _rasterLayers.first.load();
-      addLayer(_rasterLayers.first);
+      setLayer(_rasterLayers.first);
     }
 
     setState(() => _ready = true);
@@ -122,7 +122,7 @@ class _ApplyRasterRenderingRuleState extends State<ApplyRasterRenderingRule>
 
   // Sets a given layer on the map and zooms the viewpoint to the layer's extent.
   // - Parameter layer: The layer to set.
-  void addLayer(Layer layer) {
+  void setLayer(Layer layer) {
     _map.operationalLayers.clear();
     _map.operationalLayers.add(layer);
 
