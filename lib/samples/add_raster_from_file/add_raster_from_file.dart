@@ -16,6 +16,7 @@
 import 'dart:io';
 
 import 'package:arcgis_maps/arcgis_maps.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_data.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
@@ -44,15 +45,7 @@ class _AddRasterFromFileState extends State<AddRasterFromFile> {
             onMapViewReady: onMapViewReady,
           ),
           // Display a progress indicator and prevent interaction until state is ready.
-          Visibility(
-            visible: !_ready,
-            child: const SizedBox.expand(
-              child: ColoredBox(
-                color: Colors.white30,
-                child: Center(child: CircularProgressIndicator()),
-              ),
-            ),
-          ),
+          LoadingIndicator(visible: !_ready),
         ],
       ),
     );
@@ -62,7 +55,6 @@ class _AddRasterFromFileState extends State<AddRasterFromFile> {
     // Create a map with the ArcGIS ImageryStandard basemap style and set to the map view.
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISImageryStandard);
 
-
     // Download the sample data.
     await downloadSampleData(['7c4c679ab06a4df19dc497f577f111bd']);
 
@@ -71,7 +63,7 @@ class _AddRasterFromFileState extends State<AddRasterFromFile> {
 
     // Create a file to the Shasta tif file.
     final shastaTifFile =
-    File('${directory.absolute.path}/raster-file/raster-file/Shasta.tif');
+        File('${directory.absolute.path}/raster-file/raster-file/Shasta.tif');
 
     // Create a raster from the file URI.
     final raster = Raster.withFileUri(shastaTifFile.uri);
@@ -100,4 +92,3 @@ class _AddRasterFromFileState extends State<AddRasterFromFile> {
     }
   }
 }
-
