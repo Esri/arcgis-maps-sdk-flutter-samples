@@ -23,10 +23,10 @@ Tap the "Start" button to start a simulated NMEA data provider and the `NmeaLoca
 
 ## Relevant API
 
-* AGSLocation
-* AGSLocationDisplay
-* AGSNMEALocationDataSource
-* AGSNMEASatelliteInfo
+* ArcGISLocation
+* LocationDisplay
+* NmeaLocationDataSource
+* NmeaSatelliteInfo
 
 ## About the data
 

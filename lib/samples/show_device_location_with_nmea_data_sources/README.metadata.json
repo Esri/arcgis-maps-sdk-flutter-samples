@@ -13,21 +13,20 @@
         "navigation",
         "real-time",
         "trace",
-        "AGSLocation",
-        "AGSLocationDisplay",
-        "AGSNMEALocationDataSource",
-        "AGSNMEASatelliteInfo",
-        "AGSSimulatedLocationDataSource \u203c\ufe0f remove this if you don't use a simulated data source"
+        "ArcGISLocation",
+        "LocationDisplay",
+        "NmeaLocationDataSource",
+        "NmeaSatelliteInfo"
     ],
     "redirect_from": [],
     "relevant_apis": [
-        "AGSLocation",
-        "AGSLocationDisplay",
-        "AGSNMEALocationDataSource",
-        "AGSNMEASatelliteInfo",
-        "AGSSimulatedLocationDataSource \u203c\ufe0f remove this if you don't use a simulated data source"
+        "ArcGISLocation",
+        "LocationDisplay",
+        "NmeaLocationDataSource",
+        "NmeaSatelliteInfo"
     ],
     "snippets": [
+        "nmea_source_simulator.dart",
         "show_device_location_with_nmea_data_sources.dart"
     ],
     "title": "Show device location with NMEA data sources"
