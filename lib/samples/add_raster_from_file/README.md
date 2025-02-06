@@ -2,7 +2,7 @@
 
 Create and use a raster layer made from a local raster file.
 
-![Apply add raster from file](AddRasterFromFile.png)
+![Apply add raster from file](add_raster_from_file.png)
 
 ## Use case
 
@@ -16,7 +16,7 @@ When the sample starts, a raster will be loaded from a file and displayed in the
 
 1. Create a `Raster` from a raster file.
 2. Create a `RasterLayer` from the raster.
-3. Add it as an operational layer with `map.getOperationalLayers().add(rasterLayer)`.
+3. Add it as an operational layer with `map.operationalLayers.add(rasterLayer)`.
 
 ## Relevant API
 
