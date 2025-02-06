@@ -25,10 +25,6 @@ void main() {
   const apiKey = String.fromEnvironment('API_KEY');
   // Alternatively, replace the above line with the following and hard-code your apiKey here:
   // const apiKey = ''; // Your API Key here.
-
-  const licenseKey = String.fromEnvironment('STANDARD_LICENSE');
-  ArcGISEnvironment.setLicenseUsingKey(licenseKey);
-
   if (apiKey.isEmpty) {
     throw Exception('apiKey undefined');
   } else {
