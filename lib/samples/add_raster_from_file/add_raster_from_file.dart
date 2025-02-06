@@ -18,6 +18,7 @@ import 'dart:io';
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_data.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_state_support.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -28,7 +29,8 @@ class AddRasterFromFile extends StatefulWidget {
   State<AddRasterFromFile> createState() => _AddRasterFromFileState();
 }
 
-class _AddRasterFromFileState extends State<AddRasterFromFile> {
+class _AddRasterFromFileState extends State<AddRasterFromFile>
+    with SampleStateSupport {
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
 
@@ -55,24 +57,8 @@ class _AddRasterFromFileState extends State<AddRasterFromFile> {
     // Create a map with the ArcGIS ImageryStandard basemap style and set to the map view.
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISImageryStandard);
 
-    // Download the sample data.
-    await downloadSampleData(['7c4c679ab06a4df19dc497f577f111bd']);
-
-    // Get the temp directory.
-    final directory = await getApplicationDocumentsDirectory();
-
-    // Create a file to the Shasta tif file.
-    final shastaTifFile =
-        File('${directory.absolute.path}/raster-file/raster-file/Shasta.tif');
-
-    // Create a raster from the file URI.
-    final raster = Raster.withFileUri(shastaTifFile.uri);
-
-    // Load the raster file.
-    await raster.load();
-
-    // Create a raster layer using the raster object.
-    final rasterLayer = RasterLayer.withRaster(raster);
+    // Load the raster layer.
+    final rasterLayer = await loadRasterLayer();
 
     // Add the raster layer to the map's operational layers.
     map.operationalLayers.add(rasterLayer);
@@ -82,13 +68,31 @@ class _AddRasterFromFileState extends State<AddRasterFromFile> {
     if (fullExtent != null) {
       final viewpoint = Viewpoint.fromCenter(
         fullExtent.center,
-        scale: 80000, // Adjust the scale as needed
+        scale: 80000,
       );
-
-      _mapViewController.arcGISMap = map;
       _mapViewController.setViewpoint(viewpoint);
+      _mapViewController.arcGISMap = map;
+
       // Set the ready state variable to true to enable the sample UI.
       setState(() => _ready = true);
     }
+  }
+
+  Future<RasterLayer> loadRasterLayer() async {
+    // Download the sample data.
+    await downloadSampleData(['7c4c679ab06a4df19dc497f577f111bd']);
+    // Get the temp directory.
+    final directory = await getApplicationDocumentsDirectory();
+    // Create a file to the Shasta tif file.
+    final shastaTifFile =
+        File('${directory.absolute.path}/raster-file/raster-file/Shasta.tif');
+    // Create a raster from the file URI.
+    final raster = Raster.withFileUri(shastaTifFile.uri);
+    // Load the raster object.
+    await raster.load();
+
+    // Create a raster layer using the raster object.
+    final rasterLayer = RasterLayer.withRaster(raster);
+    return rasterLayer;
   }
 }
