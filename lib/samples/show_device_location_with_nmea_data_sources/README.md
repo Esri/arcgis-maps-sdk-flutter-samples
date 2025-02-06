@@ -12,14 +12,14 @@ The NMEA location data source allows for detailed interrogation of the informati
 
 ## How to use the sample
 
-Tap "Start" to parse the NMEA sentences into a simulated location data source, and initiate the location display. Tap "Recenter" to recenter the location display. Tap "Reset" to reset the location display.
+Tap the "Start" button to start a simulated NMEA data provider and the `NmeaLocationDataSource`. Tap "Recenter" to recenter the location display. Tap "Reset" to reset the location display.
 
 ## How it works
 
-1. Load an NMEA string and parse the sentences into a series of locations.
-2. Create an `AGSSimulatedLocationDataSource` and initialize it with the mock locations. ‼️ **(We can also directly parse the raw NMEA strings, and use `AGSNMEALocationDataSource` instead. Don't forget to adjust the wordings)**
-3. Set it to the location display's data source.
-4. Start the location display to begin receiving location and satellite updates.
+1. A simulated NMEA data source parses an NMEA string into sentences and provides that data as a stream.
+2. Create a `NmeaLocationDataSource` and push the NMEA sentences from the stream with `NmeaLocationDataSource.push()`.
+3. Set the `NmeaLocationDataSource` to the location display's data source.
+4. Start the location data source to begin receiving location and satellite updates.
 
 ## Relevant API
 
@@ -27,11 +27,10 @@ Tap "Start" to parse the NMEA sentences into a simulated location data source, a
 * AGSLocationDisplay
 * AGSNMEALocationDataSource
 * AGSNMEASatelliteInfo
-* AGSSimulatedLocationDataSource ‼️ remove this if you don't use a simulated data source
 
 ## About the data
 
-A list of NMEA sentences is used to initialize a `SimulatedNMEADataSource` object. This simulated data source provides NMEA data periodically, and allows the sample to be used on devices without a GPS dongle that produces NMEA data.
+A string of NMEA sentences is used to initialize a `SimulatedNmeaDataSource` object. This simulated data source provides NMEA data periodically, and allows the sample to be used on devices without a GPS dongle that produces NMEA data.
 
 The route taken in this sample features a [2-minute driving trip around Redlands, CA](https://arcgis.com/home/item.html?id=d5bad9f4fee9483791e405880fb466da).
 
@@ -39,17 +38,12 @@ The route taken in this sample features a [2-minute driving trip around Redlands
 
 Below is a list of protocol strings for commonly used GNSS external accessories. Please refer to the [ArcGIS Field Maps documentation](https://doc.arcgis.com/en/field-maps/ios/help/high-accuracy-data-collection.htm#ESRI_SECTION2_612D328A655644DCAF5CF0210308C821) for model and firmware requirements.
 
-### Supported by this sample
-
-* com.bad-elf.gps
-* com.eos-gnss.positioningsource
-* com.geneq.sxbluegpssource
-
-### Others
-
 * com.amanenterprises.nmeasource
+* com.bad-elf.gps
 * com.dualav.xgps150
+* com.eos-gnss.positioningsource
 * com.garmin.pvt
+* com.geneq.sxbluegpssource
 * com.junipersys.geode
 * com.leica-geosystems.zeno.gnss
 * com.searanllc.serial

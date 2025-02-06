@@ -45,7 +45,7 @@ class _ShowDeviceLocationWithNmeaDataSourcesState
   var _currentSatelliteInfos = <NmeaSatelliteInfo>[];
 
   // Simulated NMEA data provider members.
-  NmeaSourceSimulator? _nmeaDataSimulator;
+  SimulatedNmeaDataSource? _nmeaDataSimulator;
   StreamSubscription? _nmeaDataSubscription;
 
   // Enables or disables the Recenter button.
@@ -157,7 +157,7 @@ class _ShowDeviceLocationWithNmeaDataSourcesState
 
   Future<void> _startDataSource() async {
     // Create new instance of the NmeaSourceSimulator.
-    _nmeaDataSimulator ??= NmeaSourceSimulator();
+    _nmeaDataSimulator ??= SimulatedNmeaDataSource();
 
     // Subscribe to the simulator data.
     _nmeaDataSubscription ??=
