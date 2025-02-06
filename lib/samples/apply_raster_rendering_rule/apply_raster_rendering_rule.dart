@@ -79,7 +79,7 @@ class _ApplyRasterRenderingRuleState extends State<ApplyRasterRenderingRule> {
   Widget buildBottomMenu() {
     return Center(
       // A dropdown button for selecting a rendering rule.
-      child: DropdownButton<RasterLayer>(
+      child: DropdownButton(
         alignment: Alignment.center,
         hint: Text(
           'Rendering Rule',
@@ -90,13 +90,11 @@ class _ApplyRasterRenderingRuleState extends State<ApplyRasterRenderingRule> {
         style: Theme.of(context).textTheme.labelMedium,
         value: _selectedRasterLayer,
         onChanged: (rasterLayer) {
-          setState(() {
-            _selectedRasterLayer = rasterLayer;
-            addLayer(rasterLayer!);
-          });
+          setState(() => _selectedRasterLayer = rasterLayer);
+          addLayer(rasterLayer!);
         },
         items: rasterLayers.map((rasterLayer) {
-          return DropdownMenuItem<RasterLayer>(
+          return DropdownMenuItem(
             value: rasterLayer,
             child: Text(rasterLayer.name),
           );
