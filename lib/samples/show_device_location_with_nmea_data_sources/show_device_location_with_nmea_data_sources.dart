@@ -110,30 +110,10 @@ class _ShowDeviceLocationWithNmeaDataSourcesState
                 ),
               ],
             ),
-            // Current Section and POIs display.
-            Column(
-              children: [
-                ColoredBox(
-                  color: const Color.fromARGB(220, 255, 255, 255),
-                  child: SafeArea(
-                    left: false,
-                    right: false,
-                    child: SizedBox(
-                      width: MediaQuery.of(context).size.width,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 10,
-                          vertical: 5,
-                        ),
-                        child: NmeaLocationDetails(
-                          nmeaLocation: _currentNmeaLocation,
-                          nmeaSatelliteInfos: _currentSatelliteInfos,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
+            // Widget to show top details
+            NmeaLocationDetails(
+              nmeaLocation: _currentNmeaLocation,
+              nmeaSatelliteInfos: _currentSatelliteInfos,
             ),
             // Display a progress indicator and prevent interaction until state is ready.
             LoadingIndicator(visible: !_ready),
@@ -205,53 +185,73 @@ class NmeaLocationDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Create list of child Widgets that will be shown in a Column.
+    final children = <Widget>[];
+
     // If no location, show placeholder text.
     if (nmeaLocation == null) {
-      return const Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text('Accuracy will be shown here.'),
-          Text('Satellite information will be shown here'),
-        ],
-      );
-    }
-    // Location is provided. Build out the details.
-    // Compose Strings for accuracy and satellite count.
-    final accuracy =
-        'Accuracy: Horizontal: ${nmeaLocation!.horizontalAccuracy.toStringAsFixed(3)}, Vertical: ${nmeaLocation!.verticalAccuracy.toStringAsFixed(3)}';
-    final satellitesInView =
-        '${nmeaLocation!.satellites.length} satellites are in view.';
+      children.addAll([
+        const Text('Accuracy will be shown here.'),
+        const Text('Satellite information will be shown here'),
+      ]);
+    } else {
+      // Location is provided. Build out the details.
+      // Compose Strings for accuracy and satellite count.
+      final accuracy =
+          'Accuracy: Horizontal: ${nmeaLocation!.horizontalAccuracy.toStringAsFixed(3)}, Vertical: ${nmeaLocation!.verticalAccuracy.toStringAsFixed(3)}';
+      final satellitesInView =
+          '${nmeaLocation!.satellites.length} satellites are in view.';
 
-    // Create list of child Widgets that will be shown in a Column.
-    final children = [
-      Text(accuracy),
-      Text(satellitesInView),
-    ];
+      children.addAll([
+        Text(accuracy),
+        Text(satellitesInView),
+      ]);
 
-    // If there are Satellites, compose the Strings for navigation systems and IDs.
-    final navigationSystems = <String>{};
-    final satelliteIds = <int>[];
-    if (nmeaSatelliteInfos.isNotEmpty) {
-      for (final satellite in nmeaSatelliteInfos) {
-        // Navigation system.
-        navigationSystems.add(satellite.system.label);
-        // Satellite Ids.
-        satelliteIds.add(satellite.id);
+      // If there are Satellites, compose the Strings for navigation systems and IDs.
+      final navigationSystems = <String>{};
+      final satelliteIds = <int>[];
+      if (nmeaSatelliteInfos.isNotEmpty) {
+        for (final satellite in nmeaSatelliteInfos) {
+          // Navigation system.
+          navigationSystems.add(satellite.system.label);
+          // Satellite Ids.
+          satelliteIds.add(satellite.id);
+        }
+
+        children.add(Text('System(s): ${navigationSystems.join(', ')}'));
+        children.add(Text('IDs: ${satelliteIds.join(', ')}'));
       }
-
-      children.add(Text('System(s): ${navigationSystems.join(', ')}'));
-      children.add(Text('IDs: ${satelliteIds.join(', ')}'));
     }
 
-    // Create and return the Column displaying the data.
+    // Build and return the Widget
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: children,
+      children: [
+        ColoredBox(
+          color: const Color.fromARGB(220, 255, 255, 255),
+          child: SafeArea(
+            left: false,
+            right: false,
+            child: SizedBox(
+              width: MediaQuery.of(context).size.width,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 5,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: children,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
 
-// Extension on NmeaGnssSystem to provide a readable lable.
+// Extension on NmeaGnssSystem to provide a readable label.
 extension on NmeaGnssSystem {
   String get label {
     switch (name) {
