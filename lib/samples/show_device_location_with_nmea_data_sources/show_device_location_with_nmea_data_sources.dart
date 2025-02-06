@@ -191,6 +191,8 @@ class _ShowDeviceLocationWithNmeaDataSourcesState
   }
 }
 
+// Widget that displays current location accuracy and NMEA satellite information.
+// If no location, placehoder text is shown.
 class NmeaLocationDetails extends StatelessWidget {
   const NmeaLocationDetails({
     required this.nmeaLocation,
@@ -203,6 +205,7 @@ class NmeaLocationDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // If no location, show placeholder text.
     if (nmeaLocation == null) {
       return const Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -212,23 +215,26 @@ class NmeaLocationDetails extends StatelessWidget {
         ],
       );
     }
-
+    // Location is provided. Build out the details.
+    // Compose Strings for accuracy and satellite count.
     final accuracy =
         'Accuracy: Horizontal: ${nmeaLocation!.horizontalAccuracy.toStringAsFixed(3)}, Vertical: ${nmeaLocation!.verticalAccuracy.toStringAsFixed(3)}';
     final satellitesInView =
         '${nmeaLocation!.satellites.length} satellites are in view.';
 
+    // Create list of child Widgets that will be shown in a Column.
     final children = [
       Text(accuracy),
       Text(satellitesInView),
     ];
 
+    // If there are Satellites, compose the Strings for navigation systems and IDs.
     final navigationSystems = <String>{};
     final satelliteIds = <int>[];
     if (nmeaSatelliteInfos.isNotEmpty) {
       for (final satellite in nmeaSatelliteInfos) {
         // Navigation system.
-        navigationSystems.add(satellite.system.toString());
+        navigationSystems.add(satellite.system.label);
         // Satellite Ids.
         satelliteIds.add(satellite.id);
       }
@@ -237,9 +243,32 @@ class NmeaLocationDetails extends StatelessWidget {
       children.add(Text('IDs: ${satelliteIds.join(', ')}'));
     }
 
+    // Create and return the Column displaying the data.
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: children,
     );
+  }
+}
+
+// Extension on NmeaGnssSystem to provide a readable lable.
+extension on NmeaGnssSystem {
+  String get label {
+    switch (name) {
+      case 'gps':
+        return 'The Global Positioning System';
+      case 'glonass':
+        return 'The Russian Global Navigation Satellite System';
+      case 'galileo':
+        return 'The European Union Global Navigation Satellite System';
+      case 'bds':
+        return 'The BeiDou Navigation Satellite System';
+      case 'qzss':
+        return 'The Quasi-Zenith Satellite System';
+      case 'navIc':
+        return 'The Navigation Indian Constellation';
+      default:
+        return 'Unknown GNSS type';
+    }
   }
 }
