@@ -89,7 +89,7 @@ class SimulatedNmeaDataSource {
 
     _running = true;
 
-    // Post the first set of messages immediately.
+    // Post the first block of sentences immediately.
     _postNextMessageBlock();
 
     // Reset the timer for the next interval.
