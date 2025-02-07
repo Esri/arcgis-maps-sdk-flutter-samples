@@ -1,4 +1,3 @@
-//
 // Copyright 2025 Esri
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,20 +16,6 @@
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
-
-void main() async {
-  // Supply your apiKey using the --dart-define-from-file command line argument
-  ArcGISEnvironment.apiKey = const String.fromEnvironment('API_KEY');
-
-  runApp(
-    const MaterialApp(
-      home: SampleWidget(),
-    ),
-  );
-}
-
-// To use as a template: copy from here to the end of the file and rename the class.
-// Do NOT copy the copyright block or main function.
 
 class SampleWidget extends StatefulWidget {
   const SampleWidget({super.key});

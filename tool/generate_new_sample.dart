@@ -110,7 +110,7 @@ void createNewSampleFile(
       }
     }
   }
-  print('>A sample file $sampleCamelName.dart created');
+  print('>A sample file $sampleSnakeName.dart created');
 }
 
 final copyright = '''
