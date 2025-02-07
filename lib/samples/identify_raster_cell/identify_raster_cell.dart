@@ -63,17 +63,8 @@ class _IdentifyRasterCellState extends State<IdentifyRasterCell>
   }
 
   Future<void> onMapViewReady() async {
-    // Define a new map with Wgs84 Spatial Reference.
+    // Create a map with the oceans basemap style and an initial viewpoint.
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISOceans);
-    map.initialViewpoint = Viewpoint.fromCenter(
-      ArcGISPoint(
-        x: -34.1,
-        y: 18.6,
-        spatialReference: SpatialReference.wgs84,
-        z: 9,
-      ),
-      scale: 10000,
-    );
     // Add map to the map view.
     _mapViewController.arcGISMap = map;
     // Load the raster layer.
