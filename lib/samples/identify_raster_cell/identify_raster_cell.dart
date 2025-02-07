@@ -76,43 +76,33 @@ class _IdentifyRasterCellState extends State<IdentifyRasterCell>
     );
     // Add map to the map view.
     _mapViewController.arcGISMap = map;
-    // Download the raster file.
-    await downloadSampleData(['b5f977c78ec74b3a8857ca86d1d9b318']);
-    // Get the application documents directory.
-    final appDir = await getApplicationDocumentsDirectory();
-    // Create a Raster from the local tif file.
-    final raster = Raster.withFileUri(
-      Uri.file(
-        '${appDir.absolute.path}/SA_EVI_8Day_03May20/SA_EVI_8Day_03May20.tif',
-      ),
-    );
-    // Create a Raster Layer.
-    _rasterLayer = RasterLayer.withRaster(raster);
-    // Load the Raster Layer.
-    await _rasterLayer.load();
+    // Load the raster layer.
+    await loadRasterLayer();
     // Add the Raster Layer to the map.
     map.operationalLayers.add(_rasterLayer);
     // Set the viewpoint.
     if (_rasterLayer.fullExtent != null) {
       await _mapViewController.setViewpointGeometry(_rasterLayer.fullExtent!);
     }
+    // Add the text graphic to the text graphics overlay.
     _textGraphicsOverlay.graphics.add(_textGraphic);
+    // Add the text graphics overlay to the map view.
     _mapViewController.graphicsOverlays.add(_textGraphicsOverlay);
     // Set the ready state variable to true to enable the sample UI.
     setState(() => _ready = true);
   }
 
   Future<void> onTap(Offset position) async {
-    // Get the result for where the user hovered on the raster layer.
+    // Get the result for where the user tapped on the raster layer.
     final identifyResult = await _mapViewController.identifyLayer(
       _rasterLayer,
       screenPoint: position,
       tolerance: 1,
     );
-    // Create a StringBuffer to display information to the user.
-    final stringBuffer = StringBuffer();
     // Get the identified raster cell.
     if (identifyResult.geoElements.isNotEmpty) {
+      // Create a StringBuffer to display information to the user.
+      final stringBuffer = StringBuffer();
       final cell = identifyResult.geoElements.first;
       // Loop through the attributes (key/value pairs).
       cell.attributes.forEach((key, value) {
@@ -144,5 +134,22 @@ class _IdentifyRasterCellState extends State<IdentifyRasterCell>
     } else {
       _textGraphicsOverlay.renderer = null;
     }
+  }
+
+  Future<void> loadRasterLayer() async {
+    // Download the raster file.
+    await downloadSampleData(['b5f977c78ec74b3a8857ca86d1d9b318']);
+    // Get the application documents directory.
+    final appDir = await getApplicationDocumentsDirectory();
+    // Create a Raster from the local tif file.
+    final raster = Raster.withFileUri(
+      Uri.file(
+        '${appDir.absolute.path}/SA_EVI_8Day_03May20/SA_EVI_8Day_03May20.tif',
+      ),
+    );
+    // Create a Raster Layer.
+    _rasterLayer = RasterLayer.withRaster(raster);
+    // Load the Raster Layer.
+    await _rasterLayer.load();
   }
 }
