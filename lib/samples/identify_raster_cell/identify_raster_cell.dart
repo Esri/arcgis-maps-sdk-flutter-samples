@@ -63,7 +63,7 @@ class _IdentifyRasterCellState extends State<IdentifyRasterCell>
   }
 
   Future<void> onMapViewReady() async {
-    // Create a map with the oceans basemap style and an initial viewpoint.
+    // Create a map with the oceans basemap style.
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISOceans);
     // Add map to the map view.
     _mapViewController.arcGISMap = map;
