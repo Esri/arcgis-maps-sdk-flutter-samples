@@ -1,6 +1,6 @@
 {
     "category": "Layers",
-    "description": "Get the cell value of a local raster at the tapped location and display the result in a callout.",
+    "description": "Get the cell value of a local raster at the tapped location and display the result in the UI.",
     "ignore": false,
     "images": [
         "identify_raster_cell.png"
