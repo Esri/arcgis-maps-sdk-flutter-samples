@@ -88,6 +88,11 @@ class SimulatedNmeaDataSource {
     }
 
     _running = true;
+
+    // Post the first set of messages immediately.
+    _postNextMessageBlock();
+
+    // Reset the timer for the next interval.
     _timer.reset();
   }
 
