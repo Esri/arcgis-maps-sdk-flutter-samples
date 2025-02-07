@@ -20,9 +20,9 @@ Tap an area of the raster to identify it and see the raw raster cell information
 
 ## Relevant API
 
-* ArcGISMapViewController.identifyLayer(...)
+* ArcGISMapViewController.identifyLayer
 * GeoElement
-* GeoElement.attributes(...)
+* GeoElement.attributes
 * Raster
 * RasterLayer
 

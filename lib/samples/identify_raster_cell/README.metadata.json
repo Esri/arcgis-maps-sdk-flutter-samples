@@ -16,9 +16,9 @@
         "pixel",
         "pixel value",
         "raster",
-        "ArcGISMapViewController.identifyLayer(...)",
+        "ArcGISMapViewController.identifyLayer",
         "GeoElement",
-        "GeoElement.attributes(...)",
+        "GeoElement.attributes",
         "Raster",
         "RasterLayer"
     ],
@@ -27,9 +27,9 @@
     ],
     "redirect_from": [],
     "relevant_apis": [
-        "ArcGISMapViewController.identifyLayer(...)",
+        "ArcGISMapViewController.identifyLayer",
         "GeoElement",
-        "GeoElement.attributes(...)",
+        "GeoElement.attributes",
         "Raster",
         "RasterLayer"
     ],
