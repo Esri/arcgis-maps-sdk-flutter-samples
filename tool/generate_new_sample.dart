@@ -91,7 +91,7 @@ void createNewSampleFile(
 ) {
   final ps = Platform.pathSeparator;
   final templateFile = File(
-    '${Directory.current.parent.path}${ps}flutter${ps}internal${ps}lib${ps}sample_skeleton.dart',
+    '${Directory.current.path}${ps}lib${ps}utils${ps}sample_skeleton.dart',
   );
   final sampleFile = File('${sampleDirectory.path}$ps$sampleSnakeName.dart');
 
