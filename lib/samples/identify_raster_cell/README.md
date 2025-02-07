@@ -1,6 +1,6 @@
 # Identify raster cell
 
-Get the cell value of a local raster at the tapped location and display the result in a callout.
+Get the cell value of a local raster at the tapped location and display the result in the UI.
 
 ![Image of identify raster cell](identify_raster_cell.png)
 
