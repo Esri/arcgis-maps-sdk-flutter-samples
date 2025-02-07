@@ -43,21 +43,16 @@ class _IdentifyRasterCellState extends State<IdentifyRasterCell>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        top: false,
-        left: false,
-        right: false,
-        child: Stack(
-          children: [
-            ArcGISMapView(
-              controllerProvider: () => _mapViewController,
-              onMapViewReady: onMapViewReady,
-              onTap: onTap,
-            ),
-            // Display a progress indicator and prevent interaction until state is ready.
-            LoadingIndicator(visible: !_ready),
-          ],
-        ),
+      body: Stack(
+        children: [
+          ArcGISMapView(
+            controllerProvider: () =>
+                _mapViewController,
+            onMapViewReady: onMapViewReady,
+            onTap: onTap,
+          ),
+          LoadingIndicator(visible: !_ready),
+        ],
       ),
     );
   }
