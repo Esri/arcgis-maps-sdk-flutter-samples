@@ -42,6 +42,7 @@ class _AddRasterFromFileState extends State<AddRasterFromFile>
     return Scaffold(
       body: Stack(
         children: [
+          // Add a map view to the widget tree and set a controller.
           ArcGISMapView(
             controllerProvider: () => _mapViewController,
             onMapViewReady: onMapViewReady,
@@ -58,7 +59,7 @@ class _AddRasterFromFileState extends State<AddRasterFromFile>
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISImageryStandard);
 
     // Load the raster layer.
-    final rasterLayer = await loadRasterLayer();
+    final rasterLayer = await loadRasterLayerFromFile();
 
     // Add the raster layer to the map's operational layers.
     map.operationalLayers.add(rasterLayer);
@@ -78,7 +79,7 @@ class _AddRasterFromFileState extends State<AddRasterFromFile>
     }
   }
 
-  Future<RasterLayer> loadRasterLayer() async {
+  Future<RasterLayer> loadRasterLayerFromFile() async {
     // Download the sample data.
     await downloadSampleData(['7c4c679ab06a4df19dc497f577f111bd']);
     // Get the temp directory.
