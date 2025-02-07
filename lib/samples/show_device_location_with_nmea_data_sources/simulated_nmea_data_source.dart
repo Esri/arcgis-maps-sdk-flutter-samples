@@ -81,7 +81,7 @@ class SimulatedNmeaDataSource {
     if (_running) return;
 
     if (_sentencesByTimeBlock.isEmpty) {
-      // Load the NMEA data
+      // Load the NMEA data.
       _initData();
     }
 

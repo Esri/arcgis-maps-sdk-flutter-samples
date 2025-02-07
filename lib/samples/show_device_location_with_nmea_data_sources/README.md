@@ -6,7 +6,7 @@ Parse NMEA sentences and use the results to show device location on the map.
 
 ## Use case
 
-NMEA sentences can be retrieved from GPS receivers and parsed into a series of coordinates with additional information. Devices without a built-in GPS receiver can retrieve NMEA sentences by using a separate GPS dongle, commonly connected bluetooth or through a serial port.
+NMEA sentences can be retrieved from GPS receivers and parsed into a series of coordinates with additional information. Devices without a built-in GPS receiver can retrieve NMEA sentences by using a separate GPS dongle, commonly connected via Bluetooth or through a serial port.
 
 The NMEA location data source allows for detailed interrogation of the information coming from the GPS receiver. For example, allowing you to report the number of satellites in view.
 
@@ -17,7 +17,7 @@ Tap the "Start" button to start a simulated NMEA data provider and the `NmeaLoca
 ## How it works
 
 1. A simulated NMEA data source parses an NMEA string into sentences and provides that data as a stream.
-2. Create a `NmeaLocationDataSource` and push the NMEA sentences from the stream with `NmeaLocationDataSource.push()`.
+2. Create a `NmeaLocationDataSource` and push the NMEA sentences from the stream with `NmeaLocationDataSource.pushData()`.
 3. Set the `NmeaLocationDataSource` to the location display's data source.
 4. Start the location data source to begin receiving location and satellite updates.
 

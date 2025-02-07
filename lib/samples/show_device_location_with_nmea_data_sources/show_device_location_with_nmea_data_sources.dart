@@ -140,6 +140,18 @@ class _ShowDeviceLocationWithNmeaDataSourcesState
     // Use the NMEA location data source as the data source for the map.
     _mapViewController.locationDisplay.dataSource = _locationDataSource;
 
+    // Subscribe to the location stream of the location data source.
+    _locationSubscription =
+        _locationDataSource.onLocationChanged.listen((location) {
+      setState(() => _currentNmeaLocation = location);
+    });
+
+    // Subscribe to the location data source's satellite changed stream.
+    _satelliteSubscription =
+        _locationDataSource.onSatellitesChanged.listen((satelliteInfos) {
+      setState(() => _currentSatelliteInfos = satelliteInfos);
+    });
+
     // Set the autoPanMode to recenter and listen for any changes.
     _mapViewController.locationDisplay.autoPanMode =
         LocationDisplayAutoPanMode.recenter;
@@ -165,18 +177,6 @@ class _ShowDeviceLocationWithNmeaDataSourcesState
         _nmeaDataSimulator!.nmeaMessages.listen((nmeaDataString) {
       final nmeaData = utf8.encoder.convert(nmeaDataString);
       _locationDataSource.pushData(nmeaData);
-    });
-
-    // Subscribe to the location stream of the location data source.
-    _locationSubscription ??=
-        _locationDataSource.onLocationChanged.listen((location) {
-      setState(() => _currentNmeaLocation = location);
-    });
-
-    // Subscribe to the location data source's satellite changed stream.
-    _satelliteSubscription ??=
-        _locationDataSource.onSatellitesChanged.listen((satelliteInfos) {
-      setState(() => _currentSatelliteInfos = satelliteInfos);
     });
 
     // Start the NMEALocationDataSource.
