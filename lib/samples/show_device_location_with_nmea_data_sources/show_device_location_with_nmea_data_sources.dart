@@ -18,7 +18,6 @@ import 'dart:convert';
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/show_device_location_with_nmea_data_sources/simulated_nmea_data_source.dart';
-import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_state_support.dart';
 import 'package:flutter/material.dart';
 
 class ShowDeviceLocationWithNmeaDataSources extends StatefulWidget {

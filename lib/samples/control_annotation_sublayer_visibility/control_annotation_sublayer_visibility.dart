@@ -17,8 +17,6 @@ import 'dart:io';
 
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
-import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_data.dart';
-import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_state_support.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -174,7 +172,9 @@ class _ControlAnnotationSublayerVisibilityState
       _mapViewController.onViewpointChanged.listen((_) {
         // Check if the sublayer is visible at the current map scale.
         if (_openSublayer.isVisibleAtScale(_mapViewController.scale)) {
-          setState(() => _openLabelColor = Theme.of(context).colorScheme.primary,);
+          setState(
+            () => _openLabelColor = Theme.of(context).colorScheme.primary,
+          );
         } else {
           setState(() => _openLabelColor = null);
         }
