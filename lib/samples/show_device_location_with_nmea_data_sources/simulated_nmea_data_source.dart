@@ -14,7 +14,7 @@
 //
 import 'dart:async';
 import 'dart:io';
-import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_data.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 
 import 'package:async/async.dart';
 import 'package:path_provider/path_provider.dart';
