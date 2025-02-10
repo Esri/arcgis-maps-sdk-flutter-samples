@@ -8,7 +8,7 @@ Get the cell value of a local raster at the tapped location and display the resu
 
 ## How to use the sample
 
-Tap an area of the raster to identify it and see the raw raster cell information displayed in a renderer.
+Tap an area of the raster to identify it and see the raw raster cell information displayed in the UI.
 
 ## How it works
 
