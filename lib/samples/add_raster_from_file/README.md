@@ -25,7 +25,7 @@ When the sample starts, a raster will be loaded from a file and displayed in the
 
 ## Additional information
 
-See the topic [What is raster data?](https://pro.arcgis.com/en/pro-app/latest/help/data/imagery/introduction-to-raster-data.htm) in the *ArcMap* documentation for more information about raster images.
+See the topic [What is raster data?](https://pro.arcgis.com/en/pro-app/latest/help/data/imagery/introduction-to-raster-data.htm) in the *ArcGIS Pro* documentation for more information about raster images.
 
 ## Tags
 
