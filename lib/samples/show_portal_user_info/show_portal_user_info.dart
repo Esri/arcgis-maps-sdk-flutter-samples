@@ -48,22 +48,28 @@ class _ShowPortalUserInfoState extends State<ShowPortalUserInfo>
   }
 
   @override
-  Future<void> dispose() async {
+  void dispose() {
     // We do not want to handle authentication challenges outside of this sample,
     // so we remove this as the challenge handler.
     ArcGISEnvironment
         .authenticationManager.arcGISAuthenticationChallengeHandler = null;
 
-    super.dispose();
-
     // Revoke OAuth tokens and remove all credentials to log out.
-    await Future.wait(
+    Future.wait(
       ArcGISEnvironment.authenticationManager.arcGISCredentialStore
           .getCredentials()
           .whereType<OAuthUserCredential>()
           .map((credential) => credential.revokeToken()),
-    );
-    ArcGISEnvironment.authenticationManager.arcGISCredentialStore.removeAll();
+    ).catchError((error) {
+      // This sample has been disposed, so we can only report errors to the console.
+      // ignore: avoid_print
+      print('Error revoking tokens: $error');
+      return [];
+    }).whenComplete(() {
+      ArcGISEnvironment.authenticationManager.arcGISCredentialStore.removeAll();
+    });
+
+    super.dispose();
   }
 
   @override
