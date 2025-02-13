@@ -45,8 +45,8 @@ Click the 'Play' button to simulate travel and receive directions from a preset 
 
 A JSON file provides a simulated path for the device to demonstrate routing while traveling.
 
-Link     |
----------|
+| Link |
+|---------|
 |[Navigate a Route JSON Track](https://www.arcgis.com/home/item.html?id=4caec8c55ea2463982f1af7d9611b8d5)|
 
 ## About the data
