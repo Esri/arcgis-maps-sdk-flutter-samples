@@ -71,8 +71,12 @@ class _AddRasterFromFileState extends State<AddRasterFromFile>
         fullExtent.center,
         scale: 80000,
       );
-      _mapViewController.setViewpoint(viewpoint);
+
+      // Set the map on the map view controller.
       _mapViewController.arcGISMap = map;
+
+      // Set the viewpoint to the raster layer.
+      _mapViewController.setViewpoint(viewpoint);
 
       // Set the ready state variable to true to enable the sample UI.
       setState(() => _ready = true);
