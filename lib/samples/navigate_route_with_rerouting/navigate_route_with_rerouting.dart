@@ -52,6 +52,8 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
   // Graphics to show progress on the route.
   late Graphic _remainingRouteGraphic;
   late Graphic _routeTraveledGraphic;
+  // A PolylineBuilder to store the traversed route.
+  final _traversedRouteBuilder = PolylineBuilder();
   // San Diego Convention Center.
   final _startPoint = ArcGISPoint(
     x: -117.160386727,
@@ -334,49 +336,71 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
   // Speak the voice guidance.
   void updateGuidance(VoiceGuidance voiceGuidance) {
     final nextDirection = voiceGuidance.text;
-    setState(() {
-      _nextDirection = nextDirection;
-    });
-
+    //setState(() {
+    //  _nextDirection = nextDirection;
+    //});
+    if (nextDirection.isEmpty) return;
+    
+    _flutterTts.stop();
     _routeTracker!.setSpeechEngineReady(() => false);
     _flutterTts.speak(nextDirection);
     _routeTracker!.setSpeechEngineReady(() => true);
   }
 
-  // Update the route status and progress.
-  void updateProgress(TrackingStatus trackingStatus) {
-    final routeStatus = trackingStatus.destinationStatus;
-    var nextDirection = '';
-    if (trackingStatus.destinationStatus == DestinationStatus.reached) {
-      _mapViewController.locationDisplay.stop();
+  Future<void> updateProgress(TrackingStatus trackingStatus) async {
+     final routeStatus = trackingStatus.destinationStatus;
 
-    } else if (trackingStatus.destinationStatus ==
-            DestinationStatus.approaching ||
-        trackingStatus.destinationStatus == DestinationStatus.notReached) {
-      if (trackingStatus.currentManeuverIndex < _directionManeuvers.length) {
-        final maneuver =
-            _directionManeuvers[trackingStatus.currentManeuverIndex + 1];
-        nextDirection = maneuver.directionText;
-      }
-    }
-
+    // Update the route graphics.
     _remainingRouteGraphic.geometry =
         trackingStatus.routeProgress.remainingGeometry;
-    _routeTraveledGraphic.geometry =
-        trackingStatus.routeProgress.traversedGeometry;
 
-    final remainingTime = trackingStatus.routeProgress.remainingTime;
-    final displayText =
-        trackingStatus.routeProgress.remainingDistance.displayText;
-    final displayUnit = trackingStatus
-        .routeProgress.remainingDistance.displayTextUnits.abbreviation;
+    final currentPosition =
+        _mapViewController.locationDisplay.location?.position;
+    if (currentPosition != null) {
+      _traversedRouteBuilder.addPoint(currentPosition);
+      _routeTraveledGraphic.geometry = _traversedRouteBuilder.toGeometry();
+    }
 
-    setState(() {
-      _routeStatus = routeStatus.name;
-      _remainingDistance = '$displayText $displayUnit';
-      _remainingTime = formatDuration((remainingTime * 60).toInt());
-      _nextDirection = nextDirection;
-    });
+    // Update the status message.
+    switch (trackingStatus.destinationStatus) {
+      case DestinationStatus.approaching:
+      case DestinationStatus.notReached:
+        // Format the route's remaining distance and time.
+        final distanceRemainingText =
+            trackingStatus.routeProgress.remainingDistance.displayText;
+        final displayUnit = trackingStatus.routeProgress.remainingDistance.displayTextUnits.abbreviation;
+        final remainingTimeInSeconds =
+            trackingStatus.routeProgress.remainingTime * 60;
+        final timeRemainingText =
+            formatDuration(remainingTimeInSeconds.toInt());
+        // Get the next direction from the route's direction maneuvers.
+        var nextDirection = '';
+        final nextManeuverIndex = trackingStatus.currentManeuverIndex + 1;
+        if (nextManeuverIndex < _directionManeuvers.length) {
+           nextDirection =
+              _directionManeuvers[nextManeuverIndex].directionText;
+        }
+
+        setState(() {
+          _routeStatus = routeStatus.name;
+          _remainingDistance = '$distanceRemainingText $displayUnit';
+          _remainingTime = timeRemainingText;
+          _nextDirection = nextDirection;
+        });
+
+      case DestinationStatus.reached:
+        if (trackingStatus.remainingDestinationCount > 1) {
+          setState(() {
+            _routeStatus = 'Intermediate stop reached, continue to next stop.';
+          });
+          await _routeTracker!.switchToNextDestination();
+        } else {
+          await stop();
+          setState(() {
+            _routeStatus = 'Destination reached.';
+          });
+        }
+    }
   }
 
   // Start the navigation.
