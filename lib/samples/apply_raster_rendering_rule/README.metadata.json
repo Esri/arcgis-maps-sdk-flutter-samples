@@ -1,0 +1,26 @@
+{
+    "category": "Layers",
+    "description": "Display a raster on a map and apply different rendering rules to that raster.",
+    "ignore": false,
+    "images": [
+        "apply_raster_rendering_rule.png"
+    ],
+    "keywords": [
+        "raster",
+        "rendering rules",
+        "visualization",
+        "ImageServiceRaster",
+        "RasterLayer",
+        "RenderingRule"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+        "ImageServiceRaster",
+        "RasterLayer",
+        "RenderingRule"
+    ],
+    "snippets": [
+        "apply_raster_rendering_rule.dart"
+    ],
+    "title": "Apply raster rendering rule"
+}
