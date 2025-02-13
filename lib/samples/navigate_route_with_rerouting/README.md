@@ -10,20 +10,20 @@ While traveling between destinations, field workers use navigation to get live d
 
 ## How to use the sample
 
-Click 'Navigate' to simulate traveling and to receive directions from a preset starting point to a preset destination. Observe how the route is recalculated when the simulation does not follow the suggested route. Check 'Voice Directions' to activate announcing maneuvers. Click 'Reset' to start the simulation from the beginning.
+Click the 'Play' button to simulate travel and receive directions from a preset starting point to a preset destination. Observe how the route is recalculated if the simulation deviates from the suggested path. You should hear voice directions when maneuver instructions are available. You can stop or restart the simulated movement and recenter the navigation.
 
 ## How it works
 
-1. Create a `RouteTask` using a URL to an online route service.
-2. Generate default `RouteParameters` using `routeTask.createDefaultParametersAsync()`.
+1. Create a `RouteTask` using the downloaded `Geodatabase`.
+2. Generate default `RouteParameters` using `routeTask.createDefaultParameters()`.
 3. Set `returnStops` and `returnDirections` on the parameters to true.
 4. Add `Stop`s to the parameters `stops` collection for each destination.
-5. Solve the route using `routeTask.solveAsync(routeParameters)` to get a `RouteResult`.
+5. Solve the route using `routeTask.solve(routeParameters)` to get a `RouteResult`.
 6. Create a `RouteTracker` using the route result, and the index of the desired route to take.
-7. Enable rerouting in the route tracker with `.enableReroutingAsync(RouteTask, RouteParameters, ReroutingStrategy, false)`. The Boolean specifies `visitFirstStopOnStart` and is false by default. Use `ReroutingStrategy.toNextWaypoint` to specify that in the case of a reroute the new route goes from present location to next waypoint or stop.
-8. Use `.trackLocationAsync(LocationDataSource.Location)` to track the location of the device and update the route tracking status.
-9. Add a listener to capture `TrackingStatusChangedEvent`, and then get the `TrackingStatus` and use it to display updated route information. Tracking status includes a variety of information on the route progress, such as the remaining distance, remaining geometry or traversed geometry (represented by a `Polyline`), or the remaining time (`Double`), amongst others.
-10. Add a `NewVoiceGuidanceListener` to get the `VoiceGuidance` whenever new instructions are available. From the voice guidance, get the `String` representing the directions and use a text-to-speech engine to output the maneuver directions.
+7. Enable rerouting in the route tracker with `.enableRerouting(RouteTask, RouteParameters, ReroutingStrategy, false)`. The Boolean specifies `visitFirstStopOnStart` and is false by default. Use `ReroutingStrategy.toNextWaypoint` to specify that in the case of a reroute the new route goes from present location to next waypoint or stop.
+8. Use `RouteTrackerLocationDataSource` to track the location of the device and update the route tracking status.
+9. Add a listener to capture `onTrackingStatusChanged`, and then get the `TrackingStatus` and use it to display updated route information. Tracking status includes a variety of information on the route progress, such as the remaining distance, remaining geometry or traversed geometry (represented by a `Polyline`), or the remaining time (`Double`), amongst others.
+10. Add a `onNewVoiceGuidance` to get the `VoiceGuidance` whenever new instructions are available. From the voice guidance, get the `String` representing the directions and use a text-to-speech engine to output the maneuver directions.
 11. You can also query the tracking status for the current `DirectionManeuver` index, retrieve that maneuver from the `Route` and get its direction text to display in the GUI.
 12. To establish whether the destination has been reached, get the `DestinationStatus` from the tracking status. If the destination status is `REACHED`, and the `remainingDestinationCount` is 1, you have arrived at the destination and can stop routing. If there are several destinations in your route, and the remaining destination count is greater than 1, switch the route tracker to the next destination.
 
@@ -43,7 +43,7 @@ Click 'Navigate' to simulate traveling and to receive directions from a preset s
 
 ## Offline data
 
-A JSON file provides a simulated path for the device to demonstrate routing while travelling.
+A JSON file provides a simulated path for the device to demonstrate routing while traveling.
 
 Link     |
 ---------|

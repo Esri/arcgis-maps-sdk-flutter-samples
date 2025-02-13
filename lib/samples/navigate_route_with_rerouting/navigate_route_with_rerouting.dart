@@ -52,7 +52,8 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
   late Graphic _remainingRouteGraphic;
   late Graphic _routeTraveledGraphic;
   // A PolylineBuilder to store the traversed route.
-  var _traversedRouteBuilder = PolylineBuilder(spatialReference: SpatialReference.wgs84);
+  var _traversedRouteBuilder =
+      PolylineBuilder(spatialReference: SpatialReference.wgs84);
   // San Diego Convention Center.
   final _startPoint = ArcGISPoint(
     x: -117.160386727,
@@ -261,7 +262,9 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
     _reroutingParameters = ReroutingParameters.create(
       routeTask: _routeTask,
       routeParameters: routeParameters,
-    );
+    )!
+      ..strategy = ReroutingStrategy.toNextWaypoint
+      ..visitFirstStopOnStart = false;
 
     // Initialize the route tracker, location display, and route graphics.
     await initNavigation();
@@ -336,13 +339,12 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
     final nextDirection = voiceGuidance.text;
     if (nextDirection.isEmpty) return;
     _flutterTts.stop();
-    _flutterTts.speak(nextDirection);  
+    _flutterTts.speak(nextDirection);
   }
 
   Future<void> updateProgress(TrackingStatus status) async {
     // Update the route graphics.
-    _remainingRouteGraphic.geometry =
-        status.routeProgress.remainingGeometry;
+    _remainingRouteGraphic.geometry = status.routeProgress.remainingGeometry;
 
     final currentPosition =
         _mapViewController.locationDisplay.location?.position;
@@ -358,19 +360,19 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
         // Format the route's remaining distance and time.
         final distanceRemainingText =
             status.routeProgress.remainingDistance.displayText;
-        final displayUnit = status.routeProgress.remainingDistance.displayTextUnits.abbreviation;
+        final displayUnit = status
+            .routeProgress.remainingDistance.displayTextUnits.abbreviation;
 
-        final remainingTimeInSeconds =
-            status.routeProgress.remainingTime * 60;
+        final remainingTimeInSeconds = status.routeProgress.remainingTime * 60;
         final timeRemainingText =
             formatDuration(remainingTimeInSeconds.toInt());
         // Get the next direction from the route's direction maneuvers.
         var nextDirection = '';
-        final directionManeuvers = status.routeResult.routes.first.directionManeuvers;
+        final directionManeuvers =
+            status.routeResult.routes.first.directionManeuvers;
         final nextManeuverIndex = status.currentManeuverIndex + 1;
         if (nextManeuverIndex < directionManeuvers.length) {
-           nextDirection =
-              directionManeuvers[nextManeuverIndex].directionText;
+          nextDirection = directionManeuvers[nextManeuverIndex].directionText;
         }
 
         setState(() {
@@ -421,10 +423,11 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
 
   // Reset the navigation to begin again.
   Future<void> reset() async {
-    _traversedRouteBuilder = PolylineBuilder(spatialReference: SpatialReference.wgs84);
+    _traversedRouteBuilder =
+        PolylineBuilder(spatialReference: SpatialReference.wgs84);
     _routeTraveledGraphic.geometry = null;
     _remainingRouteGraphic.geometry = _routeResult.routes.first.routeGeometry;
-    
+
     setState(() {
       _isNavigating = false;
       _needRecenter = false;
@@ -433,7 +436,7 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
       _remainingTime = '';
       _nextDirection = '';
     });
-    
+
     await initNavigation();
   }
 
@@ -495,12 +498,10 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
       _routeTraveledGraphic,
       Graphic(geometry: _startPoint, symbol: routeStartCircleSymbol)
         ..zIndex = 100,
-      Graphic(geometry: _endPoint, symbol: routeEndCircleSymbol)
-        ..zIndex = 100,
+      Graphic(geometry: _endPoint, symbol: routeEndCircleSymbol)..zIndex = 100,
       Graphic(geometry: _startPoint, symbol: routeStartNumberSymbol)
         ..zIndex = 100,
-      Graphic(geometry: _endPoint, symbol: routeEndNumberSymbol)
-        ..zIndex = 100,
+      Graphic(geometry: _endPoint, symbol: routeEndNumberSymbol)..zIndex = 100,
     ]);
   }
 

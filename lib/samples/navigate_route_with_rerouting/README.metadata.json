@@ -3,7 +3,7 @@
     "description": "Navigate between two points and dynamically recalculate an alternate route when the original route is unavailable.",
     "ignore": false,
     "images": [
-        "navigation_route_with_rerouting.png"
+        "navigate_route_with_rerouting.png"
     ],
     "keywords": [
         "directions",
