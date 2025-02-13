@@ -43,17 +43,16 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
   // A RouteTracker to track the route.
   RouteTracker? _routeTracker;
   // A RouteResult to store the route result.
-  RouteResult? _routeResult;
+  late RouteResult _routeResult;
   // Rerouting parameters to enable rerouting.
   ReroutingParameters? _reroutingParameters;
   // A SimulatedLocationDataSource to simulate the location data source.
   SimulatedLocationDataSource? _simulatedLocationDataSource;
-  List<DirectionManeuver> _directionManeuvers = [];
   // Graphics to show progress on the route.
   late Graphic _remainingRouteGraphic;
   late Graphic _routeTraveledGraphic;
   // A PolylineBuilder to store the traversed route.
-  final _traversedRouteBuilder = PolylineBuilder();
+  var _traversedRouteBuilder = PolylineBuilder(spatialReference: SpatialReference.wgs84);
   // San Diego Convention Center.
   final _startPoint = ArcGISPoint(
     x: -117.160386727,
@@ -68,6 +67,7 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
   );
   // Indicate whether the route is being navigated.
   var _isNavigating = false;
+  var _needRecenter = false;
   // Variables to show the remaining distance, time, and next direction.
   var _routeStatus = '';
   var _remainingDistance = '';
@@ -107,7 +107,7 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
                     Container(
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: Theme.of(context).primaryColor,
+                        color: Theme.of(context).primaryColorLight,
                       ),
                       child: IconButton(
                         onPressed: _isNavigating ? stop : null,
@@ -118,7 +118,7 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
                     Container(
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: Theme.of(context).primaryColor,
+                        color: Theme.of(context).primaryColorLight,
                       ),
                       child: IconButton(
                         onPressed: _isNavigating ? null : start,
@@ -129,10 +129,10 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
                     Container(
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: Theme.of(context).primaryColor,
+                        color: Theme.of(context).primaryColorLight,
                       ),
                       child: IconButton(
-                        onPressed: recenter,
+                        onPressed: _needRecenter ? recenter : null,
                         color: Colors.white,
                         icon: const Icon(Icons.navigation),
                       ),
@@ -198,10 +198,6 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
             ),
             // Display a progress indicator and prevent interaction until state is ready.
             LoadingIndicator(visible: !_ready),
-            Visibility(
-              visible: !_ready,
-              child: const Text('Downloading data...'),
-            )
           ],
         ),
       ),
@@ -216,8 +212,8 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
 
   Future<void> onMapViewReady() async {
     setState(() => _ready = false);
-    // Create a map with a street basemap style.
-    final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISStreets);
+    // Create a map with a navigation basemap style.
+    final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISNavigation);
     _mapViewController.arcGISMap = map;
 
     map.onLoadStatusChanged.listen(
@@ -265,9 +261,7 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
     _reroutingParameters = ReroutingParameters.create(
       routeTask: _routeTask,
       routeParameters: routeParameters,
-    )!
-      ..visitFirstStopOnStart = false
-      ..strategy = ReroutingStrategy.toNextWaypoint;
+    );
 
     // Initialize the route tracker, location display, and route graphics.
     await initNavigation();
@@ -277,7 +271,7 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
   Future<void> initNavigation() async {
     // Create the route tracker with rerouting enabled.
     _routeTracker = RouteTracker.create(
-      routeResult: _routeResult!,
+      routeResult: _routeResult,
       routeIndex: 0,
       skipCoincidentStops: true,
     );
@@ -304,6 +298,13 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
         routeTrackerLocationDataSource;
     _mapViewController.locationDisplay.autoPanMode =
         LocationDisplayAutoPanMode.navigation;
+    _mapViewController.locationDisplay.onAutoPanModeChanged.listen((event) {
+      if (event != LocationDisplayAutoPanMode.navigation) {
+        setState(() => _needRecenter = true);
+      } else {
+        setState(() => _needRecenter = false);
+      }
+    });
 
     // Update the remaining route graphic and center the map view on the route.
     final routeLine = _routeResult!.routes.first.routeGeometry;
@@ -326,33 +327,22 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
       setState(() => _routeStatus = 'Rerouting');
     });
     _routeTracker!.onRerouteCompleted.listen((_) {
-      _directionManeuvers = _routeResult!.routes[0].directionManeuvers;
       setState(() => _routeStatus = 'Reroute completed');
     });
-
-    _directionManeuvers = _routeResult!.routes[0].directionManeuvers;
   }
 
   // Speak the voice guidance.
   void updateGuidance(VoiceGuidance voiceGuidance) {
     final nextDirection = voiceGuidance.text;
-    //setState(() {
-    //  _nextDirection = nextDirection;
-    //});
     if (nextDirection.isEmpty) return;
-    
     _flutterTts.stop();
-    _routeTracker!.setSpeechEngineReady(() => false);
-    _flutterTts.speak(nextDirection);
-    _routeTracker!.setSpeechEngineReady(() => true);
+    _flutterTts.speak(nextDirection);  
   }
 
-  Future<void> updateProgress(TrackingStatus trackingStatus) async {
-     final routeStatus = trackingStatus.destinationStatus;
-
+  Future<void> updateProgress(TrackingStatus status) async {
     // Update the route graphics.
     _remainingRouteGraphic.geometry =
-        trackingStatus.routeProgress.remainingGeometry;
+        status.routeProgress.remainingGeometry;
 
     final currentPosition =
         _mapViewController.locationDisplay.location?.position;
@@ -362,40 +352,43 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
     }
 
     // Update the status message.
-    switch (trackingStatus.destinationStatus) {
+    switch (status.destinationStatus) {
       case DestinationStatus.approaching:
       case DestinationStatus.notReached:
         // Format the route's remaining distance and time.
         final distanceRemainingText =
-            trackingStatus.routeProgress.remainingDistance.displayText;
-        final displayUnit = trackingStatus.routeProgress.remainingDistance.displayTextUnits.abbreviation;
+            status.routeProgress.remainingDistance.displayText;
+        final displayUnit = status.routeProgress.remainingDistance.displayTextUnits.abbreviation;
+
         final remainingTimeInSeconds =
-            trackingStatus.routeProgress.remainingTime * 60;
+            status.routeProgress.remainingTime * 60;
         final timeRemainingText =
             formatDuration(remainingTimeInSeconds.toInt());
         // Get the next direction from the route's direction maneuvers.
         var nextDirection = '';
-        final nextManeuverIndex = trackingStatus.currentManeuverIndex + 1;
-        if (nextManeuverIndex < _directionManeuvers.length) {
+        final directionManeuvers = status.routeResult.routes.first.directionManeuvers;
+        final nextManeuverIndex = status.currentManeuverIndex + 1;
+        if (nextManeuverIndex < directionManeuvers.length) {
            nextDirection =
-              _directionManeuvers[nextManeuverIndex].directionText;
+              directionManeuvers[nextManeuverIndex].directionText;
         }
 
         setState(() {
-          _routeStatus = routeStatus.name;
+          _routeStatus = '${status.destinationStatus}';
           _remainingDistance = '$distanceRemainingText $displayUnit';
           _remainingTime = timeRemainingText;
           _nextDirection = nextDirection;
         });
 
       case DestinationStatus.reached:
-        if (trackingStatus.remainingDestinationCount > 1) {
+        if (status.remainingDestinationCount > 1) {
           setState(() {
             _routeStatus = 'Intermediate stop reached, continue to next stop.';
           });
           await _routeTracker!.switchToNextDestination();
         } else {
           await stop();
+          reset();
           setState(() {
             _routeStatus = 'Destination reached.';
           });
@@ -423,15 +416,24 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
     _mapViewController.locationDisplay.autoPanMode =
         LocationDisplayAutoPanMode.off;
     await _mapViewController.locationDisplay.dataSource.stop();
-
     setState(() => _isNavigating = false);
   }
 
-  // Reset the navigation.
+  // Reset the navigation to begin again.
   Future<void> reset() async {
-    await stop();
-    await initRouteTask();
-    _simulatedLocationDataSource!.currentLocationIndex = 0;
+    _traversedRouteBuilder = PolylineBuilder(spatialReference: SpatialReference.wgs84);
+    _routeTraveledGraphic.geometry = null;
+    _remainingRouteGraphic.geometry = _routeResult.routes.first.routeGeometry;
+    
+    setState(() {
+      _isNavigating = false;
+      _needRecenter = false;
+      _routeStatus = '';
+      _remainingDistance = '';
+      _remainingTime = '';
+      _nextDirection = '';
+    });
+    
     await initNavigation();
   }
 
@@ -493,10 +495,12 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
       _routeTraveledGraphic,
       Graphic(geometry: _startPoint, symbol: routeStartCircleSymbol)
         ..zIndex = 100,
-      Graphic(geometry: _endPoint, symbol: routeEndCircleSymbol)..zIndex = 100,
+      Graphic(geometry: _endPoint, symbol: routeEndCircleSymbol)
+        ..zIndex = 100,
       Graphic(geometry: _startPoint, symbol: routeStartNumberSymbol)
         ..zIndex = 100,
-      Graphic(geometry: _endPoint, symbol: routeEndNumberSymbol)..zIndex = 100,
+      Graphic(geometry: _endPoint, symbol: routeEndNumberSymbol)
+        ..zIndex = 100,
     ]);
   }
 
