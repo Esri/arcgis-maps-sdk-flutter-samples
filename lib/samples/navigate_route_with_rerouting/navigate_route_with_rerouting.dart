@@ -41,11 +41,11 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
   // A RouteTask to solve the route.
   late RouteTask _routeTask;
   // A RouteTracker to track the route.
-  RouteTracker? _routeTracker;
+  late RouteTracker _routeTracker;
   // A RouteResult to store the route result.
   late RouteResult _routeResult;
   // Rerouting parameters to enable rerouting.
-  ReroutingParameters? _reroutingParameters;
+  late ReroutingParameters _reroutingParameters;
   // A SimulatedLocationDataSource to simulate the location data source.
   SimulatedLocationDataSource? _simulatedLocationDataSource;
   // Graphics to show progress on the route.
@@ -208,11 +208,13 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
   @override
   void dispose() {
     _flutterTts.stop();
+    _simulatedLocationDataSource?.stop();
+
     super.dispose();
   }
 
+  // Set up the map with a navigation basemap style.
   Future<void> onMapViewReady() async {
-    setState(() => _ready = false);
     // Create a map with a navigation basemap style.
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISNavigation);
     _mapViewController.arcGISMap = map;
@@ -230,13 +232,13 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
 
   // Initialize the route task, route parameters, and route result.
   Future<void> initRouteTask() async {
-    // Download the San Diego geodatabase.
+    // Downloads the San Diego geodatabase required for offline routing in San Diego.
     final geodatabasePath = await downloadSanDiegoGeodatabase();
 
     // Create a route task.
     _routeTask = RouteTask.withGeodatabase(
       pathToDatabase: Uri.file(geodatabasePath),
-      networkName: "Streets_ND",
+      networkName: 'Streets_ND',
     );
 
     // Create route parameters.
@@ -255,7 +257,8 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
     // Solve the route and store the result.
     _routeResult = await _routeTask.solveRoute(routeParameters);
 
-    // Set up the route graphics.
+    // Initializes and adds graphics to the map view to visually represent the route,
+    // including the remaining route, traveled route, and start/end points.
     showRouteGraphics();
 
     // Create Rerouting parameters with the route task and parameters.
@@ -277,11 +280,11 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
       routeResult: _routeResult,
       routeIndex: 0,
       skipCoincidentStops: true,
-    );
+    )!;
 
     // Enable rerouting on the route tracker.
     if (_routeTask.getRouteTaskInfo().supportsRerouting) {
-      await _routeTracker!.enableRerouting(parameters: _reroutingParameters!);
+      await _routeTracker.enableRerouting(parameters: _reroutingParameters);
     } else {
       showMessageDialog('Rerouting is not supported.');
       return;
@@ -292,7 +295,7 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
 
     // Create a route tracker location data source to snap the location display to the route.
     final routeTrackerLocationDataSource = RouteTrackerLocationDataSource(
-      routeTracker: _routeTracker!,
+      routeTracker: _routeTracker,
       locationDataSource: _simulatedLocationDataSource,
     );
 
@@ -310,7 +313,7 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
     });
 
     // Update the remaining route graphic and center the map view on the route.
-    final routeLine = _routeResult!.routes.first.routeGeometry;
+    final routeLine = _routeResult.routes.first.routeGeometry;
     _remainingRouteGraphic.geometry = routeLine;
     await _mapViewController.setViewpointCenter(
       routeLine!.extent.center,
@@ -318,18 +321,18 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
     );
 
     // Set the route tracker locale
-    _routeTracker!.voiceGuidanceUnitSystem =
+    _routeTracker.voiceGuidanceUnitSystem =
         const Locale.fromSubtags().languageCode == 'en'
             ? UnitSystem.metric
             : UnitSystem.imperial;
 
     // Listen for voice guidance and tracking status changes.
-    _routeTracker!.onNewVoiceGuidance.listen(updateGuidance);
-    _routeTracker!.onTrackingStatusChanged.listen(updateProgress);
-    _routeTracker!.onRerouteStarted.listen((_) {
+    _routeTracker.onNewVoiceGuidance.listen(updateGuidance);
+    _routeTracker.onTrackingStatusChanged.listen(updateProgress);
+    _routeTracker.onRerouteStarted.listen((_) {
       setState(() => _routeStatus = 'Rerouting');
     });
-    _routeTracker!.onRerouteCompleted.listen((_) {
+    _routeTracker.onRerouteCompleted.listen((_) {
       setState(() => _routeStatus = 'Reroute completed');
     });
   }
@@ -387,10 +390,10 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
           setState(() {
             _routeStatus = 'Intermediate stop reached, continue to next stop.';
           });
-          await _routeTracker!.switchToNextDestination();
+          await _routeTracker.switchToNextDestination();
         } else {
           await stop();
-          reset();
+          await reset();
           setState(() {
             _routeStatus = 'Destination reached.';
           });
@@ -513,7 +516,8 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
     final appDir = await getApplicationDocumentsDirectory();
     // Create a file to the geodatabase.
     final geodatabaseFile = File(
-        '${appDir.absolute.path}/san_diego_offline_routing/sandiego.geodatabase');
+      '${appDir.absolute.path}/san_diego_offline_routing/sandiego.geodatabase',
+    );
     // Return the path to the geodatabase.
     return geodatabaseFile.path;
   }
