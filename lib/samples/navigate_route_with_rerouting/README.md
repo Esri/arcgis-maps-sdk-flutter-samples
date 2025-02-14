@@ -10,7 +10,7 @@ While traveling between destinations, field workers use navigation to get live d
 
 ## How to use the sample
 
-Click the 'Play' button to simulate travel and receive directions from a preset starting point to a preset destination. Observe how the route is recalculated if the simulation deviates from the suggested path. You should hear voice directions when maneuver instructions are available. You can stop or restart the simulated movement and recenter the navigation.
+Tap the 'Play' button to simulate travel and receive directions from a preset starting point to a preset destination. Observe how the route is recalculated if the simulation deviates from the suggested path. You should hear voice directions when maneuver instructions are available. You can stop or restart the simulated movement and recenter the navigation.
 
 ## How it works
 
