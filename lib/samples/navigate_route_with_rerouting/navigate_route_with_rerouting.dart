@@ -18,7 +18,6 @@ import 'dart:io';
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -69,6 +68,7 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
   // Indicate whether the route is being navigated.
   var _isNavigating = false;
   var _needRecenter = false;
+  var _initNavigation = false;
   // Variables to show the remaining distance, time, and next direction.
   var _routeStatus = '';
   var _remainingDistance = '';
@@ -110,11 +110,11 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
                         shape: BoxShape.circle,
                         color: Theme.of(context).primaryColorLight,
                       ),
-                      // Add a button to stop navigation if it has started.
+                      // Add a button to reset navigation if it has started.
                       child: IconButton(
-                        onPressed: _isNavigating ? stop : null,
+                        onPressed: _isNavigating ? reset : null,
                         color: Colors.white,
-                        icon: const Icon(Icons.stop),
+                        icon: const Icon(Icons.restore),
                       ),
                     ),
                     Container(
@@ -122,11 +122,11 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
                         shape: BoxShape.circle,
                         color: Theme.of(context).primaryColorLight,
                       ),
-                      // Add a button to stop navigation if it has not already started.
+                      // Add a button to start/stop navigation.
                       child: IconButton(
-                        onPressed: _isNavigating ? null : start,
+                        onPressed: _isNavigating ? stop : start,
                         color: Colors.white,
-                        icon: const Icon(Icons.play_arrow),
+                        icon:  _isNavigating ? const Icon(Icons.stop) : const Icon(Icons.play_arrow),
                       ),
                     ),
                     Container(
@@ -134,7 +134,7 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
                         shape: BoxShape.circle,
                         color: Theme.of(context).primaryColorLight,
                       ),
-                      // Add a button to toggle navigation mode.
+                      // Add a button to reset location display to navigation mode.
                       child: IconButton(
                         onPressed: _needRecenter ? recenter : null,
                         color: Colors.white,
@@ -202,6 +202,18 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
             ),
             // Display a progress indicator and prevent interaction until state is ready.
             LoadingIndicator(visible: !_ready),
+            // Display a progress indicator.
+            Visibility(
+              visible: _initNavigation,
+              child: const Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    LinearProgressIndicator(),
+                  ],
+                ),
+              ),
+            ),
           ],
         ),
       ),
@@ -225,12 +237,13 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
     map.onLoadStatusChanged.listen(
       (event) async {
         if (event == LoadStatus.loaded) {
+          setState(() => _initNavigation = true);
           await initRouteTask();
-          // Set the ready state variable to true to enable the sample UI.
-          setState(() => _ready = true);
+          setState(() => _initNavigation = false);
         }
       },
     );
+    setState(() => _ready = true);
   }
 
   // Initialize the route task, route parameters, and route result.
@@ -448,15 +461,16 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
 
   // Create a simulated location data source.
   Future<SimulatedLocationDataSource> getLocationDataSource() async {
-    final routePointJson =
-        await rootBundle.loadString('assets/SanDiegoTourPath.json');
-    final routeLine = Geometry.fromJsonString(routePointJson) as Polyline;
+    // Load the route point JSON file.
+    final tourJsonPath = await downloadSanDiegoTourPath();
+    final jsonString = await File(tourJsonPath).readAsString();
+    final routeLine = Geometry.fromJsonString(jsonString) as Polyline;
 
     final simulatedLocationDataSource = SimulatedLocationDataSource()
       ..setLocationsWithPolyline(
         routeLine,
         simulationParameters: SimulationParameters(
-          speed: 40,
+          speed: 35,
           startTime: DateTime.now(),
           horizontalAccuracy: 5,
           verticalAccuracy: 5,
@@ -523,6 +537,20 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
     );
     // Return the path to the geodatabase.
     return geodatabaseFile.path;
+  }
+
+  // Download San Diego tour path.
+  Future<String> downloadSanDiegoTourPath() async {
+    // Download the tour path.
+    await downloadSampleData(['4caec8c55ea2463982f1af7d9611b8d5']);
+    // Get the application documents directory.
+    final appDir = await getApplicationDocumentsDirectory();
+    // Create the SanDiegoTourPath.json file.
+    final tourPathFile = File(
+      '${appDir.absolute.path}/SanDiegoTourPath.json/SanDiegoTourPath.json',
+    );
+    // Return the path of the JSON file.
+    return tourPathFile.path;
   }
 }
 
