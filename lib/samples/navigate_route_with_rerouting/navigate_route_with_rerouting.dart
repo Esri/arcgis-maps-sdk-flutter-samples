@@ -134,6 +134,7 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
                         shape: BoxShape.circle,
                         color: Theme.of(context).primaryColorLight,
                       ),
+                      // Add a button to toggle navigation mode.
                       child: IconButton(
                         onPressed: _needRecenter ? recenter : null,
                         color: Colors.white,
