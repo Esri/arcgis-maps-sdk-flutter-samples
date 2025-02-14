@@ -122,6 +122,7 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
                         shape: BoxShape.circle,
                         color: Theme.of(context).primaryColorLight,
                       ),
+                      // Add a button to stop navigation if it has not already started.
                       child: IconButton(
                         onPressed: _isNavigating ? null : start,
                         color: Colors.white,
