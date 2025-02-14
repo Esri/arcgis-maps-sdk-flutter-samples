@@ -68,8 +68,8 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
   // Indicate whether the route is being navigated.
   var _isNavigating = false;
   var _resetToNavigationMode = false;
-  var _reStart = false;
-  var _downloadData = false;
+  var _reset = false;
+  var _downloadDataAndInitNavigation = false;
   // Variables to show the remaining distance, time, and next direction.
   var _routeStatus = '';
   var _remainingDistance = '';
@@ -79,9 +79,7 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
   @override
   void initState() {
     // Initialize the text-to-speech plugin.
-    _flutterTts = FlutterTts();
-    _flutterTts.setSpeechRate(0.5);
-
+    _flutterTts = FlutterTts()..setSpeechRate(0.5);
     super.initState();
   }
 
@@ -113,7 +111,7 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
                       ),
                       // Add a button to reset navigation if it has started.
                       child: IconButton(
-                        onPressed: _isNavigating ? reset : null,
+                        onPressed: _reset ? reset : null,
                         color: Colors.white,
                         icon: const Icon(Icons.restore),
                       ),
@@ -127,7 +125,9 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
                       child: IconButton(
                         onPressed: _isNavigating ? stop : start,
                         color: Colors.white,
-                        icon:  _isNavigating ? const Icon(Icons.stop) : const Icon(Icons.play_arrow),
+                        icon: _isNavigating
+                            ? const Icon(Icons.stop)
+                            : const Icon(Icons.play_arrow),
                       ),
                     ),
                     Container(
@@ -137,7 +137,9 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
                       ),
                       // Add a button to reset location display to navigation mode.
                       child: IconButton(
-                        onPressed: _resetToNavigationMode ? resetToNavigationMode : null,
+                        onPressed: _resetToNavigationMode
+                            ? resetToNavigationMode
+                            : null,
                         color: Colors.white,
                         icon: const Icon(Icons.navigation),
                       ),
@@ -203,9 +205,9 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
             ),
             // Display a progress indicator and prevent interaction until state is ready.
             LoadingIndicator(visible: !_ready),
-            // Display a progress indicator.
+            // Display a progress indicator while the navigation data is loading.
             Visibility(
-              visible: _downloadData,
+              visible: _downloadDataAndInitNavigation,
               child: const Center(
                 child: SizedBox(
                   width: 300,
@@ -239,15 +241,12 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISNavigation);
     _mapViewController.arcGISMap = map;
 
-    map.onLoadStatusChanged.listen(
-      (event) async {
-        if (event == LoadStatus.loaded) {
-          setState(() => _downloadData = true);
-          await initRouteTask();
-          setState(() => _downloadData = false);
-        }
-      },
-    );
+    await map.load().then((_) async {
+      setState(() => _downloadDataAndInitNavigation = true);
+      await initRouteTask();
+      setState(() => _downloadDataAndInitNavigation = false);
+    });
+
     setState(() => _ready = true);
   }
 
@@ -418,7 +417,7 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
 
   // Zoom to the route.
   Future<void> zoomToRoute() async {
-   final routeLine = _routeResult.routes.first.routeGeometry;
+    final routeLine = _routeResult.routes.first.routeGeometry;
     _remainingRouteGraphic.geometry = routeLine;
     await _mapViewController.setViewpointCenter(
       routeLine!.extent.center,
@@ -432,9 +431,9 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
     _mapViewController.locationDisplay.autoPanMode =
         LocationDisplayAutoPanMode.navigation;
     await _mapViewController.locationDisplay.dataSource.start();
-    setState((){ 
-      _isNavigating = true; 
-      _reStart = true;
+    setState(() {
+      _isNavigating = true;
+      _reset = true;
     });
   }
 
@@ -450,8 +449,8 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
     _mapViewController.locationDisplay.autoPanMode =
         LocationDisplayAutoPanMode.off;
     await _mapViewController.locationDisplay.dataSource.stop();
-    setState(() { 
-      _isNavigating = false; 
+    setState(() {
+      _isNavigating = false;
       _resetToNavigationMode = false;
     });
   }
@@ -461,13 +460,13 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
     await stop();
     _traversedRouteBuilder =
         PolylineBuilder(spatialReference: SpatialReference.wgs84);
-     setState(() {
+    setState(() {
       _routeStatus = '';
       _remainingDistance = '';
       _remainingTime = '';
       _nextDirection = '';
-      _reStart = false;
-    });    
+      _reset = false;
+    });
     _simulatedLocationDataSource!.currentLocationIndex = 0;
 
     await initNavigation();
