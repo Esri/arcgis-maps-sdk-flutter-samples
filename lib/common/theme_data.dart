@@ -21,6 +21,7 @@ final colorScheme = ColorScheme.fromSeed(seedColor: Colors.deepPurple);
 final sampleViewerTheme = ThemeData(
   // color scheme
   primaryColor: colorScheme.primary,
+  primaryColorLight: Colors.deepPurple[200],
   disabledColor: Colors.grey,
   colorScheme: colorScheme,
 
