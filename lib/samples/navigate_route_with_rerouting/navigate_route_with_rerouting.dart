@@ -67,8 +67,9 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
   );
   // Indicate whether the route is being navigated.
   var _isNavigating = false;
-  var _needRecenter = false;
-  var _initNavigation = false;
+  var _resetToNavigationMode = false;
+  var _reStart = false;
+  var _downloadData = false;
   // Variables to show the remaining distance, time, and next direction.
   var _routeStatus = '';
   var _remainingDistance = '';
@@ -136,7 +137,7 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
                       ),
                       // Add a button to reset location display to navigation mode.
                       child: IconButton(
-                        onPressed: _needRecenter ? recenter : null,
+                        onPressed: _resetToNavigationMode ? resetToNavigationMode : null,
                         color: Colors.white,
                         icon: const Icon(Icons.navigation),
                       ),
@@ -204,13 +205,17 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
             LoadingIndicator(visible: !_ready),
             // Display a progress indicator.
             Visibility(
-              visible: _initNavigation,
+              visible: _downloadData,
               child: const Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    LinearProgressIndicator(),
-                  ],
+                child: SizedBox(
+                  width: 300,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      LinearProgressIndicator(),
+                      Text('Downloading data...'),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -237,9 +242,9 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
     map.onLoadStatusChanged.listen(
       (event) async {
         if (event == LoadStatus.loaded) {
-          setState(() => _initNavigation = true);
+          setState(() => _downloadData = true);
           await initRouteTask();
-          setState(() => _initNavigation = false);
+          setState(() => _downloadData = false);
         }
       },
     );
@@ -250,6 +255,9 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
   Future<void> initRouteTask() async {
     // Downloads the San Diego geodatabase required for offline routing in San Diego.
     final geodatabasePath = await downloadSanDiegoGeodatabase();
+
+    // Set up the data source's locations using a local JSON file.
+    _simulatedLocationDataSource = await getLocationDataSource();
 
     // Create a route task.
     _routeTask = RouteTask.withGeodatabase(
@@ -306,15 +314,11 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
       return;
     }
 
-    // Set up the data source's locations using a local JSON file.
-    _simulatedLocationDataSource = await getLocationDataSource();
-
     // Create a route tracker location data source to snap the location display to the route.
     final routeTrackerLocationDataSource = RouteTrackerLocationDataSource(
       routeTracker: _routeTracker,
       locationDataSource: _simulatedLocationDataSource,
     );
-
     // Set the location data source.
     _mapViewController.locationDisplay.dataSource =
         routeTrackerLocationDataSource;
@@ -322,19 +326,14 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
         LocationDisplayAutoPanMode.navigation;
     _mapViewController.locationDisplay.onAutoPanModeChanged.listen((event) {
       if (event != LocationDisplayAutoPanMode.navigation) {
-        setState(() => _needRecenter = true);
+        setState(() => _resetToNavigationMode = true);
       } else {
-        setState(() => _needRecenter = false);
+        setState(() => _resetToNavigationMode = false);
       }
     });
 
     // Update the remaining route graphic and center the map view on the route.
-    final routeLine = _routeResult.routes.first.routeGeometry;
-    _remainingRouteGraphic.geometry = routeLine;
-    await _mapViewController.setViewpointCenter(
-      routeLine!.extent.center,
-      scale: 25000,
-    );
+    await zoomToRoute();
 
     // Set the route tracker locale
     _routeTracker.voiceGuidanceUnitSystem =
@@ -361,6 +360,7 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
     _flutterTts.speak(nextDirection);
   }
 
+  // Listen for tracking status changes and update the route status.
   Future<void> updateProgress(TrackingStatus status) async {
     // Update the route graphics.
     _remainingRouteGraphic.geometry = status.routeProgress.remainingGeometry;
@@ -381,7 +381,6 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
             status.routeProgress.remainingDistance.displayText;
         final displayUnit = status
             .routeProgress.remainingDistance.displayTextUnits.abbreviation;
-
         final remainingTimeInSeconds = status.routeProgress.remainingTime * 60;
         final timeRemainingText =
             formatDuration(remainingTimeInSeconds.toInt());
@@ -417,16 +416,30 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
     }
   }
 
+  // Zoom to the route.
+  Future<void> zoomToRoute() async {
+   final routeLine = _routeResult.routes.first.routeGeometry;
+    _remainingRouteGraphic.geometry = routeLine;
+    await _mapViewController.setViewpointCenter(
+      routeLine!.extent.center,
+      scale: 25000,
+    );
+    await _mapViewController.setViewpointRotation(angleDegrees: 0);
+  }
+
   // Start the navigation.
   Future<void> start() async {
     _mapViewController.locationDisplay.autoPanMode =
         LocationDisplayAutoPanMode.navigation;
     await _mapViewController.locationDisplay.dataSource.start();
-    setState(() => _isNavigating = true);
+    setState((){ 
+      _isNavigating = true; 
+      _reStart = true;
+    });
   }
 
-  // Recenter the map view on the current location.
-  void recenter() {
+  // Reset the LocationDisplay to the navigation mode.
+  void resetToNavigationMode() {
     _mapViewController.locationDisplay.autoPanMode =
         LocationDisplayAutoPanMode.navigation;
   }
@@ -437,26 +450,29 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
     _mapViewController.locationDisplay.autoPanMode =
         LocationDisplayAutoPanMode.off;
     await _mapViewController.locationDisplay.dataSource.stop();
-    setState(() => _isNavigating = false);
+    setState(() { 
+      _isNavigating = false; 
+      _resetToNavigationMode = false;
+    });
   }
 
   // Reset the navigation to begin again.
   Future<void> reset() async {
+    await stop();
     _traversedRouteBuilder =
         PolylineBuilder(spatialReference: SpatialReference.wgs84);
-    _routeTraveledGraphic.geometry = null;
-    _remainingRouteGraphic.geometry = _routeResult.routes.first.routeGeometry;
-
-    setState(() {
-      _isNavigating = false;
-      _needRecenter = false;
+     setState(() {
       _routeStatus = '';
       _remainingDistance = '';
       _remainingTime = '';
       _nextDirection = '';
-    });
+      _reStart = false;
+    });    
+    _simulatedLocationDataSource!.currentLocationIndex = 0;
 
     await initNavigation();
+    _routeTraveledGraphic.geometry = null;
+    _remainingRouteGraphic.geometry = _routeResult.routes.first.routeGeometry;
   }
 
   // Create a simulated location data source.
