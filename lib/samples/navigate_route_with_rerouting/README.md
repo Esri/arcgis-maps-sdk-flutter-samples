@@ -20,7 +20,7 @@ Tap the 'Play' button to simulate travel and receive directions from a preset st
 4. Add `Stop`s to the parameters `stops` collection for each destination.
 5. Solve the route using `routeTask.solve(routeParameters)` to get a `RouteResult`.
 6. Create a `RouteTracker` using the route result, and the index of the desired route to take.
-7. Enable rerouting in the route tracker with `.enableRerouting(RouteTask, RouteParameters, ReroutingStrategy, false)`. The Boolean specifies `visitFirstStopOnStart` and is false by default. Use `ReroutingStrategy.toNextWaypoint` to specify that in the case of a reroute the new route goes from present location to next waypoint or stop.
+7. Enable rerouting in the route tracker with `RouteTracker.enableRerouting(RouteTask, RouteParameters, ReroutingStrategy, false)`. The Boolean specifies `visitFirstStopOnStart` and is false by default. Use `ReroutingStrategy.toNextWaypoint` to specify that in the case of a reroute the new route goes from present location to next waypoint or stop.
 8. Use `RouteTrackerLocationDataSource` to track the location of the device and update the route tracking status.
 9. Add a listener to capture `onTrackingStatusChanged`, and then get the `TrackingStatus` and use it to display updated route information. Tracking status includes a variety of information on the route progress, such as the remaining distance, remaining geometry or traversed geometry (represented by a `Polyline`), or the remaining time (`Double`), amongst others.
 10. Add a `onNewVoiceGuidance` to get the `VoiceGuidance` whenever new instructions are available. From the voice guidance, get the `String` representing the directions and use a text-to-speech engine to output the maneuver directions.
