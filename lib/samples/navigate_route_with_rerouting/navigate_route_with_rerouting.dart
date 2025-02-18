@@ -69,7 +69,7 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
   var _isNavigating = false;
   var _resetToNavigationMode = false;
   var _reset = false;
-  var _downloadDataAndInitNavigation = false;
+  var _setupDataAndInitNavigation = false;
   // Variables to show the remaining distance, time, and next direction.
   var _routeStatus = '';
   var _remainingDistance = '';
@@ -215,7 +215,7 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
             LoadingIndicator(visible: !_ready),
             // Display a progress indicator while the navigation data is loading.
             Visibility(
-              visible: _downloadDataAndInitNavigation,
+              visible: _setupDataAndInitNavigation,
               child: const Center(
                 child: SizedBox(
                   width: 300,
@@ -244,15 +244,19 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
   }
 
   // Set up the map with a navigation basemap style.
-  Future<void> onMapViewReady() async {
+  void onMapViewReady() {
     // Create a map with a navigation basemap style.
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISNavigation);
     _mapViewController.arcGISMap = map;
 
-    await map.load().then((_) async {
-      setState(() => _downloadDataAndInitNavigation = true);
+    
+
+    map.onLoadStatusChanged.listen((loadStatus) async{
+      if (loadStatus == LoadStatus.loaded) {
+        setState(() => _setupDataAndInitNavigation = true);
       await initRouteTask();
-      setState(() => _downloadDataAndInitNavigation = false);
+      setState(() => _setupDataAndInitNavigation = false);
+      }
     });
 
     setState(() => _ready = true);
