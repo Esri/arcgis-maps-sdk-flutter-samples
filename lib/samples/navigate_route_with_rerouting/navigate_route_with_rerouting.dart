@@ -85,6 +85,8 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
   late StreamSubscription<TrackingStatus> _trackingStatusSubscription;
   late StreamSubscription<void> _rerouteStartedSubscription;
   late StreamSubscription<void> _rerouteCompletedSubscription;
+  StreamSubscription<LocationDisplayAutoPanMode>?
+      _autoPanModeChangedSubscription;
 
   @override
   void initState() {
@@ -250,6 +252,7 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
     _rerouteStartedSubscription.cancel();
     _rerouteCompletedSubscription.cancel();
 
+    _autoPanModeChangedSubscription?.cancel();
     super.dispose();
   }
 
@@ -324,7 +327,6 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
       await _routeTracker.enableRerouting(parameters: _reroutingParameters);
     } else {
       showMessageDialog('Rerouting is not supported.');
-      return;
     }
 
     // Get the simulated location data source.
@@ -339,7 +341,8 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
         routeTrackerLocationDataSource;
     _mapViewController.locationDisplay.autoPanMode =
         LocationDisplayAutoPanMode.navigation;
-    _mapViewController.locationDisplay.onAutoPanModeChanged.listen((event) {
+    _autoPanModeChangedSubscription =
+        _mapViewController.locationDisplay.onAutoPanModeChanged.listen((event) {
       if (event != LocationDisplayAutoPanMode.navigation) {
         setState(() => _resetToNavigationMode = true);
       } else {
