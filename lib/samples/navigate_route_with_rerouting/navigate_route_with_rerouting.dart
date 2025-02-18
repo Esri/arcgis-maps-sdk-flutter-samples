@@ -75,11 +75,19 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
   var _remainingDistance = '';
   var _remainingTime = '';
   var _nextDirection = '';
+  // Future to download the geodatabase.
+  late Future<String> _geodatabasePathFuture;
+  // Future to download the simulate the location data source.
+  late Future<SimulatedLocationDataSource> _simulatedLocationDataSourceFuture;
 
   @override
   void initState() {
     // Initialize the text-to-speech plugin.
     _flutterTts = FlutterTts()..setSpeechRate(0.5);
+    // Downloads the San Diego geodatabase required for offline routing in San Diego.
+    _geodatabasePathFuture = downloadSanDiegoGeodatabase();
+     // Downloads the data source's locations using a local JSON file.
+    _simulatedLocationDataSourceFuture = getLocationDataSource();
     super.initState();
   }
 
@@ -252,11 +260,8 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
 
   // Initialize the route task, route parameters, and route result.
   Future<void> initRouteTask() async {
-    // Downloads the San Diego geodatabase required for offline routing in San Diego.
-    final geodatabasePath = await downloadSanDiegoGeodatabase();
-
-    // Set up the data source's locations using a local JSON file.
-    _simulatedLocationDataSource = await getLocationDataSource();
+    final geodatabasePath = await _geodatabasePathFuture;
+    _simulatedLocationDataSource = await _simulatedLocationDataSourceFuture;
 
     // Create a route task.
     _routeTask = RouteTask.withGeodatabase(
