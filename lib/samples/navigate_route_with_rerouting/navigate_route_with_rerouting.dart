@@ -86,7 +86,7 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
     _flutterTts = FlutterTts()..setSpeechRate(0.5);
     // Downloads the San Diego geodatabase required for offline routing in San Diego.
     _geodatabasePathFuture = downloadSanDiegoGeodatabase();
-     // Downloads the data source's locations using a local JSON file.
+    // Downloads the data source's locations using a local JSON file.
     _simulatedLocationDataSourceFuture = getLocationDataSource();
     super.initState();
   }
