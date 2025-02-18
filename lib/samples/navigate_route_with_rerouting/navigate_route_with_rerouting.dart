@@ -287,7 +287,7 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
 
     // Initializes and adds graphics to the map view to visually represent the route,
     // including the remaining route, traveled route, and start/end points.
-    showRouteGraphics();
+    initRouteGraphics();
 
     // Create Rerouting parameters with the route task and parameters.
     _reroutingParameters = ReroutingParameters.create(
@@ -339,11 +339,11 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
     // Update the remaining route graphic and center the map view on the route.
     await zoomToRoute();
 
-    // Set the route tracker locale
+    // Set the route tracker locale.
     _routeTracker.voiceGuidanceUnitSystem =
         const Locale.fromSubtags().languageCode == 'en'
-            ? UnitSystem.metric
-            : UnitSystem.imperial;
+            ? UnitSystem.imperial
+            : UnitSystem.metric;
 
     // Listen for voice guidance and tracking status changes.
     _routeTracker.onNewVoiceGuidance.listen(updateGuidance);
@@ -500,7 +500,7 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
   }
 
   // Set up the route graphics.
-  void showRouteGraphics() {
+  void initRouteGraphics() {
     _mapViewController.graphicsOverlays.clear();
     _mapViewController.graphicsOverlays.add(GraphicsOverlay());
 
