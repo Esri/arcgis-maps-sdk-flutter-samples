@@ -56,10 +56,13 @@ class _NavigateRouteState extends State<NavigateRoute> with SampleStateSupport {
   // A flag to indicate if the destination is reached.
   var _destinationReached = false;
 
-  // ValueNotifier for status text
+  // ValueNotifier for status text.
   final _statusTextNotifier = ValueNotifier('Directions are shown here.');
 
-  // San Diego Convention Center;
+  // Track Speech Engine Status.
+  var _speechEngineReady = true;
+
+  // San Diego Convention Center.
   final _conventionCenter = ArcGISPoint(
     x: -117.160386727,
     y: 32.706608,
@@ -122,7 +125,7 @@ class _NavigateRouteState extends State<NavigateRoute> with SampleStateSupport {
                   children: [
                     // A button to start navigation.
                     ElevatedButton(
-                      onPressed: _destinationReached ? null : startRouting,
+                      onPressed: _destinationReached ? null : toggleRouting,
                       child: Text(
                         _mapViewController.locationDisplay.started
                             ? 'Stop Routing'
@@ -188,7 +191,6 @@ class _NavigateRouteState extends State<NavigateRoute> with SampleStateSupport {
 
     // Solve the route.
     await solveRoute();
-
 
     // Set the initial viewpoint to encompass the route geometry.
     setInitialViewpoint();
@@ -264,12 +266,9 @@ class _NavigateRouteState extends State<NavigateRoute> with SampleStateSupport {
     // Add the route graphics to the overlay.
     _routeGraphicsOverlay.graphics.add(_routeAheadGraphic);
     _routeGraphicsOverlay.graphics.add(_routeTravelledGraphic);
-
-    // Update the state to reflect the new graphics.
-    setState(() {});
   }
 
-  Future<void> startRouting() async {
+  Future<void> toggleRouting() async {
     setState(() => _ready = false);
 
     if (_mapViewController.locationDisplay.started) {
@@ -301,6 +300,9 @@ class _NavigateRouteState extends State<NavigateRoute> with SampleStateSupport {
     )!;
     _routeTracker.voiceGuidanceUnitSystem = UnitSystem.imperial;
 
+    // Set the speech engine ready callback.
+    _routeTracker.setSpeechEngineReady(() => _speechEngineReady);
+
     // Listen for tracking status updates.
     _routeTracker.onTrackingStatusChanged.listen((status) async {
       _updateRouteGraphics(status);
@@ -318,10 +320,10 @@ class _NavigateRouteState extends State<NavigateRoute> with SampleStateSupport {
     });
 
     // Listen for voice guidance updates.
-    _routeTracker.onNewVoiceGuidance.listen((voiceGuidance) {
-      speechEngineInUse();
-      _flutterTts.speak(voiceGuidance.text);
-      speechEngineReady();
+    _routeTracker.onNewVoiceGuidance.listen((voiceGuidance) async {
+      _speechEngineReady = false;
+      await _flutterTts.speak(voiceGuidance.text);
+      _speechEngineReady = true;
     });
   }
 
@@ -348,10 +350,8 @@ class _NavigateRouteState extends State<NavigateRoute> with SampleStateSupport {
 
   void _updateRouteGraphics(TrackingStatus status) {
     // Update the graphics for the route traveled and ahead.
-    setState(() {
-      _routeTravelledGraphic.geometry = status.routeProgress.traversedGeometry;
-      _routeAheadGraphic.geometry = status.routeProgress.remainingGeometry;
-    });
+    _routeTravelledGraphic.geometry = status.routeProgress.traversedGeometry;
+    _routeAheadGraphic.geometry = status.routeProgress.remainingGeometry;
   }
 
   String formatDuration(Duration duration) {
@@ -368,9 +368,10 @@ class _NavigateRouteState extends State<NavigateRoute> with SampleStateSupport {
     }
   }
 
-// Usage
   void _updateStatusText(TrackingStatus status) {
-    final remainingTime = Duration(seconds: status.routeProgress.remainingTime.round());
+    // Updates the status text displayed to the user with the current navigation information.
+    final remainingTime =
+        Duration(seconds: status.routeProgress.remainingTime.round());
     final formattedTime = formatDuration(remainingTime);
     _statusTextNotifier.value = '''
   Distance remaining: ${status.routeProgress.remainingDistance.displayText} ${status.routeProgress.remainingDistance.displayTextUnits.abbreviation}
@@ -379,13 +380,13 @@ class _NavigateRouteState extends State<NavigateRoute> with SampleStateSupport {
   ''';
   }
 
-
   void recenter() {
-    _mapViewController.locationDisplay.autoPanMode = LocationDisplayAutoPanMode.navigation;
+    _mapViewController.locationDisplay.autoPanMode =
+        LocationDisplayAutoPanMode.navigation;
   }
 
+  // Reset the navigation state.
   Future<void> resetNavigation() async {
-    // Reset the navigation state.
     setState(() => _ready = false);
 
     // Stop the location display.
@@ -412,13 +413,5 @@ class _NavigateRouteState extends State<NavigateRoute> with SampleStateSupport {
 
     // Update the state to reflect the reset.
     setState(() => _ready = true);
-  }
-
-  void speechEngineInUse() {
-    _routeTracker.setSpeechEngineReady(() => false);
-  }
-
-  void speechEngineReady() {
-    _routeTracker.setSpeechEngineReady(() => true);
   }
 }
