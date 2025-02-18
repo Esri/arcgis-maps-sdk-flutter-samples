@@ -13,6 +13,7 @@
 // limitations under the License.
 //
 
+import 'dart:async';
 import 'dart:io';
 
 import 'package:arcgis_maps/arcgis_maps.dart';
@@ -79,6 +80,11 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
   late Future<String> _geodatabasePathFuture;
   // Future to download the simulated location data source.
   late Future<SimulatedLocationDataSource> _simulatedLocationDataSourceFuture;
+  // Stream subscriptions
+  late StreamSubscription<VoiceGuidance> _voiceGuidanceSubscription;
+  late StreamSubscription<TrackingStatus> _trackingStatusSubscription;
+  late StreamSubscription<void> _rerouteStartedSubscription;
+  late StreamSubscription<void> _rerouteCompletedSubscription;
 
   @override
   void initState() {
@@ -239,6 +245,10 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
   void dispose() {
     _flutterTts.stop();
     _simulatedLocationDataSource?.stop();
+    _voiceGuidanceSubscription.cancel();
+    _trackingStatusSubscription.cancel();
+    _rerouteStartedSubscription.cancel();
+    _rerouteCompletedSubscription.cancel();
 
     super.dispose();
   }
@@ -260,9 +270,8 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
 
   // Initialize the route task, route parameters, and route result.
   Future<void> initRouteTask() async {
+    // Get the path to the geodatabase.
     final geodatabasePath = await _geodatabasePathFuture;
-    _simulatedLocationDataSource = await _simulatedLocationDataSourceFuture;
-
     // Create a route task.
     _routeTask = RouteTask.withGeodatabase(
       pathToDatabase: Uri.file(geodatabasePath),
@@ -318,6 +327,8 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
       return;
     }
 
+    // Get the simulated location data source.
+    _simulatedLocationDataSource = await _simulatedLocationDataSourceFuture;
     // Create a route tracker location data source to snap the location display to the route.
     final routeTrackerLocationDataSource = RouteTrackerLocationDataSource(
       routeTracker: _routeTracker,
@@ -346,12 +357,15 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
             : UnitSystem.metric;
 
     // Listen for voice guidance and tracking status changes.
-    _routeTracker.onNewVoiceGuidance.listen(updateGuidance);
-    _routeTracker.onTrackingStatusChanged.listen(updateProgress);
-    _routeTracker.onRerouteStarted.listen((_) {
+    _voiceGuidanceSubscription =
+        _routeTracker.onNewVoiceGuidance.listen(updateGuidance);
+    _trackingStatusSubscription =
+        _routeTracker.onTrackingStatusChanged.listen(updateProgress);
+    _rerouteStartedSubscription = _routeTracker.onRerouteStarted.listen((_) {
       setState(() => _routeStatus = 'Rerouting');
     });
-    _routeTracker.onRerouteCompleted.listen((_) {
+    _rerouteCompletedSubscription =
+        _routeTracker.onRerouteCompleted.listen((_) {
       setState(() => _routeStatus = 'Reroute completed');
     });
   }
