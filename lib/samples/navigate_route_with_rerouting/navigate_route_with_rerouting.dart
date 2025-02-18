@@ -77,7 +77,7 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
   var _nextDirection = '';
   // Future to download the geodatabase.
   late Future<String> _geodatabasePathFuture;
-  // Future to download the simulate the location data source.
+  // Future to download the simulated location data source.
   late Future<SimulatedLocationDataSource> _simulatedLocationDataSourceFuture;
 
   @override
@@ -249,14 +249,10 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISNavigation);
     _mapViewController.arcGISMap = map;
 
-    
-
-    map.onLoadStatusChanged.listen((loadStatus) async{
-      if (loadStatus == LoadStatus.loaded) {
-        setState(() => _setupDataAndInitNavigation = true);
+    map.load().then((_) async {
+      setState(() => _setupDataAndInitNavigation = true);
       await initRouteTask();
       setState(() => _setupDataAndInitNavigation = false);
-      }
     });
 
     setState(() => _ready = true);
