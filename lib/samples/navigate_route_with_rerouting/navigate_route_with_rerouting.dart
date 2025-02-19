@@ -81,10 +81,10 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
   // Future to download the simulated location data source.
   late Future<SimulatedLocationDataSource> _simulatedLocationDataSourceFuture;
   // Stream subscriptions
-  late StreamSubscription<VoiceGuidance> _voiceGuidanceSubscription;
-  late StreamSubscription<TrackingStatus> _trackingStatusSubscription;
-  late StreamSubscription<void> _rerouteStartedSubscription;
-  late StreamSubscription<void> _rerouteCompletedSubscription;
+  StreamSubscription<VoiceGuidance>? _voiceGuidanceSubscription;
+  StreamSubscription<TrackingStatus>? _trackingStatusSubscription;
+  StreamSubscription<void>? _rerouteStartedSubscription;
+  StreamSubscription<void>? _rerouteCompletedSubscription;
   StreamSubscription<LocationDisplayAutoPanMode>?
       _autoPanModeChangedSubscription;
 
@@ -247,10 +247,10 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
   void dispose() {
     _flutterTts.stop();
     _simulatedLocationDataSource?.stop();
-    _voiceGuidanceSubscription.cancel();
-    _trackingStatusSubscription.cancel();
-    _rerouteStartedSubscription.cancel();
-    _rerouteCompletedSubscription.cancel();
+    _voiceGuidanceSubscription?.cancel();
+    _trackingStatusSubscription?.cancel();
+    _rerouteStartedSubscription?.cancel();
+    _rerouteCompletedSubscription?.cancel();
 
     _autoPanModeChangedSubscription?.cancel();
     super.dispose();
