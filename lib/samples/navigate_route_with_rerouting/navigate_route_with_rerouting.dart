@@ -87,6 +87,7 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
   StreamSubscription<void>? _rerouteCompletedSubscription;
   StreamSubscription<LocationDisplayAutoPanMode>?
       _autoPanModeChangedSubscription;
+  StreamSubscription<LoadStatus>? _mapLoadingSubscription;
 
   @override
   void initState() {
@@ -139,7 +140,9 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
                       ),
                       // Add a button to start/stop navigation.
                       child: IconButton(
-                        onPressed: _isNavigating ? stop : start,
+                        onPressed: _setupDataAndInitNavigation
+                            ? null
+                            : (_isNavigating ? stop : start),
                         color: Colors.white,
                         icon: _isNavigating
                             ? const Icon(Icons.stop)
@@ -253,6 +256,7 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
     _rerouteCompletedSubscription?.cancel();
 
     _autoPanModeChangedSubscription?.cancel();
+    _mapLoadingSubscription?.cancel();
     super.dispose();
   }
 
@@ -261,11 +265,12 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
     // Create a map with a navigation basemap style.
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISNavigation);
     _mapViewController.arcGISMap = map;
-
-    map.load().then((_) async {
-      setState(() => _setupDataAndInitNavigation = true);
-      await initRouteTask();
-      setState(() => _setupDataAndInitNavigation = false);
+    _mapLoadingSubscription = map.onLoadStatusChanged.listen((loadStatus) async {
+      if (loadStatus == LoadStatus.loaded) {
+        setState(() => _setupDataAndInitNavigation = true);
+        await initRouteTask();
+        setState(() => _setupDataAndInitNavigation = false);
+      }
     });
 
     setState(() => _ready = true);
@@ -365,6 +370,7 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
     _trackingStatusSubscription =
         _routeTracker.onTrackingStatusChanged.listen(updateProgress);
     _rerouteStartedSubscription = _routeTracker.onRerouteStarted.listen((_) {
+      _flutterTts.speak('Rerouting');
       setState(() => _routeStatus = 'Rerouting');
     });
     _rerouteCompletedSubscription =
