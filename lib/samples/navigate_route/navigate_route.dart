@@ -147,6 +147,7 @@ class _NavigateRouteState extends State<NavigateRoute> with SampleStateSupport {
                     ),
                     // A button to recenter the map.
                     ElevatedButton(
+                      // Gets activated only when the focus changes from navigation.
                       onPressed:
                           _mapViewController.locationDisplay.autoPanMode ==
                                   LocationDisplayAutoPanMode.navigation
