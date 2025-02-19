@@ -13,6 +13,8 @@
 // limitations under the License.
 //
 
+import 'dart:async';
+
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
@@ -87,6 +89,8 @@ class _NavigateRouteState extends State<NavigateRoute> with SampleStateSupport {
   final _routingUri = Uri.parse(
     'https://sampleserver7.arcgisonline.com/server/rest/services/NetworkAnalysis/SanDiego/NAServer/Route',
   );
+// Listener to track changes in autoPanMode.
+  StreamSubscription<LocationDisplayAutoPanMode>? _autoPanModeSubscription;
 
   @override
   void initState() {
@@ -94,11 +98,19 @@ class _NavigateRouteState extends State<NavigateRoute> with SampleStateSupport {
     _flutterTts.setLanguage('en-US');
     _flutterTts.setSpeechRate(0.5);
     _flutterTts.setVolume(1);
+
+    // Listen to the onAutoPanModeChanged stream.
+    _autoPanModeSubscription = _mapViewController
+        .locationDisplay.onAutoPanModeChanged
+        .listen((autoPanMode) {
+      setState(() {});
+    });
   }
 
   @override
   void dispose() {
     _simulatedLocationDataSource.stop();
+    _autoPanModeSubscription?.cancel();
     super.dispose();
   }
 
@@ -134,7 +146,12 @@ class _NavigateRouteState extends State<NavigateRoute> with SampleStateSupport {
                     ),
                     // A button to recenter the map.
                     ElevatedButton(
-                      onPressed: recenter,
+                      // Gets activated only when the focus changes from navigation.
+                      onPressed:
+                          _mapViewController.locationDisplay.autoPanMode ==
+                                  LocationDisplayAutoPanMode.navigation
+                              ? null
+                              : recenter,
                       child: const Text('Recenter'),
                     ),
                     // A button to reset navigation.
