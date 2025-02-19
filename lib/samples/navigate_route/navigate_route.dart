@@ -92,6 +92,7 @@ class _NavigateRouteState extends State<NavigateRoute> with SampleStateSupport {
     'https://sampleserver7.arcgisonline.com/server/rest/services/NetworkAnalysis/SanDiego/NAServer/Route',
   );
 
+
   // Listener to track changes in autoPanMode.
   StreamSubscription<LocationDisplayAutoPanMode>? _autoPanModeSubscription;
 
@@ -111,6 +112,7 @@ class _NavigateRouteState extends State<NavigateRoute> with SampleStateSupport {
   void dispose() {
     _simulatedLocationDataSource.stop();
     _autoPanModeSubscription?.cancel();
+    _flutterTts.stop();
     super.dispose();
   }
 
