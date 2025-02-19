@@ -276,18 +276,18 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
   }
 
   // Set up the map with a navigation basemap style.
-  Future<void> onMapViewReady() async {
+void onMapViewReady() {
     // Create a map with a navigation basemap style.
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISNavigation);
     _mapViewController.arcGISMap = map;
-    _mapLoadingSubscription =
-        map.onLoadStatusChanged.listen((loadStatus) async {
+    _mapLoadingSubscription = map.onLoadStatusChanged.listen((loadStatus) async {
       if (loadStatus == LoadStatus.loaded) {
         setState(() => _setupDataAndInitNavigation = true);
         await initRouteTask();
         setState(() => _setupDataAndInitNavigation = false);
       }
     });
+  
     // Initialize FlutterTts.
     await initFlutterTts();
 
