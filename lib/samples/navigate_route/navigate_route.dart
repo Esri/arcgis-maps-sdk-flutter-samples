@@ -14,9 +14,11 @@
 //
 
 import 'dart:async';
+import 'dart:io';
 
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 
@@ -89,15 +91,13 @@ class _NavigateRouteState extends State<NavigateRoute> with SampleStateSupport {
   final _routingUri = Uri.parse(
     'https://sampleserver7.arcgisonline.com/server/rest/services/NetworkAnalysis/SanDiego/NAServer/Route',
   );
-// Listener to track changes in autoPanMode.
+
+  // Listener to track changes in autoPanMode.
   StreamSubscription<LocationDisplayAutoPanMode>? _autoPanModeSubscription;
 
   @override
   void initState() {
     super.initState();
-    _flutterTts.setLanguage('en-US');
-    _flutterTts.setSpeechRate(0.5);
-    _flutterTts.setVolume(1);
 
     // Listen to the onAutoPanModeChanged stream.
     _autoPanModeSubscription = _mapViewController
@@ -209,11 +209,40 @@ class _NavigateRouteState extends State<NavigateRoute> with SampleStateSupport {
     // Solve the route.
     await solveRoute();
 
+    // Initialize Flutter TTS.
+    await initFlutterTts();
+
     // Set the initial viewpoint to encompass the route geometry.
     setInitialViewpoint();
 
     // Set the ready state variable to true to enable the sample UI.
     setState(() => _ready = true);
+  }
+
+  Future<void> initFlutterTts() async {
+    // Detect the user's locale.
+    final locale = Localizations.localeOf(context).toLanguageTag();
+
+    // Set the language based on the user's locale.
+    await _flutterTts.setLanguage(locale);
+    await _flutterTts.setSpeechRate(0.5);
+    await _flutterTts.setVolume(1);
+    await _flutterTts.setPitch(1.3);
+
+    // Check if platform is iOS.
+    final isIOS = !kIsWeb && Platform.isIOS;
+
+    if (isIOS) {
+      await _flutterTts.setIosAudioCategory(
+        IosTextToSpeechAudioCategory.playback,
+        [
+          IosTextToSpeechAudioCategoryOptions.allowBluetooth,
+          IosTextToSpeechAudioCategoryOptions.allowBluetoothA2DP,
+          IosTextToSpeechAudioCategoryOptions.mixWithOthers,
+        ],
+        IosTextToSpeechAudioMode.voicePrompt,
+      );
+    }
   }
 
   void setInitialViewpoint() {
@@ -304,6 +333,9 @@ class _NavigateRouteState extends State<NavigateRoute> with SampleStateSupport {
       _route.routeGeometry!,
       simulationParameters: SimulationParameters(
         startTime: DateTime.now(),
+        horizontalAccuracy: 5,
+        verticalAccuracy: 5,
+        speed: 35,
       ),
     );
   }
@@ -387,9 +419,9 @@ class _NavigateRouteState extends State<NavigateRoute> with SampleStateSupport {
 
   void _updateStatusText(TrackingStatus status) {
     // Updates the status text displayed to the user with the current navigation information.
-    final remainingTime =
-        Duration(seconds: status.routeProgress.remainingTime.round());
-    final formattedTime = formatDuration(remainingTime);
+    final remainingTimeInSeconds = status.routeProgress.remainingTime * 60;
+    final formattedTime =
+        formatDuration(Duration(seconds: remainingTimeInSeconds.toInt()));
     _statusTextNotifier.value = '''
   Distance remaining: ${status.routeProgress.remainingDistance.displayText} ${status.routeProgress.remainingDistance.displayTextUnits.abbreviation}
   Time remaining: $formattedTime
