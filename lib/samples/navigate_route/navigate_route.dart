@@ -89,8 +89,7 @@ class _NavigateRouteState extends State<NavigateRoute> with SampleStateSupport {
   final _routingUri = Uri.parse(
     'https://sampleserver7.arcgisonline.com/server/rest/services/NetworkAnalysis/SanDiego/NAServer/Route',
   );
-
-  // Listener to track changes in autoPanMode.
+// Listener to track changes in autoPanMode.
   StreamSubscription<LocationDisplayAutoPanMode>? _autoPanModeSubscription;
 
   @override
