@@ -30,7 +30,8 @@ class ApplyFunctionToRasterFromFile extends StatefulWidget {
 }
 
 class _ApplyFunctionToRasterFromFileState
-    extends State<ApplyFunctionToRasterFromFile> with SampleStateSupport {
+    extends State<ApplyFunctionToRasterFromFile>
+    with SampleStateSupport {
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
   // Raster layer to display raster data on the map.
@@ -63,9 +64,12 @@ class _ApplyFunctionToRasterFromFileState
     await loadRasterLayer();
     // Add the raster layer to the map.
     map.operationalLayers.add(_rasterLayer);
-    // Set the viewpoint.
-    if (_rasterLayer.fullExtent != null) {
-      await _mapViewController.setViewpointGeometry(_rasterLayer.fullExtent!);
+    // Set the viewpoint to the center of the raster layer's full extent.
+    final fullExtent = _rasterLayer.fullExtent;
+    if (fullExtent != null) {
+      final center = fullExtent.center;
+      const scale = 80000.0;
+      await _mapViewController.setViewpointCenter(center, scale: scale);
     }
     // Set the ready state variable to true to enable the sample UI.
     setState(() => _ready = true);
@@ -78,15 +82,14 @@ class _ApplyFunctionToRasterFromFileState
     final appDir = await getApplicationDocumentsDirectory();
     // Create a Raster from the local tif file.
     final shastaElevationRaster = Raster.withFileUri(
-      Uri.file(
-        '${appDir.absolute.path}/Shasta_Elevation/Shasta_Elevation.tif',
-      ),
+      Uri.file('${appDir.absolute.path}/Shasta_Elevation/Shasta_Elevation.tif'),
     );
     // Load the raster.
     await shastaElevationRaster.load();
     // Load JSON file from assets.
-    final rasterColorJson =
-        await rootBundle.loadString('assets/color_raster_function.json');
+    final rasterColorJson = await rootBundle.loadString(
+      'assets/color_raster_function.json',
+    );
     // Create a RasterFunction.
     final rasterFunction = RasterFunction.fromJson(rasterColorJson);
     if (rasterFunction != null) {
