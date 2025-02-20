@@ -346,7 +346,7 @@ class _NavigateRouteState extends State<NavigateRoute> with SampleStateSupport {
           routeResult: _routeResult,
           routeIndex: 0,
           skipCoincidentStops: true,
-        );
+        )!;
     _routeTracker.voiceGuidanceUnitSystem = UnitSystem.imperial;
 
     // Set the speech engine ready callback.
