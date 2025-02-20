@@ -62,8 +62,9 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
   late Graphic _routeTraveledGraphic;
 
   // A PolylineBuilder to store the traversed route.
-  var _traversedRouteBuilder =
-      PolylineBuilder(spatialReference: SpatialReference.wgs84);
+  var _traversedRouteBuilder = PolylineBuilder(
+    spatialReference: SpatialReference.wgs84,
+  );
 
   // San Diego Convention Center.
   final _startPoint = ArcGISPoint(
@@ -103,7 +104,7 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
   StreamSubscription<void>? _rerouteStartedSubscription;
   StreamSubscription<void>? _rerouteCompletedSubscription;
   StreamSubscription<LocationDisplayAutoPanMode>?
-      _autoPanModeChangedSubscription;
+  _autoPanModeChangedSubscription;
   StreamSubscription<LoadStatus>? _mapLoadingSubscription;
 
   @override
@@ -155,13 +156,15 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
                       ),
                       // Add a button to start/stop navigation.
                       child: IconButton(
-                        onPressed: _setupDataAndInitNavigation
-                            ? null
-                            : (_isNavigating ? stop : start),
+                        onPressed:
+                            _setupDataAndInitNavigation
+                                ? null
+                                : (_isNavigating ? stop : start),
                         color: Colors.white,
-                        icon: _isNavigating
-                            ? const Icon(Icons.stop)
-                            : const Icon(Icons.play_arrow),
+                        icon:
+                            _isNavigating
+                                ? const Icon(Icons.stop)
+                                : const Icon(Icons.play_arrow),
                       ),
                     ),
                     Container(
@@ -171,9 +174,10 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
                       ),
                       // Add a button to reset location display to navigation mode.
                       child: IconButton(
-                        onPressed: _resetToNavigationMode
-                            ? resetToNavigationMode
-                            : null,
+                        onPressed:
+                            _resetToNavigationMode
+                                ? resetToNavigationMode
+                                : null,
                         color: Colors.white,
                         icon: const Icon(Icons.navigation),
                       ),
@@ -276,18 +280,20 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
   }
 
   // Set up the map with a navigation basemap style.
-void onMapViewReady() {
+  Future<void> onMapViewReady() async {
     // Create a map with a navigation basemap style.
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISNavigation);
     _mapViewController.arcGISMap = map;
-    _mapLoadingSubscription = map.onLoadStatusChanged.listen((loadStatus) async {
+    _mapLoadingSubscription = map.onLoadStatusChanged.listen((
+      loadStatus,
+    ) async {
       if (loadStatus == LoadStatus.loaded) {
         setState(() => _setupDataAndInitNavigation = true);
         await initRouteTask();
         setState(() => _setupDataAndInitNavigation = false);
       }
     });
-  
+
     // Initialize FlutterTts.
     await initFlutterTts();
 
@@ -333,11 +339,12 @@ void onMapViewReady() {
     );
 
     // Create route parameters.
-    final routeParameters = await _routeTask.createDefaultParameters()
-      ..returnDirections = true
-      ..returnStops = true
-      ..returnRoutes = true
-      ..outputSpatialReference = SpatialReference.wgs84;
+    final routeParameters =
+        await _routeTask.createDefaultParameters()
+          ..returnDirections = true
+          ..returnStops = true
+          ..returnRoutes = true
+          ..outputSpatialReference = SpatialReference.wgs84;
 
     // Sets the start and destination stops for the route.
     routeParameters.setStops([
@@ -353,12 +360,13 @@ void onMapViewReady() {
     initRouteGraphics();
 
     // Create Rerouting parameters with the route task and parameters.
-    _reroutingParameters = ReroutingParameters.create(
-      routeTask: _routeTask,
-      routeParameters: routeParameters,
-    )!
-      ..strategy = ReroutingStrategy.toNextWaypoint
-      ..visitFirstStopOnStart = false;
+    _reroutingParameters =
+        ReroutingParameters.create(
+            routeTask: _routeTask,
+            routeParameters: routeParameters,
+          )!
+          ..strategy = ReroutingStrategy.toNextWaypoint
+          ..visitFirstStopOnStart = false;
 
     // Initialize the route tracker, location display, and route graphics.
     await initNavigation();
@@ -367,11 +375,12 @@ void onMapViewReady() {
   // Initialize the route tracker, location display, and route graphics.
   Future<void> initNavigation() async {
     // Create the route tracker with rerouting enabled.
-    _routeTracker = RouteTracker.create(
-      routeResult: _routeResult,
-      routeIndex: 0,
-      skipCoincidentStops: true,
-    )!;
+    _routeTracker =
+        RouteTracker.create(
+          routeResult: _routeResult,
+          routeIndex: 0,
+          skipCoincidentStops: true,
+        )!;
 
     // Enable rerouting on the route tracker.
     if (_routeTask.getRouteTaskInfo().supportsRerouting) {
@@ -392,14 +401,16 @@ void onMapViewReady() {
         routeTrackerLocationDataSource;
     _mapViewController.locationDisplay.autoPanMode =
         LocationDisplayAutoPanMode.navigation;
-    _autoPanModeChangedSubscription =
-        _mapViewController.locationDisplay.onAutoPanModeChanged.listen((event) {
-      if (event != LocationDisplayAutoPanMode.navigation) {
-        setState(() => _resetToNavigationMode = true);
-      } else {
-        setState(() => _resetToNavigationMode = false);
-      }
-    });
+    _autoPanModeChangedSubscription = _mapViewController
+        .locationDisplay
+        .onAutoPanModeChanged
+        .listen((event) {
+          if (event != LocationDisplayAutoPanMode.navigation) {
+            setState(() => _resetToNavigationMode = true);
+          } else {
+            setState(() => _resetToNavigationMode = false);
+          }
+        });
 
     // Update the remaining route graphic and center the map view on the route.
     await zoomToRoute();
@@ -411,16 +422,19 @@ void onMapViewReady() {
             : UnitSystem.metric;
 
     // Listen for voice guidance and tracking status changes.
-    _voiceGuidanceSubscription =
-        _routeTracker.onNewVoiceGuidance.listen(updateGuidance);
-    _trackingStatusSubscription =
-        _routeTracker.onTrackingStatusChanged.listen(updateProgress);
+    _voiceGuidanceSubscription = _routeTracker.onNewVoiceGuidance.listen(
+      updateGuidance,
+    );
+    _trackingStatusSubscription = _routeTracker.onTrackingStatusChanged.listen(
+      updateProgress,
+    );
     _rerouteStartedSubscription = _routeTracker.onRerouteStarted.listen((_) {
       _flutterTts.speak('Rerouting');
       setState(() => _routeStatus = 'Rerouting');
     });
-    _rerouteCompletedSubscription =
-        _routeTracker.onRerouteCompleted.listen((_) {
+    _rerouteCompletedSubscription = _routeTracker.onRerouteCompleted.listen((
+      _,
+    ) {
       setState(() => _routeStatus = 'Reroute completed');
     });
   }
@@ -452,11 +466,16 @@ void onMapViewReady() {
         // Format the route's remaining distance and time.
         final distanceRemainingText =
             status.routeProgress.remainingDistance.displayText;
-        final displayUnit = status
-            .routeProgress.remainingDistance.displayTextUnits.abbreviation;
+        final displayUnit =
+            status
+                .routeProgress
+                .remainingDistance
+                .displayTextUnits
+                .abbreviation;
         final remainingTimeInSeconds = status.routeProgress.remainingTime * 60;
-        final timeRemainingText =
-            formatDuration(remainingTimeInSeconds.toInt());
+        final timeRemainingText = formatDuration(
+          remainingTimeInSeconds.toInt(),
+        );
         // Get the next direction from the route's direction maneuvers.
         var nextDirection = '';
         final directionManeuvers =
@@ -532,8 +551,9 @@ void onMapViewReady() {
   // Reset the navigation to begin again.
   Future<void> reset() async {
     await stop();
-    _traversedRouteBuilder =
-        PolylineBuilder(spatialReference: SpatialReference.wgs84);
+    _traversedRouteBuilder = PolylineBuilder(
+      spatialReference: SpatialReference.wgs84,
+    );
     setState(() {
       _routeStatus = '';
       _remainingDistance = '';
@@ -555,16 +575,16 @@ void onMapViewReady() {
     final jsonString = await File(tourJsonPath).readAsString();
     final routeLine = Geometry.fromJsonString(jsonString) as Polyline;
 
-    final simulatedLocationDataSource = SimulatedLocationDataSource()
-      ..setLocationsWithPolyline(
-        routeLine,
-        simulationParameters: SimulationParameters(
-          speed: 35,
-          startTime: DateTime.now(),
-          horizontalAccuracy: 5,
-          verticalAccuracy: 5,
-        ),
-      );
+    final simulatedLocationDataSource =
+        SimulatedLocationDataSource()..setLocationsWithPolyline(
+          routeLine,
+          simulationParameters: SimulationParameters(
+            speed: 35,
+            startTime: DateTime.now(),
+            horizontalAccuracy: 5,
+            verticalAccuracy: 5,
+          ),
+        );
     return simulatedLocationDataSource;
   }
 
@@ -582,10 +602,7 @@ void onMapViewReady() {
     );
 
     _routeTraveledGraphic = Graphic(
-      symbol: SimpleLineSymbol(
-        color: Colors.blue,
-        width: 3,
-      ),
+      symbol: SimpleLineSymbol(color: Colors.blue, width: 3),
     );
 
     // Create symbols to use for the start and end stops of the route.
@@ -597,10 +614,16 @@ void onMapViewReady() {
       color: Colors.blue,
       size: 15,
     );
-    final routeStartNumberSymbol =
-        TextSymbol(text: 'A', color: Colors.white, size: 10);
-    final routeEndNumberSymbol =
-        TextSymbol(text: 'B', color: Colors.white, size: 10);
+    final routeStartNumberSymbol = TextSymbol(
+      text: 'A',
+      color: Colors.white,
+      size: 10,
+    );
+    final routeEndNumberSymbol = TextSymbol(
+      text: 'B',
+      color: Colors.white,
+      size: 10,
+    );
 
     _mapViewController.graphicsOverlays.first.graphics.addAll([
       _remainingRouteGraphic,

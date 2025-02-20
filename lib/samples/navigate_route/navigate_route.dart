@@ -92,7 +92,6 @@ class _NavigateRouteState extends State<NavigateRoute> with SampleStateSupport {
     'https://sampleserver7.arcgisonline.com/server/rest/services/NetworkAnalysis/SanDiego/NAServer/Route',
   );
 
-
   // Listener to track changes in autoPanMode.
   StreamSubscription<LocationDisplayAutoPanMode>? _autoPanModeSubscription;
 
@@ -102,10 +101,11 @@ class _NavigateRouteState extends State<NavigateRoute> with SampleStateSupport {
 
     // Listen to the onAutoPanModeChanged stream.
     _autoPanModeSubscription = _mapViewController
-        .locationDisplay.onAutoPanModeChanged
+        .locationDisplay
+        .onAutoPanModeChanged
         .listen((autoPanMode) {
-      setState(() {});
-    });
+          setState(() {});
+        });
   }
 
   @override
@@ -305,10 +305,7 @@ class _NavigateRouteState extends State<NavigateRoute> with SampleStateSupport {
     );
 
     _routeTravelledGraphic = Graphic(
-      symbol: SimpleLineSymbol(
-        color: Colors.blue,
-        width: 3,
-      ),
+      symbol: SimpleLineSymbol(color: Colors.blue, width: 3),
     );
 
     // Add the route graphics to the overlay.
@@ -344,11 +341,12 @@ class _NavigateRouteState extends State<NavigateRoute> with SampleStateSupport {
 
   Future<void> _createAndConfigureRouteTracker() async {
     // Create a route tracker with the route result.
-    _routeTracker = RouteTracker.create(
-      routeResult: _routeResult,
-      routeIndex: 0,
-      skipCoincidentStops: true,
-    )!;
+    _routeTracker =
+        RouteTracker.create(
+          routeResult: _routeResult,
+          routeIndex: 0,
+          skipCoincidentStops: true,
+        )!;
     _routeTracker.voiceGuidanceUnitSystem = UnitSystem.imperial;
 
     // Set the speech engine ready callback.
@@ -422,8 +420,9 @@ class _NavigateRouteState extends State<NavigateRoute> with SampleStateSupport {
   void _updateStatusText(TrackingStatus status) {
     // Updates the status text displayed to the user with the current navigation information.
     final remainingTimeInSeconds = status.routeProgress.remainingTime * 60;
-    final formattedTime =
-        formatDuration(Duration(seconds: remainingTimeInSeconds.toInt()));
+    final formattedTime = formatDuration(
+      Duration(seconds: remainingTimeInSeconds.toInt()),
+    );
     _statusTextNotifier.value = '''
   Distance remaining: ${status.routeProgress.remainingDistance.displayText} ${status.routeProgress.remainingDistance.displayTextUnits.abbreviation}
   Time remaining: $formattedTime
