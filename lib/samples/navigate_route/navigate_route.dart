@@ -52,7 +52,7 @@ class _NavigateRouteState extends State<NavigateRoute> with SampleStateSupport {
 
   // Graphics to show progress along the route.
   late Graphic _routeAheadGraphic;
-  late Graphic _routeTravelledGraphic;
+  late Graphic _routeTraveledGraphic;
 
   // GraphicsOverlay for route graphics
   final _routeGraphicsOverlay = GraphicsOverlay();
@@ -304,13 +304,13 @@ class _NavigateRouteState extends State<NavigateRoute> with SampleStateSupport {
       ),
     );
 
-    _routeTravelledGraphic = Graphic(
+    _routeTraveledGraphic = Graphic(
       symbol: SimpleLineSymbol(color: Colors.blue, width: 3),
     );
 
     // Add the route graphics to the overlay.
     _routeGraphicsOverlay.graphics.add(_routeAheadGraphic);
-    _routeGraphicsOverlay.graphics.add(_routeTravelledGraphic);
+    _routeGraphicsOverlay.graphics.add(_routeTraveledGraphic);
   }
 
   Future<void> toggleRouting() async {
@@ -346,7 +346,7 @@ class _NavigateRouteState extends State<NavigateRoute> with SampleStateSupport {
           routeResult: _routeResult,
           routeIndex: 0,
           skipCoincidentStops: true,
-        )!;
+        );
     _routeTracker.voiceGuidanceUnitSystem = UnitSystem.imperial;
 
     // Set the speech engine ready callback.
@@ -399,7 +399,7 @@ class _NavigateRouteState extends State<NavigateRoute> with SampleStateSupport {
 
   void _updateRouteGraphics(TrackingStatus status) {
     // Update the graphics for the route traveled and ahead.
-    _routeTravelledGraphic.geometry = status.routeProgress.traversedGeometry;
+    _routeTraveledGraphic.geometry = status.routeProgress.traversedGeometry;
     _routeAheadGraphic.geometry = status.routeProgress.remainingGeometry;
   }
 
@@ -450,7 +450,7 @@ class _NavigateRouteState extends State<NavigateRoute> with SampleStateSupport {
 
     // Add the new route graphics to the overlay.
     _routeGraphicsOverlay.graphics.add(_routeAheadGraphic);
-    _routeGraphicsOverlay.graphics.add(_routeTravelledGraphic);
+    _routeGraphicsOverlay.graphics.add(_routeTraveledGraphic);
 
     // Stop any ongoing speech.
     await _flutterTts.stop();
