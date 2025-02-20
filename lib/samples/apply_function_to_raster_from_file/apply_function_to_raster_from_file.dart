@@ -82,6 +82,7 @@ class _ApplyFunctionToRasterFromFileState
         '${appDir.absolute.path}/Shasta_Elevation/Shasta_Elevation.tif',
       ),
     );
+    // Load the raster.
     await shastaElevationRaster.load();
     // Load JSON file from assets.
     final rasterColorJson =
@@ -92,6 +93,7 @@ class _ApplyFunctionToRasterFromFileState
       final arguments = rasterFunction.arguments;
       if(arguments != null) {
         final rasterNames = arguments.rasterNames;
+        // Set the raster function arguments as required by the function used.
         arguments.setRaster(name: rasterNames[0], raster: shastaElevationRaster);
         arguments.setRaster(name: rasterNames[1], raster: shastaElevationRaster);
         // Create a Raster from the raster function.
