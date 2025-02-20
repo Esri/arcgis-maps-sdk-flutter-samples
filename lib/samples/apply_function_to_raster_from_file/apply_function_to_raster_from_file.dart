@@ -86,16 +86,22 @@ class _ApplyFunctionToRasterFromFileState
     await shastaElevationRaster.load();
     // Load JSON file from assets.
     final rasterColorJson =
-    await rootBundle.loadString('assets/color_raster_function.json');
+        await rootBundle.loadString('assets/color_raster_function.json');
     // Create a RasterFunction.
     final rasterFunction = RasterFunction.fromJson(rasterColorJson);
-    if(rasterFunction != null) {
+    if (rasterFunction != null) {
       final arguments = rasterFunction.arguments;
-      if(arguments != null) {
+      if (arguments != null) {
         final rasterNames = arguments.rasterNames;
         // Set the raster function arguments as required by the function used.
-        arguments.setRaster(name: rasterNames[0], raster: shastaElevationRaster);
-        arguments.setRaster(name: rasterNames[1], raster: shastaElevationRaster);
+        arguments.setRaster(
+          name: rasterNames[0],
+          raster: shastaElevationRaster,
+        );
+        arguments.setRaster(
+          name: rasterNames[1],
+          raster: shastaElevationRaster,
+        );
         // Create a Raster from the raster function.
         final raster = Raster.withFunction(rasterFunction);
         // Load the Raster Layer.
