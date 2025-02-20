@@ -42,7 +42,7 @@
             "program": "lib/utils/sample_runner.dart",
             // replace display_map with the directory name of any other sample
             "toolArgs": [
-                "--dart-define=SAMPLE=navigate_route",
+                "--dart-define=SAMPLE=display_map",
                 "--dart-define-from-file=env.json"
             ]
         },

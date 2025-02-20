@@ -8,8 +8,7 @@ environment:
   sdk: '>=3.7.0 <4.0.0'
 
 dependencies:
-  arcgis_maps:
-    path: ../flutter/arcgis_maps
+  arcgis_maps: ^200.6.0
   async: ^2.11.0
   build: ^2.4.1
   build_config: ^1.1.1

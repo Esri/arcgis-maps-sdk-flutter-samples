@@ -30,9 +30,6 @@ void main() {
   } else {
     ArcGISEnvironment.apiKey = apiKey;
   }
-
-  const licenseKey = String.fromEnvironment('STANDARD_LICENSE');
-  ArcGISEnvironment.setLicenseUsingKey(licenseKey);
   // Supply the directory name of a sample via the --dart-define command line argument
   // e.g. --dart-define=SAMPLE=display_map
   const sample = String.fromEnvironment('SAMPLE');
@@ -41,7 +38,6 @@ void main() {
 
   runApp(
     MaterialApp(
-      debugShowCheckedModeBanner: false,
       theme: sampleViewerTheme,
       home: sampleWidgets[sample]!(),
     ),
