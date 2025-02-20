@@ -443,7 +443,6 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
   void updateGuidance(VoiceGuidance voiceGuidance) {
     final nextDirection = voiceGuidance.text;
     if (nextDirection.isEmpty) return;
-    _flutterTts.stop();
     _flutterTts.speak(nextDirection);
   }
 
