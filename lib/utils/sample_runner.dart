@@ -30,6 +30,7 @@ void main() {
   } else {
     ArcGISEnvironment.apiKey = apiKey;
   }
+  
   // Supply the directory name of a sample via the --dart-define command line argument
   // e.g. --dart-define=SAMPLE=display_map
   const sample = String.fromEnvironment('SAMPLE');

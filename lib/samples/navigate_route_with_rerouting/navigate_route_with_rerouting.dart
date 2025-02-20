@@ -300,6 +300,7 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
     setState(() => _ready = true);
   }
 
+  // Initialize the FlutterTts plugin.
   Future<void> initFlutterTts() async {
     // Detect the user's locale.
     final locale = Localizations.localeOf(context).toLanguageTag();
