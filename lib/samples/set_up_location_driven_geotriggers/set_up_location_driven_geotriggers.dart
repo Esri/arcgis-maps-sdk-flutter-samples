@@ -30,7 +30,8 @@ class SetUpLocationDrivenGeotriggers extends StatefulWidget {
 }
 
 class _SetUpLocationDrivenGeotriggersState
-    extends State<SetUpLocationDrivenGeotriggers> with SampleStateSupport {
+    extends State<SetUpLocationDrivenGeotriggers>
+    with SampleStateSupport {
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
   // A flag for when the map view is ready and controls can be used.
@@ -104,29 +105,33 @@ class _SetUpLocationDrivenGeotriggersState
                   children: [
                     // Button to show the details of the current Section.
                     ElevatedButton(
-                      onPressed: _currentSections.isEmpty
-                          ? null
-                          : () => showDialog(
+                      onPressed:
+                          _currentSections.isEmpty
+                              ? null
+                              : () => showDialog(
                                 context: context,
-                                builder: (context) => showFeatureDetails(
-                                  context: context,
-                                  title: 'Section Details:',
-                                  features: [_currentSections.values.last],
-                                ),
+                                builder:
+                                    (context) => showFeatureDetails(
+                                      context: context,
+                                      title: 'Section Details:',
+                                      features: [_currentSections.values.last],
+                                    ),
                               ),
                       child: const Text('Section detail'),
                     ),
                     // Button to show the details of the nearby POIs.
                     ElevatedButton(
-                      onPressed: _currentPois.isEmpty
-                          ? null
-                          : () => showDialog(
+                      onPressed:
+                          _currentPois.isEmpty
+                              ? null
+                              : () => showDialog(
                                 context: context,
-                                builder: (context) => showFeatureDetails(
-                                  context: context,
-                                  title: 'POI Details:',
-                                  features: _currentPois.values.toList(),
-                                ),
+                                builder:
+                                    (context) => showFeatureDetails(
+                                      context: context,
+                                      title: 'POI Details:',
+                                      features: _currentPois.values.toList(),
+                                    ),
                               ),
                       child: const Text('POIs detail'),
                     ),
@@ -226,8 +231,9 @@ class _SetUpLocationDrivenGeotriggersState
 
     // Create the GeotriggerMonitor and listen to the onGeotriggerNotificationEvent stream.
     final monitor = GeotriggerMonitor(geotrigger);
-    final subscription =
-        monitor.onGeotriggerNotificationEvent.listen(handleGeotriggerEvent);
+    final subscription = monitor.onGeotriggerNotificationEvent.listen(
+      handleGeotriggerEvent,
+    );
     _streamSubscriptions.add(subscription);
 
     // Start monitoring the Geotrigger.
@@ -287,11 +293,12 @@ class _SetUpLocationDrivenGeotriggersState
         ),
         Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: _currentPois.isEmpty
-              ? [const Text('No Points of Interest nearby')]
-              : _currentPois.keys.map((featureName) {
-                  return Text(featureName);
-                }).toList(),
+          children:
+              _currentPois.isEmpty
+                  ? [const Text('No Points of Interest nearby')]
+                  : _currentPois.keys.map((featureName) {
+                    return Text(featureName);
+                  }).toList(),
         ),
       ],
     );
@@ -309,14 +316,9 @@ class _SetUpLocationDrivenGeotriggersState
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(
-              title,
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
+            Text(title, style: Theme.of(context).textTheme.headlineMedium),
             const Divider(),
-            Expanded(
-              child: MultiFeatureDetails(features: features),
-            ),
+            Expanded(child: MultiFeatureDetails(features: features)),
             TextButton(
               onPressed: () {
                 Navigator.pop(context);
@@ -531,8 +533,9 @@ class _SetUpLocationDrivenGeotriggersState
       [-119.709883456576, 34.4570040782933],
     ];
 
-    final polylineBuilder =
-        PolylineBuilder(spatialReference: SpatialReference.wgs84);
+    final polylineBuilder = PolylineBuilder(
+      spatialReference: SpatialReference.wgs84,
+    );
     for (final coordinate in polylineCoordinates) {
       polylineBuilder.addPointXY(x: coordinate.first, y: coordinate.last);
     }
@@ -564,11 +567,10 @@ class MultiFeatureDetailsState extends State<MultiFeatureDetails> {
       children: [
         Expanded(
           // Build the details of the selected Feature.
-          child: features.isEmpty
-              ? const Text('No features to display.')
-              : FeatureDetails(
-                  feature: features[_featureIndex],
-                ),
+          child:
+              features.isEmpty
+                  ? const Text('No features to display.')
+                  : FeatureDetails(feature: features[_featureIndex]),
         ),
         if (features.length > 1)
           Row(
@@ -576,18 +578,20 @@ class MultiFeatureDetailsState extends State<MultiFeatureDetails> {
             children: [
               // Go to previous feature.
               ElevatedButton(
-                onPressed: _featureIndex == 0
-                    ? null
-                    : () => setState(() => _featureIndex -= 1),
+                onPressed:
+                    _featureIndex == 0
+                        ? null
+                        : () => setState(() => _featureIndex -= 1),
                 child: const Text('Prev'),
               ),
               // Show current feature of total features.
               Text('${_featureIndex + 1}/${features.length}'),
               // Go to next feature.
               ElevatedButton(
-                onPressed: _featureIndex == features.length - 1
-                    ? null
-                    : () => setState(() => _featureIndex += 1),
+                onPressed:
+                    _featureIndex == features.length - 1
+                        ? null
+                        : () => setState(() => _featureIndex += 1),
                 child: const Text('Next'),
               ),
             ],
@@ -645,9 +649,7 @@ class FeatureDetailsState extends State<FeatureDetails> {
               return SizedBox(
                 height: MediaQuery.of(context).size.height,
                 width: MediaQuery.of(context).size.width * 0.75,
-                child: WebViewWidget(
-                  controller: _webViewController,
-                ),
+                child: WebViewWidget(controller: _webViewController),
               );
             },
           ),
@@ -692,9 +694,7 @@ class FeatureDetailsState extends State<FeatureDetails> {
     List<String> attachmentUrls,
   ) {
     // Add HTML openning.
-    final htmlDescription = StringBuffer(
-      '<html><head>',
-    );
+    final htmlDescription = StringBuffer('<html><head>');
     // Add some style.
     htmlDescription.write(
       '<style>body{font-size:30px;} img{display: block; margin-left: auto; margin-right: auto; width: 90%;}</style>',

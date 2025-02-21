@@ -95,18 +95,16 @@ class _StyleGraphicsWithRendererState extends State<StyleGraphicsWithRenderer>
 
   GraphicsOverlay getLineGraphicsOverlay() {
     // Create a simple line symbol.
-    final lineSymbol = SimpleLineSymbol(
-      color: Colors.blue,
-      width: 5,
-    );
+    final lineSymbol = SimpleLineSymbol(color: Colors.blue, width: 5);
     // Create a graphics overlay for the line.
     final lineGraphicsOverlay = GraphicsOverlay();
     // Create and assign a simple render to the graphics overlay.
     lineGraphicsOverlay.renderer = SimpleRenderer(symbol: lineSymbol);
 
     // Create a line with a polyline geometry.
-    final lineBuilder =
-        PolylineBuilder(spatialReference: SpatialReference.webMercator);
+    final lineBuilder = PolylineBuilder(
+      spatialReference: SpatialReference.webMercator,
+    );
     lineBuilder.addPointXY(x: -1000000, y: 4000000);
     lineBuilder.addPointXY(x: 2000000, y: 5000000);
     final lineGraphic = Graphic(geometry: lineBuilder.toGeometry());
@@ -125,8 +123,9 @@ class _StyleGraphicsWithRendererState extends State<StyleGraphicsWithRenderer>
     squareGraphicsOverlay.renderer = SimpleRenderer(symbol: squareSymbol);
 
     // Create a polygon graphic with `Polygon` geometry.
-    final polygonBuilder =
-        PolygonBuilder(spatialReference: SpatialReference.webMercator);
+    final polygonBuilder = PolygonBuilder(
+      spatialReference: SpatialReference.webMercator,
+    );
     polygonBuilder.addPoint(ArcGISPoint(x: -2000000, y: 2000000));
     polygonBuilder.addPoint(ArcGISPoint(x: 2000000, y: 2000000));
     polygonBuilder.addPoint(ArcGISPoint(x: 2000000, y: -2000000));
@@ -162,8 +161,9 @@ class _StyleGraphicsWithRendererState extends State<StyleGraphicsWithRenderer>
       semiAxis1Length: 200,
       semiAxis2Length: 400,
     );
-    final ellipseGeometry =
-        GeometryEngine.ellipseGeodesic(parameters: parameters);
+    final ellipseGeometry = GeometryEngine.ellipseGeodesic(
+      parameters: parameters,
+    );
     final ellipseGraphic = Graphic(geometry: ellipseGeometry);
 
     // Add the graphic to the overlay.
@@ -214,8 +214,11 @@ class _StyleGraphicsWithRendererState extends State<StyleGraphicsWithRenderer>
     final arcRadius = sideLength * 0.25;
 
     // Bottom left curve.
-    final leftCurveStart =
-        ArcGISPoint(x: center.x, y: minY, spatialReference: spatialReference);
+    final leftCurveStart = ArcGISPoint(
+      x: center.x,
+      y: minY,
+      spatialReference: spatialReference,
+    );
     final leftCurveEnd = ArcGISPoint(
       x: minX,
       y: minY + 0.75 * sideLength,
@@ -226,8 +229,11 @@ class _StyleGraphicsWithRendererState extends State<StyleGraphicsWithRenderer>
       y: minY + 0.25 * sideLength,
       spatialReference: spatialReference,
     );
-    final leftControlPoint2 =
-        ArcGISPoint(x: minX, y: center.y, spatialReference: spatialReference);
+    final leftControlPoint2 = ArcGISPoint(
+      x: minX,
+      y: center.y,
+      spatialReference: spatialReference,
+    );
     final leftCurve = CubicBezierSegment(
       startPoint: leftCurveStart,
       controlPoint1: leftControlPoint1,
@@ -244,12 +250,12 @@ class _StyleGraphicsWithRendererState extends State<StyleGraphicsWithRenderer>
     );
     final leftArc =
         EllipticArcSegment.circularEllipticArcWithCenterRadiusAndAngles(
-      centerPoint: leftArcCenter,
-      radius: arcRadius,
-      startAngle: pi,
-      centralAngle: -pi,
-      spatialReference: spatialReference,
-    );
+          centerPoint: leftArcCenter,
+          radius: arcRadius,
+          startAngle: pi,
+          centralAngle: -pi,
+          spatialReference: spatialReference,
+        );
 
     // Top right arc.
     final rightArcCenter = ArcGISPoint(
@@ -259,12 +265,12 @@ class _StyleGraphicsWithRendererState extends State<StyleGraphicsWithRenderer>
     );
     final rightArc =
         EllipticArcSegment.circularEllipticArcWithCenterRadiusAndAngles(
-      centerPoint: rightArcCenter,
-      radius: arcRadius,
-      startAngle: pi,
-      centralAngle: -pi,
-      spatialReference: spatialReference,
-    );
+          centerPoint: rightArcCenter,
+          radius: arcRadius,
+          startAngle: pi,
+          centralAngle: -pi,
+          spatialReference: spatialReference,
+        );
 
     // Bottom right curve.
     final rightCurveStart = ArcGISPoint(

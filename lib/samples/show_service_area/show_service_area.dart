@@ -189,8 +189,9 @@ class _ShowServiceAreaState extends State<ShowServiceArea>
 
   void onTap(Offset screenPoint) {
     // Capture the tapped point and convert it to a map point.
-    final mapTapPoint =
-        _mapViewController.screenToLocation(screen: screenPoint);
+    final mapTapPoint = _mapViewController.screenToLocation(
+      screen: screenPoint,
+    );
     if (mapTapPoint == null) return;
 
     // Add a facility or barrier to the map depending on the current toggle button selection.
@@ -198,8 +199,10 @@ class _ShowServiceAreaState extends State<ShowServiceArea>
       _facilityGraphicsOverlay.graphics.add(Graphic(geometry: mapTapPoint));
     } else {
       // Create a buffer around the tapped point to create a barrier.
-      final barrierGeometry =
-          GeometryEngine.buffer(geometry: mapTapPoint, distance: 200);
+      final barrierGeometry = GeometryEngine.buffer(
+        geometry: mapTapPoint,
+        distance: 200,
+      );
       _barrierGraphicsOverlay.graphics.add(Graphic(geometry: barrierGeometry));
     }
   }
@@ -213,19 +216,20 @@ class _ShowServiceAreaState extends State<ShowServiceArea>
       _serviceAreaGraphicsOverlay.graphics.clear();
 
       // For each graphic in the facilities graphics overlay, add a facility to the parameters.
-      final facilities = _facilityGraphicsOverlay.graphics
-          .map(
-            (graphic) => ServiceAreaFacility(graphic.geometry! as ArcGISPoint),
-          )
-          .toList();
+      final facilities =
+          _facilityGraphicsOverlay.graphics
+              .map(
+                (graphic) =>
+                    ServiceAreaFacility(graphic.geometry! as ArcGISPoint),
+              )
+              .toList();
       _serviceAreaParameters.setFacilities(facilities);
 
       // For each graphic in the barriers graphics overlay, add a polygon barrier to the parameters.
-      final barriers = _barrierGraphicsOverlay.graphics
-          .map(
-            (graphic) => PolygonBarrier(graphic.geometry! as Polygon),
-          )
-          .toList();
+      final barriers =
+          _barrierGraphicsOverlay.graphics
+              .map((graphic) => PolygonBarrier(graphic.geometry! as Polygon))
+              .toList();
       _serviceAreaParameters.setPolygonBarriers(barriers);
 
       // Solve the service area using the parameters.
@@ -236,8 +240,9 @@ class _ShowServiceAreaState extends State<ShowServiceArea>
       // Display service area polygons for each facility - since the service area parameters have
       // geometryAtOverlap set to dissolve and the impedence cutoff values are the same across facilities,
       // we only need to draw the joined polygons for one of the facilities.
-      final serviceAreaPolygons =
-          serviceAreaResult.getResultPolygons(facilityIndex: 0);
+      final serviceAreaPolygons = serviceAreaResult.getResultPolygons(
+        facilityIndex: 0,
+      );
       for (var i = 0; i < serviceAreaPolygons.length; i++) {
         _serviceAreaGraphicsOverlay.graphics.add(
           Graphic(

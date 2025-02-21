@@ -111,10 +111,7 @@ class _ShowLegendState extends State<ShowLegend> with SampleStateSupport {
           value: layerLegends.first,
           child: Text(
             layer.name,
-            style: const TextStyle(
-              fontSize: 15,
-              fontWeight: FontWeight.bold,
-            ),
+            style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
           ),
         ),
       );
@@ -139,17 +136,12 @@ class _ShowLegendState extends State<ShowLegend> with SampleStateSupport {
               children: [
                 // Add the legend image to the dropdown list if the image exists.
                 if (arcGISImage != null)
-                  Image.memory(
-                    arcGISImage.getEncodedBuffer(),
-                  )
+                  Image.memory(arcGISImage.getEncodedBuffer())
                 else
                   Container(),
                 const SizedBox(width: 8),
                 // Add the legend name to the dropdown list.
-                Text(
-                  legend.name,
-                  style: const TextStyle(fontSize: 12),
-                ),
+                Text(legend.name, style: const TextStyle(fontSize: 12)),
               ],
             ),
           ),

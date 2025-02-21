@@ -66,8 +66,9 @@ class _DisplayAnnotationState extends State<DisplayAnnotation>
     // Add an AnnotationLayer from the river annotation service.
     const riverAnnotationService =
         'https://sampleserver6.arcgisonline.com/arcgis/rest/services/RiversAnnotation/FeatureServer/0';
-    final annotationLayer =
-        AnnotationLayer.withUri(Uri.parse(riverAnnotationService));
+    final annotationLayer = AnnotationLayer.withUri(
+      Uri.parse(riverAnnotationService),
+    );
     map.operationalLayers.add(annotationLayer);
 
     // Set the map to the map view.

@@ -27,7 +27,8 @@ class StylePointWithSimpleMarkerSymbol extends StatefulWidget {
 }
 
 class _StylePointWithSimpleMarkerSymbolState
-    extends State<StylePointWithSimpleMarkerSymbol> with SampleStateSupport {
+    extends State<StylePointWithSimpleMarkerSymbol>
+    with SampleStateSupport {
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
 
@@ -64,10 +65,7 @@ class _StylePointWithSimpleMarkerSymbolState
     _mapViewController.graphicsOverlays.add(graphicsOverlay);
 
     // Create a simple marker symbol with a style, color and size.
-    final simpleMarkerSymbol = SimpleMarkerSymbol(
-      color: Colors.red,
-      size: 10,
-    );
+    final simpleMarkerSymbol = SimpleMarkerSymbol(color: Colors.red, size: 10);
 
     // Create a graphic using the point and simple marker symbol.
     final graphic = Graphic(geometry: point, symbol: simpleMarkerSymbol);

@@ -31,7 +31,8 @@ class DownloadVectorTilesToLocalCache extends StatefulWidget {
 }
 
 class _DownloadVectorTilesToLocalCacheState
-    extends State<DownloadVectorTilesToLocalCache> with SampleStateSupport {
+    extends State<DownloadVectorTilesToLocalCache>
+    with SampleStateSupport {
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
   // A instance of the ExportVectorTilesJob.
@@ -78,16 +79,17 @@ class _DownloadVectorTilesToLocalCacheState
                   ),
                 ),
                 Center(
-                  child: _previewMap
-                      ? ElevatedButton(
-                          onPressed: closePreviewVectorTiles,
-                          child: const Text('Close Preview Vector Tiles'),
-                        )
-                      : ElevatedButton(
-                          onPressed:
-                              _isJobStarted ? null : startDownloadVectorTiles,
-                          child: const Text('Download Vector Tiles'),
-                        ),
+                  child:
+                      _previewMap
+                          ? ElevatedButton(
+                            onPressed: closePreviewVectorTiles,
+                            child: const Text('Close Preview Vector Tiles'),
+                          )
+                          : ElevatedButton(
+                            onPressed:
+                                _isJobStarted ? null : startDownloadVectorTiles,
+                            child: const Text('Download Vector Tiles'),
+                          ),
                 ),
               ],
             ),
@@ -96,9 +98,7 @@ class _DownloadVectorTilesToLocalCacheState
             // Display a progress indicator and a cancel button during the offline map generation.
             Visibility(
               visible: _isJobStarted,
-              child: Center(
-                child: buildProgressIndicator(),
-              ),
+              child: Center(child: buildProgressIndicator()),
             ),
           ],
         ),
@@ -183,47 +183,43 @@ class _DownloadVectorTilesToLocalCacheState
 
     // Create the default export vector tiles parameters,
     // and shrink the area of interest by 10%.
-    final exportVectorTilesParameters =
-        await vectorTilesExportTask.createDefaultExportVectorTilesParameters(
-      areaOfInterest: downloadArea,
-      maxScale: _mapViewController.scale * 0.1,
-    );
+    final exportVectorTilesParameters = await vectorTilesExportTask
+        .createDefaultExportVectorTilesParameters(
+          areaOfInterest: downloadArea,
+          maxScale: _mapViewController.scale * 0.1,
+        );
 
     // Create the export vector tiles job.
-    _exportVectorTilesJob =
-        vectorTilesExportTask.exportVectorTilesWithItemResourceCache(
-      parameters: exportVectorTilesParameters,
-      vectorTileCacheUri: vtpkFile.uri,
-      itemResourceCacheUri: Uri.directory(resourceDirectory),
-    );
+    _exportVectorTilesJob = vectorTilesExportTask
+        .exportVectorTilesWithItemResourceCache(
+          parameters: exportVectorTilesParameters,
+          vectorTileCacheUri: vtpkFile.uri,
+          itemResourceCacheUri: Uri.directory(resourceDirectory),
+        );
 
     // Listen to the job's progress.
-    _exportVectorTilesJob?.onProgressChanged.listen(
-      (progress) {
-        setState(() => _progress = progress * 0.01);
-      },
-    );
+    _exportVectorTilesJob?.onProgressChanged.listen((progress) {
+      setState(() => _progress = progress * 0.01);
+    });
 
-    _exportVectorTilesJob?.onStatusChanged.listen(
-      (status) {
-        if (status == JobStatus.succeeded && mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: const Text('Downloaded vector tiles successfully'),
-              duration: const Duration(seconds: 5),
-              backgroundColor: Theme.of(context).colorScheme.secondary,
-            ),
-          );
-          // Hide the progress indicator after a 5 second delay so that the user can see the job completed.
-          Future.delayed(
-            const Duration(seconds: 5),
-            () => setState(() => _isJobStarted = false),
-          );
-        } else if (status == JobStatus.failed) {
-          setState(() => _isJobStarted = false);
-        }
-      },
-    );
+    _exportVectorTilesJob?.onStatusChanged.listen((status) {
+      if (status == JobStatus.succeeded && mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text('Downloaded vector tiles successfully'),
+            duration: const Duration(seconds: 5),
+            backgroundColor: Theme.of(context).colorScheme.secondary,
+          ),
+        );
+        // Hide the progress indicator after a 5 second delay so that the user can see the job completed.
+        Future.delayed(
+          const Duration(seconds: 5),
+          () => setState(() => _isJobStarted = false),
+        );
+      } else if (status == JobStatus.failed) {
+        setState(() => _isJobStarted = false);
+      }
+    });
 
     try {
       // Start the export vector tiles job.
@@ -251,12 +247,14 @@ class _DownloadVectorTilesToLocalCacheState
 
     // Convert the global screen rect to a rect local to the map view.
     final mapRenderBox = mapContext.findRenderObject() as RenderBox?;
-    final mapLocalScreenRect = outlineGlobalScreenRect
-        .shift(-mapRenderBox!.localToGlobal(Offset.zero));
+    final mapLocalScreenRect = outlineGlobalScreenRect.shift(
+      -mapRenderBox!.localToGlobal(Offset.zero),
+    );
 
     // Convert the local screen rect to map coordinates.
-    final locationTopLeft =
-        _mapViewController.screenToLocation(screen: mapLocalScreenRect.topLeft);
+    final locationTopLeft = _mapViewController.screenToLocation(
+      screen: mapLocalScreenRect.topLeft,
+    );
     final locationBottomRight = _mapViewController.screenToLocation(
       screen: mapLocalScreenRect.bottomRight,
     );
@@ -297,9 +295,7 @@ class _DownloadVectorTilesToLocalCacheState
     );
     // display the vector tile layer as a basemap layer in the map view.
     _mapViewController.arcGISMap = ArcGISMap.withBasemap(
-      Basemap.withBaseLayer(
-        vectorTileLayer,
-      ),
+      Basemap.withBaseLayer(vectorTileLayer),
     );
     // Display the preview map button.
     setState(() => _previewMap = true);
@@ -314,10 +310,7 @@ class _DownloadVectorTilesToLocalCacheState
           child: Container(
             key: _outlineKey,
             decoration: BoxDecoration(
-              border: Border.all(
-                color: Colors.red,
-                width: 2,
-              ),
+              border: Border.all(color: Colors.red, width: 2),
             ),
           ),
         ),
@@ -329,16 +322,14 @@ class _DownloadVectorTilesToLocalCacheState
   Widget buildProgressIndicator() {
     return Container(
       color: Colors.white,
-      constraints:
-          BoxConstraints(maxWidth: MediaQuery.sizeOf(context).width * 0.6),
+      constraints: BoxConstraints(
+        maxWidth: MediaQuery.sizeOf(context).width * 0.6,
+      ),
       padding: const EdgeInsets.all(20),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(
-            'Downloading...',
-            style: Theme.of(context).textTheme.labelLarge,
-          ),
+          Text('Downloading...', style: Theme.of(context).textTheme.labelLarge),
           const SizedBox(height: 20),
           Text(
             '${(_progress * 100).toStringAsFixed(0)}% completed',

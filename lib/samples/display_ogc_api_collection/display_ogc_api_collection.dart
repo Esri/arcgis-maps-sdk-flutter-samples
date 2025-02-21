@@ -72,9 +72,9 @@ class _DisplayOGCAPICollectionState extends State<DisplayOGCAPICollection>
     const collectionId = 'TransportationGroundCrv';
     final ogcFeatureCollectionTable =
         OgcFeatureCollectionTable.withUriAndCollectionId(
-      uri: Uri.parse(serviceUri),
-      collectionId: collectionId,
-    );
+          uri: Uri.parse(serviceUri),
+          collectionId: collectionId,
+        );
     // Set the feature request mode to manual cache.
     // In this mode, you must manually populate the table - panning and zooming won't request features automatically.
     ogcFeatureCollectionTable.featureRequestMode =
@@ -83,14 +83,12 @@ class _DisplayOGCAPICollectionState extends State<DisplayOGCAPICollection>
     await ogcFeatureCollectionTable.load();
 
     // Create a feature layer to visualize the OGC features.
-    final featureLayer =
-        FeatureLayer.withFeatureTable(ogcFeatureCollectionTable);
+    final featureLayer = FeatureLayer.withFeatureTable(
+      ogcFeatureCollectionTable,
+    );
     // Apply a renderer.
     featureLayer.renderer = SimpleRenderer(
-      symbol: SimpleLineSymbol(
-        color: Colors.blue,
-        width: 3,
-      ),
+      symbol: SimpleLineSymbol(color: Colors.blue, width: 3),
     );
     // Add the feature layer to the map's operational layers.
     map.operationalLayers.add(featureLayer);
@@ -104,10 +102,11 @@ class _DisplayOGCAPICollectionState extends State<DisplayOGCAPICollection>
           // Create a query based on the current visible extent.
           // Set a limit of 5000 on the number of returned features per request,
           // because the default on some services could be as low as 10.
-          final queryParameters = QueryParameters()
-            ..geometry = _mapViewController.visibleArea!.extent
-            ..spatialRelationship = SpatialRelationship.intersects
-            ..maxFeatures = 5000;
+          final queryParameters =
+              QueryParameters()
+                ..geometry = _mapViewController.visibleArea!.extent
+                ..spatialRelationship = SpatialRelationship.intersects
+                ..maxFeatures = 5000;
           // Populate the table with the query, leaving existing table entries intact.
           // Setting outFields to empty requests all fields.
           await ogcFeatureCollectionTable.populateFromService(

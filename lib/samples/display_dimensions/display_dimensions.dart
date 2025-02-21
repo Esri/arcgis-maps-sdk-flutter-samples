@@ -115,8 +115,9 @@ class _DisplayDimensionsState extends State<DisplayDimensions>
 
     // Load the local mobile map package.
     final appDir = await getApplicationDocumentsDirectory();
-    final mmpkFile =
-        File('${appDir.absolute.path}/Edinburgh_Pylon_Dimensions.mmpk');
+    final mmpkFile = File(
+      '${appDir.absolute.path}/Edinburgh_Pylon_Dimensions.mmpk',
+    );
     final mmpk = MobileMapPackage.withFileUri(mmpkFile.uri);
     await mmpk.load();
 

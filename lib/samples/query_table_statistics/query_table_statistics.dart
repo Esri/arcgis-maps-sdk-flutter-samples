@@ -125,8 +125,9 @@ class _QueryTableStatisticsState extends State<QueryTableStatistics>
             children: [
               Checkbox(
                 value: _onlyCitiesInCurrentExtent,
-                onChanged: (value) =>
-                    setState(() => _onlyCitiesInCurrentExtent = value!),
+                onChanged:
+                    (value) =>
+                        setState(() => _onlyCitiesInCurrentExtent = value!),
               ),
               const Text('Only cities in current extent'),
             ],
@@ -135,8 +136,9 @@ class _QueryTableStatisticsState extends State<QueryTableStatistics>
             children: [
               Checkbox(
                 value: _onlyCitiesGreaterThan5M,
-                onChanged: (value) =>
-                    setState(() => _onlyCitiesGreaterThan5M = value!),
+                onChanged:
+                    (value) =>
+                        setState(() => _onlyCitiesGreaterThan5M = value!),
               ),
               const Text('Only cities greater than 5M'),
             ],
@@ -151,10 +153,7 @@ class _QueryTableStatisticsState extends State<QueryTableStatistics>
     // Add the statistic definitions for the 'POP' (Population) field.
     for (final type in StatisticType.values) {
       _statisticDefinitions.add(
-        StatisticDefinition(
-          onFieldName: 'POP',
-          statisticType: type,
-        ),
+        StatisticDefinition(onFieldName: 'POP', statisticType: type),
       );
     }
     // Create a map with a topographic basemap.
@@ -173,8 +172,9 @@ class _QueryTableStatisticsState extends State<QueryTableStatistics>
   // Query statistics from the service feature table.
   Future<void> queryStatistics() async {
     // Create a statistics query parameters object.
-    final statisticsQueryParameters =
-        StatisticsQueryParameters(statisticDefinitions: _statisticDefinitions);
+    final statisticsQueryParameters = StatisticsQueryParameters(
+      statisticDefinitions: _statisticDefinitions,
+    );
 
     // Set the geometry and spatial relationship if the flag is true.
     if (_onlyCitiesInCurrentExtent) {
@@ -199,9 +199,10 @@ class _QueryTableStatisticsState extends State<QueryTableStatistics>
         final displayName =
             key.toLowerCase() == 'count_pop' ? 'CITY_COUNT' : key;
         final n = value as num?;
-        final displayValue = key.toLowerCase() == 'count_pop'
-            ? n?.toStringAsFixed(0)
-            : n?.toStringAsFixed(2);
+        final displayValue =
+            key.toLowerCase() == 'count_pop'
+                ? n?.toStringAsFixed(0)
+                : n?.toStringAsFixed(2);
         statistics.add('[$displayName]  $displayValue');
       });
     }

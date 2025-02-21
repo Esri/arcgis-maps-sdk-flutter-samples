@@ -24,8 +24,9 @@ class _ShowPortalUserInfoState extends State<ShowPortalUserInfo>
     redirectUri: Uri.parse('my-ags-flutter-app://auth'),
   );
   // Create a Portal that requires authentication.
-  final _portal =
-      Portal.arcGISOnline(connection: PortalConnection.authenticated);
+  final _portal = Portal.arcGISOnline(
+    connection: PortalConnection.authenticated,
+  );
   // Create a Future that tracks the loading of the portal.
   Future<void>? _portalLoadFuture;
   // Create variables to store the user and organization thumbnails.
@@ -41,7 +42,8 @@ class _ShowPortalUserInfoState extends State<ShowPortalUserInfo>
     // which allows it to handle authentication challenges via calls to its
     // handleArcGISAuthenticationChallenge() method.
     ArcGISEnvironment
-        .authenticationManager.arcGISAuthenticationChallengeHandler = this;
+        .authenticationManager
+        .arcGISAuthenticationChallengeHandler = this;
 
     // Load the portal (which will trigger an authentication challenge), and then load the thumbnails.
     _portalLoadFuture = _portal.load().then((_) => loadThumbnails());
@@ -52,22 +54,26 @@ class _ShowPortalUserInfoState extends State<ShowPortalUserInfo>
     // We do not want to handle authentication challenges outside of this sample,
     // so we remove this as the challenge handler.
     ArcGISEnvironment
-        .authenticationManager.arcGISAuthenticationChallengeHandler = null;
+        .authenticationManager
+        .arcGISAuthenticationChallengeHandler = null;
 
     // Revoke OAuth tokens and remove all credentials to log out.
     Future.wait(
-      ArcGISEnvironment.authenticationManager.arcGISCredentialStore
-          .getCredentials()
-          .whereType<OAuthUserCredential>()
-          .map((credential) => credential.revokeToken()),
-    ).catchError((error) {
-      // This sample has been disposed, so we can only report errors to the console.
-      // ignore: avoid_print
-      print('Error revoking tokens: $error');
-      return [];
-    }).whenComplete(() {
-      ArcGISEnvironment.authenticationManager.arcGISCredentialStore.removeAll();
-    });
+          ArcGISEnvironment.authenticationManager.arcGISCredentialStore
+              .getCredentials()
+              .whereType<OAuthUserCredential>()
+              .map((credential) => credential.revokeToken()),
+        )
+        .catchError((error) {
+          // This sample has been disposed, so we can only report errors to the console.
+          // ignore: avoid_print
+          print('Error revoking tokens: $error');
+          return [];
+        })
+        .whenComplete(() {
+          ArcGISEnvironment.authenticationManager.arcGISCredentialStore
+              .removeAll();
+        });
 
     super.dispose();
   }

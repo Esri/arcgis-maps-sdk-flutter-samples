@@ -40,7 +40,8 @@ class _AuthenticateWithTokenState extends State<AuthenticateWithToken>
     // which allows it to handle authentication challenges via calls to its
     // handleArcGISAuthenticationChallenge() method.
     ArcGISEnvironment
-        .authenticationManager.arcGISAuthenticationChallengeHandler = this;
+        .authenticationManager
+        .arcGISAuthenticationChallengeHandler = this;
   }
 
   @override
@@ -48,7 +49,8 @@ class _AuthenticateWithTokenState extends State<AuthenticateWithToken>
     // We do not want to handle authentication challenges outside of this sample,
     // so we remove this as the challenge handler.
     ArcGISEnvironment
-        .authenticationManager.arcGISAuthenticationChallengeHandler = null;
+        .authenticationManager
+        .arcGISAuthenticationChallengeHandler = null;
 
     // Log out by removing all credentials.
     ArcGISEnvironment.authenticationManager.arcGISCredentialStore.removeAll();
@@ -93,10 +95,7 @@ class _AuthenticateWithTokenState extends State<AuthenticateWithToken>
 
 // A widget that handles an authentication challenge by prompting the user to log in.
 class LoginWidget extends StatefulWidget {
-  const LoginWidget({
-    required this.challenge,
-    super.key,
-  });
+  const LoginWidget({required this.challenge, super.key});
   final ArcGISAuthenticationChallenge challenge;
 
   @override
@@ -160,10 +159,7 @@ class _LoginWidgetState extends State<LoginWidget> {
                     child: const Text('Cancel'),
                   ),
                   const Spacer(),
-                  ElevatedButton(
-                    onPressed: login,
-                    child: const Text('Login'),
-                  ),
+                  ElevatedButton(onPressed: login, child: const Text('Login')),
                 ],
               ),
               // Display an error message if there is one.

@@ -29,10 +29,5 @@ void main() {
     ArcGISEnvironment.apiKey = apiKey;
   }
 
-  runApp(
-    MaterialApp(
-      theme: sampleViewerTheme,
-      home: const SampleWidget(),
-    ),
-  );
+  runApp(MaterialApp(theme: sampleViewerTheme, home: const SampleWidget()));
 }

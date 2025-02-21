@@ -106,13 +106,9 @@ class _IdentifyRasterCellState extends State<IdentifyRasterCell>
           text: stringBuffer.toString(),
           horizontalAlignment: HorizontalAlignment.left,
         );
-        textSymbol.backgroundColor = Colors.black.withValues(
-          alpha: 0.8,
-        );
+        textSymbol.backgroundColor = Colors.black.withValues(alpha: 0.8);
         _textGraphic.geometry = cell.geometry;
-        _textGraphicsOverlay.renderer = SimpleRenderer(
-          symbol: textSymbol,
-        );
+        _textGraphicsOverlay.renderer = SimpleRenderer(symbol: textSymbol);
       }
     } else {
       _textGraphicsOverlay.renderer = null;

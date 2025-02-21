@@ -130,10 +130,12 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
     setState(() => _selectedTool = _vertexTool);
     _geometryEditor.tool = _vertexTool;
     // Listen to changes in canUndo and canRedo in order to enable/disable the UI.
-    _geometryEditor.onCanUndoChanged
-        .listen((canUndo) => setState(() => _geometryEditorCanUndo = canUndo));
-    _geometryEditor.onCanRedoChanged
-        .listen((canRedo) => setState(() => _geometryEditorCanRedo = canRedo));
+    _geometryEditor.onCanUndoChanged.listen(
+      (canUndo) => setState(() => _geometryEditorCanUndo = canUndo),
+    );
+    _geometryEditor.onCanRedoChanged.listen(
+      (canRedo) => setState(() => _geometryEditorCanRedo = canRedo),
+    );
     // Listen to changes in isStarted in order to enable/disable the UI.
     _geometryEditor.onIsStartedChanged.listen(
       (isStarted) => setState(() => _geometryEditorIsStarted = isStarted),
@@ -234,10 +236,11 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
   void toggleScale() {
     // Toggle the selected scale mode and then update each tool with the new value.
     setState(
-      () => _selectedScaleMode =
-          _selectedScaleMode == GeometryEditorScaleMode.uniform
-              ? GeometryEditorScaleMode.stretch
-              : GeometryEditorScaleMode.uniform,
+      () =>
+          _selectedScaleMode =
+              _selectedScaleMode == GeometryEditorScaleMode.uniform
+                  ? GeometryEditorScaleMode.stretch
+                  : GeometryEditorScaleMode.uniform,
     );
     _vertexTool.configuration.scaleMode = _selectedScaleMode;
     _freehandTool.configuration.scaleMode = _selectedScaleMode;
@@ -260,12 +263,13 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
           value: type,
           child: Text(
             type.name.capitalize(),
-            style: isVertexTool
-                ? null
-                : const TextStyle(
-                    color: Colors.grey,
-                    fontStyle: FontStyle.italic,
-                  ),
+            style:
+                isVertexTool
+                    ? null
+                    : const TextStyle(
+                      color: Colors.grey,
+                      fontStyle: FontStyle.italic,
+                    ),
           ),
         );
       } else {
@@ -294,7 +298,7 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
     // We also enable selection of freehand/shape tools when a geometry type has not yet been selected.
     final isNotPointOrMultipoint =
         _selectedGeometryType != GeometryType.point &&
-            _selectedGeometryType != GeometryType.multipoint;
+        _selectedGeometryType != GeometryType.multipoint;
 
     return tools.keys.map((tool) {
       if (tool == _vertexTool || tool == _reticleVertexTool) {
@@ -308,12 +312,13 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
           value: tool,
           child: Text(
             tools[tool] ?? 'Unknown Tool',
-            style: isNotPointOrMultipoint
-                ? null
-                : const TextStyle(
-                    color: Colors.grey,
-                    fontStyle: FontStyle.italic,
-                  ),
+            style:
+                isNotPointOrMultipoint
+                    ? null
+                    : const TextStyle(
+                      color: Colors.grey,
+                      fontStyle: FontStyle.italic,
+                    ),
           ),
         );
       }
@@ -338,21 +343,19 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
           value: _selectedGeometryType,
           items: configureGeometryTypeMenuItems(),
           // If the geometry editor is already started then we fully disable the DropDownButton and prevent editing with another geometry type.
-          onChanged: !_geometryEditorIsStarted
-              ? (GeometryType? geometryType) {
-                  if (geometryType != null) {
-                    startEditingWithGeometryType(geometryType);
+          onChanged:
+              !_geometryEditorIsStarted
+                  ? (GeometryType? geometryType) {
+                    if (geometryType != null) {
+                      startEditingWithGeometryType(geometryType);
+                    }
                   }
-                }
-              : null,
+                  : null,
         ),
         // A drop down button for selecting a tool.
         DropdownButton(
           alignment: Alignment.center,
-          hint: Text(
-            'Tool',
-            style: Theme.of(context).textTheme.labelMedium,
-          ),
+          hint: Text('Tool', style: Theme.of(context).textTheme.labelMedium),
           iconEnabledColor: Theme.of(context).colorScheme.primary,
           style: Theme.of(context).textTheme.labelMedium,
           value: _selectedTool,
@@ -425,12 +428,13 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
                   Tooltip(
                     message: 'Delete selected element',
                     child: ElevatedButton(
-                      onPressed: _geometryEditorIsStarted &&
-                              _geometryEditorHasSelectedElement &&
-                              _geometryEditor.selectedElement != null &&
-                              _geometryEditor.selectedElement!.canDelete
-                          ? _geometryEditor.deleteSelectedElement
-                          : null,
+                      onPressed:
+                          _geometryEditorIsStarted &&
+                                  _geometryEditorHasSelectedElement &&
+                                  _geometryEditor.selectedElement != null &&
+                                  _geometryEditor.selectedElement!.canDelete
+                              ? _geometryEditor.deleteSelectedElement
+                              : null,
                       child: const Icon(Icons.clear),
                     ),
                   ),
@@ -452,9 +456,10 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
                   Tooltip(
                     message: 'Delete all graphics',
                     child: ElevatedButton(
-                      onPressed: !_geometryEditorIsStarted
-                          ? () => _graphicsOverlay.graphics.clear()
-                          : null,
+                      onPressed:
+                          !_geometryEditorIsStarted
+                              ? () => _graphicsOverlay.graphics.clear()
+                              : null,
                       child: const Icon(Icons.delete_forever),
                     ),
                   ),
@@ -463,10 +468,11 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
               // A button to toggle the scale mode setting of the geometry editor tools.
               ElevatedButton(
                 // Scale mode is not compatible with point geometry types or the reticle vertex tool.
-                onPressed: _selectedGeometryType == GeometryType.point ||
-                        _selectedTool == _reticleVertexTool
-                    ? null
-                    : toggleScale,
+                onPressed:
+                    _selectedGeometryType == GeometryType.point ||
+                            _selectedTool == _reticleVertexTool
+                        ? null
+                        : toggleScale,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -494,14 +500,8 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
       color: Colors.red,
       size: 10,
     );
-    _multipointSymbol = SimpleMarkerSymbol(
-      color: Colors.yellow,
-      size: 5,
-    );
-    _polylineSymbol = SimpleLineSymbol(
-      color: Colors.blue,
-      width: 2,
-    );
+    _multipointSymbol = SimpleMarkerSymbol(color: Colors.yellow, size: 5);
+    _polylineSymbol = SimpleLineSymbol(color: Colors.blue, width: 2);
     final outlineSymbol = SimpleLineSymbol(
       style: SimpleLineSymbolStyle.dash,
       color: Colors.black,

@@ -10,10 +10,7 @@ class SampleDetailPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: FittedBox(
-          fit: BoxFit.scaleDown,
-          child: Text(sample.title),
-        ),
+        title: FittedBox(fit: BoxFit.scaleDown, child: Text(sample.title)),
       ),
       body: sample.getSampleWidget(),
     );

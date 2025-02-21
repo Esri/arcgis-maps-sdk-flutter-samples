@@ -32,9 +32,7 @@ class CategoryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       elevation: 4,
       child: ClipRRect(
         borderRadius: BorderRadius.circular(16),
@@ -64,10 +62,7 @@ class CategoryCard extends StatelessWidget {
 }
 
 class CategoryIconBackground extends StatelessWidget {
-  const CategoryIconBackground({
-    required this.category,
-    super.key,
-  });
+  const CategoryIconBackground({required this.category, super.key});
   final SampleCategory category;
 
   @override
@@ -78,20 +73,13 @@ class CategoryIconBackground extends StatelessWidget {
         color: Colors.black.withValues(alpha: 0.8),
         shape: BoxShape.circle,
       ),
-      child: Icon(
-        category.icon,
-        size: 30,
-        color: Colors.white,
-      ),
+      child: Icon(category.icon, size: 30, color: Colors.white),
     );
   }
 }
 
 class CategoryBackground extends StatelessWidget {
-  const CategoryBackground({
-    required this.category,
-    super.key,
-  });
+  const CategoryBackground({required this.category, super.key});
   final SampleCategory category;
 
   @override
@@ -104,9 +92,7 @@ class CategoryBackground extends StatelessWidget {
           width: double.infinity,
           height: double.infinity,
         ),
-        Container(
-          color: Colors.black.withValues(alpha: 0.6),
-        ),
+        Container(color: Colors.black.withValues(alpha: 0.6)),
       ],
     );
   }

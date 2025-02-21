@@ -27,7 +27,8 @@ class FindAddressWithReverseGeocode extends StatefulWidget {
 }
 
 class _FindAddressWithReverseGeocodeState
-    extends State<FindAddressWithReverseGeocode> with SampleStateSupport {
+    extends State<FindAddressWithReverseGeocode>
+    with SampleStateSupport {
   final _graphicsOverlay = GraphicsOverlay();
   final _worldLocatorTask = LocatorTask.withUri(
     Uri.parse(
@@ -75,9 +76,10 @@ class _FindAddressWithReverseGeocodeState
 
     // Create a picture marker symbol using an image asset.
     final image = await ArcGISImage.fromAsset('assets/pin_circle_red.png');
-    final pictureMarkerSymbol = PictureMarkerSymbol.withImage(image)
-      ..width = 35
-      ..height = 35;
+    final pictureMarkerSymbol =
+        PictureMarkerSymbol.withImage(image)
+          ..width = 35
+          ..height = 35;
     pictureMarkerSymbol.offsetY = pictureMarkerSymbol.height / 2;
 
     // Create a renderer using the picture marker symbol and set to the graphics overlay.
@@ -95,13 +97,15 @@ class _FindAddressWithReverseGeocodeState
     if (_graphicsOverlay.graphics.isNotEmpty) _graphicsOverlay.graphics.clear();
 
     // Convert the screen point to a map point.
-    final mapTapPoint =
-        _mapViewController.screenToLocation(screen: localPosition);
+    final mapTapPoint = _mapViewController.screenToLocation(
+      screen: localPosition,
+    );
     if (mapTapPoint == null) return;
 
     // Normalize the point incase the tapped location crosses the international date line.
-    final normalizedTapPoint =
-        GeometryEngine.normalizeCentralMeridian(mapTapPoint);
+    final normalizedTapPoint = GeometryEngine.normalizeCentralMeridian(
+      mapTapPoint,
+    );
     if (normalizedTapPoint == null) return;
 
     // Create a graphic object for the tapped point.
@@ -123,8 +127,9 @@ class _FindAddressWithReverseGeocodeState
     final addressString = firstResult.attributes['Address'] as String? ?? '';
     final stateString = firstResult.attributes['RegionAbbr'] as String? ?? '';
     final resultStrings = [addressString, cityString, stateString];
-    final combinedString =
-        resultStrings.where((str) => str.isNotEmpty).join(', ');
+    final combinedString = resultStrings
+        .where((str) => str.isNotEmpty)
+        .join(', ');
 
     showMessageDialog(combinedString);
   }

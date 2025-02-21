@@ -37,10 +37,7 @@ class _ApplyStyleToWmsLayerState extends State<ApplyStyleToWmsLayer>
   late WmsLayer _wmsLayer;
 
   // String array to store the styles.
-  final _stylesTitles = [
-    'Default',
-    'Contrast stretch',
-  ];
+  final _stylesTitles = ['Default', 'Contrast stretch'];
 
   // Create variable for holding sublayer style.
   String? _selectedStyle;
@@ -89,12 +86,10 @@ class _ApplyStyleToWmsLayerState extends State<ApplyStyleToWmsLayer>
         iconDisabledColor: Theme.of(context).disabledColor,
         style: Theme.of(context).textTheme.labelMedium,
         value: _selectedStyle,
-        items: _stylesTitles.map((items) {
-          return DropdownMenuItem(
-            value: items,
-            child: Text(items),
-          );
-        }).toList(),
+        items:
+            _stylesTitles.map((items) {
+              return DropdownMenuItem(value: items, child: Text(items));
+            }).toList(),
         onChanged: (style) {
           if (style != null) {
             changeStyle(style);

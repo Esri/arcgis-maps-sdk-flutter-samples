@@ -200,10 +200,11 @@ void printFailedChecks() {
 
 int runMdlStyleChecker(String dirPath) {
   print('**** Running mdl (markdown linter) style checker ****');
-  final result = Process.runSync(
-    'mdl',
-    ['--style', './tool/readme_scripts/style.rb', '$dirPath/README.md'],
-  );
+  final result = Process.runSync('mdl', [
+    '--style',
+    './tool/readme_scripts/style.rb',
+    '$dirPath/README.md',
+  ]);
 
   printScriptOutput('mdl style check', result);
 
@@ -212,45 +213,41 @@ int runMdlStyleChecker(String dirPath) {
 
 int runReadmeCheck(String dirPath) {
   print('**** README checker ****');
-  final result = Process.runSync(
-    'python3',
-    ['./tool/readme_scripts/readme_checker.py', '-s', dirPath],
-  );
+  final result = Process.runSync('python3', [
+    './tool/readme_scripts/readme_checker.py',
+    '-s',
+    dirPath,
+  ]);
   printScriptOutput('README checker', result);
   return result.exitCode;
 }
 
 int createMetadataFromReadme(String dirPath, String category) {
   print('**** Creating README.metadata.json from README.md ****');
-  final result = Process.runSync(
-    'python3',
-    [
-      './tool/readme_scripts/create_metadata_from_README.py',
-      '-s',
-      dirPath,
-      '-c',
-      category,
-    ],
-  );
+  final result = Process.runSync('python3', [
+    './tool/readme_scripts/create_metadata_from_README.py',
+    '-s',
+    dirPath,
+    '-c',
+    category,
+  ]);
   printScriptOutput('create readme from metadata script', result);
   return result.exitCode;
 }
 
 int runMetadataCheck(String dirPath) {
   print('**** Metadata checker ****');
-  final result = Process.runSync(
-    'python3',
-    ['./tool/readme_scripts/metadata_checker.py', '-s', dirPath],
-  );
+  final result = Process.runSync('python3', [
+    './tool/readme_scripts/metadata_checker.py',
+    '-s',
+    dirPath,
+  ]);
   printScriptOutput('Metadata checker', result);
   return result.exitCode;
 }
 
 class FailedCheck {
-  FailedCheck({
-    required this.name,
-    required this.result,
-  });
+  FailedCheck({required this.name, required this.result});
   String name;
   ProcessResult? result;
 }

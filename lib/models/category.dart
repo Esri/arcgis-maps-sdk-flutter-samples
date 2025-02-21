@@ -17,11 +17,7 @@
 import 'package:flutter/material.dart';
 
 enum SampleCategory {
-  all(
-    'All',
-    Icons.apps,
-    'assets/category_images/all_background.webp',
-  ),
+  all('All', Icons.apps, 'assets/category_images/all_background.webp'),
   analysis(
     'Analysis',
     Icons.analytics,
@@ -61,8 +57,7 @@ enum SampleCategory {
     'Visualization',
     Icons.visibility,
     'assets/category_images/visualization_background.webp',
-  ),
-  ;
+  );
 
   const SampleCategory(this.title, this.icon, this.backgroundImage);
   final String title;

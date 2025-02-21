@@ -29,7 +29,8 @@ class DensifyAndGeneralizeGeometry extends StatefulWidget {
 }
 
 class _DensifyAndGeneralizeGeometryState
-    extends State<DensifyAndGeneralizeGeometry> with SampleStateSupport {
+    extends State<DensifyAndGeneralizeGeometry>
+    with SampleStateSupport {
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
   // Declare a polyline geometry representing the ship's route.
@@ -150,12 +151,13 @@ class _DensifyAndGeneralizeGeometryState
                   value: _maxDeviation,
                   min: 1,
                   max: 250,
-                  onChanged: _generalize
-                      ? (value) {
-                          setState(() => _maxDeviation = value);
-                          updateGraphics();
-                        }
-                      : null,
+                  onChanged:
+                      _generalize
+                          ? (value) {
+                            setState(() => _maxDeviation = value);
+                            updateGraphics();
+                          }
+                          : null,
                 ),
               ),
             ],
@@ -191,21 +193,19 @@ class _DensifyAndGeneralizeGeometryState
                   value: _maxSegmentLength,
                   min: 50,
                   max: 500,
-                  onChanged: _densify
-                      ? (value) {
-                          setState(() => _maxSegmentLength = value);
-                          updateGraphics();
-                        }
-                      : null,
+                  onChanged:
+                      _densify
+                          ? (value) {
+                            setState(() => _maxSegmentLength = value);
+                            updateGraphics();
+                          }
+                          : null,
                 ),
               ),
             ],
           ),
           const Divider(),
-          ElevatedButton(
-            onPressed: reset,
-            child: const Text('Reset'),
-          ),
+          ElevatedButton(onPressed: reset, child: const Text('Reset')),
         ],
       ),
     );
@@ -239,10 +239,7 @@ class _DensifyAndGeneralizeGeometryState
     final multipoint = multipointFromPolyline(_originalPolyline);
     final originalPointGraphic = Graphic(
       geometry: multipoint,
-      symbol: SimpleMarkerSymbol(
-        color: Colors.red,
-        size: 7,
-      ),
+      symbol: SimpleMarkerSymbol(color: Colors.red, size: 7),
     );
     final originalPolylineGraphic = Graphic(
       geometry: _originalPolyline,
@@ -255,28 +252,21 @@ class _DensifyAndGeneralizeGeometryState
 
     // Create graphics for displaying the resultant points and lines.
     _resultPointsGraphic = Graphic(
-      symbol: SimpleMarkerSymbol(
-        color: Colors.purple,
-        size: 7,
-      ),
+      symbol: SimpleMarkerSymbol(color: Colors.purple, size: 7),
     );
     _resultPolylineGraphic = Graphic(
-      symbol: SimpleLineSymbol(
-        color: Colors.purple,
-        width: 3,
-      ),
+      symbol: SimpleLineSymbol(color: Colors.purple, width: 3),
     );
 
     // Add the graphics to a graphics overlay, and add the overlay to the map view.
-    final graphicsOverlay = GraphicsOverlay()
-      ..graphics.addAll(
-        [
-          originalPointGraphic,
-          originalPolylineGraphic,
-          _resultPointsGraphic,
-          _resultPolylineGraphic,
-        ],
-      );
+    final graphicsOverlay =
+        GraphicsOverlay()
+          ..graphics.addAll([
+            originalPointGraphic,
+            originalPolylineGraphic,
+            _resultPointsGraphic,
+            _resultPolylineGraphic,
+          ]);
     _mapViewController.graphicsOverlays.add(graphicsOverlay);
 
     // Create a map with a basemap style and an initial viewpoint to show the extent of the polyline.
@@ -305,19 +295,23 @@ class _DensifyAndGeneralizeGeometryState
 
     // Generalize the polyline with the specified max deviation.
     if (_generalize) {
-      resultPolyline = GeometryEngine.generalize(
-        geometry: resultPolyline,
-        maxDeviation: _maxDeviation,
-        removeDegenerateParts: true,
-      ) as Polyline;
+      resultPolyline =
+          GeometryEngine.generalize(
+                geometry: resultPolyline,
+                maxDeviation: _maxDeviation,
+                removeDegenerateParts: true,
+              )
+              as Polyline;
     }
 
     // Densify the points of the polyline with the specified max segment length.
     if (_densify) {
-      resultPolyline = GeometryEngine.densify(
-        geometry: resultPolyline,
-        maxSegmentLength: _maxSegmentLength,
-      ) as Polyline;
+      resultPolyline =
+          GeometryEngine.densify(
+                geometry: resultPolyline,
+                maxSegmentLength: _maxSegmentLength,
+              )
+              as Polyline;
     }
 
     // Update the result graphics with the calculated geometries.
@@ -339,8 +333,9 @@ class _DensifyAndGeneralizeGeometryState
   // Creates a Multipoint geometry composed of all the points of a polyline.
   Multipoint multipointFromPolyline(Polyline polyline) {
     // Create a MutablePointCollection and add all the points of the polyline.
-    final mutablePointCollection =
-        MutablePointCollection(spatialReference: polyline.spatialReference);
+    final mutablePointCollection = MutablePointCollection(
+      spatialReference: polyline.spatialReference,
+    );
     for (final part in polyline.parts) {
       for (final point in part.getPoints()) {
         mutablePointCollection.addPoint(point);

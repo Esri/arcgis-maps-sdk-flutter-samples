@@ -81,10 +81,7 @@ class _FilterByDefinitionExpressionOrDisplayFilterState
                   ),
                 ),
                 // Add a button to reset the definition expression and display filter.
-                ElevatedButton(
-                  onPressed: reset,
-                  child: const Text('Reset'),
-                ),
+                ElevatedButton(onPressed: reset, child: const Text('Reset')),
               ],
             ),
           ],
@@ -129,9 +126,9 @@ class _FilterByDefinitionExpressionOrDisplayFilterState
     // Create a manual display filter definition.
     final manualDisplayFilterDefinition =
         ManualDisplayFilterDefinition.withFilters(
-      activeFilter: displayFilter,
-      availableFilters: [displayFilter],
-    );
+          activeFilter: displayFilter,
+          availableFilters: [displayFilter],
+        );
     _displayFilterDefinition = manualDisplayFilterDefinition;
     // Count the number of features.
     await calculateFeatureCount();
@@ -149,18 +146,20 @@ class _FilterByDefinitionExpressionOrDisplayFilterState
     _featureLayer.displayFilterDefinition = _displayFilterDefinition;
     _featureLayer.definitionExpression = _definitionExpression;
     // Get the current extent of the map view.
-    final extent = _mapViewController
-        .getCurrentViewpoint(ViewpointType.boundingGeometry)
-        ?.targetGeometry
-        .extent;
+    final extent =
+        _mapViewController
+            .getCurrentViewpoint(ViewpointType.boundingGeometry)
+            ?.targetGeometry
+            .extent;
 
     // Create query parameters.
     final queryParameters = QueryParameters();
     queryParameters.geometry = extent;
 
     // Query the feature count.
-    final featureCount =
-        await _featureLayer.featureTable!.queryFeatureCount(queryParameters);
+    final featureCount = await _featureLayer.featureTable!.queryFeatureCount(
+      queryParameters,
+    );
 
     // Show the feature count in an alert dialog.
     showMessageDialog('$featureCount features', title: 'Current Feature Count');

@@ -75,9 +75,10 @@ class _ShowDeviceLocationState extends State<ShowDeviceLocation>
                 ),
                 Center(
                   child: ElevatedButton(
-                    onPressed: _status == LocationDataSourceStatus.failedToStart
-                        ? null
-                        : () => setState(() => _settingsVisible = true),
+                    onPressed:
+                        _status == LocationDataSourceStatus.failedToStart
+                            ? null
+                            : () => setState(() => _settingsVisible = true),
                     child: const Text('Location Settings'),
                   ),
                 ),
@@ -177,8 +178,9 @@ class _ShowDeviceLocationState extends State<ShowDeviceLocation>
 
   Future<void> onMapViewReady() async {
     // Create a map with the Navigation Night basemap style.
-    _mapViewController.arcGISMap =
-        ArcGISMap.withBasemapStyle(BasemapStyle.arcGISNavigationNight);
+    _mapViewController.arcGISMap = ArcGISMap.withBasemapStyle(
+      BasemapStyle.arcGISNavigationNight,
+    );
 
     // Set the initial system location data source and auto-pan mode.
     _mapViewController.locationDisplay.dataSource = _locationDataSource;
@@ -190,10 +192,12 @@ class _ShowDeviceLocationState extends State<ShowDeviceLocation>
       setState(() => _status = status);
     });
     setState(() => _status = _locationDataSource.status);
-    _autoPanModeSubscription =
-        _mapViewController.locationDisplay.onAutoPanModeChanged.listen((mode) {
-      setState(() => _autoPanMode = mode);
-    });
+    _autoPanModeSubscription = _mapViewController
+        .locationDisplay
+        .onAutoPanModeChanged
+        .listen((mode) {
+          setState(() => _autoPanMode = mode);
+        });
     setState(
       () => _autoPanMode = _mapViewController.locationDisplay.autoPanMode,
     );

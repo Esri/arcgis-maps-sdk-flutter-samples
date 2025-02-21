@@ -45,13 +45,11 @@ class _SampleViewerPageState extends State<SampleViewerPage> {
   void initState() {
     super.initState();
     loadSamples();
-    _searchFocusNode.addListener(
-      () {
-        if (_searchFocusNode.hasFocus != _searchHasFocus) {
-          setState(() => _searchHasFocus = _searchFocusNode.hasFocus);
-        }
-      },
-    );
+    _searchFocusNode.addListener(() {
+      if (_searchFocusNode.hasFocus != _searchHasFocus) {
+        setState(() => _searchHasFocus = _searchFocusNode.hasFocus);
+      }
+    });
   }
 
   @override
@@ -84,9 +82,7 @@ class _SampleViewerPageState extends State<SampleViewerPage> {
                 decoration: InputDecoration(
                   hintText: 'Search...',
                   suffixIcon: IconButton(
-                    icon: Icon(
-                      _searchHasFocus ? Icons.cancel : Icons.search,
-                    ),
+                    icon: Icon(_searchHasFocus ? Icons.cancel : Icons.search),
                     onPressed: onSearchSuffixPressed,
                   ),
                 ),
@@ -96,15 +92,13 @@ class _SampleViewerPageState extends State<SampleViewerPage> {
           if (_ready)
             Expanded(
               child: Listener(
-                onPointerDown: (_) =>
-                    FocusManager.instance.primaryFocus?.unfocus(),
+                onPointerDown:
+                    (_) => FocusManager.instance.primaryFocus?.unfocus(),
                 child: SampleListView(samples: _filteredSamples),
               ),
             )
           else
-            const Center(
-              child: Text('Loading samples...'),
-            ),
+            const Center(child: Text('Loading samples...')),
         ],
       ),
     );
@@ -121,8 +115,9 @@ class _SampleViewerPageState extends State<SampleViewerPage> {
   }
 
   Future<void> loadSamples() async {
-    final jsonString =
-        await rootBundle.loadString('assets/generated_samples_list.json');
+    final jsonString = await rootBundle.loadString(
+      'assets/generated_samples_list.json',
+    );
     final sampleData = jsonDecode(jsonString) as Map<String, dynamic>;
     for (final s in sampleData.entries) {
       _allSamples.add(Sample.fromJson(s.value));
@@ -149,27 +144,27 @@ class _SampleViewerPageState extends State<SampleViewerPage> {
       }
     } else {
       if (widget.category == null || widget.category == SampleCategory.all) {
-        results = _allSamples.where(
-          (sample) {
-            final lowerSearchText = searchText.toLowerCase();
-            return sample.title.toLowerCase().contains(lowerSearchText) ||
-                sample.category.toLowerCase().contains(lowerSearchText) ||
-                sample.keywords.any(
-                  (keyword) => keyword.toLowerCase().contains(lowerSearchText),
-                );
-          },
-        ).toList();
+        results =
+            _allSamples.where((sample) {
+              final lowerSearchText = searchText.toLowerCase();
+              return sample.title.toLowerCase().contains(lowerSearchText) ||
+                  sample.category.toLowerCase().contains(lowerSearchText) ||
+                  sample.keywords.any(
+                    (keyword) =>
+                        keyword.toLowerCase().contains(lowerSearchText),
+                  );
+            }).toList();
         // if the category is not null, the only samples within the category are searched
       } else {
-        results = getSamplesByCategory(widget.category).where(
-          (sample) {
-            final lowerSearchText = searchText.toLowerCase();
-            return sample.title.toLowerCase().contains(lowerSearchText) ||
-                sample.keywords.any(
-                  (keyword) => keyword.toLowerCase().contains(lowerSearchText),
-                );
-          },
-        ).toList();
+        results =
+            getSamplesByCategory(widget.category).where((sample) {
+              final lowerSearchText = searchText.toLowerCase();
+              return sample.title.toLowerCase().contains(lowerSearchText) ||
+                  sample.keywords.any(
+                    (keyword) =>
+                        keyword.toLowerCase().contains(lowerSearchText),
+                  );
+            }).toList();
       }
     }
     setState(() => _filteredSamples = results);

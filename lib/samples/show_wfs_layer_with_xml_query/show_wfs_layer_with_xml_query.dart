@@ -73,13 +73,14 @@ class _ShowWfsLayerWithXmlQueryState extends State<ShowWfsLayerWithXmlQuery>
         'https://dservices2.arcgis.com/ZQgQTuoyBrtmoGdP/arcgis/services/Seattle_Downtown_Features/WFSServer?service=wfs&amp;request=getcapabilities';
 
     // Create the WFS feature table from URI and name.
-    final statesTable = WfsFeatureTable.withUriAndTableName(
-      uri: Uri.parse(wfsFeatureTableUri),
-      tableName: 'Seattle_Downtown_Features:Trees',
-    )
-      // Set the feature request mode and axis order.
-      ..axisOrder = OgcAxisOrder.noSwap
-      ..featureRequestMode = FeatureRequestMode.manualCache;
+    final statesTable =
+        WfsFeatureTable.withUriAndTableName(
+            uri: Uri.parse(wfsFeatureTableUri),
+            tableName: 'Seattle_Downtown_Features:Trees',
+          )
+          // Set the feature request mode and axis order.
+          ..axisOrder = OgcAxisOrder.noSwap
+          ..featureRequestMode = FeatureRequestMode.manualCache;
 
     // Create the feature layer from the feature table.
     final featureLayer = FeatureLayer.withFeatureTable(statesTable);

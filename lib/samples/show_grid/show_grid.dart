@@ -110,9 +110,7 @@ class _ShowGridState extends State<ShowGrid> with SampleStateSupport {
     if (_mapViewController.grid != null) {
       final grid = _mapViewController.grid!;
       for (var i = 0; i < grid.levelCount; i++) {
-        final lineSymbol = SimpleLineSymbol(
-          color: colorType.value,
-        );
+        final lineSymbol = SimpleLineSymbol(color: colorType.value);
         grid.setLineSymbol(level: i, lineSymbol: lineSymbol);
       }
     }
@@ -132,14 +130,15 @@ class _ShowGridState extends State<ShowGrid> with SampleStateSupport {
     if (_mapViewController.grid != null) {
       final grid = _mapViewController.grid!;
       for (var i = 0; i < grid.levelCount; i++) {
-        final textSymbol = TextSymbol(
-          color: colorType.value,
-          size: 14,
-          horizontalAlignment: HorizontalAlignment.left,
-          verticalAlignment: VerticalAlignment.bottom,
-        )
-          ..haloColor = Colors.black
-          ..haloWidth = 5.0;
+        final textSymbol =
+            TextSymbol(
+                color: colorType.value,
+                size: 14,
+                horizontalAlignment: HorizontalAlignment.left,
+                verticalAlignment: VerticalAlignment.bottom,
+              )
+              ..haloColor = Colors.black
+              ..haloWidth = 5.0;
         grid.setTextSymbol(level: i, textSymbol: textSymbol);
       }
     }
@@ -295,15 +294,14 @@ class _GridOptionsState extends State<GridOptions> with SampleStateSupport {
       onChanged: (newValue) {
         onChanged(newValue!);
       },
-      decoration: InputDecoration(
-        labelText: labelText,
-      ),
-      items: items.map((value) {
-        return DropdownMenuItem(
-          value: value,
-          child: Text(value.toString()),
-        );
-      }).toList(),
+      decoration: InputDecoration(labelText: labelText),
+      items:
+          items.map((value) {
+            return DropdownMenuItem(
+              value: value,
+              child: Text(value.toString()),
+            );
+          }).toList(),
     );
   }
 

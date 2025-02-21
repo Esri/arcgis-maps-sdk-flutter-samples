@@ -113,11 +113,7 @@ class _ApplyUniqueValueRendererState extends State<ApplyUniqueValueRenderer>
     // Create a unique value renderer with the unique values.
     return UniqueValueRenderer(
       fieldNames: ['SUB_REGION'],
-      uniqueValues: [
-        pacificValue,
-        mountainValue,
-        westSouthCentralValue,
-      ],
+      uniqueValues: [pacificValue, mountainValue, westSouthCentralValue],
       defaultLabel: 'Other',
       defaultSymbol: defaultFillSymbol,
     );

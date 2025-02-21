@@ -63,9 +63,7 @@ class _DisplayClustersState extends State<DisplayClusters>
                       onPressed: toggleFeatureClustering,
                       child: const Text('Toggle feature clustering'),
                     ),
-                    const SizedBox(
-                      height: 10,
-                    ),
+                    const SizedBox(height: 10),
                     // Display the current feature reduction state.
                     Text(
                       _featureReductionEnabled
@@ -169,14 +167,15 @@ class _DisplayClustersState extends State<DisplayClusters>
                 child: SingleChildScrollView(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: geoElements
-                        .map(
-                          (geoElement) => Text(
-                            geoElement.attributes['name'] ??
-                                'Geoelement: ${geoElements.indexOf(geoElement)}}',
-                          ),
-                        )
-                        .toList(),
+                    children:
+                        geoElements
+                            .map(
+                              (geoElement) => Text(
+                                geoElement.attributes['name'] ??
+                                    'Geoelement: ${geoElements.indexOf(geoElement)}}',
+                              ),
+                            )
+                            .toList(),
                   ),
                 ),
               ),

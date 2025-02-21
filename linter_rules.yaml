@@ -133,7 +133,7 @@ linter:
     provide_deprecation_message: true
     public_member_api_docs: false # documenting all public members would be low-value clutter
     recursive_getters: true
-    require_trailing_commas: true
+    require_trailing_commas: false # this lint is incompatible with the dart formatter in Dart 3.7+
     secure_pubspec_urls: true
     sized_box_for_whitespace: true
     sized_box_shrink_expand: true

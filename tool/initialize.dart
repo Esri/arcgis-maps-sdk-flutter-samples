@@ -22,18 +22,22 @@ import 'dart:io';
 void main(List<String> arguments) async {
   await runDart(['pub', 'upgrade']);
   await runDart(['run', 'arcgis_maps', 'install']);
-  await runDart(
-    ['run', 'build_runner', 'build', '--delete-conflicting-outputs'],
-  );
+  await runDart([
+    'run',
+    'build_runner',
+    'build',
+    '--delete-conflicting-outputs',
+  ]);
   await runDart(['format', 'lib/models/samples_widget_list.dart']);
   print('> Initialization complete.');
 }
 
 Future<void> runDart(List<String> arguments) async {
   final command = 'dart ${arguments.join(' ')}';
-  final executable = Platform.isWindows
-      ? '${Platform.environment['FLUTTER_ROOT']}\\bin\\dart.bat'
-      : '${Platform.environment['FLUTTER_ROOT']}/bin/dart';
+  final executable =
+      Platform.isWindows
+          ? '${Platform.environment['FLUTTER_ROOT']}\\bin\\dart.bat'
+          : '${Platform.environment['FLUTTER_ROOT']}/bin/dart';
   final result = await Process.run(executable, arguments);
   print(result.stdout);
   print(result.stderr);

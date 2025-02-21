@@ -42,8 +42,9 @@ class _ShowDeviceLocationHistoryState extends State<ShowDeviceLocationHistory>
   // A GraphicsOverlay to display the location history points.
   final _locationHistoryPointOverlay = GraphicsOverlay();
   // A PolylineBuilder to build the location history polyline.
-  final _polylineBuilder =
-      PolylineBuilder(spatialReference: SpatialReference.wgs84);
+  final _polylineBuilder = PolylineBuilder(
+    spatialReference: SpatialReference.wgs84,
+  );
   // A flag for when the map view is ready and controls can be used.
   var _ready = false;
   // A flag for toggling location tracking.
@@ -124,16 +125,10 @@ class _ShowDeviceLocationHistoryState extends State<ShowDeviceLocationHistory>
     ]);
     // Set the renderers for the graphics overlays.
     _locationHistoryLineOverlay.renderer = SimpleRenderer(
-      symbol: SimpleLineSymbol(
-        color: Colors.red[100]!,
-        width: 2,
-      ),
+      symbol: SimpleLineSymbol(color: Colors.red[100]!, width: 2),
     );
     _locationHistoryPointOverlay.renderer = SimpleRenderer(
-      symbol: SimpleMarkerSymbol(
-        color: Colors.red,
-        size: 10,
-      ),
+      symbol: SimpleMarkerSymbol(color: Colors.red, size: 10),
     );
     // Wait for the map to be displayed before starting the location display.
     _mapViewController.onDrawStatusChanged.listen((status) async {
@@ -157,8 +152,9 @@ class _ShowDeviceLocationHistoryState extends State<ShowDeviceLocationHistory>
 
   // Start the location data source and listen for location changes.
   Future<void> _startLocationDataSource() async {
-    final routeLineJson =
-        await rootBundle.loadString('assets/SimulatedRoute.json');
+    final routeLineJson = await rootBundle.loadString(
+      'assets/SimulatedRoute.json',
+    );
     final routeLine = Geometry.fromJsonString(routeLineJson) as Polyline;
     _locationDataSource.setLocationsWithPolyline(routeLine);
 
@@ -171,8 +167,9 @@ class _ShowDeviceLocationHistoryState extends State<ShowDeviceLocationHistory>
 
     // Listen for location changes.
     if (_locationDataSource.status == LocationDataSourceStatus.started) {
-      _locationSubscription = _locationDataSource.onLocationChanged
-          .listen(_handleLdsLocationChange);
+      _locationSubscription = _locationDataSource.onLocationChanged.listen(
+        _handleLdsLocationChange,
+      );
     }
   }
 
@@ -186,7 +183,8 @@ class _ShowDeviceLocationHistoryState extends State<ShowDeviceLocationHistory>
     _polylineBuilder.addPoint(point);
     // Visualize the location history polyline on the map.
     _locationHistoryLineOverlay.graphics.clear();
-    _locationHistoryLineOverlay.graphics
-        .add(Graphic(geometry: _polylineBuilder.toGeometry() as Polyline));
+    _locationHistoryLineOverlay.graphics.add(
+      Graphic(geometry: _polylineBuilder.toGeometry() as Polyline),
+    );
   }
 }

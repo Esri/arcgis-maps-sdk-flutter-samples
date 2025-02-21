@@ -94,12 +94,13 @@ class _ApplyRasterRenderingRuleState extends State<ApplyRasterRenderingRule>
           setState(() => _selectedRasterLayer = rasterLayer);
           setLayer(rasterLayer!);
         },
-        items: _rasterLayers.map((rasterLayer) {
-          return DropdownMenuItem(
-            value: rasterLayer,
-            child: Text(rasterLayer.name),
-          );
-        }).toList(),
+        items:
+            _rasterLayers.map((rasterLayer) {
+              return DropdownMenuItem(
+                value: rasterLayer,
+                child: Text(rasterLayer.name),
+              );
+            }).toList(),
       ),
     );
   }
@@ -146,8 +147,9 @@ class _ApplyRasterRenderingRuleState extends State<ApplyRasterRenderingRule>
       // Creates another image service raster and sets its rendering rule using the info.
       // This is required since the raster can't be loaded when setting its rendering rule.
       final imageServiceRaster = ImageServiceRaster(uri: _charlotteLASUri);
-      imageServiceRaster.renderingRule =
-          RenderingRule.withRenderingRuleInfo(renderingRuleInfo);
+      imageServiceRaster.renderingRule = RenderingRule.withRenderingRuleInfo(
+        renderingRuleInfo,
+      );
 
       // Creates a layer using the raster.
       final rasterLayer = RasterLayer.withRaster(imageServiceRaster);

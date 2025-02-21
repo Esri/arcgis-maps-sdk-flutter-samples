@@ -18,10 +18,7 @@ import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 class AboutInfo extends StatefulWidget {
-  const AboutInfo({
-    required this.title,
-    super.key,
-  });
+  const AboutInfo({required this.title, super.key});
 
   final String title;
 
@@ -36,12 +33,7 @@ class _AboutInfoState extends State<AboutInfo> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Text(
-          widget.title,
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+        Text(widget.title, style: const TextStyle(fontWeight: FontWeight.bold)),
         const SizedBox(height: 20),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
