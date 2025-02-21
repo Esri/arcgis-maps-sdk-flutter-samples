@@ -27,7 +27,8 @@ class SelectFeaturesInFeatureLayer extends StatefulWidget {
 }
 
 class _SelectFeaturesInFeatureLayerState
-    extends State<SelectFeaturesInFeatureLayer> with SampleStateSupport {
+    extends State<SelectFeaturesInFeatureLayer>
+    with SampleStateSupport {
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
   // Create a feature layer from a feature table.

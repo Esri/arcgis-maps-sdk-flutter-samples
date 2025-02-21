@@ -75,8 +75,8 @@ class _DownloadPreplannedMapAreaState extends State<DownloadPreplannedMapArea>
                   children: [
                     // Create a button to open the map selection view.
                     ElevatedButton(
-                      onPressed: () =>
-                          setState(() => _mapSelectionVisible = true),
+                      onPressed:
+                          () => setState(() => _mapSelectionVisible = true),
                       child: const Text('Select Map'),
                     ),
                   ],
@@ -171,12 +171,15 @@ class _DownloadPreplannedMapAreaState extends State<DownloadPreplannedMapArea>
           // Create a list tile for the web map.
           ListTile(
             title: const Text('Web Map (online)'),
-            trailing: _mapViewController.arcGISMap == _webMap
-                ? const Icon(Icons.check)
-                : null,
-            onTap: () => _mapViewController.arcGISMap != _webMap
-                ? setMapAndViewpoint(_webMap)
-                : null,
+            trailing:
+                _mapViewController.arcGISMap == _webMap
+                    ? const Icon(Icons.check)
+                    : null,
+            onTap:
+                () =>
+                    _mapViewController.arcGISMap != _webMap
+                        ? setMapAndViewpoint(_webMap)
+                        : null,
           ),
           const SizedBox(height: 20),
           Text(
@@ -225,9 +228,10 @@ class _DownloadPreplannedMapAreaState extends State<DownloadPreplannedMapArea>
         final map = job.result!.offlineMap;
         return ListTile(
           title: title,
-          trailing: _mapViewController.arcGISMap == map
-              ? const Icon(Icons.check)
-              : null,
+          trailing:
+              _mapViewController.arcGISMap == map
+                  ? const Icon(Icons.check)
+                  : null,
           onTap: () => setMapAndViewpoint(map),
         );
       } else if (job.status == JobStatus.failed) {
@@ -263,11 +267,11 @@ class _DownloadPreplannedMapAreaState extends State<DownloadPreplannedMapArea>
     mapDir.createSync();
 
     // Create and run a job to download the offline map using the default params and download path.
-    final downloadMapJob =
-        _offlineMapTask.downloadPreplannedOfflineMapWithParameters(
-      parameters: defaultDownloadParams,
-      downloadDirectoryUri: mapDir.uri,
-    );
+    final downloadMapJob = _offlineMapTask
+        .downloadPreplannedOfflineMapWithParameters(
+          parameters: defaultDownloadParams,
+          downloadDirectoryUri: mapDir.uri,
+        );
 
     // Associate the job with the map area and update the UI.
     setState(() => _preplannedMapAreas[mapArea] = downloadMapJob);

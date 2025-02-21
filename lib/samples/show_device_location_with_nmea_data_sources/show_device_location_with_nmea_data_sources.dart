@@ -91,21 +91,23 @@ class _ShowDeviceLocationWithNmeaDataSourcesState
                   children: [
                     // Start the Location Data Source.
                     ElevatedButton(
-                      onPressed: _locationDataSource.status ==
-                              LocationDataSourceStatus.stopped
-                          ? _startDataSource
-                          : null,
+                      onPressed:
+                          _locationDataSource.status ==
+                                  LocationDataSourceStatus.stopped
+                              ? _startDataSource
+                              : null,
                       child: const Text('Start'),
                     ),
                     // Recenter the map on the blue dot.
                     ElevatedButton(
-                      onPressed: _enableRecenter
-                          ? () {
-                              // Set the autoPanMode to recenter.
-                              _mapViewController.locationDisplay.autoPanMode =
-                                  LocationDisplayAutoPanMode.recenter;
-                            }
-                          : null,
+                      onPressed:
+                          _enableRecenter
+                              ? () {
+                                // Set the autoPanMode to recenter.
+                                _mapViewController.locationDisplay.autoPanMode =
+                                    LocationDisplayAutoPanMode.recenter;
+                              }
+                              : null,
                       child: const Text('Recenter'),
                     ),
                     // Stop and reset the location data source.
@@ -140,14 +142,16 @@ class _ShowDeviceLocationWithNmeaDataSourcesState
     _mapViewController.locationDisplay.dataSource = _locationDataSource;
 
     // Subscribe to the location stream of the location data source.
-    _locationSubscription =
-        _locationDataSource.onLocationChanged.listen((location) {
+    _locationSubscription = _locationDataSource.onLocationChanged.listen((
+      location,
+    ) {
       setState(() => _currentNmeaLocation = location);
     });
 
     // Subscribe to the location data source's satellite changed stream.
-    _satelliteSubscription =
-        _locationDataSource.onSatellitesChanged.listen((satelliteInfos) {
+    _satelliteSubscription = _locationDataSource.onSatellitesChanged.listen((
+      satelliteInfos,
+    ) {
       setState(() => _currentSatelliteInfos = satelliteInfos);
     });
 
@@ -155,13 +159,15 @@ class _ShowDeviceLocationWithNmeaDataSourcesState
     _mapViewController.locationDisplay.autoPanMode =
         LocationDisplayAutoPanMode.recenter;
     _autopanSubscription = _mapViewController
-        .locationDisplay.onAutoPanModeChanged
+        .locationDisplay
+        .onAutoPanModeChanged
         .listen((autoPanMode) {
-      setState(() {
-        // Activates/deactivates the Recenter button based on the new auto pan mode.
-        _enableRecenter = autoPanMode != LocationDisplayAutoPanMode.recenter;
-      });
-    });
+          setState(() {
+            // Activates/deactivates the Recenter button based on the new auto pan mode.
+            _enableRecenter =
+                autoPanMode != LocationDisplayAutoPanMode.recenter;
+          });
+        });
 
     // Set the ready state variable to true to enable the UI.
     setState(() => _ready = true);
@@ -172,8 +178,9 @@ class _ShowDeviceLocationWithNmeaDataSourcesState
     _nmeaDataSimulator ??= SimulatedNmeaDataSource();
 
     // Subscribe to the simulator data.
-    _nmeaDataSubscription ??=
-        _nmeaDataSimulator!.nmeaMessages.listen((nmeaDataString) {
+    _nmeaDataSubscription ??= _nmeaDataSimulator!.nmeaMessages.listen((
+      nmeaDataString,
+    ) {
       final nmeaData = utf8.encoder.convert(nmeaDataString);
       _locationDataSource.pushData(nmeaData);
     });
@@ -222,9 +229,10 @@ class NmeaLocationDetails extends StatelessWidget {
 
     // If there is no location object, show placeholder text. Otherwise, compose
     // accuracy data string.
-    final accuracy = nmeaLocation == null
-        ? 'Accuracy will be shown here.'
-        : 'Accuracy: Horizontal: ${nmeaLocation!.horizontalAccuracy.toStringAsFixed(3)}, Vertical: ${nmeaLocation!.verticalAccuracy.toStringAsFixed(3)}';
+    final accuracy =
+        nmeaLocation == null
+            ? 'Accuracy will be shown here.'
+            : 'Accuracy: Horizontal: ${nmeaLocation!.horizontalAccuracy.toStringAsFixed(3)}, Vertical: ${nmeaLocation!.verticalAccuracy.toStringAsFixed(3)}';
     children.add(Text(accuracy));
 
     // If there are no satellites, show placeholder text. Otherwise, compose the
@@ -242,8 +250,9 @@ class NmeaLocationDetails extends StatelessWidget {
         satelliteIds.add(satellite.id);
       }
 
-      children
-          .add(Text('${nmeaSatelliteInfos.length} satellites are in view.'));
+      children.add(
+        Text('${nmeaSatelliteInfos.length} satellites are in view.'),
+      );
       children.add(Text('System(s): ${navigationSystems.join(', ')}'));
       children.add(Text('IDs: ${satelliteIds.join(', ')}'));
     }

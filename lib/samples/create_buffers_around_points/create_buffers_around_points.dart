@@ -64,8 +64,9 @@ class _CreateBuffersAroundPointsState extends State<CreateBuffersAroundPoints>
   final _tapPointSymbol = SimpleMarkerSymbol();
 
   // Define the spatial reference required by the sample.
-  final _statePlaneNorthCentralTexasSpatialReference =
-      SpatialReference(wkid: 32038);
+  final _statePlaneNorthCentralTexasSpatialReference = SpatialReference(
+    wkid: 32038,
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -95,12 +96,13 @@ class _CreateBuffersAroundPointsState extends State<CreateBuffersAroundPoints>
                     ),
                     // A button to clear the buffers.
                     ElevatedButton(
-                      onPressed: _bufferPoints.isEmpty
-                          ? null
-                          : () {
-                              clearBufferPoints();
-                              setState(() => _status = Status.addPoints);
-                            },
+                      onPressed:
+                          _bufferPoints.isEmpty
+                              ? null
+                              : () {
+                                clearBufferPoints();
+                                setState(() => _status = Status.addPoints);
+                              },
                       child: const Text('Clear'),
                     ),
                   ],
@@ -160,8 +162,9 @@ class _CreateBuffersAroundPointsState extends State<CreateBuffersAroundPoints>
     _mapViewController.arcGISMap = map;
 
     // Set the viewpoint of the map view to our boundary polygon extent.
-    _mapViewController
-        .setViewpoint(Viewpoint.fromTargetExtent(_boundaryPolygon.extent));
+    _mapViewController.setViewpoint(
+      Viewpoint.fromTargetExtent(_boundaryPolygon.extent),
+    );
 
     _configureGraphicsOverlays();
 
@@ -193,10 +196,7 @@ class _CreateBuffersAroundPointsState extends State<CreateBuffersAroundPoints>
     // Initialize the fill symbol for the buffer.
     _bufferFillSymbol
       ..color = Colors.yellow.withValues(alpha: 0.5)
-      ..outline = SimpleLineSymbol(
-        color: Colors.green,
-        width: 3,
-      );
+      ..outline = SimpleLineSymbol(color: Colors.green, width: 3);
 
     // Initialize the tap point symbol.
     _tapPointSymbol
@@ -209,46 +209,47 @@ class _CreateBuffersAroundPointsState extends State<CreateBuffersAroundPoints>
   Widget buildSettings(BuildContext context, StateSetter setState) {
     return BottomSheetSettings(
       onCloseIconPressed: () => setState(() => _showSettings = false),
-      settingsWidgets: (context) => [
-        Row(
-          children: [
-            const Text('Buffer Radius (miles)'),
-            const Spacer(),
-            Text(
-              _bufferRadius.round().toString(),
-              textAlign: TextAlign.right,
+      settingsWidgets:
+          (context) => [
+            Row(
+              children: [
+                const Text('Buffer Radius (miles)'),
+                const Spacer(),
+                Text(
+                  _bufferRadius.round().toString(),
+                  textAlign: TextAlign.right,
+                ),
+              ],
+            ),
+            Row(
+              children: [
+                Expanded(
+                  // A slider to adjust the buffer radius.
+                  child: Slider(
+                    value: _bufferRadius,
+                    min: 10,
+                    max: 300,
+                    onChanged: (value) => setState(() => _bufferRadius = value),
+                  ),
+                ),
+              ],
+            ),
+            Row(
+              children: [
+                Text(_shouldUnion ? 'Union Enabled' : 'Union Disabled'),
+                const Spacer(),
+                Switch(
+                  value: _shouldUnion,
+                  onChanged: (value) {
+                    setState(() => _shouldUnion = value);
+                    if (_bufferPoints.isNotEmpty) {
+                      drawBuffers(unionized: _shouldUnion);
+                    }
+                  },
+                ),
+              ],
             ),
           ],
-        ),
-        Row(
-          children: [
-            Expanded(
-              // A slider to adjust the buffer radius.
-              child: Slider(
-                value: _bufferRadius,
-                min: 10,
-                max: 300,
-                onChanged: (value) => setState(() => _bufferRadius = value),
-              ),
-            ),
-          ],
-        ),
-        Row(
-          children: [
-            Text(_shouldUnion ? 'Union Enabled' : 'Union Disabled'),
-            const Spacer(),
-            Switch(
-              value: _shouldUnion,
-              onChanged: (value) {
-                setState(() => _shouldUnion = value);
-                if (_bufferPoints.isNotEmpty) {
-                  drawBuffers(unionized: _shouldUnion);
-                }
-              },
-            ),
-          ],
-        ),
-      ],
     );
   }
 
@@ -267,8 +268,10 @@ class _CreateBuffersAroundPointsState extends State<CreateBuffersAroundPoints>
     );
 
     // Create the graphics.
-    final boundaryGraphic =
-        Graphic(geometry: _boundaryPolygon, symbol: lineSymbol);
+    final boundaryGraphic = Graphic(
+      geometry: _boundaryPolygon,
+      symbol: lineSymbol,
+    );
 
     // Add the graphics to the graphics overlay.
     boundaryGraphicsOverlay.graphics.add(boundaryGraphic);
@@ -280,8 +283,9 @@ class _CreateBuffersAroundPointsState extends State<CreateBuffersAroundPoints>
 
   Polygon _makeBoundaryPolygon() {
     // Create a boundary polygon.
-    final polygonBuilder =
-        PolygonBuilder(spatialReference: SpatialReference.wgs84);
+    final polygonBuilder = PolygonBuilder(
+      spatialReference: SpatialReference.wgs84,
+    );
 
     // Add points to define the boundary where the spatial reference is valid for planar buffers.
     polygonBuilder.addPointXY(x: -103.070, y: 31.720);
@@ -293,10 +297,13 @@ class _CreateBuffersAroundPointsState extends State<CreateBuffersAroundPoints>
     final boundaryGeometry = polygonBuilder.toGeometry();
 
     // Project the boundary geometry to the spatial reference used by the sample.
-    final boundaryPolygon = GeometryEngine.project(
-      boundaryGeometry,
-      outputSpatialReference: _statePlaneNorthCentralTexasSpatialReference,
-    ) as Polygon;
+    final boundaryPolygon =
+        GeometryEngine.project(
+              boundaryGeometry,
+              outputSpatialReference:
+                  _statePlaneNorthCentralTexasSpatialReference,
+            )
+            as Polygon;
 
     return boundaryPolygon;
   }

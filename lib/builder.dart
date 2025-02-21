@@ -31,8 +31,9 @@ class SampleCatalogBuilder implements Builder {
 
   @override
   Future build(BuildStep buildStep) async {
-    final assets =
-        buildStep.findAssets(Glob('lib/samples/*/README.metadata.json'));
+    final assets = buildStep.findAssets(
+      Glob('lib/samples/*/README.metadata.json'),
+    );
     final metadataFiles = <String>[];
     await for (final input in assets) {
       metadataFiles.add(input.path);
@@ -80,8 +81,9 @@ class SampleWidgetsBuilder implements Builder {
 
   @override
   Future build(BuildStep buildStep) async {
-    final assets =
-        buildStep.findAssets(Glob('lib/samples/*/README.metadata.json'));
+    final assets = buildStep.findAssets(
+      Glob('lib/samples/*/README.metadata.json'),
+    );
     final samples = <String>[];
     await for (final sample in assets) {
       samples.add(sample.path);
@@ -95,10 +97,11 @@ class SampleWidgetsBuilder implements Builder {
 
   Future<String> createSource(List<String> samples) async {
     final buffer = StringBuffer();
-    final sortedSampleNames = samples
-        .map((filepath) => File(filepath).parent.path.split('/').last)
-        .toList()
-      ..sort();
+    final sortedSampleNames =
+        samples
+            .map((filepath) => File(filepath).parent.path.split('/').last)
+            .toList()
+          ..sort();
 
     for (final sampleName in sortedSampleNames) {
       buffer.writeln(

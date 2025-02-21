@@ -23,12 +23,12 @@ import 'package:flutter/material.dart';
 /// The Widget for each sample is pulled from the samples_widget_list.dart.
 class Sample {
   Sample.fromJson(Map<String, dynamic> json)
-      : _category = json['category'],
-        _description = json['description'],
-        _snippets = List<String>.from(json['snippets']),
-        _title = json['title'],
-        _keywords = List<String>.from(json['keywords']),
-        _sampleWidget = sampleWidgets[json['key']]!();
+    : _category = json['category'],
+      _description = json['description'],
+      _snippets = List<String>.from(json['snippets']),
+      _title = json['title'],
+      _keywords = List<String>.from(json['keywords']),
+      _sampleWidget = sampleWidgets[json['key']]!();
   final String _category;
   final String _description;
   final List<String> _snippets;

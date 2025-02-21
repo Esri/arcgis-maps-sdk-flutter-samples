@@ -81,12 +81,13 @@ class _FindRouteState extends State<FindRoute> with SampleStateSupport {
                       ),
                       // Create a button to show the directions.
                       ElevatedButton(
-                        onPressed: _routeGenerated
-                            ? () => showDialog(
+                        onPressed:
+                            _routeGenerated
+                                ? () => showDialog(
                                   context: context,
                                   builder: showDirections,
                                 )
-                            : null,
+                                : null,
                         child: const Text('Directions'),
                       ),
                     ],
@@ -139,10 +140,16 @@ class _FindRouteState extends State<FindRoute> with SampleStateSupport {
       color: Colors.blue,
       size: 15,
     );
-    final routeStartNumberSymbol =
-        TextSymbol(text: '1', color: Colors.white, size: 10);
-    final routeEndNumberSymbol =
-        TextSymbol(text: '2', color: Colors.white, size: 10);
+    final routeStartNumberSymbol = TextSymbol(
+      text: '1',
+      color: Colors.white,
+      size: 10,
+    );
+    final routeEndNumberSymbol = TextSymbol(
+      text: '2',
+      color: Colors.white,
+      size: 10,
+    );
 
     // Configure pre-defined start and end points for the route.
     final startPoint = ArcGISPoint(
@@ -175,12 +182,13 @@ class _FindRouteState extends State<FindRoute> with SampleStateSupport {
 
   Future<void> initRouteParameters() async {
     // Create default route parameters.
-    _routeParameters = await _routeTask.createDefaultParameters()
-      ..setStops(_stops)
-      ..returnDirections = true
-      ..directionsDistanceUnits = UnitSystem.imperial
-      ..returnRoutes = true
-      ..returnStops = true;
+    _routeParameters =
+        await _routeTask.createDefaultParameters()
+          ..setStops(_stops)
+          ..returnDirections = true
+          ..directionsDistanceUnits = UnitSystem.imperial
+          ..returnRoutes = true
+          ..returnStops = true;
   }
 
   void resetRoute() {
@@ -195,10 +203,7 @@ class _FindRouteState extends State<FindRoute> with SampleStateSupport {
 
   Future<void> generateRoute() async {
     // Create the symbol for the route line.
-    final routeLineSymbol = SimpleLineSymbol(
-      color: Colors.blue,
-      width: 5,
-    );
+    final routeLineSymbol = SimpleLineSymbol(color: Colors.blue, width: 5);
 
     // Reset the route.
     resetRoute();
@@ -216,8 +221,10 @@ class _FindRouteState extends State<FindRoute> with SampleStateSupport {
 
     // Add the route to the route graphics overlay.
     if (routeGeometry != null) {
-      final routeGraphic =
-          Graphic(geometry: routeGeometry, symbol: routeLineSymbol);
+      final routeGraphic = Graphic(
+        geometry: routeGeometry,
+        symbol: routeLineSymbol,
+      );
       _routeGraphicsOverlay.graphics.add(routeGraphic);
     }
 
@@ -241,9 +248,10 @@ class _FindRouteState extends State<FindRoute> with SampleStateSupport {
               ),
             ),
             Expanded(
-              child: _directions.isEmpty
-                  ? const Center(child: Text('No directions to show.'))
-                  : buildDirectionsListView(),
+              child:
+                  _directions.isEmpty
+                      ? const Center(child: Text('No directions to show.'))
+                      : buildDirectionsListView(),
             ),
             TextButton(
               onPressed: () {

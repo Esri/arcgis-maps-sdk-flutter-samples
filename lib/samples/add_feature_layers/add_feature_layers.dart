@@ -136,8 +136,9 @@ class _AddFeatureLayersState extends State<AddFeatureLayers>
     // Create a service feature table with the uri.
     final serviceFeatureTables = ServiceFeatureTable.withUri(uri);
     // Create a feature layer with the service feature table.
-    final serviceFeatureLayer =
-        FeatureLayer.withFeatureTable(serviceFeatureTables);
+    final serviceFeatureLayer = FeatureLayer.withFeatureTable(
+      serviceFeatureTables,
+    );
     // Clear the operational layers and add the feature layer to the map.
     _map.operationalLayers.clear();
     _map.operationalLayers.add(serviceFeatureLayer);
@@ -157,20 +158,23 @@ class _AddFeatureLayersState extends State<AddFeatureLayers>
     // Get the application documents directory.
     final appDir = await getApplicationDocumentsDirectory();
     // Create a file to the geodatabase.
-    final geodatabaseFile =
-        File('${appDir.absolute.path}/LA_Trails/LA_Trails.geodatabase');
+    final geodatabaseFile = File(
+      '${appDir.absolute.path}/LA_Trails/LA_Trails.geodatabase',
+    );
     // Create a geodatabase with the file uri.
     final geodatabase = Geodatabase.withFileUri(geodatabaseFile.uri);
     // Load the geodatabase.
     await geodatabase.load();
     // Get the feature table with the table name.
-    final geodatabaseFeatureTables =
-        geodatabase.getGeodatabaseFeatureTable(tableName: 'Trailheads');
+    final geodatabaseFeatureTables = geodatabase.getGeodatabaseFeatureTable(
+      tableName: 'Trailheads',
+    );
     // Check if the feature table is not null.
     if (geodatabaseFeatureTables != null) {
       // Create a feature layer with the feature table.
-      final geodatabaseFeatureLayer =
-          FeatureLayer.withFeatureTable(geodatabaseFeatureTables);
+      final geodatabaseFeatureLayer = FeatureLayer.withFeatureTable(
+        geodatabaseFeatureTables,
+      );
       // Clear the operational layers and add the feature layer to the map.
       _map.operationalLayers.clear();
       _map.operationalLayers.add(geodatabaseFeatureLayer);
@@ -193,8 +197,10 @@ class _AddFeatureLayersState extends State<AddFeatureLayers>
     final portal = Portal.arcGISOnline();
     // Create the portal item with the item ID for the Portland tree service data.
     const itemId = '1759fd3e8a324358a0c58d9a687a8578';
-    final portalItem =
-        PortalItem.withPortalAndItemId(portal: portal, itemId: itemId);
+    final portalItem = PortalItem.withPortalAndItemId(
+      portal: portal,
+      itemId: itemId,
+    );
     // Load the portal item.
     await portalItem.load();
     // Create a feature layer with the portal item and layer ID.
@@ -221,8 +227,9 @@ class _AddFeatureLayersState extends State<AddFeatureLayers>
     // Get the application documents directory.
     final appDir = await getApplicationDocumentsDirectory();
     // Create a file to the geopackage.
-    final geopackageFile =
-        File('${appDir.absolute.path}/AuroraCO/AuroraCO.gpkg');
+    final geopackageFile = File(
+      '${appDir.absolute.path}/AuroraCO/AuroraCO.gpkg',
+    );
     // Create a geopackage with the file uri.
     final geopackage = GeoPackage.withFileUri(geopackageFile.uri);
     // Load the geopackage.
@@ -230,8 +237,9 @@ class _AddFeatureLayersState extends State<AddFeatureLayers>
     // Get the feature table with the table name.
     final geopackageFeatureTables = geopackage.geoPackageFeatureTables;
     // Create a feature layer with the feature table.
-    final geopackageFeatureLayer =
-        FeatureLayer.withFeatureTable(geopackageFeatureTables.first);
+    final geopackageFeatureLayer = FeatureLayer.withFeatureTable(
+      geopackageFeatureTables.first,
+    );
     // Clear the operational layers and add the feature layer to the map.
     _map.operationalLayers.clear();
     _map.operationalLayers.add(geopackageFeatureLayer);
@@ -256,11 +264,13 @@ class _AddFeatureLayersState extends State<AddFeatureLayers>
       '${appDir.absolute.path}/ScottishWildlifeTrust_reserves/ScottishWildlifeTrust_ReserveBoundaries_20201102.shp',
     );
     // Create a feature table from the Shapefile URI.
-    final shapefileFeatureTable =
-        ShapefileFeatureTable.withFileUri(shapefile.uri);
+    final shapefileFeatureTable = ShapefileFeatureTable.withFileUri(
+      shapefile.uri,
+    );
     // Create a feature layer for the Shapefile feature table.
-    final shapefileFeatureLayer =
-        FeatureLayer.withFeatureTable(shapefileFeatureTable);
+    final shapefileFeatureLayer = FeatureLayer.withFeatureTable(
+      shapefileFeatureTable,
+    );
     // Clear the operational layers and add the feature layer to the map.
     _map.operationalLayers.clear();
     _map.operationalLayers.add(shapefileFeatureLayer);

@@ -26,7 +26,8 @@ class AddFeatureCollectionLayerFromTable extends StatefulWidget {
 }
 
 class _AddFeatureCollectionLayerFromTableState
-    extends State<AddFeatureCollectionLayerFromTable> with SampleStateSupport {
+    extends State<AddFeatureCollectionLayerFromTable>
+    with SampleStateSupport {
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
 
@@ -48,12 +49,14 @@ class _AddFeatureCollectionLayerFromTableState
     final polygonTable = createPolygonTable();
 
     // Create a new feature collection and add the feature collection tables.
-    final featureCollection = FeatureCollection()
-      ..tables.addAll([pointTable, polylineTable, polygonTable]);
+    final featureCollection =
+        FeatureCollection()
+          ..tables.addAll([pointTable, polylineTable, polygonTable]);
 
     // Create a feature collection layer from the feature collection.
-    final featureCollectionLayer =
-        FeatureCollectionLayer.withFeatureCollection(featureCollection);
+    final featureCollectionLayer = FeatureCollectionLayer.withFeatureCollection(
+      featureCollection,
+    );
 
     // Create a map with a basemap style and initial viewpoint.
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISOceans)
@@ -130,8 +133,9 @@ class _AddFeatureCollectionLayerFromTableState
     );
 
     // Build a polyline.
-    final polylineBuilder =
-        PolylineBuilder(spatialReference: SpatialReference(wkid: 4326));
+    final polylineBuilder = PolylineBuilder(
+      spatialReference: SpatialReference(wkid: 4326),
+    );
     polylineBuilder.addPoint(
       ArcGISPoint(
         x: -79.497238,
@@ -172,16 +176,14 @@ class _AddFeatureCollectionLayerFromTableState
       symbol: SimpleFillSymbol(
         style: SimpleFillSymbolStyle.diagonalCross,
         color: Colors.cyan,
-        outline: SimpleLineSymbol(
-          color: Colors.blue,
-          width: 2,
-        ),
+        outline: SimpleLineSymbol(color: Colors.blue, width: 2),
       ),
     );
 
     // Build a polygon.
-    final polygonBuilder =
-        PolygonBuilder(spatialReference: SpatialReference(wkid: 4326));
+    final polygonBuilder = PolygonBuilder(
+      spatialReference: SpatialReference(wkid: 4326),
+    );
     polygonBuilder.addPoint(
       ArcGISPoint(
         x: -79.497238,

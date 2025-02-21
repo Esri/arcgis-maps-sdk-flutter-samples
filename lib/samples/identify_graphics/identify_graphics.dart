@@ -74,9 +74,7 @@ class _IdentifyGraphicsState extends State<IdentifyGraphics>
     // Create a graphic with the polygon geometry and a yellow fill symbol.
     _graphic = Graphic(
       geometry: polygonBuilder.toGeometry(),
-      symbol: SimpleFillSymbol(
-        color: Colors.yellow,
-      ),
+      symbol: SimpleFillSymbol(color: Colors.yellow),
     );
 
     // Add the graphics to the graphics overlay.
@@ -95,13 +93,13 @@ class _IdentifyGraphicsState extends State<IdentifyGraphics>
 
   Future<void> onTap(Offset offset) async {
     // Identify the graphics overlay at the tapped point.
-    final identifyGraphicsOverlay =
-        await _mapViewController.identifyGraphicsOverlay(
-      _graphicsOverlay,
-      screenPoint: offset,
-      tolerance: 12,
-      maximumResults: 10,
-    );
+    final identifyGraphicsOverlay = await _mapViewController
+        .identifyGraphicsOverlay(
+          _graphicsOverlay,
+          screenPoint: offset,
+          tolerance: 12,
+          maximumResults: 10,
+        );
     // Check if the identified graphic is the same as the sample graphic.
     if (identifyGraphicsOverlay.graphics.isNotEmpty) {
       final identifiedGraphic = identifyGraphicsOverlay.graphics.first;

@@ -27,7 +27,8 @@ class ApplyClassBreaksRendererToSublayer extends StatefulWidget {
 }
 
 class _ApplyClassBreaksRendererToSublayerState
-    extends State<ApplyClassBreaksRendererToSublayer> with SampleStateSupport {
+    extends State<ApplyClassBreaksRendererToSublayer>
+    with SampleStateSupport {
   // Create a map view controller.
   final _mapViewController = ArcGISMapView.createController();
   // Create a map with a basemap style.
@@ -120,29 +121,12 @@ class _ApplyClassBreaksRendererToSublayerState
     const blue5 = Color.fromARGB(255, 2, 75, 109);
 
     // Create symbols for the class breaks.
-    final outline = SimpleLineSymbol(
-      color: Colors.grey,
-    );
-    final classSymbol1 = SimpleFillSymbol(
-      color: blue1,
-      outline: outline,
-    );
-    final classSymbol2 = SimpleFillSymbol(
-      color: blue2,
-      outline: outline,
-    );
-    final classSymbol3 = SimpleFillSymbol(
-      color: blue3,
-      outline: outline,
-    );
-    final classSymbol4 = SimpleFillSymbol(
-      color: blue4,
-      outline: outline,
-    );
-    final classSymbol5 = SimpleFillSymbol(
-      color: blue5,
-      outline: outline,
-    );
+    final outline = SimpleLineSymbol(color: Colors.grey);
+    final classSymbol1 = SimpleFillSymbol(color: blue1, outline: outline);
+    final classSymbol2 = SimpleFillSymbol(color: blue2, outline: outline);
+    final classSymbol3 = SimpleFillSymbol(color: blue3, outline: outline);
+    final classSymbol4 = SimpleFillSymbol(color: blue4, outline: outline);
+    final classSymbol5 = SimpleFillSymbol(color: blue5, outline: outline);
 
     // Create class breaks.
     final classBreak1 = ClassBreak(

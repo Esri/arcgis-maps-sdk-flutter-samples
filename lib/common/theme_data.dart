@@ -29,9 +29,7 @@ final sampleViewerTheme = ThemeData(
   appBarTheme: AppBarTheme(backgroundColor: colorScheme.inversePrimary),
 
   // text theme
-  textTheme: const TextTheme(
-    labelMedium: TextStyle(color: Colors.deepPurple),
-  ),
+  textTheme: const TextTheme(labelMedium: TextStyle(color: Colors.deepPurple)),
 
   // button theme
   elevatedButtonTheme: ElevatedButtonThemeData(
@@ -44,23 +42,21 @@ final sampleViewerTheme = ThemeData(
   ),
 
   // icon theme
-  iconTheme: IconThemeData(
-    color: colorScheme.primary,
-  ),
+  iconTheme: IconThemeData(color: colorScheme.primary),
 );
 
 extension CustomTextTheme on TextTheme {
   TextStyle get customLabelStyle => const TextStyle(
-        fontSize: 18,
-        fontWeight: FontWeight.bold,
-        color: Colors.white,
-      );
+    fontSize: 18,
+    fontWeight: FontWeight.bold,
+    color: Colors.white,
+  );
 
   TextStyle get categoryCardLabelStyle => const TextStyle(
-        fontSize: 16,
-        fontWeight: FontWeight.bold,
-        color: Colors.white,
-      );
+    fontSize: 16,
+    fontWeight: FontWeight.bold,
+    color: Colors.white,
+  );
 
   TextStyle get customErrorStyle => const TextStyle(color: Colors.red);
 

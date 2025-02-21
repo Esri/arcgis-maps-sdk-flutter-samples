@@ -30,24 +30,20 @@ class FindRouteInMobileMapPackage extends StatefulWidget {
 }
 
 // A record type to hold data related to a specific map.
-typedef SampleData = ({
-  ArcGISMap map,
-  Uint8List? thumbnail,
-  LocatorTask? locatorTask
-});
+typedef SampleData =
+    ({ArcGISMap map, Uint8List? thumbnail, LocatorTask? locatorTask});
 
 class _FindRouteInMobileMapPackageState
-    extends State<FindRouteInMobileMapPackage> with SampleStateSupport {
+    extends State<FindRouteInMobileMapPackage>
+    with SampleStateSupport {
   // A Future that completes with the list of mobile map packages.
   final mobileMapPackages = loadMobileMapPackages();
 
   static Future<List<MobileMapPackage>> loadMobileMapPackages() async {
-    await downloadSampleData(
-      [
-        'e1f3a7254cb845b09450f54937c16061',
-        '260eb6535c824209964cf281766ebe43',
-      ],
-    );
+    await downloadSampleData([
+      'e1f3a7254cb845b09450f54937c16061',
+      '260eb6535c824209964cf281766ebe43',
+    ]);
     final appDir = await getApplicationDocumentsDirectory();
 
     // Load the local mobile map packages.
@@ -88,13 +84,11 @@ class _FindRouteInMobileMapPackageState
             for (final mmpk in snapshot.data!) {
               for (final map in mmpk.maps) {
                 // For each map create a SampleData record defining the map itself, a thumbnail and the locator task from the mobile map package.
-                sampleData.add(
-                  (
-                    map: map,
-                    thumbnail: map.item?.thumbnail?.image?.getEncodedBuffer(),
-                    locatorTask: mmpk.locatorTask,
-                  ),
-                );
+                sampleData.add((
+                  map: map,
+                  thumbnail: map.item?.thumbnail?.image?.getEncodedBuffer(),
+                  locatorTask: mmpk.locatorTask,
+                ));
               }
             }
 
@@ -109,20 +103,22 @@ class _FindRouteInMobileMapPackageState
                   child: Padding(
                     padding: const EdgeInsets.symmetric(vertical: 4),
                     child: ListTile(
-                      leading: data.thumbnail != null
-                          ? Image.memory(data.thumbnail!)
-                          : null,
+                      leading:
+                          data.thumbnail != null
+                              ? Image.memory(data.thumbnail!)
+                              : null,
                       title: Text(data.map.item?.name ?? ''),
                       // If the map has transportation networks, show an icon indicating it supports routing.
-                      trailing: data.map.transportationNetworks.isNotEmpty
-                          ? const Icon(Icons.directions_outlined)
-                          : null,
+                      trailing:
+                          data.map.transportationNetworks.isNotEmpty
+                              ? const Icon(Icons.directions_outlined)
+                              : null,
                       // When the card is tapped, navigate to a FindRouteInMap page.
                       onTap: () {
                         Navigator.of(context).push(
                           MaterialPageRoute(
-                            builder: (context) =>
-                                FindRouteInMap(sampleData: data),
+                            builder:
+                                (context) => FindRouteInMap(sampleData: data),
                           ),
                         );
                       },
@@ -140,10 +136,7 @@ class _FindRouteInMobileMapPackageState
 
 // A page for a specific map loaded from a mobile map package.
 class FindRouteInMap extends StatefulWidget {
-  const FindRouteInMap({
-    required this.sampleData,
-    super.key,
-  });
+  const FindRouteInMap({required this.sampleData, super.key});
 
   final SampleData sampleData;
 
@@ -248,9 +241,10 @@ class _FindRouteInMapState extends State<FindRouteInMap>
 
     // Create a picture marker symbol using an image asset.
     final image = await ArcGISImage.fromAsset('assets/pin_circle_red.png');
-    final pictureMarkerSymbol = PictureMarkerSymbol.withImage(image)
-      ..width = 35
-      ..height = 35;
+    final pictureMarkerSymbol =
+        PictureMarkerSymbol.withImage(image)
+          ..width = 35
+          ..height = 35;
     pictureMarkerSymbol.offsetY = pictureMarkerSymbol.height / 2;
     // Configure the marker overlay with the picture marker symbol and add it to the list of overlays.
     _markerOverlay.renderer = SimpleRenderer(symbol: pictureMarkerSymbol);
@@ -269,8 +263,8 @@ class _FindRouteInMapState extends State<FindRouteInMap>
         width: 5,
       );
       // Create a graphics overlay to display the route and add it to the list of overlays.
-      _routeOverlay = GraphicsOverlay()
-        ..renderer = SimpleRenderer(symbol: routeSymbol);
+      _routeOverlay =
+          GraphicsOverlay()..renderer = SimpleRenderer(symbol: routeSymbol);
       _mapViewController.graphicsOverlays.add(_routeOverlay!);
     }
 
@@ -297,8 +291,9 @@ class _FindRouteInMapState extends State<FindRouteInMap>
       graphicToSelect = result.graphics.first;
     } else {
       // If no graphic was identified, add a new marker at the tapped location.
-      final location =
-          _mapViewController.screenToLocation(screen: localPosition);
+      final location = _mapViewController.screenToLocation(
+        screen: localPosition,
+      );
       if (location != null) {
         graphicToSelect = Graphic(geometry: location);
         _markerOverlay.graphics.add(graphicToSelect);
@@ -318,9 +313,10 @@ class _FindRouteInMapState extends State<FindRouteInMap>
 
   Future<void> reverseGeocode(Graphic graphic) async {
     // Create parameters to return at most one match with the desired attributes.
-    final reverseGeocodeParameters = ReverseGeocodeParameters()
-      ..resultAttributeNames.addAll(['StAddr', 'City', 'Region'])
-      ..maxResults = 1;
+    final reverseGeocodeParameters =
+        ReverseGeocodeParameters()
+          ..resultAttributeNames.addAll(['StAddr', 'City', 'Region'])
+          ..maxResults = 1;
 
     // Perform the reverse geocode operation.
     final results = await widget.sampleData.locatorTask!.reverseGeocode(
@@ -354,9 +350,10 @@ class _FindRouteInMapState extends State<FindRouteInMap>
     }
 
     // Create a list of stops from the location markers.
-    final stops = _markerOverlay.graphics
-        .map((g) => Stop(g.geometry! as ArcGISPoint))
-        .toList();
+    final stops =
+        _markerOverlay.graphics
+            .map((g) => Stop(g.geometry! as ArcGISPoint))
+            .toList();
     _routeParameters!.clearStops();
     _routeParameters!.setStops(stops);
 

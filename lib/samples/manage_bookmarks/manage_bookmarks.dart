@@ -100,10 +100,7 @@ class _ManageBookmarksState extends State<ManageBookmarks> {
         children: [
           Row(
             children: [
-              Text(
-                'Bookmarks',
-                style: Theme.of(context).textTheme.titleLarge,
-              ),
+              Text('Bookmarks', style: Theme.of(context).textTheme.titleLarge),
               const Spacer(),
               IconButton(
                 icon: const Icon(Icons.close),
@@ -118,18 +115,18 @@ class _ManageBookmarksState extends State<ManageBookmarks> {
             child: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: _bookmarks.map(
-                  (bookmark) {
-                    // When a bookmark is tapped, set the bookmark on the map view.
-                    return TextButton(
-                      onPressed: () => _mapViewController.setBookmark(bookmark),
-                      style: const ButtonStyle(
-                        alignment: Alignment.centerLeft,
-                      ),
-                      child: Text(bookmark.name),
-                    );
-                  },
-                ).toList(),
+                children:
+                    _bookmarks.map((bookmark) {
+                      // When a bookmark is tapped, set the bookmark on the map view.
+                      return TextButton(
+                        onPressed:
+                            () => _mapViewController.setBookmark(bookmark),
+                        style: const ButtonStyle(
+                          alignment: Alignment.centerLeft,
+                        ),
+                        child: Text(bookmark.name),
+                      );
+                    }).toList(),
               ),
             ),
           ),
@@ -237,10 +234,7 @@ class _AddBookmarkDialogState extends State<AddBookmarkDialog> {
         onSubmitted: add,
       ),
       actions: [
-        TextButton(
-          onPressed: cancel,
-          child: const Text('Cancel'),
-        ),
+        TextButton(onPressed: cancel, child: const Text('Cancel')),
         TextButton(
           onPressed: () => add(_nameController.text),
           child: const Text('Add'),

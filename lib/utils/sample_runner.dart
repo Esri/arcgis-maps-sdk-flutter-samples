@@ -37,10 +37,5 @@ void main() {
   // Alternatively, replace sample below with the directory name of the individual sample in snake case
   // const sample = 'display_map';
 
-  runApp(
-    MaterialApp(
-      theme: sampleViewerTheme,
-      home: sampleWidgets[sample]!(),
-    ),
-  );
+  runApp(MaterialApp(theme: sampleViewerTheme, home: sampleWidgets[sample]!()));
 }

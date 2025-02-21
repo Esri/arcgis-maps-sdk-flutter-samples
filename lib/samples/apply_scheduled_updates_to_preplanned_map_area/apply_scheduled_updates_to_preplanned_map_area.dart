@@ -116,8 +116,9 @@ class _ApplyScheduledUpdatesToPreplannedMapAreaState
   Future<void> syncUpdates() async {
     setState(() => _canUpdate = false);
 
-    final mapSyncJob =
-        _offlineMapSyncTask.syncOfflineMap(parameters: _mapSyncParameters);
+    final mapSyncJob = _offlineMapSyncTask.syncOfflineMap(
+      parameters: _mapSyncParameters,
+    );
     try {
       await mapSyncJob.run();
       final result = mapSyncJob.result;
@@ -141,7 +142,8 @@ class _ApplyScheduledUpdatesToPreplannedMapAreaState
     setState(() {
       _updateStatus = updatesInfo.downloadAvailability;
       _updateSizeKB = updatesInfo.scheduledUpdatesDownloadSize / 1024;
-      _canUpdate = updatesInfo.downloadAvailability ==
+      _canUpdate =
+          updatesInfo.downloadAvailability ==
           OfflineUpdateAvailability.available;
     });
   }
@@ -173,8 +175,9 @@ class _ApplyScheduledUpdatesToPreplannedMapAreaState
     _mapViewController.arcGISMap = _mobileMapPackage!.maps.first;
 
     // Set the offline map sync task.
-    _offlineMapSyncTask =
-        OfflineMapSyncTask.withMap(_mapViewController.arcGISMap!);
+    _offlineMapSyncTask = OfflineMapSyncTask.withMap(
+      _mapViewController.arcGISMap!,
+    );
 
     // Set the map sync parameters.
     _mapSyncParameters =

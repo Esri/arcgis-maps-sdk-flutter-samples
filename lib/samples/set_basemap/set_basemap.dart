@@ -65,40 +65,43 @@ class _SetBasemapState extends State<SetBasemap> with SampleStateSupport {
                 // Create a grid view to display basemaps.
                 return GridView.count(
                   crossAxisCount: 2,
-                  children: _basemaps.keys
-                      .map(
-                        // Create a list tile for each basemap.
-                        (basemap) => ListTile(
-                          title: Column(
-                            children: [
-                              Container(
-                                // Add a border to the selected basemap.
-                                decoration: _selectedBasemap == basemap
-                                    ? BoxDecoration(
-                                        border: Border.all(
-                                          color: Colors.blue,
-                                          width: 4,
-                                        ),
-                                      )
-                                    : null,
-                                // Display the basemap image.
-                                child: _basemaps[basemap] ?? _defaultImage,
+                  children:
+                      _basemaps.keys
+                          .map(
+                            // Create a list tile for each basemap.
+                            (basemap) => ListTile(
+                              title: Column(
+                                children: [
+                                  Container(
+                                    // Add a border to the selected basemap.
+                                    decoration:
+                                        _selectedBasemap == basemap
+                                            ? BoxDecoration(
+                                              border: Border.all(
+                                                color: Colors.blue,
+                                                width: 4,
+                                              ),
+                                            )
+                                            : null,
+                                    // Display the basemap image.
+                                    child: _basemaps[basemap] ?? _defaultImage,
+                                  ),
+                                  Text(
+                                    basemap.name,
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ],
                               ),
-                              Text(
-                                basemap.name,
-                                textAlign: TextAlign.center,
-                              ),
-                            ],
-                          ),
-                          // Update the map with the selected basemap.
-                          onTap: () {
-                            _selectedBasemap = basemap;
-                            _arcGISMap.basemap = basemap;
-                            _scaffoldStateKey.currentState!.closeEndDrawer();
-                          },
-                        ),
-                      )
-                      .toList(),
+                              // Update the map with the selected basemap.
+                              onTap: () {
+                                _selectedBasemap = basemap;
+                                _arcGISMap.basemap = basemap;
+                                _scaffoldStateKey.currentState!
+                                    .closeEndDrawer();
+                              },
+                            ),
+                          )
+                          .toList(),
                 );
               } else {
                 // Display a loading message while loading basemaps.

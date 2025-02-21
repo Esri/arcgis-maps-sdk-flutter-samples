@@ -36,11 +36,7 @@ class _ChangeViewpointState extends State<ChangeViewpoint>
   late PolygonBuilder _edinburghEnvelope;
 
   // String array to store titles for the viewpoints specified above.
-  final _viewpointTitles = [
-    'Geometry',
-    'Center & Scale',
-    'Animate',
-  ];
+  final _viewpointTitles = ['Geometry', 'Center & Scale', 'Animate'];
 
   // Create variable for holding state relating to the viewpoint.
   String? _selectedViewpoint;
@@ -92,16 +88,18 @@ class _ChangeViewpointState extends State<ChangeViewpoint>
     _fullExtent = map.basemap!.baseLayers.first.fullExtent;
 
     // Coordinates for Redlands.
-    _redlandsEnvelope =
-        PolygonBuilder(spatialReference: SpatialReference.webMercator);
+    _redlandsEnvelope = PolygonBuilder(
+      spatialReference: SpatialReference.webMercator,
+    );
     _redlandsEnvelope.addPointXY(x: -13049785.1566222, y: 4032064.6003424);
     _redlandsEnvelope.addPointXY(x: -13049785.1566222, y: 4040202.42595729);
     _redlandsEnvelope.addPointXY(x: -13037033.5780234, y: 4032064.6003424);
     _redlandsEnvelope.addPointXY(x: -13037033.5780234, y: 4040202.42595729);
 
     // Coordinates for Edinburgh.
-    _edinburghEnvelope =
-        PolygonBuilder(spatialReference: SpatialReference.webMercator);
+    _edinburghEnvelope = PolygonBuilder(
+      spatialReference: SpatialReference.webMercator,
+    );
     _edinburghEnvelope.addPointXY(x: -354262.156621384, y: 7548092.94093301);
     _edinburghEnvelope.addPointXY(x: -354262.156621384, y: 7548901.50684376);
     _edinburghEnvelope.addPointXY(x: -353039.164455303, y: 7548092.94093301);
@@ -125,12 +123,10 @@ class _ChangeViewpointState extends State<ChangeViewpoint>
         iconDisabledColor: Theme.of(context).disabledColor,
         style: Theme.of(context).textTheme.titleMedium,
         value: _selectedViewpoint,
-        items: _viewpointTitles.map((items) {
-          return DropdownMenuItem(
-            value: items,
-            child: Text(items),
-          );
-        }).toList(),
+        items:
+            _viewpointTitles.map((items) {
+              return DropdownMenuItem(value: items, child: Text(items));
+            }).toList(),
         onChanged: (viewpoint) {
           if (viewpoint != null) {
             changeViewpoint(viewpoint);
@@ -165,9 +161,7 @@ class _ChangeViewpointState extends State<ChangeViewpoint>
         if (_fullExtent != null) {
           // Navigate to full extent of the first baselayer before animating to specified geometry.
           _mapViewController.setViewpoint(
-            Viewpoint.fromTargetExtent(
-              _fullExtent!.extent,
-            ),
+            Viewpoint.fromTargetExtent(_fullExtent!.extent),
           );
 
           // Set Viewpoint of ArcGISMapView to the Viewpoint created above and animate to it using a timespan of 5 seconds.

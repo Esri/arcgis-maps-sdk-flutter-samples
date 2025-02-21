@@ -65,10 +65,7 @@ class _ApplySymbologyToShapefileState extends State<ApplySymbologyToShapefile>
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     const Text('Alternate renderer'),
-                    Switch(
-                      value: _alternate,
-                      onChanged: updateRenderer,
-                    ),
+                    Switch(value: _alternate, onChanged: updateRenderer),
                   ],
                 ),
               ],
@@ -98,21 +95,22 @@ class _ApplySymbologyToShapefileState extends State<ApplySymbologyToShapefile>
     // Get the application documents directory.
     final appDir = await getApplicationDocumentsDirectory();
     // Get the Shapefile from the download resource.
-    final shapefile =
-        File('${appDir.absolute.path}/Aurora_CO_shp/Subdivisions.shp');
+    final shapefile = File(
+      '${appDir.absolute.path}/Aurora_CO_shp/Subdivisions.shp',
+    );
     // Create a feature table from the Shapefile URI.
-    final shapefileFeatureTable =
-        ShapefileFeatureTable.withFileUri(shapefile.uri);
+    final shapefileFeatureTable = ShapefileFeatureTable.withFileUri(
+      shapefile.uri,
+    );
     // Create a feature layer for the Shapefile feature table.
-    _shapefileFeatureLayer =
-        FeatureLayer.withFeatureTable(shapefileFeatureTable);
+    _shapefileFeatureLayer = FeatureLayer.withFeatureTable(
+      shapefileFeatureTable,
+    );
     // Clear the operational layers and add the feature layer to the map.
     map.operationalLayers.clear();
     map.operationalLayers.add(_shapefileFeatureLayer);
     // Create the symbology for the alternate renderer.
-    final lineSymbol = SimpleLineSymbol(
-      color: Colors.red,
-    );
+    final lineSymbol = SimpleLineSymbol(color: Colors.red);
     final fillSymbol = SimpleFillSymbol(
       color: Colors.yellow,
       outline: lineSymbol,

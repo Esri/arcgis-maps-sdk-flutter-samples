@@ -57,11 +57,7 @@ class _EditFeatureAttachmentsState extends State<EditFeatureAttachments>
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISStreets);
     // Set the initial viewpoint for the map.
     map.initialViewpoint = Viewpoint.fromCenter(
-      ArcGISPoint(
-        x: -95,
-        y: 40,
-        spatialReference: SpatialReference.wgs84,
-      ),
+      ArcGISPoint(x: -95, y: 40, spatialReference: SpatialReference.wgs84),
       scale: 100000000,
     );
 
@@ -96,10 +92,11 @@ class _EditFeatureAttachmentsState extends State<EditFeatureAttachments>
   void _showBottomSheet(ArcGISFeature selectedFeature) {
     showModalBottomSheet(
       context: context,
-      builder: (context) => AttachmentsOptions(
-        arcGISFeature: selectedFeature,
-        applyEdits: _applyEdits,
-      ),
+      builder:
+          (context) => AttachmentsOptions(
+            arcGISFeature: selectedFeature,
+            applyEdits: _applyEdits,
+          ),
     );
   }
 
@@ -174,9 +171,7 @@ class _AttachmentsOptionsState extends State<AttachmentsOptions>
                     const SizedBox(
                       height: 18,
                       width: 18,
-                      child: CircularProgressIndicator(
-                        color: Colors.white,
-                      ),
+                      child: CircularProgressIndicator(color: Colors.white),
                     )
                   else
                     const SizedBox.shrink(),
@@ -202,9 +197,7 @@ class _AttachmentsOptionsState extends State<AttachmentsOptions>
                 ],
               ),
             ),
-            const Divider(
-              color: Colors.purple,
-            ),
+            const Divider(color: Colors.purple),
 
             // Display each attachment with view and delete buttons.
             SingleChildScrollView(
@@ -223,13 +216,13 @@ class _AttachmentsOptionsState extends State<AttachmentsOptions>
                           children: [
                             IconButton(
                               icon: const Icon(Icons.remove_red_eye),
-                              onPressed: () =>
-                                  viewAttachment(_attachments[index]),
+                              onPressed:
+                                  () => viewAttachment(_attachments[index]),
                             ),
                             IconButton(
                               icon: const Icon(Icons.delete),
-                              onPressed: () =>
-                                  deleteAttachment(_attachments[index]),
+                              onPressed:
+                                  () => deleteAttachment(_attachments[index]),
                             ),
                           ],
                         ),
@@ -268,10 +261,7 @@ class _AttachmentsOptionsState extends State<AttachmentsOptions>
         builder: (context) {
           return AlertDialog(
             title: Text(attachment.name),
-            content: SizedBox(
-              height: 300,
-              child: Image.memory(data),
-            ),
+            content: SizedBox(height: 300, child: Image.memory(data)),
             actions: [
               IconButton(
                 icon: const Icon(Icons.save),

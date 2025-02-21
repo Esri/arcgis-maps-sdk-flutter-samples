@@ -21,7 +21,7 @@ import 'package:path_provider/path_provider.dart';
 
 class SimulatedNmeaDataSource {
   SimulatedNmeaDataSource({Duration interval = const Duration(seconds: 1)})
-      : _interval = interval {
+    : _interval = interval {
     _nmeaMessagesController.onListen = _start;
     _nmeaMessagesController.onCancel = _shutdown;
 

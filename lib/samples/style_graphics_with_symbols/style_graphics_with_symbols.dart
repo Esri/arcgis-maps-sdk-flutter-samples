@@ -86,10 +86,7 @@ class _StyleGraphicsWithSymbolsState extends State<StyleGraphicsWithSymbols>
 
   void _createPoints() {
     // Create a red circle simple marker symbol.
-    final redCircleSymbol = SimpleMarkerSymbol(
-      color: Colors.red,
-      size: 10,
-    );
+    final redCircleSymbol = SimpleMarkerSymbol(color: Colors.red, size: 10);
 
     // Create graphics and add them to graphics overlay.
     var graphic = Graphic(
@@ -142,8 +139,9 @@ class _StyleGraphicsWithSymbolsState extends State<StyleGraphicsWithSymbols>
     );
 
     // Build a polyline.
-    final polylineBuilder =
-        PolylineBuilder(spatialReference: SpatialReference.wgs84);
+    final polylineBuilder = PolylineBuilder(
+      spatialReference: SpatialReference.wgs84,
+    );
     polylineBuilder.addPointXY(x: -2.715, y: 56.061);
     polylineBuilder.addPointXY(x: -2.6438, y: 56.079);
     polylineBuilder.addPointXY(x: -2.638, y: 56.079);
@@ -176,8 +174,9 @@ class _StyleGraphicsWithSymbolsState extends State<StyleGraphicsWithSymbols>
     );
 
     // Create a new point collection for polygon.
-    final polygonBuilder =
-        PolygonBuilder(spatialReference: SpatialReference.wgs84);
+    final polygonBuilder = PolygonBuilder(
+      spatialReference: SpatialReference.wgs84,
+    );
 
     polygonBuilder.addPointXY(x: -2.6425, y: 56.0784);
     polygonBuilder.addPointXY(x: -2.6430, y: 56.0763);
@@ -226,10 +225,14 @@ class _StyleGraphicsWithSymbolsState extends State<StyleGraphicsWithSymbols>
     );
 
     // Create two graphics from the points and symbols.
-    final bassRockGraphic =
-        Graphic(geometry: bassPoint, symbol: bassRockTextSymbol);
-    final craigleithGraphic =
-        Graphic(geometry: craigleithPoint, symbol: craigleithTextSymbol);
+    final bassRockGraphic = Graphic(
+      geometry: bassPoint,
+      symbol: bassRockTextSymbol,
+    );
+    final craigleithGraphic = Graphic(
+      geometry: craigleithPoint,
+      symbol: craigleithTextSymbol,
+    );
 
     // Add graphics to the graphics overlay.
     _graphicsOverlay.graphics.addAll([bassRockGraphic, craigleithGraphic]);
@@ -237,8 +240,9 @@ class _StyleGraphicsWithSymbolsState extends State<StyleGraphicsWithSymbols>
 
   Future<void> _setExtent() async {
     // Create a new envelope builder using the same spatial reference as the graphics.
-    final myEnvelopeBuilder =
-        EnvelopeBuilder(spatialReference: SpatialReference.wgs84);
+    final myEnvelopeBuilder = EnvelopeBuilder(
+      spatialReference: SpatialReference.wgs84,
+    );
 
     // Loop through each graphic in the graphic collection.
     for (final graphic in _graphicsOverlay.graphics) {

@@ -77,23 +77,25 @@ class _GroupLayersTogetherState extends State<GroupLayersTogether>
   Widget buildSettings(BuildContext context) {
     return BottomSheetSettings(
       onCloseIconPressed: () => setState(() => _settingsVisible = false),
-      settingsWidgets: (context) => [
-        Container(
-          constraints: BoxConstraints(
-            maxHeight: MediaQuery.sizeOf(context).height * 0.4,
-          ),
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: _mapViewController.arcGISMap?.operationalLayers
-                      .whereType<GroupLayer>()
-                      .map(buildGroupLayerSettings)
-                      .toList() ??
-                  [],
+      settingsWidgets:
+          (context) => [
+            Container(
+              constraints: BoxConstraints(
+                maxHeight: MediaQuery.sizeOf(context).height * 0.4,
+              ),
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children:
+                      _mapViewController.arcGISMap?.operationalLayers
+                          .whereType<GroupLayer>()
+                          .map(buildGroupLayerSettings)
+                          .toList() ??
+                      [],
+                ),
+              ),
             ),
-          ),
-        ),
-      ],
+          ],
     );
   }
 
@@ -125,26 +127,25 @@ class _GroupLayersTogetherState extends State<GroupLayersTogether>
           ],
         ),
         // Create a list of Switches to toggle the visibility of the individual layers.
-        ...groupLayer.layers.map(
-          (layer) {
-            return Row(
-              children: [
-                Text(displayName[layer.name] ?? layer.name),
-                const Spacer(),
-                // Create a Switch to toggle the visibility of the individual layer.
-                Switch(
-                  value: layer.isVisible,
-                  onChanged: groupLayer.isVisible
-                      ? (value) {
+        ...groupLayer.layers.map((layer) {
+          return Row(
+            children: [
+              Text(displayName[layer.name] ?? layer.name),
+              const Spacer(),
+              // Create a Switch to toggle the visibility of the individual layer.
+              Switch(
+                value: layer.isVisible,
+                onChanged:
+                    groupLayer.isVisible
+                        ? (value) {
                           layer.isVisible = value;
                           setState(() {});
                         }
-                      : null,
-                ),
-              ],
-            );
-          },
-        ),
+                        : null,
+              ),
+            ],
+          );
+        }),
       ],
     );
   }
@@ -178,8 +179,9 @@ class _GroupLayersTogetherState extends State<GroupLayersTogether>
     await projectAreaLayer.load();
     if (projectAreaGroupLayer.fullExtent != null) {
       // Set the initial viewpoint to the full extent of the group layer.
-      map.initialViewpoint =
-          Viewpoint.fromTargetExtent(projectAreaGroupLayer.fullExtent!);
+      map.initialViewpoint = Viewpoint.fromTargetExtent(
+        projectAreaGroupLayer.fullExtent!,
+      );
     }
 
     // Set the map to the map view.

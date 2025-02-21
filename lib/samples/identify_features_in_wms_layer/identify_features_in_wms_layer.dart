@@ -153,20 +153,19 @@ class _IdentifyFeaturesInWmsLayerState extends State<IdentifyFeaturesInWmsLayer>
     // Show a dialog containing a web view widget.
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text(
-          'Identify Result',
-          style: Theme.of(context).textTheme.titleMedium,
-        ),
-        content: SizedBox(
-          height: 150,
-          width: MediaQuery.of(context).size.width * 0.75,
-          // Create a web view widget and set the controller to provide the content.
-          child: WebViewWidget(
-            controller: _webViewController,
+      builder:
+          (context) => AlertDialog(
+            title: Text(
+              'Identify Result',
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+            content: SizedBox(
+              height: 150,
+              width: MediaQuery.of(context).size.width * 0.75,
+              // Create a web view widget and set the controller to provide the content.
+              child: WebViewWidget(controller: _webViewController),
+            ),
           ),
-        ),
-      ),
     );
   }
 

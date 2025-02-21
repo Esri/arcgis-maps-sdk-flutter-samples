@@ -27,10 +27,12 @@ void createNewSample(String sampleCamelName) {
   final ps = Platform.pathSeparator;
   final currentDirectory = Directory.current;
   final sampleSnakeName = camelToSnake(sampleCamelName);
-  final sampleRootDirectory =
-      Directory('${currentDirectory.path}${ps}lib${ps}samples');
-  final sampleDirectory =
-      Directory('${sampleRootDirectory.path}$ps$sampleSnakeName');
+  final sampleRootDirectory = Directory(
+    '${currentDirectory.path}${ps}lib${ps}samples',
+  );
+  final sampleDirectory = Directory(
+    '${sampleRootDirectory.path}$ps$sampleSnakeName',
+  );
 
   if (sampleDirectory.existsSync()) {
     throw FileSystemException(

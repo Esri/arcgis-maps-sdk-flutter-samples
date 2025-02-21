@@ -97,22 +97,20 @@ class _AddWfsLayerState extends State<AddWfsLayer> with SampleStateSupport {
         'https://dservices2.arcgis.com/ZQgQTuoyBrtmoGdP/arcgis/services/Seattle_Downtown_Features/WFSServer?service=wfs&request=getcapabilities';
 
     // Create a WFS feature table from URI and name.
-    _featureTable = WfsFeatureTable.withUriAndTableName(
-      uri: Uri.parse(wfsFeatureTableUri),
-      tableName: 'Seattle_Downtown_Features:Buildings',
-    )
-      // Set the axis order and feature request mode.
-      ..axisOrder = OgcAxisOrder.noSwap
-      ..featureRequestMode = FeatureRequestMode.manualCache;
+    _featureTable =
+        WfsFeatureTable.withUriAndTableName(
+            uri: Uri.parse(wfsFeatureTableUri),
+            tableName: 'Seattle_Downtown_Features:Buildings',
+          )
+          // Set the axis order and feature request mode.
+          ..axisOrder = OgcAxisOrder.noSwap
+          ..featureRequestMode = FeatureRequestMode.manualCache;
 
     // Create the feature layer from the feature table.
     final featureLayer = FeatureLayer.withFeatureTable(_featureTable)
       // Apply a renderer.
       ..renderer = SimpleRenderer(
-        symbol: SimpleLineSymbol(
-          color: Colors.red,
-          width: 3,
-        ),
+        symbol: SimpleLineSymbol(color: Colors.red, width: 3),
       );
     // Wait for the feature layer to load.
     await featureLayer.load();
@@ -130,9 +128,10 @@ class _AddWfsLayerState extends State<AddWfsLayer> with SampleStateSupport {
     final currentExtent = _mapViewController.visibleArea;
 
     // Create a query based on the current visible extent.
-    final visibleExtentQuery = QueryParameters()
-      ..geometry = currentExtent
-      ..spatialRelationship = SpatialRelationship.intersects;
+    final visibleExtentQuery =
+        QueryParameters()
+          ..geometry = currentExtent
+          ..spatialRelationship = SpatialRelationship.intersects;
 
     // Populate the table with the query, leaving existing table entries intact.
     await _featureTable.populateFromService(

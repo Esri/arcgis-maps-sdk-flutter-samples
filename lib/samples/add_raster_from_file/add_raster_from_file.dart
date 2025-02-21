@@ -65,10 +65,7 @@ class _AddRasterFromFileState extends State<AddRasterFromFile>
     // Set the viewpoint to the center of the raster layer's full extent.
     final fullExtent = rasterLayer.fullExtent;
     if (fullExtent != null) {
-      final viewpoint = Viewpoint.fromCenter(
-        fullExtent.center,
-        scale: 80000,
-      );
+      final viewpoint = Viewpoint.fromCenter(fullExtent.center, scale: 80000);
 
       // Set the map on the map view controller.
       _mapViewController.arcGISMap = map;
@@ -87,8 +84,9 @@ class _AddRasterFromFileState extends State<AddRasterFromFile>
     // Get the temp directory.
     final directory = await getApplicationDocumentsDirectory();
     // Create a file to the Shasta tif file.
-    final shastaTifFile =
-        File('${directory.absolute.path}/raster-file/raster-file/Shasta.tif');
+    final shastaTifFile = File(
+      '${directory.absolute.path}/raster-file/raster-file/Shasta.tif',
+    );
     // Create a raster from the file URI.
     final raster = Raster.withFileUri(shastaTifFile.uri);
     // Load the raster object.

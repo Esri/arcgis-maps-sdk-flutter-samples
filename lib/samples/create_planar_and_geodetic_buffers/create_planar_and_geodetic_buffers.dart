@@ -27,7 +27,8 @@ class CreatePlanarAndGeodeticBuffers extends StatefulWidget {
 }
 
 class _CreatePlanarAndGeodeticBuffersState
-    extends State<CreatePlanarAndGeodeticBuffers> with SampleStateSupport {
+    extends State<CreatePlanarAndGeodeticBuffers>
+    with SampleStateSupport {
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
   // The graphics overlay for the geodetic buffers.
@@ -93,72 +94,73 @@ class _CreatePlanarAndGeodeticBuffersState
   Widget buildSettings(BuildContext context) {
     return BottomSheetSettings(
       onCloseIconPressed: () => setState(() => _settingsVisible = false),
-      settingsWidgets: (context) => [
-        Row(
-          children: [
-            const Text('Buffer Radius (miles)'),
-            const Spacer(),
-            Text(
-              _bufferRadius.round().toString(),
-              textAlign: TextAlign.right,
-            ),
-          ],
-        ),
-        Row(
-          children: [
-            Expanded(
-              // A slider to adjust the buffer radius.
-              child: Slider(
-                value: _bufferRadius,
-                min: 200,
-                max: 2000,
-                onChanged: (value) => setState(() => _bufferRadius = value),
-              ),
-            ),
-          ],
-        ),
-        Row(
-          children: [
-            SizedBox(
-              width: 30,
-              height: 30,
-              child: Container(
-                decoration: const BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.green,
+      settingsWidgets:
+          (context) => [
+            Row(
+              children: [
+                const Text('Buffer Radius (miles)'),
+                const Spacer(),
+                Text(
+                  _bufferRadius.round().toString(),
+                  textAlign: TextAlign.right,
                 ),
-                child: Container(
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(width: 2),
-                    color: Colors.red.withAlpha(127),
+              ],
+            ),
+            Row(
+              children: [
+                Expanded(
+                  // A slider to adjust the buffer radius.
+                  child: Slider(
+                    value: _bufferRadius,
+                    min: 200,
+                    max: 2000,
+                    onChanged: (value) => setState(() => _bufferRadius = value),
                   ),
                 ),
-              ),
+              ],
             ),
-            const SizedBox(width: 10),
-            const Text('Planar Buffer'),
-          ],
-        ),
-        const SizedBox(height: 10),
-        Row(
-          children: [
-            SizedBox(
-              width: 30,
-              height: 30,
-              child: Container(
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(width: 2),
-                  color: Colors.green,
+            Row(
+              children: [
+                SizedBox(
+                  width: 30,
+                  height: 30,
+                  child: Container(
+                    decoration: const BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.green,
+                    ),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(width: 2),
+                        color: Colors.red.withAlpha(127),
+                      ),
+                    ),
+                  ),
                 ),
-              ),
+                const SizedBox(width: 10),
+                const Text('Planar Buffer'),
+              ],
             ),
-            const SizedBox(width: 10),
-            const Text('Geodetic Buffer'),
+            const SizedBox(height: 10),
+            Row(
+              children: [
+                SizedBox(
+                  width: 30,
+                  height: 30,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(width: 2),
+                      color: Colors.green,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                const Text('Geodetic Buffer'),
+              ],
+            ),
           ],
-        ),
-      ],
     );
   }
 
@@ -167,10 +169,7 @@ class _CreatePlanarAndGeodeticBuffersState
     _geodeticOverlay.renderer = SimpleRenderer(
       symbol: SimpleFillSymbol(
         color: Colors.green,
-        outline: SimpleLineSymbol(
-          color: Colors.black,
-          width: 2,
-        ),
+        outline: SimpleLineSymbol(color: Colors.black, width: 2),
       ),
     );
     _geodeticOverlay.opacity = 0.5;
@@ -179,10 +178,7 @@ class _CreatePlanarAndGeodeticBuffersState
     _planarOverlay.renderer = SimpleRenderer(
       symbol: SimpleFillSymbol(
         color: Colors.red,
-        outline: SimpleLineSymbol(
-          color: Colors.black,
-          width: 2,
-        ),
+        outline: SimpleLineSymbol(color: Colors.black, width: 2),
       ),
     );
     _planarOverlay.opacity = 0.5;
@@ -197,13 +193,11 @@ class _CreatePlanarAndGeodeticBuffersState
     );
 
     // Add the overlays to the map view.
-    _mapViewController.graphicsOverlays.addAll(
-      [
-        _geodeticOverlay,
-        _planarOverlay,
-        _pointOverlay,
-      ],
-    );
+    _mapViewController.graphicsOverlays.addAll([
+      _geodeticOverlay,
+      _planarOverlay,
+      _pointOverlay,
+    ]);
 
     // Create a map with the topographic basemap style and set to the map view.
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic);

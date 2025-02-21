@@ -74,12 +74,7 @@ class _GenerateOfflineMapState extends State<GenerateOfflineMap>
                         child: IgnorePointer(
                           child: SafeArea(
                             child: Container(
-                              margin: const EdgeInsets.fromLTRB(
-                                30,
-                                30,
-                                30,
-                                50,
-                              ),
+                              margin: const EdgeInsets.fromLTRB(30, 30, 30, 50),
                               child: Container(
                                 key: _outlineKey,
                                 decoration: BoxDecoration(
@@ -175,12 +170,14 @@ class _GenerateOfflineMapState extends State<GenerateOfflineMap>
 
     // Convert the global screen rect to a rect local to the map view.
     final mapRenderBox = mapContext.findRenderObject() as RenderBox?;
-    final mapLocalScreenRect = outlineGlobalScreenRect
-        .shift(-mapRenderBox!.localToGlobal(Offset.zero));
+    final mapLocalScreenRect = outlineGlobalScreenRect.shift(
+      -mapRenderBox!.localToGlobal(Offset.zero),
+    );
 
     // Convert the local screen rect to map coordinates.
-    final locationTopLeft =
-        _mapViewController.screenToLocation(screen: mapLocalScreenRect.topLeft);
+    final locationTopLeft = _mapViewController.screenToLocation(
+      screen: mapLocalScreenRect.topLeft,
+    );
     final locationBottomRight = _mapViewController.screenToLocation(
       screen: mapLocalScreenRect.bottomRight,
     );
@@ -202,11 +199,11 @@ class _GenerateOfflineMapState extends State<GenerateOfflineMap>
     // Create parameters specifying the region to take offline.
     // Provides a min scale to avoid requesting a huge download. Note maxScale defaults to 0.0.
     const minScale = 1e4;
-    final parameters =
-        await _offlineMapTask.createDefaultGenerateOfflineMapParameters(
-      areaOfInterest: envelope,
-      minScale: minScale,
-    );
+    final parameters = await _offlineMapTask
+        .createDefaultGenerateOfflineMapParameters(
+          areaOfInterest: envelope,
+          minScale: minScale,
+        );
     parameters.continueOnErrors = false;
 
     // Prepare an empty directory to store the offline map.

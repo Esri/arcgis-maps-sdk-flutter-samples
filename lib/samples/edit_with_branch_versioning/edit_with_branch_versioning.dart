@@ -75,9 +75,10 @@ class _EditWithBranchVersioningState extends State<EditWithBranchVersioning>
                     ),
                     // A button to select a version to switch to.
                     ElevatedButton(
-                      onPressed: _model.isVersionCreated
-                          ? () => showSwitchVersionDialog(context, _model)
-                          : null,
+                      onPressed:
+                          _model.isVersionCreated
+                              ? () => showSwitchVersionDialog(context, _model)
+                              : null,
                       child: const Text('Switch'),
                     ),
                   ],
@@ -114,9 +115,10 @@ class _EditWithBranchVersioningState extends State<EditWithBranchVersioning>
         ),
       ),
       // The Feature Details bottom sheet.
-      bottomSheet: _featureBottomSheetVisible
-          ? buildFeatureDetails(context, _model.selectedFeature!)
-          : null,
+      bottomSheet:
+          _featureBottomSheetVisible
+              ? buildFeatureDetails(context, _model.selectedFeature!)
+              : null,
     );
   }
 
@@ -133,8 +135,9 @@ class _EditWithBranchVersioningState extends State<EditWithBranchVersioning>
 
   Future<void> onTap(Offset localPosition) async {
     if (_model.selectedFeature != null && !_model.onDefaultVersion) {
-      final mapPoint =
-          _mapViewController.screenToLocation(screen: localPosition);
+      final mapPoint = _mapViewController.screenToLocation(
+        screen: localPosition,
+      );
 
       // Show the move confirmation dialog if a feature is already selected.
       _showMoveConfirmationDialog(_model.selectedFeature!, mapPoint!);
@@ -195,10 +198,11 @@ class _EditWithBranchVersioningState extends State<EditWithBranchVersioning>
               const Spacer(),
               IconButton(
                 icon: const Icon(Icons.close),
-                onPressed: () => setState(() {
-                  _featureBottomSheetVisible = false;
-                  _model.clearSelection();
-                }),
+                onPressed:
+                    () => setState(() {
+                      _featureBottomSheetVisible = false;
+                      _model.clearSelection();
+                    }),
               ),
             ],
           ),
@@ -206,13 +210,14 @@ class _EditWithBranchVersioningState extends State<EditWithBranchVersioning>
           Text('Damage Type: ${damageType ?? 'Unknown'}'),
           const Divider(),
           TextButton(
-            onPressed: _model.onDefaultVersion
-                ? null
-                : () {
-                    setState(() {
-                      _editDamageType(feature);
-                    });
-                  },
+            onPressed:
+                _model.onDefaultVersion
+                    ? null
+                    : () {
+                      setState(() {
+                        _editDamageType(feature);
+                      });
+                    },
             child: const Text('Edit Damage Type'),
           ),
         ],
@@ -223,31 +228,32 @@ class _EditWithBranchVersioningState extends State<EditWithBranchVersioning>
   void _showMoveConfirmationDialog(Feature feature, ArcGISPoint mapPoint) {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Confirm Move'),
-        content: const Text('Do you want to move the selected feature?'),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-              _model.clearSelection();
-              setState(() => _featureBottomSheetVisible = false);
-            },
-            child: const Text('Cancel'),
+      builder:
+          (context) => AlertDialog(
+            title: const Text('Confirm Move'),
+            content: const Text('Do you want to move the selected feature?'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  _model.clearSelection();
+                  setState(() => _featureBottomSheetVisible = false);
+                },
+                child: const Text('Cancel'),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  setState(() {
+                    feature.geometry = mapPoint;
+                    _model.updateFeature();
+                    setState(() => _featureBottomSheetVisible = false);
+                  });
+                },
+                child: const Text('Move'),
+              ),
+            ],
           ),
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-              setState(() {
-                feature.geometry = mapPoint;
-                _model.updateFeature();
-                setState(() => _featureBottomSheetVisible = false);
-              });
-            },
-            child: const Text('Move'),
-          ),
-        ],
-      ),
     );
   }
 
@@ -259,22 +265,23 @@ class _EditWithBranchVersioningState extends State<EditWithBranchVersioning>
           title: const Text('Damage Type'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
-            children: DamageType.values.map((damageType) {
-              return ListTile(
-                title: Text(damageType.label),
-                onTap: () {
-                  Navigator.of(context).pop();
+            children:
+                DamageType.values.map((damageType) {
+                  return ListTile(
+                    title: Text(damageType.label),
+                    onTap: () {
+                      Navigator.of(context).pop();
 
-                  // Update the feature's attribute with the selected value.
-                  feature.attributes['typdamage'] = damageType.label;
-                  _model.updateFeature();
+                      // Update the feature's attribute with the selected value.
+                      feature.attributes['typdamage'] = damageType.label;
+                      _model.updateFeature();
 
-                  setState(() {
-                    _featureBottomSheetVisible = false;
-                  });
-                },
-              );
-            }).toList(),
+                      setState(() {
+                        _featureBottomSheetVisible = false;
+                      });
+                    },
+                  );
+                }).toList(),
           ),
         );
       },
@@ -309,13 +316,15 @@ class _EditWithBranchVersioningState extends State<EditWithBranchVersioning>
                         children: [
                           TextField(
                             controller: nameController,
-                            decoration:
-                                const InputDecoration(labelText: 'Name'),
+                            decoration: const InputDecoration(
+                              labelText: 'Name',
+                            ),
                           ),
                           TextField(
                             controller: descriptionController,
-                            decoration:
-                                const InputDecoration(labelText: 'Description'),
+                            decoration: const InputDecoration(
+                              labelText: 'Description',
+                            ),
                           ),
                           DropdownButton(
                             value: selectedAccess,
@@ -328,12 +337,13 @@ class _EditWithBranchVersioningState extends State<EditWithBranchVersioning>
                               }
                             },
                             // Display the version access values in a dropdown.
-                            items: VersionAccess.values.map((value) {
-                              return DropdownMenuItem(
-                                value: value,
-                                child: Text(value.name),
-                              );
-                            }).toList(),
+                            items:
+                                VersionAccess.values.map((value) {
+                                  return DropdownMenuItem(
+                                    value: value,
+                                    child: Text(value.name),
+                                  );
+                                }).toList(),
                           ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -372,13 +382,15 @@ class _EditWithBranchVersioningState extends State<EditWithBranchVersioning>
                                                 .additionalMessage
                                                 .split(RegExp(r'\s+'));
 
-                                            if (errorMessageStrings
-                                                .contains('Extended')) {
+                                            if (errorMessageStrings.contains(
+                                              'Extended',
+                                            )) {
                                               errorMessageStrings =
                                                   errorMessageStrings.sublist(
-                                                0,
-                                                errorMessageStrings.length - 4,
-                                              );
+                                                    0,
+                                                    errorMessageStrings.length -
+                                                        4,
+                                                  );
                                             }
                                             final cleanedMessage =
                                                 errorMessageStrings.join(' ');
@@ -389,9 +401,11 @@ class _EditWithBranchVersioningState extends State<EditWithBranchVersioning>
                                               ),
                                               actions: [
                                                 TextButton(
-                                                  onPressed: () =>
-                                                      Navigator.of(context)
-                                                          .pop(),
+                                                  onPressed:
+                                                      () =>
+                                                          Navigator.of(
+                                                            context,
+                                                          ).pop(),
                                                   child: const Text('OK'),
                                                 ),
                                               ],
@@ -412,8 +426,11 @@ class _EditWithBranchVersioningState extends State<EditWithBranchVersioning>
                                           ),
                                           actions: [
                                             TextButton(
-                                              onPressed: () =>
-                                                  Navigator.of(context).pop(),
+                                              onPressed:
+                                                  () =>
+                                                      Navigator.of(
+                                                        context,
+                                                      ).pop(),
                                               child: const Text('OK'),
                                             ),
                                           ],
@@ -450,38 +467,40 @@ class _EditWithBranchVersioningState extends State<EditWithBranchVersioning>
           title: const Text('Switch Version'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
-            children: model.existingVersionNames.map((versionName) {
-              return ListTile(
-                title: Text(versionName),
-                onTap: () async {
-                  Navigator.of(context).pop();
-                  try {
-                    await model.switchToVersion(versionName);
-                    // catch ArcGISException when switching to a version fails.
-                    // ignore: avoid_catches_without_on_clauses
-                  } catch (e) {
-                    // Show an error message if an exception occurs.
-                    if (context.mounted) {
-                      await showDialog<void>(
-                        context: context,
-                        builder: (context) {
-                          return AlertDialog(
-                            title: const Text('Error'),
-                            content: Text('Error: $e'),
-                            actions: [
-                              TextButton(
-                                onPressed: () => Navigator.of(context).pop(),
-                                child: const Text('OK'),
-                              ),
-                            ],
+            children:
+                model.existingVersionNames.map((versionName) {
+                  return ListTile(
+                    title: Text(versionName),
+                    onTap: () async {
+                      Navigator.of(context).pop();
+                      try {
+                        await model.switchToVersion(versionName);
+                        // catch ArcGISException when switching to a version fails.
+                        // ignore: avoid_catches_without_on_clauses
+                      } catch (e) {
+                        // Show an error message if an exception occurs.
+                        if (context.mounted) {
+                          await showDialog<void>(
+                            context: context,
+                            builder: (context) {
+                              return AlertDialog(
+                                title: const Text('Error'),
+                                content: Text('Error: $e'),
+                                actions: [
+                                  TextButton(
+                                    onPressed:
+                                        () => Navigator.of(context).pop(),
+                                    child: const Text('OK'),
+                                  ),
+                                ],
+                              );
+                            },
                           );
-                        },
-                      );
-                    }
-                  }
-                },
-              );
-            }).toList(),
+                        }
+                      }
+                    },
+                  );
+                }).toList(),
           ),
           actions: [
             TextButton(
@@ -548,8 +567,9 @@ class EditWithBranchVersioningModel extends ChangeNotifier {
   Future<void> setUp() async {
     // Adds the credential to access the feature service for the service geodatabase.
     final credential = await getPublicSampleCredential();
-    ArcGISEnvironment.authenticationManager.arcGISCredentialStore
-        .add(credential: credential);
+    ArcGISEnvironment.authenticationManager.arcGISCredentialStore.add(
+      credential: credential,
+    );
     await serviceGeodatabase.load();
     existingVersionNames.add(serviceGeodatabase.defaultVersionName);
 
@@ -566,8 +586,9 @@ class EditWithBranchVersioningModel extends ChangeNotifier {
   // - ServiceVersionParameters parameters: The properties of the new version.
   // - Returns: The name of the created version.
   Future<String> createVersion(ServiceVersionParameters parameters) async {
-    final versionInfo =
-        await serviceGeodatabase.createVersion(newVersion: parameters);
+    final versionInfo = await serviceGeodatabase.createVersion(
+      newVersion: parameters,
+    );
     existingVersionNames.add(versionInfo.name);
     // Set the flag to true when a version is created.
     isVersionCreated = true;

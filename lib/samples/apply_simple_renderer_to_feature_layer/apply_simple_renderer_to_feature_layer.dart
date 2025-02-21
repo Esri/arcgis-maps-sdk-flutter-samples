@@ -27,7 +27,8 @@ class ApplySimpleRendererToFeatureLayer extends StatefulWidget {
 }
 
 class _ApplySimpleRendererToFeatureLayerState
-    extends State<ApplySimpleRendererToFeatureLayer> with SampleStateSupport {
+    extends State<ApplySimpleRendererToFeatureLayer>
+    with SampleStateSupport {
   // The feature layer that will host the symbolized features.
   late final FeatureLayer _featureLayer;
   // Create the map view controller.
@@ -57,12 +58,14 @@ class _ApplySimpleRendererToFeatureLayerState
                 ),
                 Center(
                   child: ElevatedButton(
-                    onPressed: _usingDefaultRenderer
-                        ? overrideRenderer
-                        : resetRenderer,
-                    child: _usingDefaultRenderer
-                        ? const Text('Blue Renderer')
-                        : const Text('Orange Renderer'),
+                    onPressed:
+                        _usingDefaultRenderer
+                            ? overrideRenderer
+                            : resetRenderer,
+                    child:
+                        _usingDefaultRenderer
+                            ? const Text('Blue Renderer')
+                            : const Text('Orange Renderer'),
                   ),
                 ),
               ],
@@ -84,16 +87,17 @@ class _ApplySimpleRendererToFeatureLayerState
     _featureLayer = FeatureLayer.withFeatureTable(serviceFeatureTable);
 
     // Initialize the ArcGISMap.
-    final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic)
-      ..operationalLayers.add(_featureLayer)
-      ..initialViewpoint = Viewpoint.fromCenter(
-        ArcGISPoint(
-          x: -9177343,
-          y: 4247283,
-          spatialReference: SpatialReference.webMercator,
-        ),
-        scale: 4750,
-      );
+    final map =
+        ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic)
+          ..operationalLayers.add(_featureLayer)
+          ..initialViewpoint = Viewpoint.fromCenter(
+            ArcGISPoint(
+              x: -9177343,
+              y: 4247283,
+              spatialReference: SpatialReference.webMercator,
+            ),
+            scale: 4750,
+          );
 
     // Add the map to the MapViewController.
     _mapViewController.arcGISMap = map;
@@ -104,10 +108,7 @@ class _ApplySimpleRendererToFeatureLayerState
 
   void overrideRenderer() {
     // Set a new renderer for the feature layer
-    final markerSymbol = SimpleMarkerSymbol(
-      color: Colors.blue,
-      size: 5,
-    );
+    final markerSymbol = SimpleMarkerSymbol(color: Colors.blue, size: 5);
     _featureLayer.renderer = SimpleRenderer(symbol: markerSymbol);
     setState(() => _usingDefaultRenderer = false);
   }

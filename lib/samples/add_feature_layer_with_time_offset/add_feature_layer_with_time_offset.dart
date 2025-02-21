@@ -27,7 +27,8 @@ class AddFeatureLayerWithTimeOffset extends StatefulWidget {
 }
 
 class _AddFeatureLayerWithTimeOffsetState
-    extends State<AddFeatureLayerWithTimeOffset> with SampleStateSupport {
+    extends State<AddFeatureLayerWithTimeOffset>
+    with SampleStateSupport {
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
   // The start and end times of the feature layer.
@@ -86,57 +87,58 @@ class _AddFeatureLayerWithTimeOffsetState
   Widget buildSettings(BuildContext context) {
     return BottomSheetSettings(
       onCloseIconPressed: () => setState(() => _settingsVisible = false),
-      settingsWidgets: (context) => [
-        // Display the current date range.
-        Text(_dateRangeMessage),
-        Row(
-          children: [
-            Expanded(
-              // A slider to adjust the interval.
-              child: Slider(
-                value: _intervalFraction,
-                onChanged: (value) {
-                  setState(() => _intervalFraction = value);
-                  updateTimeExtent();
-                },
-              ),
-            ),
-          ],
-        ),
-        Row(
-          children: [
-            SizedBox(
-              width: 20,
-              height: 20,
-              child: Container(
-                decoration: const BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.red,
+      settingsWidgets:
+          (context) => [
+            // Display the current date range.
+            Text(_dateRangeMessage),
+            Row(
+              children: [
+                Expanded(
+                  // A slider to adjust the interval.
+                  child: Slider(
+                    value: _intervalFraction,
+                    onChanged: (value) {
+                      setState(() => _intervalFraction = value);
+                      updateTimeExtent();
+                    },
+                  ),
                 ),
-              ),
+              ],
             ),
-            const SizedBox(width: 10),
-            const Text('Hurricane tracks, offset 10 days'),
-          ],
-        ),
-        const SizedBox(height: 10),
-        Row(
-          children: [
-            SizedBox(
-              width: 20,
-              height: 20,
-              child: Container(
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.blue.shade900,
+            Row(
+              children: [
+                SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: Container(
+                    decoration: const BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.red,
+                    ),
+                  ),
                 ),
-              ),
+                const SizedBox(width: 10),
+                const Text('Hurricane tracks, offset 10 days'),
+              ],
             ),
-            const SizedBox(width: 10),
-            const Text('Hurricane tracks, no offset'),
+            const SizedBox(height: 10),
+            Row(
+              children: [
+                SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.blue.shade900,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                const Text('Hurricane tracks, no offset'),
+              ],
+            ),
           ],
-        ),
-      ],
     );
   }
 
@@ -161,24 +163,21 @@ class _AddFeatureLayerWithTimeOffsetState
     final featureTable = ServiceFeatureTable.withUri(featureLayerUri);
     final featureLayer = FeatureLayer.withFeatureTable(featureTable);
     featureLayer.renderer = SimpleRenderer(
-      symbol: SimpleMarkerSymbol(
-        color: Colors.blue.shade900,
-        size: 10,
-      ),
+      symbol: SimpleMarkerSymbol(color: Colors.blue.shade900, size: 10),
     );
 
     // Create another feature layer, offset by 10 days, represented by red dots.
     final offsetFeatureTable = ServiceFeatureTable.withUri(featureLayerUri);
-    final offsetFeatureLayer =
-        FeatureLayer.withFeatureTable(offsetFeatureTable);
-    offsetFeatureLayer.renderer = SimpleRenderer(
-      symbol: SimpleMarkerSymbol(
-        color: Colors.red,
-        size: 10,
-      ),
+    final offsetFeatureLayer = FeatureLayer.withFeatureTable(
+      offsetFeatureTable,
     );
-    offsetFeatureLayer.timeOffset =
-        TimeValue(duration: 10, unit: TimeUnit.days);
+    offsetFeatureLayer.renderer = SimpleRenderer(
+      symbol: SimpleMarkerSymbol(color: Colors.red, size: 10),
+    );
+    offsetFeatureLayer.timeOffset = TimeValue(
+      duration: 10,
+      unit: TimeUnit.days,
+    );
 
     // Add the feature layers to the map.
     map.operationalLayers.addAll([featureLayer, offsetFeatureLayer]);
@@ -208,11 +207,14 @@ class _AddFeatureLayerWithTimeOffsetState
     if (newEnd.isAfter(_endTime)) newEnd = _endTime;
 
     // Set the new time extent on the map view controller.
-    _mapViewController.timeExtent =
-        TimeExtent(startTime: newStart, endTime: newEnd);
+    _mapViewController.timeExtent = TimeExtent(
+      startTime: newStart,
+      endTime: newEnd,
+    );
 
     // Update the date range message.
-    _dateRangeMessage = '${newStart.month}/${newStart.day}/${newStart.year} - '
+    _dateRangeMessage =
+        '${newStart.month}/${newStart.day}/${newStart.year} - '
         '${newEnd.month}/${newEnd.day}/${newEnd.year}';
   }
 }
