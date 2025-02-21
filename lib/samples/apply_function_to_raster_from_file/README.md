@@ -27,10 +27,7 @@ Load the sample to see a raster function applied to a raster.
 
 ## Offline data
 
-| Link                                                                                                     | Local Location                                                |
-|----------------------------------------------------------------------------------------------------------|---------------------------------------------------------------|
-| Shasta.tif raster           | `<userhome>`/ArcGIS/Runtime/Data/raster/Shasta_Elevation.tif  |
-| color.json raster function  | `<userhome>`/ArcGIS/Runtime/Data/raster/color.json            |
+This sample uses the [Shasta_Elevation.tif raster](https://www.arcgis.com/home/item.html?id=b051f5c3e01048f3bf11c59b41507896) and the [color.json raster function](https://www.arcgis.com/home/item.html?id=5356dbf91788474493467519e268cf87).
 
 ## About the data
 
