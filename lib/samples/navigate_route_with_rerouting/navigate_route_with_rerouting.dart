@@ -444,7 +444,10 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
   void updateGuidance(VoiceGuidance voiceGuidance) {
     final nextDirection = voiceGuidance.text;
     if (nextDirection.isEmpty) return;
-    _flutterTts.speak(nextDirection);
+    _routeTracker.setSpeechEngineReady(() => false);
+    _flutterTts.speak(nextDirection).then((value) {
+      _routeTracker.setSpeechEngineReady(() => true);
+    });
   }
 
   // Listen for tracking status changes and update the route status.
@@ -538,6 +541,7 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
 
   // Stop the navigation.
   Future<void> stop() async {
+    await _flutterTts.stop();
     // Stop the location display.
     _mapViewController.locationDisplay.autoPanMode =
         LocationDisplayAutoPanMode.off;
@@ -579,7 +583,6 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
         SimulatedLocationDataSource()..setLocationsWithPolyline(
           routeLine,
           simulationParameters: SimulationParameters(
-            speed: 35,
             startTime: DateTime.now(),
             horizontalAccuracy: 5,
             verticalAccuracy: 5,
