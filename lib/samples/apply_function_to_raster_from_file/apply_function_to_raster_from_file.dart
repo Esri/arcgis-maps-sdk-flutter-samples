@@ -107,6 +107,7 @@ class _ApplyFunctionToRasterFromFileState
         final raster = Raster.withFunction(rasterFunction);
         // Load the Raster Layer.
         _rasterLayer = RasterLayer.withRaster(raster);
+        _rasterLayer.opacity = 0.5;
         await _rasterLayer.load();
       }
     }
