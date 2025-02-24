@@ -143,10 +143,11 @@ class _SetBasemapState extends State<SetBasemap> with SampleStateSupport {
     final portal = Portal.arcGISOnline();
     // Load basemaps from portal.
     final basemaps = await portal.developerBasemaps();
+    await Future.wait(basemaps.map((basemap) => basemap.load()));
+    basemaps.sort((a, b) => a.name.compareTo(b.name));
 
     // Load each basemap to access and display attribute data in the UI.
     for (final basemap in basemaps) {
-      await basemap.load();
       if (basemap.item != null) {
         final thumbnail = basemap.item!.thumbnail;
         if (thumbnail != null) {
