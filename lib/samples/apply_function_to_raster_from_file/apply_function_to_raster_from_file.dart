@@ -13,10 +13,11 @@
 // limitations under the License.
 //
 
+import 'dart:io';
+
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 
 class ApplyFunctionToRasterFromFile extends StatefulWidget {
@@ -87,9 +88,9 @@ class _ApplyFunctionToRasterFromFileState
     );
     await shastaElevationRaster.load();
     // Load the color configuration from the JSON file located in the app's directory.
-    final rasterColorJson = await rootBundle.loadString(
-      '${appDir.absolute.path}/color.json',
-    );
+    final file = File('${appDir.absolute.path}/color.json');
+    final rasterColorJson = await file.readAsString();
+
     // Create a RasterFunction.
     final rasterFunction = RasterFunction.fromJson(rasterColorJson);
     if (rasterFunction != null) {
