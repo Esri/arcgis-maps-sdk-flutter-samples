@@ -21,6 +21,7 @@ import 'package:arcgis_maps_sdk_flutter_samples/widgets/about_info.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/widgets/category_card.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/widgets/sample_viewer_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 void main() {
   // Supply your apiKey using the --dart-define-from-file command line argument.
@@ -33,7 +34,20 @@ void main() {
     ArcGISEnvironment.apiKey = apiKey;
   }
 
-  runApp(MaterialApp(theme: sampleViewerTheme, home: const SampleViewerApp()));
+  runApp(
+    MaterialApp(
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      localeResolutionCallback: (locale, supportedLocales) {
+        return locale;
+      },
+      theme: sampleViewerTheme,
+      home: const SampleViewerApp(),
+    ),
+  );
 }
 
 class SampleViewerApp extends StatefulWidget {
