@@ -139,7 +139,7 @@ class _ShowLegendState extends State<ShowLegend> with SampleStateSupport {
                 if (arcGISImage != null)
                   Image.memory(arcGISImage.getEncodedBuffer())
                 else
-                  Container(),
+                  const SizedBox.shrink(),
                 // Add the legend name to the dropdown list.
                 Text(legend.name, style: const TextStyle(fontSize: 12)),
               ],
