@@ -70,9 +70,9 @@ class _FindRouteInMobileMapPackageState
               return const Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
+                  spacing: 20,
                   children: [
                     CircularProgressIndicator(),
-                    SizedBox(height: 20),
                     Text('Downloading data...'),
                   ],
                 ),

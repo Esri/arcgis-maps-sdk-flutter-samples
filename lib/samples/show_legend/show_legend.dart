@@ -133,13 +133,13 @@ class _ShowLegendState extends State<ShowLegend> with SampleStateSupport {
           DropdownMenuItem(
             value: legend,
             child: Row(
+              spacing: 8,
               children: [
                 // Add the legend image to the dropdown list if the image exists.
                 if (arcGISImage != null)
                   Image.memory(arcGISImage.getEncodedBuffer())
                 else
                   Container(),
-                const SizedBox(width: 8),
                 // Add the legend name to the dropdown list.
                 Text(legend.name, style: const TextStyle(fontSize: 12)),
               ],

@@ -335,6 +335,7 @@ class _SnapGeometryEditsState extends State<SnapGeometryEdits>
                 child: const Text('Show snap settings'),
               ),
               Row(
+                spacing: 12,
                 children: [
                   // A button to call undo on the geometry editor, if enabled.
                   Tooltip(
@@ -347,7 +348,6 @@ class _SnapGeometryEditsState extends State<SnapGeometryEdits>
                       child: const Icon(Icons.undo),
                     ),
                   ),
-                  const SizedBox(width: 12),
                   // A button to delete the selected element on the geometry editor.
                   Tooltip(
                     message: 'Delete selected element',
@@ -365,6 +365,7 @@ class _SnapGeometryEditsState extends State<SnapGeometryEdits>
                 ],
               ),
               Row(
+                spacing: 12,
                 children: [
                   // A button to stop and save edits.
                   Tooltip(
@@ -374,7 +375,6 @@ class _SnapGeometryEditsState extends State<SnapGeometryEdits>
                       child: const Icon(Icons.save),
                     ),
                   ),
-                  const SizedBox(width: 12),
                   // A button to stop the geometry editor and discard all edits.
                   Tooltip(
                     message: 'Stop and discard edits',
