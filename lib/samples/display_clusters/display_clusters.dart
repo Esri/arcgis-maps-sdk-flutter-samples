@@ -156,7 +156,7 @@ class _DisplayClustersState extends State<DisplayClusters>
           content: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
-            spacing: 10 ,
+            spacing: 10,
             children: [
               Text(
                 'Total GeoElements: ${geoElements.length}',

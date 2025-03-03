@@ -387,7 +387,7 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               Row(
-                spacing: 4  ,
+                spacing: 4,
                 children: [
                   // A button to call undo on the geometry editor, if enabled.
                   Tooltip(
