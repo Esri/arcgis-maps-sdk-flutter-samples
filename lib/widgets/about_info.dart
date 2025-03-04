@@ -32,9 +32,9 @@ class _AboutInfoState extends State<AboutInfo> {
   @override
   Widget build(BuildContext context) {
     return Column(
+      spacing: 20,
       children: [
         Text(widget.title, style: const TextStyle(fontWeight: FontWeight.bold)),
-        const SizedBox(height: 20),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [

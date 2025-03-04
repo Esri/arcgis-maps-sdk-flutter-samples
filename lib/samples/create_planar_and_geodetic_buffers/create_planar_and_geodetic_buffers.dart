@@ -120,6 +120,7 @@ class _CreatePlanarAndGeodeticBuffersState
               ],
             ),
             Row(
+              spacing: 10,
               children: [
                 SizedBox(
                   width: 30,
@@ -138,12 +139,12 @@ class _CreatePlanarAndGeodeticBuffersState
                     ),
                   ),
                 ),
-                const SizedBox(width: 10),
                 const Text('Planar Buffer'),
               ],
             ),
             const SizedBox(height: 10),
             Row(
+              spacing: 10,
               children: [
                 SizedBox(
                   width: 30,
@@ -156,7 +157,6 @@ class _CreatePlanarAndGeodeticBuffersState
                     ),
                   ),
                 ),
-                const SizedBox(width: 10),
                 const Text('Geodetic Buffer'),
               ],
             ),

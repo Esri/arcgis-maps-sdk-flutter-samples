@@ -106,6 +106,7 @@ class _AddFeatureLayerWithTimeOffsetState
               ],
             ),
             Row(
+              spacing: 10,
               children: [
                 SizedBox(
                   width: 20,
@@ -117,12 +118,12 @@ class _AddFeatureLayerWithTimeOffsetState
                     ),
                   ),
                 ),
-                const SizedBox(width: 10),
                 const Text('Hurricane tracks, offset 10 days'),
               ],
             ),
             const SizedBox(height: 10),
             Row(
+              spacing: 10,
               children: [
                 SizedBox(
                   width: 20,
@@ -134,7 +135,6 @@ class _AddFeatureLayerWithTimeOffsetState
                     ),
                   ),
                 ),
-                const SizedBox(width: 10),
                 const Text('Hurricane tracks, no offset'),
               ],
             ),

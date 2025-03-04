@@ -125,12 +125,12 @@ class _ShowPortalUserInfoState extends State<ShowPortalUserInfo>
             return SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
+                spacing: 20,
                 children: [
                   Text(
                     '${_portal.user?.fullName} Profile',
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
-                  const SizedBox(height: 20),
                   if (_userThumbnail != null)
                     Image.memory(_userThumbnail!)
                   else

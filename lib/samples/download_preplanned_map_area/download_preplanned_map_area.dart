@@ -156,6 +156,7 @@ class _DownloadPreplannedMapAreaState extends State<DownloadPreplannedMapArea>
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
+        spacing: 15,
         children: [
           Row(
             children: [
@@ -167,7 +168,6 @@ class _DownloadPreplannedMapAreaState extends State<DownloadPreplannedMapArea>
               ),
             ],
           ),
-          const SizedBox(height: 10),
           // Create a list tile for the web map.
           ListTile(
             title: const Text('Web Map (online)'),
@@ -181,12 +181,10 @@ class _DownloadPreplannedMapAreaState extends State<DownloadPreplannedMapArea>
                         ? setMapAndViewpoint(_webMap)
                         : null,
           ),
-          const SizedBox(height: 20),
           Text(
             'Preplanned Map Areas:',
             style: Theme.of(context).textTheme.titleMedium,
           ),
-          const SizedBox(height: 20),
           ListView.builder(
             shrinkWrap: true,
             itemCount: _preplannedMapAreas.length,

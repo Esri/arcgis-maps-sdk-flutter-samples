@@ -57,13 +57,13 @@ class _DisplayClustersState extends State<DisplayClusters>
                 ),
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
+                  spacing: 10,
                   children: [
                     // Add a button to toggle feature clustering.
                     ElevatedButton(
                       onPressed: toggleFeatureClustering,
                       child: const Text('Toggle feature clustering'),
                     ),
-                    const SizedBox(height: 10),
                     // Display the current feature reduction state.
                     Text(
                       _featureReductionEnabled
@@ -156,12 +156,12 @@ class _DisplayClustersState extends State<DisplayClusters>
           content: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
+            spacing: 10,
             children: [
               Text(
                 'Total GeoElements: ${geoElements.length}',
                 style: Theme.of(context).textTheme.titleMedium,
               ),
-              const SizedBox(height: 10),
               SizedBox(
                 height: 200,
                 child: SingleChildScrollView(

@@ -131,6 +131,7 @@ class _LoginWidgetState extends State<LoginWidget> {
         child: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
+            spacing: 10,
             children: [
               Text(
                 'Authentication Required',
@@ -150,7 +151,6 @@ class _LoginWidgetState extends State<LoginWidget> {
                 obscureText: true,
                 decoration: const InputDecoration(hintText: 'Password'),
               ),
-              const SizedBox(height: 10),
               // Buttons to cancel or log in.
               Row(
                 children: [

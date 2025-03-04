@@ -328,20 +328,18 @@ class _DownloadVectorTilesToLocalCacheState
       padding: const EdgeInsets.all(20),
       child: Column(
         mainAxisSize: MainAxisSize.min,
+        spacing: 20,
         children: [
           Text('Downloading...', style: Theme.of(context).textTheme.labelLarge),
-          const SizedBox(height: 20),
           Text(
             '${(_progress * 100).toStringAsFixed(0)}% completed',
             style: Theme.of(context).textTheme.labelMedium,
           ),
-          const SizedBox(height: 20),
           LinearProgressIndicator(
             value: _progress,
             backgroundColor: Colors.grey[200],
             color: Colors.blue,
           ),
-          const SizedBox(height: 20),
           ElevatedButton(
             onPressed: cancelDownloadingJob,
             child: const Text('Cancel Job'),

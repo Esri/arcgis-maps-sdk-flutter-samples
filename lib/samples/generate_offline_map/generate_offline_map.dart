@@ -116,13 +116,13 @@ class _GenerateOfflineMapState extends State<GenerateOfflineMap>
                   ),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
+                    spacing: 20,
                     children: [
                       // Add a progress indicator.
                       Text('$_progress%'),
                       LinearProgressIndicator(
                         value: _progress != null ? _progress! / 100.0 : 0.0,
                       ),
-                      const SizedBox(height: 20),
                       // Add a button to cancel the job.
                       ElevatedButton(
                         onPressed: () => _generateOfflineMapJob?.cancel(),
