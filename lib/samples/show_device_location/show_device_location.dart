@@ -149,7 +149,7 @@ class _ShowDeviceLocationState extends State<ShowDeviceLocation>
             children: [
               const Text('Auto-Pan Mode'),
               const Spacer(),
-              // A dropdown button to select the auto-pan mode.
+              // A dropdown menu to select the auto-pan mode.
               DropdownMenu(
                 initialSelection: _autoPanMode,
                 onSelected: (value) {

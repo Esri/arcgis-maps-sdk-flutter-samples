@@ -70,7 +70,7 @@ class _AddFeatureLayersState extends State<AddFeatureLayers>
         top: false,
         left: false,
         right: false,
-        // Create a column with a map view and a dropdown button.
+        // Create a column with a map view and a dropdown menu.
         child: Column(
           children: [
             // Add a map view to the widget tree and set a controller.

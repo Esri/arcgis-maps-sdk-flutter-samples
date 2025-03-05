@@ -79,7 +79,7 @@ class _ApplyRasterRenderingRuleState extends State<ApplyRasterRenderingRule>
 
   Widget buildBottomMenu() {
     return Center(
-      // A dropdown button for selecting a rendering rule.
+      // A dropdown menu for selecting a rendering rule.
       child: DropdownMenu(
         hintText: 'Rendering Rule',
         trailingIcon: const Icon(Icons.arrow_drop_down),
@@ -97,7 +97,6 @@ class _ApplyRasterRenderingRuleState extends State<ApplyRasterRenderingRule>
                 label: rasterLayer.name,
               );
             }).toList(),
-
       ),
     );
   }

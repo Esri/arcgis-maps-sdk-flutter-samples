@@ -43,7 +43,7 @@ class _ShowLegendState extends State<ShowLegend> with SampleStateSupport {
         left: false,
         right: false,
         child: Column(
-          // Add the map view and dropdown button to a column.
+          // Add the map view and dropdown menu to a column.
           children: [
             Expanded(
               // Add a map view to the widget tree and set a controller.
