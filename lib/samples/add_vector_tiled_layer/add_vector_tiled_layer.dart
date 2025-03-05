@@ -34,9 +34,9 @@ enum VectorTiledItem {
   final String label;
   final String itemId;
 
-  // A menu item for this selection.
-  DropdownMenuItem<VectorTiledItem> get menuItem =>
-      DropdownMenuItem(value: this, child: Text(label));
+  // A menu entry for this selection.
+  DropdownMenuEntry<VectorTiledItem> get menuItem =>
+      DropdownMenuEntry(value: this, label: label);
 
   // The service URL for this selection.
   Uri get uri => Uri.parse('https://www.arcgis.com/home/item.html?id=$itemId');
@@ -53,8 +53,9 @@ class _AddVectorTiledLayerState extends State<AddVectorTiledLayer>
     with SampleStateSupport {
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
+
   // Prepare menu items for the selection of vector tiled layers.
-  final _selectionMenuItems =
+  final _selectionMenuEntries =
       VectorTiledItem.values.map((selection) => selection.menuItem).toList();
   VectorTiledItem? _selection;
 
@@ -75,14 +76,13 @@ class _AddVectorTiledLayerState extends State<AddVectorTiledLayer>
               ),
             ),
             Center(
-              // Add a dropdown button to select a vector tiled layer.
-              child: DropdownButton(
-                icon: const Icon(Icons.arrow_drop_down),
-                style: Theme.of(context).textTheme.labelMedium,
-                alignment: Alignment.center,
-                value: _selection,
-                items: _selectionMenuItems,
-                onChanged: loadSelection,
+              // Add a dropdown menu to select a vector tiled layer.
+              child: DropdownMenu(
+                trailingIcon: const Icon(Icons.arrow_drop_down),
+                textStyle: Theme.of(context).textTheme.labelMedium,
+                initialSelection: _selection,
+                dropdownMenuEntries: _selectionMenuEntries,
+                onSelected: loadSelection,
               ),
             ),
           ],

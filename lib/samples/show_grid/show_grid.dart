@@ -228,6 +228,7 @@ class GridOptions extends StatefulWidget {
     required this.onLabelVisibilityChanged,
     super.key,
   });
+
   final Function(GridType) onGridChanged;
   final Function(GridColorType) onGridColorChanged;
   final Function(GridColorType) onLabelColorChanged;
@@ -282,31 +283,29 @@ class _GridOptionsState extends State<GridOptions> with SampleStateSupport {
     );
   }
 
-  // Create a DropdownButtonFormField widget.
-  static DropdownButtonFormField _createDropdownButtonFormField<T>({
+  // Create a DropdownMenu widget.
+  static DropdownMenu _createDropdownMenu<T>({
     required T value,
     required String labelText,
     required List<T> items,
     required Function(T) onChanged,
   }) {
-    return DropdownButtonFormField(
-      value: value,
-      onChanged: (newValue) {
+    return DropdownMenu(
+      width: double.infinity,
+      initialSelection: value,
+      onSelected: (newValue) {
         onChanged(newValue!);
       },
-      decoration: InputDecoration(labelText: labelText),
-      items:
+      label: Text(labelText),
+      dropdownMenuEntries:
           items.map((value) {
-            return DropdownMenuItem(
-              value: value,
-              child: Text(value.toString()),
-            );
+            return DropdownMenuEntry(value: value, label: value.toString());
           }).toList(),
     );
   }
 
-  DropdownButtonFormField _buildGridDropdown() {
-    return _createDropdownButtonFormField(
+  DropdownMenu _buildGridDropdown() {
+    return _createDropdownMenu(
       value: gridType,
       labelText: 'Grid Type',
       items: GridType.values,
@@ -320,8 +319,8 @@ class _GridOptionsState extends State<GridOptions> with SampleStateSupport {
     );
   }
 
-  DropdownButtonFormField _buildLatLongLabelFormatDropdown() {
-    final formField = _createDropdownButtonFormField(
+  DropdownMenu _buildLatLongLabelFormatDropdown() {
+    final formField = _createDropdownMenu(
       value: labelFormatType,
       labelText: 'Label Format',
       items: LatLongLabelFormatType.values,
@@ -333,8 +332,8 @@ class _GridOptionsState extends State<GridOptions> with SampleStateSupport {
     return formField;
   }
 
-  DropdownButtonFormField _buildGridColorDropdown() {
-    return _createDropdownButtonFormField(
+  DropdownMenu _buildGridColorDropdown() {
+    return _createDropdownMenu(
       value: gridColorType,
       labelText: 'Grid Color',
       items: GridColorType.values,
@@ -345,8 +344,8 @@ class _GridOptionsState extends State<GridOptions> with SampleStateSupport {
     );
   }
 
-  DropdownButtonFormField _buildLabelColorDropdown() {
-    return _createDropdownButtonFormField(
+  DropdownMenu _buildLabelColorDropdown() {
+    return _createDropdownMenu(
       value: gridLabelColorType,
       labelText: 'Label Color',
       items: GridColorType.values,
@@ -357,8 +356,8 @@ class _GridOptionsState extends State<GridOptions> with SampleStateSupport {
     );
   }
 
-  DropdownButtonFormField _buildLabelPositionDropdown() {
-    return _createDropdownButtonFormField(
+  DropdownMenu _buildLabelPositionDropdown() {
+    return _createDropdownMenu(
       value: labelPositionType,
       labelText: 'Label Position',
       items: GridLabelPositionType.values,
@@ -409,6 +408,7 @@ class MapViewGrids {
     required this.labelFormatType,
     required this.labelVisible,
   });
+
   final GridType gridType;
   final GridColorType gridColorType;
   final GridColorType labelColorType;

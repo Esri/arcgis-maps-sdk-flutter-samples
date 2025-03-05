@@ -32,16 +32,21 @@ class _ShowDeviceLocationState extends State<ShowDeviceLocation>
     with SampleStateSupport {
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
+
   // A flag for when the settings bottom sheet is visible.
   var _settingsVisible = false;
+
   // Create the system location data source.
   final _locationDataSource = SystemLocationDataSource();
+
   // A subscription to receive status changes of the location data source.
   StreamSubscription? _statusSubscription;
   var _status = LocationDataSourceStatus.stopped;
+
   // A subscription to receive changes to the auto-pan mode.
   StreamSubscription? _autoPanModeSubscription;
   var _autoPanMode = LocationDisplayAutoPanMode.recenter;
+
   // A flag for when the map view is ready and controls can be used.
   var _ready = false;
 
@@ -145,27 +150,27 @@ class _ShowDeviceLocationState extends State<ShowDeviceLocation>
               const Text('Auto-Pan Mode'),
               const Spacer(),
               // A dropdown button to select the auto-pan mode.
-              DropdownButton(
-                value: _autoPanMode,
-                onChanged: (value) {
+              DropdownMenu(
+                initialSelection: _autoPanMode,
+                onSelected: (value) {
                   _mapViewController.locationDisplay.autoPanMode = value!;
                 },
-                items: const [
-                  DropdownMenuItem(
+                dropdownMenuEntries: const [
+                  DropdownMenuEntry(
                     value: LocationDisplayAutoPanMode.off,
-                    child: Text('Off'),
+                    label: 'Off',
                   ),
-                  DropdownMenuItem(
+                  DropdownMenuEntry(
                     value: LocationDisplayAutoPanMode.recenter,
-                    child: Text('Recenter'),
+                    label: 'Recenter',
                   ),
-                  DropdownMenuItem(
+                  DropdownMenuEntry(
                     value: LocationDisplayAutoPanMode.navigation,
-                    child: Text('Navigation'),
+                    label: 'Navigation',
                   ),
-                  DropdownMenuItem(
+                  DropdownMenuEntry(
                     value: LocationDisplayAutoPanMode.compassNavigation,
-                    child: Text('Compass'),
+                    label: 'Compass',
                   ),
                 ],
               ),

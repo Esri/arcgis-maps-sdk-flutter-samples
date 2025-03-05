@@ -75,22 +75,16 @@ class _ApplyStyleToWmsLayerState extends State<ApplyStyleToWmsLayer>
   Widget buildBottomMenu() {
     return Center(
       // A drop down button for selecting style.
-      child: DropdownButton(
-        alignment: Alignment.center,
-        hint: Text(
-          'Choose a style',
-          style: Theme.of(context).textTheme.labelMedium,
-        ),
-        icon: const Icon(Icons.arrow_drop_down),
-        iconEnabledColor: Theme.of(context).primaryColor,
-        iconDisabledColor: Theme.of(context).disabledColor,
-        style: Theme.of(context).textTheme.labelMedium,
-        value: _selectedStyle,
-        items:
-            _stylesTitles.map((items) {
-              return DropdownMenuItem(value: items, child: Text(items));
-            }).toList(),
-        onChanged: (style) {
+      child:  DropdownMenu(
+        hintText: 'Choose a style',
+        trailingIcon: const Icon(Icons.arrow_drop_down),
+        textStyle: Theme.of(context).textTheme.labelMedium,
+        initialSelection: _selectedStyle,
+        dropdownMenuEntries:
+        _stylesTitles.map((item) {
+          return DropdownMenuEntry(value: item, label: item);
+        }).toList(),
+        onSelected: (style) {
           if (style != null) {
             changeStyle(style);
           }

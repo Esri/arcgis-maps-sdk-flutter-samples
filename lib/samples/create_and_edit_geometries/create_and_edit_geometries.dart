@@ -29,8 +29,10 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
     with SampleStateSupport {
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
+
   // Create a graphics overlay.
   final _graphicsOverlay = GraphicsOverlay();
+
   // Create a geometry editor.
   final _geometryEditor = GeometryEditor();
 
@@ -66,6 +68,7 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
   var _geometryEditorCanRedo = false;
   var _geometryEditorIsStarted = false;
   var _geometryEditorHasSelectedElement = false;
+
   // A flag for controlling the visibility of the editing toolbar.
   var _showEditToolbar = true;
 
@@ -250,43 +253,40 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
     _triangleShapeTool.configuration.scaleMode = _selectedScaleMode;
   }
 
-  List<DropdownMenuItem<GeometryType>> configureGeometryTypeMenuItems() {
-    // Returns a list of drop down menu items for each geometry type.
+  List<DropdownMenuEntry<GeometryType>> configureGeometryTypeMenuEntries() {
+    // Returns a list of drop down menu entries for each geometry type.
     return _geometryTypes.map((type) {
       // All geometry types can be created using a vertex or reticle vertex tool.
       // Only polyline and polygon geometry types can be created using freehand or shape tools.
       final isVertexTool =
           _selectedTool == _vertexTool || _selectedTool == _reticleVertexTool;
       if (type == GeometryType.point || type == GeometryType.multipoint) {
-        return DropdownMenuItem(
+        return DropdownMenuEntry(
           enabled: isVertexTool,
           value: type,
-          child: Text(
-            type.name.capitalize(),
-            style:
-                isVertexTool
-                    ? null
-                    : const TextStyle(
-                      color: Colors.grey,
-                      fontStyle: FontStyle.italic,
+          label: type.name.capitalize(),
+          style:
+              isVertexTool
+                  ? null
+                  : ButtonStyle(
+                    foregroundColor: WidgetStateProperty.all(Colors.grey),
+                    textStyle: WidgetStateProperty.all(
+                      const TextStyle(fontStyle: FontStyle.italic),
                     ),
-          ),
+                  ),
         );
       } else {
-        return DropdownMenuItem(
-          value: type,
-          child: Text(type.name.capitalize()),
-        );
+        return DropdownMenuEntry(value: type, label: type.name.capitalize());
       }
     }).toList();
   }
 
-  List<DropdownMenuItem<GeometryEditorTool>> configureToolMenuItems() {
+  List<DropdownMenuEntry<GeometryEditorTool>> configureToolMenuEntries() {
     // A list of all tools with an identifying name to display in the UI.
     final tools = {
       _vertexTool: 'Vertex Tool',
       _reticleVertexTool: 'Reticle Vertex Tool',
-      _freehandTool: 'Freehand tool',
+      _freehandTool: 'Freehand Tool',
       _arrowShapeTool: 'Arrow Shape Tool',
       _ellipseShapeTool: 'Ellipse Shape Tool',
       _rectangleShapeTool: 'Rectangle Shape Tool',
@@ -302,24 +302,24 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
 
     return tools.keys.map((tool) {
       if (tool == _vertexTool || tool == _reticleVertexTool) {
-        return DropdownMenuItem(
+        return DropdownMenuEntry(
           value: tool,
-          child: Text(tools[tool] ?? 'Unknown Tool'),
+          label: tools[tool] ?? 'Unknown Tool',
         );
       } else {
-        return DropdownMenuItem(
+        return DropdownMenuEntry(
           enabled: isNotPointOrMultipoint,
           value: tool,
-          child: Text(
-            tools[tool] ?? 'Unknown Tool',
-            style:
-                isNotPointOrMultipoint
-                    ? null
-                    : const TextStyle(
-                      color: Colors.grey,
-                      fontStyle: FontStyle.italic,
+          label: tools[tool] ?? 'Unknown Tool',
+          style:
+              isNotPointOrMultipoint
+                  ? null
+                  : ButtonStyle(
+                    foregroundColor: WidgetStateProperty.all(Colors.grey),
+                    textStyle: WidgetStateProperty.all(
+                      const TextStyle(fontStyle: FontStyle.italic),
                     ),
-          ),
+                  ),
         );
       }
     }).toList();
@@ -329,43 +329,39 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        // A drop down button for selecting geometry type.
-        DropdownButton(
-          alignment: Alignment.center,
-          hint: Text(
-            'Geometry Type',
-            style: Theme.of(context).textTheme.labelMedium,
-          ),
-          icon: const Icon(Icons.arrow_drop_down),
-          iconEnabledColor: Theme.of(context).colorScheme.primary,
-          iconDisabledColor: Theme.of(context).disabledColor,
-          style: Theme.of(context).textTheme.labelMedium,
-          value: _selectedGeometryType,
-          items: configureGeometryTypeMenuItems(),
-          // If the geometry editor is already started then we fully disable the DropDownButton and prevent editing with another geometry type.
-          onChanged:
-              !_geometryEditorIsStarted
-                  ? (GeometryType? geometryType) {
-                    if (geometryType != null) {
-                      startEditingWithGeometryType(geometryType);
+        // A drop down menu for selecting geometry type.
+        Expanded(
+          child: DropdownMenu(
+            hintText: 'Geometry Type',
+            textStyle: Theme.of(context).textTheme.labelMedium,
+            leadingIcon: const Icon(Icons.arrow_drop_down),
+            initialSelection: _selectedGeometryType,
+            dropdownMenuEntries: configureGeometryTypeMenuEntries(),
+            // If the geometry editor is already started then we fully disable the DropdownMenu and prevent editing with another geometry type.
+            onSelected:
+                !_geometryEditorIsStarted
+                    ? (GeometryType? geometryType) {
+                      if (geometryType != null) {
+                        startEditingWithGeometryType(geometryType);
+                      }
                     }
-                  }
-                  : null,
+                    : null,
+          ),
         ),
-        // A drop down button for selecting a tool.
-        DropdownButton(
-          alignment: Alignment.center,
-          hint: Text('Tool', style: Theme.of(context).textTheme.labelMedium),
-          iconEnabledColor: Theme.of(context).colorScheme.primary,
-          style: Theme.of(context).textTheme.labelMedium,
-          value: _selectedTool,
-          items: configureToolMenuItems(),
-          onChanged: (tool) {
-            if (tool != null) {
-              setState(() => _selectedTool = tool);
-              _geometryEditor.tool = tool;
-            }
-          },
+        // A drop down menu for selecting a tool.
+        Expanded(
+          child: DropdownMenu(
+            hintText: 'Tool',
+            textStyle: Theme.of(context).textTheme.labelMedium,
+            initialSelection: _selectedTool,
+            dropdownMenuEntries: configureToolMenuEntries(),
+            onSelected: (tool) {
+              if (tool != null) {
+                setState(() => _selectedTool = tool);
+                _geometryEditor.tool = tool;
+              }
+            },
+          ),
         ),
         // A button to toggle the visibility of the editing toolbar.
         IconButton(

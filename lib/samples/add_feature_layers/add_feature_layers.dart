@@ -35,10 +35,13 @@ class _AddFeatureLayersState extends State<AddFeatureLayers>
     with SampleStateSupport {
   // Create a map with a topographic basemap style.
   final _map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic);
+
   // Create a map view controller.
   final _mapViewController = ArcGISMapView.createController();
+
   // Create a list of feature layer sources.
-  final _featureLayerSources = <DropdownMenuItem<Source>>[];
+  final _featureLayerSources = <DropdownMenuEntry<Source>>[];
+
   // Create a variable to store the selected feature layer source.
   Source? _selectedFeatureLayerSource;
 
@@ -47,36 +50,16 @@ class _AddFeatureLayersState extends State<AddFeatureLayers>
     super.initState();
 
     // Add feature layer sources to the list.
-    _featureLayerSources.addAll([
+    _featureLayerSources.addAll(const [
       // Add a dropdown menu item to load a feature service from a uri.
-      DropdownMenuItem(
-        onTap: loadFeatureServiceFromUri,
-        value: Source.url,
-        child: const Text('URL'),
-      ),
+      DropdownMenuEntry(value: Source.url, label: 'URL'),
       // Add a dropdown menu item to load a feature service from a portal item.
-      DropdownMenuItem(
-        onTap: loadPortalItem,
-        value: Source.portalItem,
-        child: const Text('Portal Item'),
-      ),
+      DropdownMenuEntry(value: Source.portalItem, label: 'Portal Item'),
       // Add a dropdown menu item to load a feature service from a geodatabase.
-      DropdownMenuItem(
-        onTap: loadGeodatabase,
-        value: Source.geodatabase,
-        child: const Text('Geodatabase'),
-      ),
+      DropdownMenuEntry(value: Source.geodatabase, label: 'Geodatabase'),
       // Add a dropdown menu item to load a feature service from a geopackage.
-      DropdownMenuItem(
-        onTap: loadGeopackage,
-        value: Source.geopackage,
-        child: const Text('Geopackage'),
-      ),
-      DropdownMenuItem(
-        onTap: loadShapefile,
-        value: Source.shapefile,
-        child: const Text('Shapefile'),
-      ),
+      DropdownMenuEntry(value: Source.geopackage, label: 'Geopackage'),
+      DropdownMenuEntry(value: Source.shapefile, label: 'Shapefile'),
     ]);
   }
 
@@ -97,25 +80,20 @@ class _AddFeatureLayersState extends State<AddFeatureLayers>
                 onMapViewReady: _onMapViewReady,
               ),
             ),
-            // Create a dropdown button to select a feature layer source.
-            DropdownButton(
-              alignment: Alignment.center,
-              hint: Text(
-                'Select a feature layer source',
-                style: Theme.of(context).textTheme.labelMedium,
-              ),
-              // Set the selected feature layer source.
-              value: _selectedFeatureLayerSource,
-              icon: const Icon(Icons.arrow_drop_down),
-              elevation: 16,
-              style: Theme.of(context).textTheme.labelMedium,
-              // Set the onChanged callback to update the selected feature layer source.
-              onChanged: (featureLayerSource) {
+            // Create a dropdown menu to select a feature layer source.
+            DropdownMenu(
+              dropdownMenuEntries: _featureLayerSources,
+              trailingIcon: const Icon(Icons.arrow_drop_down),
+              textAlign: TextAlign.center,
+              textStyle: Theme.of(context).textTheme.labelMedium,
+              hintText: 'Select a feature layer source',
+              onSelected: (featureLayerSource) {
                 setState(() {
                   _selectedFeatureLayerSource = featureLayerSource;
+                  handleSourceSelection(featureLayerSource!);
                 });
               },
-              items: _featureLayerSources,
+              initialSelection: _selectedFeatureLayerSource,
             ),
           ],
         ),
@@ -126,6 +104,22 @@ class _AddFeatureLayersState extends State<AddFeatureLayers>
   Future<void> _onMapViewReady() async {
     // Set the map on the map view controller.
     _mapViewController.arcGISMap = _map;
+  }
+
+  // Handles the selection of a feature layer source from the dropdown menu.
+  void handleSourceSelection(Source source) {
+    switch (source) {
+      case Source.url:
+        loadFeatureServiceFromUri();
+      case Source.portalItem:
+        loadPortalItem();
+      case Source.geodatabase:
+        loadGeodatabase();
+      case Source.geopackage:
+        loadGeopackage();
+      case Source.shapefile:
+        loadShapefile();
+    }
   }
 
   void loadFeatureServiceFromUri() {

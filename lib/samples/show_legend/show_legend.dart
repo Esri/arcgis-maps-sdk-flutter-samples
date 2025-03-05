@@ -20,6 +20,7 @@ import 'package:flutter/material.dart';
 
 class ShowLegend extends StatefulWidget {
   const ShowLegend({super.key});
+
   @override
   State<ShowLegend> createState() => _ShowLegendState();
 }
@@ -27,10 +28,12 @@ class ShowLegend extends StatefulWidget {
 class _ShowLegendState extends State<ShowLegend> with SampleStateSupport {
   // Create a map view controller.
   final _mapViewController = ArcGISMapView.createController();
+
   // Create a map with a basemap style.
   final _map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic);
+
   // Create a list to store dropdown items.
-  var _legendsDropDown = <DropdownMenuItem<LegendInfo>>[];
+  var _legendsDropDown = <DropdownMenuEntry<LegendInfo>>[];
 
   @override
   Widget build(BuildContext context) {
@@ -49,21 +52,15 @@ class _ShowLegendState extends State<ShowLegend> with SampleStateSupport {
                 onMapViewReady: onMapViewReady,
               ),
             ),
-            // Add a dropdown button to the widget tree.
-            DropdownButtonHideUnderline(
-              child: DropdownButton(
-                menuMaxHeight: 200,
-                alignment: Alignment.center,
-                hint: Text(
-                  'Legend',
-                  style: Theme.of(context).textTheme.labelMedium,
-                ),
-                elevation: 16,
-                style: Theme.of(context).textTheme.labelMedium,
-                // No need to set up onChanged callback.
-                onChanged: (_) {},
-                items: _legendsDropDown,
-              ),
+            // Add a dropdown menu to the widget tree.
+            DropdownMenu(
+              menuHeight: 250,
+              width: 250,
+              hintText: 'Legend',
+              textStyle: Theme.of(context).textTheme.labelMedium,
+              // No need to set up onChanged callback.
+              onSelected: (_) {},
+              dropdownMenuEntries: _legendsDropDown,
             ),
           ],
         ),
@@ -100,16 +97,17 @@ class _ShowLegendState extends State<ShowLegend> with SampleStateSupport {
     ];
 
     // Create a list to store dropdown items.
-    final legendsDropDown = <DropdownMenuItem<LegendInfo>>[];
+    final legendsDropDown = <DropdownMenuEntry<LegendInfo>>[];
     // Get the legend info for each layer and add it to the legends dropdown list.
     for (final layer in operationalLayersList) {
       // Get the legend info for the current layer.
       final layerLegends = await layer.fetchLegendInfos();
       // Add the name of the current layer.
       legendsDropDown.add(
-        DropdownMenuItem(
+        DropdownMenuEntry(
           value: layerLegends.first,
-          child: Text(
+          label: layer.name,
+          labelWidget: Text(
             layer.name,
             style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
           ),
@@ -130,9 +128,10 @@ class _ShowLegendState extends State<ShowLegend> with SampleStateSupport {
         }
         // Add the legend to the legends list.
         legendsDropDown.add(
-          DropdownMenuItem(
+          DropdownMenuEntry(
             value: legend,
-            child: Row(
+            label: legend.name,
+            labelWidget: Row(
               spacing: 8,
               children: [
                 // Add the legend image to the dropdown list if the image exists.
