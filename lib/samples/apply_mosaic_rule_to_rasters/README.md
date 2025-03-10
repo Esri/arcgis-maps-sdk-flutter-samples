@@ -2,15 +2,15 @@
 
 Apply mosaic rule to a mosaic dataset of rasters.
 
-![Apply mosaic rule to rasters](apply-mosaic-rule-to-rasters.png)
+![Apply mosaic rule to rasters](apply_mosaic_rule_to_rasters.png)
 
 ## Use case
 
 An image service can use a mosaic rule to mosaic multiple rasters on-the-fly. A mosaic rule can specify which rasters are selected, and how the selected rasters are z-ordered. It can also specify how overlapping pixels from different rasters at the same location are resolved.
 
-For example, when using the "ByAttribute" mosaic method, the values in an attribute field are used to sort the images, and when using the "Center" method, the image closest to the center of the display is positioned as the top image in the mosaic. Additionally, the mosaic operator allows you to define how to resolve the overlapping cells, such as choosing a blending operation.
+For example, when using the "attribute" mosaic method, the values in an attribute field are used to sort the images, and when using the "center" method, the image closest to the center of the display is positioned as the top image in the mosaic. Additionally, the mosaic operator allows you to define how to resolve the overlapping cells, such as choosing a blending operation.
 
-Specifying mosaic rules is useful for viewing overlapping rasters. For example, using the "By Attribute" mosaic method to sort the rasters based on their acquisition date allows the newest image to be on top. Using "mean" mosaic operation makes the overlapping areas contain the mean cell values from all the overlapping rasters.
+Specifying mosaic rules is useful for viewing overlapping rasters. For example, using the "attribute" mosaic method to sort the rasters based on their acquisition date allows the newest image to be on top. Using "mean" mosaic operation makes the overlapping areas contain the mean cell values from all the overlapping rasters.
 
 ## How to use the sample
 
@@ -18,17 +18,16 @@ When the rasters are loaded, choose from a list of preset mosaic rules to apply 
 
 ## How it works
 
-1. Create an `AGSImageServiceRaster` using the service's URL.
-2. Create an `AGSMosaicRule` object and set it to the `mosaicRule` property of the image service raster, if it does not specify a mosaic rule.
-3. Create an `AGSRasterLayer` from the image service raster and add it to the map.
-4. Set the `mosaicMethod`, `mosaicOperation` and other properties of the mosaic rule object accordingly to specify the rule on the raster dataset.
+1. Create an `ImageServiceRaster` using the service's URL.
+2. Create an `MosaicRule` object and set it to the `mosaicRule` property of the image service raster, if it does not specify a mosaic rule.
+3. Create an `RasterLayer` from the image service raster and add it to the map.
+4. Set the `mosaicMethod` and other properties of the mosaic rule object accordingly to specify the rule on the raster dataset.
 
 ## Relevant API
 
-* AGSImageServiceRaster
-* AGSMosaicMethod
-* AGSMosaicOperation
-* AGSMosaicRule
+* ImageServiceRaster
+* MosaicMethod
+* MosaicRule
 
 ## About the data
 

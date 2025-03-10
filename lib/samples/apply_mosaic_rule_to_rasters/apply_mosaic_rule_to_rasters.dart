@@ -33,6 +33,13 @@ class _ApplyMosaicRuleToRastersState extends State<ApplyMosaicRuleToRasters>
   
   var _showMosaicOptions = false;
   final _mosaicMethods = ['Object ID', 'North West', 'Center', 'By Attribute', 'Lock Raster'];
+  final _mosaicMethodDescriptions = [
+    'Orders rasters based on the order (ObjectID).',
+    'Orders rasters based on the distance between each raster center and the northwest point.',
+    'Orders rasters based on the distance between each raster center and the view center.',
+    'Orders rasters based on the absolute distance between their values of an attribute and a base value.',
+    'Displays only the selected rasters specified in [MosaicRule.lockRasterIds].'
+  ];
   var _selectedMosaicMethod = 'Object ID';
 
   @override
@@ -120,22 +127,25 @@ class _ApplyMosaicRuleToRastersState extends State<ApplyMosaicRuleToRasters>
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              ElevatedButton(
-                onPressed: () {
-                  setState(() {
-                    _showMosaicOptions = !_showMosaicOptions;
-                  });
-                },
-                child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Icon(Icons.check, color: Colors.blue),
-                  const SizedBox(width: 8),
-                  Text(_selectedMosaicMethod),
-                ],
+              const Text('Choose a mosaic rule for image service.'),
+              const Divider(),
+              if (!_showMosaicOptions)
+                ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      _showMosaicOptions = !_showMosaicOptions;
+                    });
+                  },
+                  child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.check, color: Colors.blue),
+                    const SizedBox(width: 8),
+                    Text(_selectedMosaicMethod),
+                  ],
+                ),
               ),
-              ),
-              if (_showMosaicOptions)
+              if (_showMosaicOptions) 
                 ListView(
                   shrinkWrap: true,
                   children: _mosaicMethods.map((method) {
@@ -144,6 +154,7 @@ class _ApplyMosaicRuleToRastersState extends State<ApplyMosaicRuleToRasters>
                           ? const Icon(Icons.check, color: Colors.blue)
                           : const SizedBox(width: 16),
                       title: Text(method),
+                      subtitle: Text(_mosaicMethodDescriptions[_mosaicMethods.indexOf(method)]),
                       onTap: () {
                         setState(() {
                           _selectedMosaicMethod = method;
