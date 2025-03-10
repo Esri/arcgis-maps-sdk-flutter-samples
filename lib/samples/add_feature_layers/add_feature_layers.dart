@@ -87,6 +87,10 @@ class _AddFeatureLayersState extends State<AddFeatureLayers>
               textAlign: TextAlign.center,
               textStyle: Theme.of(context).textTheme.labelMedium,
               hintText: 'Select a feature layer source',
+              width: calculateMenuWidth(
+                context,
+                'Select a feature layer source',
+              ),
               onSelected: (featureLayerSource) {
                 setState(() {
                   _selectedFeatureLayerSource = featureLayerSource;
@@ -120,6 +124,21 @@ class _AddFeatureLayersState extends State<AddFeatureLayers>
       case Source.shapefile:
         loadShapefile();
     }
+  }
+
+  double calculateMenuWidth(BuildContext context, String menuString) {
+    final textPainter = TextPainter(
+      text: TextSpan(
+        text: menuString,
+        style: Theme.of(context).textTheme.labelMedium,
+      ),
+      maxLines: 1,
+      textDirection: TextDirection.ltr,
+    )..layout();
+
+    final textWidth = textPainter.size.width;
+
+    return textWidth * 1.5;
   }
 
   void loadFeatureServiceFromUri() {
