@@ -43,6 +43,7 @@ final sampleViewerTheme = ThemeData(
   dropdownMenuTheme: DropdownMenuThemeData(
     inputDecorationTheme: const InputDecorationTheme(
       outlineBorder: BorderSide(width: 0),
+      border: InputBorder.none,
     ),
     menuStyle: MenuStyle(elevation: WidgetStateProperty.all(6)),
   ),
