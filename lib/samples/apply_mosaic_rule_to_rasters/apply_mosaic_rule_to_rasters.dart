@@ -17,6 +17,30 @@ import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
 
+enum MosaicMethodEnum {
+  objectID('Object ID', 'Orders rasters based on the order (ObjectID).'),
+  northwest(
+    'North West',
+    'Orders rasters based on the distance between each raster center and the northwest point.',
+  ),
+  center(
+    'Center',
+    'Orders rasters based on the distance between each raster center and the view center.',
+  ),
+  attribute(
+    'By Attribute',
+    'Orders rasters based on the absolute distance between their values of an attribute and a base value.',
+  ),
+  lockRaster(
+    'Lock Raster',
+    'Displays only the selected rasters specified in [MosaicRule.lockRasterIds].',
+  );
+
+  const MosaicMethodEnum(this.value, this.description);
+  final String value;
+  final String description;
+}
+
 class ApplyMosaicRuleToRasters extends StatefulWidget {
   const ApplyMosaicRuleToRasters({super.key});
 
@@ -24,23 +48,17 @@ class ApplyMosaicRuleToRasters extends StatefulWidget {
   State<ApplyMosaicRuleToRasters> createState() =>
       _ApplyMosaicRuleToRastersState();
 }
+
 class _ApplyMosaicRuleToRastersState extends State<ApplyMosaicRuleToRasters>
     with SampleStateSupport {
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
   // A flag for when the map view is ready and controls can be used.
   var _ready = false;
-  
+  // If the mosaic options should be shown.
   var _showMosaicOptions = false;
-  final _mosaicMethods = ['Object ID', 'North West', 'Center', 'By Attribute', 'Lock Raster'];
-  final _mosaicMethodDescriptions = [
-    'Orders rasters based on the order (ObjectID).',
-    'Orders rasters based on the distance between each raster center and the northwest point.',
-    'Orders rasters based on the distance between each raster center and the view center.',
-    'Orders rasters based on the absolute distance between their values of an attribute and a base value.',
-    'Displays only the selected rasters specified in [MosaicRule.lockRasterIds].'
-  ];
-  var _selectedMosaicMethod = 'Object ID';
+  // Current selected mosaic method.
+  var _selectedMosaicMethod = MosaicMethodEnum.objectID;
 
   @override
   Widget build(BuildContext context) {
@@ -86,7 +104,7 @@ class _ApplyMosaicRuleToRastersState extends State<ApplyMosaicRuleToRasters>
     final rasterLayer = RasterLayer.withRaster(raster);
     await rasterLayer.load();
     //Set a default MosaicRule to the RasterLayer
-    raster.mosaicRule = MosaicRule();
+    raster.mosaicRule = MosaicRule()..mosaicMethod = MosaicMethod.none;
     //Add the RasterLayer to the operational layers of the map
     map.operationalLayers.add(rasterLayer);
     await _mapViewController.setViewpointCenter(
@@ -97,27 +115,33 @@ class _ApplyMosaicRuleToRastersState extends State<ApplyMosaicRuleToRasters>
     setState(() => _ready = true);
   }
 
-  Future<void> updateMosaicMethod() async {
+  // Update the mosaic method of the raster layer.
+  Future<void> _updateMosaicMethod() async {
     setState(() => _ready = false);
-    final rasterLayer = _mapViewController
-        .arcGISMap!.operationalLayers.firstWhere((layer) => layer is RasterLayer) as RasterLayer;
+    final rasterLayer =
+        _mapViewController.arcGISMap!.operationalLayers.firstWhere(
+              (layer) => layer is RasterLayer,
+            )
+            as RasterLayer;
     final raster = rasterLayer.raster! as ImageServiceRaster;
-    switch(_selectedMosaicMethod) {
-      case 'Object ID':
+    switch (_selectedMosaicMethod) {
+      case MosaicMethodEnum.objectID:
         raster.mosaicRule = MosaicRule()..mosaicMethod = MosaicMethod.none;
-      case 'North West':
+      case MosaicMethodEnum.northwest:
         raster.mosaicRule = MosaicRule()..mosaicMethod = MosaicMethod.northwest;
-      case 'Center':
+      case MosaicMethodEnum.center:
         raster.mosaicRule = MosaicRule()..mosaicMethod = MosaicMethod.center;
-      case 'By Attribute':
+      case MosaicMethodEnum.attribute:
         raster.mosaicRule = MosaicRule()..mosaicMethod = MosaicMethod.attribute;
-      case 'Lock Raster':
-        raster.mosaicRule = MosaicRule()..mosaicMethod = MosaicMethod.lockRaster;
-    } 
-    
+      case MosaicMethodEnum.lockRaster:
+        raster.mosaicRule =
+            MosaicRule()..mosaicMethod = MosaicMethod.lockRaster;
+    }
+
     setState(() => _ready = true);
   }
 
+  // Build a bottom sheet to display mosaic method options.
   Widget _buildBottomSheet() {
     return BottomSheet(
       onClosing: () {},
@@ -137,33 +161,35 @@ class _ApplyMosaicRuleToRastersState extends State<ApplyMosaicRuleToRasters>
                     });
                   },
                   child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(Icons.check, color: Colors.blue),
-                    const SizedBox(width: 8),
-                    Text(_selectedMosaicMethod),
-                  ],
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(Icons.check, color: Colors.blue),
+                      const SizedBox(width: 8),
+                      Text(_selectedMosaicMethod.value),
+                    ],
+                  ),
                 ),
-              ),
-              if (_showMosaicOptions) 
+              if (_showMosaicOptions)
                 ListView(
                   shrinkWrap: true,
-                  children: _mosaicMethods.map((method) {
-                    return ListTile(
-                      leading: (method == _selectedMosaicMethod)
-                          ? const Icon(Icons.check, color: Colors.blue)
-                          : const SizedBox(width: 16),
-                      title: Text(method),
-                      subtitle: Text(_mosaicMethodDescriptions[_mosaicMethods.indexOf(method)]),
-                      onTap: () {
-                        setState(() {
-                          _selectedMosaicMethod = method;
-                          _showMosaicOptions = false;
-                        });
-                        updateMosaicMethod();
-                      },
-                    );
-                  }).toList(),
+                  children:
+                      MosaicMethodEnum.values.map((method) {
+                        return ListTile(
+                          leading:
+                              (method == _selectedMosaicMethod)
+                                  ? const Icon(Icons.check, color: Colors.blue)
+                                  : const SizedBox(width: 16),
+                          title: Text(method.value),
+                          subtitle: Text(method.description),
+                          onTap: () {
+                            setState(() {
+                              _selectedMosaicMethod = method;
+                              _showMosaicOptions = false;
+                            });
+                            _updateMosaicMethod();
+                          },
+                        );
+                      }).toList(),
                 ),
             ],
           ),
