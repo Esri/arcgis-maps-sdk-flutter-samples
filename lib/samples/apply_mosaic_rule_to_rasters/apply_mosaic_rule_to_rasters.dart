@@ -137,7 +137,7 @@ class _ApplyMosaicRuleToRastersState extends State<ApplyMosaicRuleToRasters>
   Widget _buildBottomSheet() {
     return BottomSheet(
       onClosing: () {},
-      builder: (BuildContext context) {
+      builder: (context) {
         return Container(
           padding: const EdgeInsets.all(16),
           child: Column(
