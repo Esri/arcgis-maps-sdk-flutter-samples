@@ -59,6 +59,8 @@ class _ApplyMosaicRuleToRastersState extends State<ApplyMosaicRuleToRasters>
   var _showMosaicOptions = false;
   // Current selected mosaic method.
   var _selectedMosaicMethod = MosaicMethodEnum.objectID;
+  // Raster to apply the mosaic rule.
+  late ImageServiceRaster _raster;
 
   @override
   Widget build(BuildContext context) {
@@ -93,19 +95,19 @@ class _ApplyMosaicRuleToRastersState extends State<ApplyMosaicRuleToRasters>
     // Create a map with a topographic basemap style.
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic);
     _mapViewController.arcGISMap = map;
-    //Create a Raster with the provided URL
-    final raster = ImageServiceRaster(
+    // Create a Raster with the provided URL
+    _raster = ImageServiceRaster(
       uri: Uri.parse(
         'https://sampleserver7.arcgisonline.com/server/rest/services/amberg_germany/ImageServer',
       ),
     );
 
-    //Create a RasterLayer with the Raster
-    final rasterLayer = RasterLayer.withRaster(raster);
+    // Create a RasterLayer with the Raster
+    final rasterLayer = RasterLayer.withRaster(_raster);
     await rasterLayer.load();
-    //Set a default MosaicRule to the RasterLayer
-    raster.mosaicRule = MosaicRule()..mosaicMethod = MosaicMethod.none;
-    //Add the RasterLayer to the operational layers of the map
+    // Set a default MosaicRule to the RasterLayer
+    _raster.mosaicRule = MosaicRule()..mosaicMethod = MosaicMethod.none;
+    // Add the RasterLayer to the operational layers of the map
     map.operationalLayers.add(rasterLayer);
     await _mapViewController.setViewpointCenter(
       rasterLayer.fullExtent!.center,
@@ -116,29 +118,19 @@ class _ApplyMosaicRuleToRastersState extends State<ApplyMosaicRuleToRasters>
   }
 
   // Update the mosaic method of the raster layer.
-  Future<void> _updateMosaicMethod() async {
-    setState(() => _ready = false);
-    final rasterLayer =
-        _mapViewController.arcGISMap!.operationalLayers.firstWhere(
-              (layer) => layer is RasterLayer,
-            )
-            as RasterLayer;
-    final raster = rasterLayer.raster! as ImageServiceRaster;
+  void _updateMosaicMethod() {
     switch (_selectedMosaicMethod) {
       case MosaicMethodEnum.objectID:
-        raster.mosaicRule = MosaicRule()..mosaicMethod = MosaicMethod.none;
+        _raster.mosaicRule!.mosaicMethod = MosaicMethod.none;
       case MosaicMethodEnum.northwest:
-        raster.mosaicRule = MosaicRule()..mosaicMethod = MosaicMethod.northwest;
+        _raster.mosaicRule!.mosaicMethod = MosaicMethod.northwest;
       case MosaicMethodEnum.center:
-        raster.mosaicRule = MosaicRule()..mosaicMethod = MosaicMethod.center;
+        _raster.mosaicRule!.mosaicMethod = MosaicMethod.center;
       case MosaicMethodEnum.attribute:
-        raster.mosaicRule = MosaicRule()..mosaicMethod = MosaicMethod.attribute;
+        _raster.mosaicRule!.mosaicMethod = MosaicMethod.attribute;
       case MosaicMethodEnum.lockRaster:
-        raster.mosaicRule =
-            MosaicRule()..mosaicMethod = MosaicMethod.lockRaster;
+        _raster.mosaicRule!.mosaicMethod = MosaicMethod.lockRaster;
     }
-
-    setState(() => _ready = true);
   }
 
   // Build a bottom sheet to display mosaic method options.
