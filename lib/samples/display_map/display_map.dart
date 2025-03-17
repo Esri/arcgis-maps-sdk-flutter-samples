@@ -15,23 +15,56 @@
 //
 
 import 'package:arcgis_maps/arcgis_maps.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
 
-class DisplayMap extends StatelessWidget {
+class DisplayMap extends StatefulWidget {
   const DisplayMap({super.key});
+
+  @override
+  State<DisplayMap> createState() => _DisplayMapState();
+}
+
+class _DisplayMapState extends State<DisplayMap> with SampleStateSupport {
+  // Create a controller for the map view.
+  final _mapViewController = ArcGISMapView.createController();
+  // A flag for when the map view is ready and controls can be used.
+  var _ready = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // Add a map view to the widget tree and set a controller and a map with a basemap style.
-      body: ArcGISMapView(
-        controllerProvider:
-            () =>
-                ArcGISMapView.createController()
-                  ..arcGISMap = ArcGISMap.withBasemapStyle(
-                    BasemapStyle.arcGISImagery,
+      body: SafeArea(
+        top: false,
+        left: false,
+        right: false,
+        child: Stack(
+          children: [
+            Column(
+              children: [
+                Expanded(
+                  // Add a map view to the widget tree and set a controller.
+                  child: ArcGISMapView(
+                    controllerProvider: () => _mapViewController,
+                    onMapViewReady: onMapViewReady,
                   ),
+                ),
+              ],
+            ),
+            // Display a progress indicator and prevent interaction until state is ready.
+            LoadingIndicator(visible: !_ready),
+          ],
+        ),
       ),
     );
+  }
+
+  void onMapViewReady() {
+    // Create a map with a topographic basemap style.
+    final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISImagery);
+    _mapViewController.arcGISMap = map;
+
+    // Set the ready state variable to true to enable the sample UI.
+    setState(() => _ready = true);
   }
 }
