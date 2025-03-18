@@ -29,20 +29,28 @@ class _SetReferenceScaleState extends State<SetReferenceScale>
     with SampleStateSupport {
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
+
   // Create a list of dropdown menu items to load all the reference scales.
-  final _referenceScaleList = <DropdownMenuItem<double>>[];
+  final _referenceScaleList = <DropdownMenuEntry<double>>[];
+
   // Create a list of selected feature layers.
   final _selectedFeatureLayers = <String>[];
+
   // Create a list of all feature layers.
   late List<String> _allFeatureLayers;
+
   // Create a variable to store the map.
   var _map = ArcGISMap();
+
   // Create a variable to store the scale.
   var _scale = 250000.0;
+
   // Create a flag for when the map view is ready and controls can be used.
   var _ready = false;
+
   // Create a flag for when the bottom sheet is visible.
   var _bottomSheetVisible = false;
+
   // Create a regular expression to format the scale.
   final _digitGroupRegex = RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))');
 
@@ -52,7 +60,7 @@ class _SetReferenceScaleState extends State<SetReferenceScale>
     // Add scales to the list.
     for (final value in [500000.0, 250000.0, 100000.0, 50000.0]) {
       _referenceScaleList.add(
-        DropdownMenuItem(value: value, child: Text(formatAsScale(value))),
+        DropdownMenuEntry(value: value, label: formatAsScale(value)),
       );
     }
   }
@@ -142,23 +150,20 @@ class _SetReferenceScaleState extends State<SetReferenceScale>
                           style: Theme.of(context).textTheme.titleMedium,
                         ),
                         const Spacer(),
-                        // Add a dropdown button for setting a new reference scale.
-                        DropdownButton(
-                          underline: Container(),
-                          style: Theme.of(context).textTheme.titleSmall,
-                          isDense: true,
-                          alignment: Alignment.center,
+                        // Add a dropdown menu for setting a new reference scale.
+                        DropdownMenu(
+                          textStyle: Theme.of(context).textTheme.titleSmall,
                           // Set the selected scale
-                          value: _scale,
-                          icon: const Icon(Icons.arrow_drop_down),
+                          initialSelection: _scale,
+                          trailingIcon: const Icon(Icons.arrow_drop_down),
                           // Set the callback to update the selected scale.
-                          onChanged: (newScale) {
+                          onSelected: (newScale) {
                             setState(() {
                               _scale = newScale!;
                               _map.referenceScale = _scale;
                             });
                           },
-                          items: _referenceScaleList,
+                          dropdownMenuEntries: _referenceScaleList,
                         ),
                       ],
                     ),

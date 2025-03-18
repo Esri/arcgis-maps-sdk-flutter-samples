@@ -326,24 +326,27 @@ class _EditWithBranchVersioningState extends State<EditWithBranchVersioning>
                               labelText: 'Description',
                             ),
                           ),
-                          DropdownButton(
-                            value: selectedAccess,
-                            onChanged: (newValue) {
-                              if (newValue != null) {
-                                setModalState(() {
-                                  // Update the selected access value when a new value is selected from the dropdown menu.
-                                  selectedAccess = newValue;
-                                });
-                              }
-                            },
-                            // Display the version access values in a dropdown.
-                            items:
-                                VersionAccess.values.map((value) {
-                                  return DropdownMenuItem(
-                                    value: value,
-                                    child: Text(value.name),
-                                  );
-                                }).toList(),
+                          Padding(
+                            padding: const EdgeInsets.all(8),
+                            child: DropdownMenu(
+                              initialSelection: selectedAccess,
+                              onSelected: (newValue) {
+                                if (newValue != null) {
+                                  setModalState(() {
+                                    // Update the selected access value when a new value is selected from the dropdown menu.
+                                    selectedAccess = newValue;
+                                  });
+                                }
+                              },
+                              // Display the version access values in a dropdown.
+                              dropdownMenuEntries:
+                                  VersionAccess.values.map((value) {
+                                    return DropdownMenuEntry(
+                                      value: value,
+                                      label: value.name,
+                                    );
+                                  }).toList(),
+                            ),
                           ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,

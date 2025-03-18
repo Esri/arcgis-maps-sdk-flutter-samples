@@ -111,23 +111,17 @@ class _ChangeViewpointState extends State<ChangeViewpoint>
 
   Widget buildBottomMenu() {
     return Center(
-      // A drop down button for selecting viewpoint.
-      child: DropdownButton(
-        alignment: Alignment.center,
-        hint: Text(
-          'Select viewpoint',
-          style: Theme.of(context).textTheme.titleMedium,
-        ),
-        icon: const Icon(Icons.arrow_drop_down),
-        iconEnabledColor: Theme.of(context).primaryColor,
-        iconDisabledColor: Theme.of(context).disabledColor,
-        style: Theme.of(context).textTheme.titleMedium,
-        value: _selectedViewpoint,
-        items:
+      // A drop down menu for selecting viewpoint.
+      child: DropdownMenu(
+        hintText: 'Choose a style',
+        trailingIcon: const Icon(Icons.arrow_drop_down),
+        textStyle: Theme.of(context).textTheme.labelMedium,
+        initialSelection: _selectedViewpoint,
+        dropdownMenuEntries:
             _viewpointTitles.map((items) {
-              return DropdownMenuItem(value: items, child: Text(items));
+              return DropdownMenuEntry(value: items, label: items);
             }).toList(),
-        onChanged: (viewpoint) {
+        onSelected: (viewpoint) {
           if (viewpoint != null) {
             changeViewpoint(viewpoint);
           }
