@@ -94,8 +94,8 @@ class _AddFeatureLayersState extends State<AddFeatureLayers>
               onSelected: (featureLayerSource) {
                 setState(() {
                   _selectedFeatureLayerSource = featureLayerSource;
-                  handleSourceSelection(featureLayerSource!);
                 });
+                handleSourceSelection(featureLayerSource!);
               },
               initialSelection: _selectedFeatureLayerSource,
             ),
