@@ -64,6 +64,10 @@ class _DisplayMapState extends State<DisplayMap> with SampleStateSupport {
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISImagery);
     _mapViewController.arcGISMap = map;
 
+    map.operationalLayers.add(ArcGISMapImageLayer.withUri(
+      Uri.parse( 'https://sampleserver6.arcgisonline.com/arcgis/rest/services/DamageAssessment/MapServer'),
+    ));
+
     // Set the ready state variable to true to enable the sample UI.
     setState(() => _ready = true);
   }
