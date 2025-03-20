@@ -13,6 +13,8 @@
 // limitations under the License.
 //
 
+import 'dart:async';
+
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
@@ -61,6 +63,7 @@ class _ApplyMosaicRuleToRastersState extends State<ApplyMosaicRuleToRasters>
   var _selectedMosaicMethod = MosaicMethodEnum.objectID;
   // Raster to apply the mosaic rule.
   late ImageServiceRaster _raster;
+  late StreamSubscription<DrawStatus> _drawStatusSubscription;
 
   @override
   Widget build(BuildContext context) {
@@ -113,24 +116,43 @@ class _ApplyMosaicRuleToRastersState extends State<ApplyMosaicRuleToRasters>
       rasterLayer.fullExtent!.center,
       scale: 25000,
     );
+
+    _drawStatusSubscription = _mapViewController.onDrawStatusChanged.listen((status) {
+      if (status == DrawStatus.completed) {
+        setState(() => _ready = true);
+      }
+    });
+
     // Set the ready state variable to true to enable the sample UI.
     setState(() => _ready = true);
   }
 
+  @override
+  void dispose() {
+    _drawStatusSubscription.cancel();
+    super.dispose();
+  }
+
   // Update the mosaic method of the raster layer.
   void _updateMosaicMethod() {
+    final mosaicRule = MosaicRule();
     switch (_selectedMosaicMethod) {
       case MosaicMethodEnum.objectID:
-        _raster.mosaicRule!.mosaicMethod = MosaicMethod.none;
+        mosaicRule.mosaicMethod = MosaicMethod.none;
       case MosaicMethodEnum.northwest:
-        _raster.mosaicRule!.mosaicMethod = MosaicMethod.northwest;
+        mosaicRule.mosaicMethod = MosaicMethod.northwest;
+        mosaicRule.mosaicOperation = MosaicOperation.first;
       case MosaicMethodEnum.center:
-        _raster.mosaicRule!.mosaicMethod = MosaicMethod.center;
+        mosaicRule.mosaicMethod = MosaicMethod.center;
+        mosaicRule.mosaicOperation = MosaicOperation.blend;
       case MosaicMethodEnum.attribute:
-        _raster.mosaicRule!.mosaicMethod = MosaicMethod.attribute;
+        mosaicRule.mosaicMethod = MosaicMethod.attribute;
+        mosaicRule.sortField = 'OBJECTID';
       case MosaicMethodEnum.lockRaster:
-        _raster.mosaicRule!.mosaicMethod = MosaicMethod.lockRaster;
+        mosaicRule.mosaicMethod = MosaicMethod.lockRaster;
+        mosaicRule.lockRasterIds.addAll([1, 7, 12]);
     }
+    _raster.mosaicRule = mosaicRule;
   }
 
   // Build a bottom sheet to display mosaic method options.
@@ -177,6 +199,7 @@ class _ApplyMosaicRuleToRastersState extends State<ApplyMosaicRuleToRasters>
                             setState(() {
                               _selectedMosaicMethod = method;
                               _showMosaicOptions = false;
+                              _ready = false;
                             });
                             _updateMosaicMethod();
                           },
