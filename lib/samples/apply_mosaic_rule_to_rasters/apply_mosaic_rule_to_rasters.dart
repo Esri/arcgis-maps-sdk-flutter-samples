@@ -17,7 +17,6 @@ import 'dart:async';
 
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
-import 'package:async/async.dart';
 import 'package:flutter/material.dart';
 
 enum MosaicMethodEnum {
@@ -154,7 +153,6 @@ class _ApplyMosaicRuleToRastersState extends State<ApplyMosaicRuleToRasters>
         mosaicRule.lockRasterIds.addAll([1, 7, 12]);
     }
     _raster.mosaicRule = mosaicRule;
-    
   }
 
   // Build a bottom sheet to display mosaic method options.
