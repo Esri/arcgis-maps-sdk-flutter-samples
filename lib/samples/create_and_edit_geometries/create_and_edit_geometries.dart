@@ -131,19 +131,19 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
     _geometryEditor.tool = _vertexTool;
     // Listen to changes in canUndo and canRedo in order to enable/disable the UI.
     _geometryEditor.onCanUndoChanged.listen(
-          (canUndo) => setState(() => _geometryEditorCanUndo = canUndo),
+      (canUndo) => setState(() => _geometryEditorCanUndo = canUndo),
     );
     _geometryEditor.onCanRedoChanged.listen(
-          (canRedo) => setState(() => _geometryEditorCanRedo = canRedo),
+      (canRedo) => setState(() => _geometryEditorCanRedo = canRedo),
     );
     // Listen to changes in isStarted in order to enable/disable the UI.
     _geometryEditor.onIsStartedChanged.listen(
-          (isStarted) => setState(() => _geometryEditorIsStarted = isStarted),
+      (isStarted) => setState(() => _geometryEditorIsStarted = isStarted),
     );
     // Listen to changes in the selected element in order to enable/disable the UI.
     _geometryEditor.onSelectedElementChanged.listen(
-          (selectedElement) => setState(
-            () => _geometryEditorHasSelectedElement = selectedElement != null,
+      (selectedElement) => setState(
+        () => _geometryEditorHasSelectedElement = selectedElement != null,
       ),
     );
     // Set the geometry editor to the map view controller.
@@ -236,11 +236,11 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
   void toggleScale() {
     // Toggle the selected scale mode and then update each tool with the new value.
     setState(
-          () =>
-      _selectedScaleMode =
-      _selectedScaleMode == GeometryEditorScaleMode.uniform
-          ? GeometryEditorScaleMode.stretch
-          : GeometryEditorScaleMode.uniform,
+      () =>
+          _selectedScaleMode =
+              _selectedScaleMode == GeometryEditorScaleMode.uniform
+                  ? GeometryEditorScaleMode.stretch
+                  : GeometryEditorScaleMode.uniform,
     );
     _vertexTool.configuration.scaleMode = _selectedScaleMode;
     _freehandTool.configuration.scaleMode = _selectedScaleMode;
@@ -264,12 +264,12 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
           child: Text(
             type.name.capitalize(),
             style:
-            isVertexTool
-                ? null
-                : const TextStyle(
-              color: Colors.grey,
-              fontStyle: FontStyle.italic,
-            ),
+                isVertexTool
+                    ? null
+                    : const TextStyle(
+                      color: Colors.grey,
+                      fontStyle: FontStyle.italic,
+                    ),
           ),
         );
       } else {
@@ -298,7 +298,7 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
     // We also enable selection of freehand/shape tools when a geometry type has not yet been selected.
     final isNotPointOrMultipoint =
         _selectedGeometryType != GeometryType.point &&
-            _selectedGeometryType != GeometryType.multipoint;
+        _selectedGeometryType != GeometryType.multipoint;
 
     return tools.keys.map((tool) {
       if (tool == _vertexTool || tool == _reticleVertexTool) {
@@ -313,12 +313,12 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
           child: Text(
             tools[tool] ?? 'Unknown Tool',
             style:
-            isNotPointOrMultipoint
-                ? null
-                : const TextStyle(
-              color: Colors.grey,
-              fontStyle: FontStyle.italic,
-            ),
+                isNotPointOrMultipoint
+                    ? null
+                    : const TextStyle(
+                      color: Colors.grey,
+                      fontStyle: FontStyle.italic,
+                    ),
           ),
         );
       }
@@ -344,13 +344,13 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
           items: configureGeometryTypeMenuItems(),
           // If the geometry editor is already started then we fully disable the DropDownButton and prevent editing with another geometry type.
           onChanged:
-          !_geometryEditorIsStarted
-              ? (GeometryType? geometryType) {
-            if (geometryType != null) {
-              startEditingWithGeometryType(geometryType);
-            }
-          }
-              : null,
+              !_geometryEditorIsStarted
+                  ? (GeometryType? geometryType) {
+                    if (geometryType != null) {
+                      startEditingWithGeometryType(geometryType);
+                    }
+                  }
+                  : null,
         ),
         // A drop down button for selecting a tool.
         DropdownButton(
@@ -394,9 +394,9 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
                     message: 'Undo',
                     child: ElevatedButton(
                       onPressed:
-                      _geometryEditorIsStarted && _geometryEditorCanUndo
-                          ? _geometryEditor.undo
-                          : null,
+                          _geometryEditorIsStarted && _geometryEditorCanUndo
+                              ? _geometryEditor.undo
+                              : null,
                       child: const Icon(Icons.undo),
                     ),
                   ),
@@ -405,9 +405,9 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
                     message: 'Redo',
                     child: ElevatedButton(
                       onPressed:
-                      _geometryEditorIsStarted && _geometryEditorCanRedo
-                          ? _geometryEditor.redo
-                          : null,
+                          _geometryEditorIsStarted && _geometryEditorCanRedo
+                              ? _geometryEditor.redo
+                              : null,
                       child: const Icon(Icons.redo),
                     ),
                   ),
@@ -429,12 +429,12 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
                     message: 'Delete selected element',
                     child: ElevatedButton(
                       onPressed:
-                      _geometryEditorIsStarted &&
-                          _geometryEditorHasSelectedElement &&
-                          _geometryEditor.selectedElement != null &&
-                          _geometryEditor.selectedElement!.canDelete
-                          ? _geometryEditor.deleteSelectedElement
-                          : null,
+                          _geometryEditorIsStarted &&
+                                  _geometryEditorHasSelectedElement &&
+                                  _geometryEditor.selectedElement != null &&
+                                  _geometryEditor.selectedElement!.canDelete
+                              ? _geometryEditor.deleteSelectedElement
+                              : null,
                       child: const Icon(Icons.clear),
                     ),
                   ),
@@ -448,7 +448,7 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
                     message: 'Stop and discard edits',
                     child: ElevatedButton(
                       onPressed:
-                      _geometryEditorIsStarted ? stopAndDiscardEdits : null,
+                          _geometryEditorIsStarted ? stopAndDiscardEdits : null,
                       child: const Icon(Icons.not_interested_sharp),
                     ),
                   ),
@@ -457,9 +457,9 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
                     message: 'Delete all graphics',
                     child: ElevatedButton(
                       onPressed:
-                      !_geometryEditorIsStarted
-                          ? () => _graphicsOverlay.graphics.clear()
-                          : null,
+                          !_geometryEditorIsStarted
+                              ? () => _graphicsOverlay.graphics.clear()
+                              : null,
                       child: const Icon(Icons.delete_forever),
                     ),
                   ),
@@ -469,10 +469,10 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
               ElevatedButton(
                 // Scale mode is not compatible with point geometry types or the reticle vertex tool.
                 onPressed:
-                _selectedGeometryType == GeometryType.point ||
-                    _selectedTool == _reticleVertexTool
-                    ? null
-                    : toggleScale,
+                    _selectedGeometryType == GeometryType.point ||
+                            _selectedTool == _reticleVertexTool
+                        ? null
+                        : toggleScale,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   spacing: 10,

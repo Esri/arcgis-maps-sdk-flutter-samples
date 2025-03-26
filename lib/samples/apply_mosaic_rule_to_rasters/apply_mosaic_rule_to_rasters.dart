@@ -117,7 +117,9 @@ class _ApplyMosaicRuleToRastersState extends State<ApplyMosaicRuleToRasters>
       scale: 25000,
     );
 
-    _drawStatusSubscription = _mapViewController.onDrawStatusChanged.listen((status) {
+    _drawStatusSubscription = _mapViewController.onDrawStatusChanged.listen((
+      status,
+    ) {
       if (status == DrawStatus.completed) {
         setState(() => _ready = true);
       }
