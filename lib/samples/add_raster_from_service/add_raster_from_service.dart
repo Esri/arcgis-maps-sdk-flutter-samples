@@ -13,6 +13,8 @@
 // limitations under the License.
 //
 
+import 'dart:async';
+
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
@@ -28,13 +30,28 @@ class _AddRasterFromServiceState extends State<AddRasterFromService>
     with SampleStateSupport {
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
+  // A flag for when the map view is ready and controls can be used.
+  var _ready = false;
+  // A subscription to listen for layer view state changes.
+  late final StreamSubscription _layerViewChangedSubscription;
+
+  @override
+  void dispose() {
+    _layerViewChangedSubscription.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: ArcGISMapView(
-        controllerProvider: () => _mapViewController,
-        onMapViewReady: onMapViewReady,
+      body: Stack(
+        children: [
+          ArcGISMapView(
+            controllerProvider: () => _mapViewController,
+            onMapViewReady: onMapViewReady,
+          ),
+          LoadingIndicator(visible: !_ready),
+        ],
       ),
     );
   }
@@ -71,5 +88,15 @@ class _AddRasterFromServiceState extends State<AddRasterFromService>
 
     // Add Raster layer to the map.
     map.operationalLayers.add(rasterLayer);
+    // Listen for layer view state changes.
+    _layerViewChangedSubscription = _mapViewController.onLayerViewStateChanged
+        .listen((layerViewState) {
+          if (layerViewState.layer == rasterLayer &&
+              layerViewState.layerViewState.status.contains(
+                LayerViewStatus.active,
+              )) {
+            setState(() => _ready = true);
+          }
+        });
   }
 }
