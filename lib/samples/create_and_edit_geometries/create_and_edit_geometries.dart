@@ -286,7 +286,7 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
     final tools = {
       _vertexTool: 'Vertex Tool',
       _reticleVertexTool: 'Reticle Vertex Tool',
-      _freehandTool: 'Freehand tool',
+      _freehandTool: 'Freehand Tool',
       _arrowShapeTool: 'Arrow Shape Tool',
       _ellipseShapeTool: 'Ellipse Shape Tool',
       _rectangleShapeTool: 'Rectangle Shape Tool',
