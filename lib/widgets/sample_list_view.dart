@@ -15,7 +15,9 @@
 //
 
 import 'package:arcgis_maps_sdk_flutter_samples/models/sample.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/widgets/readme_page.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/widgets/sample_detail_page.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/widgets/show_web_page.dart';
 import 'package:flutter/material.dart';
 
 class SampleListView extends StatelessWidget {
@@ -42,6 +44,45 @@ class SampleListView extends StatelessWidget {
                 ),
               );
             },
+            trailing: PopupMenuButton(
+              icon: const Icon(Icons.more_vert),
+              itemBuilder:
+                  (context) => const [
+                    PopupMenuItem(
+                      value: 'README',
+                      child: ListTile(
+                        leading: Icon(Icons.description),
+                        title: Text('README'),
+                      ),
+                    ),
+                    PopupMenuItem(
+                      value: 'Website',
+                      child: ListTile(
+                        leading: Icon(Icons.link_rounded),
+                        title: Text('Website'),
+                      ),
+                    ),
+                  ],
+              onSelected: (String result) {
+                switch (result) {
+                  case 'Website':
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder:
+                            (context) => ShowWebPage(sample: sample),
+                      ),
+                    );
+                  case 'README':
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ReadmePage(sample: sample),
+                      ),
+                    );
+                }
+              },
+            ),
           ),
         );
       },
