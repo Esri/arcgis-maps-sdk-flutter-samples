@@ -41,9 +41,9 @@ class _ReadmePageState extends State<ReadmePage> {
 
   Future<void> _fetchMarkDown() async {
     final readmeUrl =
-        'https://raw.githubusercontent.com/Esri/arcgis-maps-sdk-flutter-samples/v.next/lib/samples/${widget.sample.key}/README.md';
+        'https://raw.githubusercontent.com/Esri/arcgis-maps-sdk-flutter-samples/main/lib/samples/${widget.sample.key}/README.md';
     final imageUrl =
-        'https://github.com/Esri/arcgis-maps-sdk-flutter-samples/raw/v.next/lib/samples/${widget.sample.key}/${widget.sample.key}.png';
+        'https://github.com/Esri/arcgis-maps-sdk-flutter-samples/raw/main/lib/samples/${widget.sample.key}/${widget.sample.key}.png';
 
     final response = await http.get(Uri.parse(readmeUrl));
     if (response.statusCode == 200) {
