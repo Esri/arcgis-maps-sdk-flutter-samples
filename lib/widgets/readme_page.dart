@@ -16,9 +16,9 @@
 
 import 'package:arcgis_maps_sdk_flutter_samples/models/sample.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_html/flutter_html.dart';
 import 'package:http/http.dart' as http;
 import 'package:markdown/markdown.dart' as md;
+import 'package:webview_flutter/webview_flutter.dart';
 
 class ReadmePage extends StatefulWidget {
   const ReadmePage({required this.sample, super.key});
@@ -30,8 +30,10 @@ class ReadmePage extends StatefulWidget {
 }
 
 class _ReadmePageState extends State<ReadmePage> {
-  var _htmlData = '';
   var _isLoading = true;
+  var _htmlData = '';
+
+  final _controller = WebViewController();
 
   @override
   void initState() {
@@ -58,13 +60,49 @@ class _ReadmePageState extends State<ReadmePage> {
       // Convert the markdown to html.
       final html = md.markdownToHtml(markdownData);
 
+      // Inject custom CSS for styling.
+      final styledHtml = '''
+      <html>
+      <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+        <style>
+          body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            padding: 16px;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+          }
+          h1, h2, h3, h4, h5, h6 {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+          }
+          code {
+            background-color: #f5f5f5;
+            padding: 2px 4px;
+            border-radius: 4px;
+            font-family: 'Courier New', Courier, monospace;
+          }
+          img {
+            max-width: 100%;
+            height: auto;
+          }
+        </style>
+      </head>
+      <body>
+        $html
+      </body>
+      </html>
+    ''';
+
       setState(() {
-        _htmlData = html;
+        _htmlData = styledHtml;
+        _controller.loadHtmlString(_htmlData);
         _isLoading = false;
       });
     } else {
       setState(() {
         _htmlData = 'Failed to load README.md';
+        _controller.loadHtmlString(_htmlData);
         _isLoading = false;
       });
     }
@@ -92,12 +130,7 @@ class _ReadmePageState extends State<ReadmePage> {
             child:
                 _isLoading
                     ? const Center(child: CircularProgressIndicator())
-                    : SingleChildScrollView(
-                      child: Padding(
-                        padding: const EdgeInsets.fromLTRB(12, 4, 12, 12),
-                        child: Html(data: _htmlData),
-                      ),
-                    ),
+                    : WebViewWidget(controller: _controller),
           ),
         ],
       ),
