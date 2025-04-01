@@ -16,7 +16,6 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_archive: ^6.0.3
-  flutter_html: ^3.0.0
   flutter_localizations:
     sdk: flutter
   flutter_tts: ^4.2.2
