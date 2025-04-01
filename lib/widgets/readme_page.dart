@@ -40,8 +40,10 @@ class _ReadmePageState extends State<ReadmePage> {
   }
 
   Future<void> _fetchMarkDown() async {
-    final readmeUrl = formatUrls()[0];
-    final imageUrl = formatUrls()[1];
+    final readmeUrl =
+        'https://raw.githubusercontent.com/Esri/arcgis-maps-sdk-flutter-samples/v.next/lib/samples/${widget.sample.key}/README.md';
+    final imageUrl =
+        'https://github.com/Esri/arcgis-maps-sdk-flutter-samples/raw/v.next/lib/samples/${widget.sample.key}/${widget.sample.key}.png';
 
     final response = await http.get(Uri.parse(readmeUrl));
     if (response.statusCode == 200) {
@@ -66,19 +68,6 @@ class _ReadmePageState extends State<ReadmePage> {
         _isLoading = false;
       });
     }
-  }
-
-  List<String> formatUrls() {
-    final keyUrls = <String>[];
-    final readmeUrl =
-        'https://raw.githubusercontent.com/Esri/arcgis-maps-sdk-flutter-samples/v.next/lib/samples/${widget.sample.key}/README.md';
-    final imageUrl =
-        'https://github.com/Esri/arcgis-maps-sdk-flutter-samples/raw/v.next/lib/samples/${widget.sample.key}/${widget.sample.key}.png';
-
-    keyUrls.add(readmeUrl);
-    keyUrls.add(imageUrl);
-
-    return keyUrls;
   }
 
   @override
