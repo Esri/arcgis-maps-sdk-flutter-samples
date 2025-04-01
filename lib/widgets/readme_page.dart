@@ -1,3 +1,19 @@
+//
+// Copyright 2025 Esri
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//   https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+
 import 'package:arcgis_maps_sdk_flutter_samples/models/sample.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
@@ -74,7 +90,7 @@ class _ReadmePageState extends State<ReadmePage> {
           Container(
             width: double.infinity,
             color: Colors.grey[300],
-            child:  const ListTile(
+            child: const ListTile(
               leading: Icon(Icons.description),
               title: Text(
                 'Readme',
@@ -84,14 +100,15 @@ class _ReadmePageState extends State<ReadmePage> {
           ),
 
           Expanded(
-            child: _isLoading
-                ? const Center(child: CircularProgressIndicator())
-                : SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(12, 4, 12, 12),
-                child: Html(data: _htmlData),
-              ),
-            ),
+            child:
+                _isLoading
+                    ? const Center(child: CircularProgressIndicator())
+                    : SingleChildScrollView(
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(12, 4, 12, 12),
+                        child: Html(data: _htmlData),
+                      ),
+                    ),
           ),
         ],
       ),
