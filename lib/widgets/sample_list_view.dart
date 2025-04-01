@@ -64,7 +64,7 @@ class SampleListView extends StatelessWidget {
                       ),
                     ),
                   ],
-              onSelected: (String result) {
+              onSelected: (result) {
                 switch (result) {
                   case 'Website':
                     _launchSampleUrl(sample);
