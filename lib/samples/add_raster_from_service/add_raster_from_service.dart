@@ -16,6 +16,7 @@
 import 'dart:async';
 
 import 'package:arcgis_maps/arcgis_maps.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/common/busy_indicator.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
 
@@ -30,6 +31,8 @@ class _AddRasterFromServiceState extends State<AddRasterFromService>
     with SampleStateSupport {
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
+  // A flag indicating the map is currently drawing layers.
+  var _drawing = false;
   // A flag for when the map view is ready and controls can be used.
   var _ready = false;
   // A subscription to listen for layer view state changes.
@@ -51,12 +54,21 @@ class _AddRasterFromServiceState extends State<AddRasterFromService>
             onMapViewReady: onMapViewReady,
           ),
           LoadingIndicator(visible: !_ready),
+          BusyIndicator(labelText: 'Drawing...', visible: _drawing),
         ],
       ),
     );
   }
 
   void onMapViewReady() {
+    _mapViewController.onDrawStatusChanged.listen((status) {
+      if (status == DrawStatus.inProgress) {
+        setState(() => _drawing = true);
+      } else {
+        setState(() => _drawing = false);
+      }
+    });
+
     // Create a map with the ArcGIS DarkGrayBase basemap style and set to the map view.
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISDarkGrayBase);
 
