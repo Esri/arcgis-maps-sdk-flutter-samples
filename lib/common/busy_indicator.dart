@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 
+// This is a widget that is meant to sit atop the widget stack to indicate
+// that the system is doing something without blocking user interaction.
+// The widget consists of a [CircularProgressIndicator] and a very short [Text]
+// label.
 class BusyIndicator extends StatelessWidget {
   const BusyIndicator({
     required this.labelText,

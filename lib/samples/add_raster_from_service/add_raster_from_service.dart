@@ -35,11 +35,14 @@ class _AddRasterFromServiceState extends State<AddRasterFromService>
   var _drawing = false;
   // A flag for when the map view is ready and controls can be used.
   var _ready = false;
+  // A subscription to listen for MapViewController draw status state changes.
+  late final StreamSubscription _drawStatusChangedSubscription;
   // A subscription to listen for layer view state changes.
   late final StreamSubscription _layerViewChangedSubscription;
 
   @override
   void dispose() {
+    _drawStatusChangedSubscription.cancel();
     _layerViewChangedSubscription.cancel();
     super.dispose();
   }
@@ -61,13 +64,14 @@ class _AddRasterFromServiceState extends State<AddRasterFromService>
   }
 
   void onMapViewReady() {
-    _mapViewController.onDrawStatusChanged.listen((status) {
-      if (status == DrawStatus.inProgress) {
-        setState(() => _drawing = true);
-      } else {
-        setState(() => _drawing = false);
-      }
-    });
+    _drawStatusChangedSubscription = _mapViewController.onDrawStatusChanged
+        .listen((status) {
+          if (status == DrawStatus.inProgress) {
+            setState(() => _drawing = true);
+          } else {
+            setState(() => _drawing = false);
+          }
+        });
 
     // Create a map with the ArcGIS DarkGrayBase basemap style and set to the map view.
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISDarkGrayBase);
