@@ -26,6 +26,7 @@ const applicationTitle = 'ArcGIS Maps SDK for Flutter Samples';
 /// A page that displays a list of sample categories.
 class SampleViewerPage extends StatefulWidget {
   const SampleViewerPage({super.key, this.category, this.isSearchable = true});
+
   final SampleCategory? category;
   final bool isSearchable;
 
