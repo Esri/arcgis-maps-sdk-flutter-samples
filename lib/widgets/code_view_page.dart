@@ -99,7 +99,7 @@ class _CodeViewPageState extends State<CodeViewPage> {
 
   Future<String> _fetchOnlineCodeForFile(String filePath) async {
     const urlPrefix =
-        'https://raw.githubusercontent.com/Esri/arcgis-maps-sdk-flutter-samples/refs/heads/v.next/lib/samples/';
+        'https://raw.githubusercontent.com/Esri/arcgis-maps-sdk-flutter-samples/refs/heads/main/lib/samples/';
     final fileUrl = '$urlPrefix/$filePath';
     final fileUri = Uri.parse(fileUrl);
     final response = await http.get(fileUri);

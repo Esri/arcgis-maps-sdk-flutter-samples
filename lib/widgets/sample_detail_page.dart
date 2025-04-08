@@ -1,7 +1,6 @@
 import 'package:arcgis_maps_sdk_flutter_samples/models/sample.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/widgets/sample_info_popup_menu.dart';
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class SampleDetailPage extends StatelessWidget {
   const SampleDetailPage({required this.sample, super.key});
@@ -17,19 +16,5 @@ class SampleDetailPage extends StatelessWidget {
       ),
       body: sample.getSampleWidget(),
     );
-  }
-
-  Future<void> _launchSampleUrl() async {
-    if (!await launchUrl(webPageUrl(), mode: LaunchMode.externalApplication)) {
-      debugPrint('Could not launch ${webPageUrl()}');
-    }
-  }
-
-  Uri webPageUrl() {
-    final formattedKey = sample.key.replaceAll('_', '-');
-    final formattedUrl =
-        'https://developers.arcgis.com/flutter/sample-code/$formattedKey/';
-
-    return Uri.parse(formattedUrl);
   }
 }
