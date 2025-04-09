@@ -15,10 +15,9 @@
 //
 
 import 'package:arcgis_maps_sdk_flutter_samples/models/sample.dart';
-import 'package:arcgis_maps_sdk_flutter_samples/widgets/readme_page.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/widgets/sample_detail_page.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/widgets/sample_info_popup_menu.dart';
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class SampleListView extends StatelessWidget {
   const SampleListView({required this.samples, super.key});
@@ -45,59 +44,10 @@ class SampleListView extends StatelessWidget {
               );
             },
             contentPadding: const EdgeInsets.only(left: 20),
-            trailing: PopupMenuButton(
-              icon: const Icon(Icons.more_vert),
-              itemBuilder:
-                  (context) => const [
-                    PopupMenuItem(
-                      value: 'README',
-                      child: ListTile(
-                        leading: Icon(Icons.description),
-                        title: Text('README'),
-                      ),
-                    ),
-                    PopupMenuItem(
-                      value: 'Website',
-                      child: ListTile(
-                        leading: Icon(Icons.link_rounded),
-                        title: Text('Website'),
-                      ),
-                    ),
-                  ],
-              onSelected: (result) {
-                switch (result) {
-                  case 'Website':
-                    _launchSampleUrl(sample);
-                  case 'README':
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => ReadmePage(sample: sample),
-                      ),
-                    );
-                }
-              },
-            ),
+            trailing: SampleInfoPopupMenu(sample: sample),
           ),
         );
       },
     );
-  }
-
-  Future<void> _launchSampleUrl(Sample sample) async {
-    if (!await launchUrl(
-      webPageUrl(sample),
-      mode: LaunchMode.externalApplication,
-    )) {
-      debugPrint('Could not launch ${webPageUrl(sample)}');
-    }
-  }
-
-  Uri webPageUrl(Sample sample) {
-    final formattedKey = sample.key.replaceAll('_', '-');
-    final formattedUrl =
-        'https://developers.arcgis.com/flutter/sample-code/$formattedKey/';
-
-    return Uri.parse(formattedUrl);
   }
 }
