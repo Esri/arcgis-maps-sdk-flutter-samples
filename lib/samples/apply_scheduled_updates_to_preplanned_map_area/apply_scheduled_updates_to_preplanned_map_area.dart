@@ -15,12 +15,11 @@
 //
 
 import 'dart:io';
+
 import 'package:arcgis_maps/arcgis_maps.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
-
-import '../../utils/sample_data.dart';
-import '../../utils/sample_state_support.dart';
 
 class ApplyScheduledUpdatesToPreplannedMapArea extends StatefulWidget {
   const ApplyScheduledUpdatesToPreplannedMapArea({super.key});
@@ -56,10 +55,11 @@ class _ApplyScheduledUpdatesToPreplannedMapAreaState
     return Scaffold(
       body: SafeArea(
         top: false,
+        left: false,
+        right: false,
         child: Stack(
           children: [
             Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Expanded(
                   // Add a map view to the widget tree and set a controller.
@@ -91,22 +91,14 @@ class _ApplyScheduledUpdatesToPreplannedMapAreaState
               ],
             ),
             // Display a progress indicator and prevent interaction before state is ready.
-            Visibility(
-              visible: !_ready,
-              child: SizedBox.expand(
-                child: Container(
-                  color: Colors.white30,
-                  child: const Center(child: CircularProgressIndicator()),
-                ),
-              ),
-            ),
+            LoadingIndicator(visible: !_ready),
           ],
         ),
       ),
     );
   }
 
-  void onMapViewReady() async {
+  Future<void> onMapViewReady() async {
     // Set the path to the map package data.
     final appDir = await getApplicationDocumentsDirectory();
     _dataUri = Uri.parse('${appDir.absolute.path}/canyonlands');
@@ -124,21 +116,20 @@ class _ApplyScheduledUpdatesToPreplannedMapAreaState
   Future<void> syncUpdates() async {
     setState(() => _canUpdate = false);
 
-    final mapSyncJob =
-        _offlineMapSyncTask.syncOfflineMap(parameters: _mapSyncParameters);
+    final mapSyncJob = _offlineMapSyncTask.syncOfflineMap(
+      parameters: _mapSyncParameters,
+    );
     try {
       await mapSyncJob.run();
       final result = mapSyncJob.result;
       if (result != null && result.isMobileMapPackageReopenRequired) {
         await _loadMapPackageMap();
       }
-    } catch (err) {
-      if (mounted) {
-        _showAlertDialog(
-          'The offline map sync failed with error: {$err}.',
-          title: 'Error',
-        );
-      }
+    } on ArcGISException catch (e) {
+      showMessageDialog(
+        'The offline map sync failed with error: {$e}.',
+        title: 'Error',
+      );
     } finally {
       // Refresh the update status.
       await _checkForUpdates();
@@ -151,7 +142,8 @@ class _ApplyScheduledUpdatesToPreplannedMapAreaState
     setState(() {
       _updateStatus = updatesInfo.downloadAvailability;
       _updateSizeKB = updatesInfo.scheduledUpdatesDownloadSize / 1024;
-      _canUpdate = updatesInfo.downloadAvailability ==
+      _canUpdate =
+          updatesInfo.downloadAvailability ==
           OfflineUpdateAvailability.available;
     });
   }
@@ -166,20 +158,16 @@ class _ApplyScheduledUpdatesToPreplannedMapAreaState
     // Try to load the map package.
     try {
       await _mobileMapPackage!.load();
-    } catch (err) {
-      if (mounted) {
-        _showAlertDialog(
-          'Mobile Map Package failed to load with error: {$err}',
-          title: 'Error',
-        );
-      }
+    } on ArcGISException catch (e) {
+      showMessageDialog(
+        'Mobile Map Package failed to load with error: {$e}',
+        title: 'Error',
+      );
       return false;
     }
 
     if (_mobileMapPackage!.maps.isEmpty) {
-      if (mounted) {
-        _showAlertDialog('Mobile map package contains no maps.');
-      }
+      showMessageDialog('Mobile map package contains no maps.');
       return false;
     }
 
@@ -187,8 +175,9 @@ class _ApplyScheduledUpdatesToPreplannedMapAreaState
     _mapViewController.arcGISMap = _mobileMapPackage!.maps.first;
 
     // Set the offline map sync task.
-    _offlineMapSyncTask =
-        OfflineMapSyncTask.withMap(_mapViewController.arcGISMap!);
+    _offlineMapSyncTask = OfflineMapSyncTask.withMap(
+      _mapViewController.arcGISMap!,
+    );
 
     // Set the map sync parameters.
     _mapSyncParameters =
@@ -215,22 +204,5 @@ class _ApplyScheduledUpdatesToPreplannedMapAreaState
 
     // Load the map package from the extracted map package.
     await _loadMapPackageMap();
-  }
-
-  // Utility function to show an alert dialog with a provided message.
-  Future<void> _showAlertDialog(String message, {String title = 'Alert'}) {
-    return showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(title),
-        content: Text(message),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, 'OK'),
-            child: const Text('OK'),
-          ),
-        ],
-      ),
-    );
   }
 }

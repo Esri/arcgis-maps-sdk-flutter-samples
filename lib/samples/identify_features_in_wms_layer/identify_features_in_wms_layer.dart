@@ -14,7 +14,7 @@
 //
 
 import 'package:arcgis_maps/arcgis_maps.dart';
-import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_state_support.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
@@ -42,6 +42,8 @@ class _IdentifyFeaturesInWmsLayerState extends State<IdentifyFeaturesInWmsLayer>
     return Scaffold(
       body: SafeArea(
         top: false,
+        left: false,
+        right: false,
         child: Stack(
           children: [
             Column(
@@ -61,7 +63,7 @@ class _IdentifyFeaturesInWmsLayerState extends State<IdentifyFeaturesInWmsLayer>
               child: IgnorePointer(
                 child: Container(
                   padding: const EdgeInsets.all(10),
-                  color: Colors.white.withOpacity(0.7),
+                  color: Colors.white.withValues(alpha: 0.7),
                   child: const Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -76,22 +78,14 @@ class _IdentifyFeaturesInWmsLayerState extends State<IdentifyFeaturesInWmsLayer>
               ),
             ),
             // Display a progress indicator and prevent interaction until state is ready.
-            Visibility(
-              visible: !_ready,
-              child: const SizedBox.expand(
-                child: ColoredBox(
-                  color: Colors.white30,
-                  child: Center(child: CircularProgressIndicator()),
-                ),
-              ),
-            ),
+            LoadingIndicator(visible: !_ready),
           ],
         ),
       ),
     );
   }
 
-  void onMapViewReady() async {
+  Future<void> onMapViewReady() async {
     // Create a map with a basemap and set to the map view controller.
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISDarkGrayBase);
     _mapViewController.arcGISMap = map;
@@ -120,7 +114,7 @@ class _IdentifyFeaturesInWmsLayerState extends State<IdentifyFeaturesInWmsLayer>
     setState(() => _ready = true);
   }
 
-  void onTap(Offset localPosition) async {
+  Future<void> onTap(Offset localPosition) async {
     // Prevent addtional taps until the identify operation is complete.
     setState(() => _ready = false);
 
@@ -128,8 +122,7 @@ class _IdentifyFeaturesInWmsLayerState extends State<IdentifyFeaturesInWmsLayer>
     final identifyLayerResult = await _mapViewController.identifyLayer(
       _wmsLayer,
       screenPoint: localPosition,
-      tolerance: 12.0,
-      maximumResults: 1,
+      tolerance: 12,
     );
 
     // Check if there are any features identified.
@@ -160,20 +153,19 @@ class _IdentifyFeaturesInWmsLayerState extends State<IdentifyFeaturesInWmsLayer>
     // Show a dialog containing a web view widget.
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text(
-          'Identify Result',
-          style: Theme.of(context).textTheme.titleMedium,
-        ),
-        content: SizedBox(
-          height: 150,
-          width: MediaQuery.of(context).size.width * 0.75,
-          // Create a web view widget and set the controller to provide the content.
-          child: WebViewWidget(
-            controller: _webViewController,
+      builder:
+          (context) => AlertDialog(
+            title: Text(
+              'Identify Result',
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+            content: SizedBox(
+              height: 150,
+              width: MediaQuery.of(context).size.width * 0.75,
+              // Create a web view widget and set the controller to provide the content.
+              child: WebViewWidget(controller: _webViewController),
+            ),
           ),
-        ),
-      ),
     );
   }
 

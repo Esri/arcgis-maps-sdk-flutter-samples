@@ -15,10 +15,10 @@
 //
 
 import 'dart:math';
-import 'package:arcgis_maps/arcgis_maps.dart';
-import 'package:flutter/material.dart';
 
-import '../../utils/sample_state_support.dart';
+import 'package:arcgis_maps/arcgis_maps.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
+import 'package:flutter/material.dart';
 
 class DensifyAndGeneralizeGeometry extends StatefulWidget {
   const DensifyAndGeneralizeGeometry({super.key});
@@ -29,7 +29,8 @@ class DensifyAndGeneralizeGeometry extends StatefulWidget {
 }
 
 class _DensifyAndGeneralizeGeometryState
-    extends State<DensifyAndGeneralizeGeometry> with SampleStateSupport {
+    extends State<DensifyAndGeneralizeGeometry>
+    with SampleStateSupport {
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
   // Declare a polyline geometry representing the ship's route.
@@ -56,6 +57,8 @@ class _DensifyAndGeneralizeGeometryState
     return Scaffold(
       body: SafeArea(
         top: false,
+        left: false,
+        right: false,
         child: Stack(
           children: [
             Column(
@@ -80,15 +83,7 @@ class _DensifyAndGeneralizeGeometryState
               ],
             ),
             // Display a progress indicator and prevent interaction until state is ready.
-            Visibility(
-              visible: !_ready,
-              child: SizedBox.expand(
-                child: Container(
-                  color: Colors.white30,
-                  child: const Center(child: CircularProgressIndicator()),
-                ),
-              ),
-            ),
+            LoadingIndicator(visible: !_ready),
           ],
         ),
       ),
@@ -101,11 +96,11 @@ class _DensifyAndGeneralizeGeometryState
   Widget buildSettings(BuildContext context) {
     return Container(
       padding: EdgeInsets.fromLTRB(
-        20.0,
-        20.0,
-        20.0,
+        20,
+        20,
+        20,
         max(
-          20.0,
+          20,
           View.of(context).viewPadding.bottom /
               View.of(context).devicePixelRatio,
         ),
@@ -154,14 +149,15 @@ class _DensifyAndGeneralizeGeometryState
               Expanded(
                 child: Slider(
                   value: _maxDeviation,
-                  min: 1.0,
-                  max: 250.0,
-                  onChanged: _generalize
-                      ? (value) {
-                          setState(() => _maxDeviation = value);
-                          updateGraphics();
-                        }
-                      : null,
+                  min: 1,
+                  max: 250,
+                  onChanged:
+                      _generalize
+                          ? (value) {
+                            setState(() => _maxDeviation = value);
+                            updateGraphics();
+                          }
+                          : null,
                 ),
               ),
             ],
@@ -195,23 +191,21 @@ class _DensifyAndGeneralizeGeometryState
               Expanded(
                 child: Slider(
                   value: _maxSegmentLength,
-                  min: 50.0,
-                  max: 500.0,
-                  onChanged: _densify
-                      ? (value) {
-                          setState(() => _maxSegmentLength = value);
-                          updateGraphics();
-                        }
-                      : null,
+                  min: 50,
+                  max: 500,
+                  onChanged:
+                      _densify
+                          ? (value) {
+                            setState(() => _maxSegmentLength = value);
+                            updateGraphics();
+                          }
+                          : null,
                 ),
               ),
             ],
           ),
           const Divider(),
-          ElevatedButton(
-            onPressed: reset,
-            child: const Text('Reset'),
-          ),
+          ElevatedButton(onPressed: reset, child: const Text('Reset')),
         ],
       ),
     );
@@ -245,47 +239,34 @@ class _DensifyAndGeneralizeGeometryState
     final multipoint = multipointFromPolyline(_originalPolyline);
     final originalPointGraphic = Graphic(
       geometry: multipoint,
-      symbol: SimpleMarkerSymbol(
-        style: SimpleMarkerSymbolStyle.circle,
-        color: Colors.red,
-        size: 7.0,
-      ),
+      symbol: SimpleMarkerSymbol(color: Colors.red, size: 7),
     );
     final originalPolylineGraphic = Graphic(
       geometry: _originalPolyline,
       symbol: SimpleLineSymbol(
         style: SimpleLineSymbolStyle.dot,
         color: Colors.red,
-        width: 3.0,
+        width: 3,
       ),
     );
 
     // Create graphics for displaying the resultant points and lines.
     _resultPointsGraphic = Graphic(
-      symbol: SimpleMarkerSymbol(
-        style: SimpleMarkerSymbolStyle.circle,
-        color: Colors.purple,
-        size: 7.0,
-      ),
+      symbol: SimpleMarkerSymbol(color: Colors.purple, size: 7),
     );
     _resultPolylineGraphic = Graphic(
-      symbol: SimpleLineSymbol(
-        style: SimpleLineSymbolStyle.solid,
-        color: Colors.purple,
-        width: 3.0,
-      ),
+      symbol: SimpleLineSymbol(color: Colors.purple, width: 3),
     );
 
     // Add the graphics to a graphics overlay, and add the overlay to the map view.
-    final graphicsOverlay = GraphicsOverlay()
-      ..graphics.addAll(
-        [
-          originalPointGraphic,
-          originalPolylineGraphic,
-          _resultPointsGraphic,
-          _resultPolylineGraphic,
-        ],
-      );
+    final graphicsOverlay =
+        GraphicsOverlay()
+          ..graphics.addAll([
+            originalPointGraphic,
+            originalPolylineGraphic,
+            _resultPointsGraphic,
+            _resultPolylineGraphic,
+          ]);
     _mapViewController.graphicsOverlays.add(graphicsOverlay);
 
     // Create a map with a basemap style and an initial viewpoint to show the extent of the polyline.
@@ -314,19 +295,23 @@ class _DensifyAndGeneralizeGeometryState
 
     // Generalize the polyline with the specified max deviation.
     if (_generalize) {
-      resultPolyline = GeometryEngine.generalize(
-        geometry: resultPolyline,
-        maxDeviation: _maxDeviation,
-        removeDegenerateParts: true,
-      ) as Polyline;
+      resultPolyline =
+          GeometryEngine.generalize(
+                geometry: resultPolyline,
+                maxDeviation: _maxDeviation,
+                removeDegenerateParts: true,
+              )
+              as Polyline;
     }
 
     // Densify the points of the polyline with the specified max segment length.
     if (_densify) {
-      resultPolyline = GeometryEngine.densify(
-        geometry: resultPolyline,
-        maxSegmentLength: _maxSegmentLength,
-      ) as Polyline;
+      resultPolyline =
+          GeometryEngine.densify(
+                geometry: resultPolyline,
+                maxSegmentLength: _maxSegmentLength,
+              )
+              as Polyline;
     }
 
     // Update the result graphics with the calculated geometries.
@@ -348,8 +333,9 @@ class _DensifyAndGeneralizeGeometryState
   // Creates a Multipoint geometry composed of all the points of a polyline.
   Multipoint multipointFromPolyline(Polyline polyline) {
     // Create a MutablePointCollection and add all the points of the polyline.
-    final mutablePointCollection =
-        MutablePointCollection(spatialReference: polyline.spatialReference);
+    final mutablePointCollection = MutablePointCollection(
+      spatialReference: polyline.spatialReference,
+    );
     for (final part in polyline.parts) {
       for (final point in part.getPoints()) {
         mutablePointCollection.addPoint(point);

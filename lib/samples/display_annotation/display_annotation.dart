@@ -14,9 +14,8 @@
 //
 
 import 'package:arcgis_maps/arcgis_maps.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
-
-import '../../utils/sample_state_support.dart';
 
 class DisplayAnnotation extends StatefulWidget {
   const DisplayAnnotation({super.key});
@@ -67,8 +66,9 @@ class _DisplayAnnotationState extends State<DisplayAnnotation>
     // Add an AnnotationLayer from the river annotation service.
     const riverAnnotationService =
         'https://sampleserver6.arcgisonline.com/arcgis/rest/services/RiversAnnotation/FeatureServer/0';
-    final annotationLayer =
-        AnnotationLayer.withUri(Uri.parse(riverAnnotationService));
+    final annotationLayer = AnnotationLayer.withUri(
+      Uri.parse(riverAnnotationService),
+    );
     map.operationalLayers.add(annotationLayer);
 
     // Set the map to the map view.

@@ -14,7 +14,7 @@
 //
 
 import 'package:arcgis_maps/arcgis_maps.dart';
-import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_state_support.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
 
 class ManageFeatures extends StatefulWidget {
@@ -58,9 +58,7 @@ class _ManageFeaturesState extends State<ManageFeatures>
     _featureManagementOptions.addAll(
       FeatureManagementOperation.values.map(
         (operation) => DropdownMenuItem(
-          onTap: () => setState(
-            () => _selectedOperation == operation,
-          ),
+          onTap: () => setState(() => _selectedOperation == operation),
           value: operation,
           child: Text(getLabel(operation)),
         ),
@@ -73,6 +71,8 @@ class _ManageFeaturesState extends State<ManageFeatures>
     return Scaffold(
       body: SafeArea(
         top: false,
+        left: false,
+        right: false,
         child: Stack(
           children: [
             Column(
@@ -95,20 +95,19 @@ class _ManageFeaturesState extends State<ManageFeatures>
                           // Create a dropdown button to select a feature management operation.
                           DropdownButton(
                             alignment: Alignment.center,
-                            hint: const Text(
+                            hint: Text(
                               'Select operation',
-                              style: TextStyle(color: Colors.deepPurple),
+                              style: Theme.of(context).textTheme.labelMedium,
                             ),
                             value: _selectedOperation,
-                            icon: const Icon(
-                              Icons.arrow_drop_down,
-                              color: Colors.deepPurple,
-                            ),
+                            icon: const Icon(Icons.arrow_drop_down),
                             elevation: 16,
-                            style: const TextStyle(color: Colors.deepPurple),
+                            style: Theme.of(context).textTheme.labelMedium,
                             // Set the onChanged callback to update the selected operation.
-                            onChanged: (operation) =>
-                                setState(() => _selectedOperation = operation),
+                            onChanged:
+                                (operation) => setState(
+                                  () => _selectedOperation = operation,
+                                ),
                             items: _featureManagementOptions,
                           ),
                           // Display additional UI depending on the selected operation.
@@ -121,28 +120,21 @@ class _ManageFeaturesState extends State<ManageFeatures>
               ],
             ),
             // Display a progress indicator and prevent interaction until state is ready.
-            Visibility(
-              visible: !_ready,
-              child: const SizedBox.expand(
-                child: ColoredBox(
-                  color: Colors.white30,
-                  child: Center(child: CircularProgressIndicator()),
-                ),
-              ),
-            ),
+            LoadingIndicator(visible: !_ready),
           ],
         ),
       ),
     );
   }
 
-  void onMapViewReady() async {
+  Future<void> onMapViewReady() async {
     try {
       // Create and load a service geodatabase from a service URL.
       const featureServiceUri =
           'https://sampleserver6.arcgisonline.com/arcgis/rest/services/DamageAssessment/FeatureServer/0';
-      final serviceGeodatabase =
-          ServiceGeodatabase.withUri(Uri.parse(featureServiceUri));
+      final serviceGeodatabase = ServiceGeodatabase.withUri(
+        Uri.parse(featureServiceUri),
+      );
       await serviceGeodatabase.load();
 
       // Get the feature table from the service geodatabase referencing the Damage Assessment feature service.
@@ -151,16 +143,18 @@ class _ManageFeaturesState extends State<ManageFeatures>
       // Load the table.
       await _damageServiceFeatureTable.load();
       // Get the required field from the table - in this case, damage type.
-      final damageTypeField = _damageServiceFeatureTable.fields
-          .firstWhere((field) => field.name == 'typdamage');
+      final damageTypeField = _damageServiceFeatureTable.fields.firstWhere(
+        (field) => field.name == 'typdamage',
+      );
       // Get the domain for the field.
       final domain = damageTypeField.domain! as CodedValueDomain;
       // Update the dropdown menu with the attribute values from the domain.
       configureAttributeDropdownMenuItems(domain);
 
       // Create a feature layer to visualize the features in the table.
-      _damageFeatureLayer =
-          FeatureLayer.withFeatureTable(_damageServiceFeatureTable);
+      _damageFeatureLayer = FeatureLayer.withFeatureTable(
+        _damageServiceFeatureTable,
+      );
       // Create a map with the ArcGIS Streets basemap.
       final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISStreets);
       // Add the feature layer to the map's operational layers.
@@ -175,7 +169,7 @@ class _ManageFeaturesState extends State<ManageFeatures>
             y: 4500000,
             spatialReference: SpatialReference.webMercator,
           ),
-          scale: 3e7,
+          scale: 30000000,
         ),
       );
       // Set the ready state variable to true to enable the sample UI.
@@ -189,7 +183,7 @@ class _ManageFeaturesState extends State<ManageFeatures>
     }
   }
 
-  void onTap(Offset localPosition) async {
+  Future<void> onTap(Offset localPosition) async {
     // Configure actions when a user taps on the map, depending on the selected operation.
     if (_selectedOperation == FeatureManagementOperation.create) {
       // Create a feature if create is selected.
@@ -221,8 +215,7 @@ class _ManageFeaturesState extends State<ManageFeatures>
     final identifyResult = await _mapViewController.identifyLayer(
       _damageFeatureLayer,
       screenPoint: localPosition,
-      tolerance: 12.0,
-      maximumResults: 1,
+      tolerance: 12,
     );
 
     if (identifyResult.geoElements.isNotEmpty) {
@@ -248,8 +241,9 @@ class _ManageFeaturesState extends State<ManageFeatures>
     // Get the normalized geometry for the tapped location and use it as the feature's geometry.
     final geometry = _mapViewController.screenToLocation(screen: localPosition);
     if (geometry != null) {
-      final normalizedGeometry =
-          GeometryEngine.normalizeCentralMeridian(geometry);
+      final normalizedGeometry = GeometryEngine.normalizeCentralMeridian(
+        geometry,
+      );
       feature.geometry = normalizedGeometry;
 
       // Set feature attributes.
@@ -280,9 +274,7 @@ class _ManageFeaturesState extends State<ManageFeatures>
     await _damageFeatureLayer.featureTable!.deleteFeature(feature);
     // Sync the change with the service on the service geodatabase.
     await _damageServiceFeatureTable.serviceGeodatabase!.applyEdits();
-    showMessageDialog(
-      'Deleted feature ${feature.attributes['objectid']}.',
-    );
+    showMessageDialog('Deleted feature ${feature.attributes['objectid']}.');
     // Reset selected elements and re-enable the UI.
     setState(() {
       _selectedFeature = null;
@@ -291,27 +283,24 @@ class _ManageFeaturesState extends State<ManageFeatures>
     });
   }
 
-  Future<void> updateGeometry(
-    Feature feature,
-    Offset localPosition,
-  ) async {
+  Future<void> updateGeometry(Feature feature, Offset localPosition) async {
     // Disable the UI while the async operations are in progress.
     setState(() => _ready = false);
 
     // Get the normalized geometry for the tapped location and use it as the feature's geometry.
-    final newGeometry =
-        _mapViewController.screenToLocation(screen: localPosition);
+    final newGeometry = _mapViewController.screenToLocation(
+      screen: localPosition,
+    );
     if (newGeometry != null) {
-      final normalizedNewGeometry =
-          GeometryEngine.normalizeCentralMeridian(newGeometry);
+      final normalizedNewGeometry = GeometryEngine.normalizeCentralMeridian(
+        newGeometry,
+      );
       feature.geometry = normalizedNewGeometry;
       // Update the feature in the local table.
       await _damageFeatureLayer.featureTable!.updateFeature(feature);
       // Sync the change with the service on the service geodatabase.
       await _damageServiceFeatureTable.serviceGeodatabase!.applyEdits();
-      showMessageDialog(
-        'Updated feature ${feature.attributes['objectid']}',
-      );
+      showMessageDialog('Updated feature ${feature.attributes['objectid']}');
       // Re-enable the UI and deselect the currently selected feature.
       _damageFeatureLayer.unselectFeature(_selectedFeature!);
       setState(() {
@@ -321,7 +310,7 @@ class _ManageFeaturesState extends State<ManageFeatures>
     }
   }
 
-  void updateAttribute(Feature feature, String damageType) async {
+  Future<void> updateAttribute(Feature feature, String damageType) async {
     // Disable the UI while the async operations are in progress.
     setState(() => _ready = false);
     // Update the damage type field to the selected value.
@@ -342,9 +331,7 @@ class _ManageFeaturesState extends State<ManageFeatures>
     _damageTypeAttributeOptions.addAll(
       domain.codedValues.map(
         (value) => DropdownMenuItem(
-          onTap: () => setState(
-            () => _selectedDamageType == value.name,
-          ),
+          onTap: () => setState(() => _selectedDamageType == value.name),
           value: value.name,
           child: Text(value.name),
         ),
@@ -360,50 +347,50 @@ class _ManageFeaturesState extends State<ManageFeatures>
       case FeatureManagementOperation.delete:
         // Create a button to delete the selected feature.
         return ElevatedButton(
-          onPressed: _selectedFeature != null
-              ? () => deleteFeature(_selectedFeature!)
-              : null,
+          onPressed:
+              _selectedFeature != null
+                  ? () => deleteFeature(_selectedFeature!)
+                  : null,
           child: const Text('Delete Selected Feature'),
         );
       case FeatureManagementOperation.attribute:
         // Create a dropdown button for updating the attribute value of the selected feature.
         return DropdownButton(
           alignment: Alignment.center,
-          hint: const Text(
+          hint: Text(
             'Select attribute value',
-            style: TextStyle(color: Colors.deepPurple),
+            style: Theme.of(context).textTheme.labelMedium,
           ),
           disabledHint: const Text(
             'Select a feature',
-            style: TextStyle(
-              color: Colors.grey,
-            ),
+            style: TextStyle(color: Colors.grey),
           ),
           value: _selectedDamageType,
           icon: const Icon(Icons.arrow_drop_down),
-          style: const TextStyle(color: Colors.deepPurple),
-          iconEnabledColor: Colors.deepPurple,
-          iconDisabledColor: Colors.grey,
-          onChanged: _selectedFeature != null
-              ? (String? damageType) {
-                  if (damageType != null) {
-                    setState(() => _selectedDamageType = damageType);
-                    updateAttribute(_selectedFeature!, damageType);
+          style: Theme.of(context).textTheme.labelMedium,
+          iconEnabledColor: Theme.of(context).colorScheme.primary,
+          iconDisabledColor: Theme.of(context).disabledColor,
+          onChanged:
+              _selectedFeature != null
+                  ? (String? damageType) {
+                    if (damageType != null) {
+                      setState(() => _selectedDamageType = damageType);
+                      updateAttribute(_selectedFeature!, damageType);
+                    }
                   }
-                }
-              : null,
+                  : null,
           items: _damageTypeAttributeOptions,
         );
       case FeatureManagementOperation.geometry:
         // Display instructions for updating feature geometry.
         return const Text('Tap on the map to move a selected feature.');
-      default:
+      case null:
         // Display default instructions.
         return const Text('Select a feature management operation.');
     }
   }
 
-  String getLabel(FeatureManagementOperation operation) {
+  String getLabel(FeatureManagementOperation? operation) {
     // Return a UI friendly string for each feature management operation.
     switch (operation) {
       case FeatureManagementOperation.create:
@@ -414,21 +401,9 @@ class _ManageFeaturesState extends State<ManageFeatures>
         return 'Update attribute';
       case FeatureManagementOperation.geometry:
         return 'Update geometry';
-      default:
+      case null:
         return 'Select a feature management operation.';
     }
-  }
-
-  void showMessageDialog(String message) {
-    // Show a dialog with the provided message.
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          content: Text(message),
-        );
-      },
-    );
   }
 }
 

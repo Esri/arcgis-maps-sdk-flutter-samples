@@ -15,9 +15,8 @@
 //
 
 import 'package:arcgis_maps/arcgis_maps.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
-
-import '../../utils/sample_state_support.dart';
 
 class IdentifyLayerFeatures extends StatefulWidget {
   const IdentifyLayerFeatures({super.key});
@@ -53,14 +52,14 @@ class _IdentifyLayerFeaturesState extends State<IdentifyLayerFeatures>
                 visible: _message.isNotEmpty,
                 child: Container(
                   padding: const EdgeInsets.all(10),
-                  color: Colors.black.withOpacity(0.7),
+                  color: Colors.black.withValues(alpha: 0.7),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
                         _message,
                         textAlign: TextAlign.center,
-                        style: const TextStyle(color: Colors.white),
+                        style: Theme.of(context).textTheme.customWhiteStyle,
                       ),
                     ],
                   ),
@@ -69,21 +68,13 @@ class _IdentifyLayerFeaturesState extends State<IdentifyLayerFeatures>
             ),
           ),
           // Display a progress indicator and prevent interaction until state is ready.
-          Visibility(
-            visible: !_ready,
-            child: SizedBox.expand(
-              child: Container(
-                color: Colors.white30,
-                child: const Center(child: CircularProgressIndicator()),
-              ),
-            ),
-          ),
+          LoadingIndicator(visible: !_ready),
         ],
       ),
     );
   }
 
-  void onMapViewReady() async {
+  Future<void> onMapViewReady() async {
     // Create a feature layer of damaged property data.
     final serviceFeatureTable = ServiceFeatureTable.withUri(
       Uri.parse(
@@ -127,11 +118,11 @@ class _IdentifyLayerFeaturesState extends State<IdentifyLayerFeatures>
     });
   }
 
-  void onTap(Offset localPosition) async {
+  Future<void> onTap(Offset localPosition) async {
     // Identify features at the tapped location.
     final identifyLayerResults = await _mapViewController.identifyLayers(
       screenPoint: localPosition,
-      tolerance: 12.0,
+      tolerance: 12,
       maximumResultsPerLayer: 10,
     );
 
@@ -146,9 +137,10 @@ class _IdentifyLayerFeaturesState extends State<IdentifyLayerFeatures>
 
     // Display the results in the banner.
     setState(() {
-      _message = identifyTotal == 0
-          ? 'No features identified.'
-          : layerCounts.join('\n');
+      _message =
+          identifyTotal == 0
+              ? 'No features identified.'
+              : layerCounts.join('\n');
     });
   }
 }

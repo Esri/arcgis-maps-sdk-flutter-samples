@@ -16,6 +16,7 @@
 
 import 'dart:math';
 import 'package:arcgis_maps/arcgis_maps.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
 
 class ManageBookmarks extends StatefulWidget {
@@ -40,6 +41,8 @@ class _ManageBookmarksState extends State<ManageBookmarks> {
     return Scaffold(
       body: SafeArea(
         top: false,
+        left: false,
+        right: false,
         child: Stack(
           children: [
             Column(
@@ -69,15 +72,7 @@ class _ManageBookmarksState extends State<ManageBookmarks> {
               ],
             ),
             // Display a progress indicator and prevent interaction until state is ready.
-            Visibility(
-              visible: !_ready,
-              child: SizedBox.expand(
-                child: Container(
-                  color: Colors.white30,
-                  child: const Center(child: CircularProgressIndicator()),
-                ),
-              ),
-            ),
+            LoadingIndicator(visible: !_ready),
           ],
         ),
       ),
@@ -90,11 +85,11 @@ class _ManageBookmarksState extends State<ManageBookmarks> {
   Widget buildBookmarks(BuildContext context) {
     return Container(
       padding: EdgeInsets.fromLTRB(
-        20.0,
-        20.0,
-        20.0,
+        20,
+        20,
+        20,
         max(
-          20.0,
+          20,
           View.of(context).viewPadding.bottom /
               View.of(context).devicePixelRatio,
         ),
@@ -105,10 +100,7 @@ class _ManageBookmarksState extends State<ManageBookmarks> {
         children: [
           Row(
             children: [
-              Text(
-                'Bookmarks',
-                style: Theme.of(context).textTheme.titleLarge,
-              ),
+              Text('Bookmarks', style: Theme.of(context).textTheme.titleLarge),
               const Spacer(),
               IconButton(
                 icon: const Icon(Icons.close),
@@ -123,18 +115,18 @@ class _ManageBookmarksState extends State<ManageBookmarks> {
             child: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: _bookmarks.map(
-                  (bookmark) {
-                    // When a bookmark is tapped, set the bookmark on the map view.
-                    return TextButton(
-                      onPressed: () => _mapViewController.setBookmark(bookmark),
-                      style: const ButtonStyle(
-                        alignment: Alignment.centerLeft,
-                      ),
-                      child: Text(bookmark.name),
-                    );
-                  },
-                ).toList(),
+                children:
+                    _bookmarks.map((bookmark) {
+                      // When a bookmark is tapped, set the bookmark on the map view.
+                      return TextButton(
+                        onPressed:
+                            () => _mapViewController.setBookmark(bookmark),
+                        style: const ButtonStyle(
+                          alignment: Alignment.centerLeft,
+                        ),
+                        child: Text(bookmark.name),
+                      );
+                    }).toList(),
               ),
             ),
           ),
@@ -157,7 +149,7 @@ class _ManageBookmarksState extends State<ManageBookmarks> {
         viewpoint: Viewpoint.withLatLongScale(
           latitude: 44.525,
           longitude: -110.838,
-          scale: 6e3,
+          scale: 6000,
         ),
       ),
       Bookmark(
@@ -165,7 +157,7 @@ class _ManageBookmarksState extends State<ManageBookmarks> {
         viewpoint: Viewpoint.withLatLongScale(
           latitude: -33.867,
           longitude: -63.985,
-          scale: 4e4,
+          scale: 40000,
         ),
       ),
       Bookmark(
@@ -173,7 +165,7 @@ class _ManageBookmarksState extends State<ManageBookmarks> {
         viewpoint: Viewpoint.withLatLongScale(
           latitude: 27.380,
           longitude: 33.632,
-          scale: 6e3,
+          scale: 6000,
         ),
       ),
       Bookmark(
@@ -181,7 +173,7 @@ class _ManageBookmarksState extends State<ManageBookmarks> {
         viewpoint: Viewpoint.withLatLongScale(
           latitude: 37.401,
           longitude: -116.867,
-          scale: 6e3,
+          scale: 6000,
         ),
       ),
     ]);
@@ -194,7 +186,7 @@ class _ManageBookmarksState extends State<ManageBookmarks> {
     setState(() => _ready = true);
   }
 
-  void addBookmark() async {
+  Future<void> addBookmark() async {
     // Show a dialog to get the name of the bookmark.
     final name = await showDialog<String>(
       context: context,
@@ -242,10 +234,7 @@ class _AddBookmarkDialogState extends State<AddBookmarkDialog> {
         onSubmitted: add,
       ),
       actions: [
-        TextButton(
-          onPressed: cancel,
-          child: const Text('Cancel'),
-        ),
+        TextButton(onPressed: cancel, child: const Text('Cancel')),
         TextButton(
           onPressed: () => add(_nameController.text),
           child: const Text('Add'),

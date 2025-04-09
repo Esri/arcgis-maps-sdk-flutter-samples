@@ -15,9 +15,8 @@
 //
 
 import 'package:arcgis_maps/arcgis_maps.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
-
-import '../../utils/sample_state_support.dart';
 
 class ApplySimpleRendererToFeatureLayer extends StatefulWidget {
   const ApplySimpleRendererToFeatureLayer({super.key});
@@ -28,7 +27,8 @@ class ApplySimpleRendererToFeatureLayer extends StatefulWidget {
 }
 
 class _ApplySimpleRendererToFeatureLayerState
-    extends State<ApplySimpleRendererToFeatureLayer> with SampleStateSupport {
+    extends State<ApplySimpleRendererToFeatureLayer>
+    with SampleStateSupport {
   // The feature layer that will host the symbolized features.
   late final FeatureLayer _featureLayer;
   // Create the map view controller.
@@ -43,6 +43,8 @@ class _ApplySimpleRendererToFeatureLayerState
     return Scaffold(
       body: SafeArea(
         top: false,
+        left: false,
+        right: false,
         child: Stack(
           children: [
             Column(
@@ -56,26 +58,20 @@ class _ApplySimpleRendererToFeatureLayerState
                 ),
                 Center(
                   child: ElevatedButton(
-                    onPressed: _usingDefaultRenderer
-                        ? overrideRenderer
-                        : resetRenderer,
-                    child: _usingDefaultRenderer
-                        ? const Text('Blue Renderer')
-                        : const Text('Orange Renderer'),
+                    onPressed:
+                        _usingDefaultRenderer
+                            ? overrideRenderer
+                            : resetRenderer,
+                    child:
+                        _usingDefaultRenderer
+                            ? const Text('Blue Renderer')
+                            : const Text('Orange Renderer'),
                   ),
                 ),
               ],
             ),
             // Display a progress indicator and prevent interaction before state is ready.
-            Visibility(
-              visible: !_ready,
-              child: SizedBox.expand(
-                child: Container(
-                  color: Colors.white30,
-                  child: const Center(child: CircularProgressIndicator()),
-                ),
-              ),
-            ),
+            LoadingIndicator(visible: !_ready),
           ],
         ),
       ),
@@ -91,16 +87,17 @@ class _ApplySimpleRendererToFeatureLayerState
     _featureLayer = FeatureLayer.withFeatureTable(serviceFeatureTable);
 
     // Initialize the ArcGISMap.
-    final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic)
-      ..operationalLayers.add(_featureLayer)
-      ..initialViewpoint = Viewpoint.fromCenter(
-        ArcGISPoint(
-          x: -9177343,
-          y: 4247283,
-          spatialReference: SpatialReference.webMercator,
-        ),
-        scale: 4750,
-      );
+    final map =
+        ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic)
+          ..operationalLayers.add(_featureLayer)
+          ..initialViewpoint = Viewpoint.fromCenter(
+            ArcGISPoint(
+              x: -9177343,
+              y: 4247283,
+              spatialReference: SpatialReference.webMercator,
+            ),
+            scale: 4750,
+          );
 
     // Add the map to the MapViewController.
     _mapViewController.arcGISMap = map;
@@ -111,11 +108,7 @@ class _ApplySimpleRendererToFeatureLayerState
 
   void overrideRenderer() {
     // Set a new renderer for the feature layer
-    final markerSymbol = SimpleMarkerSymbol(
-      style: SimpleMarkerSymbolStyle.circle,
-      color: Colors.blue,
-      size: 5,
-    );
+    final markerSymbol = SimpleMarkerSymbol(color: Colors.blue, size: 5);
     _featureLayer.renderer = SimpleRenderer(symbol: markerSymbol);
     setState(() => _usingDefaultRenderer = false);
   }

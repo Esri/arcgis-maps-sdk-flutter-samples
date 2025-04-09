@@ -14,10 +14,8 @@
 // limitations under the License.
 //
 
-import 'dart:math';
-
 import 'package:arcgis_maps/arcgis_maps.dart';
-import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_state_support.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
 
 class CreateBuffersAroundPoints extends StatefulWidget {
@@ -66,14 +64,14 @@ class _CreateBuffersAroundPointsState extends State<CreateBuffersAroundPoints>
   final _tapPointSymbol = SimpleMarkerSymbol();
 
   // Define the spatial reference required by the sample.
-  final _statePlaneNorthCentralTexasSpatialReference =
-      SpatialReference(wkid: 32038);
+  final _statePlaneNorthCentralTexasSpatialReference = SpatialReference(
+    wkid: 32038,
+  );
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        top: true,
         child: Stack(
           children: [
             Column(
@@ -98,12 +96,13 @@ class _CreateBuffersAroundPointsState extends State<CreateBuffersAroundPoints>
                     ),
                     // A button to clear the buffers.
                     ElevatedButton(
-                      onPressed: _bufferPoints.isEmpty
-                          ? null
-                          : () {
-                              clearBufferPoints();
-                              setState(() => _status = Status.addPoints);
-                            },
+                      onPressed:
+                          _bufferPoints.isEmpty
+                              ? null
+                              : () {
+                                clearBufferPoints();
+                                setState(() => _status = Status.addPoints);
+                              },
                       child: const Text('Clear'),
                     ),
                   ],
@@ -111,28 +110,20 @@ class _CreateBuffersAroundPointsState extends State<CreateBuffersAroundPoints>
               ],
             ),
             // Display a progress indicator and prevent interaction until state is ready.
-            Visibility(
-              visible: !_ready,
-              child: const SizedBox.expand(
-                child: ColoredBox(
-                  color: Colors.white30,
-                  child: Center(child: CircularProgressIndicator()),
-                ),
-              ),
-            ),
+            LoadingIndicator(visible: !_ready),
             // Display a banner with instructions at the top.
             SafeArea(
               child: IgnorePointer(
                 child: Container(
                   padding: const EdgeInsets.all(10),
-                  color: Colors.white.withOpacity(0.7),
+                  color: Colors.white.withValues(alpha: 0.7),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
                         _status.label,
                         textAlign: TextAlign.center,
-                        style: const TextStyle(color: Colors.black),
+                        style: Theme.of(context).textTheme.labelMedium,
                       ),
                     ],
                   ),
@@ -171,8 +162,9 @@ class _CreateBuffersAroundPointsState extends State<CreateBuffersAroundPoints>
     _mapViewController.arcGISMap = map;
 
     // Set the viewpoint of the map view to our boundary polygon extent.
-    _mapViewController
-        .setViewpoint(Viewpoint.fromTargetExtent(_boundaryPolygon.extent));
+    _mapViewController.setViewpoint(
+      Viewpoint.fromTargetExtent(_boundaryPolygon.extent),
+    );
 
     _configureGraphicsOverlays();
 
@@ -203,12 +195,8 @@ class _CreateBuffersAroundPointsState extends State<CreateBuffersAroundPoints>
   void _initializeSymbols() {
     // Initialize the fill symbol for the buffer.
     _bufferFillSymbol
-      ..color = Colors.yellow.withOpacity(0.5)
-      ..outline = SimpleLineSymbol(
-        style: SimpleLineSymbolStyle.solid,
-        color: Colors.green,
-        width: 3,
-      );
+      ..color = Colors.yellow.withValues(alpha: 0.5)
+      ..outline = SimpleLineSymbol(color: Colors.green, width: 3);
 
     // Initialize the tap point symbol.
     _tapPointSymbol
@@ -219,75 +207,49 @@ class _CreateBuffersAroundPointsState extends State<CreateBuffersAroundPoints>
 
   // The build method for the settings.
   Widget buildSettings(BuildContext context, StateSetter setState) {
-    return Container(
-      padding: EdgeInsets.fromLTRB(
-        20.0,
-        0.0,
-        20.0,
-        max(
-          20.0,
-          View.of(context).viewPadding.bottom /
-              View.of(context).devicePixelRatio,
-        ),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Row(
-            children: [
-              Text(
-                'Settings',
-                style: Theme.of(context).textTheme.titleLarge,
-              ),
-              const Spacer(),
-              IconButton(
-                onPressed: () {
-                  setState(() => _showSettings = false);
-                },
-                icon: const Icon(Icons.close),
-              ),
-            ],
-          ),
-          Row(
-            children: [
-              const Text('Buffer Radius (miles)'),
-              const Spacer(),
-              Text(
-                _bufferRadius.round().toString(),
-                textAlign: TextAlign.right,
-              ),
-            ],
-          ),
-          Row(
-            children: [
-              Expanded(
-                // A slider to adjust the buffer radius.
-                child: Slider(
-                  value: _bufferRadius,
-                  min: 10,
-                  max: 300,
-                  onChanged: (value) => setState(() => _bufferRadius = value),
+    return BottomSheetSettings(
+      onCloseIconPressed: () => setState(() => _showSettings = false),
+      settingsWidgets:
+          (context) => [
+            Row(
+              children: [
+                const Text('Buffer Radius (miles)'),
+                const Spacer(),
+                Text(
+                  _bufferRadius.round().toString(),
+                  textAlign: TextAlign.right,
                 ),
-              ),
-            ],
-          ),
-          Row(
-            children: [
-              Text(_shouldUnion ? 'Union Enabled' : 'Union Disabled'),
-              const Spacer(),
-              Switch(
-                value: _shouldUnion,
-                onChanged: (value) {
-                  setState(() => _shouldUnion = value);
-                  if (_bufferPoints.isNotEmpty) {
-                    drawBuffers(unionized: _shouldUnion);
-                  }
-                },
-              ),
-            ],
-          ),
-        ],
-      ),
+              ],
+            ),
+            Row(
+              children: [
+                Expanded(
+                  // A slider to adjust the buffer radius.
+                  child: Slider(
+                    value: _bufferRadius,
+                    min: 10,
+                    max: 300,
+                    onChanged: (value) => setState(() => _bufferRadius = value),
+                  ),
+                ),
+              ],
+            ),
+            Row(
+              children: [
+                Text(_shouldUnion ? 'Union Enabled' : 'Union Disabled'),
+                const Spacer(),
+                Switch(
+                  value: _shouldUnion,
+                  onChanged: (value) {
+                    setState(() => _shouldUnion = value);
+                    if (_bufferPoints.isNotEmpty) {
+                      drawBuffers(unionized: _shouldUnion);
+                    }
+                  },
+                ),
+              ],
+            ),
+          ],
     );
   }
 
@@ -306,8 +268,10 @@ class _CreateBuffersAroundPointsState extends State<CreateBuffersAroundPoints>
     );
 
     // Create the graphics.
-    final boundaryGraphic =
-        Graphic(geometry: _boundaryPolygon, symbol: lineSymbol);
+    final boundaryGraphic = Graphic(
+      geometry: _boundaryPolygon,
+      symbol: lineSymbol,
+    );
 
     // Add the graphics to the graphics overlay.
     boundaryGraphicsOverlay.graphics.add(boundaryGraphic);
@@ -319,23 +283,27 @@ class _CreateBuffersAroundPointsState extends State<CreateBuffersAroundPoints>
 
   Polygon _makeBoundaryPolygon() {
     // Create a boundary polygon.
-    final polygonBuilder =
-        PolygonBuilder(spatialReference: SpatialReference.wgs84);
+    final polygonBuilder = PolygonBuilder(
+      spatialReference: SpatialReference.wgs84,
+    );
 
     // Add points to define the boundary where the spatial reference is valid for planar buffers.
     polygonBuilder.addPointXY(x: -103.070, y: 31.720);
     polygonBuilder.addPointXY(x: -103.070, y: 34.580);
-    polygonBuilder.addPointXY(x: -94.000, y: 34.580);
-    polygonBuilder.addPointXY(x: -94.000, y: 31.720);
+    polygonBuilder.addPointXY(x: -94, y: 34.580);
+    polygonBuilder.addPointXY(x: -94, y: 31.720);
 
     // Use the polygon builder to define a boundary geometry.
     final boundaryGeometry = polygonBuilder.toGeometry();
 
     // Project the boundary geometry to the spatial reference used by the sample.
-    final boundaryPolygon = GeometryEngine.project(
-      boundaryGeometry,
-      outputSpatialReference: _statePlaneNorthCentralTexasSpatialReference,
-    ) as Polygon;
+    final boundaryPolygon =
+        GeometryEngine.project(
+              boundaryGeometry,
+              outputSpatialReference:
+                  _statePlaneNorthCentralTexasSpatialReference,
+            )
+            as Polygon;
 
     return boundaryPolygon;
   }
@@ -397,7 +365,7 @@ enum Status {
   invalidInput('Enter a value between 0 and 300 to create a buffer.'),
   noPoints('Add a point to draw the buffers.');
 
-  final String label;
-
   const Status(this.label);
+
+  final String label;
 }

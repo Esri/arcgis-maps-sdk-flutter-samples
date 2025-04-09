@@ -17,9 +17,8 @@
 import 'dart:math';
 
 import 'package:arcgis_maps/arcgis_maps.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
-
-import '../../utils/sample_state_support.dart';
 
 class QueryTableStatistics extends StatefulWidget {
   const QueryTableStatistics({super.key});
@@ -54,6 +53,8 @@ class _QueryTableStatisticsState extends State<QueryTableStatistics>
     return Scaffold(
       body: SafeArea(
         top: false,
+        left: false,
+        right: false,
         child: Stack(
           children: [
             Column(
@@ -83,15 +84,7 @@ class _QueryTableStatisticsState extends State<QueryTableStatistics>
               ],
             ),
             // Display a progress indicator and prevent interaction until state is ready.
-            Visibility(
-              visible: !_ready,
-              child: SizedBox.expand(
-                child: Container(
-                  color: Colors.white30,
-                  child: const Center(child: CircularProgressIndicator()),
-                ),
-              ),
-            ),
+            LoadingIndicator(visible: !_ready),
           ],
         ),
       ),
@@ -103,11 +96,11 @@ class _QueryTableStatisticsState extends State<QueryTableStatistics>
   Widget querySettings(BuildContext context) {
     return Container(
       padding: EdgeInsets.fromLTRB(
-        20.0,
-        20.0,
-        20.0,
+        20,
+        20,
+        20,
         max(
-          20.0,
+          20,
           View.of(context).viewPadding.bottom /
               View.of(context).devicePixelRatio,
         ),
@@ -132,8 +125,9 @@ class _QueryTableStatisticsState extends State<QueryTableStatistics>
             children: [
               Checkbox(
                 value: _onlyCitiesInCurrentExtent,
-                onChanged: (value) =>
-                    setState(() => _onlyCitiesInCurrentExtent = value!),
+                onChanged:
+                    (value) =>
+                        setState(() => _onlyCitiesInCurrentExtent = value!),
               ),
               const Text('Only cities in current extent'),
             ],
@@ -142,8 +136,9 @@ class _QueryTableStatisticsState extends State<QueryTableStatistics>
             children: [
               Checkbox(
                 value: _onlyCitiesGreaterThan5M,
-                onChanged: (value) =>
-                    setState(() => _onlyCitiesGreaterThan5M = value!),
+                onChanged:
+                    (value) =>
+                        setState(() => _onlyCitiesGreaterThan5M = value!),
               ),
               const Text('Only cities greater than 5M'),
             ],
@@ -158,10 +153,7 @@ class _QueryTableStatisticsState extends State<QueryTableStatistics>
     // Add the statistic definitions for the 'POP' (Population) field.
     for (final type in StatisticType.values) {
       _statisticDefinitions.add(
-        StatisticDefinition(
-          onFieldName: 'POP',
-          statisticType: type,
-        ),
+        StatisticDefinition(onFieldName: 'POP', statisticType: type),
       );
     }
     // Create a map with a topographic basemap.
@@ -178,10 +170,11 @@ class _QueryTableStatisticsState extends State<QueryTableStatistics>
   }
 
   // Query statistics from the service feature table.
-  void queryStatistics() async {
+  Future<void> queryStatistics() async {
     // Create a statistics query parameters object.
-    final statisticsQueryParameters =
-        StatisticsQueryParameters(statisticDefinitions: _statisticDefinitions);
+    final statisticsQueryParameters = StatisticsQueryParameters(
+      statisticDefinitions: _statisticDefinitions,
+    );
 
     // Set the geometry and spatial relationship if the flag is true.
     if (_onlyCitiesInCurrentExtent) {
@@ -205,26 +198,18 @@ class _QueryTableStatisticsState extends State<QueryTableStatistics>
       record.statistics.forEach((key, value) {
         final displayName =
             key.toLowerCase() == 'count_pop' ? 'CITY_COUNT' : key;
-        final displayValue = key.toLowerCase() == 'count_pop'
-            ? value.toStringAsFixed(0)
-            : value.toStringAsFixed(2);
+        final n = value as num?;
+        final displayValue =
+            key.toLowerCase() == 'count_pop'
+                ? n?.toStringAsFixed(0)
+                : n?.toStringAsFixed(2);
         statistics.add('[$displayName]  $displayValue');
       });
     }
     // Display the statistics in a dialog.
-    if (mounted) {
-      showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: Text(
-              'Statistical Query Results',
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
-            content: Text(statistics.join('\n')),
-          );
-        },
-      );
-    }
+    showMessageDialog(
+      statistics.join('\n'),
+      title: 'Statistical Query Results',
+    );
   }
 }

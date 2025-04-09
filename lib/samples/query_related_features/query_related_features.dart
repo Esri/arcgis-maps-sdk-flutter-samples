@@ -1,9 +1,8 @@
 import 'dart:math';
 
 import 'package:arcgis_maps/arcgis_maps.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
-
-import '../../utils/sample_state_support.dart';
 
 class QueryRelatedFeatures extends StatefulWidget {
   const QueryRelatedFeatures({super.key});
@@ -35,6 +34,8 @@ class _QueryRelatedFeaturesState extends State<QueryRelatedFeatures>
     return Scaffold(
       body: SafeArea(
         top: false,
+        left: false,
+        right: false,
         child: Stack(
           children: [
             // Add a map view to the widget tree and set a controller.
@@ -44,15 +45,7 @@ class _QueryRelatedFeaturesState extends State<QueryRelatedFeatures>
               onTap: onTap,
             ),
             // Display a progress indicator and prevent interaction until state is ready.
-            Visibility(
-              visible: !_ready,
-              child: SizedBox.expand(
-                child: Container(
-                  color: Colors.white30,
-                  child: const Center(child: CircularProgressIndicator()),
-                ),
-              ),
-            ),
+            LoadingIndicator(visible: !_ready),
           ],
         ),
       ),
@@ -67,11 +60,11 @@ class _QueryRelatedFeaturesState extends State<QueryRelatedFeatures>
         maxHeight: MediaQuery.sizeOf(context).height * 0.4,
       ),
       padding: EdgeInsets.fromLTRB(
-        20.0,
-        5.0,
-        20.0,
+        20,
+        5,
+        20,
         max(
-          20.0,
+          20,
           View.of(context).viewPadding.bottom /
               View.of(context).devicePixelRatio,
         ),
@@ -82,12 +75,13 @@ class _QueryRelatedFeaturesState extends State<QueryRelatedFeatures>
           Row(
             children: [
               Expanded(
-                child: _loadingFeatures
-                    ? const Center(child: CircularProgressIndicator())
-                    : Text(
-                        _selectedParkName,
-                        style: Theme.of(context).textTheme.titleLarge,
-                      ),
+                child:
+                    _loadingFeatures
+                        ? const Center(child: CircularProgressIndicator())
+                        : Text(
+                          _selectedParkName,
+                          style: Theme.of(context).textTheme.titleLarge,
+                        ),
               ),
               IconButton(
                 alignment: Alignment.centerRight,
@@ -142,7 +136,7 @@ class _QueryRelatedFeaturesState extends State<QueryRelatedFeatures>
     );
   }
 
-  void onMapViewReady() async {
+  Future<void> onMapViewReady() async {
     // Create a map with a topographic basemap style.
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic);
 
@@ -154,8 +148,9 @@ class _QueryRelatedFeaturesState extends State<QueryRelatedFeatures>
     );
 
     // Create parks feature layer, the origin layer in the relationship.
-    _alaskaNationalParksLayer =
-        FeatureLayer.withFeatureTable(alaskaNationalParksFeaturesTable);
+    _alaskaNationalParksLayer = FeatureLayer.withFeatureTable(
+      alaskaNationalParksFeaturesTable,
+    );
 
     // Add parks feature layer to the map.
     map.operationalLayers.add(_alaskaNationalParksLayer);
@@ -174,30 +169,33 @@ class _QueryRelatedFeaturesState extends State<QueryRelatedFeatures>
       ),
     );
     // Add these to the tables on the map.
-    map.tables.addAll(
-      [alaskaNationalParksSpeciesTable, alaskaNationalParksPreservesTable],
-    );
+    map.tables.addAll([
+      alaskaNationalParksSpeciesTable,
+      alaskaNationalParksPreservesTable,
+    ]);
 
     // Assign map to the map view.
-    _mapViewController.arcGISMap = map
-      ..initialViewpoint = Viewpoint.fromCenter(
-        ArcGISPoint(
-          x: -16507762.575543,
-          y: 9058828.127243,
-          spatialReference: SpatialReference.webMercator,
-        ),
-        scale: 36764077,
-      );
+    _mapViewController.arcGISMap =
+        map
+          ..initialViewpoint = Viewpoint.fromCenter(
+            ArcGISPoint(
+              x: -16507762.575543,
+              y: 9058828.127243,
+              spatialReference: SpatialReference.webMercator,
+            ),
+            scale: 36764077,
+          );
 
     // Set selection color.
-    _mapViewController.selectionProperties =
-        SelectionProperties(color: Colors.yellow);
+    _mapViewController.selectionProperties = SelectionProperties(
+      color: Colors.yellow,
+    );
 
     // Set the ready state variable to true to enable the sample UI.
     setState(() => _ready = true);
   }
 
-  void onTap(Offset offset) async {
+  Future<void> onTap(Offset offset) async {
     // Clear the selection on the feature layer.
     _alaskaNationalParksLayer.clearSelection();
 
@@ -205,8 +203,7 @@ class _QueryRelatedFeaturesState extends State<QueryRelatedFeatures>
     final identifyLayerResult = await _mapViewController.identifyLayer(
       _alaskaNationalParksLayer,
       screenPoint: offset,
-      tolerance: 12.0,
-      maximumResults: 1,
+      tolerance: 12,
     );
 
     // If there are features identified, show the bottom sheet to display the
@@ -226,7 +223,7 @@ class _QueryRelatedFeaturesState extends State<QueryRelatedFeatures>
         _loadingFeatures = true;
       });
       // Query for related features.
-      queryRelatedFeatures(selectedFeature);
+      await queryRelatedFeatures(selectedFeature);
     } else {
       setState(() {
         _layerDataVisible = false;
@@ -236,11 +233,11 @@ class _QueryRelatedFeaturesState extends State<QueryRelatedFeatures>
   }
 
   // Query for related features given the origin feature.
-  void queryRelatedFeatures(ArcGISFeature selectedPark) async {
+  Future<void> queryRelatedFeatures(ArcGISFeature selectedPark) async {
     // Query for related features.
-    final selectedParkTable = selectedPark.featureTable as ServiceFeatureTable;
-    final relatedFeatureQueryResult =
-        await selectedParkTable.queryRelatedFeatures(feature: selectedPark);
+    final selectedParkTable = selectedPark.featureTable! as ServiceFeatureTable;
+    final relatedFeatureQueryResult = await selectedParkTable
+        .queryRelatedFeatures(feature: selectedPark);
 
     // Get the related species and preserves features.
     final relatedFeaturesLists = <List<String>>[];
@@ -249,7 +246,7 @@ class _QueryRelatedFeaturesState extends State<QueryRelatedFeatures>
       for (final feature in result.features()) {
         final relatedFeature = feature as ArcGISFeature;
         // Get a reference to the feature's table.
-        final relatedTable = feature.featureTable as ArcGISFeatureTable;
+        final relatedTable = feature.featureTable! as ArcGISFeatureTable;
 
         // Get the display field name - this is the name of the field that is intended for display.
         final displayFieldName = relatedTable.layerInfo!.displayFieldName;

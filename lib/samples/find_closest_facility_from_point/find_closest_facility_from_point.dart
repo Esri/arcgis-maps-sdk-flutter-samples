@@ -15,9 +15,8 @@
 //
 
 import 'package:arcgis_maps/arcgis_maps.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
-
-import '../../utils/sample_state_support.dart';
 
 class FindClosestFacilityFromPoint extends StatefulWidget {
   const FindClosestFacilityFromPoint({super.key});
@@ -28,7 +27,8 @@ class FindClosestFacilityFromPoint extends StatefulWidget {
 }
 
 class _FindClosestFacilityFromPointState
-    extends State<FindClosestFacilityFromPoint> with SampleStateSupport {
+    extends State<FindClosestFacilityFromPoint>
+    with SampleStateSupport {
   // Create the URIs for the fire station and fire images, as well as the URIs for the facilities and incidents layers.
   static final _fireStationImageUri = Uri.parse(
     'https://static.arcgis.com/images/Symbols/SafetyHealth/FireStation.png',
@@ -59,17 +59,15 @@ class _FindClosestFacilityFromPointState
   // Create parameters for the closest facility task.
   late final ClosestFacilityParameters _closestFacilityParameters;
   // Create a symbol for the route line.
-  final _routeLineSymbol = SimpleLineSymbol(
-    style: SimpleLineSymbolStyle.solid,
-    color: Colors.blue,
-    width: 5.0,
-  );
+  final _routeLineSymbol = SimpleLineSymbol(color: Colors.blue, width: 5);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
         top: false,
+        left: false,
+        right: false,
         child: Stack(
           children: [
             Column(
@@ -98,45 +96,40 @@ class _FindClosestFacilityFromPointState
               ],
             ),
             // Display a progress indicator and prevent interaction until state is ready.
-            Visibility(
-              visible: !_ready,
-              child: SizedBox.expand(
-                child: Container(
-                  color: Colors.white30,
-                  child: const Center(child: CircularProgressIndicator()),
-                ),
-              ),
-            ),
+            LoadingIndicator(visible: !_ready),
           ],
         ),
       ),
     );
   }
 
-  void onMapViewReady() async {
+  Future<void> onMapViewReady() async {
     // Create a map with the ArcGIS Streets basemap style.
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISStreets);
 
     // Create feature table for the facilities layer.
-    final facilitiesFeatureTable =
-        ServiceFeatureTable.withUri(_facilitiesLayerUri);
+    final facilitiesFeatureTable = ServiceFeatureTable.withUri(
+      _facilitiesLayerUri,
+    );
     // Create a marker symbol for the facilities.
     final facilitiesMarkerSymbol =
         PictureMarkerSymbol.withUri(_fireStationImageUri)
           ..width = 30
           ..height = 30;
     // Create a feature layer for the facilities.
-    final facilitiesLayer =
-        FeatureLayer.withFeatureTable(facilitiesFeatureTable)
-          ..renderer = SimpleRenderer(symbol: facilitiesMarkerSymbol);
+    final facilitiesLayer = FeatureLayer.withFeatureTable(
+      facilitiesFeatureTable,
+    )..renderer = SimpleRenderer(symbol: facilitiesMarkerSymbol);
 
     // Create feature table for the incidents layer.
-    final incidentsFeatureTable =
-        ServiceFeatureTable.withUri(_incidentsLayerUri);
+    final incidentsFeatureTable = ServiceFeatureTable.withUri(
+      _incidentsLayerUri,
+    );
     // Create a marker symbol for the incidents.
-    final incidentsMarkerSymbol = PictureMarkerSymbol.withUri(_fireImageUri)
-      ..width = 30
-      ..height = 30;
+    final incidentsMarkerSymbol =
+        PictureMarkerSymbol.withUri(_fireImageUri)
+          ..width = 30
+          ..height = 30;
     // Create a feature layer for the incidents.
     final incidentsLayer = FeatureLayer.withFeatureTable(incidentsFeatureTable)
       ..renderer = SimpleRenderer(symbol: incidentsMarkerSymbol);
@@ -152,10 +145,7 @@ class _FindClosestFacilityFromPointState
     _mapViewController.graphicsOverlays.add(_routeGraphicsOverlay);
 
     // Load the layers
-    await Future.wait([
-      facilitiesLayer.load(),
-      incidentsLayer.load(),
-    ]);
+    await Future.wait([facilitiesLayer.load(), incidentsLayer.load()]);
 
     // Get the extent from the layers and use the combination as the viewpoint geometry.
     final mapExtent = GeometryEngine.combineExtents(
@@ -164,7 +154,7 @@ class _FindClosestFacilityFromPointState
     );
 
     // Set the viewpoint geometry on the map view controller.
-    _mapViewController.setViewpointGeometry(mapExtent, paddingInDiPs: 30);
+    await _mapViewController.setViewpointGeometry(mapExtent, paddingInDiPs: 30);
 
     // Generate the closest facility parameters.
     _closestFacilityParameters = await generateClosestFacilityParameters(
@@ -179,9 +169,10 @@ class _FindClosestFacilityFromPointState
   FeatureLayer buildFeatureLayer(Uri tableUri, Uri imageUri) {
     // Create a feature table and feature layer for the facilities or incidents.
     final featureTable = ServiceFeatureTable.withUri(tableUri);
-    final markerSymbol = PictureMarkerSymbol.withUri(imageUri)
-      ..width = 30
-      ..height = 30;
+    final markerSymbol =
+        PictureMarkerSymbol.withUri(imageUri)
+          ..width = 30
+          ..height = 30;
     final featureLayer = FeatureLayer.withFeatureTable(featureTable)
       ..renderer = SimpleRenderer(symbol: markerSymbol);
 
@@ -195,30 +186,34 @@ class _FindClosestFacilityFromPointState
     // Create query parameters to get all features.
     final featureQueryParams = QueryParameters()..whereClause = '1=1';
     // Create default parameters for the closest facility task.
-    final parameters = await _closestFacilityTask.createDefaultParameters()
-      ..setFacilitiesWithFeatureTable(
-        featureTable: facilitiesFeatureTable as ArcGISFeatureTable,
-        queryParameters: featureQueryParams,
-      )
-      ..setIncidentsWithFeatureTable(
-        featureTable: incidentsFeatureTable as ArcGISFeatureTable,
-        queryParameters: featureQueryParams,
-      );
+    final parameters =
+        await _closestFacilityTask.createDefaultParameters()
+          ..setFacilitiesWithFeatureTable(
+            featureTable: facilitiesFeatureTable as ArcGISFeatureTable,
+            queryParameters: featureQueryParams,
+          )
+          ..setIncidentsWithFeatureTable(
+            featureTable: incidentsFeatureTable as ArcGISFeatureTable,
+            queryParameters: featureQueryParams,
+          );
 
     return parameters;
   }
 
-  void solveRoutes() async {
+  Future<void> solveRoutes() async {
     setState(() => _ready = false);
     // Solve the closest facility task with the parameters.
     final result = await _closestFacilityTask.solveClosestFacility(
       _closestFacilityParameters,
     );
-    for (var incidentIdx = 0;
-        incidentIdx < result.incidents.length;
-        ++incidentIdx) {
-      final rankedFacilities =
-          result.getRankedFacilityIndexes(incidentIndex: incidentIdx);
+    for (
+      var incidentIdx = 0;
+      incidentIdx < result.incidents.length;
+      ++incidentIdx
+    ) {
+      final rankedFacilities = result.getRankedFacilityIndexes(
+        incidentIndex: incidentIdx,
+      );
       if (rankedFacilities.isEmpty) {
         continue;
       }

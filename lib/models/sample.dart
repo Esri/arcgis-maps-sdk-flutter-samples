@@ -14,6 +14,7 @@
 // limitations under the License.
 //
 
+// run `dart run build_runner build` to generate samples_widget_list.dart
 import 'package:arcgis_maps_sdk_flutter_samples/models/samples_widget_list.dart';
 import 'package:flutter/material.dart';
 
@@ -21,20 +22,19 @@ import 'package:flutter/material.dart';
 /// The metadata is taken from the sample's README.metadata.json data via generated_samples_list.json.
 /// The Widget for each sample is pulled from the samples_widget_list.dart.
 class Sample {
+  Sample.fromJson(Map<String, dynamic> json)
+    : _category = json['category'],
+      _description = json['description'],
+      _snippets = List<String>.from(json['snippets']),
+      _title = json['title'],
+      _keywords = List<String>.from(json['keywords']),
+      _sampleWidget = sampleWidgets[json['key']]!();
   final String _category;
   final String _description;
   final List<String> _snippets;
   final String _title;
   final List<String> _keywords;
   final Widget _sampleWidget;
-
-  Sample.fromJson(Map<String, dynamic> json)
-      : _category = json['category'],
-        _description = json['description'],
-        _snippets = List<String>.from(json['snippets']),
-        _title = json['title'],
-        _keywords = List<String>.from(json['keywords']),
-        _sampleWidget = sampleWidgets[json['key']]!();
 
   String get title => _title;
 

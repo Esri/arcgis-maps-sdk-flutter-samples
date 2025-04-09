@@ -14,11 +14,9 @@
 //
 
 import 'dart:io';
-import 'dart:math';
 
 import 'package:arcgis_maps/arcgis_maps.dart';
-import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_data.dart';
-import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_state_support.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -31,7 +29,8 @@ class ControlAnnotationSublayerVisibility extends StatefulWidget {
 }
 
 class _ControlAnnotationSublayerVisibilityState
-    extends State<ControlAnnotationSublayerVisibility> with SampleStateSupport {
+    extends State<ControlAnnotationSublayerVisibility>
+    with SampleStateSupport {
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
 
@@ -58,6 +57,8 @@ class _ControlAnnotationSublayerVisibilityState
     return Scaffold(
       body: SafeArea(
         top: false,
+        left: false,
+        right: false,
         child: Stack(
           children: [
             Column(
@@ -79,15 +80,7 @@ class _ControlAnnotationSublayerVisibilityState
               ],
             ),
             // Display a progress indicator and prevent interaction until state is ready.
-            Visibility(
-              visible: !_ready,
-              child: const SizedBox.expand(
-                child: ColoredBox(
-                  color: Colors.white30,
-                  child: Center(child: CircularProgressIndicator()),
-                ),
-              ),
-            ),
+            LoadingIndicator(visible: !_ready),
           ],
         ),
       ),
@@ -97,73 +90,42 @@ class _ControlAnnotationSublayerVisibilityState
 
   // The build method for the Settings bottom sheet.
   Widget buildSettings(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.fromLTRB(
-        20.0,
-        20.0,
-        20.0,
-        max(
-          20.0,
-          View.of(context).viewPadding.bottom /
-              View.of(context).devicePixelRatio,
-        ),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Row(
-            children: [
-              Text(
-                'Settings',
-                style: Theme.of(context).textTheme.titleLarge,
-              ),
-              const Spacer(),
-              IconButton(
-                icon: const Icon(Icons.close),
-                onPressed: () => setState(() => _settingsVisible = false),
-              ),
-            ],
-          ),
-          Row(
-            children: [
-              Text(
-                _openLabel,
-                style: TextStyle(color: _openLabelColor),
-              ),
-              const Spacer(),
-              Switch(
-                value: _openSublayer.isVisible,
-                onChanged: (value) {
-                  // Set the visibility of the open sub layer.
-                  setState(() => _openSublayer.isVisible = value);
-                },
-              ),
-            ],
-          ),
-          Row(
-            children: [
-              Text(
-                _closedLabel,
-              ),
-              const Spacer(),
-              Switch(
-                value: _closedSublayer.isVisible,
-                onChanged: (value) {
-                  // Set the visibility of the closed sub layer.
-                  setState(() => _closedSublayer.isVisible = value);
-                },
-              ),
-            ],
-          ),
-          Text(
-            _currentScaleLabel,
-          ),
-        ],
-      ),
+    return BottomSheetSettings(
+      onCloseIconPressed: () => setState(() => _settingsVisible = false),
+      settingsWidgets:
+          (context) => [
+            Row(
+              children: [
+                Text(_openLabel, style: TextStyle(color: _openLabelColor)),
+                const Spacer(),
+                Switch(
+                  value: _openSublayer.isVisible,
+                  onChanged: (value) {
+                    // Set the visibility of the open sub layer.
+                    setState(() => _openSublayer.isVisible = value);
+                  },
+                ),
+              ],
+            ),
+            Row(
+              children: [
+                Text(_closedLabel),
+                const Spacer(),
+                Switch(
+                  value: _closedSublayer.isVisible,
+                  onChanged: (value) {
+                    // Set the visibility of the closed sub layer.
+                    setState(() => _closedSublayer.isVisible = value);
+                  },
+                ),
+              ],
+            ),
+            Text(_currentScaleLabel),
+          ],
     );
   }
 
-  void onMapViewReady() async {
+  Future<void> onMapViewReady() async {
     try {
       await downloadSampleData(['b87307dcfb26411eb2e92e1627cb615b']);
       final appDir = await getApplicationDocumentsDirectory();
@@ -178,9 +140,10 @@ class _ControlAnnotationSublayerVisibilityState
       _mapViewController.arcGISMap = mmpk.maps.first;
 
       // Get the annotation layer from the MapView operational layers.
-      final annotationLayer = _mapViewController.arcGISMap!.operationalLayers
-          .whereType<AnnotationLayer>()
-          .first;
+      final annotationLayer =
+          _mapViewController.arcGISMap!.operationalLayers
+              .whereType<AnnotationLayer>()
+              .first;
 
       // Load the annotation layer.
       await annotationLayer.load();
@@ -205,14 +168,17 @@ class _ControlAnnotationSublayerVisibilityState
       _mapViewController.onViewpointChanged.listen((_) {
         // Check if the sublayer is visible at the current map scale.
         if (_openSublayer.isVisibleAtScale(_mapViewController.scale)) {
-          setState(() => _openLabelColor = Colors.purple);
+          setState(
+            () => _openLabelColor = Theme.of(context).colorScheme.primary,
+          );
         } else {
           setState(() => _openLabelColor = null);
         }
         // Set the current map scale text.
         setState(
-          () => _currentScaleLabel =
-              'Current map scale: 1:${_mapViewController.scale.toInt()}',
+          () =>
+              _currentScaleLabel =
+                  'Current map scale: 1:${_mapViewController.scale.toInt()}',
         );
       });
 
@@ -225,17 +191,5 @@ class _ControlAnnotationSublayerVisibilityState
         'There was an error loading the data required for the sample.',
       );
     }
-  }
-
-  void showMessageDialog(String message) {
-    // Show a dialog with the provided message.
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          content: Text(message),
-        );
-      },
-    );
   }
 }

@@ -15,9 +15,8 @@
 //
 
 import 'package:arcgis_maps/arcgis_maps.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
-
-import '../../utils/sample_state_support.dart';
 
 class FindAddressWithReverseGeocode extends StatefulWidget {
   const FindAddressWithReverseGeocode({super.key});
@@ -28,7 +27,8 @@ class FindAddressWithReverseGeocode extends StatefulWidget {
 }
 
 class _FindAddressWithReverseGeocodeState
-    extends State<FindAddressWithReverseGeocode> with SampleStateSupport {
+    extends State<FindAddressWithReverseGeocode>
+    with SampleStateSupport {
   final _graphicsOverlay = GraphicsOverlay();
   final _worldLocatorTask = LocatorTask.withUri(
     Uri.parse(
@@ -43,7 +43,7 @@ class _FindAddressWithReverseGeocodeState
       y: 34.058,
       spatialReference: SpatialReference.wgs84,
     ),
-    scale: 5e4,
+    scale: 50000,
   );
   // A flag for when the map view is ready and controls can be used.
   var _ready = false;
@@ -60,21 +60,13 @@ class _FindAddressWithReverseGeocodeState
             onTap: onTap,
           ),
           // Display a progress indicator and prevent interaction until state is ready.
-          Visibility(
-            visible: !_ready,
-            child: SizedBox.expand(
-              child: Container(
-                color: Colors.white30,
-                child: const Center(child: CircularProgressIndicator()),
-              ),
-            ),
-          ),
+          LoadingIndicator(visible: !_ready),
         ],
       ),
     );
   }
 
-  void onMapViewReady() async {
+  Future<void> onMapViewReady() async {
     // Create a map with the topographic basemap style and set to the map view.
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic);
     _mapViewController.arcGISMap = map;
@@ -84,9 +76,10 @@ class _FindAddressWithReverseGeocodeState
 
     // Create a picture marker symbol using an image asset.
     final image = await ArcGISImage.fromAsset('assets/pin_circle_red.png');
-    final pictureMarkerSymbol = PictureMarkerSymbol.withImage(image)
-      ..width = 35
-      ..height = 35;
+    final pictureMarkerSymbol =
+        PictureMarkerSymbol.withImage(image)
+          ..width = 35
+          ..height = 35;
     pictureMarkerSymbol.offsetY = pictureMarkerSymbol.height / 2;
 
     // Create a renderer using the picture marker symbol and set to the graphics overlay.
@@ -99,18 +92,20 @@ class _FindAddressWithReverseGeocodeState
     setState(() => _ready = true);
   }
 
-  void onTap(Offset localPosition) async {
+  Future<void> onTap(Offset localPosition) async {
     // Remove already existing graphics.
     if (_graphicsOverlay.graphics.isNotEmpty) _graphicsOverlay.graphics.clear();
 
     // Convert the screen point to a map point.
-    final mapTapPoint =
-        _mapViewController.screenToLocation(screen: localPosition);
+    final mapTapPoint = _mapViewController.screenToLocation(
+      screen: localPosition,
+    );
     if (mapTapPoint == null) return;
 
     // Normalize the point incase the tapped location crosses the international date line.
-    final normalizedTapPoint =
-        GeometryEngine.normalizeCentralMeridian(mapTapPoint);
+    final normalizedTapPoint = GeometryEngine.normalizeCentralMeridian(
+      mapTapPoint,
+    );
     if (normalizedTapPoint == null) return;
 
     // Create a graphic object for the tapped point.
@@ -128,20 +123,14 @@ class _FindAddressWithReverseGeocodeState
 
     // Get attributes from the first result and display a formatted address in a dialog.
     final firstResult = reverseGeocodeResult.first;
-    final cityString = firstResult.attributes['City'] ?? '';
-    final addressString = firstResult.attributes['Address'] ?? '';
-    final stateString = firstResult.attributes['RegionAbbr'] ?? '';
+    final cityString = firstResult.attributes['City'] as String? ?? '';
+    final addressString = firstResult.attributes['Address'] as String? ?? '';
+    final stateString = firstResult.attributes['RegionAbbr'] as String? ?? '';
     final resultStrings = [addressString, cityString, stateString];
-    final combinedString =
-        resultStrings.where((str) => str.isNotEmpty).join(', ');
+    final combinedString = resultStrings
+        .where((str) => str.isNotEmpty)
+        .join(', ');
 
-    if (mounted) {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(content: Text(combinedString));
-        },
-      );
-    }
+    showMessageDialog(combinedString);
   }
 }

@@ -13,8 +13,10 @@
 // limitations under the License.
 //
 
+import 'dart:async';
+
 import 'package:arcgis_maps/arcgis_maps.dart';
-import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_state_support.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
 
 class DisplayOGCAPICollection extends StatefulWidget {
@@ -37,6 +39,8 @@ class _DisplayOGCAPICollectionState extends State<DisplayOGCAPICollection>
     return Scaffold(
       body: SafeArea(
         top: false,
+        left: false,
+        right: false,
         child: Stack(
           children: [
             Column(
@@ -51,22 +55,14 @@ class _DisplayOGCAPICollectionState extends State<DisplayOGCAPICollection>
               ],
             ),
             // Display a progress indicator and prevent interaction until state is ready.
-            Visibility(
-              visible: !_ready,
-              child: const SizedBox.expand(
-                child: ColoredBox(
-                  color: Colors.white30,
-                  child: Center(child: CircularProgressIndicator()),
-                ),
-              ),
-            ),
+            LoadingIndicator(visible: !_ready),
           ],
         ),
       ),
     );
   }
 
-  void onMapViewReady() async {
+  Future<void> onMapViewReady() async {
     // Create a map with a basemap style and add to the map view controller.
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic);
     _mapViewController.arcGISMap = map;
@@ -76,9 +72,9 @@ class _DisplayOGCAPICollectionState extends State<DisplayOGCAPICollection>
     const collectionId = 'TransportationGroundCrv';
     final ogcFeatureCollectionTable =
         OgcFeatureCollectionTable.withUriAndCollectionId(
-      uri: Uri.parse(serviceUri),
-      collectionId: collectionId,
-    );
+          uri: Uri.parse(serviceUri),
+          collectionId: collectionId,
+        );
     // Set the feature request mode to manual cache.
     // In this mode, you must manually populate the table - panning and zooming won't request features automatically.
     ogcFeatureCollectionTable.featureRequestMode =
@@ -87,15 +83,12 @@ class _DisplayOGCAPICollectionState extends State<DisplayOGCAPICollection>
     await ogcFeatureCollectionTable.load();
 
     // Create a feature layer to visualize the OGC features.
-    final featureLayer =
-        FeatureLayer.withFeatureTable(ogcFeatureCollectionTable);
+    final featureLayer = FeatureLayer.withFeatureTable(
+      ogcFeatureCollectionTable,
+    );
     // Apply a renderer.
     featureLayer.renderer = SimpleRenderer(
-      symbol: SimpleLineSymbol(
-        style: SimpleLineSymbolStyle.solid,
-        color: Colors.blue,
-        width: 3,
-      ),
+      symbol: SimpleLineSymbol(color: Colors.blue, width: 3),
     );
     // Add the feature layer to the map's operational layers.
     map.operationalLayers.add(featureLayer);
@@ -109,10 +102,11 @@ class _DisplayOGCAPICollectionState extends State<DisplayOGCAPICollection>
           // Create a query based on the current visible extent.
           // Set a limit of 5000 on the number of returned features per request,
           // because the default on some services could be as low as 10.
-          final queryParameters = QueryParameters()
-            ..geometry = _mapViewController.visibleArea!.extent
-            ..spatialRelationship = SpatialRelationship.intersects
-            ..maxFeatures = 5000;
+          final queryParameters =
+              QueryParameters()
+                ..geometry = _mapViewController.visibleArea!.extent
+                ..spatialRelationship = SpatialRelationship.intersects
+                ..maxFeatures = 5000;
           // Populate the table with the query, leaving existing table entries intact.
           // Setting outFields to empty requests all fields.
           await ogcFeatureCollectionTable.populateFromService(
@@ -129,12 +123,14 @@ class _DisplayOGCAPICollectionState extends State<DisplayOGCAPICollection>
     // Zoom to a small area within the dataset by default.
     final datasetExtent = ogcFeatureCollectionTable.extent;
     if (datasetExtent != null) {
-      _mapViewController.setViewpointAnimated(
-        Viewpoint.fromTargetExtent(
-          Envelope.fromCenter(
-            datasetExtent.center,
-            width: datasetExtent.width / 3,
-            height: datasetExtent.height / 3,
+      unawaited(
+        _mapViewController.setViewpointAnimated(
+          Viewpoint.fromTargetExtent(
+            Envelope.fromCenter(
+              datasetExtent.center,
+              width: datasetExtent.width / 3,
+              height: datasetExtent.height / 3,
+            ),
           ),
         ),
       );

@@ -15,9 +15,8 @@
 //
 
 import 'package:arcgis_maps/arcgis_maps.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
-
-import '../../utils/sample_state_support.dart';
 
 class QueryFeatureTable extends StatefulWidget {
   const QueryFeatureTable({super.key});
@@ -92,23 +91,19 @@ class _QueryFeatureTableState extends State<QueryFeatureTable>
     );
   }
 
-  void onMapViewReady() async {
+  Future<void> onMapViewReady() async {
     // Create a map with the topographic basemap style and set to the map view.
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic);
 
     // Create a feature layer and amend the opacity and max scale properties.
-    _featureLayer = FeatureLayer.withFeatureTable(_featureTable)
-      ..opacity = 0.8
-      ..maxScale = 10000;
+    _featureLayer =
+        FeatureLayer.withFeatureTable(_featureTable)
+          ..opacity = 0.8
+          ..maxScale = 10000;
 
     // Create a renderer with a fill symbol and apply to the feature layer.
-    final lineSymbol = SimpleLineSymbol(
-      style: SimpleLineSymbolStyle.solid,
-      color: Colors.black,
-      width: 1,
-    );
+    final lineSymbol = SimpleLineSymbol(color: Colors.black);
     final fillSymbol = SimpleFillSymbol(
-      style: SimpleFillSymbolStyle.solid,
       color: Colors.yellow,
       outline: lineSymbol,
     );
@@ -122,7 +117,7 @@ class _QueryFeatureTableState extends State<QueryFeatureTable>
     _mapViewController.arcGISMap = map;
   }
 
-  void onSearchSubmitted(String value) async {
+  Future<void> onSearchSubmitted(String value) async {
     // Clear the selection.
     _featureLayer.clearSelection();
 
@@ -141,9 +136,9 @@ class _QueryFeatureTableState extends State<QueryFeatureTable>
       final feature = iterator.current;
       if (feature.geometry != null) {
         // Set the viewpoint to the feature's extent.
-        _mapViewController.setViewpointGeometry(
+        await _mapViewController.setViewpointGeometry(
           feature.geometry!.extent,
-          paddingInDiPs: 20.0,
+          paddingInDiPs: 20,
         );
       }
       _featureLayer.selectFeature(feature);
@@ -152,21 +147,15 @@ class _QueryFeatureTableState extends State<QueryFeatureTable>
       if (mounted) {
         // Set the viewpoint to the initial viewpoint.
         _mapViewController.setViewpoint(_initialViewpoint);
-        showDialog(
-          context: context,
-          builder: (context) {
-            return const AlertDialog(
-              content: Text('No matching State found.'),
-            );
-          },
-        );
+
+        showMessageDialog('No matching State found.');
       }
     }
   }
 
   void dismissSearch() {
     // Clear the text field and dismiss the keyboard.
-    setState(() => _textEditingController.clear());
+    _textEditingController.clear();
     FocusManager.instance.primaryFocus?.unfocus();
   }
 }

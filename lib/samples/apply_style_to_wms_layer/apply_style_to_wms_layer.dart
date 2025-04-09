@@ -15,7 +15,7 @@
 //
 
 import 'package:arcgis_maps/arcgis_maps.dart';
-import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_state_support.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
 
 class ApplyStyleToWmsLayer extends StatefulWidget {
@@ -37,10 +37,7 @@ class _ApplyStyleToWmsLayerState extends State<ApplyStyleToWmsLayer>
   late WmsLayer _wmsLayer;
 
   // String array to store the styles.
-  final _stylesTitles = [
-    'Default',
-    'Contrast stretch',
-  ];
+  final _stylesTitles = ['Default', 'Contrast stretch'];
 
   // Create variable for holding sublayer style.
   String? _selectedStyle;
@@ -50,6 +47,8 @@ class _ApplyStyleToWmsLayerState extends State<ApplyStyleToWmsLayer>
     return Scaffold(
       body: SafeArea(
         top: false,
+        left: false,
+        right: false,
         child: Stack(
           children: [
             Column(
@@ -66,15 +65,7 @@ class _ApplyStyleToWmsLayerState extends State<ApplyStyleToWmsLayer>
               ],
             ),
             // Display a progress indicator and prevent interaction until state is ready.
-            Visibility(
-              visible: !_ready,
-              child: const SizedBox.expand(
-                child: ColoredBox(
-                  color: Colors.white30,
-                  child: Center(child: CircularProgressIndicator()),
-                ),
-              ),
-            ),
+            LoadingIndicator(visible: !_ready),
           ],
         ),
       ),
@@ -83,27 +74,17 @@ class _ApplyStyleToWmsLayerState extends State<ApplyStyleToWmsLayer>
 
   Widget buildBottomMenu() {
     return Center(
-      // A drop down button for selecting style.
-      child: DropdownButton(
-        alignment: Alignment.center,
-        hint: const Text(
-          'Choose a style',
-          style: TextStyle(
-            color: Colors.deepPurple,
-          ),
-        ),
-        icon: const Icon(Icons.arrow_drop_down),
-        iconEnabledColor: Colors.deepPurple,
-        iconDisabledColor: Colors.grey,
-        style: const TextStyle(color: Colors.deepPurple),
-        value: _selectedStyle,
-        items: _stylesTitles.map((items) {
-          return DropdownMenuItem(
-            value: items,
-            child: Text(items),
-          );
-        }).toList(),
-        onChanged: (style) {
+      // A drop down menu for selecting style.
+      child: DropdownMenu(
+        hintText: 'Choose a style',
+        trailingIcon: const Icon(Icons.arrow_drop_down),
+        textStyle: Theme.of(context).textTheme.labelMedium,
+        initialSelection: _selectedStyle,
+        dropdownMenuEntries:
+            _stylesTitles.map((item) {
+              return DropdownMenuEntry(value: item, label: item);
+            }).toList(),
+        onSelected: (style) {
           if (style != null) {
             changeStyle(style);
           }
@@ -132,7 +113,7 @@ class _ApplyStyleToWmsLayerState extends State<ApplyStyleToWmsLayer>
     }
   }
 
-  void onMapViewReady() async {
+  Future<void> onMapViewReady() async {
     // Create a map with spatial reference appropriate for the service.
     final map = ArcGISMap(spatialReference: SpatialReference(wkid: 26915))
       ..minScale = 7000000.0;

@@ -14,7 +14,7 @@
 //
 
 import 'package:arcgis_maps/arcgis_maps.dart';
-import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_state_support.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
 
 class AddWmtsLayer extends StatefulWidget {
@@ -41,6 +41,8 @@ class _AddWmtsLayerState extends State<AddWmtsLayer> with SampleStateSupport {
     return Scaffold(
       body: SafeArea(
         top: false,
+        left: false,
+        right: false,
         child: Stack(
           children: [
             Column(
@@ -70,22 +72,14 @@ class _AddWmtsLayerState extends State<AddWmtsLayer> with SampleStateSupport {
               ],
             ),
             // Display a progress indicator and prevent interaction until state is ready.
-            Visibility(
-              visible: !_ready,
-              child: const SizedBox.expand(
-                child: ColoredBox(
-                  color: Colors.white30,
-                  child: Center(child: CircularProgressIndicator()),
-                ),
-              ),
-            ),
+            LoadingIndicator(visible: !_ready),
           ],
         ),
       ),
     );
   }
 
-  void onMapViewReady() async {
+  Future<void> onMapViewReady() async {
     // Initially display the map with the URI constructor.
     createWmtsLayerFromUri();
     // Set the ready state variable to true to enable the sample UI.
@@ -108,7 +102,7 @@ class _AddWmtsLayerState extends State<AddWmtsLayer> with SampleStateSupport {
     setState(() => _fromUriActive = true);
   }
 
-  void createWmtsLayerFromLayerInfo() async {
+  Future<void> createWmtsLayerFromLayerInfo() async {
     // Set the ready state variable to false to disable the sample UI.
     setState(() => _ready = false);
     // Create a map.

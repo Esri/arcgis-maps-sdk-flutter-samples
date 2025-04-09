@@ -16,11 +16,9 @@
 import 'dart:io';
 
 import 'package:arcgis_maps/arcgis_maps.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
-
-import '../../utils/sample_data.dart';
-import '../../utils/sample_state_support.dart';
 
 class DisplayDimensions extends StatefulWidget {
   const DisplayDimensions({super.key});
@@ -52,6 +50,8 @@ class _DisplayDimensionsState extends State<DisplayDimensions>
     return Scaffold(
       body: SafeArea(
         top: false,
+        left: false,
+        right: false,
         child: Stack(
           children: [
             Column(
@@ -102,29 +102,22 @@ class _DisplayDimensionsState extends State<DisplayDimensions>
               ],
             ),
             // Display a progress indicator and prevent interaction until state is ready.
-            Visibility(
-              visible: !_ready,
-              child: const SizedBox.expand(
-                child: ColoredBox(
-                  color: Colors.white30,
-                  child: Center(child: CircularProgressIndicator()),
-                ),
-              ),
-            ),
+            LoadingIndicator(visible: !_ready),
           ],
         ),
       ),
     );
   }
 
-  void onMapViewReady() async {
+  Future<void> onMapViewReady() async {
     // Download the mobile map package.
     await downloadSampleData(['f5ff6f5556a945bca87ca513b8729a1e']);
 
     // Load the local mobile map package.
     final appDir = await getApplicationDocumentsDirectory();
-    final mmpkFile =
-        File('${appDir.absolute.path}/Edinburgh_Pylon_Dimensions.mmpk');
+    final mmpkFile = File(
+      '${appDir.absolute.path}/Edinburgh_Pylon_Dimensions.mmpk',
+    );
     final mmpk = MobileMapPackage.withFileUri(mmpkFile.uri);
     await mmpk.load();
 

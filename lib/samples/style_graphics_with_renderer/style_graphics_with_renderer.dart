@@ -16,7 +16,7 @@
 import 'dart:math';
 
 import 'package:arcgis_maps/arcgis_maps.dart';
-import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_state_support.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
 
 class StyleGraphicsWithRenderer extends StatefulWidget {
@@ -82,8 +82,8 @@ class _StyleGraphicsWithRendererState extends State<StyleGraphicsWithRenderer>
 
     // Create a point graphic with a point geometry.
     final pointGeometry = ArcGISPoint(
-      x: 40e5,
-      y: 40e5,
+      x: 4000000,
+      y: 4000000,
       spatialReference: SpatialReference.webMercator,
     );
     final pointGraphic = Graphic(geometry: pointGeometry);
@@ -95,20 +95,18 @@ class _StyleGraphicsWithRendererState extends State<StyleGraphicsWithRenderer>
 
   GraphicsOverlay getLineGraphicsOverlay() {
     // Create a simple line symbol.
-    final lineSymbol = SimpleLineSymbol(
-      color: Colors.blue,
-      width: 5,
-    );
+    final lineSymbol = SimpleLineSymbol(color: Colors.blue, width: 5);
     // Create a graphics overlay for the line.
     final lineGraphicsOverlay = GraphicsOverlay();
     // Create and assign a simple render to the graphics overlay.
     lineGraphicsOverlay.renderer = SimpleRenderer(symbol: lineSymbol);
 
     // Create a line with a polyline geometry.
-    final lineBuilder =
-        PolylineBuilder(spatialReference: SpatialReference.webMercator);
-    lineBuilder.addPointXY(x: -10e5, y: 40e5);
-    lineBuilder.addPointXY(x: 20e5, y: 50e5);
+    final lineBuilder = PolylineBuilder(
+      spatialReference: SpatialReference.webMercator,
+    );
+    lineBuilder.addPointXY(x: -1000000, y: 4000000);
+    lineBuilder.addPointXY(x: 2000000, y: 5000000);
     final lineGraphic = Graphic(geometry: lineBuilder.toGeometry());
     // Add the graphic to the graphics overlay.
     lineGraphicsOverlay.graphics.add(lineGraphic);
@@ -125,12 +123,13 @@ class _StyleGraphicsWithRendererState extends State<StyleGraphicsWithRenderer>
     squareGraphicsOverlay.renderer = SimpleRenderer(symbol: squareSymbol);
 
     // Create a polygon graphic with `Polygon` geometry.
-    final polygonBuilder =
-        PolygonBuilder(spatialReference: SpatialReference.webMercator);
-    polygonBuilder.addPoint(ArcGISPoint(x: -20e5, y: 20e5));
-    polygonBuilder.addPoint(ArcGISPoint(x: 20e5, y: 20e5));
-    polygonBuilder.addPoint(ArcGISPoint(x: 20e5, y: -20e5));
-    polygonBuilder.addPoint(ArcGISPoint(x: -20e5, y: -20e5));
+    final polygonBuilder = PolygonBuilder(
+      spatialReference: SpatialReference.webMercator,
+    );
+    polygonBuilder.addPoint(ArcGISPoint(x: -2000000, y: 2000000));
+    polygonBuilder.addPoint(ArcGISPoint(x: 2000000, y: 2000000));
+    polygonBuilder.addPoint(ArcGISPoint(x: 2000000, y: -2000000));
+    polygonBuilder.addPoint(ArcGISPoint(x: -2000000, y: -2000000));
     final polygonGraphic = Graphic(geometry: polygonBuilder.toGeometry());
     // Add the graphic to the overlay.
     squareGraphicsOverlay.graphics.add(polygonGraphic);
@@ -148,8 +147,8 @@ class _StyleGraphicsWithRendererState extends State<StyleGraphicsWithRenderer>
 
     // Create an ellipse graphic.
     final ellipseCenter = ArcGISPoint(
-      x: 40e5,
-      y: 25e5,
+      x: 4000000,
+      y: 2500000,
       spatialReference: SpatialReference.webMercator,
     );
     final parameters = GeodesicEllipseParameters(
@@ -159,12 +158,12 @@ class _StyleGraphicsWithRendererState extends State<StyleGraphicsWithRenderer>
       linearUnit: LinearUnit(unitId: LinearUnitId.kilometers),
       maxPointCount: 100,
       maxSegmentLength: 20,
-      geometryType: GeometryType.polygon,
       semiAxis1Length: 200,
       semiAxis2Length: 400,
     );
-    final ellipseGeometry =
-        GeometryEngine.ellipseGeodesic(parameters: parameters);
+    final ellipseGeometry = GeometryEngine.ellipseGeodesic(
+      parameters: parameters,
+    );
     final ellipseGraphic = Graphic(geometry: ellipseGeometry);
 
     // Add the graphic to the overlay.
@@ -186,11 +185,11 @@ class _StyleGraphicsWithRendererState extends State<StyleGraphicsWithRenderer>
 
     // Create a heart shape graphic from a segment.
     final origin = ArcGISPoint(
-      x: 40e5,
-      y: 5e5,
+      x: 4000000,
+      y: 500000,
       spatialReference: SpatialReference.webMercator,
     );
-    final heartGeometry = getHeartGeometry(center: origin, sideLength: 10e5);
+    final heartGeometry = getHeartGeometry(center: origin, sideLength: 1000000);
     final heartGraphic = Graphic(geometry: heartGeometry);
 
     // Add the graphic to the overlay.
@@ -215,8 +214,11 @@ class _StyleGraphicsWithRendererState extends State<StyleGraphicsWithRenderer>
     final arcRadius = sideLength * 0.25;
 
     // Bottom left curve.
-    final leftCurveStart =
-        ArcGISPoint(x: center.x, y: minY, spatialReference: spatialReference);
+    final leftCurveStart = ArcGISPoint(
+      x: center.x,
+      y: minY,
+      spatialReference: spatialReference,
+    );
     final leftCurveEnd = ArcGISPoint(
       x: minX,
       y: minY + 0.75 * sideLength,
@@ -227,8 +229,11 @@ class _StyleGraphicsWithRendererState extends State<StyleGraphicsWithRenderer>
       y: minY + 0.25 * sideLength,
       spatialReference: spatialReference,
     );
-    final leftControlPoint2 =
-        ArcGISPoint(x: minX, y: center.y, spatialReference: spatialReference);
+    final leftControlPoint2 = ArcGISPoint(
+      x: minX,
+      y: center.y,
+      spatialReference: spatialReference,
+    );
     final leftCurve = CubicBezierSegment(
       startPoint: leftCurveStart,
       controlPoint1: leftControlPoint1,
@@ -245,12 +250,12 @@ class _StyleGraphicsWithRendererState extends State<StyleGraphicsWithRenderer>
     );
     final leftArc =
         EllipticArcSegment.circularEllipticArcWithCenterRadiusAndAngles(
-      centerPoint: leftArcCenter,
-      radius: arcRadius,
-      startAngle: pi,
-      centralAngle: -pi,
-      spatialReference: spatialReference,
-    );
+          centerPoint: leftArcCenter,
+          radius: arcRadius,
+          startAngle: pi,
+          centralAngle: -pi,
+          spatialReference: spatialReference,
+        );
 
     // Top right arc.
     final rightArcCenter = ArcGISPoint(
@@ -260,12 +265,12 @@ class _StyleGraphicsWithRendererState extends State<StyleGraphicsWithRenderer>
     );
     final rightArc =
         EllipticArcSegment.circularEllipticArcWithCenterRadiusAndAngles(
-      centerPoint: rightArcCenter,
-      radius: arcRadius,
-      startAngle: pi,
-      centralAngle: -pi,
-      spatialReference: spatialReference,
-    );
+          centerPoint: rightArcCenter,
+          radius: arcRadius,
+          startAngle: pi,
+          centralAngle: -pi,
+          spatialReference: spatialReference,
+        );
 
     // Bottom right curve.
     final rightCurveStart = ArcGISPoint(

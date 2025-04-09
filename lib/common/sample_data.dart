@@ -28,8 +28,9 @@ Future<void> downloadSampleData(List<String> portalItemIds) async {
 
   for (final itemId in portalItemIds) {
     // Create a portal item to ensure it exists and load to access properties.
-    final portalItem =
-        PortalItem.withUri(Uri.parse('$portal/home/item.html?id=$itemId'));
+    final portalItem = PortalItem.withUri(
+      Uri.parse('$portal/home/item.html?id=$itemId'),
+    );
     if (portalItem == null) continue;
 
     await portalItem.load();
@@ -59,7 +60,5 @@ Future<void> extractZipArchive(File archiveFile) async {
 
 /// Fetch data from the provided Portal and PortalItem ID and return the response.
 Future<Response> _fetchData(String portal, String itemId) async {
-  return get(
-    Uri.parse('$portal/sharing/rest/content/items/$itemId/data'),
-  );
+  return get(Uri.parse('$portal/sharing/rest/content/items/$itemId/data'));
 }

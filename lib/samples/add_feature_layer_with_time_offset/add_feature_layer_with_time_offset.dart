@@ -14,11 +14,9 @@
 // limitations under the License.
 //
 
-import 'dart:math';
 import 'package:arcgis_maps/arcgis_maps.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
-
-import '../../utils/sample_state_support.dart';
 
 class AddFeatureLayerWithTimeOffset extends StatefulWidget {
   const AddFeatureLayerWithTimeOffset({super.key});
@@ -29,7 +27,8 @@ class AddFeatureLayerWithTimeOffset extends StatefulWidget {
 }
 
 class _AddFeatureLayerWithTimeOffsetState
-    extends State<AddFeatureLayerWithTimeOffset> with SampleStateSupport {
+    extends State<AddFeatureLayerWithTimeOffset>
+    with SampleStateSupport {
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
   // The start and end times of the feature layer.
@@ -49,6 +48,8 @@ class _AddFeatureLayerWithTimeOffsetState
     return Scaffold(
       body: SafeArea(
         top: false,
+        left: false,
+        right: false,
         child: Stack(
           children: [
             Column(
@@ -73,15 +74,7 @@ class _AddFeatureLayerWithTimeOffsetState
               ],
             ),
             // Display a progress indicator and prevent interaction until state is ready.
-            Visibility(
-              visible: !_ready,
-              child: SizedBox.expand(
-                child: Container(
-                  color: Colors.white30,
-                  child: const Center(child: CircularProgressIndicator()),
-                ),
-              ),
-            ),
+            LoadingIndicator(visible: !_ready),
           ],
         ),
       ),
@@ -92,88 +85,64 @@ class _AddFeatureLayerWithTimeOffsetState
 
   // The build method for the Settings bottom sheet.
   Widget buildSettings(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.fromLTRB(
-        20.0,
-        0.0,
-        20.0,
-        max(
-          20.0,
-          View.of(context).viewPadding.bottom /
-              View.of(context).devicePixelRatio,
-        ),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Row(
-            children: [
-              Text(
-                'Settings',
-                style: Theme.of(context).textTheme.titleLarge,
-              ),
-              const Spacer(),
-              IconButton(
-                icon: const Icon(Icons.close),
-                onPressed: () => setState(() => _settingsVisible = false),
-              ),
-            ],
-          ),
-          // Display the current date range.
-          Text(_dateRangeMessage),
-          Row(
-            children: [
-              Expanded(
-                // A slider to adjust the interval.
-                child: Slider(
-                  value: _intervalFraction,
-                  onChanged: (value) {
-                    setState(() => _intervalFraction = value);
-                    updateTimeExtent();
-                  },
-                ),
-              ),
-            ],
-          ),
-          Row(
-            children: [
-              SizedBox(
-                width: 20.0,
-                height: 20.0,
-                child: Container(
-                  decoration: const BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.red,
+    return BottomSheetSettings(
+      onCloseIconPressed: () => setState(() => _settingsVisible = false),
+      settingsWidgets:
+          (context) => [
+            // Display the current date range.
+            Text(_dateRangeMessage),
+            Row(
+              children: [
+                Expanded(
+                  // A slider to adjust the interval.
+                  child: Slider(
+                    value: _intervalFraction,
+                    onChanged: (value) {
+                      setState(() => _intervalFraction = value);
+                      updateTimeExtent();
+                    },
                   ),
                 ),
-              ),
-              const SizedBox(width: 10.0),
-              const Text('Hurricane tracks, offset 10 days'),
-            ],
-          ),
-          const SizedBox(height: 10.0),
-          Row(
-            children: [
-              SizedBox(
-                width: 20.0,
-                height: 20.0,
-                child: Container(
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.blue.shade900,
+              ],
+            ),
+            Row(
+              spacing: 10,
+              children: [
+                SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: Container(
+                    decoration: const BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.red,
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(width: 10.0),
-              const Text('Hurricane tracks, no offset'),
-            ],
-          ),
-        ],
-      ),
+                const Text('Hurricane tracks, offset 10 days'),
+              ],
+            ),
+            const SizedBox(height: 10),
+            Row(
+              spacing: 10,
+              children: [
+                SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.blue.shade900,
+                    ),
+                  ),
+                ),
+                const Text('Hurricane tracks, no offset'),
+              ],
+            ),
+          ],
     );
   }
 
-  void onMapViewReady() async {
+  Future<void> onMapViewReady() async {
     // Create a map with the oceans basemap style and an initial viewpoint.
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISOceans);
     map.initialViewpoint = Viewpoint.fromCenter(
@@ -182,7 +151,7 @@ class _AddFeatureLayerWithTimeOffsetState
         y: 2500000,
         spatialReference: SpatialReference.webMercator,
       ),
-      scale: 1e8,
+      scale: 100000000,
     );
 
     // The URL of the feature layer showing hurricanes.
@@ -194,26 +163,21 @@ class _AddFeatureLayerWithTimeOffsetState
     final featureTable = ServiceFeatureTable.withUri(featureLayerUri);
     final featureLayer = FeatureLayer.withFeatureTable(featureTable);
     featureLayer.renderer = SimpleRenderer(
-      symbol: SimpleMarkerSymbol(
-        style: SimpleMarkerSymbolStyle.circle,
-        color: Colors.blue.shade900,
-        size: 10.0,
-      ),
+      symbol: SimpleMarkerSymbol(color: Colors.blue.shade900, size: 10),
     );
 
     // Create another feature layer, offset by 10 days, represented by red dots.
     final offsetFeatureTable = ServiceFeatureTable.withUri(featureLayerUri);
-    final offsetFeatureLayer =
-        FeatureLayer.withFeatureTable(offsetFeatureTable);
-    offsetFeatureLayer.renderer = SimpleRenderer(
-      symbol: SimpleMarkerSymbol(
-        style: SimpleMarkerSymbolStyle.circle,
-        color: Colors.red,
-        size: 10.0,
-      ),
+    final offsetFeatureLayer = FeatureLayer.withFeatureTable(
+      offsetFeatureTable,
     );
-    offsetFeatureLayer.timeOffset =
-        TimeValue(duration: 10, unit: TimeUnit.days);
+    offsetFeatureLayer.renderer = SimpleRenderer(
+      symbol: SimpleMarkerSymbol(color: Colors.red, size: 10),
+    );
+    offsetFeatureLayer.timeOffset = TimeValue(
+      duration: 10,
+      unit: TimeUnit.days,
+    );
 
     // Add the feature layers to the map.
     map.operationalLayers.addAll([featureLayer, offsetFeatureLayer]);
@@ -243,11 +207,14 @@ class _AddFeatureLayerWithTimeOffsetState
     if (newEnd.isAfter(_endTime)) newEnd = _endTime;
 
     // Set the new time extent on the map view controller.
-    _mapViewController.timeExtent =
-        TimeExtent(startTime: newStart, endTime: newEnd);
+    _mapViewController.timeExtent = TimeExtent(
+      startTime: newStart,
+      endTime: newEnd,
+    );
 
     // Update the date range message.
-    _dateRangeMessage = '${newStart.month}/${newStart.day}/${newStart.year} - '
+    _dateRangeMessage =
+        '${newStart.month}/${newStart.day}/${newStart.year} - '
         '${newEnd.month}/${newEnd.day}/${newEnd.year}';
   }
 }

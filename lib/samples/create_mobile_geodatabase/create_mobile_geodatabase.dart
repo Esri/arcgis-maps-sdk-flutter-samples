@@ -17,11 +17,10 @@
 import 'dart:io';
 
 import 'package:arcgis_maps/arcgis_maps.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
-
-import '../../utils/sample_state_support.dart';
 
 class CreateMobileGeodatabase extends StatefulWidget {
   const CreateMobileGeodatabase({super.key});
@@ -51,6 +50,8 @@ class _CreateMobileGeodatabaseState extends State<CreateMobileGeodatabase>
     return Scaffold(
       body: SafeArea(
         top: false,
+        left: false,
+        right: false,
         child: Stack(
           children: [
             Column(
@@ -69,60 +70,31 @@ class _CreateMobileGeodatabaseState extends State<CreateMobileGeodatabase>
                 ),
                 // Display the number of features added and a button to view the table.
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(
-                    10,
-                    0,
-                    10,
-                    0,
-                  ),
+                  padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        'Number of features added: $_featureCount',
-                      ),
+                      Text('Number of features added: $_featureCount'),
                       ElevatedButton(
                         onPressed: _featureCount > 0 ? _displayTable : null,
-                        child: const Text(
-                          'View table',
-                        ),
+                        child: const Text('View table'),
                       ),
                     ],
                   ),
                 ),
                 // Display a button to create and share the mobile geodatabase.
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(
-                    0,
-                    10,
-                    0,
-                    10,
-                  ),
+                  padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
                   child: ElevatedButton.icon(
                     onPressed: _featureCount > 0 ? _shareGeodatabaseUri : null,
-                    icon: const Icon(
-                      Icons.share,
-                    ),
-                    label: const Text(
-                      'Share Mobile Geodatabase',
-                    ),
+                    icon: const Icon(Icons.share),
+                    label: const Text('Share Mobile Geodatabase'),
                   ),
                 ),
               ],
             ),
             // Display a progress indicator and prevent interaction
             // until state is ready.
-            Visibility(
-              visible: !_ready,
-              child: SizedBox.expand(
-                child: Container(
-                  color: Colors.white30,
-                  child: const Center(
-                    child: CircularProgressIndicator(),
-                  ),
-                ),
-              ),
-            ),
           ],
         ),
       ),
@@ -138,14 +110,14 @@ class _CreateMobileGeodatabaseState extends State<CreateMobileGeodatabase>
   }
 
   // When the map view is ready, create a map and set the viewpoint.
-  void onMapViewReady() async {
+  Future<void> onMapViewReady() async {
     _map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic);
     _mapViewController.arcGISMap = _map;
     _mapViewController.setViewpoint(
       Viewpoint.withLatLongScale(
         latitude: 41.5,
-        longitude: -100.0,
-        scale: 100000000.0,
+        longitude: -100,
+        scale: 100000000,
       ),
     );
     // Create the mobile geodatabase with a feature table to track
@@ -157,9 +129,7 @@ class _CreateMobileGeodatabaseState extends State<CreateMobileGeodatabase>
 
   // When the map is tapped, add a feature to the feature table.
   void onTap(Offset localPosition) {
-    final mapPoint = _mapViewController.screenToLocation(
-      screen: localPosition,
-    );
+    final mapPoint = _mapViewController.screenToLocation(screen: localPosition);
     if (mapPoint != null) _addFeature(mapPoint);
   }
 
@@ -174,11 +144,8 @@ class _CreateMobileGeodatabaseState extends State<CreateMobileGeodatabase>
     try {
       _geodatabase = await Geodatabase.create(fileUri: geodatabaseFile.uri);
       await _createGeodatabaseFeatureTable();
-    } catch (e) {
-      _showDialog(
-        'Error',
-        e.toString(),
-      );
+    } on Exception catch (e) {
+      showMessageDialog(e.toString(), title: 'Error');
     }
     return Future.value();
   }
@@ -186,54 +153,38 @@ class _CreateMobileGeodatabaseState extends State<CreateMobileGeodatabase>
   // Create a feature table to store location history.
   Future<void> _createGeodatabaseFeatureTable() async {
     // Create and define a table description for the feature table.
-    final tableDescription = TableDescription(
-      name: 'LocationHistory',
-    )
-      ..geometryType = GeometryType.point
-      ..spatialReference = SpatialReference.wgs84
-      ..hasAttachments = false
-      ..hasM = false
-      ..hasZ = false;
+    final tableDescription =
+        TableDescription(name: 'LocationHistory')
+          ..geometryType = GeometryType.point
+          ..spatialReference = SpatialReference.wgs84
+          ..hasAttachments = false
+          ..hasM = false
+          ..hasZ = false;
 
-    tableDescription.fieldDescriptions.addAll(
-      [
-        FieldDescription(
-          name: 'oid',
-          fieldType: FieldType.oid,
-        ),
-        FieldDescription(
-          name: 'collection_timestamp',
-          fieldType: FieldType.date,
-        ),
-      ],
-    );
+    tableDescription.fieldDescriptions.addAll([
+      FieldDescription(name: 'oid', fieldType: FieldType.oid),
+      FieldDescription(name: 'collection_timestamp', fieldType: FieldType.date),
+    ]);
 
     // Create the feature table and add the associated feature layer to the map.
     try {
       _featureTable = await _geodatabase!.createTable(tableDescription);
       _map.operationalLayers.clear();
-      _map.operationalLayers.add(
-        FeatureLayer.withFeatureTable(_featureTable as GeodatabaseFeatureTable),
-      );
+      _map.operationalLayers.add(FeatureLayer.withFeatureTable(_featureTable!));
       setState(() => _featureCount = _featureTable!.numberOfFeatures);
-    } catch (e) {
-      _showDialog(
-        'Error',
-        e.toString(),
-      );
+    } on ArcGISException catch (e) {
+      showMessageDialog(e.toString(), title: 'Error');
     }
     return Future.value();
   }
 
   // Add a feature to the feature table.
-  void _addFeature(ArcGISPoint point) async {
+  Future<void> _addFeature(ArcGISPoint point) async {
     if (_featureTable == null) {
       return;
     }
 
-    final attributes = {
-      'collection_timestamp': DateTime.now(),
-    };
+    final attributes = {'collection_timestamp': DateTime.now()};
     final newFeature = _featureTable!.createFeature(
       attributes: attributes,
       geometry: point,
@@ -243,7 +194,7 @@ class _CreateMobileGeodatabaseState extends State<CreateMobileGeodatabase>
   }
 
   // Display the attribute table in a dialog.
-  void _displayTable() async {
+  Future<void> _displayTable() async {
     final queryResult = await _featureTable?.queryFeatures(QueryParameters());
 
     final dataRows = <DataRow>[];
@@ -251,47 +202,34 @@ class _CreateMobileGeodatabaseState extends State<CreateMobileGeodatabase>
       dataRows.add(
         DataRow(
           cells: [
+            DataCell(Text(feature.attributes['oid'].toString())),
             DataCell(
-              Text(
-                feature.attributes['oid'].toString(),
-              ),
-            ),
-            DataCell(
-              Text(
-                feature.attributes['collection_timestamp'].toString(),
-              ),
+              Text(feature.attributes['collection_timestamp'].toString()),
             ),
           ],
         ),
       );
     }
     if (mounted) {
-      showDialog(
+      await showDialog(
         context: context,
         barrierColor: Colors.transparent,
         builder: (context) {
           return SimpleDialog(
-            shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.zero,
-            ),
+            shape: const RoundedRectangleBorder(),
             children: [
               Padding(
-                padding: const EdgeInsets.fromLTRB(
-                  15,
-                  5,
-                  15,
-                  10,
-                ),
+                padding: const EdgeInsets.fromLTRB(15, 5, 15, 10),
                 child: SingleChildScrollView(
-                  scrollDirection: Axis.vertical,
                   child: DataTable(
                     border: TableBorder.all(),
                     columns: const [
+                      DataColumn(label: Text('OID')),
                       DataColumn(
-                        label: Text('OID'),
-                      ),
-                      DataColumn(
-                        label: Text('Collection Timestamp'),
+                        label: Text(
+                          'Collection Timestamp',
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
                     ],
                     rows: dataRows,
@@ -299,18 +237,11 @@ class _CreateMobileGeodatabaseState extends State<CreateMobileGeodatabase>
                 ),
               ),
               const Padding(
-                padding: EdgeInsets.fromLTRB(
-                  15,
-                  0,
-                  15,
-                  10,
-                ),
+                padding: EdgeInsets.fromLTRB(15, 0, 15, 10),
                 child: Text(
                   'Attribute table loaded from the mobile geodatabase '
                   'file. File can be loaded on ArcGIS Pro or ArcGIS Maps SDK.',
-                  style: TextStyle(
-                    fontSize: 12.0,
-                  ),
+                  style: TextStyle(fontSize: 12),
                 ),
               ),
             ],
@@ -321,7 +252,7 @@ class _CreateMobileGeodatabaseState extends State<CreateMobileGeodatabase>
   }
 
   // Call platform share sheet and share the mobile geodatabase file URI.
-  void _shareGeodatabaseUri() async {
+  Future<void> _shareGeodatabaseUri() async {
     _geodatabase?.close();
 
     // Open the platform share sheet and share the mobile geodatabase file URI.
@@ -331,19 +262,6 @@ class _CreateMobileGeodatabaseState extends State<CreateMobileGeodatabase>
     );
 
     // Create a new mobile geodatabase and feature table to start again.
-    _setupGeodatabase();
-  }
-
-  // Display a dialog with a title and message.
-  void _showDialog(String title, String message) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text(title),
-          content: Text(message),
-        );
-      },
-    );
+    await _setupGeodatabase();
   }
 }

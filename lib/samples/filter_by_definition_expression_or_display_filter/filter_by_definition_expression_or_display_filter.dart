@@ -15,9 +15,8 @@
 //
 
 import 'package:arcgis_maps/arcgis_maps.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
-
-import '../../utils/sample_state_support.dart';
 
 class FilterByDefinitionExpressionOrDisplayFilter extends StatefulWidget {
   const FilterByDefinitionExpressionOrDisplayFilter({super.key});
@@ -50,6 +49,8 @@ class _FilterByDefinitionExpressionOrDisplayFilterState
     return Scaffold(
       body: SafeArea(
         top: false,
+        left: false,
+        right: false,
         child: Column(
           children: [
             Expanded(
@@ -80,10 +81,7 @@ class _FilterByDefinitionExpressionOrDisplayFilterState
                   ),
                 ),
                 // Add a button to reset the definition expression and display filter.
-                ElevatedButton(
-                  onPressed: reset,
-                  child: const Text('Reset'),
-                ),
+                ElevatedButton(onPressed: reset, child: const Text('Reset')),
               ],
             ),
           ],
@@ -108,7 +106,7 @@ class _FilterByDefinitionExpressionOrDisplayFilterState
     _mapViewController.arcGISMap = map;
   }
 
-  void applyDefinitionExpression() async {
+  Future<void> applyDefinitionExpression() async {
     // Remove the display filter.
     _displayFilterDefinition = null;
     // Apply a definition expression to the feature layer.
@@ -117,7 +115,7 @@ class _FilterByDefinitionExpressionOrDisplayFilterState
     await calculateFeatureCount();
   }
 
-  void applyDisplayFilter() async {
+  Future<void> applyDisplayFilter() async {
     // Remove the definition expression.
     _definitionExpression = '';
     // Apply a display filter to the feature layer.
@@ -128,15 +126,15 @@ class _FilterByDefinitionExpressionOrDisplayFilterState
     // Create a manual display filter definition.
     final manualDisplayFilterDefinition =
         ManualDisplayFilterDefinition.withFilters(
-      activeFilter: displayFilter,
-      availableFilters: [displayFilter],
-    );
+          activeFilter: displayFilter,
+          availableFilters: [displayFilter],
+        );
     _displayFilterDefinition = manualDisplayFilterDefinition;
     // Count the number of features.
     await calculateFeatureCount();
   }
 
-  void reset() async {
+  Future<void> reset() async {
     // Remove the definition expression and display filter.
     _displayFilterDefinition = null;
     _definitionExpression = '';
@@ -148,37 +146,22 @@ class _FilterByDefinitionExpressionOrDisplayFilterState
     _featureLayer.displayFilterDefinition = _displayFilterDefinition;
     _featureLayer.definitionExpression = _definitionExpression;
     // Get the current extent of the map view.
-    final extent = _mapViewController
-        .getCurrentViewpoint(ViewpointType.boundingGeometry)
-        ?.targetGeometry
-        .extent;
+    final extent =
+        _mapViewController
+            .getCurrentViewpoint(ViewpointType.boundingGeometry)
+            ?.targetGeometry
+            .extent;
 
     // Create query parameters.
     final queryParameters = QueryParameters();
     queryParameters.geometry = extent;
 
     // Query the feature count.
-    final featureCount =
-        await _featureLayer.featureTable!.queryFeatureCount(queryParameters);
+    final featureCount = await _featureLayer.featureTable!.queryFeatureCount(
+      queryParameters,
+    );
 
     // Show the feature count in an alert dialog.
-    if (mounted) {
-      showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: const Text(
-              'Current Feature Count',
-              style: TextStyle(fontSize: 20),
-              textAlign: TextAlign.center,
-            ),
-            content: Text(
-              '$featureCount features',
-              textAlign: TextAlign.center,
-            ),
-          );
-        },
-      );
-    }
+    showMessageDialog('$featureCount features', title: 'Current Feature Count');
   }
 }

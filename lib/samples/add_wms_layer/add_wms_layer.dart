@@ -14,7 +14,7 @@
 //
 
 import 'package:arcgis_maps/arcgis_maps.dart';
-import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_state_support.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
 
 class AddWmsLayer extends StatefulWidget {
@@ -39,7 +39,7 @@ class _AddWmsLayerState extends State<AddWmsLayer> with SampleStateSupport {
     );
   }
 
-  void onMapViewReady() async {
+  Future<void> onMapViewReady() async {
     // Create a map with a basemap style.
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISLightGray);
     // Set the map to the map view controller.
@@ -52,8 +52,10 @@ class _AddWmsLayerState extends State<AddWmsLayer> with SampleStateSupport {
     // A list of uniquely-identifying WMS layer names to display.
     final layerNames = ['conus_base_reflectivity_mosaic'];
     // Create a WMS layer using the URL and list of names.
-    final wmsLayer =
-        WmsLayer.withUriAndLayerNames(uri: uri, layerNames: layerNames);
+    final wmsLayer = WmsLayer.withUriAndLayerNames(
+      uri: uri,
+      layerNames: layerNames,
+    );
     // Load the layer and get the extent.
     await wmsLayer.load();
     final layerExtent = wmsLayer.fullExtent;

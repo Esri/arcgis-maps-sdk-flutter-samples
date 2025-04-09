@@ -1,0 +1,52 @@
+# The name of the job, which will be displayed for the status check in PR.
+name: Flutter samples verification
+
+# Controls when the action will run.
+# Below triggers the workflow on pull requests to the specified branches.
+on:
+  pull_request:
+    branches:
+      - main
+      - v.next
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel.
+jobs:
+  # This workflow contains a single job called "readme-metadata-stylecheck"
+  readme-metadata-stylecheck:
+    name: README and metadata formatting check
+
+    # The type of runner that the job will run on
+    # supported VMs are here: https://docs.github.com/en/free-pro-team@latest/actions/reference/specifications-for-github-hosted-runners#supported-runners-and-hardware-resources
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that got executed as part of the job.
+    steps:
+
+      # Checks-out your repository under $GITHUB_WORKSPACE, so the workflow can
+      # access the files. https://github.com/actions/checkout
+      - name: Checkout the repository
+        uses: actions/checkout@v4
+
+      # Setup Dart
+      # https://github.com/dart-lang/setup-dart
+      - name: Setup Dart
+        uses: dart-lang/setup-dart@v1
+        
+      # Setup Python
+      # https://github.com/actions/setup-python
+      - name: Setup python
+        uses: actions/setup-python@v5
+      
+      # Setup Ruby
+      # https://github.com/ruby/setup-ruby
+      - name: Setup ruby
+        uses: actions/setup-ruby@v1
+        
+      # Install mdl
+      # https://github.com/markdownlint/markdownlint
+      - name: install mdl
+        run: gem install mdl
+
+      # Runs readme_scripts_runner.dart on all samples
+      - name: Run README and metadata formatting check on all samples
+        run: dart run ./tool/readme_scripts/readme_scripts_runner.dart -all

@@ -15,9 +15,8 @@
 //
 
 import 'package:arcgis_maps/arcgis_maps.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
-
-import '../../utils/sample_state_support.dart';
 
 // An enumeration of vector tiled layers to choose from.
 enum VectorTiledItem {
@@ -30,13 +29,14 @@ enum VectorTiledItem {
     '86f556a2d1fd468181855a35e344567f',
   );
 
-  final String label;
-  final String itemId;
   const VectorTiledItem(this.label, this.itemId);
 
-  // A menu item for this selection.
-  DropdownMenuItem<VectorTiledItem> get menuItem =>
-      DropdownMenuItem(value: this, child: Text(label));
+  final String label;
+  final String itemId;
+
+  // A menu entry for this selection.
+  DropdownMenuEntry<VectorTiledItem> get menuItem =>
+      DropdownMenuEntry(value: this, label: label);
 
   // The service URL for this selection.
   Uri get uri => Uri.parse('https://www.arcgis.com/home/item.html?id=$itemId');
@@ -53,8 +53,9 @@ class _AddVectorTiledLayerState extends State<AddVectorTiledLayer>
     with SampleStateSupport {
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
+
   // Prepare menu items for the selection of vector tiled layers.
-  final _selectionMenuItems =
+  final _selectionMenuEntries =
       VectorTiledItem.values.map((selection) => selection.menuItem).toList();
   VectorTiledItem? _selection;
 
@@ -63,6 +64,8 @@ class _AddVectorTiledLayerState extends State<AddVectorTiledLayer>
     return Scaffold(
       body: SafeArea(
         top: false,
+        left: false,
+        right: false,
         child: Column(
           children: [
             Expanded(
@@ -73,17 +76,13 @@ class _AddVectorTiledLayerState extends State<AddVectorTiledLayer>
               ),
             ),
             Center(
-              // Add a dropdown button to select a vector tiled layer.
-              child: DropdownButton(
-                icon: const Icon(
-                  Icons.arrow_drop_down,
-                  color: Colors.deepPurple,
-                ),
-                style: const TextStyle(color: Colors.deepPurple),
-                alignment: Alignment.center,
-                value: _selection,
-                items: _selectionMenuItems,
-                onChanged: loadSelection,
+              // Add a dropdown menu to select a vector tiled layer.
+              child: DropdownMenu(
+                trailingIcon: const Icon(Icons.arrow_drop_down),
+                textStyle: Theme.of(context).textTheme.labelMedium,
+                initialSelection: _selection,
+                dropdownMenuEntries: _selectionMenuEntries,
+                onSelected: loadSelection,
               ),
             ),
           ],

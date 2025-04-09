@@ -14,7 +14,7 @@
 //
 
 import 'package:arcgis_maps/arcgis_maps.dart';
-import 'package:arcgis_maps_sdk_flutter_samples/utils/sample_state_support.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
 
 class AddWfsLayer extends StatefulWidget {
@@ -37,6 +37,8 @@ class _AddWfsLayerState extends State<AddWfsLayer> with SampleStateSupport {
     return Scaffold(
       body: SafeArea(
         top: false,
+        left: false,
+        right: false,
         child: Stack(
           children: [
             Column(
@@ -51,22 +53,14 @@ class _AddWfsLayerState extends State<AddWfsLayer> with SampleStateSupport {
               ],
             ),
             // Display a progress indicator and prevent interaction until state is ready.
-            Visibility(
-              visible: !_ready,
-              child: const SizedBox.expand(
-                child: ColoredBox(
-                  color: Colors.white30,
-                  child: Center(child: CircularProgressIndicator()),
-                ),
-              ),
-            ),
+            LoadingIndicator(visible: !_ready),
           ],
         ),
       ),
     );
   }
 
-  void onMapViewReady() async {
+  Future<void> onMapViewReady() async {
     // Create a map with the ArcGIS Navigation basemap style and set to the map view.
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISNavigation);
     // Set the map to _mapViewController.
@@ -103,22 +97,20 @@ class _AddWfsLayerState extends State<AddWfsLayer> with SampleStateSupport {
         'https://dservices2.arcgis.com/ZQgQTuoyBrtmoGdP/arcgis/services/Seattle_Downtown_Features/WFSServer?service=wfs&request=getcapabilities';
 
     // Create a WFS feature table from URI and name.
-    _featureTable = WfsFeatureTable.withUriAndTableName(
-      uri: Uri.parse(wfsFeatureTableUri),
-      tableName: 'Seattle_Downtown_Features:Buildings',
-    )
-      // Set the axis order and feature request mode.
-      ..axisOrder = OgcAxisOrder.noSwap
-      ..featureRequestMode = FeatureRequestMode.manualCache;
+    _featureTable =
+        WfsFeatureTable.withUriAndTableName(
+            uri: Uri.parse(wfsFeatureTableUri),
+            tableName: 'Seattle_Downtown_Features:Buildings',
+          )
+          // Set the axis order and feature request mode.
+          ..axisOrder = OgcAxisOrder.noSwap
+          ..featureRequestMode = FeatureRequestMode.manualCache;
 
     // Create the feature layer from the feature table.
     final featureLayer = FeatureLayer.withFeatureTable(_featureTable)
       // Apply a renderer.
       ..renderer = SimpleRenderer(
-        symbol: SimpleLineSymbol(
-          color: Colors.red,
-          width: 3,
-        ),
+        symbol: SimpleLineSymbol(color: Colors.red, width: 3),
       );
     // Wait for the feature layer to load.
     await featureLayer.load();
@@ -136,9 +128,10 @@ class _AddWfsLayerState extends State<AddWfsLayer> with SampleStateSupport {
     final currentExtent = _mapViewController.visibleArea;
 
     // Create a query based on the current visible extent.
-    final visibleExtentQuery = QueryParameters()
-      ..geometry = currentExtent
-      ..spatialRelationship = SpatialRelationship.intersects;
+    final visibleExtentQuery =
+        QueryParameters()
+          ..geometry = currentExtent
+          ..spatialRelationship = SpatialRelationship.intersects;
 
     // Populate the table with the query, leaving existing table entries intact.
     await _featureTable.populateFromService(

@@ -1,10 +1,9 @@
 import 'dart:typed_data';
 
 import 'package:arcgis_maps/arcgis_maps.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
 import 'package:simple_html_css/simple_html_css.dart';
-
-import '../../utils/sample_state_support.dart';
 
 class ShowPortalUserInfo extends StatefulWidget {
   const ShowPortalUserInfo({super.key});
@@ -25,8 +24,9 @@ class _ShowPortalUserInfoState extends State<ShowPortalUserInfo>
     redirectUri: Uri.parse('my-ags-flutter-app://auth'),
   );
   // Create a Portal that requires authentication.
-  final _portal =
-      Portal.arcGISOnline(connection: PortalConnection.authenticated);
+  final _portal = Portal.arcGISOnline(
+    connection: PortalConnection.authenticated,
+  );
   // Create a Future that tracks the loading of the portal.
   Future<void>? _portalLoadFuture;
   // Create variables to store the user and organization thumbnails.
@@ -42,33 +42,44 @@ class _ShowPortalUserInfoState extends State<ShowPortalUserInfo>
     // which allows it to handle authentication challenges via calls to its
     // handleArcGISAuthenticationChallenge() method.
     ArcGISEnvironment
-        .authenticationManager.arcGISAuthenticationChallengeHandler = this;
+        .authenticationManager
+        .arcGISAuthenticationChallengeHandler = this;
 
     // Load the portal (which will trigger an authentication challenge), and then load the thumbnails.
     _portalLoadFuture = _portal.load().then((_) => loadThumbnails());
   }
 
   @override
-  void dispose() async {
+  void dispose() {
     // We do not want to handle authentication challenges outside of this sample,
     // so we remove this as the challenge handler.
     ArcGISEnvironment
-        .authenticationManager.arcGISAuthenticationChallengeHandler = null;
-
-    super.dispose();
+        .authenticationManager
+        .arcGISAuthenticationChallengeHandler = null;
 
     // Revoke OAuth tokens and remove all credentials to log out.
-    await Future.wait(
-      ArcGISEnvironment.authenticationManager.arcGISCredentialStore
-          .getCredentials()
-          .whereType<OAuthUserCredential>()
-          .map((credential) => credential.revokeToken()),
-    );
-    ArcGISEnvironment.authenticationManager.arcGISCredentialStore.removeAll();
+    Future.wait(
+          ArcGISEnvironment.authenticationManager.arcGISCredentialStore
+              .getCredentials()
+              .whereType<OAuthUserCredential>()
+              .map((credential) => credential.revokeToken()),
+        )
+        .catchError((error) {
+          // This sample has been disposed, so we can only report errors to the console.
+          // ignore: avoid_print
+          print('Error revoking tokens: $error');
+          return [];
+        })
+        .whenComplete(() {
+          ArcGISEnvironment.authenticationManager.arcGISCredentialStore
+              .removeAll();
+        });
+
+    super.dispose();
   }
 
   @override
-  void handleArcGISAuthenticationChallenge(
+  Future<void> handleArcGISAuthenticationChallenge(
     ArcGISAuthenticationChallenge challenge,
   ) async {
     try {
@@ -114,15 +125,16 @@ class _ShowPortalUserInfoState extends State<ShowPortalUserInfo>
             return SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
+                spacing: 20,
                 children: [
                   Text(
                     '${_portal.user?.fullName} Profile',
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
-                  const SizedBox(height: 20.0),
-                  _userThumbnail != null
-                      ? Image.memory(_userThumbnail!)
-                      : const Icon(Icons.person),
+                  if (_userThumbnail != null)
+                    Image.memory(_userThumbnail!)
+                  else
+                    const Icon(Icons.person),
                   Text('Full name', style: titleStyle),
                   Text(_portal.user?.fullName ?? ''),
                   Text('Username', style: titleStyle),
@@ -134,9 +146,10 @@ class _ShowPortalUserInfoState extends State<ShowPortalUserInfo>
                   Text('Access', style: titleStyle),
                   Text(_portal.user?.access.name ?? ''),
                   const Divider(),
-                  _organizationThumbnail != null
-                      ? Image.memory(_organizationThumbnail!)
-                      : const Icon(Icons.domain),
+                  if (_organizationThumbnail != null)
+                    Image.memory(_organizationThumbnail!)
+                  else
+                    const Icon(Icons.domain),
                   Text('Organization', style: titleStyle),
                   Text(_portal.portalInfo?.organizationName ?? ''),
                   Text('Can find external content', style: titleStyle),
@@ -145,7 +158,7 @@ class _ShowPortalUserInfoState extends State<ShowPortalUserInfo>
                   Text('${_portal.portalInfo?.canSharePublic}'),
                   Text('Description', style: titleStyle),
                   Padding(
-                    padding: const EdgeInsets.only(left: 10.0),
+                    padding: const EdgeInsets.only(left: 10),
                     child: RichText(
                       text: HTML.toTextSpan(
                         context,

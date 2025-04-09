@@ -15,12 +15,12 @@
 //
 
 import 'package:arcgis_maps/arcgis_maps.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
-
-import '../../utils/sample_state_support.dart';
 
 class ShowLegend extends StatefulWidget {
   const ShowLegend({super.key});
+
   @override
   State<ShowLegend> createState() => _ShowLegendState();
 }
@@ -28,18 +28,22 @@ class ShowLegend extends StatefulWidget {
 class _ShowLegendState extends State<ShowLegend> with SampleStateSupport {
   // Create a map view controller.
   final _mapViewController = ArcGISMapView.createController();
+
   // Create a map with a basemap style.
   final _map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic);
+
   // Create a list to store dropdown items.
-  var _legendsDropDown = <DropdownMenuItem<LegendInfo>>[];
+  var _legendsDropDown = <DropdownMenuEntry<LegendInfo>>[];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
         top: false,
+        left: false,
+        right: false,
         child: Column(
-          // Add the map view and dropdown button to a column.
+          // Add the map view and dropdown menu to a column.
           children: [
             Expanded(
               // Add a map view to the widget tree and set a controller.
@@ -48,23 +52,15 @@ class _ShowLegendState extends State<ShowLegend> with SampleStateSupport {
                 onMapViewReady: onMapViewReady,
               ),
             ),
-            // Add a dropdown button to the widget tree.
-            DropdownButtonHideUnderline(
-              child: DropdownButton(
-                menuMaxHeight: 200,
-                alignment: Alignment.center,
-                hint: const Text(
-                  'Legend',
-                  style: TextStyle(
-                    color: Colors.deepPurple,
-                  ),
-                ),
-                elevation: 16,
-                style: const TextStyle(color: Colors.deepPurple),
-                // No need to set up onChanged callback.
-                onChanged: (_) {},
-                items: _legendsDropDown,
-              ),
+            // Add a dropdown menu to the widget tree.
+            DropdownMenu(
+              menuHeight: 250,
+              width: 250,
+              hintText: 'Legend',
+              textStyle: Theme.of(context).textTheme.labelMedium,
+              // No need to set up onChanged callback.
+              onSelected: (_) {},
+              dropdownMenuEntries: _legendsDropDown,
             ),
           ],
         ),
@@ -72,7 +68,7 @@ class _ShowLegendState extends State<ShowLegend> with SampleStateSupport {
     );
   }
 
-  void onMapViewReady() async {
+  Future<void> onMapViewReady() async {
     // Get the screen scale.
     final screenScale = MediaQuery.of(context).devicePixelRatio;
     // Create an image layer.
@@ -101,21 +97,19 @@ class _ShowLegendState extends State<ShowLegend> with SampleStateSupport {
     ];
 
     // Create a list to store dropdown items.
-    final legendsDropDown = <DropdownMenuItem<LegendInfo>>[];
+    final legendsDropDown = <DropdownMenuEntry<LegendInfo>>[];
     // Get the legend info for each layer and add it to the legends dropdown list.
     for (final layer in operationalLayersList) {
       // Get the legend info for the current layer.
       final layerLegends = await layer.fetchLegendInfos();
       // Add the name of the current layer.
       legendsDropDown.add(
-        DropdownMenuItem(
+        DropdownMenuEntry(
           value: layerLegends.first,
-          child: Text(
+          label: layer.name,
+          labelWidget: Text(
             layer.name,
-            style: const TextStyle(
-              fontSize: 15,
-              fontWeight: FontWeight.bold,
-            ),
+            style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
           ),
         ),
       );
@@ -128,29 +122,25 @@ class _ShowLegendState extends State<ShowLegend> with SampleStateSupport {
         if (legend.symbol != null) {
           arcGISImage = await legend.symbol!.createSwatch(
             screenScale: screenScale,
-            backgroundColor: Colors.transparent,
             width: symbolSize.width,
             height: symbolSize.height,
           );
         }
         // Add the legend to the legends list.
         legendsDropDown.add(
-          DropdownMenuItem(
+          DropdownMenuEntry(
             value: legend,
-            child: Row(
+            label: legend.name,
+            labelWidget: Row(
+              spacing: 8,
               children: [
                 // Add the legend image to the dropdown list if the image exists.
-                arcGISImage != null
-                    ? Image.memory(
-                        arcGISImage.getEncodedBuffer(),
-                      )
-                    : Container(),
-                const SizedBox(width: 8),
+                if (arcGISImage != null)
+                  Image.memory(arcGISImage.getEncodedBuffer())
+                else
+                  const SizedBox.shrink(),
                 // Add the legend name to the dropdown list.
-                Text(
-                  legend.name,
-                  style: const TextStyle(fontSize: 12),
-                ),
+                Text(legend.name, style: const TextStyle(fontSize: 12)),
               ],
             ),
           ),
@@ -165,11 +155,11 @@ class _ShowLegendState extends State<ShowLegend> with SampleStateSupport {
     // Set the initial viewpoint of the map.
     _map.initialViewpoint = Viewpoint.fromCenter(
       ArcGISPoint(
-        x: -11e6,
-        y: 6e6,
+        x: -11000000,
+        y: 6000000,
         spatialReference: SpatialReference.webMercator,
       ),
-      scale: 9e7,
+      scale: 90000000,
     );
   }
 }

@@ -15,9 +15,8 @@
 //
 
 import 'package:arcgis_maps/arcgis_maps.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
-
-import '../../utils/sample_state_support.dart';
 
 class SelectFeaturesInFeatureLayer extends StatefulWidget {
   const SelectFeaturesInFeatureLayer({super.key});
@@ -28,7 +27,8 @@ class SelectFeaturesInFeatureLayer extends StatefulWidget {
 }
 
 class _SelectFeaturesInFeatureLayerState
-    extends State<SelectFeaturesInFeatureLayer> with SampleStateSupport {
+    extends State<SelectFeaturesInFeatureLayer>
+    with SampleStateSupport {
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
   // Create a feature layer from a feature table.
@@ -63,7 +63,7 @@ class _SelectFeaturesInFeatureLayerState
         y: 50.838570,
         spatialReference: SpatialReference.wgs84,
       ),
-      scale: 5e7,
+      scale: 50000000,
     );
     // Add the feature layer to the map.
     map.operationalLayers.add(_featureLayer);
@@ -71,7 +71,7 @@ class _SelectFeaturesInFeatureLayerState
     _mapViewController.arcGISMap = map;
   }
 
-  void onTap(Offset localPosition) async {
+  Future<void> onTap(Offset localPosition) async {
     // Clear the selection on the feature layer.
     _featureLayer.clearSelection();
 

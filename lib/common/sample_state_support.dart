@@ -14,6 +14,7 @@
 // limitations under the License.
 //
 
+import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
 
 /// A mixin that overrides `setState` to first check if the widget is mounted.
@@ -22,5 +23,16 @@ mixin SampleStateSupport<T extends StatefulWidget> on State<T> {
   @override
   void setState(VoidCallback fn) {
     if (mounted) super.setState(fn);
+  }
+
+  /// Shows an alert dialog with the given [message].
+  void showMessageDialog(
+    String message, {
+    String title = 'Info',
+    bool showOK = false,
+  }) {
+    if (mounted) {
+      showAlertDialog(context, message, title: title, showOK: showOK);
+    }
   }
 }

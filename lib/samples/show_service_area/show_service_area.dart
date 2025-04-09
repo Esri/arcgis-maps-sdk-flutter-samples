@@ -15,9 +15,8 @@
 //
 
 import 'package:arcgis_maps/arcgis_maps.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
-
-import '../../utils/sample_state_support.dart';
 
 class ShowServiceArea extends StatefulWidget {
   const ShowServiceArea({super.key});
@@ -39,16 +38,16 @@ class _ShowServiceAreaState extends State<ShowServiceArea>
   final _serviceAreaGraphicsOverlay = GraphicsOverlay();
   final _serviceAreaSymbols = [
     SimpleFillSymbol(
-      color: Colors.yellowAccent.withOpacity(0.4),
-      outline: SimpleLineSymbol(color: Colors.yellow.withOpacity(0.8)),
+      color: Colors.yellowAccent.withValues(alpha: 0.4),
+      outline: SimpleLineSymbol(color: Colors.yellow.withValues(alpha: 0.8)),
     ),
     SimpleFillSymbol(
-      color: Colors.orangeAccent.withOpacity(0.4),
-      outline: SimpleLineSymbol(color: Colors.orange.withOpacity(0.8)),
+      color: Colors.orangeAccent.withValues(alpha: 0.4),
+      outline: SimpleLineSymbol(color: Colors.orange.withValues(alpha: 0.8)),
     ),
     SimpleFillSymbol(
-      color: Colors.greenAccent.withOpacity(0.4),
-      outline: SimpleLineSymbol(color: Colors.green.withOpacity(0.8)),
+      color: Colors.greenAccent.withValues(alpha: 0.4),
+      outline: SimpleLineSymbol(color: Colors.green.withValues(alpha: 0.8)),
     ),
   ];
 
@@ -73,6 +72,8 @@ class _ShowServiceAreaState extends State<ShowServiceArea>
     return Scaffold(
       body: SafeArea(
         top: false,
+        left: false,
+        right: false,
         child: Stack(
           children: [
             Column(
@@ -108,7 +109,6 @@ class _ShowServiceAreaState extends State<ShowServiceArea>
                             _segmentedButtonSelection = newSelection.first;
                           });
                         },
-                        multiSelectionEnabled: false,
                         showSelectedIcon: false,
                       ),
                       // Create buttons for calculating the service area and resetting.
@@ -126,22 +126,14 @@ class _ShowServiceAreaState extends State<ShowServiceArea>
               ],
             ),
             // Display a progress indicator when the ready flag is false - this will indicate the map is loading or the service area task is in progress.
-            Visibility(
-              visible: !_ready || _taskInProgress,
-              child: SizedBox.expand(
-                child: Container(
-                  color: Colors.white30,
-                  child: const Center(child: CircularProgressIndicator()),
-                ),
-              ),
-            ),
+            LoadingIndicator(visible: !_ready || _taskInProgress),
           ],
         ),
       ),
     );
   }
 
-  void onMapViewReady() async {
+  Future<void> onMapViewReady() async {
     // Create a map with the light gray basemap style and an initial viewpoint.
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISLightGray)
       ..initialViewpoint = Viewpoint.withLatLongScale(
@@ -176,16 +168,20 @@ class _ShowServiceAreaState extends State<ShowServiceArea>
       _barrierGraphicsOverlay,
     ]);
 
-    // Create default service area parameters for using to solve a service area task.
-    _serviceAreaParameters = await _serviceAreaTask.createDefaultParameters();
-    // Note: returnPolygons defaults to true to return all service areas.
-    // Set the overlap behavior when there are results for multiple facilities.
-    _serviceAreaParameters.geometryAtOverlap =
-        ServiceAreaOverlapGeometry.dissolve;
-    // Customize impedance cutoffs for facilities (drive time minutes).
-    // Note: the defaults are initially set as 5, 10 and 15.
-    _serviceAreaParameters.defaultImpedanceCutoffs.clear();
-    _serviceAreaParameters.defaultImpedanceCutoffs.addAll([3, 8, 12]);
+    try {
+      // Create default service area parameters for using to solve a service area task.
+      _serviceAreaParameters = await _serviceAreaTask.createDefaultParameters();
+      // Note: returnPolygons defaults to true to return all service areas.
+      // Set the overlap behavior when there are results for multiple facilities.
+      _serviceAreaParameters.geometryAtOverlap =
+          ServiceAreaOverlapGeometry.dissolve;
+      // Customize impedance cutoffs for facilities (drive time minutes).
+      // Note: the defaults are initially set as 5, 10 and 15.
+      _serviceAreaParameters.defaultImpedanceCutoffs.clear();
+      _serviceAreaParameters.defaultImpedanceCutoffs.addAll([3, 8, 12]);
+    } on Exception catch (e) {
+      showMessageDialog('Error creating service area parameters:\n $e');
+    }
 
     // Toggle the _ready flag to enable the UI.
     setState(() => _ready = true);
@@ -193,8 +189,9 @@ class _ShowServiceAreaState extends State<ShowServiceArea>
 
   void onTap(Offset screenPoint) {
     // Capture the tapped point and convert it to a map point.
-    final mapTapPoint =
-        _mapViewController.screenToLocation(screen: screenPoint);
+    final mapTapPoint = _mapViewController.screenToLocation(
+      screen: screenPoint,
+    );
     if (mapTapPoint == null) return;
 
     // Add a facility or barrier to the map depending on the current toggle button selection.
@@ -202,13 +199,15 @@ class _ShowServiceAreaState extends State<ShowServiceArea>
       _facilityGraphicsOverlay.graphics.add(Graphic(geometry: mapTapPoint));
     } else {
       // Create a buffer around the tapped point to create a barrier.
-      final barrierGeometry =
-          GeometryEngine.buffer(geometry: mapTapPoint, distance: 200);
+      final barrierGeometry = GeometryEngine.buffer(
+        geometry: mapTapPoint,
+        distance: 200,
+      );
       _barrierGraphicsOverlay.graphics.add(Graphic(geometry: barrierGeometry));
     }
   }
 
-  void solveServiceArea() async {
+  Future<void> solveServiceArea() async {
     // Require at least 1 facility to perform a service area calculation.
     if (_facilityGraphicsOverlay.graphics.isNotEmpty) {
       // Disable the UI while the service area is calculated.
@@ -217,19 +216,20 @@ class _ShowServiceAreaState extends State<ShowServiceArea>
       _serviceAreaGraphicsOverlay.graphics.clear();
 
       // For each graphic in the facilities graphics overlay, add a facility to the parameters.
-      final facilities = _facilityGraphicsOverlay.graphics
-          .map(
-            (graphic) => ServiceAreaFacility(graphic.geometry as ArcGISPoint),
-          )
-          .toList();
+      final facilities =
+          _facilityGraphicsOverlay.graphics
+              .map(
+                (graphic) =>
+                    ServiceAreaFacility(graphic.geometry! as ArcGISPoint),
+              )
+              .toList();
       _serviceAreaParameters.setFacilities(facilities);
 
       // For each graphic in the barriers graphics overlay, add a polygon barrier to the parameters.
-      final barriers = _barrierGraphicsOverlay.graphics
-          .map(
-            (graphic) => PolygonBarrier(graphic.geometry as Polygon),
-          )
-          .toList();
+      final barriers =
+          _barrierGraphicsOverlay.graphics
+              .map((graphic) => PolygonBarrier(graphic.geometry! as Polygon))
+              .toList();
       _serviceAreaParameters.setPolygonBarriers(barriers);
 
       // Solve the service area using the parameters.
@@ -240,8 +240,9 @@ class _ShowServiceAreaState extends State<ShowServiceArea>
       // Display service area polygons for each facility - since the service area parameters have
       // geometryAtOverlap set to dissolve and the impedence cutoff values are the same across facilities,
       // we only need to draw the joined polygons for one of the facilities.
-      final serviceAreaPolygons =
-          serviceAreaResult.getResultPolygons(facilityIndex: 0);
+      final serviceAreaPolygons = serviceAreaResult.getResultPolygons(
+        facilityIndex: 0,
+      );
       for (var i = 0; i < serviceAreaPolygons.length; i++) {
         _serviceAreaGraphicsOverlay.graphics.add(
           Graphic(
@@ -254,19 +255,9 @@ class _ShowServiceAreaState extends State<ShowServiceArea>
       // Re-enable the UI once the service area task is finished.
       setState(() => _taskInProgress = false);
     } else {
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          content: const Text(
-            'At least 1 facility is required to perform a service area calculation.',
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context, 'OK'),
-              child: const Text('OK'),
-            ),
-          ],
-        ),
+      showMessageDialog(
+        'At least 1 facility is required to perform a service area calculation.',
+        showOK: true,
       );
     }
   }

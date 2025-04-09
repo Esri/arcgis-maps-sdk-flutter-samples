@@ -13,11 +13,9 @@
 // limitations under the License.
 //
 
-import 'dart:math';
 import 'package:arcgis_maps/arcgis_maps.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
-
-import '../../utils/sample_state_support.dart';
 
 class GroupLayersTogether extends StatefulWidget {
   const GroupLayersTogether({super.key});
@@ -40,6 +38,8 @@ class _GroupLayersTogetherState extends State<GroupLayersTogether>
     return Scaffold(
       body: SafeArea(
         top: false,
+        left: false,
+        right: false,
         child: Stack(
           children: [
             Column(
@@ -64,15 +64,7 @@ class _GroupLayersTogetherState extends State<GroupLayersTogether>
               ],
             ),
             // Display a progress indicator and prevent interaction until state is ready.
-            Visibility(
-              visible: !_ready,
-              child: const SizedBox.expand(
-                child: ColoredBox(
-                  color: Colors.white30,
-                  child: Center(child: CircularProgressIndicator()),
-                ),
-              ),
-            ),
+            LoadingIndicator(visible: !_ready),
           ],
         ),
       ),
@@ -83,50 +75,27 @@ class _GroupLayersTogetherState extends State<GroupLayersTogether>
 
   // The build method for the Settings bottom sheet.
   Widget buildSettings(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.fromLTRB(
-        20.0,
-        0.0,
-        20.0,
-        max(
-          20.0,
-          View.of(context).viewPadding.bottom /
-              View.of(context).devicePixelRatio,
-        ),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Row(
-            children: [
-              Text(
-                'Settings',
-                style: Theme.of(context).textTheme.titleLarge,
+    return BottomSheetSettings(
+      onCloseIconPressed: () => setState(() => _settingsVisible = false),
+      settingsWidgets:
+          (context) => [
+            Container(
+              constraints: BoxConstraints(
+                maxHeight: MediaQuery.sizeOf(context).height * 0.4,
               ),
-              const Spacer(),
-              IconButton(
-                icon: const Icon(Icons.close),
-                onPressed: () => setState(() => _settingsVisible = false),
-              ),
-            ],
-          ),
-          Container(
-            constraints: BoxConstraints(
-              maxHeight: MediaQuery.sizeOf(context).height * 0.4,
-            ),
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: _mapViewController.arcGISMap?.operationalLayers
-                        .whereType<GroupLayer>()
-                        .map(buildGroupLayerSettings)
-                        .toList() ??
-                    [],
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children:
+                      _mapViewController.arcGISMap?.operationalLayers
+                          .whereType<GroupLayer>()
+                          .map(buildGroupLayerSettings)
+                          .toList() ??
+                      [],
+                ),
               ),
             ),
-          ),
-        ],
-      ),
+          ],
     );
   }
 
@@ -158,31 +127,30 @@ class _GroupLayersTogetherState extends State<GroupLayersTogether>
           ],
         ),
         // Create a list of Switches to toggle the visibility of the individual layers.
-        ...groupLayer.layers.map(
-          (layer) {
-            return Row(
-              children: [
-                Text(displayName[layer.name] ?? layer.name),
-                const Spacer(),
-                // Create a Switch to toggle the visibility of the individual layer.
-                Switch(
-                  value: layer.isVisible,
-                  onChanged: groupLayer.isVisible
-                      ? (value) {
+        ...groupLayer.layers.map((layer) {
+          return Row(
+            children: [
+              Text(displayName[layer.name] ?? layer.name),
+              const Spacer(),
+              // Create a Switch to toggle the visibility of the individual layer.
+              Switch(
+                value: layer.isVisible,
+                onChanged:
+                    groupLayer.isVisible
+                        ? (value) {
                           layer.isVisible = value;
                           setState(() {});
                         }
-                      : null,
-                ),
-              ],
-            );
-          },
-        ),
+                        : null,
+              ),
+            ],
+          );
+        }),
       ],
     );
   }
 
-  void onMapViewReady() async {
+  Future<void> onMapViewReady() async {
     // Create a Group Layer for the Project Area Group.
     final projectAreaGroupLayer = GroupLayer()..name = 'Project Area Group';
     // Create a Feature Layer for the Project Area.
@@ -211,8 +179,9 @@ class _GroupLayersTogetherState extends State<GroupLayersTogether>
     await projectAreaLayer.load();
     if (projectAreaGroupLayer.fullExtent != null) {
       // Set the initial viewpoint to the full extent of the group layer.
-      map.initialViewpoint =
-          Viewpoint.fromTargetExtent(projectAreaGroupLayer.fullExtent!);
+      map.initialViewpoint = Viewpoint.fromTargetExtent(
+        projectAreaGroupLayer.fullExtent!,
+      );
     }
 
     // Set the map to the map view.

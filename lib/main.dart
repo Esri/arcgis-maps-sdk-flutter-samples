@@ -14,13 +14,14 @@
 // limitations under the License.
 //
 
-import 'dart:convert';
 import 'package:arcgis_maps/arcgis_maps.dart';
-import 'package:arcgis_maps_sdk_flutter_samples/models/sample.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/common/theme_data.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/models/category.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/widgets/about_info.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/widgets/category_card.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/widgets/sample_viewer_page.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'widgets/sample_list_view.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 void main() {
   // Supply your apiKey using the --dart-define-from-file command line argument.
@@ -33,13 +34,17 @@ void main() {
     ArcGISEnvironment.apiKey = apiKey;
   }
 
-  final colorScheme = ColorScheme.fromSeed(seedColor: Colors.deepPurple);
   runApp(
     MaterialApp(
-      theme: ThemeData(
-        colorScheme: colorScheme,
-        appBarTheme: AppBarTheme(backgroundColor: colorScheme.inversePrimary),
-      ),
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      localeResolutionCallback: (locale, supportedLocales) {
+        return locale;
+      },
+      theme: sampleViewerTheme,
       home: const SampleViewerApp(),
     ),
   );
@@ -53,154 +58,106 @@ class SampleViewerApp extends StatefulWidget {
 }
 
 class _SampleViewerAppState extends State<SampleViewerApp> {
-  final _allSamples = <Sample>[];
-  final _searchFocusNode = FocusNode();
-  final _textEditingController = TextEditingController();
-  var _filteredSamples = <Sample>[];
-  bool _ready = false;
-  bool _searchHasFocus = false;
-
-  @override
-  void initState() {
-    super.initState();
-    loadSamples();
-    _searchFocusNode.addListener(
-      () {
-        if (_searchFocusNode.hasFocus != _searchHasFocus) {
-          setState(() => _searchHasFocus = _searchFocusNode.hasFocus);
-        }
-      },
-    );
-  }
-
-  @override
-  void dispose() {
-    _textEditingController.dispose();
-    _searchFocusNode.dispose();
-    super.dispose();
-  }
+  static const double cardSpacing = 6;
 
   @override
   Widget build(BuildContext context) {
-    const title = 'ArcGIS Maps SDK for Flutter Samples';
-
     return Scaffold(
       appBar: AppBar(
-        title: const Text(title),
+        title: const Text('Sample Categories'),
         actions: [
           IconButton(
             icon: const Icon(Icons.info_outline),
-            onPressed: () => showModalBottomSheet(
-              context: context,
-              isScrollControlled: true,
-              isDismissible: true,
-              useSafeArea: true,
-              builder: (context) {
-                return FractionallySizedBox(
-                  heightFactor: 0.5,
-                  child: Column(
-                    children: [
-                      AppBar(
-                        automaticallyImplyLeading: false,
-                        title: const Text('About'),
-                        actions: [
-                          IconButton(
-                            icon: const Icon(Icons.close),
-                            onPressed: () => Navigator.pop(context),
+            onPressed:
+                () => showModalBottomSheet(
+                  context: context,
+                  isScrollControlled: true,
+                  useSafeArea: true,
+                  builder: (context) {
+                    return FractionallySizedBox(
+                      heightFactor: 0.5,
+                      child: Column(
+                        children: [
+                          AppBar(
+                            automaticallyImplyLeading: false,
+                            title: const Text('About'),
+                            actions: [
+                              IconButton(
+                                icon: const Icon(Icons.close),
+                                onPressed: () => Navigator.pop(context),
+                              ),
+                            ],
+                            shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.vertical(
+                                top: Radius.circular(30),
+                              ),
+                            ),
+                          ),
+                          Container(
+                            padding: const EdgeInsets.all(20),
+                            child: const AboutInfo(title: applicationTitle),
                           ),
                         ],
-                        shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.vertical(
-                            top: Radius.circular(30.0),
-                          ),
-                        ),
                       ),
-                      Container(
-                        padding: const EdgeInsets.all(20.0),
-                        child: const AboutInfo(title: title),
-                      ),
-                    ],
-                  ),
-                );
-              },
-            ),
+                    );
+                  },
+                ),
           ),
         ],
       ),
-      body: Column(
-        children: [
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8),
-            child: TextField(
-              focusNode: _searchFocusNode,
-              controller: _textEditingController,
-              onChanged: onSearchChanged,
-              autocorrect: false,
-              decoration: InputDecoration(
-                hintText: 'Search...',
-                suffixIcon: IconButton(
-                  icon: Icon(
-                    _searchHasFocus ? Icons.cancel : Icons.search,
-                  ),
-                  onPressed: onSearchSuffixPressed,
-                ),
+      body: Padding(
+        padding: const EdgeInsets.fromLTRB(cardSpacing, cardSpacing, 0, 0),
+        child: OrientationBuilder(
+          builder: (context, orientation) {
+            return SingleChildScrollView(
+              child: Wrap(
+                spacing: cardSpacing,
+                runSpacing: cardSpacing,
+                children: _buildCategoryCards(context, orientation),
               ),
-            ),
-          ),
-          _ready
-              ? Expanded(
-                  child: Listener(
-                    onPointerDown: (_) =>
-                        FocusManager.instance.primaryFocus?.unfocus(),
-                    child: SampleListView(samples: _filteredSamples),
-                  ),
-                )
-              : const Center(
-                  child: Text('Loading samples...'),
-                ),
-        ],
+            );
+          },
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const SampleViewerPage()),
+          );
+        },
+        child: const Icon(Icons.search),
       ),
     );
   }
 
-  void onSearchSuffixPressed() {
-    if (_searchHasFocus) {
-      _textEditingController.clear();
-      FocusManager.instance.primaryFocus?.unfocus();
-      onSearchChanged('');
-    } else {
-      _searchFocusNode.requestFocus();
+  List<Widget> _buildCategoryCards(
+    BuildContext context,
+    Orientation orientation,
+  ) {
+    var cardSize = MediaQuery.of(context).size.width / 2 - cardSpacing * 2;
+    if (orientation == Orientation.landscape) {
+      cardSize = MediaQuery.of(context).size.height / 2 - cardSpacing * 2;
     }
+    return List<Widget>.generate(
+      SampleCategory.values.length,
+      (i) => SizedBox(
+        height: cardSize,
+        width: cardSize,
+        child: CategoryCard(
+          category: SampleCategory.values[i],
+          onClick: () => _onCategoryClick(context, SampleCategory.values[i]),
+        ),
+      ),
+    );
   }
 
-  void loadSamples() async {
-    final jsonString =
-        await rootBundle.loadString('assets/generated_samples_list.json');
-    final sampleData = jsonDecode(jsonString);
-    for (final s in sampleData.entries) {
-      _allSamples.add(Sample.fromJson(s.value));
-    }
-    _filteredSamples = _allSamples;
-    setState(() => _ready = true);
-  }
-
-  void onSearchChanged(String searchText) {
-    final List<Sample> results;
-    if (searchText.isEmpty) {
-      results = _allSamples;
-    } else {
-      results = _allSamples.where(
-        (sample) {
-          final lowerSearchText = searchText.toLowerCase();
-          return sample.title.toLowerCase().contains(lowerSearchText) ||
-              sample.category.toLowerCase().contains(lowerSearchText) ||
-              sample.keywords.any(
-                (keyword) => keyword.toLowerCase().contains(lowerSearchText),
-              );
-        },
-      ).toList();
-    }
-
-    setState(() => _filteredSamples = results);
+  void _onCategoryClick(BuildContext context, SampleCategory category) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => SampleViewerPage(category: category),
+      ),
+    );
   }
 }

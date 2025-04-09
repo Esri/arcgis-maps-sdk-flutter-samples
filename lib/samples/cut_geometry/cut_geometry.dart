@@ -15,9 +15,8 @@
 //
 
 import 'package:arcgis_maps/arcgis_maps.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
-
-import '../../utils/sample_state_support.dart';
 
 class CutGeometry extends StatefulWidget {
   const CutGeometry({super.key});
@@ -48,6 +47,8 @@ class _CutGeometryState extends State<CutGeometry> with SampleStateSupport {
     return Scaffold(
       body: SafeArea(
         top: false,
+        left: false,
+        right: false,
         child: Stack(
           children: [
             Column(
@@ -65,24 +66,17 @@ class _CutGeometryState extends State<CutGeometry> with SampleStateSupport {
                     // Button to trigger the cut function or reset to the original state.
                     ElevatedButton(
                       onPressed: _geometryCut ? resetGeometry : cutGeometry,
-                      child: _geometryCut
-                          ? const Text('Reset')
-                          : const Text('Cut'),
+                      child:
+                          _geometryCut
+                              ? const Text('Reset')
+                              : const Text('Cut'),
                     ),
                   ],
                 ),
               ],
             ),
             // Display a progress indicator and prevent interaction until state is ready.
-            Visibility(
-              visible: !_ready,
-              child: SizedBox.expand(
-                child: Container(
-                  color: Colors.white30,
-                  child: const Center(child: CircularProgressIndicator()),
-                ),
-              ),
-            ),
+            LoadingIndicator(visible: !_ready),
           ],
         ),
       ),
@@ -196,12 +190,8 @@ class _CutGeometryState extends State<CutGeometry> with SampleStateSupport {
     _lakeGraphic = Graphic(
       geometry: lakePolygonBuilder.toGeometry(),
       symbol: SimpleFillSymbol(
-        color: Colors.blue.withOpacity(0.5),
-        outline: SimpleLineSymbol(
-          color: Colors.blue,
-          width: 4.0,
-          style: SimpleLineSymbolStyle.solid,
-        ),
+        color: Colors.blue.withValues(alpha: 0.5),
+        outline: SimpleLineSymbol(color: Colors.blue, width: 4),
       ),
     );
   }
@@ -226,7 +216,7 @@ class _CutGeometryState extends State<CutGeometry> with SampleStateSupport {
       geometry: borderPolylineBuilder.toGeometry(),
       symbol: SimpleLineSymbol(
         color: Colors.red,
-        width: 4.0,
+        width: 4,
         style: SimpleLineSymbolStyle.dot,
       ),
     );

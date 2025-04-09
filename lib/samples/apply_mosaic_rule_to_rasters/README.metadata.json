@@ -1,0 +1,27 @@
+{
+    "category": "Layers",
+    "description": "Apply mosaic rule to a mosaic dataset of rasters.",
+    "ignore": false,
+    "images": [
+        "apply_mosaic_rule_to_rasters.png"
+    ],
+    "keywords": [
+        "image service",
+        "mosaic method",
+        "mosaic rule",
+        "raster",
+        "ImageServiceRaster",
+        "MosaicMethod",
+        "MosaicRule"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+        "ImageServiceRaster",
+        "MosaicMethod",
+        "MosaicRule"
+    ],
+    "snippets": [
+        "apply_mosaic_rule_to_rasters.dart"
+    ],
+    "title": "Apply mosaic rule to rasters"
+}

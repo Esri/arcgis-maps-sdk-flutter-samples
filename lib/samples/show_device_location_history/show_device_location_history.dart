@@ -17,10 +17,9 @@
 import 'dart:async';
 
 import 'package:arcgis_maps/arcgis_maps.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
-import '../../utils/sample_state_support.dart';
 
 class ShowDeviceLocationHistory extends StatefulWidget {
   const ShowDeviceLocationHistory({super.key});
@@ -43,8 +42,9 @@ class _ShowDeviceLocationHistoryState extends State<ShowDeviceLocationHistory>
   // A GraphicsOverlay to display the location history points.
   final _locationHistoryPointOverlay = GraphicsOverlay();
   // A PolylineBuilder to build the location history polyline.
-  final _polylineBuilder =
-      PolylineBuilder(spatialReference: SpatialReference.wgs84);
+  final _polylineBuilder = PolylineBuilder(
+    spatialReference: SpatialReference.wgs84,
+  );
   // A flag for when the map view is ready and controls can be used.
   var _ready = false;
   // A flag for toggling location tracking.
@@ -66,6 +66,8 @@ class _ShowDeviceLocationHistoryState extends State<ShowDeviceLocationHistory>
     return Scaffold(
       body: SafeArea(
         top: false,
+        left: false,
+        right: false,
         child: Stack(
           children: [
             Column(
@@ -94,15 +96,7 @@ class _ShowDeviceLocationHistoryState extends State<ShowDeviceLocationHistory>
               ],
             ),
             // Display a progress indicator and prevent interaction until state is ready.
-            Visibility(
-              visible: !_ready,
-              child: SizedBox.expand(
-                child: Container(
-                  color: Colors.white30,
-                  child: const Center(child: CircularProgressIndicator()),
-                ),
-              ),
-            ),
+            LoadingIndicator(visible: !_ready),
           ],
         ),
       ),
@@ -110,7 +104,7 @@ class _ShowDeviceLocationHistoryState extends State<ShowDeviceLocationHistory>
   }
 
   // The method is called when the map view is ready to be used.
-  void onMapViewReady() async {
+  Future<void> onMapViewReady() async {
     // Create a map with the ArcGIS Navigation basemap style.
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISNavigation);
     // Set the initial viewpoint.
@@ -120,7 +114,7 @@ class _ShowDeviceLocationHistoryState extends State<ShowDeviceLocationHistory>
         y: 32.154089,
         spatialReference: SpatialReference.wgs84,
       ),
-      scale: 2e4,
+      scale: 20000,
     );
     // Add the map to the map view controller.
     _mapViewController.arcGISMap = map;
@@ -131,16 +125,10 @@ class _ShowDeviceLocationHistoryState extends State<ShowDeviceLocationHistory>
     ]);
     // Set the renderers for the graphics overlays.
     _locationHistoryLineOverlay.renderer = SimpleRenderer(
-      symbol: SimpleLineSymbol(
-        color: Colors.red[100]!,
-        width: 2.0,
-      ),
+      symbol: SimpleLineSymbol(color: Colors.red[100]!, width: 2),
     );
     _locationHistoryPointOverlay.renderer = SimpleRenderer(
-      symbol: SimpleMarkerSymbol(
-        color: Colors.red,
-        size: 10.0,
-      ),
+      symbol: SimpleMarkerSymbol(color: Colors.red, size: 10),
     );
     // Wait for the map to be displayed before starting the location display.
     _mapViewController.onDrawStatusChanged.listen((status) async {
@@ -164,8 +152,9 @@ class _ShowDeviceLocationHistoryState extends State<ShowDeviceLocationHistory>
 
   // Start the location data source and listen for location changes.
   Future<void> _startLocationDataSource() async {
-    final routeLineJson =
-        await rootBundle.loadString('assets/SimulatedRoute.json');
+    final routeLineJson = await rootBundle.loadString(
+      'assets/SimulatedRoute.json',
+    );
     final routeLine = Geometry.fromJsonString(routeLineJson) as Polyline;
     _locationDataSource.setLocationsWithPolyline(routeLine);
 
@@ -173,20 +162,14 @@ class _ShowDeviceLocationHistoryState extends State<ShowDeviceLocationHistory>
     try {
       await _locationDataSource.start();
     } on ArcGISException catch (e) {
-      if (mounted) {
-        showDialog(
-          context: context,
-          builder: (_) => AlertDialog(
-            content: Text(e.message),
-          ),
-        );
-      }
+      showMessageDialog(e.message);
     }
 
     // Listen for location changes.
     if (_locationDataSource.status == LocationDataSourceStatus.started) {
-      _locationSubscription = _locationDataSource.onLocationChanged
-          .listen(_handleLdsLocationChange);
+      _locationSubscription = _locationDataSource.onLocationChanged.listen(
+        _handleLdsLocationChange,
+      );
     }
   }
 
@@ -200,7 +183,8 @@ class _ShowDeviceLocationHistoryState extends State<ShowDeviceLocationHistory>
     _polylineBuilder.addPoint(point);
     // Visualize the location history polyline on the map.
     _locationHistoryLineOverlay.graphics.clear();
-    _locationHistoryLineOverlay.graphics
-        .add(Graphic(geometry: _polylineBuilder.toGeometry() as Polyline));
+    _locationHistoryLineOverlay.graphics.add(
+      Graphic(geometry: _polylineBuilder.toGeometry() as Polyline),
+    );
   }
 }

@@ -14,8 +14,8 @@
 //
 
 import 'package:arcgis_maps/arcgis_maps.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
-import '../../utils/sample_state_support.dart';
 
 class StyleGraphicsWithSymbols extends StatefulWidget {
   const StyleGraphicsWithSymbols({super.key});
@@ -45,15 +45,7 @@ class _StyleGraphicsWithSymbolsState extends State<StyleGraphicsWithSymbols>
             onMapViewReady: onMapViewReady,
           ),
           // Display a progress indicator and prevent interaction until state is ready.
-          Visibility(
-            visible: !_ready,
-            child: const SizedBox.expand(
-              child: ColoredBox(
-                color: Colors.white30,
-                child: Center(child: CircularProgressIndicator()),
-              ),
-            ),
-          ),
+          LoadingIndicator(visible: !_ready),
         ],
       ),
     );
@@ -94,11 +86,7 @@ class _StyleGraphicsWithSymbolsState extends State<StyleGraphicsWithSymbols>
 
   void _createPoints() {
     // Create a red circle simple marker symbol.
-    final redCircleSymbol = SimpleMarkerSymbol(
-      style: SimpleMarkerSymbolStyle.circle,
-      color: Colors.red,
-      size: 10,
-    );
+    final redCircleSymbol = SimpleMarkerSymbol(color: Colors.red, size: 10);
 
     // Create graphics and add them to graphics overlay.
     var graphic = Graphic(
@@ -151,8 +139,9 @@ class _StyleGraphicsWithSymbolsState extends State<StyleGraphicsWithSymbols>
     );
 
     // Build a polyline.
-    final polylineBuilder =
-        PolylineBuilder(spatialReference: SpatialReference.wgs84);
+    final polylineBuilder = PolylineBuilder(
+      spatialReference: SpatialReference.wgs84,
+    );
     polylineBuilder.addPointXY(x: -2.715, y: 56.061);
     polylineBuilder.addPointXY(x: -2.6438, y: 56.079);
     polylineBuilder.addPointXY(x: -2.638, y: 56.079);
@@ -175,7 +164,6 @@ class _StyleGraphicsWithSymbolsState extends State<StyleGraphicsWithSymbols>
     final outlineSymbol = SimpleLineSymbol(
       style: SimpleLineSymbolStyle.dash,
       color: Colors.green,
-      width: 1,
     );
 
     // Create a green mesh simple fill symbol.
@@ -186,8 +174,9 @@ class _StyleGraphicsWithSymbolsState extends State<StyleGraphicsWithSymbols>
     );
 
     // Create a new point collection for polygon.
-    final polygonBuilder =
-        PolygonBuilder(spatialReference: SpatialReference.wgs84);
+    final polygonBuilder = PolygonBuilder(
+      spatialReference: SpatialReference.wgs84,
+    );
 
     polygonBuilder.addPointXY(x: -2.6425, y: 56.0784);
     polygonBuilder.addPointXY(x: -2.6430, y: 56.0763);
@@ -236,19 +225,24 @@ class _StyleGraphicsWithSymbolsState extends State<StyleGraphicsWithSymbols>
     );
 
     // Create two graphics from the points and symbols.
-    final bassRockGraphic =
-        Graphic(geometry: bassPoint, symbol: bassRockTextSymbol);
-    final craigleithGraphic =
-        Graphic(geometry: craigleithPoint, symbol: craigleithTextSymbol);
+    final bassRockGraphic = Graphic(
+      geometry: bassPoint,
+      symbol: bassRockTextSymbol,
+    );
+    final craigleithGraphic = Graphic(
+      geometry: craigleithPoint,
+      symbol: craigleithTextSymbol,
+    );
 
     // Add graphics to the graphics overlay.
     _graphicsOverlay.graphics.addAll([bassRockGraphic, craigleithGraphic]);
   }
 
-  void _setExtent() async {
+  Future<void> _setExtent() async {
     // Create a new envelope builder using the same spatial reference as the graphics.
-    final myEnvelopeBuilder =
-        EnvelopeBuilder(spatialReference: SpatialReference.wgs84);
+    final myEnvelopeBuilder = EnvelopeBuilder(
+      spatialReference: SpatialReference.wgs84,
+    );
 
     // Loop through each graphic in the graphic collection.
     for (final graphic in _graphicsOverlay.graphics) {
@@ -261,7 +255,7 @@ class _StyleGraphicsWithSymbolsState extends State<StyleGraphicsWithSymbols>
 
     // Adjust the viewable area of the map to encompass all of the graphics in the
     // graphics overlay plus an extra 30% margin for better viewing.
-    _mapViewController.setViewpointAnimated(
+    await _mapViewController.setViewpointAnimated(
       Viewpoint.fromTargetExtent(myEnvelopeBuilder.extent),
     );
   }

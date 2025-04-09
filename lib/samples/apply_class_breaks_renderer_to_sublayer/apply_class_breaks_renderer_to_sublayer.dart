@@ -15,9 +15,8 @@
 //
 
 import 'package:arcgis_maps/arcgis_maps.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
-
-import '../../utils/sample_state_support.dart';
 
 class ApplyClassBreaksRendererToSublayer extends StatefulWidget {
   const ApplyClassBreaksRendererToSublayer({super.key});
@@ -28,7 +27,8 @@ class ApplyClassBreaksRendererToSublayer extends StatefulWidget {
 }
 
 class _ApplyClassBreaksRendererToSublayerState
-    extends State<ApplyClassBreaksRendererToSublayer> with SampleStateSupport {
+    extends State<ApplyClassBreaksRendererToSublayer>
+    with SampleStateSupport {
   // Create a map view controller.
   final _mapViewController = ArcGISMapView.createController();
   // Create a map with a basemap style.
@@ -45,6 +45,8 @@ class _ApplyClassBreaksRendererToSublayerState
     return Scaffold(
       body: SafeArea(
         top: false,
+        left: false,
+        right: false,
         child: Stack(
           children: [
             Column(
@@ -67,22 +69,14 @@ class _ApplyClassBreaksRendererToSublayerState
               ],
             ),
             // Display a progress indicator and prevent interaction until state is ready.
-            Visibility(
-              visible: !_ready,
-              child: SizedBox.expand(
-                child: Container(
-                  color: Colors.white30,
-                  child: const Center(child: CircularProgressIndicator()),
-                ),
-              ),
-            ),
+            LoadingIndicator(visible: !_ready),
           ],
         ),
       ),
     );
   }
 
-  void onMapViewReady() async {
+  Future<void> onMapViewReady() async {
     // Create an image layer.
     final imageLayer = ArcGISMapImageLayer.withUri(
       Uri.parse(
@@ -111,7 +105,7 @@ class _ApplyClassBreaksRendererToSublayerState
     setState(() => _ready = true);
   }
 
-  void renderLayer() async {
+  Future<void> renderLayer() async {
     // Apply class breaks renderer.
     _countiesSublayer.renderer = createPopulationClassBreaksRenderer();
     // Update the rendered state.
@@ -127,36 +121,12 @@ class _ApplyClassBreaksRendererToSublayerState
     const blue5 = Color.fromARGB(255, 2, 75, 109);
 
     // Create symbols for the class breaks.
-    final outline = SimpleLineSymbol(
-      style: SimpleLineSymbolStyle.solid,
-      color: Colors.grey,
-      width: 1,
-    );
-    final classSymbol1 = SimpleFillSymbol(
-      style: SimpleFillSymbolStyle.solid,
-      color: blue1,
-      outline: outline,
-    );
-    final classSymbol2 = SimpleFillSymbol(
-      style: SimpleFillSymbolStyle.solid,
-      color: blue2,
-      outline: outline,
-    );
-    final classSymbol3 = SimpleFillSymbol(
-      style: SimpleFillSymbolStyle.solid,
-      color: blue3,
-      outline: outline,
-    );
-    final classSymbol4 = SimpleFillSymbol(
-      style: SimpleFillSymbolStyle.solid,
-      color: blue4,
-      outline: outline,
-    );
-    final classSymbol5 = SimpleFillSymbol(
-      style: SimpleFillSymbolStyle.solid,
-      color: blue5,
-      outline: outline,
-    );
+    final outline = SimpleLineSymbol(color: Colors.grey);
+    final classSymbol1 = SimpleFillSymbol(color: blue1, outline: outline);
+    final classSymbol2 = SimpleFillSymbol(color: blue2, outline: outline);
+    final classSymbol3 = SimpleFillSymbol(color: blue3, outline: outline);
+    final classSymbol4 = SimpleFillSymbol(color: blue4, outline: outline);
+    final classSymbol5 = SimpleFillSymbol(color: blue5, outline: outline);
 
     // Create class breaks.
     final classBreak1 = ClassBreak(

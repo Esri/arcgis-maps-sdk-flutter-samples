@@ -17,11 +17,9 @@
 import 'dart:io';
 
 import 'package:arcgis_maps/arcgis_maps.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
-
-import '../../utils/sample_data.dart';
-import '../../utils/sample_state_support.dart';
 
 // Create an enumeration to define the feature layer sources.
 enum Source { url, portalItem, geodatabase, geopackage, shapefile }
@@ -37,10 +35,13 @@ class _AddFeatureLayersState extends State<AddFeatureLayers>
     with SampleStateSupport {
   // Create a map with a topographic basemap style.
   final _map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic);
+
   // Create a map view controller.
   final _mapViewController = ArcGISMapView.createController();
+
   // Create a list of feature layer sources.
-  final _featureLayerSources = <DropdownMenuItem<Source>>[];
+  final _featureLayerSources = <DropdownMenuEntry<Source>>[];
+
   // Create a variable to store the selected feature layer source.
   Source? _selectedFeatureLayerSource;
 
@@ -49,36 +50,16 @@ class _AddFeatureLayersState extends State<AddFeatureLayers>
     super.initState();
 
     // Add feature layer sources to the list.
-    _featureLayerSources.addAll([
+    _featureLayerSources.addAll(const [
       // Add a dropdown menu item to load a feature service from a uri.
-      DropdownMenuItem(
-        onTap: loadFeatureServiceFromUri,
-        value: Source.url,
-        child: const Text('URL'),
-      ),
+      DropdownMenuEntry(value: Source.url, label: 'URL'),
       // Add a dropdown menu item to load a feature service from a portal item.
-      DropdownMenuItem(
-        onTap: loadPortalItem,
-        value: Source.portalItem,
-        child: const Text('Portal Item'),
-      ),
+      DropdownMenuEntry(value: Source.portalItem, label: 'Portal Item'),
       // Add a dropdown menu item to load a feature service from a geodatabase.
-      DropdownMenuItem(
-        onTap: loadGeodatabase,
-        value: Source.geodatabase,
-        child: const Text('Geodatabase'),
-      ),
+      DropdownMenuEntry(value: Source.geodatabase, label: 'Geodatabase'),
       // Add a dropdown menu item to load a feature service from a geopackage.
-      DropdownMenuItem(
-        onTap: loadGeopackage,
-        value: Source.geopackage,
-        child: const Text('Geopackage'),
-      ),
-      DropdownMenuItem(
-        onTap: loadShapefile,
-        value: Source.shapefile,
-        child: const Text('Shapefile'),
-      ),
+      DropdownMenuEntry(value: Source.geopackage, label: 'Geopackage'),
+      DropdownMenuEntry(value: Source.shapefile, label: 'Shapefile'),
     ]);
   }
 
@@ -87,7 +68,9 @@ class _AddFeatureLayersState extends State<AddFeatureLayers>
     return Scaffold(
       body: SafeArea(
         top: false,
-        // Create a column with a map view and a dropdown button.
+        left: false,
+        right: false,
+        // Create a column with a map view and a dropdown menu.
         child: Column(
           children: [
             // Add a map view to the widget tree and set a controller.
@@ -97,30 +80,24 @@ class _AddFeatureLayersState extends State<AddFeatureLayers>
                 onMapViewReady: _onMapViewReady,
               ),
             ),
-            // Create a dropdown button to select a feature layer source.
-            DropdownButton(
-              alignment: Alignment.center,
-              hint: const Text(
+            // Create a dropdown menu to select a feature layer source.
+            DropdownMenu(
+              dropdownMenuEntries: _featureLayerSources,
+              trailingIcon: const Icon(Icons.arrow_drop_down),
+              textAlign: TextAlign.center,
+              textStyle: Theme.of(context).textTheme.labelMedium,
+              hintText: 'Select a feature layer source',
+              width: calculateMenuWidth(
+                context,
                 'Select a feature layer source',
-                style: TextStyle(
-                  color: Colors.deepPurple,
-                ),
               ),
-              // Set the selected feature layer source.
-              value: _selectedFeatureLayerSource,
-              icon: const Icon(
-                Icons.arrow_drop_down,
-                color: Colors.deepPurple,
-              ),
-              elevation: 16,
-              style: const TextStyle(color: Colors.deepPurple),
-              // Set the onChanged callback to update the selected feature layer source.
-              onChanged: (featureLayerSource) {
+              onSelected: (featureLayerSource) {
                 setState(() {
                   _selectedFeatureLayerSource = featureLayerSource;
                 });
+                handleSourceSelection(featureLayerSource!);
               },
-              items: _featureLayerSources,
+              initialSelection: _selectedFeatureLayerSource,
             ),
           ],
         ),
@@ -128,9 +105,40 @@ class _AddFeatureLayersState extends State<AddFeatureLayers>
     );
   }
 
-  void _onMapViewReady() async {
+  Future<void> _onMapViewReady() async {
     // Set the map on the map view controller.
     _mapViewController.arcGISMap = _map;
+  }
+
+  // Handles the selection of a feature layer source from the dropdown menu.
+  void handleSourceSelection(Source source) {
+    switch (source) {
+      case Source.url:
+        loadFeatureServiceFromUri();
+      case Source.portalItem:
+        loadPortalItem();
+      case Source.geodatabase:
+        loadGeodatabase();
+      case Source.geopackage:
+        loadGeopackage();
+      case Source.shapefile:
+        loadShapefile();
+    }
+  }
+
+  double calculateMenuWidth(BuildContext context, String menuString) {
+    final textPainter = TextPainter(
+      text: TextSpan(
+        text: menuString,
+        style: Theme.of(context).textTheme.labelMedium,
+      ),
+      maxLines: 1,
+      textDirection: TextDirection.ltr,
+    )..layout();
+
+    final textWidth = textPainter.size.width;
+
+    return textWidth * 1.5;
   }
 
   void loadFeatureServiceFromUri() {
@@ -141,8 +149,9 @@ class _AddFeatureLayersState extends State<AddFeatureLayers>
     // Create a service feature table with the uri.
     final serviceFeatureTables = ServiceFeatureTable.withUri(uri);
     // Create a feature layer with the service feature table.
-    final serviceFeatureLayer =
-        FeatureLayer.withFeatureTable(serviceFeatureTables);
+    final serviceFeatureLayer = FeatureLayer.withFeatureTable(
+      serviceFeatureTables,
+    );
     // Clear the operational layers and add the feature layer to the map.
     _map.operationalLayers.clear();
     _map.operationalLayers.add(serviceFeatureLayer);
@@ -156,26 +165,29 @@ class _AddFeatureLayersState extends State<AddFeatureLayers>
     );
   }
 
-  void loadGeodatabase() async {
+  Future<void> loadGeodatabase() async {
     // Download the sample data.
     await downloadSampleData(['cb1b20748a9f4d128dad8a87244e3e37']);
     // Get the application documents directory.
     final appDir = await getApplicationDocumentsDirectory();
     // Create a file to the geodatabase.
-    final geodatabaseFile =
-        File('${appDir.absolute.path}/LA_Trails/LA_Trails.geodatabase');
+    final geodatabaseFile = File(
+      '${appDir.absolute.path}/LA_Trails/LA_Trails.geodatabase',
+    );
     // Create a geodatabase with the file uri.
     final geodatabase = Geodatabase.withFileUri(geodatabaseFile.uri);
     // Load the geodatabase.
     await geodatabase.load();
     // Get the feature table with the table name.
-    final geodatabaseFeatureTables =
-        geodatabase.getGeodatabaseFeatureTable(tableName: 'Trailheads');
+    final geodatabaseFeatureTables = geodatabase.getGeodatabaseFeatureTable(
+      tableName: 'Trailheads',
+    );
     // Check if the feature table is not null.
     if (geodatabaseFeatureTables != null) {
       // Create a feature layer with the feature table.
-      final geodatabaseFeatureLayer =
-          FeatureLayer.withFeatureTable(geodatabaseFeatureTables);
+      final geodatabaseFeatureLayer = FeatureLayer.withFeatureTable(
+        geodatabaseFeatureTables,
+      );
       // Clear the operational layers and add the feature layer to the map.
       _map.operationalLayers.clear();
       _map.operationalLayers.add(geodatabaseFeatureLayer);
@@ -193,13 +205,15 @@ class _AddFeatureLayersState extends State<AddFeatureLayers>
     }
   }
 
-  void loadPortalItem() async {
+  Future<void> loadPortalItem() async {
     // Set the portal.
     final portal = Portal.arcGISOnline();
     // Create the portal item with the item ID for the Portland tree service data.
     const itemId = '1759fd3e8a324358a0c58d9a687a8578';
-    final portalItem =
-        PortalItem.withPortalAndItemId(portal: portal, itemId: itemId);
+    final portalItem = PortalItem.withPortalAndItemId(
+      portal: portal,
+      itemId: itemId,
+    );
     // Load the portal item.
     await portalItem.load();
     // Create a feature layer with the portal item and layer ID.
@@ -220,14 +234,15 @@ class _AddFeatureLayersState extends State<AddFeatureLayers>
     );
   }
 
-  void loadGeopackage() async {
+  Future<void> loadGeopackage() async {
     // Download the sample data.
     await downloadSampleData(['68ec42517cdd439e81b036210483e8e7']);
     // Get the application documents directory.
     final appDir = await getApplicationDocumentsDirectory();
     // Create a file to the geopackage.
-    final geopackageFile =
-        File('${appDir.absolute.path}/AuroraCO/AuroraCO.gpkg');
+    final geopackageFile = File(
+      '${appDir.absolute.path}/AuroraCO/AuroraCO.gpkg',
+    );
     // Create a geopackage with the file uri.
     final geopackage = GeoPackage.withFileUri(geopackageFile.uri);
     // Load the geopackage.
@@ -235,8 +250,9 @@ class _AddFeatureLayersState extends State<AddFeatureLayers>
     // Get the feature table with the table name.
     final geopackageFeatureTables = geopackage.geoPackageFeatureTables;
     // Create a feature layer with the feature table.
-    final geopackageFeatureLayer =
-        FeatureLayer.withFeatureTable(geopackageFeatureTables.first);
+    final geopackageFeatureLayer = FeatureLayer.withFeatureTable(
+      geopackageFeatureTables.first,
+    );
     // Clear the operational layers and add the feature layer to the map.
     _map.operationalLayers.clear();
     _map.operationalLayers.add(geopackageFeatureLayer);
@@ -251,7 +267,7 @@ class _AddFeatureLayersState extends State<AddFeatureLayers>
   }
 
   /// Load a feature layer with a local shapefile.
-  void loadShapefile() async {
+  Future<void> loadShapefile() async {
     // Download the sample data.
     await downloadSampleData(['15a7cbd3af1e47cfa5d2c6b93dc44fc2']);
     // Get the application documents directory.
@@ -261,11 +277,13 @@ class _AddFeatureLayersState extends State<AddFeatureLayers>
       '${appDir.absolute.path}/ScottishWildlifeTrust_reserves/ScottishWildlifeTrust_ReserveBoundaries_20201102.shp',
     );
     // Create a feature table from the Shapefile URI.
-    final shapefileFeatureTable =
-        ShapefileFeatureTable.withFileUri(shapefile.uri);
+    final shapefileFeatureTable = ShapefileFeatureTable.withFileUri(
+      shapefile.uri,
+    );
     // Create a feature layer for the Shapefile feature table.
-    final shapefileFeatureLayer =
-        FeatureLayer.withFeatureTable(shapefileFeatureTable);
+    final shapefileFeatureLayer = FeatureLayer.withFeatureTable(
+      shapefileFeatureTable,
+    );
     // Clear the operational layers and add the feature layer to the map.
     _map.operationalLayers.clear();
     _map.operationalLayers.add(shapefileFeatureLayer);
@@ -274,7 +292,7 @@ class _AddFeatureLayersState extends State<AddFeatureLayers>
       Viewpoint.withLatLongScale(
         latitude: 56.641344,
         longitude: -3.889066,
-        scale: 6e6,
+        scale: 6000000,
       ),
     );
   }
