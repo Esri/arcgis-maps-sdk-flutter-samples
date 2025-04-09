@@ -1,13 +1,36 @@
+//
+// Copyright 2025 Esri
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//   https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+
+import 'package:arcgis_maps_sdk_flutter_samples/common/sample_state_support.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/models/sample.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/widgets/code_view_page.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/widgets/readme_page.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class SampleInfoPopupMenu extends StatelessWidget {
+class SampleInfoPopupMenu extends StatefulWidget {
   const SampleInfoPopupMenu({required this.sample, super.key});
   final Sample sample;
 
+  @override
+  State<SampleInfoPopupMenu> createState() => _SampleInfoPopupMenuState();
+}
+
+class _SampleInfoPopupMenuState extends State<SampleInfoPopupMenu>
+    with SampleStateSupport {
   @override
   Widget build(BuildContext context) {
     return PopupMenuButton(
@@ -41,14 +64,14 @@ class SampleInfoPopupMenu extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => ReadmePage(sample: sample),
+                builder: (context) => ReadmePage(sample: widget.sample),
               ),
             );
           case 'Code':
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => CodeViewPage(sample: sample),
+                builder: (context) => CodeViewPage(sample: widget.sample),
               ),
             );
         }
@@ -58,12 +81,12 @@ class SampleInfoPopupMenu extends StatelessWidget {
 
   Future<void> _launchSampleUrl() async {
     if (!await launchUrl(webPageUrl(), mode: LaunchMode.externalApplication)) {
-      debugPrint('Could not launch ${webPageUrl()}');
+      showMessageDialog('Could not launch ${webPageUrl()}');
     }
   }
 
   Uri webPageUrl() {
-    final formattedKey = sample.key.replaceAll('_', '-');
+    final formattedKey = widget.sample.key.replaceAll('_', '-');
     final formattedUrl =
         'https://developers.arcgis.com/flutter/sample-code/$formattedKey/';
 

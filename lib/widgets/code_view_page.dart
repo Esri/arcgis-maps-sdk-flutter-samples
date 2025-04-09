@@ -1,3 +1,19 @@
+//
+// Copyright 2025 Esri
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//   https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+
 import 'package:arcgis_maps_sdk_flutter_samples/models/sample.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_syntax_view/flutter_syntax_view.dart';
@@ -12,12 +28,12 @@ class CodeViewPage extends StatefulWidget {
 }
 
 class _CodeViewPageState extends State<CodeViewPage> {
+  var _selectedFileIndex = 0;
   late final codeMap = _loadCodeMap(widget.sample.key);
-  int selectedFileIndex = 0;
 
   @override
   Widget build(BuildContext context) {
-    final filePath = codeMap.keys.elementAt(selectedFileIndex);
+    final filePath = codeMap.keys.elementAt(_selectedFileIndex);
     final fileName = filePath.split('/').last;
 
     return Scaffold(
@@ -32,10 +48,7 @@ class _CodeViewPageState extends State<CodeViewPage> {
             Expanded(
               child: FutureBuilder(
                 future: codeMap[filePath],
-                builder: (
-                  BuildContext context,
-                  AsyncSnapshot<String> snapshot,
-                ) {
+                builder: (context, snapshot) {
                   if (snapshot.hasData) {
                     final codeString = snapshot.data!;
                     return SyntaxView(
@@ -44,7 +57,7 @@ class _CodeViewPageState extends State<CodeViewPage> {
                       syntaxTheme: SyntaxTheme.vscodeLight(),
                     );
                   } else if (snapshot.hasError) {
-                    final exception = snapshot.error! as CodeViewExeption;
+                    final exception = snapshot.error! as CodeViewException;
                     return Center(
                       child: Text(
                         'Could not load code with error: ${exception.message}',
@@ -63,18 +76,18 @@ class _CodeViewPageState extends State<CodeViewPage> {
                 children: [
                   ElevatedButton(
                     onPressed:
-                        selectedFileIndex > 0
+                        _selectedFileIndex > 0
                             ? () {
-                              setState(() => selectedFileIndex -= 1);
+                              setState(() => _selectedFileIndex -= 1);
                             }
                             : null,
                     child: const Text('Prev.'),
                   ),
                   ElevatedButton(
                     onPressed:
-                        selectedFileIndex < codeMap.length - 1
+                        _selectedFileIndex < codeMap.length - 1
                             ? () {
-                              setState(() => selectedFileIndex += 1);
+                              setState(() => _selectedFileIndex += 1);
                             }
                             : null,
                     child: const Text('Next'),
@@ -104,7 +117,7 @@ class _CodeViewPageState extends State<CodeViewPage> {
     final fileUri = Uri.parse(fileUrl);
     final response = await http.get(fileUri);
     if (response.statusCode != 200) {
-      throw CodeViewExeption(
+      throw CodeViewException(
         url: fileUrl,
         message:
             'HTTP request failed with status: ${response.statusCode}: ${response.reasonPhrase}',
@@ -115,8 +128,8 @@ class _CodeViewPageState extends State<CodeViewPage> {
   }
 }
 
-class CodeViewExeption implements Exception {
-  CodeViewExeption({required this.url, this.message});
+class CodeViewException implements Exception {
+  CodeViewException({required this.url, this.message});
 
   final String? message;
   final String url;
