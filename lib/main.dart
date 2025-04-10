@@ -110,11 +110,7 @@ class _SampleViewerAppState extends State<SampleViewerApp> {
         child: OrientationBuilder(
           builder: (context, orientation) {
             return SingleChildScrollView(
-              child: Wrap(
-                spacing: cardSpacing,
-                runSpacing: cardSpacing,
-                children: _buildCategoryCards(context, orientation),
-              ),
+              child: _ResponsiveCategoryGrid(orientation: orientation),
             );
           },
         ),
@@ -130,25 +126,38 @@ class _SampleViewerAppState extends State<SampleViewerApp> {
       ),
     );
   }
+}
 
-  List<Widget> _buildCategoryCards(
-    BuildContext context,
-    Orientation orientation,
-  ) {
-    var cardSize = MediaQuery.of(context).size.width / 2 - cardSpacing * 2;
-    if (orientation == Orientation.landscape) {
-      cardSize = MediaQuery.of(context).size.height / 2 - cardSpacing * 2;
-    }
-    return List<Widget>.generate(
-      SampleCategory.values.length,
-      (i) => SizedBox(
-        height: cardSize,
-        width: cardSize,
-        child: CategoryCard(
-          category: SampleCategory.values[i],
-          onClick: () => _onCategoryClick(context, SampleCategory.values[i]),
-        ),
-      ),
+class _ResponsiveCategoryGrid extends StatelessWidget {
+  const _ResponsiveCategoryGrid({required this.orientation});
+  final Orientation orientation;
+  static const double cardSpacing = 6;
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        var cardSize = constraints.maxWidth / 2 - cardSpacing * 2;
+        if (orientation == Orientation.landscape) {
+          cardSize = constraints.maxHeight / 2 - cardSpacing * 2;
+        }
+        return Wrap(
+          spacing: cardSpacing,
+          runSpacing: cardSpacing,
+          children: List.generate(
+            SampleCategory.values.length,
+            (i) => SizedBox(
+              height: cardSize,
+              width: cardSize,
+              child: CategoryCard(
+                category: SampleCategory.values[i],
+                onClick:
+                    () => _onCategoryClick(context, SampleCategory.values[i]),
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 
