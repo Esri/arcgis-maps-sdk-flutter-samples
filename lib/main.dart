@@ -18,8 +18,10 @@ import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/theme_data.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/models/category.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/widgets/about_info.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/widgets/animated_category_card.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/widgets/category_card.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/widgets/sample_viewer_page.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/widgets/tale_scale_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
@@ -57,8 +59,9 @@ class SampleViewerApp extends StatefulWidget {
   State<SampleViewerApp> createState() => _SampleViewerAppState();
 }
 
-class _SampleViewerAppState extends State<SampleViewerApp> {
+class _SampleViewerAppState extends State<SampleViewerApp> with SingleTickerProviderStateMixin {
   static const double cardSpacing = 6;
+  double _scale = 1.0;
 
   @override
   Widget build(BuildContext context) {
@@ -144,7 +147,7 @@ class _SampleViewerAppState extends State<SampleViewerApp> {
       (i) => SizedBox(
         height: cardSize,
         width: cardSize,
-        child: CategoryCard(
+        child: TapScaleCard(
           category: SampleCategory.values[i],
           onClick: () => _onCategoryClick(context, SampleCategory.values[i]),
         ),
