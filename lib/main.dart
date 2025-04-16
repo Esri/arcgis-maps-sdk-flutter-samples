@@ -17,9 +17,9 @@
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/theme_data.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/models/category.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/utils/ripple_page_route.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/widgets/about_info.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/widgets/category_card.dart';
-import 'package:arcgis_maps_sdk_flutter_samples/widgets/ripple_page_route.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/widgets/sample_viewer_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
