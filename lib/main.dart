@@ -18,10 +18,9 @@ import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/theme_data.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/models/category.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/widgets/about_info.dart';
-import 'package:arcgis_maps_sdk_flutter_samples/widgets/animated_category_card.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/widgets/category_card.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/widgets/ripple_page_route.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/widgets/sample_viewer_page.dart';
-import 'package:arcgis_maps_sdk_flutter_samples/widgets/tale_scale_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
@@ -59,9 +58,9 @@ class SampleViewerApp extends StatefulWidget {
   State<SampleViewerApp> createState() => _SampleViewerAppState();
 }
 
-class _SampleViewerAppState extends State<SampleViewerApp> with SingleTickerProviderStateMixin {
+class _SampleViewerAppState extends State<SampleViewerApp>
+    with SingleTickerProviderStateMixin {
   static const double cardSpacing = 6;
-  double _scale = 1.0;
 
   @override
   Widget build(BuildContext context) {
@@ -122,14 +121,24 @@ class _SampleViewerAppState extends State<SampleViewerApp> with SingleTickerProv
           },
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const SampleViewerPage()),
+      floatingActionButton: Builder(
+        builder: (context) {
+          return FloatingActionButton(
+            onPressed: () {
+              // Get the position of the FAB.
+              final box = context.findRenderObject()! as RenderBox;
+              final position = box.localToGlobal(box.size.center(Offset.zero));
+
+              Navigator.of(context).push(
+                RipplePageRoute(
+                  position: position,
+                  child: const SampleViewerPage(),
+                ),
+              );
+            },
+            child: const Icon(Icons.search),
           );
         },
-        child: const Icon(Icons.search),
       ),
     );
   }
@@ -147,19 +156,34 @@ class _SampleViewerAppState extends State<SampleViewerApp> with SingleTickerProv
       (i) => SizedBox(
         height: cardSize,
         width: cardSize,
-        child: TapScaleCard(
+        child: CategoryCard(
+          index: i,
           category: SampleCategory.values[i],
-          onClick: () => _onCategoryClick(context, SampleCategory.values[i]),
+          onClick: (o) => _onCategoryClick(context, SampleCategory.values[i]),
         ),
       ),
     );
   }
 
   void _onCategoryClick(BuildContext context, SampleCategory category) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => SampleViewerPage(category: category),
+    Navigator.of(context).push(
+      PageRouteBuilder(
+        transitionDuration: const Duration(milliseconds: 600),
+        pageBuilder:
+            (context, animation, secondaryAnimation) =>
+                SampleViewerPage(category: category),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          // scale + fade + curve.
+          final curved = CurvedAnimation(
+            parent: animation,
+            curve: Curves.easeOutBack,
+          );
+
+          return ScaleTransition(
+            scale: Tween<double>(begin: 0.6, end: 1).animate(curved),
+            child: FadeTransition(opacity: animation, child: child),
+          );
+        },
       ),
     );
   }
