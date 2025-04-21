@@ -65,7 +65,9 @@ class _SampleViewerPageState extends State<SampleViewerPage> {
     'How about',
     "Let's explore",
   ];
-  final int _maxHintLength = 50; // limit keywords to short strings.
+
+  // Limit keywords 50 characters.
+  final int _maxHintLength = 50;
 
   List<String> _hintMessages = [];
   int _currentHintIndex = 0;
@@ -189,7 +191,7 @@ class _SampleViewerPageState extends State<SampleViewerPage> {
 
   void onSearchChanged(String searchText) {
     var results = <Sample>[];
-    // restore the initial list of samples if the search text is empty
+    // Restore the initial list of samples if the search text is empty.
     if (searchText.isEmpty) {
       if (widget.category == null) {
         results = [];
@@ -210,7 +212,7 @@ class _SampleViewerPageState extends State<SampleViewerPage> {
                         keyword.toLowerCase().contains(lowerSearchText),
                   );
             }).toList();
-        // if the category is not null, the only samples within the category are searched
+        // If the category is not null, the only samples within the category are searched.
       } else {
         results =
             getSamplesByCategory(widget.category).where((sample) {
