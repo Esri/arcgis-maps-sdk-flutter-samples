@@ -65,9 +65,9 @@ class _SampleViewerPageState extends State<SampleViewerPage> {
     return Scaffold(
       appBar: AppBar(
         title:
-        (widget.category != null && widget.category != SampleCategory.all)
-            ? Text(widget.category!.title)
-            : const Text(applicationTitle),
+            (widget.category != null && widget.category != SampleCategory.all)
+                ? Text(widget.category!.title)
+                : const Text(applicationTitle),
       ),
       body: Column(
         children: [
@@ -151,7 +151,7 @@ class _SampleViewerPageState extends State<SampleViewerPage> {
               return sample.title.toLowerCase().contains(lowerSearchText) ||
                   sample.category.toLowerCase().contains(lowerSearchText) ||
                   sample.keywords.any(
-                        (keyword) =>
+                    (keyword) =>
                         keyword.toLowerCase().contains(lowerSearchText),
                   );
             }).toList();
@@ -162,7 +162,7 @@ class _SampleViewerPageState extends State<SampleViewerPage> {
               final lowerSearchText = searchText.toLowerCase();
               return sample.title.toLowerCase().contains(lowerSearchText) ||
                   sample.keywords.any(
-                        (keyword) =>
+                    (keyword) =>
                         keyword.toLowerCase().contains(lowerSearchText),
                   );
             }).toList();
