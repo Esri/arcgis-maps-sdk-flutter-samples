@@ -14,7 +14,9 @@
 // limitations under the License.
 //
 
+import 'dart:async';
 import 'dart:convert';
+import 'dart:math';
 import 'package:arcgis_maps_sdk_flutter_samples/models/category.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/models/sample.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/widgets/sample_list_view.dart';
@@ -42,6 +44,35 @@ class _SampleViewerPageState extends State<SampleViewerPage> {
   var _ready = false;
   var _searchHasFocus = false;
 
+  final List<String> _searchPrefixes = [
+    'Try',
+    'Look for',
+    'Search',
+    'Explore',
+    'Type to explore',
+    'Check out',
+    'Discover',
+    'Start typing',
+    'Tap to search',
+  ];
+
+  final List<String> _questionPrefixes = [
+    'Need help with',
+    'Find out about',
+    'Interested in',
+    'Dig into',
+    'Want to learn',
+    'How about',
+    "Let's explore",
+  ];
+
+  // Limit keywords 50 characters.
+  final int _maxHintLength = 50;
+
+  List<String> _hintMessages = [];
+  int _currentHintIndex = 0;
+  late Timer _hintTimer;
+
   @override
   void initState() {
     super.initState();
@@ -51,10 +82,23 @@ class _SampleViewerPageState extends State<SampleViewerPage> {
         setState(() => _searchHasFocus = _searchFocusNode.hasFocus);
       }
     });
+
+    _hintTimer = Timer.periodic(const Duration(seconds: 3), (_) {
+      if (!mounted) return;
+
+      if (_hintMessages.isNotEmpty &&
+          !_searchHasFocus &&
+          _textEditingController.text.isEmpty) {
+        setState(() {
+          _currentHintIndex = (_currentHintIndex + 1) % _hintMessages.length;
+        });
+      }
+    });
   }
 
   @override
   void dispose() {
+    _hintTimer.cancel();
     _textEditingController.dispose();
     _searchFocusNode.dispose();
     super.dispose();
@@ -95,7 +139,19 @@ class _SampleViewerPageState extends State<SampleViewerPage> {
               child: Listener(
                 onPointerDown:
                     (_) => FocusManager.instance.primaryFocus?.unfocus(),
-                child: SampleListView(samples: _filteredSamples),
+                child:
+                    _filteredSamples.isEmpty &&
+                            _textEditingController.text.isEmpty &&
+                            widget.isSearchable &&
+                            _hintMessages.isNotEmpty
+                        ? AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 400),
+                          child: Text(
+                            _hintMessages[_currentHintIndex],
+                            key: ValueKey(_currentHintIndex),
+                          ),
+                        )
+                        : SampleListView(samples: _filteredSamples),
               ),
             )
           else
@@ -125,16 +181,17 @@ class _SampleViewerPageState extends State<SampleViewerPage> {
     }
 
     if (widget.category != null) {
-      setState(() {
         _filteredSamples = getSamplesByCategory(widget.category);
-      });
     }
+
+    generateSearchHints();
+
     setState(() => _ready = true);
   }
 
   void onSearchChanged(String searchText) {
     var results = <Sample>[];
-    // restore the initial list of samples if the search text is empty
+    // Restore the initial list of samples if the search text is empty.
     if (searchText.isEmpty) {
       if (widget.category == null) {
         results = [];
@@ -155,7 +212,7 @@ class _SampleViewerPageState extends State<SampleViewerPage> {
                         keyword.toLowerCase().contains(lowerSearchText),
                   );
             }).toList();
-        // if the category is not null, the only samples within the category are searched
+        // If the category is not null, the only samples within the category are searched.
       } else {
         results =
             getSamplesByCategory(widget.category).where((sample) {
@@ -182,5 +239,45 @@ class _SampleViewerPageState extends State<SampleViewerPage> {
     return _allSamples.where((sample) {
       return sample.category.toLowerCase() == category.title.toLowerCase();
     }).toList();
+  }
+
+  void generateSearchHints() {
+    final uniqueHints = <String>{};
+    final random = Random();
+
+    for (final sample in _allSamples) {
+      final title = sample.title;
+
+      // Generate a hint from title (if short).
+      if (title.length <= _maxHintLength) {
+        final useQuestion = random.nextBool();
+        final prefix = useQuestion
+            ? _questionPrefixes[random.nextInt(_questionPrefixes.length)]
+            : _searchPrefixes[random.nextInt(_searchPrefixes.length)];
+        final hint = useQuestion ? '$prefix "$title"?' : '$prefix "$title".';
+        uniqueHints.add(hint);
+      }
+
+      // Generate hints from short keywords.
+      for (final keyword in sample.keywords) {
+        if (keyword.length <= _maxHintLength) {
+          final useQuestion = random.nextBool();
+          final prefix = useQuestion
+              ? _questionPrefixes[random.nextInt(_questionPrefixes.length)]
+              : _searchPrefixes[random.nextInt(_searchPrefixes.length)];
+          final hint = useQuestion ? '$prefix "$keyword"?' : '$prefix "$keyword".';
+          uniqueHints.add(hint);
+        }
+      }
+
+      if (uniqueHints.length >= 20) break;
+    }
+
+    final hintsList = uniqueHints.toList()..shuffle();
+
+    _hintMessages = [
+      'Type to explore samples.',
+      ...hintsList.take(6),
+    ];
   }
 }
