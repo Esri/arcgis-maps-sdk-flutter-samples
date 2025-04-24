@@ -26,7 +26,7 @@ class CategoryCard extends StatefulWidget {
   });
 
   final SampleCategory category;
-  final void Function(Offset tapPosition) onClick;
+  final void Function() onClick;
   final int index;
 
   @override
@@ -35,8 +35,8 @@ class CategoryCard extends StatefulWidget {
 
 class _CategoryCardState extends State<CategoryCard>
     with SingleTickerProviderStateMixin {
-  double _scale = 1;
-  bool _iconPressed = false;
+  var _scale = 1.0;
+  var _iconPressed = false;
 
   late final AnimationController _controller;
   late final Animation<Offset> _slideAnimation;
@@ -51,7 +51,7 @@ class _CategoryCardState extends State<CategoryCard>
       duration: const Duration(milliseconds: 1000),
     );
 
-    _slideAnimation = Tween<Offset>(
+    _slideAnimation = Tween(
       begin: const Offset(0, 1.2),
       end: Offset.zero,
     ).animate(
@@ -93,7 +93,7 @@ class _CategoryCardState extends State<CategoryCard>
           _scale = 1.0;
           _iconPressed = false;
         });
-        widget.onClick(details.globalPosition);
+        widget.onClick();
       },
       onTapCancel:
           () => setState(() {
@@ -164,7 +164,7 @@ class _AnimatedIcon extends StatefulWidget {
 
 class _AnimatedIconState extends State<_AnimatedIcon>
     with SingleTickerProviderStateMixin {
-  bool _hovering = false;
+  var _hovering = false;
   late final AnimationController _entryController;
   late final Animation<double> _entryScale;
 

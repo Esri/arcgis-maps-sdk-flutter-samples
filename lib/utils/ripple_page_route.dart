@@ -20,7 +20,7 @@ class RipplePageRoute extends PageRouteBuilder {
   RipplePageRoute({required this.position, required this.child})
     : super(
         transitionDuration: const Duration(milliseconds: 700),
-        pageBuilder: (_, __, ___) => child,
+        pageBuilder: (_, _, _) => child,
         transitionsBuilder: (context, animation, _, child) {
           final rippleAnim = Tween<double>(
             begin: 0,

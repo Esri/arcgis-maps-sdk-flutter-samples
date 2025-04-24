@@ -164,7 +164,7 @@ class _ResponsiveCategoryGrid extends StatelessWidget {
               child: CategoryCard(
                 category: SampleCategory.values[i],
                 onClick:
-                    (d) => _onCategoryClick(context, SampleCategory.values[i]),
+                    () => _onCategoryClick(context, SampleCategory.values[i]),
                 index: i,
               ),
             ),
