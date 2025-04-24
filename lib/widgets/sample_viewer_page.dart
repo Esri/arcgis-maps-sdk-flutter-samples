@@ -260,6 +260,11 @@ class _SampleViewerPageState extends State<SampleViewerPage> {
 
       // Generate hints from short keywords.
       for (final keyword in sample.keywords) {
+        // Skip single-word keywords to avoid ambiguous suggestions.
+        final isSingleWord = !keyword.trim().contains(' ');
+
+        if (isSingleWord) continue;
+
         if (keyword.length <= _maxHintLength) {
           final useQuestion = random.nextBool();
           final prefix = useQuestion
