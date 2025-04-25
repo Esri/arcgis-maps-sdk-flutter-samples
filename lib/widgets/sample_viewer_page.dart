@@ -44,7 +44,7 @@ class _SampleViewerPageState extends State<SampleViewerPage> {
   var _ready = false;
   var _searchHasFocus = false;
 
-  final List<String> _searchPrefixes = [
+  final _searchPrefixes = [
     'Try',
     'Look for',
     'Search',
@@ -56,7 +56,7 @@ class _SampleViewerPageState extends State<SampleViewerPage> {
     'Tap to search',
   ];
 
-  final List<String> _questionPrefixes = [
+  final _questionPrefixes = [
     'Need help with',
     'Find out about',
     'Interested in',
@@ -69,7 +69,7 @@ class _SampleViewerPageState extends State<SampleViewerPage> {
   // Limit keywords 50 characters.
   final int _maxHintLength = 50;
 
-  List<String> _hintMessages = [];
+  List<String> _hintMessages = <String>[];
   int _currentHintIndex = 0;
   late Timer _hintTimer;
 
@@ -181,7 +181,7 @@ class _SampleViewerPageState extends State<SampleViewerPage> {
     }
 
     if (widget.category != null) {
-        _filteredSamples = getSamplesByCategory(widget.category);
+      _filteredSamples = getSamplesByCategory(widget.category);
     }
 
     generateSearchHints();
@@ -251,9 +251,10 @@ class _SampleViewerPageState extends State<SampleViewerPage> {
       // Generate a hint from title (if short).
       if (title.length <= _maxHintLength) {
         final useQuestion = random.nextBool();
-        final prefix = useQuestion
-            ? _questionPrefixes[random.nextInt(_questionPrefixes.length)]
-            : _searchPrefixes[random.nextInt(_searchPrefixes.length)];
+        final prefix =
+            useQuestion
+                ? _questionPrefixes[random.nextInt(_questionPrefixes.length)]
+                : _searchPrefixes[random.nextInt(_searchPrefixes.length)];
         final hint = useQuestion ? '$prefix "$title"?' : '$prefix "$title".';
         uniqueHints.add(hint);
       }
@@ -267,10 +268,12 @@ class _SampleViewerPageState extends State<SampleViewerPage> {
 
         if (keyword.length <= _maxHintLength) {
           final useQuestion = random.nextBool();
-          final prefix = useQuestion
-              ? _questionPrefixes[random.nextInt(_questionPrefixes.length)]
-              : _searchPrefixes[random.nextInt(_searchPrefixes.length)];
-          final hint = useQuestion ? '$prefix "$keyword"?' : '$prefix "$keyword".';
+          final prefix =
+              useQuestion
+                  ? _questionPrefixes[random.nextInt(_questionPrefixes.length)]
+                  : _searchPrefixes[random.nextInt(_searchPrefixes.length)];
+          final hint =
+              useQuestion ? '$prefix "$keyword"?' : '$prefix "$keyword".';
           uniqueHints.add(hint);
         }
       }
@@ -280,9 +283,6 @@ class _SampleViewerPageState extends State<SampleViewerPage> {
 
     final hintsList = uniqueHints.toList()..shuffle();
 
-    _hintMessages = [
-      'Type to explore samples.',
-      ...hintsList.take(6),
-    ];
+    _hintMessages = ['Type to explore samples.', ...hintsList.take(6)];
   }
 }
