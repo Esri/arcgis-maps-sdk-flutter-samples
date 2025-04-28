@@ -53,7 +53,6 @@ class _SampleViewerPageState extends State<SampleViewerPage> {
     'Check out',
     'Discover',
     'Start typing',
-    'Tap to search',
   ];
 
   final _questionPrefixes = [
