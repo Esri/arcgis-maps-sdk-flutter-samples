@@ -14,17 +14,24 @@
 // limitations under the License.
 //
 
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 
 class RipplePageRoute extends PageRouteBuilder {
   RipplePageRoute({required this.position, required this.child})
     : super(
-        transitionDuration: const Duration(milliseconds: 700),
+        transitionDuration: const Duration(milliseconds: 600),
         pageBuilder: (_, _, _) => child,
         transitionsBuilder: (context, animation, _, child) {
+          final screenSize = MediaQuery.of(context).size;
+          final diagonal = sqrt(
+            pow(screenSize.width, 2) + pow(screenSize.height, 2),
+          );
+
           final rippleAnim = Tween<double>(
             begin: 0,
-            end: MediaQuery.of(context).size.longestSide * 2,
+            end: diagonal, // ensures ripple reaches all corners.
           ).animate(
             CurvedAnimation(parent: animation, curve: Curves.easeOutCubic),
           );
@@ -37,7 +44,7 @@ class RipplePageRoute extends PageRouteBuilder {
               return SizedBox.expand(
                 child: ClipRRect(
                   child: ClipPath(
-                    clipper: _RippleClipper(center: position, radius: size / 2),
+                    clipper: _RippleClipper(center: position, radius: size),
                     child: child,
                   ),
                 ),
