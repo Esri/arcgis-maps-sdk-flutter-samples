@@ -75,21 +75,27 @@ class _SampleViewerPageState extends State<SampleViewerPage> {
   @override
   void initState() {
     super.initState();
-    loadSamples();
-    _searchFocusNode.addListener(() {
-      if (_searchFocusNode.hasFocus != _searchHasFocus) {
-        setState(() => _searchHasFocus = _searchFocusNode.hasFocus);
-      }
-    });
+    // Delay search after first frame.
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (mounted) {
+        await loadSamples();
+        _searchFocusNode.addListener(() {
+          if (_searchFocusNode.hasFocus != _searchHasFocus) {
+            setState(() => _searchHasFocus = _searchFocusNode.hasFocus);
+          }
+        });
 
-    _hintTimer = Timer.periodic(const Duration(seconds: 3), (_) {
-      if (!mounted) return;
+        _hintTimer = Timer.periodic(const Duration(seconds: 3), (_) {
+          if (!mounted) return;
 
-      if (_hintMessages.isNotEmpty &&
-          !_searchHasFocus &&
-          _textEditingController.text.isEmpty) {
-        setState(() {
-          _currentHintIndex = (_currentHintIndex + 1) % _hintMessages.length;
+          if (_hintMessages.isNotEmpty &&
+              !_searchHasFocus &&
+              _textEditingController.text.isEmpty) {
+            setState(() {
+              _currentHintIndex =
+                  (_currentHintIndex + 1) % _hintMessages.length;
+            });
+          }
         });
       }
     });
