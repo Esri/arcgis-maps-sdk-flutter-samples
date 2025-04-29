@@ -149,11 +149,15 @@ class _SampleViewerPageState extends State<SampleViewerPage> {
                             _textEditingController.text.isEmpty &&
                             widget.isSearchable &&
                             _hintMessages.isNotEmpty
-                        ? AnimatedSwitcher(
-                          duration: const Duration(milliseconds: 400),
-                          child: Text(
-                            _hintMessages[_currentHintIndex],
-                            key: ValueKey(_currentHintIndex),
+                        ? Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 12),
+                          child: AnimatedSwitcher(
+                            duration: const Duration(milliseconds: 400),
+                            child: Text(
+                              _hintMessages[_currentHintIndex],
+                              key: ValueKey(_currentHintIndex),
+                              textAlign: TextAlign.center,
+                            ),
                           ),
                         )
                         : SampleListView(samples: _filteredSamples),
