@@ -34,14 +34,13 @@ class RipplePageRoute extends PageRouteBuilder {
             builder: (context, _) {
               final size = rippleAnim.value;
 
-              return Stack(
-                children: [
-                  // The child page masked by a circular clip.
-                  ClipPath(
+              return SizedBox.expand(
+                child: ClipRRect(
+                  child: ClipPath(
                     clipper: _RippleClipper(center: position, radius: size / 2),
                     child: child,
                   ),
-                ],
+                ),
               );
             },
           );
