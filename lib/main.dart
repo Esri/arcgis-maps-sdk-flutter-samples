@@ -108,7 +108,7 @@ class _SampleViewerAppState extends State<SampleViewerApp>
         ],
       ),
       body: Padding(
-        padding: const EdgeInsets.fromLTRB(cardSpacing, cardSpacing, 0, 0),
+        padding: const EdgeInsets.all(cardSpacing),
         child: OrientationBuilder(
           builder: (context, orientation) {
             return SingleChildScrollView(
@@ -149,9 +149,9 @@ class _ResponsiveCategoryGrid extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        var cardSize = constraints.maxWidth / 2 - cardSpacing * 2;
+        var cardSize = (constraints.maxWidth - cardSpacing) / 2;
         if (orientation == Orientation.landscape) {
-          cardSize = constraints.maxHeight / 2 - cardSpacing * 2;
+          cardSize = (constraints.maxHeight - cardSpacing) / 2;
         }
         return Wrap(
           spacing: cardSpacing,
@@ -177,7 +177,7 @@ class _ResponsiveCategoryGrid extends StatelessWidget {
   void _onCategoryClick(BuildContext context, SampleCategory category) {
     Navigator.of(context).push(
       PageRouteBuilder(
-        transitionDuration: const Duration(milliseconds: 600),
+        transitionDuration: const Duration(milliseconds: 500),
         pageBuilder:
             (context, animation, secondaryAnimation) =>
                 SampleViewerPage(category: category),
