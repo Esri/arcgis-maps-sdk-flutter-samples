@@ -27,27 +27,19 @@ class DisplayScene extends StatefulWidget {
 class _DisplaySceneState extends State<DisplayScene> with SampleStateSupport {
   // Create a controller for the scene view.
   final _sceneViewController = ArcGISSceneView.createController();
-  // A flag for when the map view is ready and controls can be used.
-  var _ready = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: [
-          ArcGISSceneView(
-            controllerProvider: () => _sceneViewController,
-            onSceneViewReady: onSceneViewReady,
-          ),
-          // Display a progress indicator and prevent interaction until state is ready.
-          LoadingIndicator(visible: !_ready),
-        ],
+      body: ArcGISSceneView(
+        controllerProvider: () => _sceneViewController,
+        onSceneViewReady: onSceneViewReady,
       ),
     );
   }
 
   Future<void> onSceneViewReady() async {
-    // Create a new base map using the static/shared create imagery method.
+    // Create a scene with the imagery standard basemap style.
     final scene = ArcGISScene.withBasemapStyle(
       BasemapStyle.arcGISImageryStandard,
     );
@@ -86,8 +78,5 @@ class _DisplaySceneState extends State<DisplayScene> with SampleStateSupport {
 
     // Set the scene view's camera position.
     await _sceneViewController.setViewpointCameraAnimated(camera: camera);
-
-    // Set the ready state variable to true to enable the sample UI.
-    setState(() => _ready = true);
   }
 }
