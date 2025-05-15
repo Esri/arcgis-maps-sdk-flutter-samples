@@ -13,8 +13,6 @@
 // limitations under the License.
 //
 
-import 'dart:io';
-
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
@@ -34,8 +32,34 @@ class _ChangeCameraControllerState extends State<ChangeCameraController>
   // A flag for when the scene view is ready and controls can be used.
   var _ready = false;
 
-  // The type of CameraController currently being used
-  var _cameraControllerKind = _CameraControllerKind.global;
+  // The graphic for the plane.
+  Graphic? _planeGraphic;
+
+  // The type of CameraController currently being used.
+  var _selectedCameraControllerKind = CameraControllerKind.globe;
+
+  final _cameraControllerDropdownEntries =
+      <DropdownMenuEntry<CameraControllerKind>>[];
+
+  @override
+  void initState() {
+    super.initState();
+
+    _cameraControllerDropdownEntries.addAll([
+      const DropdownMenuEntry(
+        value: CameraControllerKind.globe,
+        label: 'Global',
+      ),
+      const DropdownMenuEntry(
+        value: CameraControllerKind.orbitLocation,
+        label: 'Orbit crater',
+      ),
+      const DropdownMenuEntry(
+        value: CameraControllerKind.orbitGeoElement,
+        label: 'Orbit plane',
+      ),
+    ]);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,12 +80,18 @@ class _ChangeCameraControllerState extends State<ChangeCameraController>
                   ),
                 ),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    // A button to perform a task.
-                    ElevatedButton(
-                      onPressed: performTask,
-                      child: const Text('Perform Task'),
+                    const Text('Select Camera Controller:'),
+                    // Create a dropdown menu to select a feature layer source.
+                    DropdownMenu(
+                      dropdownMenuEntries: _cameraControllerDropdownEntries,
+                      trailingIcon: const Icon(Icons.arrow_drop_down),
+                      textAlign: TextAlign.center,
+                      textStyle: Theme.of(context).textTheme.labelMedium,
+                      hintText: 'Select a camera controller',
+                      onSelected: handleCameraControllerSelection,
+                      initialSelection: _selectedCameraControllerKind,
                     ),
                   ],
                 ),
@@ -81,22 +111,55 @@ class _ChangeCameraControllerState extends State<ChangeCameraController>
     _sceneViewController.arcGISScene = scene;
 
     // Graphics overlay for the plane
-    final graphicsOverlay = await _setupPlaneGraphicsOverlay();
+    final graphicsOverlay = GraphicsOverlay();
+    _planeGraphic = await _setupPlaneGraphic();
+    graphicsOverlay.graphics.add(_planeGraphic!);
+    graphicsOverlay.sceneProperties.surfacePlacement =
+        SurfacePlacement.absolute;
+
     _sceneViewController.graphicsOverlays.add(graphicsOverlay);
 
     // Set the ready state variable to true to enable the sample UI.
     setState(() => _ready = true);
   }
 
-  Future<void> performTask() async {
-    setState(() => _ready = false);
+  void handleCameraControllerSelection(
+    CameraControllerKind? cameraControllerKind,
+  ) {
+    if (cameraControllerKind == null || _planeGraphic == null) return;
 
-    // Perform some task.
-    // ignore: avoid_print
-    print('Perform task');
-    await Future.delayed(const Duration(seconds: 5));
+    switch (cameraControllerKind) {
+      case CameraControllerKind.globe:
+        _sceneViewController.cameraController = GlobeCameraController();
+      case CameraControllerKind.orbitGeoElement:
+        final cameraController = OrbitGeoElementCameraController(
+          targetGeoElement: _planeGraphic!,
+          distance: 1700,
+        );
 
-    setState(() => _ready = true);
+        cameraController.cameraPitchOffset = 3;
+        cameraController.cameraHeadingOffset = 150;
+        _sceneViewController.cameraController = cameraController;
+      case CameraControllerKind.orbitLocation:
+        final cameraController =
+            OrbitLocationCameraController.withTargetPositionAndCameraDistance(
+              targetLocation: ArcGISPoint(
+                x: -109.929589,
+                y: 38.437304,
+                z: 1700,
+                spatialReference: SpatialReference.wgs84,
+              ),
+              distance: 10000,
+            );
+
+        cameraController.cameraPitchOffset = 3;
+        cameraController.cameraHeadingOffset = 150;
+        _sceneViewController.cameraController = cameraController;
+    }
+
+    setState(() {
+      _selectedCameraControllerKind = cameraControllerKind;
+    });
   }
 
   ArcGISScene _setupScene() {
@@ -134,31 +197,29 @@ class _ChangeCameraControllerState extends State<ChangeCameraController>
     return scene;
   }
 
-  Future<GraphicsOverlay> _setupPlaneGraphicsOverlay() async {
+  Future<Graphic> _setupPlaneGraphic() async {
     // Download the plane model files
     await downloadSampleData(['681d6f7694644709a7c830ec57a2d72b']);
     final documentsDirPath =
         (await getApplicationDocumentsDirectory()).absolute.path;
     final planeModelPath = '$documentsDirPath/Bristol/Bristol.dae';
 
-    final graphicsOverlay = GraphicsOverlay();
     final planePosition = ArcGISPoint(
       x: -109.937516,
       y: 38.456714,
       z: 5000,
       spatialReference: SpatialReference.wgs84,
     );
+
     final planeSymbol = ModelSceneSymbol.withUri(
       uri: Uri.parse(planeModelPath),
       scale: 50,
     );
-    final planeGraphic = Graphic(geometry: planePosition, symbol: planeSymbol);
-    graphicsOverlay.graphics.add(planeGraphic);
-    graphicsOverlay.sceneProperties.surfacePlacement =
-        SurfacePlacement.absolute;
 
-    return graphicsOverlay;
+    final planeGraphic = Graphic(geometry: planePosition, symbol: planeSymbol);
+
+    return planeGraphic;
   }
 }
 
-enum _CameraControllerKind { global, orbitLocation, orbitGeoElement }
+enum CameraControllerKind { globe, orbitLocation, orbitGeoElement }
