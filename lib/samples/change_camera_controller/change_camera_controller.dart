@@ -84,13 +84,6 @@ class _ChangeCameraControllerState extends State<ChangeCameraController>
     final graphicsOverlay = await _setupPlaneGraphicsOverlay();
     _sceneViewController.graphicsOverlays.add(graphicsOverlay);
 
-    _sceneViewController.onViewpointChanged.listen((_) {
-      final viewpoint = _sceneViewController.getCurrentViewpoint(
-        ViewpointType.centerAndScale,
-      );
-      print(viewpoint?.targetGeometry);
-    });
-
     // Set the ready state variable to true to enable the sample UI.
     setState(() => _ready = true);
   }
