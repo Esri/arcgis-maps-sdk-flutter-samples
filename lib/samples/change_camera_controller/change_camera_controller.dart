@@ -70,8 +70,8 @@ class _ChangeCameraControllerState extends State<ChangeCameraController>
   }
 
   Future<void> onSceneViewReady() async {
-    // Create a scene with an imagery basemap style.
-    final scene = ArcGISScene.withBasemapStyle(BasemapStyle.arcGISImagery);
+    // Add the scene to the view controller.
+    final scene = _setupScene();
     _sceneViewController.arcGISScene = scene;
 
     // Set the ready state variable to true to enable the sample UI.
@@ -87,5 +87,40 @@ class _ChangeCameraControllerState extends State<ChangeCameraController>
     await Future.delayed(const Duration(seconds: 5));
 
     setState(() => _ready = true);
+  }
+
+  ArcGISScene _setupScene() {
+    // Create a scene with an imagery basemap style.
+    final scene = ArcGISScene.withBasemapStyle(BasemapStyle.arcGISImagery);
+
+    // Set the scene's initial viewpoint.
+    scene.initialViewpoint = Viewpoint.withPointScaleCamera(
+      center: ArcGISPoint(x: 0, y: 0),
+      scale: 1,
+      camera: Camera.withLookAtPoint(
+        lookAtPoint: ArcGISPoint(
+          x: -109.937516,
+          y: 38.456714,
+          spatialReference: SpatialReference.wgs84,
+        ),
+        distance: 5500,
+        heading: 150,
+        pitch: 20,
+        roll: 0,
+      ),
+    );
+
+    // Add surface elevation to the scene.
+    final surface = Surface();
+    final worldElevationService = Uri.parse(
+      'https://elevation3d.arcgis.com/arcgis/rest/services/WorldElevation3D/Terrain3D/ImageServer',
+    );
+    final elevationSource = ArcGISTiledElevationSource.withUri(
+      worldElevationService,
+    );
+    surface.elevationSources.add(elevationSource);
+    scene.baseSurface = surface;
+
+    return scene;
   }
 }
