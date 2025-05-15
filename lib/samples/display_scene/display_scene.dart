@@ -67,7 +67,7 @@ class _DisplaySceneState extends State<DisplayScene> with SampleStateSupport {
     scene.baseSurface = surface;
 
     // Create camera with an initial camera position (Mount Everest in the Alps mountains).
-    final camera = Camera.withLatLongAltitudeHeadingPitchRoll(
+    final camera = Camera.withLatLong(
       latitude: 45.74,
       longitude: 6.88,
       altitude: 4500,
