@@ -13,9 +13,12 @@
 // limitations under the License.
 //
 
+import 'dart:io';
+
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
 
 class ChangeCameraController extends StatefulWidget {
   const ChangeCameraController({super.key});
@@ -30,6 +33,9 @@ class _ChangeCameraControllerState extends State<ChangeCameraController>
   final _sceneViewController = ArcGISSceneView.createController();
   // A flag for when the scene view is ready and controls can be used.
   var _ready = false;
+
+  // The type of CameraController currently being used
+  var _cameraControllerKind = _CameraControllerKind.global;
 
   @override
   Widget build(BuildContext context) {
@@ -74,6 +80,17 @@ class _ChangeCameraControllerState extends State<ChangeCameraController>
     final scene = _setupScene();
     _sceneViewController.arcGISScene = scene;
 
+    // Graphics overlay for the plane
+    final graphicsOverlay = await _setupPlaneGraphicsOverlay();
+    _sceneViewController.graphicsOverlays.add(graphicsOverlay);
+
+    _sceneViewController.onViewpointChanged.listen((_) {
+      final viewpoint = _sceneViewController.getCurrentViewpoint(
+        ViewpointType.centerAndScale,
+      );
+      print(viewpoint?.targetGeometry);
+    });
+
     // Set the ready state variable to true to enable the sample UI.
     setState(() => _ready = true);
   }
@@ -99,11 +116,11 @@ class _ChangeCameraControllerState extends State<ChangeCameraController>
       scale: 1,
       camera: Camera.withLookAtPoint(
         lookAtPoint: ArcGISPoint(
-          x: -109.937516,
-          y: 38.456714,
+          x: -109.93330428076712,
+          y: 38.454207465344282,
           spatialReference: SpatialReference.wgs84,
         ),
-        distance: 5500,
+        distance: 10000,
         heading: 150,
         pitch: 20,
         roll: 0,
@@ -123,4 +140,32 @@ class _ChangeCameraControllerState extends State<ChangeCameraController>
 
     return scene;
   }
+
+  Future<GraphicsOverlay> _setupPlaneGraphicsOverlay() async {
+    // Download the plane model files
+    await downloadSampleData(['681d6f7694644709a7c830ec57a2d72b']);
+    final documentsDirPath =
+        (await getApplicationDocumentsDirectory()).absolute.path;
+    final planeModelPath = '$documentsDirPath/Bristol/Bristol.dae';
+
+    final graphicsOverlay = GraphicsOverlay();
+    final planePosition = ArcGISPoint(
+      x: -109.937516,
+      y: 38.456714,
+      z: 5000,
+      spatialReference: SpatialReference.wgs84,
+    );
+    final planeSymbol = ModelSceneSymbol.withUri(
+      uri: Uri.parse(planeModelPath),
+      scale: 50,
+    );
+    final planeGraphic = Graphic(geometry: planePosition, symbol: planeSymbol);
+    graphicsOverlay.graphics.add(planeGraphic);
+    graphicsOverlay.sceneProperties.surfacePlacement =
+        SurfacePlacement.absolute;
+
+    return graphicsOverlay;
+  }
 }
+
+enum _CameraControllerKind { global, orbitLocation, orbitGeoElement }
