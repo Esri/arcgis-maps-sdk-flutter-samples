@@ -176,8 +176,8 @@ class _ChangeCameraControllerState extends State<ChangeCameraController>
       scale: 1,
       camera: Camera.withLookAtPoint(
         lookAtPoint: ArcGISPoint(
-          x: -109.93330428076712,
-          y: 38.454207465344282,
+          x: -109.92845172437961,
+          y: 38.440455578104029,
           spatialReference: SpatialReference.wgs84,
         ),
         distance: 10000,
