@@ -38,6 +38,7 @@ class _ChangeCameraControllerState extends State<ChangeCameraController>
   // The type of CameraController currently being used.
   var _selectedCameraControllerKind = CameraControllerKind.globe;
 
+  // List of entries for the dropdown menu.
   final _cameraControllerDropdownEntries =
       <DropdownMenuEntry<CameraControllerKind>>[];
 
@@ -45,6 +46,7 @@ class _ChangeCameraControllerState extends State<ChangeCameraController>
   void initState() {
     super.initState();
 
+    // Build up the dropdown menu entries.
     _cameraControllerDropdownEntries.addAll([
       const DropdownMenuEntry(
         value: CameraControllerKind.globe,
@@ -116,18 +118,20 @@ class _ChangeCameraControllerState extends State<ChangeCameraController>
     graphicsOverlay.graphics.add(_planeGraphic!);
     graphicsOverlay.sceneProperties.surfacePlacement =
         SurfacePlacement.absolute;
-
     _sceneViewController.graphicsOverlays.add(graphicsOverlay);
 
     // Set the ready state variable to true to enable the sample UI.
     setState(() => _ready = true);
   }
 
+  // Function to handle when the user selects a camera controller from the
+  // dropdown menu.
   void handleCameraControllerSelection(
     CameraControllerKind? cameraControllerKind,
   ) {
     if (cameraControllerKind == null || _planeGraphic == null) return;
 
+    // Set the appropriate camera controller based on the user's selection.
     switch (cameraControllerKind) {
       case CameraControllerKind.globe:
         _sceneViewController.cameraController = GlobeCameraController();
@@ -198,12 +202,13 @@ class _ChangeCameraControllerState extends State<ChangeCameraController>
   }
 
   Future<Graphic> _setupPlaneGraphic() async {
-    // Download the plane model files
+    // Download the plane model files.
     await downloadSampleData(['681d6f7694644709a7c830ec57a2d72b']);
     final documentsDirPath =
         (await getApplicationDocumentsDirectory()).absolute.path;
     final planeModelPath = '$documentsDirPath/Bristol/Bristol.dae';
 
+    // Define the plane's position.
     final planePosition = ArcGISPoint(
       x: -109.937516,
       y: 38.456714,
@@ -211,15 +216,18 @@ class _ChangeCameraControllerState extends State<ChangeCameraController>
       spatialReference: SpatialReference.wgs84,
     );
 
+    // Define the plane symbol.
     final planeSymbol = ModelSceneSymbol.withUri(
       uri: Uri.parse(planeModelPath),
       scale: 50,
     );
 
+    // Create the plane's graphic with the location and symbol.
     final planeGraphic = Graphic(geometry: planePosition, symbol: planeSymbol);
 
     return planeGraphic;
   }
 }
 
+// Enumeration listing the kinds of camera controllers available in this sample.
 enum CameraControllerKind { globe, orbitLocation, orbitGeoElement }
