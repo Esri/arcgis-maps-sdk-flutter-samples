@@ -50,7 +50,7 @@ class _ChangeCameraControllerState extends State<ChangeCameraController>
     _cameraControllerDropdownEntries.addAll([
       const DropdownMenuEntry(
         value: CameraControllerKind.globe,
-        label: 'Global',
+        label: 'Globe',
       ),
       const DropdownMenuEntry(
         value: CameraControllerKind.orbitLocation,
