@@ -211,6 +211,7 @@ class _ShowGridState extends State<ShowGrid> with SampleStateSupport {
               padding: const EdgeInsets.all(10),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Row(
                     children: [
