@@ -34,12 +34,26 @@ class _ShowGridState extends State<ShowGrid> with SampleStateSupport {
     spatialReference: SpatialReference.webMercator,
   );
 
+  // Create a controller for the Scene View.
+  final _sceneViewController = ArcGISSceneView.createController();
+
   var _gridType = GridType.latitudeLongitude;
   var _gridColorType = GridColorType.red;
   var _gridLabelColorType = GridColorType.red;
   var _labelPositionType = GridLabelPositionType.allSides;
   var _labelFormatType = LatLongLabelFormatType.decimalDegrees;
   var _labelVisibility = true;
+
+  // Selected View.
+  final dropDownMenuEntries = [
+    const DropdownMenuEntry(value: 'MapView', label: 'MapView'),
+    const DropdownMenuEntry(value: 'SceneView', label: 'SceneView'),
+  ];
+
+  var isMapView = true;
+
+  GeoViewController getController() =>
+      isMapView ? _mapViewController : _sceneViewController;
 
   @override
   Widget build(BuildContext context) {
@@ -54,10 +68,16 @@ class _ShowGridState extends State<ShowGrid> with SampleStateSupport {
               children: [
                 Expanded(
                   // Add a map view to the widget tree and set a controller.
-                  child: ArcGISMapView(
-                    controllerProvider: () => _mapViewController,
-                    onMapViewReady: onMapViewReady,
-                  ),
+                  child:
+                      isMapView
+                          ? ArcGISMapView(
+                            controllerProvider: () => _mapViewController,
+                            onMapViewReady: onMapViewReady,
+                          )
+                          : ArcGISSceneView(
+                            controllerProvider: () => _sceneViewController,
+                            onSceneViewReady: onMapViewReady,
+                          ),
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -65,6 +85,17 @@ class _ShowGridState extends State<ShowGrid> with SampleStateSupport {
                     ElevatedButton(
                       onPressed: _showGridOptions,
                       child: const Text('Change Grid'),
+                    ),
+
+                    // Button to switch between MapView and SceneView.
+                    DropdownMenu(
+                      dropdownMenuEntries: dropDownMenuEntries,
+                      initialSelection: 'MapView',
+                      onSelected: (value) {
+                        setState(() {
+                          isMapView = value == dropDownMenuEntries[0].label;
+                        });
+                      },
                     ),
                   ],
                 ),
@@ -80,6 +111,9 @@ class _ShowGridState extends State<ShowGrid> with SampleStateSupport {
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISImagery);
     _mapViewController.arcGISMap = map;
 
+    final scene = ArcGISScene.withBasemapStyle(BasemapStyle.arcGISImagery);
+    _sceneViewController.arcGISScene = scene;
+
     // Set the initial grid.
     _onGridChanged(_gridType);
     _onGridColorChanged(_gridColorType);
@@ -93,22 +127,24 @@ class _ShowGridState extends State<ShowGrid> with SampleStateSupport {
     _gridType = gridType;
 
     final grid = gridType.value;
-    _mapViewController.grid = grid;
+    getController().grid = grid;
     if (grid is LatitudeLongitudeGrid) {
       grid.labelFormat = LatitudeLongitudeGridLabelFormat.decimalDegrees;
-      _mapViewController.setViewpointCenter(_center, scale: 23227);
+      getController().setViewpoint(Viewpoint.fromCenter(_center, scale: 23227));
     } else if (grid is UtmGrid) {
-      _mapViewController.setViewpointCenter(_center, scale: 10000000);
+      getController().setViewpoint(
+        Viewpoint.fromCenter(_center, scale: 10000000),
+      );
     } else if (grid is UsngGrid || grid is MgrsGrid) {
-      _mapViewController.setViewpointCenter(_center, scale: 23227);
+      getController().setViewpoint(Viewpoint.fromCenter(_center, scale: 23227));
     }
   }
 
   // Change the grid color based on the given value.
   void _onGridColorChanged(GridColorType colorType) {
     _gridColorType = colorType;
-    if (_mapViewController.grid != null) {
-      final grid = _mapViewController.grid!;
+    if (getController().grid != null) {
+      final grid = getController().grid!;
       for (var i = 0; i < grid.levelCount; i++) {
         final lineSymbol = SimpleLineSymbol(color: colorType.value);
         grid.setLineSymbol(level: i, lineSymbol: lineSymbol);
@@ -119,16 +155,16 @@ class _ShowGridState extends State<ShowGrid> with SampleStateSupport {
   // Change the label visibility based on the given value.
   void _onLabelVisibilityChanged(bool value) {
     _labelVisibility = value;
-    if (_mapViewController.grid != null) {
-      _mapViewController.grid!.labelVisibility = value;
+    if (getController().grid != null) {
+      getController().grid!.labelVisibility = value;
     }
   }
 
   // Change the label color based on the given value.
   void _onLabelColorChanged(GridColorType colorType) {
     _gridLabelColorType = colorType;
-    if (_mapViewController.grid != null) {
-      final grid = _mapViewController.grid!;
+    if (getController().grid != null) {
+      final grid = getController().grid!;
       for (var i = 0; i < grid.levelCount; i++) {
         final textSymbol =
             TextSymbol(
@@ -147,8 +183,8 @@ class _ShowGridState extends State<ShowGrid> with SampleStateSupport {
   // Change the label format if the grid is LatitudeLongitudeGrid.
   void _onLabelFormatChanged(LatLongLabelFormatType labelFormatType) {
     _labelFormatType = labelFormatType;
-    if (_mapViewController.grid is LatitudeLongitudeGrid) {
-      final grid = _mapViewController.grid! as LatitudeLongitudeGrid;
+    if (getController().grid is LatitudeLongitudeGrid) {
+      final grid = getController().grid! as LatitudeLongitudeGrid;
       grid.labelFormat = labelFormatType.value;
     }
   }
@@ -156,8 +192,8 @@ class _ShowGridState extends State<ShowGrid> with SampleStateSupport {
   // Change the label position based on the given value.
   void _onLabelPositionChanged(GridLabelPositionType labelPositionType) {
     _labelPositionType = labelPositionType;
-    if (_mapViewController.grid != null) {
-      final grid = _mapViewController.grid!;
+    if (getController().grid != null) {
+      final grid = getController().grid!;
       grid.labelPosition = labelPositionType.value;
     }
   }
