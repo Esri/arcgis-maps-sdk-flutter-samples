@@ -1,0 +1,33 @@
+{
+    "category": "Scenes",
+    "description": "Control the behavior of the camera in a scene.",
+    "ignore": false,
+    "images": [
+        "change_camera_controller.png"
+    ],
+    "keywords": [
+        "3D",
+        "camera controller",
+        "orbit",
+        "tracking",
+        "ArcGISScene",
+        "ArcGISSceneViewController",
+        "Camera",
+        "GlobeCameraController",
+        "OrbitGeoElementCameraController",
+        "OrbitLocationCameraController"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+        "ArcGISScene",
+        "ArcGISSceneViewController",
+        "Camera",
+        "GlobeCameraController",
+        "OrbitGeoElementCameraController",
+        "OrbitLocationCameraController"
+    ],
+    "snippets": [
+        "change_camera_controller.dart"
+    ],
+    "title": "Change camera controller"
+}
