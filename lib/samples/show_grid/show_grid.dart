@@ -45,15 +45,15 @@ class _ShowGridState extends State<ShowGrid> with SampleStateSupport {
   var _labelVisibility = true;
 
   // Selected View.
-  final dropDownMenuEntries = [
+  final _dropDownMenuEntries = [
     const DropdownMenuEntry(value: 'MapView', label: 'MapView'),
     const DropdownMenuEntry(value: 'SceneView', label: 'SceneView'),
   ];
 
-  var isMapView = true;
+  var _isMapView = true;
 
   GeoViewController getController() =>
-      isMapView ? _mapViewController : _sceneViewController;
+      _isMapView ? _mapViewController : _sceneViewController;
 
   @override
   Widget build(BuildContext context) {
@@ -69,7 +69,7 @@ class _ShowGridState extends State<ShowGrid> with SampleStateSupport {
                 Expanded(
                   // Add a map view to the widget tree and set a controller.
                   child:
-                      isMapView
+                      _isMapView
                           ? ArcGISMapView(
                             controllerProvider: () => _mapViewController,
                             onMapViewReady: onMapViewReady,
@@ -89,11 +89,11 @@ class _ShowGridState extends State<ShowGrid> with SampleStateSupport {
 
                     // Button to switch between MapView and SceneView.
                     DropdownMenu(
-                      dropdownMenuEntries: dropDownMenuEntries,
+                      dropdownMenuEntries: _dropDownMenuEntries,
                       initialSelection: 'MapView',
                       onSelected: (value) {
                         setState(() {
-                          isMapView = value == dropDownMenuEntries[0].label;
+                          _isMapView = value == _dropDownMenuEntries[0].value;
                         });
                       },
                     ),
@@ -155,9 +155,8 @@ class _ShowGridState extends State<ShowGrid> with SampleStateSupport {
   // Change the label visibility based on the given value.
   void _onLabelVisibilityChanged(bool value) {
     _labelVisibility = value;
-    if (getController().grid != null) {
-      getController().grid!.labelVisibility = value;
-    }
+
+    getController().grid?.labelVisibility = value;
   }
 
   // Change the label color based on the given value.
@@ -192,10 +191,7 @@ class _ShowGridState extends State<ShowGrid> with SampleStateSupport {
   // Change the label position based on the given value.
   void _onLabelPositionChanged(GridLabelPositionType labelPositionType) {
     _labelPositionType = labelPositionType;
-    if (getController().grid != null) {
-      final grid = getController().grid!;
-      grid.labelPosition = labelPositionType.value;
-    }
+    getController().grid?.labelPosition = labelPositionType.value;
   }
 
   /// Show the grid options dialog.

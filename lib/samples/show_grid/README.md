@@ -10,7 +10,7 @@ Grids are often used on printed maps, but can also be helpful on digital maps, t
 
 ## How to use the sample
 
-Tap on the `Change Grid` button in the toolbar to open a settings view. You can change the view from 2D(MapView) or 3D(SceneView), can select type of grid from `Grid Type` (LatLong, MGRS, UTM and USNG) and modify its properties like label visibility, grid line color, and grid label color.
+Tap on the `Change Grid` button in the toolbar to open a settings view. You can change the view from 2D (MapView) or 3D (SceneView), can select type of grid from `Grid Type` (LatLong, MGRS, UTM and USNG) and modify its properties like label visibility, grid line color, and grid label color.
 
 ## How it works
 
