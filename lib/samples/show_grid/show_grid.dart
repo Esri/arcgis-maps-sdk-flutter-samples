@@ -230,6 +230,7 @@ class _ShowGridState extends State<ShowGrid> with SampleStateSupport {
                       labelFormatType: _labelFormatType,
                       labelVisible: _labelVisibility,
                     ),
+                    isSceneView: !_isMapView,
                     onGridChanged: _onGridChanged,
                     onGridColorChanged: _onGridColorChanged,
                     onLabelColorChanged: _onLabelColorChanged,
@@ -259,6 +260,7 @@ class GridOptions extends StatefulWidget {
     required this.onLabelPositionChanged,
     required this.onLabelFormatChanged,
     required this.onLabelVisibilityChanged,
+    required this.isSceneView,
     super.key,
   });
 
@@ -269,6 +271,7 @@ class GridOptions extends StatefulWidget {
   final Function(LatLongLabelFormatType) onLabelFormatChanged;
   final Function(bool) onLabelVisibilityChanged;
   final MapViewGrids grids;
+  final bool isSceneView;
 
   @override
   State<GridOptions> createState() => _GridOptionsState();
@@ -390,10 +393,26 @@ class _GridOptionsState extends State<GridOptions> with SampleStateSupport {
   }
 
   DropdownMenu _buildLabelPositionDropdown() {
+    final unsupportedInSceneView = {
+      GridLabelPositionType.bottomLeft,
+      GridLabelPositionType.bottomRight,
+      GridLabelPositionType.topLeft,
+      GridLabelPositionType.topRight,
+      GridLabelPositionType.center,
+      GridLabelPositionType.allSides,
+    };
+
+    final isUnsupportedGrid = gridType != GridType.latitudeLongitude;
+    final filteredItems = widget.isSceneView && isUnsupportedGrid
+        ? GridLabelPositionType.values
+        .where((type) => !unsupportedInSceneView.contains(type))
+        .toList()
+        : GridLabelPositionType.values;
+
     return _createDropdownMenu(
       value: labelPositionType,
       labelText: 'Label Position',
-      items: GridLabelPositionType.values,
+      items: filteredItems,
       onChanged: (newLabelPosition) {
         widget.onLabelPositionChanged(newLabelPosition);
         setState(() => labelPositionType = newLabelPosition);
@@ -415,14 +434,35 @@ class _GridOptionsState extends State<GridOptions> with SampleStateSupport {
   }
 
   // Change the Grid and apply the current settings.
-  void _changeGrid(GridType gridType) {
-    widget.onGridChanged(gridType);
+  void _changeGrid(GridType newGridType) {
+    widget.onGridChanged(newGridType);
     widget.onLabelFormatChanged(labelFormatType);
     widget.onGridColorChanged(gridColorType);
     widget.onLabelColorChanged(gridLabelColorType);
+
+    // Reset label position if unsupported
+    final unsupportedInSceneView = {
+      GridLabelPositionType.bottomLeft,
+      GridLabelPositionType.bottomRight,
+      GridLabelPositionType.topLeft,
+      GridLabelPositionType.topRight,
+      GridLabelPositionType.center,
+      GridLabelPositionType.allSides,
+    };
+
+    final isUnsupported = widget.isSceneView &&
+        newGridType != GridType.latitudeLongitude &&
+        unsupportedInSceneView.contains(labelPositionType);
+
+    if (isUnsupported) {
+      labelPositionType = GridLabelPositionType.geographic;
+      widget.onLabelPositionChanged(labelPositionType);
+    }
+
     widget.onLabelPositionChanged(labelPositionType);
     widget.onLabelVisibilityChanged(labelVisible);
   }
+
 
   // Set the visibility of the label format dropdown based on the grid type.
   bool _shouldShowLabelFormat(GridType grid) =>
