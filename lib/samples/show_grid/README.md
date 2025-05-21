@@ -1,12 +1,12 @@
 # Show grid
 
-Display coordinate system grids including Latitude/Longitude, MGRS, UTM and USNG on a map view. Also, toggle label visibility and change the color of grid lines and grid labels.
+Display coordinate system grids including Latitude/Longitude, MGRS, UTM and USNG on a map view or scene view. Also, toggle label visibility and change the color of grid lines and grid labels.
 
 ![Image of Show grid](show_grid.png)
 
 ## Use case
 
-Grids are often used on printed maps, but can also be helpful on digital maps, to identify locations on a map.
+Grids are often used on printed maps, but can also be helpful on 2D maps or 3D scenes, to identify locations on a map.
 
 ## How to use the sample
 
