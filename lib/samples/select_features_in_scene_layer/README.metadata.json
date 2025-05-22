@@ -1,0 +1,31 @@
+{
+    "category": "Search and Query",
+    "description": "Identify features in a scene to select.",
+    "ignore": false,
+    "images": [
+        "select_features_in_scene_layer.png"
+    ],
+    "keywords": [
+        "3D",
+        "Berlin",
+        "buildings",
+        "identify",
+        "model",
+        "query",
+        "search",
+        "select",
+        "ArcGISSceneLayer",
+        "Scene",
+        "SceneView"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+        "ArcGISSceneLayer",
+        "Scene",
+        "SceneView"
+    ],
+    "snippets": [
+        "select_features_in_scene_layer.dart"
+    ],
+    "title": "Select features in scene layer"
+}
