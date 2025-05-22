@@ -10,7 +10,7 @@ You can select features to visually distinguish them with a selection color or h
 
 ## How to use the sample
 
-Click on a building in the scene layer to select it. Deselect buildings by clicking away from the buildings.
+Tap on a building in the scene layer to select it. Deselect buildings by tapping away from the buildings.
 
 ## How it works
 
@@ -22,9 +22,9 @@ Click on a building in the scene layer to select it. Deselect buildings by click
 
 ## Relevant API
 
+* ArcGISScene
 * ArcGISSceneLayer
-* Scene
-* SceneView
+* ArcGISSceneView
 
 ## About the data
 

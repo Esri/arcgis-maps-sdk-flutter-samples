@@ -14,15 +14,15 @@
         "query",
         "search",
         "select",
+        "ArcGISScene",
         "ArcGISSceneLayer",
-        "Scene",
-        "SceneView"
+        "ArcGISSceneView"
     ],
     "redirect_from": [],
     "relevant_apis": [
+        "ArcGISScene",
         "ArcGISSceneLayer",
-        "Scene",
-        "SceneView"
+        "ArcGISSceneView"
     ],
     "snippets": [
         "select_features_in_scene_layer.dart"

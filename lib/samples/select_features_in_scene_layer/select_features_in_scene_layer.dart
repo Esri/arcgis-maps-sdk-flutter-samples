@@ -30,7 +30,7 @@ class _SelectFeaturesInSceneLayerState extends State<SelectFeaturesInSceneLayer>
   // Create a controller for the scene view.
   final _sceneViewController = ArcGISSceneView.createController();
 
-  // Define a ArcGISSceneLayer to get from the URI
+  // Define an ArcGISSceneLayer.
   late ArcGISSceneLayer _sceneLayer;
 
   // A flag for when the map view is ready and controls can be used.
