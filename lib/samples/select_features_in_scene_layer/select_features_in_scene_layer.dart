@@ -29,9 +29,12 @@ class _SelectFeaturesInSceneLayerState extends State<SelectFeaturesInSceneLayer>
     with SampleStateSupport {
   // Create a controller for the scene view.
   final _sceneViewController = ArcGISSceneView.createController();
-
   // Define an ArcGISSceneLayer.
-  late ArcGISSceneLayer _sceneLayer;
+  final _sceneLayer = ArcGISSceneLayer.withUri(
+    Uri.parse(
+      'https://tiles.arcgis.com/tiles/P3ePLMYs2RVChkJx/arcgis/rest/services/Buildings_Berlin/SceneServer/layers/0',
+    ),
+  );
 
   // A flag for when the map view is ready and controls can be used.
   var _ready = false;
@@ -62,25 +65,42 @@ class _SelectFeaturesInSceneLayerState extends State<SelectFeaturesInSceneLayer>
   }
 
   Future<void> onSceneViewReady() async {
-    // Create a scene with from the uri.
-    final scene = ArcGISScene.withUri(
-      Uri.parse(
-        'https://www.arcgis.com/home/item.html?id=31874da8a16d45bfbc1273422f772270',
+    // Create a scene with Topographic basemap.
+    final scene = ArcGISScene.withBasemapStyle(BasemapStyle.arcGISTopographic);
+
+    // Create camera with initial latitude and longitude (GBP College, Berlin).
+    final camera = Camera.withLatLong(
+      latitude: 52.52003000,
+      longitude: 13.40489000,
+      altitude: 200,
+      heading: 41.65,
+      pitch: 71.2,
+      roll: 0,
+    );
+
+    // Set the initial viewpoint to camera position at point.
+    _sceneViewController.setViewpoint(
+      Viewpoint.withExtentCamera(targetExtent: camera.location, camera: camera),
+    );
+
+    // Create a surface and add an elevation source.
+    final surface = Surface();
+    surface.elevationSources.add(
+      ArcGISTiledElevationSource.withUri(
+        Uri.parse(
+          'https://elevation3d.arcgis.com/arcgis/rest/services/WorldElevation3D/Terrain3D/ImageServer',
+        ),
       ),
     );
-    // Load the scene.
-    await scene!.load();
-    // Set the scene to ArcGISSceneViewController
-    _sceneViewController.arcGISScene = scene;
+    // Set the surface to scene.
+    scene.baseSurface = surface;
 
-    // Get the operational layers from ArcGISScene
-    final operationalLayers = scene.operationalLayers;
-    // There are two layers from the provided Berlin, Germany Scene. We need the ArcGISSceneLayer
-    _sceneLayer =
-        operationalLayers.firstWhere(
-              (layer) => layer.runtimeType == ArcGISSceneLayer,
-            )
-            as ArcGISSceneLayer;
+    await _sceneLayer.load();
+    // Add buildings scene layer to the scene.
+    scene.operationalLayers.add(_sceneLayer);
+
+    // Set the scene to scene view controller.
+    _sceneViewController.arcGISScene = scene;
 
     // Set the ready state variable to true to enable the sample UI.
     setState(() => _ready = true);
