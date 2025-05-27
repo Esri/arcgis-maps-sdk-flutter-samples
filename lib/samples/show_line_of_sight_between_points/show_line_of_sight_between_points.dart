@@ -93,7 +93,7 @@ class _ShowLineOfSightBetweenPointsState
   }
 
   Future<void> onSceneViewReady() async {
-    // Create a scene with a topographic basemap style.
+    // Create the scene for this sample and set it on the view controller.
     final scene = _setupScene();
     _sceneViewController.arcGISScene = scene;
 
@@ -109,21 +109,23 @@ class _ShowLineOfSightBetweenPointsState
   }
 
   void onTap(Offset offset) {
-    // Get the new origin point from the screen tap location.
-    final newOriginPoint = _sceneViewController.screenToBaseSurface(
+    // Get the new observer point from the screen tap offset.
+    final newObserverPoint = _sceneViewController.screenToBaseSurface(
       screen: offset,
     );
-    if (newOriginPoint == null) return;
+    // Return if a point could not be returned.
+    if (newObserverPoint == null) return;
 
     // Set the new origin point on the analysis object.
-    _locationLineOfSight.observerLocation = newOriginPoint;
+    _locationLineOfSight.observerLocation = newObserverPoint;
   }
 
   void onLongPressEnd(Offset offset) {
-    // Get the new target point from the location of the long press.
+    // Get the new target point from the long press offset.
     final newTargetPoint = _sceneViewController.screenToBaseSurface(
       screen: offset,
     );
+    // Return if a point could not be returned.
     if (newTargetPoint == null) return;
 
     // Set the new origin point on the analysis object.
