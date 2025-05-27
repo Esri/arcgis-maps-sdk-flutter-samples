@@ -31,16 +31,22 @@ class _ShowLineOfSightBetweenPointsState
   // Create a controller for the scene view.
   final _sceneViewController = ArcGISSceneView.createController();
 
-  // Origin location for the line-of-sight calculation.
-  ArcGISPoint? _originPoint;
-
-  // Target location for the line-of-sight calculation.
-  ArcGISPoint? _targetPoint;
-
-  // The AnalysisOverlay that will show the line-of-sight results.
-  final _analysisOverlay = AnalysisOverlay();
-
-  // final _locationLineOfSight = LocationLineOfSight(observerLocation: observerLocation, targetLocation: targetLocation)
+  // The LocationLineOfSight object that will provide line-of-sight analysis for this sample.
+  // The object is initialized with the starting observer and target locations.
+  final _locationLineOfSight = LocationLineOfSight(
+    observerLocation: ArcGISPoint(
+      x: -73.095827750063904,
+      y: -49.319214695380957,
+      z: 2697.4689045762643,
+      spatialReference: SpatialReference.wgs84,
+    ),
+    targetLocation: ArcGISPoint(
+      x: -73.125568047959803,
+      y: -49.347049722534479,
+      z: 1944.1079967124388,
+      spatialReference: SpatialReference.wgs84,
+    ),
+  );
 
   // A flag for when the scene view is ready and controls can be used.
   var _ready = false;
@@ -62,14 +68,18 @@ class _ShowLineOfSightBetweenPointsState
                     controllerProvider: () => _sceneViewController,
                     onSceneViewReady: onSceneViewReady,
                     onTap: onTap,
+                    onLongPressEnd: onLongPressEnd,
                   ),
                 ),
-                const Row(
+                const Column(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    Text(
-                      'The green line segment is visible from the origin point, the red segment is not.',
-                    ),
+                    Text('Tap to set new observation point.'),
+                    Text('Long press to set new target point.'),
+                    Divider(),
+                    Text('Green: Visible from the observation point.'),
+                    Text('Red: Not visible from the observation point.'),
+                    Text('Hiden: Segment is obscured by terrain.'),
                   ],
                 ),
               ],
@@ -87,15 +97,37 @@ class _ShowLineOfSightBetweenPointsState
     final scene = _setupScene();
     _sceneViewController.arcGISScene = scene;
 
-    // Add an AnalysisOverlay to the view controller
-    _sceneViewController.analysisOverlays.add(_analysisOverlay);
+    // Create an AnalysisOverlay and add the LocationLineOfSight object to it.
+    final analysisOverlay = AnalysisOverlay();
+    analysisOverlay.analyses.add(_locationLineOfSight);
+
+    // Add the AnalysisOverlay to the view controller.
+    _sceneViewController.analysisOverlays.add(analysisOverlay);
 
     // Set the ready state variable to true to enable the sample UI.
     setState(() => _ready = true);
   }
 
   void onTap(Offset offset) {
-    _originPoint = _sceneViewController.screenToBaseSurface(screen: offset);
+    // Get the new origin point from the screen tap location.
+    final newOriginPoint = _sceneViewController.screenToBaseSurface(
+      screen: offset,
+    );
+    if (newOriginPoint == null) return;
+
+    // Set the new origin point on the analysis object.
+    _locationLineOfSight.observerLocation = newOriginPoint;
+  }
+
+  void onLongPressEnd(Offset offset) {
+    // Get the new target point from the location of the long press.
+    final newTargetPoint = _sceneViewController.screenToBaseSurface(
+      screen: offset,
+    );
+    if (newTargetPoint == null) return;
+
+    // Set the new origin point on the analysis object.
+    _locationLineOfSight.targetLocation = newTargetPoint;
   }
 
   ArcGISScene _setupScene() {
@@ -108,9 +140,9 @@ class _ShowLineOfSightBetweenPointsState
       scale: 1,
       camera: Camera.withLookAtPoint(
         lookAtPoint: ArcGISPoint(
-          x: -73.0870,
-          y: -49.3460,
-          z: 5046,
+          x: -73.1094,
+          y: -49.3325,
+          z: 2210,
           spatialReference: SpatialReference.wgs84,
         ),
         distance: 10000,
