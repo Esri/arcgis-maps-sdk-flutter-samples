@@ -43,21 +43,16 @@ class _SelectFeaturesInSceneLayerState extends State<SelectFeaturesInSceneLayer>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        top: false,
-        left: false,
-        right: false,
-        child: Stack(
-          children: [
-            ArcGISSceneView(
-              controllerProvider: () => _sceneViewController,
-              onSceneViewReady: onSceneViewReady,
-              onTap: onTap,
-            ),
-            // Display a progress indicator and prevent interaction until state is ready.
-            LoadingIndicator(visible: !_ready),
-          ],
-        ),
+      body: Stack(
+        children: [
+          ArcGISSceneView(
+            controllerProvider: () => _sceneViewController,
+            onSceneViewReady: onSceneViewReady,
+            onTap: onTap,
+          ),
+          // Display a progress indicator and prevent interaction until state is ready.
+          LoadingIndicator(visible: !_ready),
+        ],
       ),
     );
   }
