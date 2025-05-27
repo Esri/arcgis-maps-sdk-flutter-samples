@@ -29,18 +29,16 @@ class _SelectFeaturesInSceneLayerState extends State<SelectFeaturesInSceneLayer>
     with SampleStateSupport {
   // Create a controller for the scene view.
   final _sceneViewController = ArcGISSceneView.createController();
+
   // Define an ArcGISSceneLayer.
   final _sceneLayer = ArcGISSceneLayer.withUri(
     Uri.parse(
-      'https://tiles.arcgis.com/tiles/P3ePLMYs2RVChkJx/arcgis/rest/services/Buildings_Berlin/SceneServer/layers/0',
+      'https://tiles.arcgis.com/tiles/P3ePLMYs2RVChkJx/arcgis/rest/services/Buildings_Brest/SceneServer/layers/0',
     ),
   );
 
-  // A flag for when the map view is ready and controls can be used.
+  // A flag for when the scene view is ready.
   var _ready = false;
-
-  // A flag to prevent multiple simultaneous identify operations.
-  var _isIdentifying = false;
 
   @override
   Widget build(BuildContext context) {
@@ -70,9 +68,9 @@ class _SelectFeaturesInSceneLayerState extends State<SelectFeaturesInSceneLayer>
 
     // Create camera with initial latitude and longitude (GBP College, Berlin).
     final camera = Camera.withLatLong(
-      latitude: 52.52003000,
-      longitude: 13.40489000,
-      altitude: 200,
+      latitude: 48.38282,
+      longitude: -4.49779,
+      altitude: 40,
       heading: 41.65,
       pitch: 71.2,
       roll: 0,
@@ -107,37 +105,24 @@ class _SelectFeaturesInSceneLayerState extends State<SelectFeaturesInSceneLayer>
   }
 
   Future<void> onTap(Offset offset) async {
-    // If an identify operation is already in progress, ignore this tap.
-    if (_isIdentifying) return;
+    // Clear any previously selected feature.
+    _sceneLayer.clearSelection();
 
-    // Set the flag to indicate an identify operation is in progress.
-    _isIdentifying = true;
+    // Identify feature at the tapped screen location.
+    final identifyLayerResult = await _sceneViewController.identifyLayer(
+      _sceneLayer,
+      screenPoint: offset,
+      tolerance: 22,
+    );
 
-    try {
-      // Clear any previously selected features.
-      _sceneLayer.clearSelection();
+    // From the resulting IdentifyLayerResult, get the list of identified GeoElements with result.geoElements.
+    final geoElements = identifyLayerResult.geoElements;
 
-      // Identify features at the tapped screen location.
-      final identifyLayerResult = await _sceneViewController.identifyLayer(
-        _sceneLayer,
-        screenPoint: offset,
-        tolerance: 22,
-      );
+    // Get the first element in the list, checking that it is a feature.
+    if (geoElements.isEmpty || geoElements.first is! ArcGISFeature) return;
 
-      // Filter the identified GeoElements to only include features.
-      final features =
-          identifyLayerResult.geoElements.whereType<Feature>().toList();
-
-      // If no features were identified, clear any existing selection.
-      if (features.isEmpty) {
-        _sceneLayer.clearSelection();
-      } else {
-        // Otherwise, select the identified features to highlight them.
-        _sceneLayer.selectFeatures(features);
-      }
-    } finally {
-      // Reset the flag to allow future identify operations.
-      _isIdentifying = false;
-    }
+    final feature = geoElements.first as ArcGISFeature;
+    // Call sceneLayer.selectFeature(feature) to select it.
+    _sceneLayer.selectFeature(feature);
   }
 }
