@@ -57,7 +57,16 @@ class _SelectFeaturesInSceneLayerState extends State<SelectFeaturesInSceneLayer>
     );
   }
 
-  Future<void> onSceneViewReady() async {
+  void onSceneViewReady() {
+    // Create a scene for this sample and set it on the the ArcGISSceneView controller.
+    final scene = _setupScene();
+    _sceneViewController.arcGISScene = scene;
+
+    // Set the ready state variable to true to enable the sample UI.
+    setState(() => _ready = true);
+  }
+
+  ArcGISScene _setupScene() {
     // Create a scene with Topographic basemap.
     final scene = ArcGISScene.withBasemapStyle(BasemapStyle.arcGISTopographic);
 
@@ -88,15 +97,10 @@ class _SelectFeaturesInSceneLayerState extends State<SelectFeaturesInSceneLayer>
     // Set the surface to scene.
     scene.baseSurface = surface;
 
-    await _sceneLayer.load();
     // Add buildings scene layer to the scene.
     scene.operationalLayers.add(_sceneLayer);
 
-    // Set the scene to scene view controller.
-    _sceneViewController.arcGISScene = scene;
-
-    // Set the ready state variable to true to enable the sample UI.
-    setState(() => _ready = true);
+    return scene;
   }
 
   Future<void> onTap(Offset offset) async {
