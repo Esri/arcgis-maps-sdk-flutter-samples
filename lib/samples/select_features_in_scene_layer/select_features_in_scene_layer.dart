@@ -40,6 +40,9 @@ class _SelectFeaturesInSceneLayerState extends State<SelectFeaturesInSceneLayer>
   // A flag for when the scene view is ready.
   var _ready = false;
 
+  // A flag to prevent multiple taps.
+  bool _isSelecting = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -104,24 +107,34 @@ class _SelectFeaturesInSceneLayerState extends State<SelectFeaturesInSceneLayer>
   }
 
   Future<void> onTap(Offset offset) async {
-    // Clear any previously selected feature.
-    _sceneLayer.clearSelection();
+    // Prevents multiple simultaneous selections.
+    if (_isSelecting) return;
 
-    // Identify feature at the tapped screen location.
-    final identifyLayerResult = await _sceneViewController.identifyLayer(
-      _sceneLayer,
-      screenPoint: offset,
-      tolerance: 22,
-    );
+    _isSelecting = true;
 
-    // From the resulting IdentifyLayerResult, get the list of identified GeoElements with result.geoElements.
-    final geoElements = identifyLayerResult.geoElements;
+    try {
+      // Clear any previously selected feature.
+      _sceneLayer.clearSelection();
 
-    // Get the first element in the list, checking that it is a feature.
-    if (geoElements.isEmpty || geoElements.first is! ArcGISFeature) return;
+      // Identify feature at the tapped screen location.
+      final identifyLayerResult = await _sceneViewController.identifyLayer(
+        _sceneLayer,
+        screenPoint: offset,
+        tolerance: 22,
+      );
 
-    final feature = geoElements.first as ArcGISFeature;
-    // Call sceneLayer.selectFeature(feature) to select it.
-    _sceneLayer.selectFeature(feature);
+      // From the resulting IdentifyLayerResult, get the list of identified GeoElements with result.geoElements.
+      final geoElements = identifyLayerResult.geoElements;
+
+      // Get the first element in the list, checking that it is a feature.
+      if (geoElements.isNotEmpty && geoElements.first is ArcGISFeature) {
+        final feature = geoElements.first as ArcGISFeature;
+        // Call sceneLayer.selectFeature(feature) to select it.
+        _sceneLayer.selectFeature(feature);
+      }
+    } finally {
+      // Release the lock after a feature is selected.
+      _isSelecting = false;
+    }
   }
 }
