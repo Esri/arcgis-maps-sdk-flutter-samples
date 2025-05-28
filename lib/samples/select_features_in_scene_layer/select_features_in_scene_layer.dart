@@ -61,8 +61,13 @@ class _SelectFeaturesInSceneLayerState extends State<SelectFeaturesInSceneLayer>
   }
 
   void onSceneViewReady() {
-    // Create a scene for this sample and set it on the the ArcGISSceneView controller.
+    // Create a scene for this sample.
     final scene = _setupScene();
+
+    // Add buildings scene layer to the scene.
+    scene.operationalLayers.add(_sceneLayer);
+
+    // Set it on the the ArcGISSceneView controller.
     _sceneViewController.arcGISScene = scene;
 
     // Set the ready state variable to true to enable the sample UI.
@@ -99,9 +104,6 @@ class _SelectFeaturesInSceneLayerState extends State<SelectFeaturesInSceneLayer>
     );
     // Set the surface to scene.
     scene.baseSurface = surface;
-
-    // Add buildings scene layer to the scene.
-    scene.operationalLayers.add(_sceneLayer);
 
     return scene;
   }
