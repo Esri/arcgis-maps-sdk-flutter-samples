@@ -48,7 +48,7 @@ class _ShowLineOfSightBetweenPointsState
     ),
   );
 
-  // A flag for when the scene view is ready and controls can be used.
+  // A flag for when the scene view is ready.
   var _ready = false;
 
   @override
@@ -79,7 +79,7 @@ class _ShowLineOfSightBetweenPointsState
                     Divider(),
                     Text('Green: Visible from the observation point.'),
                     Text('Red: Not visible from the observation point.'),
-                    Text('Hiden: Segment is obscured by terrain.'),
+                    Text('Hidden: Segment is obscured by terrain.'),
                   ],
                 ),
               ],
