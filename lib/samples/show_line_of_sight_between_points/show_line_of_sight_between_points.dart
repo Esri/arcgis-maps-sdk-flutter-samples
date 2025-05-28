@@ -92,7 +92,7 @@ class _ShowLineOfSightBetweenPointsState
     );
   }
 
-  Future<void> onSceneViewReady() async {
+  void onSceneViewReady() {
     // Create the scene for this sample and set it on the view controller.
     final scene = _setupScene();
     _sceneViewController.arcGISScene = scene;
