@@ -30,8 +30,40 @@ class _ShowViewshedFromPointInSceneState
     with SampleStateSupport {
   // Create a controller for the scene view.
   final _sceneViewController = ArcGISSceneView.createController();
+
+  // Viewshed state variables.
+  double _heading = 20;
+  double _pitch = 70;
+  double _horizontalAngle = 45;
+  double _verticalAngle = 90;
+  double _height = 100;
+  double _minDistance = 5;
+  double _maxDistance = 1000;
+  late final LocationViewshed _viewshed;
+
   // A flag for when the scene view is ready and controls can be used.
   var _ready = false;
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Initialze the viewshed.
+    _viewshed = LocationViewshed.withLocation(
+      location: ArcGISPoint(
+        x: -4.50,
+        y: 48.4,
+        z: _height,
+        spatialReference: SpatialReference.wgs84,
+      ),
+      heading: _heading,
+      pitch: _pitch,
+      horizontalAngle: _horizontalAngle,
+      verticalAngle: _verticalAngle,
+      minDistance: _minDistance,
+      maxDistance: _maxDistance,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -85,6 +117,13 @@ class _ShowViewshedFromPointInSceneState
 
     // Add scene to view controller.
     _sceneViewController.arcGISScene = scene;
+
+    // Create an analysis overlay and add the viewshed.
+    final analysisOverlay = AnalysisOverlay();
+    analysisOverlay.analyses.add(_viewshed);
+
+    // Add the AnalysisOverlay to the view controller.
+    _sceneViewController.analysisOverlays.add(analysisOverlay);
 
     // Set the ready state variable to true to enable the sample UI.
     setState(() => _ready = true);
