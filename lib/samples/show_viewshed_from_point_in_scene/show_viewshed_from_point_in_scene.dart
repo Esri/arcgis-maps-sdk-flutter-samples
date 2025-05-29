@@ -73,8 +73,17 @@ class _ShowViewshedFromPointInSceneState
   }
 
   Future<void> onSceneViewReady() async {
-    // Create a scene with a topographic basemap style.
-    final scene = ArcGISScene.withBasemapStyle(BasemapStyle.arcGISTopographic);
+    // Get scene with basemap, surface, and initial viewpoint.
+    final scene = _setupScene();
+
+    // Add a buildings scene layer
+    final buildingLayerUri = Uri.parse(
+      'https://tiles.arcgis.com/tiles/P3ePLMYs2RVChkJx/arcgis/rest/services/Buildings_Brest/SceneServer/layers/0',
+    );
+    final buildingsLayer = ArcGISSceneLayer.withUri(buildingLayerUri);
+    scene.operationalLayers.add(buildingsLayer);
+
+    // Add scene to view controller.
     _sceneViewController.arcGISScene = scene;
 
     // Set the ready state variable to true to enable the sample UI.
@@ -96,5 +105,41 @@ class _ShowViewshedFromPointInSceneState
     await Future.delayed(const Duration(seconds: 5));
 
     setState(() => _ready = true);
+  }
+
+  ArcGISScene _setupScene() {
+    // Create a scene with a topographic basemap style.
+    final scene = ArcGISScene.withBasemapStyle(BasemapStyle.arcGISImagery);
+
+    // Setup the initial viewpoint for the scene.
+    final camera = Camera.withLookAtPoint(
+      lookAtPoint: ArcGISPoint(
+        x: -4.50,
+        y: 48.4,
+        z: 100,
+        spatialReference: SpatialReference.wgs84,
+      ),
+      distance: 200,
+      heading: 20,
+      pitch: 70,
+      roll: 0,
+    );
+    scene.initialViewpoint = Viewpoint.withExtentCamera(
+      targetExtent: camera.location,
+      camera: camera,
+    );
+
+    // Add surface elevation to the scene.
+    final surface = Surface();
+    final worldElevationService = Uri.parse(
+      'https://elevation3d.arcgis.com/arcgis/rest/services/WorldElevation3D/Terrain3D/ImageServer',
+    );
+    final elevationSource = ArcGISTiledElevationSource.withUri(
+      worldElevationService,
+    );
+    surface.elevationSources.add(elevationSource);
+    scene.baseSurface = surface;
+
+    return scene;
   }
 }
