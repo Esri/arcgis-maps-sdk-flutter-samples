@@ -39,7 +39,10 @@ class _ShowViewshedFromPointInSceneState
   double _height = 100;
   double _minDistance = 5;
   double _maxDistance = 1000;
+  bool _showFrustum = false;
   late final LocationViewshed _viewshed;
+
+  bool _settingsVisible = false;
 
   // A flag for when the scene view is ready and controls can be used.
   var _ready = false;
@@ -89,8 +92,8 @@ class _ShowViewshedFromPointInSceneState
                   children: [
                     // A button to perform a task.
                     ElevatedButton(
-                      onPressed: performTask,
-                      child: const Text('Perform Task'),
+                      onPressed: () => setState(() => _settingsVisible = true),
+                      child: const Text('Settings'),
                     ),
                   ],
                 ),
@@ -101,6 +104,178 @@ class _ShowViewshedFromPointInSceneState
           ],
         ),
       ),
+      bottomSheet: _settingsVisible ? buildSettings(context) : null,
+    );
+  }
+
+  Widget buildSettings(BuildContext context) {
+    return BottomSheetSettings(
+      onCloseIconPressed: () => setState(() => _settingsVisible = false),
+      settingsWidgets:
+          (context) => [
+            SizedBox(
+              height: 250,
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    Table(
+                      // border: TableBorder.all(),
+                      columnWidths: const <int, TableColumnWidth>{
+                        0: FractionColumnWidth(0.25),
+                        1: FlexColumnWidth(),
+                        2: FixedColumnWidth(35),
+                      },
+                      defaultVerticalAlignment:
+                          TableCellVerticalAlignment.middle,
+                      children: [
+                        TableRow(
+                          children: [
+                            const Text('Heading:'),
+                            Slider(
+                              value: _heading,
+                              max: 360,
+                              label: _heading.round().toString(),
+                              onChanged: (value) {
+                                _viewshed.heading = value;
+                                setState(() => _heading = value);
+                              },
+                            ),
+                            Text(
+                              _heading.round().toString(),
+                              textAlign: TextAlign.end,
+                            ),
+                          ],
+                        ),
+                        TableRow(
+                          children: [
+                            const Text('Pitch:'),
+                            Slider(
+                              value: _pitch,
+                              max: 180,
+                              label: _pitch.round().toString(),
+                              onChanged: (value) {
+                                _viewshed.pitch = value;
+                                setState(() => _pitch = value);
+                              },
+                            ),
+                            Text(
+                              _pitch.round().toString(),
+                              textAlign: TextAlign.end,
+                            ),
+                          ],
+                        ),
+                        TableRow(
+                          children: [
+                            const Text('Horizontal angle:'),
+                            Slider(
+                              value: _horizontalAngle,
+                              max: 360,
+                              onChanged: (value) {
+                                _viewshed.horizontalAngle = value;
+                                setState(() => _horizontalAngle = value);
+                              },
+                            ),
+                            Text(
+                              _horizontalAngle.round().toString(),
+                              textAlign: TextAlign.end,
+                            ),
+                          ],
+                        ),
+                        TableRow(
+                          children: [
+                            const Text('Vertical angle:'),
+                            Slider(
+                              value: _verticalAngle,
+                              max: 360,
+                              onChanged: (value) {
+                                _viewshed.verticalAngle = value;
+                                setState(() => _verticalAngle = value);
+                              },
+                            ),
+                            Text(
+                              _verticalAngle.round().toString(),
+                              textAlign: TextAlign.end,
+                            ),
+                          ],
+                        ),
+                        TableRow(
+                          children: [
+                            const Text('Height:'),
+                            Slider(
+                              value: _height,
+                              min: 10,
+                              max: 300,
+                              onChanged: (value) {
+                                _viewshed.location = ArcGISPoint(
+                                  x: _viewshed.location.x,
+                                  y: _viewshed.location.y,
+                                  z: value,
+                                  spatialReference: SpatialReference.wgs84,
+                                );
+                                setState(() => _height = value);
+                              },
+                            ),
+                            Text(
+                              _height.round().toString(),
+                              textAlign: TextAlign.end,
+                            ),
+                          ],
+                        ),
+                        TableRow(
+                          children: [
+                            const Text('Min distance:'),
+                            Slider(
+                              value: _minDistance,
+                              max: 50,
+                              onChanged: (value) {
+                                _viewshed.minDistance = value;
+                                setState(() => _minDistance = value);
+                              },
+                            ),
+                            Text(
+                              _minDistance.round().toString(),
+                              textAlign: TextAlign.end,
+                            ),
+                          ],
+                        ),
+                        TableRow(
+                          children: [
+                            const Text('Max distance:'),
+                            Slider(
+                              value: _maxDistance,
+                              min: 100,
+                              max: 5000,
+                              onChanged: (value) {
+                                _viewshed.maxDistance = value;
+                                setState(() => _maxDistance = value);
+                              },
+                            ),
+                            Text(
+                              _maxDistance.round().toString(),
+                              textAlign: TextAlign.end,
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        const Text('Show frustum:'),
+                        const Spacer(),
+                        Switch(
+                          value: _showFrustum,
+                          onChanged: (value) {
+                            _viewshed.frustumOutlineVisible = value;
+                            setState(() => _showFrustum = value);
+                          },
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
     );
   }
 
