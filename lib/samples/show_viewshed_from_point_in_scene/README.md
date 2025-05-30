@@ -9,8 +9,9 @@ Perform a viewshed analysis from a defined vantage point.
 A 3D viewshed analysis is a type of visual analysis you can perform on a scene. The viewshed shows what can be seen from a given location. The output is an overlay with two different colors - one representing the visible areas (green) and the other representing the obstructed areas (red). Viewshed analysis is a form of "exploratory analysis", which means the results are calculated on the current scale of the data, and the results are generated very quickly. If more "conclusive" results are required, consider using a `GeoprocessingTask` to perform a viewshed instead.
 
 ## How to use the sample
+Tap a location on the map to change the location of the viewshed observation point.
 
-Use the sliders to change the properties (heading, pitch, etc.), of the viewshed and see them updated in real time. To move the viewshed, double touch and drag your finger across the screen. Lift your finger to stop moving the viewshed.
+Tap the "Settings" button at the bottom of the screen to show the controls to change the viewshed settings. The rendered viewshed will update in real time as the values are adjusted.
 
 ## How it works
 
