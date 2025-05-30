@@ -305,9 +305,19 @@ class _ShowViewshedFromPointInSceneState
   }
 
   void onTap(Offset offset) {
-    // Do something with a tap.
-    // ignore: avoid_print
-    print('Tapped at $offset');
+    final tapLocation = _sceneViewController.screenToBaseSurface(
+      screen: offset,
+    );
+    if (tapLocation == null) return;
+
+    // Set the new viewshed location using the x and y values from the tap point
+    // and the current viewshed height.
+    _viewshed.location = ArcGISPoint(
+      x: tapLocation.x,
+      y: tapLocation.y,
+      z: _height,
+      spatialReference: SpatialReference.wgs84,
+    );
   }
 
   Future<void> performTask() async {
