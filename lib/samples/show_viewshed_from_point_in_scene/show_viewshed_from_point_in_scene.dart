@@ -320,17 +320,6 @@ class _ShowViewshedFromPointInSceneState
     );
   }
 
-  Future<void> performTask() async {
-    setState(() => _ready = false);
-
-    // Perform some task.
-    // ignore: avoid_print
-    print('Perform task');
-    await Future.delayed(const Duration(seconds: 5));
-
-    setState(() => _ready = true);
-  }
-
   ArcGISScene _setupScene() {
     // Create a scene with a topographic basemap style.
     final scene = ArcGISScene.withBasemapStyle(BasemapStyle.arcGISImagery);
