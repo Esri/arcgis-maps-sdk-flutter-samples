@@ -31,6 +31,9 @@ class _ShowViewshedFromPointInSceneState
   // Create a controller for the scene view.
   final _sceneViewController = ArcGISSceneView.createController();
 
+  // A flag indicating whether to show the settings bottom sheet.
+  bool _settingsVisible = false;
+
   // Viewshed state variables.
   double _heading = 20;
   double _pitch = 70;
@@ -41,8 +44,6 @@ class _ShowViewshedFromPointInSceneState
   double _maxDistance = 1000;
   bool _showFrustum = false;
   late final LocationViewshed _viewshed;
-
-  bool _settingsVisible = false;
 
   // A flag for when the scene view is ready and controls can be used.
   var _ready = false;
@@ -109,6 +110,7 @@ class _ShowViewshedFromPointInSceneState
   }
 
   Widget buildSettings(BuildContext context) {
+    // Create the BottomSheet containing the viewshed adjustment controls.
     return BottomSheetSettings(
       onCloseIconPressed: () => setState(() => _settingsVisible = false),
       settingsWidgets:
@@ -119,7 +121,6 @@ class _ShowViewshedFromPointInSceneState
                 child: Column(
                   children: [
                     Table(
-                      // border: TableBorder.all(),
                       columnWidths: const <int, TableColumnWidth>{
                         0: FractionColumnWidth(0.25),
                         1: FlexColumnWidth(),
