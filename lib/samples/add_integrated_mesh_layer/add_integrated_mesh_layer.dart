@@ -36,7 +36,7 @@ class _AddIntegratedMeshLayerState extends State<AddIntegratedMeshLayer>
     ),
   );
 
-  // A flag for when the map view is ready and controls can be used.
+  // A flag for when the scene view is ready.
   var _ready = false;
 
   @override
@@ -68,7 +68,7 @@ class _AddIntegratedMeshLayerState extends State<AddIntegratedMeshLayer>
 
   Future<ArcGISScene> _setupScene() async {
     // Create a scene.
-    final scene = ArcGISScene.withBasemapStyle(BasemapStyle.arcGISTopographic);
+    final scene = ArcGISScene.withBasemapStyle(BasemapStyle.arcGISImageryStandard);
 
     //Create a Viewpoint for camera.
     final camera = Camera.withLatLong(
@@ -79,6 +79,13 @@ class _AddIntegratedMeshLayerState extends State<AddIntegratedMeshLayer>
       pitch: 65,
       roll: 0,
     );
+
+    const elevationUrl = 'https://elevation3d.arcgis.com/arcgis/rest/services/WorldElevation3D/Terrain3D/ImageServer';
+
+    //  // Create and use an elevation surface to show terrain.
+    final surface = Surface();
+    surface.elevationSources.add(ArcGISTiledElevationSource.withUri(Uri.parse(elevationUrl)));
+    scene.baseSurface = surface;
 
     await _integratedMeshLayer.load();
     // Get the extent form the mesh layer envelope.
