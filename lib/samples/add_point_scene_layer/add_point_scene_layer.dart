@@ -33,14 +33,6 @@ class _AddPointSceneLayerState extends State<AddPointSceneLayer>
   // A flag for when the scene view is ready and controls can be used.
   var _ready = false;
 
-  late StreamSubscription<LoadStatus> _loadStatusSubscription;
-
-  @override
-  void dispose() {
-    super.dispose();
-    _loadStatusSubscription.cancel();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -83,12 +75,8 @@ class _AddPointSceneLayerState extends State<AddPointSceneLayer>
       ),
     );
     scene.operationalLayers.add(pointSceneLayer);
-    _loadStatusSubscription = pointSceneLayer.onLoadStatusChanged.listen((
-      status,
-    ) {
-      if (status == LoadStatus.loaded) {
-        setState(() => _ready = true);
-      }
+    pointSceneLayer.load().then((_) {
+      setState(() => _ready = true);
     });
   }
 }
