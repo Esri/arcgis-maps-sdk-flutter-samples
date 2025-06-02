@@ -45,7 +45,7 @@ class _DisplayWebSceneFromPortalItemState
             Column(
               children: [
                 Expanded(
-                  // Add scene view to the widget tree and set a controller.
+                  // Add the scene view to the widget tree and set a controller.
                   child: ArcGISSceneView(
                     controllerProvider: () => _sceneViewController,
                     onSceneViewReady: onSceneViewReady,
@@ -61,8 +61,8 @@ class _DisplayWebSceneFromPortalItemState
     );
   }
 
-  Future<void> onSceneViewReady() async {
-    // Geneva, Switzerland Scene.
+  void onSceneViewReady() {
+    // Load the scene in the area of Geneva, Switzerland.
     _sceneViewController.arcGISScene = ArcGISScene.withItem(
       PortalItem.withPortalAndItemId(
         portal: Portal.arcGISOnline(),
