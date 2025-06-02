@@ -30,35 +30,56 @@ class _DisplayWebSceneFromPortalItemState
     with SampleStateSupport {
   // Create a controller for the scene view.
   final _sceneViewController = ArcGISSceneView.createController();
+  // A flag for when the scene view is ready and controls can be used.
+  var _ready = false;
+
+  @override
+  void initState() {
+    //ArcGISEnvironment.apiKey = '';
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(
-        children: [
-          Column(
-            children: [
-              Expanded(
-                // Add the scene view to the widget tree and set a controller.
-                child: ArcGISSceneView(
-                  controllerProvider: () => _sceneViewController,
-                  onSceneViewReady: onSceneViewReady,
+          children: [
+            Column(
+              children: [
+                Expanded(
+                  // Add the scene view to the widget tree and set a controller.
+                  child: ArcGISSceneView(
+                    controllerProvider: () => _sceneViewController,
+                    onSceneViewReady: onSceneViewReady,
+                  ),
                 ),
-              ),
-            ],
-          ),
-        ],
-      ),
+              ],
+            ),
+            // Display a progress indicator and prevent interaction until state is ready.
+            LoadingIndicator(visible: !_ready),
+          ],
+        ),
     );
   }
 
   void onSceneViewReady() {
     // Load the scene in the area of Geneva, Switzerland.
-    _sceneViewController.arcGISScene = ArcGISScene.withItem(
+    final scene = ArcGISScene.withItem(
       PortalItem.withPortalAndItemId(
         portal: Portal.arcGISOnline(),
         itemId: 'c6f90b19164c4283884361005faea852',
       ),
     );
+    _sceneViewController.arcGISScene = scene;
+
+    scene.load().then((_) {
+      // Set the initial viewpoint to the scene's extent
+      for (final layer in scene.operationalLayers) {
+        print('Layer: ${layer.runtimeType}, name: ${layer.name}');
+      }
+      setState(() => _ready = true);
+    });
+
+    
   }
 }
