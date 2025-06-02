@@ -30,8 +30,6 @@ class _DisplayWebSceneFromPortalItemState
     with SampleStateSupport {
   // Create a controller for the scene view.
   final _sceneViewController = ArcGISSceneView.createController();
-  // A flag for when the scene view is ready and controls can be used.
-  var _ready = false;
 
   @override
   void initState() {
@@ -55,13 +53,12 @@ class _DisplayWebSceneFromPortalItemState
                 ),
               ],
             ),
-            // Display a progress indicator and prevent interaction until state is ready.
-            LoadingIndicator(visible: !_ready),
           ],
         ),
     );
   }
 
+  // Called when the scene view is ready to display a scene.
   void onSceneViewReady() {
     // Load the scene in the area of Geneva, Switzerland.
     final scene = ArcGISScene.withItem(
@@ -70,16 +67,7 @@ class _DisplayWebSceneFromPortalItemState
         itemId: 'c6f90b19164c4283884361005faea852',
       ),
     );
+
     _sceneViewController.arcGISScene = scene;
-
-    scene.load().then((_) {
-      // Set the initial viewpoint to the scene's extent
-      for (final layer in scene.operationalLayers) {
-        print('Layer: ${layer.runtimeType}, name: ${layer.name}');
-      }
-      setState(() => _ready = true);
-    });
-
-    
   }
 }
