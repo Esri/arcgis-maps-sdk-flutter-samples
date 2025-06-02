@@ -55,13 +55,11 @@ class _DisplayWebSceneFromPortalItemState
   // Called when the scene view is ready to display a scene.
   void onSceneViewReady() {
     // Load the scene in the area of Geneva, Switzerland.
-    final scene = ArcGISScene.withItem(
+    _sceneViewController.arcGISScene = ArcGISScene.withItem(
       PortalItem.withPortalAndItemId(
         portal: Portal.arcGISOnline(),
         itemId: 'c6f90b19164c4283884361005faea852',
       ),
     );
-
-    _sceneViewController.arcGISScene = scene;
   }
 }
