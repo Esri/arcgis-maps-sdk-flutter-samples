@@ -29,13 +29,6 @@ class _AddIntegratedMeshLayerState extends State<AddIntegratedMeshLayer>
   // Create a controller for the scene view.
   final _sceneViewController = ArcGISSceneView.createController();
 
-  // Create an IntegratedMeshLayer with the URI to an integrated mesh layer scene service.
-  final _integratedMeshLayer = IntegratedMeshLayer.withUri(
-    Uri.parse(
-      'https://tiles.arcgis.com/tiles/z2tnIkrLQ2BRzr6P/arcgis/rest/services/Girona_Spain/SceneServer',
-    ),
-  );
-
   // A flag for when the scene view is ready.
   var _ready = false;
 
@@ -56,19 +49,33 @@ class _AddIntegratedMeshLayerState extends State<AddIntegratedMeshLayer>
   }
 
   Future<void> onSceneViewReady() async {
+    // Create an IntegratedMeshLayer with the URI to an integrated mesh layer scene service.
+    final integratedMeshLayer = IntegratedMeshLayer.withUri(
+      Uri.parse(
+        'https://tiles.arcgis.com/tiles/z2tnIkrLQ2BRzr6P/arcgis/rest/services/Girona_Spain/SceneServer',
+      ),
+    );
+
+    await integratedMeshLayer.load();
+
+    // Get the extent from the mesh layer envelope.
+    final extent = integratedMeshLayer.fullExtent;
+
     // Create a scene.
-    final scene = await _setupScene();
+    final scene = _setupScene(extent!);
 
     // Add the layer to the scene's operational layers.
-    scene.operationalLayers.add(_integratedMeshLayer);
+    scene.operationalLayers.add(integratedMeshLayer);
     _sceneViewController.arcGISScene = scene;
 
     setState(() => _ready = true);
   }
 
-  Future<ArcGISScene> _setupScene() async {
+  ArcGISScene _setupScene(Geometry extent) {
     // Create a scene.
-    final scene = ArcGISScene.withBasemapStyle(BasemapStyle.arcGISImageryStandard);
+    final scene = ArcGISScene.withBasemapStyle(
+      BasemapStyle.arcGISImageryStandard,
+    );
 
     //Create a Viewpoint for camera.
     final camera = Camera.withLatLong(
@@ -80,20 +87,19 @@ class _AddIntegratedMeshLayerState extends State<AddIntegratedMeshLayer>
       roll: 0,
     );
 
-    const elevationUrl = 'https://elevation3d.arcgis.com/arcgis/rest/services/WorldElevation3D/Terrain3D/ImageServer';
+    const elevationUrl =
+        'https://elevation3d.arcgis.com/arcgis/rest/services/WorldElevation3D/Terrain3D/ImageServer';
 
-    //  // Create and use an elevation surface to show terrain.
+    // Create and use an elevation surface to show terrain.
     final surface = Surface();
-    surface.elevationSources.add(ArcGISTiledElevationSource.withUri(Uri.parse(elevationUrl)));
+    surface.elevationSources.add(
+      ArcGISTiledElevationSource.withUri(Uri.parse(elevationUrl)),
+    );
     scene.baseSurface = surface;
-
-    await _integratedMeshLayer.load();
-    // Get the extent form the mesh layer envelope.
-    final extent = _integratedMeshLayer.fullExtent;
 
     // Set controller viewpoint to camera.
     _sceneViewController.setViewpoint(
-      Viewpoint.withExtentCamera(targetExtent: extent!, camera: camera),
+      Viewpoint.withExtentCamera(targetExtent: extent, camera: camera),
     );
     return scene;
   }
