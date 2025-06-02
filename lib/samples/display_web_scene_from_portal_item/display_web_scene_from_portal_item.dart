@@ -32,12 +32,6 @@ class _DisplayWebSceneFromPortalItemState
   final _sceneViewController = ArcGISSceneView.createController();
 
   @override
-  void initState() {
-    //ArcGISEnvironment.apiKey = '';
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(
