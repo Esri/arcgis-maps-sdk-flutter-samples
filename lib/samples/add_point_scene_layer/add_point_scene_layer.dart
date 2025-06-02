@@ -44,31 +44,27 @@ class _AddPointSceneLayerState extends State<AddPointSceneLayer>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        top: false,
-        left: false,
-        right: false,
-        child: Stack(
-          children: [
-            Column(
-              children: [
-                Expanded(
-                  // Add a scene view to the widget tree and set a controller.
-                  child: ArcGISSceneView(
-                    controllerProvider: () => _sceneViewController,
-                    onSceneViewReady: onSceneViewReady,
-                  ),
+      body: Stack(
+        children: [
+          Column(
+            children: [
+              Expanded(
+                // Add a scene view to the widget tree and set a controller.
+                child: ArcGISSceneView(
+                  controllerProvider: () => _sceneViewController,
+                  onSceneViewReady: onSceneViewReady,
                 ),
-              ],
-            ),
-            // Display a progress indicator and prevent interaction until state is ready.
-            LoadingIndicator(visible: !_ready),
-          ],
-        ),
+              ),
+            ],
+          ),
+          // Display a progress indicator and prevent interaction until state is ready.
+          LoadingIndicator(visible: !_ready),
+        ],
       ),
     );
   }
 
+  // Called when the scene view is ready to be used.
   void onSceneViewReady() {
     final scene = ArcGISScene.withBasemapStyle(BasemapStyle.arcGISImagery);
     _sceneViewController.arcGISScene = scene;
@@ -77,9 +73,8 @@ class _AddPointSceneLayerState extends State<AddPointSceneLayer>
         'https://elevation3d.arcgis.com/arcgis/rest/services/WorldElevation3D/Terrain3D/ImageServer',
       ),
     );
-    final surface = Surface()
-      ..elevationSources.add(elevationSource);
-      
+    final surface = Surface()..elevationSources.add(elevationSource);
+
     scene.baseSurface = surface;
     // Add a point scene layer to the scene.
     final pointSceneLayer = ArcGISSceneLayer.withUri(
@@ -88,7 +83,9 @@ class _AddPointSceneLayerState extends State<AddPointSceneLayer>
       ),
     );
     scene.operationalLayers.add(pointSceneLayer);
-    _loadStatusSubscription = pointSceneLayer.onLoadStatusChanged.listen((status) {
+    _loadStatusSubscription = pointSceneLayer.onLoadStatusChanged.listen((
+      status,
+    ) {
       if (status == LoadStatus.loaded) {
         setState(() => _ready = true);
       }
