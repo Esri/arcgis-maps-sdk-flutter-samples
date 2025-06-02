@@ -30,33 +30,24 @@ class _DisplayWebSceneFromPortalItemState
     with SampleStateSupport {
   // Create a controller for the scene view.
   final _sceneViewController = ArcGISSceneView.createController();
-  // A flag for when the scene view is ready and controls can be used.
-  var _ready = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        top: false,
-        left: false,
-        right: false,
-        child: Stack(
-          children: [
-            Column(
-              children: [
-                Expanded(
-                  // Add the scene view to the widget tree and set a controller.
-                  child: ArcGISSceneView(
-                    controllerProvider: () => _sceneViewController,
-                    onSceneViewReady: onSceneViewReady,
-                  ),
+      body: Stack(
+        children: [
+          Column(
+            children: [
+              Expanded(
+                // Add the scene view to the widget tree and set a controller.
+                child: ArcGISSceneView(
+                  controllerProvider: () => _sceneViewController,
+                  onSceneViewReady: onSceneViewReady,
                 ),
-              ],
-            ),
-            // Display a progress indicator and prevent interaction until state is ready.
-            LoadingIndicator(visible: !_ready),
-          ],
-        ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
@@ -69,8 +60,5 @@ class _DisplayWebSceneFromPortalItemState
         itemId: 'c6f90b19164c4283884361005faea852',
       ),
     );
-
-    // Set the ready state variable to true to enable the sample UI.
-    setState(() => _ready = true);
   }
 }
