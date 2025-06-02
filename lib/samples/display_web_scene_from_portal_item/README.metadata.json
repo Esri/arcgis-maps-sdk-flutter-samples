@@ -6,12 +6,12 @@
         "display_web_scene_from_portal_item.png"
     ],
     "keywords": [
-        "ArcGISScene",
-        "ArcGISSceneView",
-        "PortalItem",
         "portal",
         "scene",
-        "web scene"
+        "web scene",
+        "ArcGISScene",
+        "ArcGISSceneView",
+        "PortalItem"
     ],
     "redirect_from": [],
     "relevant_apis": [
