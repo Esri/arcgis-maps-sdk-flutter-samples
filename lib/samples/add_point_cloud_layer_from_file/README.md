@@ -2,7 +2,7 @@
 
 Display local 3D point cloud data.
 
-![Image of add point cloud layer from file](AddPointCloudLayerFromFile.png)
+![Image of add point cloud layer from file](add_point_cloud_layer_from_file.png)
 
 ## Use case
 
