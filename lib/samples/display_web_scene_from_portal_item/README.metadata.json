@@ -6,18 +6,18 @@
         "display_web_scene_from_portal_item.png"
     ],
     "keywords": [
+        "ArcGISScene",
+        "ArcGISSceneView",
+        "PortalItem",
         "portal",
         "scene",
-        "web scene",
-        "ArcGISScene",
-        "PortalItem",
-        "ArcGISSceneView"
+        "web scene"
     ],
     "redirect_from": [],
     "relevant_apis": [
         "ArcGISScene",
-        "PortalItem",
-        "ArcGISSceneView"
+        "ArcGISSceneView",
+        "PortalItem"
     ],
     "snippets": [
         "display_web_scene_from_portal_item.dart"

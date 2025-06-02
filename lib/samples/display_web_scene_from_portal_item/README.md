@@ -23,8 +23,8 @@ To open a web scene from a portal item:
 ## Relevant API
 
 * ArcGISScene
-* PortalItem
 * ArcGISSceneView
+* PortalItem
 
 ## About the data
 
