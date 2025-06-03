@@ -64,7 +64,7 @@ class _AddPointCloudLayerFromFileState extends State<AddPointCloudLayerFromFile>
     // Add the point cloud layer to the map's operational layers.
     scene.operationalLayers.add(pointCloudLayer);
 
-    // Add scene (with an imagery basemap) to the scene view's scene property.
+    // Add the scene to the scene view's scene property.
     _sceneViewController.arcGISScene = scene;
 
     // Create a new surface.
