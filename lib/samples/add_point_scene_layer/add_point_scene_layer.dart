@@ -13,8 +13,6 @@
 // limitations under the License.
 //
 
-import 'dart:async';
-
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
@@ -58,23 +56,20 @@ class _AddPointSceneLayerState extends State<AddPointSceneLayer>
 
   // Called when the scene view is ready to be used.
   void onSceneViewReady() {
+    // Create a scene with the imagery basemap style.
     final scene = ArcGISScene.withBasemapStyle(BasemapStyle.arcGISImagery);
+    // Set the scene to the scene view controller.
     _sceneViewController.arcGISScene = scene;
-    final elevationSource = ArcGISTiledElevationSource.withUri(
-      Uri.parse(
-        'https://elevation3d.arcgis.com/arcgis/rest/services/WorldElevation3D/Terrain3D/ImageServer',
-      ),
-    );
-    final surface = Surface()..elevationSources.add(elevationSource);
 
-    scene.baseSurface = surface;
-    // Add a point scene layer to the scene.
+    // Create a point scene layer with a URL to the airport point service.
     final pointSceneLayer = ArcGISSceneLayer.withUri(
       Uri.parse(
         'https://tiles.arcgis.com/tiles/V6ZHFr6zdgNZuVG0/arcgis/rest/services/Airports_PointSceneLayer/SceneServer/layers/0',
       ),
     );
+    // Add the point scene layer to the scene.
     scene.operationalLayers.add(pointSceneLayer);
+    // Disable the loading indicator when the layer is loaded.
     pointSceneLayer.load().then((_) {
       setState(() => _ready = true);
     });
