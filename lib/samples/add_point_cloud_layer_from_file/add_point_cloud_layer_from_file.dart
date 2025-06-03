@@ -53,10 +53,9 @@ class _AddPointCloudLayerFromFileState extends State<AddPointCloudLayerFromFile>
   }
 
   Future<void> onSceneViewReady() async {
-    // Create a scene with the imagery standard basemap style.
-    final scene = ArcGISScene.withBasemapStyle(
-      BasemapStyle.arcGISImageryStandard,
-    );
+    // Add the scene to the view controller.
+    final scene = _setupScene();
+    _sceneViewController.arcGISScene = scene;
 
     // Load the point cloud layer.
     final pointCloudLayer = await loadCloudPointLayerFromFile();
@@ -67,40 +66,40 @@ class _AddPointCloudLayerFromFileState extends State<AddPointCloudLayerFromFile>
     // Add the scene to the scene view's scene property.
     _sceneViewController.arcGISScene = scene;
 
-    // Create a new surface.
-    final surface = Surface();
-
-    // Create a Uri from the elevation image service.
-    final myUri = Uri.parse(
-      'https://elevation3d.arcgis.com/arcgis/rest/services/WorldElevation3D/Terrain3D/ImageServer',
-    );
-
-    // Create an ArcGIS tiled elevation.
-    final arcGISTiledElevationSource = ArcGISTiledElevationSource.withUri(
-      myUri,
-    );
-
-    // Add the ArcGIS tiled elevation source to the surface's elevated sources collection.
-    surface.elevationSources.add(arcGISTiledElevationSource);
-
-    // Set the scene's base surface to the surface with the ArcGIS tiled elevation source.
-    scene.baseSurface = surface;
-
-    // Initially centers the scene's camera on the point cloud layer.
-    final camera = Camera.withLatLong(
-      latitude: 32.720195,
-      longitude: -117.155593,
-      altitude: 1050,
-      heading: 23,
-      pitch: 70,
-      roll: 0,
-    );
-
-    // Set the scene view's camera position.
-    await _sceneViewController.setViewpointCameraAnimated(camera: camera);
-
     // Set the ready state variable to true to enable the sample UI.
     setState(() => _ready = true);
+  }
+
+  ArcGISScene _setupScene() {
+    // Create a scene with an imagery basemap style.
+    final scene = ArcGISScene.withBasemapStyle(BasemapStyle.arcGISImagery);
+
+    // Set the scene's initial viewpoint.
+    scene.initialViewpoint = Viewpoint.withPointScaleCamera(
+      center: ArcGISPoint(x: 0, y: 0),
+      scale: 1,
+      camera: Camera.withLatLong(
+        latitude: 32.720195,
+        longitude: -117.155593,
+        altitude: 1050,
+        heading: 23,
+        pitch: 70,
+        roll: 0,
+      ),
+    );
+
+    // Add surface elevation to the scene.
+    final surface = Surface();
+    final worldElevationService = Uri.parse(
+      'https://elevation3d.arcgis.com/arcgis/rest/services/WorldElevation3D/Terrain3D/ImageServer',
+    );
+    final elevationSource = ArcGISTiledElevationSource.withUri(
+      worldElevationService,
+    );
+    surface.elevationSources.add(elevationSource);
+    scene.baseSurface = surface;
+
+    return scene;
   }
 
   Future<PointCloudLayer> loadCloudPointLayerFromFile() async {
