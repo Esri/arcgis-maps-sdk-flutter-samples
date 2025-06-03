@@ -33,7 +33,7 @@ class _AddPointCloudLayerFromFileState extends State<AddPointCloudLayerFromFile>
   // Create a controller for the scene view.
   final _sceneViewController = ArcGISSceneView.createController();
 
-  // A flag for when the map view is ready and controls can be used.
+  // A flag for when the scene view is ready.
   var _ready = false;
 
   @override
