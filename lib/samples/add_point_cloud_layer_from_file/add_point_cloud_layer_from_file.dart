@@ -33,7 +33,7 @@ class _AddPointCloudLayerFromFileState extends State<AddPointCloudLayerFromFile>
   // Create a controller for the scene view.
   final _sceneViewController = ArcGISSceneView.createController();
 
-  // A flag for when the scene view is ready and controls can be used.
+  // A flag for when the scene view is ready.
   var _ready = false;
 
   @override
@@ -61,10 +61,10 @@ class _AddPointCloudLayerFromFileState extends State<AddPointCloudLayerFromFile>
     // Load the point cloud layer.
     final pointCloudLayer = await loadCloudPointLayerFromFile();
 
-    // Add the point cloud layer to the scene's operational layers.
+    // Add the point cloud layer to the map's operational layers.
     scene.operationalLayers.add(pointCloudLayer);
 
-    // Add scene (with an imagery basemap) to the scene view's scene property.
+    // Add the scene to the scene view's scene property.
     _sceneViewController.arcGISScene = scene;
 
     // Create a new surface.
