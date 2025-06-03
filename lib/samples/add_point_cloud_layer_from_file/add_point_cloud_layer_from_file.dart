@@ -33,7 +33,7 @@ class _AddPointCloudLayerFromFileState extends State<AddPointCloudLayerFromFile>
   // Create a controller for the scene view.
   final _sceneViewController = ArcGISSceneView.createController();
 
-  // A flag for when the map view is ready and controls can be used.
+  // A flag for when the scene view is ready and controls can be used.
   var _ready = false;
 
   @override
@@ -61,7 +61,7 @@ class _AddPointCloudLayerFromFileState extends State<AddPointCloudLayerFromFile>
     // Load the point cloud layer.
     final pointCloudLayer = await loadCloudPointLayerFromFile();
 
-    // Add the point cloud layer to the map's operational layers.
+    // Add the point cloud layer to the scene's operational layers.
     scene.operationalLayers.add(pointCloudLayer);
 
     // Add scene (with an imagery basemap) to the scene view's scene property.
@@ -86,7 +86,7 @@ class _AddPointCloudLayerFromFileState extends State<AddPointCloudLayerFromFile>
     // Set the scene's base surface to the surface with the ArcGIS tiled elevation source.
     scene.baseSurface = surface;
 
-    // Create camera with an initial camera position (Mount Everest in the Alps mountains).
+    // Initially centers the scene's camera on the point cloud layer.
     final camera = Camera.withLatLong(
       latitude: 32.720195,
       longitude: -117.155593,
