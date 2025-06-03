@@ -34,21 +34,11 @@ class _DisplayWebSceneFromPortalItemState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-          children: [
-            Column(
-              children: [
-                Expanded(
-                  // Add the scene view to the widget tree and set a controller.
-                  child: ArcGISSceneView(
-                    controllerProvider: () => _sceneViewController,
-                    onSceneViewReady: onSceneViewReady,
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
+      // Add the scene view to the body of the scaffold and set a controller.
+      body: ArcGISSceneView(
+        controllerProvider: () => _sceneViewController,
+        onSceneViewReady: onSceneViewReady,
+      ),
     );
   }
 
