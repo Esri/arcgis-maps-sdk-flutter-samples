@@ -1,0 +1,26 @@
+{
+    "category": "Scenes",
+    "description": "Open a web scene from a portal item.",
+    "ignore": false,
+    "images": [
+        "display_web_scene_from_portal_item.png"
+    ],
+    "keywords": [
+        "portal",
+        "scene",
+        "web scene",
+        "ArcGISScene",
+        "ArcGISSceneView",
+        "PortalItem"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+        "ArcGISScene",
+        "ArcGISSceneView",
+        "PortalItem"
+    ],
+    "snippets": [
+        "display_web_scene_from_portal_item.dart"
+    ],
+    "title": "Display web scene from portal item"
+}
