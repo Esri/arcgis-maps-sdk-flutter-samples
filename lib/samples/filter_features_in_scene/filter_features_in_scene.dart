@@ -51,7 +51,7 @@ class _FilterFeaturesInSceneState extends State<FilterFeaturesInScene>
   late Geometry _sceneLayerExtentPolygon;
 
   // A state for filtering features in a scene.
-  SceneFilterAction _sceneFilterAction = SceneFilterAction.load;
+  SceneFilterAction _sceneFilterAction = SceneFilterAction.filter;
 
   @override
   Widget build(BuildContext context) {
@@ -101,6 +101,8 @@ class _FilterFeaturesInSceneState extends State<FilterFeaturesInScene>
     _sceneViewController.graphicsOverlays.add(_sfGraphicsOverlay);
 
     _createAndFilterPolygon();
+
+    addBuildings();
 
     setState(() => _ready = true);
   }
