@@ -29,11 +29,7 @@ void main() {
   const apiKey = String.fromEnvironment('API_KEY');
   // Alternatively, replace the above line with the following and hard-code your apiKey here:
   // const apiKey = ''; // Your API Key here.
-  if (apiKey.isEmpty) {
-    throw Exception('apiKey undefined');
-  } else {
-    ArcGISEnvironment.apiKey = apiKey;
-  }
+  ArcGISEnvironment.apiKey = apiKey;
 
   runApp(
     MaterialApp(

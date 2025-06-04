@@ -25,11 +25,7 @@ void main() {
   const apiKey = String.fromEnvironment('API_KEY');
   // Alternatively, replace the above line with the following and hard-code your apiKey here:
   // const apiKey = ''; // Your API Key here.
-  if (apiKey.isEmpty) {
-    throw Exception('apiKey undefined');
-  } else {
-    ArcGISEnvironment.apiKey = apiKey;
-  }
+  ArcGISEnvironment.apiKey = apiKey;
 
   // Supply the directory name of a sample via the --dart-define command line argument
   // e.g. --dart-define=SAMPLE=display_map
