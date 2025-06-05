@@ -39,17 +39,19 @@ class _FilterFeaturesInSceneState extends State<FilterFeaturesInScene>
   final _sanFranciscoBuildings =
       'https://tiles.arcgis.com/tiles/z2tnIkrLQ2BRzr6P/arcgis/rest/services/SanFrancisco_Bldgs/SceneServer';
 
+  // San Francisco buildings scene layer for the sample.
   late ArcGISSceneLayer _sfBuildingsSceneLayer;
+  // Open Street Map buildings scene layer for the sample.
   late ArcGISSceneLayer _osmBuildingsSceneLayer;
 
-  late SceneLayerPolygonFilter _sceneLayerPolygonFilter;
-  // Graphic to get San Francisco's information.
+  // A Graphic to get San Francisco's information.
   Graphic _sfGraphic = Graphic();
-  // Graphics overlay to present the graphic for the sample.
+  // A Graphics overlay to present the graphic for the sample.
   final _sfGraphicsOverlay = GraphicsOverlay();
-
+  // A Polygon geometry that represents the San Francisco buildings scene layer full extent.
   late Geometry _sceneLayerExtentPolygon;
-
+  // A filter that limits the visible features of the scene layer.
+  late SceneLayerPolygonFilter _sceneLayerPolygonFilter;
   // A state for filtering features in a scene.
   SceneFilterAction _sceneFilterAction = SceneFilterAction.filter;
 
@@ -102,7 +104,7 @@ class _FilterFeaturesInSceneState extends State<FilterFeaturesInScene>
 
     _createAndFilterPolygon();
 
-    addBuildings();
+    _addBuildings();
 
     setState(() => _ready = true);
   }
@@ -111,7 +113,10 @@ class _FilterFeaturesInSceneState extends State<FilterFeaturesInScene>
     // Create a scene.
     final scene = ArcGISScene();
 
+    // Create on ArcGIS Online portal instance.
     final arcGISOnlinePortal = Portal.arcGISOnline();
+
+    // Create the Open Street Map scene layer from the portal item.
     _osmBuildingsSceneLayer = ArcGISSceneLayer.withItem(
       PortalItem.withPortalAndItemId(
         portal: arcGISOnlinePortal,
@@ -119,6 +124,7 @@ class _FilterFeaturesInSceneState extends State<FilterFeaturesInScene>
       ),
     );
 
+    // Add base layers to the basemap in the scene.
     scene.basemap?.baseLayers.addAll([
       ArcGISVectorTiledLayer.withUri(Uri.parse(_osmTopographic)),
       _osmBuildingsSceneLayer,
@@ -186,20 +192,21 @@ class _FilterFeaturesInSceneState extends State<FilterFeaturesInScene>
     );
   }
 
+  // Filter scene based on the current filter action.
   void onSceneActionPressed() {
     switch (_sceneFilterAction) {
       case SceneFilterAction.load:
-        addBuildings();
+        _addBuildings();
       case SceneFilterAction.filter:
-        filterScene();
+        _filterScene();
       case SceneFilterAction.reset:
-        resetScene();
+        _resetScene();
     }
     setState(() => _sceneFilterAction = _sceneFilterAction.next());
   }
 
   // Add the San Francisco buildings scene layer and its extent graphic to the scene.
-  void addBuildings() {
+  void _addBuildings() {
     _sceneViewController.arcGISScene?.operationalLayers.add(
       _sfBuildingsSceneLayer,
     );
@@ -207,7 +214,7 @@ class _FilterFeaturesInSceneState extends State<FilterFeaturesInScene>
   }
 
   // Apply a polygon filter to hide OSM buildings within the San Francisco extent.
-  void filterScene() {
+  void _filterScene() {
     // If no filter is set, assign the polygon filter.
     if (_osmBuildingsSceneLayer.polygonFilter == null) {
       _osmBuildingsSceneLayer.polygonFilter = _sceneLayerPolygonFilter;
@@ -221,7 +228,7 @@ class _FilterFeaturesInSceneState extends State<FilterFeaturesInScene>
   }
 
   // Reset the scene by removing layers, filters, and graphics.
-  void resetScene() {
+  void _resetScene() {
     _sceneViewController.arcGISScene!.operationalLayers.clear();
     _osmBuildingsSceneLayer.polygonFilter?.polygons.clear();
     _sfGraphicsOverlay.graphics.clear();
