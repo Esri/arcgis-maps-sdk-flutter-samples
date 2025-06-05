@@ -108,7 +108,7 @@ class _FilterFeaturesInSceneState extends State<FilterFeaturesInScene>
   }
 
   ArcGISScene _setupScene() {
-    // Create a scene with an imagery basemap style.
+    // Create a scene.
     final scene = ArcGISScene();
 
     final arcGISOnlinePortal = Portal.arcGISOnline();
