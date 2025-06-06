@@ -53,7 +53,7 @@ class _FilterFeaturesInSceneState extends State<FilterFeaturesInScene>
   // A filter that limits the visible features of the scene layer.
   late SceneLayerPolygonFilter _sceneLayerPolygonFilter;
   // A state for filtering features in a scene.
-  SceneFilterAction _sceneFilterAction = SceneFilterAction.filter;
+  SceneFilterAction _sceneFilterAction = SceneFilterAction.load;
 
   @override
   Widget build(BuildContext context) {
@@ -103,8 +103,6 @@ class _FilterFeaturesInSceneState extends State<FilterFeaturesInScene>
     _sceneViewController.graphicsOverlays.add(_sfGraphicsOverlay);
 
     _createAndFilterPolygon();
-
-    _addBuildings();
 
     setState(() => _ready = true);
   }
@@ -237,7 +235,7 @@ class _FilterFeaturesInSceneState extends State<FilterFeaturesInScene>
 
 // The different states for filtering features in a scene.
 enum SceneFilterAction {
-  load('Load detailed buildings'),
+  load('Load San Francisco buildings'),
   filter('Filter OSM buildings'),
   reset('Reset scene');
 
