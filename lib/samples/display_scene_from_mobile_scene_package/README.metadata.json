@@ -1,0 +1,23 @@
+{
+    "category": "Scenes",
+    "description": "Opens and displays a scene from a Mobile Scene Package (.mspk).",
+    "ignore": false,
+    "images": [
+        "display_scene_from_mobile_scene_package.png"
+    ],
+    "keywords": [
+        "offline",
+        "scene",
+        "ArcGISSceneView",
+        "MobileScenePackage"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+        "ArcGISSceneView",
+        "MobileScenePackage"
+    ],
+    "snippets": [
+        "display_scene_from_mobile_scene_package.dart"
+    ],
+    "title": "Display scene from mobile scene package"
+}
