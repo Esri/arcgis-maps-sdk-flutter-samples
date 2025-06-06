@@ -1,0 +1,22 @@
+{
+    "category": "Scenes",
+    "description": "View a point scene layer from a scene service.",
+    "ignore": false,
+    "images": [
+        "add_point_scene_layer.png"
+    ],
+    "keywords": [
+        "3D",
+        "layers",
+        "point scene layer",
+        "ArcGISSceneLayer"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+        "ArcGISSceneLayer"
+    ],
+    "snippets": [
+        "add_point_scene_layer.dart"
+    ],
+    "title": "Add point scene layer"
+}
