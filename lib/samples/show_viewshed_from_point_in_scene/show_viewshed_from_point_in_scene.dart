@@ -52,7 +52,7 @@ class _ShowViewshedFromPointInSceneState
   void initState() {
     super.initState();
 
-    // Initialze the viewshed.
+    // Initialize the viewshed.
     _viewshed = LocationViewshed.withLocation(
       location: ArcGISPoint(
         x: -4.50,
@@ -294,7 +294,7 @@ class _ShowViewshedFromPointInSceneState
     // Add the scene to the view controller.
     _sceneViewController.arcGISScene = scene;
 
-    // Create an analysis overlay and add the viewshed.
+    // Create an AnalysisOverlay and add the viewshed.
     final analysisOverlay = AnalysisOverlay();
     analysisOverlay.analyses.add(_viewshed);
 
