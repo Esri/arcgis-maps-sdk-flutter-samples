@@ -235,7 +235,7 @@ class _FilterFeaturesInSceneState extends State<FilterFeaturesInScene>
 
 // The different states for filtering features in a scene.
 enum SceneFilterAction {
-  load('Load San Francisco buildings'),
+  load('Load detailed buildings'),
   filter('Filter OSM buildings'),
   reset('Reset scene');
 
