@@ -322,7 +322,7 @@ class _ShowViewshedFromPointInSceneState
   }
 
   ArcGISScene _setupScene() {
-    // Create a scene with a imagery basemap style.
+    // Create a scene with an imagery basemap style.
     final scene = ArcGISScene.withBasemapStyle(BasemapStyle.arcGISImagery);
 
     // Setup the initial viewpoint for the scene.
