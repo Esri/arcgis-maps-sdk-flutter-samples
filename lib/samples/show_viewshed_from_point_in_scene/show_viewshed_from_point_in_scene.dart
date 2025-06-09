@@ -43,6 +43,7 @@ class _ShowViewshedFromPointInSceneState
   double _minDistance = 5;
   double _maxDistance = 1000;
   bool _showFrustum = false;
+  bool _showAnalysis = true;
   late final LocationViewshed _viewshed;
 
   // A flag for when the scene view is ready and controls can be used.
@@ -268,6 +269,19 @@ class _ShowViewshedFromPointInSceneState
                           onChanged: (value) {
                             _viewshed.frustumOutlineVisible = value;
                             setState(() => _showFrustum = value);
+                          },
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        const Text('Show viewshed:'),
+                        const Spacer(),
+                        Switch(
+                          value: _showAnalysis,
+                          onChanged: (value) {
+                            _viewshed.isVisible = value;
+                            setState(() => _showAnalysis = value);
                           },
                         ),
                       ],
