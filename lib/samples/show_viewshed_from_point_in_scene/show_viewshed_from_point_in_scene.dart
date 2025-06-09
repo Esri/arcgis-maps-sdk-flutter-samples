@@ -91,7 +91,7 @@ class _ShowViewshedFromPointInSceneState
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    // Button to show the viewhsed options.
+                    // Button to show the viewshed options.
                     ElevatedButton(
                       onPressed: () => setState(() => _settingsVisible = true),
                       child: const Text('Settings'),
