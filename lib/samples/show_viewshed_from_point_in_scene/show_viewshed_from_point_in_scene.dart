@@ -91,7 +91,7 @@ class _ShowViewshedFromPointInSceneState
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    // A button to perform a task.
+                    // Button to show the viewhsed options.
                     ElevatedButton(
                       onPressed: () => setState(() => _settingsVisible = true),
                       child: const Text('Settings'),
@@ -280,18 +280,18 @@ class _ShowViewshedFromPointInSceneState
     );
   }
 
-  Future<void> onSceneViewReady() async {
+  void onSceneViewReady() {
     // Get scene with basemap, surface, and initial viewpoint.
     final scene = _setupScene();
 
-    // Add a buildings scene layer
+    // Add a buildings scene layer.
     final buildingLayerUri = Uri.parse(
       'https://tiles.arcgis.com/tiles/P3ePLMYs2RVChkJx/arcgis/rest/services/Buildings_Brest/SceneServer/layers/0',
     );
     final buildingsLayer = ArcGISSceneLayer.withUri(buildingLayerUri);
     scene.operationalLayers.add(buildingsLayer);
 
-    // Add scene to view controller.
+    // Add the scene to the view controller.
     _sceneViewController.arcGISScene = scene;
 
     // Create an analysis overlay and add the viewshed.
@@ -322,7 +322,7 @@ class _ShowViewshedFromPointInSceneState
   }
 
   ArcGISScene _setupScene() {
-    // Create a scene with a topographic basemap style.
+    // Create a scene with a imagery basemap style.
     final scene = ArcGISScene.withBasemapStyle(BasemapStyle.arcGISImagery);
 
     // Setup the initial viewpoint for the scene.
