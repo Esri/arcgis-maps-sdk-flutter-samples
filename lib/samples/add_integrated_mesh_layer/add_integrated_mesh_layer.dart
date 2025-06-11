@@ -48,59 +48,46 @@ class _AddIntegratedMeshLayerState extends State<AddIntegratedMeshLayer>
     );
   }
 
-  Future<void> onSceneViewReady() async {
-    // Create an IntegratedMeshLayer with the URI to an integrated mesh layer scene service.
+  void onSceneViewReady()  {
+    // Create a scene.
+    _setupScene();
+
+    setState(() => _ready = true);
+  }
+
+  void _setupScene() {
+    // Create a scene.
+    final scene = ArcGISScene.withBasemapStyle(
+      BasemapStyle.arcGISImageryStandard,
+    );
+    // Create an ArcGISTiledElevationSource with the URI to an elevation service.
+    final elevationSource = ArcGISTiledElevationSource.withUri(
+      Uri.parse(
+        'https://elevation3d.arcgis.com/arcgis/rest/services/WorldElevation3D/Terrain3D/ImageServer',
+      ),
+    );
+     // Create an IntegratedMeshLayer with the URI to an integrated mesh layer scene service.
     final integratedMeshLayer = IntegratedMeshLayer.withUri(
       Uri.parse(
         'https://tiles.arcgis.com/tiles/z2tnIkrLQ2BRzr6P/arcgis/rest/services/Girona_Spain/SceneServer',
       ),
     );
 
-    await integratedMeshLayer.load();
-
-    // Get the extent from the mesh layer envelope.
-    final extent = integratedMeshLayer.fullExtent;
-
-    // Create a scene.
-    final scene = _setupScene(extent!);
-
+    // Add the elevation source to surface to show terrain.
+    scene.baseSurface.elevationSources.add(elevationSource);
     // Add the layer to the scene's operational layers.
     scene.operationalLayers.add(integratedMeshLayer);
+    // Set the scene to the scene view controller.
     _sceneViewController.arcGISScene = scene;
 
-    setState(() => _ready = true);
-  }
-
-  ArcGISScene _setupScene(Geometry extent) {
-    // Create a scene.
-    final scene = ArcGISScene.withBasemapStyle(
-      BasemapStyle.arcGISImageryStandard,
-    );
-
-    //Create a Viewpoint for camera.
-    final camera = Camera.withLatLong(
+    // Set controller viewpoint to camera.
+    _sceneViewController.setViewpointCamera(Camera.withLatLong(
       latitude: 41.9906,
       longitude: 2.8259,
       altitude: 200,
       heading: 190,
       pitch: 65,
       roll: 0,
-    );
-
-    const elevationUrl =
-        'https://elevation3d.arcgis.com/arcgis/rest/services/WorldElevation3D/Terrain3D/ImageServer';
-
-    // Create and use an elevation surface to show terrain.
-    final surface = Surface();
-    surface.elevationSources.add(
-      ArcGISTiledElevationSource.withUri(Uri.parse(elevationUrl)),
-    );
-    scene.baseSurface = surface;
-
-    // Set controller viewpoint to camera.
-    _sceneViewController.setViewpoint(
-      Viewpoint.withExtentCamera(targetExtent: extent, camera: camera),
-    );
-    return scene;
+    ));
   }
 }

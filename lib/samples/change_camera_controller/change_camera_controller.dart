@@ -188,15 +188,13 @@ class _ChangeCameraControllerState extends State<ChangeCameraController>
     );
 
     // Add surface elevation to the scene.
-    final surface = Surface();
     final worldElevationService = Uri.parse(
       'https://elevation3d.arcgis.com/arcgis/rest/services/WorldElevation3D/Terrain3D/ImageServer',
     );
     final elevationSource = ArcGISTiledElevationSource.withUri(
       worldElevationService,
     );
-    surface.elevationSources.add(elevationSource);
-    scene.baseSurface = surface;
+    scene.baseSurface.elevationSources.add(elevationSource);
 
     return scene;
   }
