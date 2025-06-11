@@ -75,7 +75,6 @@ Future<void> downloadSampleDataWithProgress({
   void Function(double progress)? onProgress,
 }) async {
   const portal = 'https://arcgis.com';
-  // Use the shared client instance
   final request = Request(
     'GET',
     Uri.parse('$portal/sharing/rest/content/items/$itemId/data'),
@@ -87,17 +86,26 @@ Future<void> downloadSampleDataWithProgress({
 
   // Open file for writing
   final sink = file.openWrite();
-
   final completer = Completer<void>();
+  final buffer = <int>[];
+  const customChunkSize = 32*1024;
+
   response.stream.listen(
     (chunk) {
-      sink.add(chunk); // Write chunk directly to file
+      buffer.addAll(chunk);
+      while (buffer.length >= customChunkSize) {
+        sink.add(buffer.sublist(0, customChunkSize));
+        buffer.removeRange(0, customChunkSize);
+      }
       received += chunk.length;
       if (onProgress != null && contentLength > 0) {
         onProgress(received / contentLength);
       }
     },
     onDone: () async {
+      if (buffer.isNotEmpty) {
+        sink.add(buffer);
+      }
       await sink.close();
       completer.complete();
     },
