@@ -14,6 +14,7 @@
 // limitations under the License.
 //
 
+import 'dart:async';
 import 'dart:io';
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:flutter_archive/flutter_archive.dart';
@@ -62,3 +63,60 @@ Future<void> extractZipArchive(File archiveFile) async {
 Future<Response> _fetchData(String portal, String itemId) async {
   return get(Uri.parse('$portal/sharing/rest/content/items/$itemId/data'));
 }
+
+/// Fetch the Sample data from the provided PortalItem ID.
+/// Parameters:
+/// - [itemId]: The ID of the Portal Item to download.
+/// - [file]: The file to write the downloaded data to.
+/// - [onProgress] is called with a value from 0.0 to 1.0 as the download progresses.
+Future<void> downloadSampleDataWithProgress({
+  required String itemId,
+  required File file, 
+  void Function(double progress)? onProgress,
+}) async {
+  const portal = 'https://arcgis.com';
+  final request = Request(
+    'GET',
+    Uri.parse('$portal/sharing/rest/content/items/$itemId/data'),
+  );
+  final response = await _sharedHttpClient.send(request);
+
+  final contentLength = response.contentLength ?? 0;
+  var received = 0;
+
+  // Open file for writing
+  final sink = file.openWrite();
+  final completer = Completer<void>();
+  final buffer = <int>[];
+  const customChunkSize = 64*1024; // 64 KB chunk size
+
+  response.stream.listen(
+    (chunk) {
+      buffer.addAll(chunk);
+      while (buffer.length >= customChunkSize) {
+        sink.add(buffer.sublist(0, customChunkSize));
+        buffer.removeRange(0, customChunkSize);
+      }
+      received += chunk.length;
+      if (onProgress != null && contentLength > 0) {
+        onProgress(received / contentLength);
+      }
+    },
+    onDone: () async {
+      if (buffer.isNotEmpty) {
+        sink.add(buffer);
+      }
+      await sink.close();
+      completer.complete();
+    },
+    onError: (e) async {
+      await sink.close();
+      completer.completeError(e);
+    },
+    cancelOnError: true,
+  );
+  return completer.future;
+}
+
+// Use a single static instance of Client for all HTTP requests.
+final Client _sharedHttpClient = Client();

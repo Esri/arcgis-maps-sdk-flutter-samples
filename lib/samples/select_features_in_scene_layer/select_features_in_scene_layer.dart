@@ -93,17 +93,14 @@ class _SelectFeaturesInSceneLayerState extends State<SelectFeaturesInSceneLayer>
       Viewpoint.withExtentCamera(targetExtent: camera.location, camera: camera),
     );
 
-    // Create a surface and add an elevation source.
-    final surface = Surface();
-    surface.elevationSources.add(
+    // Add an elevation source.
+    scene.baseSurface.elevationSources.add(
       ArcGISTiledElevationSource.withUri(
         Uri.parse(
           'https://elevation3d.arcgis.com/arcgis/rest/services/WorldElevation3D/Terrain3D/ImageServer',
         ),
       ),
     );
-    // Set the surface to scene.
-    scene.baseSurface = surface;
 
     return scene;
   }

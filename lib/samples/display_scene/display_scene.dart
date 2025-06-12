@@ -47,24 +47,14 @@ class _DisplaySceneState extends State<DisplayScene> with SampleStateSupport {
     // Add scene (with an imagery basemap) to the scene view's scene property.
     _sceneViewController.arcGISScene = scene;
 
-    // Create a new surface.
-    final surface = Surface();
-
-    // Create a Uri from the elevation image service.
-    final myUri = Uri.parse(
-      'https://elevation3d.arcgis.com/arcgis/rest/services/WorldElevation3D/Terrain3D/ImageServer',
-    );
-
     // Create an ArcGIS tiled elevation.
     final arcGISTiledElevationSource = ArcGISTiledElevationSource.withUri(
-      myUri,
-    );
+      Uri.parse(
+      'https://elevation3d.arcgis.com/arcgis/rest/services/WorldElevation3D/Terrain3D/ImageServer',
+    ));
 
     // Add the ArcGIS tiled elevation source to the surface's elevated sources collection.
-    surface.elevationSources.add(arcGISTiledElevationSource);
-
-    // Set the scene's base surface to the surface with the ArcGIS tiled elevation source.
-    scene.baseSurface = surface;
+    scene.baseSurface.elevationSources.add(arcGISTiledElevationSource);
 
     // Create camera with an initial camera position (Mount Everest in the Alps mountains).
     final camera = Camera.withLatLong(

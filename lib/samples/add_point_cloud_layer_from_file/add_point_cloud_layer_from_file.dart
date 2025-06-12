@@ -35,6 +35,8 @@ class _AddPointCloudLayerFromFileState extends State<AddPointCloudLayerFromFile>
 
   // A flag for when the scene view is ready.
   var _ready = false;
+  // The download progress of the sample data.
+  var _downloadProgress = 0.0;
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +48,32 @@ class _AddPointCloudLayerFromFileState extends State<AddPointCloudLayerFromFile>
             onSceneViewReady: onSceneViewReady,
           ),
           // Display a progress indicator and prevent interaction until state is ready.
-          LoadingIndicator(visible: !_ready),
+          Visibility(
+            visible: !_ready,
+            child: Center(
+              child: Column(
+                spacing: 10,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircularProgressIndicator(
+                    value: _downloadProgress,
+                    backgroundColor: Colors.white,
+                    valueColor: const AlwaysStoppedAnimation<Color>(
+                      Colors.blue,
+                    ),
+                  ),
+                  Text(
+                    'Downloading sample data ${(_downloadProgress * 100).toStringAsFixed(0)}%',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -54,20 +81,10 @@ class _AddPointCloudLayerFromFileState extends State<AddPointCloudLayerFromFile>
 
   Future<void> onSceneViewReady() async {
     // Add the scene to the view controller.
-    final scene = _setupScene();
-    _sceneViewController.arcGISScene = scene;
+    _sceneViewController.arcGISScene = _setupScene();
 
     // Load the point cloud layer.
-    final pointCloudLayer = await loadCloudPointLayerFromFile();
-
-    // Add the point cloud layer to the map's operational layers.
-    scene.operationalLayers.add(pointCloudLayer);
-
-    // Add the scene to the scene view's scene property.
-    _sceneViewController.arcGISScene = scene;
-
-    // Set the ready state variable to true to enable the sample UI.
-    setState(() => _ready = true);
+    await loadCloudPointLayerFromFile();
   }
 
   ArcGISScene _setupScene() {
@@ -89,30 +106,41 @@ class _AddPointCloudLayerFromFileState extends State<AddPointCloudLayerFromFile>
     );
 
     // Add surface elevation to the scene.
-    final surface = Surface();
-    final worldElevationService = Uri.parse(
-      'https://elevation3d.arcgis.com/arcgis/rest/services/WorldElevation3D/Terrain3D/ImageServer',
-    );
     final elevationSource = ArcGISTiledElevationSource.withUri(
-      worldElevationService,
+      Uri.parse('https://elevation3d.arcgis.com/arcgis/rest/services/WorldElevation3D/Terrain3D/ImageServer'),
     );
-    surface.elevationSources.add(elevationSource);
-    scene.baseSurface = surface;
+    scene.baseSurface.elevationSources.add(elevationSource);
 
     return scene;
   }
 
-  Future<PointCloudLayer> loadCloudPointLayerFromFile() async {
+  Future<void> loadCloudPointLayerFromFile() async {
     // Download the sample data.
-    await downloadSampleData(['34da965ca51d4c68aa9b3a38edb29e00']);
     // Get the temp directory.
     final directory = await getApplicationDocumentsDirectory();
     // Create a file reference to the scene layer package for Balboa Park, San Diego, CA.
     final sanDiegoPointCloudFile = File(
       '${directory.absolute.path}/sandiego-north-balboa-pointcloud.slpk',
     );
+    if (!sanDiegoPointCloudFile.existsSync()) {
+      // If the file does not exist, download it.
+      await downloadSampleDataWithProgress(
+        itemId: '34da965ca51d4c68aa9b3a38edb29e00',
+        file: sanDiegoPointCloudFile,
+        onProgress: (progress) {
+          setState(() {
+            _downloadProgress = progress;
+          });
+        },
+      );
+    }
+    
     // Create a Point Cloud Layer from the file URI.
-    final pointCloud = PointCloudLayer.withUri(sanDiegoPointCloudFile.uri);
-    return pointCloud;
+    final pointCloudLayer = PointCloudLayer.withUri(sanDiegoPointCloudFile.uri);
+    await pointCloudLayer.load();
+    // Add the point cloud layer to the map's operational layers.
+     _sceneViewController.arcGISScene?.operationalLayers.add(pointCloudLayer);
+    // Set the ready state variable to true to enable the sample UI.
+    setState(() => _ready = true);
   }
 }

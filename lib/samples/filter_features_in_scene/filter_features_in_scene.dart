@@ -129,13 +129,11 @@ class _FilterFeaturesInSceneState extends State<FilterFeaturesInScene>
     ]);
 
     // Add surface elevation to the scene.
-    final surface = Surface();
     final worldElevationService = Uri.parse(_elevationSource);
     final elevationSource = ArcGISTiledElevationSource.withUri(
       worldElevationService,
     );
-    surface.elevationSources.add(elevationSource);
-    scene.baseSurface = surface;
+    scene.baseSurface.elevationSources.add(elevationSource);
 
     // Create camera with an initial camera position.
     final camera = Camera.withLocation(
