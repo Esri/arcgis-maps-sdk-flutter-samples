@@ -64,6 +64,11 @@ class _AddPointCloudLayerFromFileState extends State<AddPointCloudLayerFromFile>
                   ),
                   Text(
                     'Downloading sample data ${(_downloadProgress * 100).toStringAsFixed(0)}%',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ],
               ),
