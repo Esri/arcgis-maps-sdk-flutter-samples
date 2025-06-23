@@ -11,12 +11,12 @@
         "underground",
         "utilities",
         "Surface",
-        "Surface.NavigationConstraint"
+        "Surface.navigationConstraint"
     ],
     "redirect_from": [],
     "relevant_apis": [
         "Surface",
-        "Surface.NavigationConstraint"
+        "Surface.navigationConstraint"
     ],
     "snippets": [
         "set_surface_navigation_constraint.dart"

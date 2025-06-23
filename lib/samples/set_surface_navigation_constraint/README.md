@@ -21,7 +21,7 @@ The sample loads a scene with underground features. Pan and zoom to explore the 
 ## Relevant API
 
 * Surface
-* Surface.NavigationConstraint
+* Surface.navigationConstraint
 
 ## About the data
 
