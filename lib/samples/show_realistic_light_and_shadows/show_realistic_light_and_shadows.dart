@@ -144,7 +144,7 @@ class _ShowRealisticLightAndShadowsState
   }
 
   Future<void> onSceneViewReady() async {
-    // Create a Scene with a topographic baseScene style.
+    // Create a Scene with a topographic basemap style.
     final scene = ArcGISScene.withBasemapStyle(BasemapStyle.arcGISTopographic);
     _sceneViewController.arcGISScene = scene;
     final elevationSource = ArcGISTiledElevationSource.withUri(
