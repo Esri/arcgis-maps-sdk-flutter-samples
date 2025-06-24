@@ -126,8 +126,7 @@ class _ShowRealisticLightAndShadowsState
                       padding: const EdgeInsets.only(bottom: 10),
                       child: Text(
                         // Format the sun time as MM dd, yyyy, hh:mm a
-                        // ignore: unnecessary_string_interpolations
-                        '${_dateFormat.format(_sunTime)}',
+                        ${_dateFormat.format(_sunTime)},
                         style: TextStyle(color: Theme.of(context).primaryColor),
                       ),
                     ),
