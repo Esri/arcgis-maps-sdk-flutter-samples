@@ -10,7 +10,7 @@ You can use realistic lighting to evaluate the shadow impact of buildings and ut
 
 ## How to use the sample
 
-Select one of the three lighting options to show that lighting effect on the SceneView. Select a time of day from the slider (based on a 24hr clock) to show the lighting for that time of day in the SceneView.
+Select one of the three lighting options to show that lighting effect on the scene view. Select a time of day from the slider (based on a 24hr clock) to show the lighting for that time of day in the scene view.
 
 ## How it works
 
