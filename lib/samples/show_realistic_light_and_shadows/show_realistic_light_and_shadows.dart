@@ -65,7 +65,7 @@ class _ShowRealisticLightAndShadowsState
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    // dropdown for lighting choices
+                    // A dropdown button for lighting choices.
                     DropdownButton(
                       value: _selectedLighting,
                       items: _lightingChoices.keys
