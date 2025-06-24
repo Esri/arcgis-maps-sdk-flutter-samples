@@ -185,7 +185,7 @@ class _ShowRealisticLightAndShadowsState
     setState(() => _ready = true);
   }
 
-  // Update the sun time in the SceneViewController.
+  // Update the sun time in the sceneview controller.
   void setSunTimeFromValue(double value) {
     final remainder = value % 1;
     final hours = (value - remainder).toInt();
