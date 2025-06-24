@@ -121,7 +121,7 @@ class _ShowRealisticLightAndShadowsState
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    // Slider to change the sun time from 0 to 24 hours
+                    // Slider to change the sun time from 0 to 24 hours.
                     Padding(
                       padding: const EdgeInsets.only(bottom: 10),
                       child: Text(
