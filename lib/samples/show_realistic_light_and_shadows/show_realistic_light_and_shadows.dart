@@ -16,6 +16,7 @@
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class ShowRealisticLightAndShadows extends StatefulWidget {
   const ShowRealisticLightAndShadows({super.key});
@@ -30,17 +31,28 @@ class _ShowRealisticLightAndShadowsState
     with SampleStateSupport {
   // Create a controller for the Scene view.
   final _sceneViewController = ArcGISSceneView.createController();
-  // A flag for when the Scene view is ready and controls can be used.
-  var _ready = false;
+
+  // Define the lighting choices available in the dropdown button.
   final _lightingChoices = {
     'Light and Shadows': LightingMode.lightAndShadows,
     'Light': LightingMode.light,
     'No Light': LightingMode.noLight,
   };
+
+  // The initial selected lighting mode.
   String _selectedLighting = 'Light and Shadows';
+
+  // The initial time value for the sun, in 24 hours.
   double _timeValue = 8.5;
+
+  // The initial sun time, set to a specific date and time.
   DateTime _sunTime = DateTime(2018, 8, 10, 8, 30);
+
+  // Date format for displaying the sun time.
   final _dateFormat = DateFormat('MMMM dd, yyyy, hh:mm a');
+
+  // A flag for when the Scene view is ready and controls can be used.
+  var _ready = false;
 
   @override
   Widget build(BuildContext context) {
@@ -124,8 +136,8 @@ class _ShowRealisticLightAndShadowsState
                     Padding(
                       padding: const EdgeInsets.only(bottom: 10),
                       child: Text(
-                        // Format the sun time as MM dd, yyyy, hh:mm a
-                        ${_dateFormat.format(_sunTime)},
+                        // Format the sun time as [MMMM dd, yyyy, hh:mm a]
+                        _dateFormat.format(_sunTime),
                         style: TextStyle(color: Theme.of(context).primaryColor),
                       ),
                     ),
@@ -145,6 +157,7 @@ class _ShowRealisticLightAndShadowsState
     // Create a Scene with a topographic basemap style.
     final scene = ArcGISScene.withBasemapStyle(BasemapStyle.arcGISTopographic);
     _sceneViewController.arcGISScene = scene;
+    // Create a elevation source for the scene.
     final elevationSource = ArcGISTiledElevationSource.withUri(
       Uri.parse(
         'https://elevation3d.arcgis.com/arcgis/rest/services/WorldElevation3D/Terrain3D/ImageServer',
@@ -183,7 +196,7 @@ class _ShowRealisticLightAndShadowsState
     setState(() => _ready = true);
   }
 
-  // Update the sun time in the sceneview controller.
+  // Update the sun time in the scene view controller.
   void setSunTimeFromValue(double value) {
     final remainder = value % 1;
     final hours = (value - remainder).toInt();
