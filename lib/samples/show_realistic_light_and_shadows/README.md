@@ -16,7 +16,7 @@ Select one of the three lighting options to show that lighting effect on the sce
 
 1. Create an `ArcGISScene` and display it in a `ArcGISSceneView`.
 2. Create a `DateTime` to define the time of day.
-3. Set the sun time property to that DataTime with `ArcGISSceneViewController.sunTime`.
+3. Set the sun time property to that `DateTime` with `ArcGISSceneViewController.sunTime`.
 4. Set the lighting mode of the ArcGIS SceneView to **no light**, **light**, or **light and shadows** with `ArcGISSceneViewController.sunLighting = LightingMode`.
 
 ## Relevant API
