@@ -16,13 +16,13 @@
         "rendering",
         "ImageFrame",
         "ImageOverlay",
-        "SceneView"
+        "SceneViewController"
     ],
     "redirect_from": [],
     "relevant_apis": [
         "ImageFrame",
         "ImageOverlay",
-        "SceneView"
+        "SceneViewController"
     ],
     "snippets": [
         "animate_images_with_image_overlay.dart"
