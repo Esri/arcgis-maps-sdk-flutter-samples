@@ -20,18 +20,36 @@ import 'package:flutter/material.dart';
 /// A widget that displays a circular progress indicator when [visible] is true.
 /// - [visible] : A boolean value to determine the visibility of the loading
 ///                 indicator.
-class LoadingIndicator extends StatelessWidget {
-  const LoadingIndicator({required this.visible, super.key});
+/// - [text] : An optional text message to display below the indicator.
+class LoadingIndicator extends StatefulWidget {
+  const LoadingIndicator({required this.visible, this.text, super.key});
   final bool visible;
+  final String? text;
 
+  @override
+  State<LoadingIndicator> createState() => _LoadingIndicatorState();
+}
+
+class _LoadingIndicatorState extends State<LoadingIndicator> {
   @override
   Widget build(BuildContext context) {
     return Visibility(
-      visible: visible,
-      child: const SizedBox.expand(
+      visible: widget.visible,
+      child: SizedBox.expand(
         child: ColoredBox(
           color: Colors.white30,
-          child: Center(child: CircularProgressIndicator()),
+          child: Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const CircularProgressIndicator(),
+                if (widget.text != null) ...[
+                  const SizedBox(height: 16),
+                  Text(widget.text!, style: Theme.of(context).textTheme.bodyMedium),
+                ],
+              ],
+            ),
+          ),
         ),
       ),
     );

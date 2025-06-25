@@ -88,7 +88,7 @@ Future<void> downloadSampleDataWithProgress({
   final sink = file.openWrite();
   final completer = Completer<void>();
   final buffer = <int>[];
-  const customChunkSize = 64*1024; // 64 KB chunk size
+  const customChunkSize = 32 * 1024 * 1024; // 32 MB
 
   response.stream.listen(
     (chunk) {
