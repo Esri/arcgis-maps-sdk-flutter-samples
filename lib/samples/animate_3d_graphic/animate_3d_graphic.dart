@@ -136,7 +136,9 @@ class _Animate3DGraphicState extends State<Animate3DGraphic>
   // Called when the scene view is ready.
   Future<void> onSceneViewReady() async {
     // Create and configure the scene with elevation.
-    await _createScene();
+    final scene =  await _createScene();
+    // Assign the scene to the scene view controller.
+    _sceneViewController.arcGISScene = scene;
 
     // Load the 3D plane graphic from local sample data.
     _planeGraphic = await _loadPlaneGraphic();
@@ -150,8 +152,21 @@ class _Animate3DGraphicState extends State<Animate3DGraphic>
     // Load the default mission animation frames.
     await _loadMissionFrames(_currentMission);
 
-    // Enable the UI once everything is ready.
+    // Enable the UI once everything is ready.a
     setState(() => _ready = true);
+  }
+
+  // Creates a scene with an imagery basemap and adds elevation data.
+  Future<ArcGISScene> _createScene() async {
+    final scene = ArcGISScene.withBasemapStyle(BasemapStyle.arcGISImagery);
+
+    // Add world elevation source to the scene's surface.
+    final elevationSource = ArcGISTiledElevationSource.withUri(
+      Uri.parse('https://elevation3d.arcgis.com/arcgis/rest/services/WorldElevation3D/Terrain3D/ImageServer'),
+    );
+    scene.baseSurface.elevationSources.add(elevationSource);
+
+    return scene;
   }
 
   // Loads the 3D plane model from local sample data and returns it as a Graphic.
@@ -179,20 +194,6 @@ class _Animate3DGraphicState extends State<Animate3DGraphic>
     return Graphic(geometry: planePosition, symbol: planeSymbol);
   }
 
-
-  // Creates a scene with an imagery basemap and adds elevation data.
-  Future<void> _createScene() async {
-    final scene = ArcGISScene.withBasemapStyle(BasemapStyle.arcGISImagery);
-
-    // Add world elevation source to the scene's surface.
-    final elevationSource = ArcGISTiledElevationSource.withUri(
-      Uri.parse('https://elevation3d.arcgis.com/arcgis/rest/services/WorldElevation3D/Terrain3D/ImageServer'),
-    );
-    scene.baseSurface.elevationSources.add(elevationSource);
-
-    // Assign the scene to the scene view controller.
-    _sceneViewController.arcGISScene = scene;
-  }
 
   // Adds the plane graphic to a graphics overlay and sets the initial viewpoint.
   Future<void> _addPlaneToScene(Graphic planeGraphic) async {
