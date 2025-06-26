@@ -14,15 +14,15 @@
         "image overlay",
         "real time",
         "rendering",
+        "ArcGISSceneViewController",
         "ImageFrame",
-        "ImageOverlay",
-        "ArcGISSceneViewController"
+        "ImageOverlay"
     ],
     "redirect_from": [],
     "relevant_apis": [
+        "ArcGISSceneViewController",
         "ImageFrame",
-        "ImageOverlay",
-        "ArcGISSceneViewController"
+        "ImageOverlay"
     ],
     "snippets": [
         "animate_images_with_image_overlay.dart"

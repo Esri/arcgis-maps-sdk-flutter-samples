@@ -21,9 +21,9 @@ The application loads a map of the Southwestern United States. Click the "Start"
 
 ## Relevant API
 
+* ArcGISSceneViewController
 * ImageFrame
 * ImageOverlay
-* ArcGISSceneViewController
 
 ## About the data
 
