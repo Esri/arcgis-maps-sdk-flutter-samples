@@ -18,7 +18,7 @@ Tap the buttons on the bottom toolbar to adjust the settings for the animation:
 
 ## How it works
 
-1. Create a `GraphicsOverlay` and add it to the `SceneView`.
+1. Create a `GraphicsOverlay` and add it to the `ArcGISSceneViewController`.
 2. Create a `ModelSceneSymbol` object.
 3. Create a `Graphic` object and set its geometry to a `Point`.
 4. Set the `ModelSceneSymbol` object to the graphic.
@@ -26,7 +26,7 @@ Tap the buttons on the bottom toolbar to adjust the settings for the animation:
 6. Create a `SimpleRenderer` object and set its expression properties.
 7. Add graphic and a renderer to the graphics overlay.
 8. Create a `OrbitGeoElementCameraController` which is set to target the graphic.
-9. Assign the camera controller to the `SceneView`.
+9. Assign the camera controller to the `ArcGISSceneViewController`.
 10. Update the graphic's location, heading, pitch, and roll.
 
 ## Relevant API
@@ -40,7 +40,7 @@ Tap the buttons on the bottom toolbar to adjust the settings for the animation:
 * OrbitGeoElementCameraController
 * Renderer
 * SceneProperties
-* SceneView
+* ArcGISSceneViewController
 * SurfacePlacement
 
 ## Offline data

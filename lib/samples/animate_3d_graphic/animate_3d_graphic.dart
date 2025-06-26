@@ -136,7 +136,7 @@ class _Animate3DGraphicState extends State<Animate3DGraphic>
   // Called when the scene view is ready.
   Future<void> onSceneViewReady() async {
     // Create and configure the scene with elevation.
-    final scene =  await _createScene();
+    final scene = _createScene();
     // Assign the scene to the scene view controller.
     _sceneViewController.arcGISScene = scene;
 
@@ -152,17 +152,19 @@ class _Animate3DGraphicState extends State<Animate3DGraphic>
     // Load the default mission animation frames.
     await _loadMissionFrames(_currentMission);
 
-    // Enable the UI once everything is ready.a
+    // Enable the UI once everything is ready.
     setState(() => _ready = true);
   }
 
   // Creates a scene with an imagery basemap and adds elevation data.
-  Future<ArcGISScene> _createScene() async {
+  ArcGISScene _createScene() {
     final scene = ArcGISScene.withBasemapStyle(BasemapStyle.arcGISImagery);
 
     // Add world elevation source to the scene's surface.
     final elevationSource = ArcGISTiledElevationSource.withUri(
-      Uri.parse('https://elevation3d.arcgis.com/arcgis/rest/services/WorldElevation3D/Terrain3D/ImageServer'),
+      Uri.parse(
+        'https://elevation3d.arcgis.com/arcgis/rest/services/WorldElevation3D/Terrain3D/ImageServer',
+      ),
     );
     scene.baseSurface.elevationSources.add(elevationSource);
 
@@ -171,6 +173,7 @@ class _Animate3DGraphicState extends State<Animate3DGraphic>
 
   // Loads the 3D plane model from local sample data and returns it as a Graphic.
   Future<Graphic> _loadPlaneGraphic() async {
+
     await downloadSampleData(['681d6f7694644709a7c830ec57a2d72b']);
     final documentsDirPath =
         (await getApplicationDocumentsDirectory()).absolute.path;
@@ -193,7 +196,6 @@ class _Animate3DGraphicState extends State<Animate3DGraphic>
     // Return the graphic that combines geometry and symbol.
     return Graphic(geometry: planePosition, symbol: planeSymbol);
   }
-
 
   // Adds the plane graphic to a graphics overlay and sets the initial viewpoint.
   Future<void> _addPlaneToScene(Graphic planeGraphic) async {
@@ -222,7 +224,8 @@ class _Animate3DGraphicState extends State<Animate3DGraphic>
 
   // Configures the orbit camera controller to follow the plane graphic.
   void _setupCameraController(Graphic planeGraphic) {
-    _cameraController = OrbitGeoElementCameraController(
+    _cameraController =
+    OrbitGeoElementCameraController(
       targetGeoElement: planeGraphic,
       distance: _cameraDistance,
     )
@@ -237,11 +240,13 @@ class _Animate3DGraphicState extends State<Animate3DGraphic>
     _sceneViewController.cameraController = _cameraController;
   }
 
-
   // Loads mission frames from a CSV file using a PortalItem.
   Future<void> _loadMissionFrames(Mission mission) async {
     final portal = Portal.arcGISOnline();
-    final item =  PortalItem.withPortalAndItemId(portal: portal, itemId: mission.itemId);
+    final item = PortalItem.withPortalAndItemId(
+      portal: portal,
+      itemId: mission.itemId,
+    );
     final data = await item.fetchData();
     final csv = utf8.decode(data);
 
@@ -267,12 +272,9 @@ class _Animate3DGraphicState extends State<Animate3DGraphic>
           spatialReference: SpatialReference.wgs84,
         );
 
-        frames.add(Frame(
-          position: position,
-          heading: heading,
-          pitch: pitch,
-          roll: roll,
-        ));
+        frames.add(
+          Frame(position: position, heading: heading, pitch: pitch, roll: roll),
+        );
       } catch (_) {
         continue;
       }
@@ -321,6 +323,7 @@ class _Animate3DGraphicState extends State<Animate3DGraphic>
       _isPlaying = !_isPlaying;
     });
   }
+
   // Shows the mission settings in a bottom sheet.
   void _showMissionSettings() {
     showModalBottomSheet(
@@ -334,7 +337,10 @@ class _Animate3DGraphicState extends State<Animate3DGraphic>
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text('Mission Settings', style: Theme.of(context).textTheme.titleLarge),
+              Text(
+                'Mission Settings',
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
               const SizedBox(height: 16),
               // Progress bar showing animation progress.
               LinearProgressIndicator(value: _progress),
@@ -400,7 +406,10 @@ class _Animate3DGraphicState extends State<Animate3DGraphic>
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text('Camera Settings', style: Theme.of(context).textTheme.titleLarge),
+                  Text(
+                    'Camera Settings',
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
                   const SizedBox(height: 16),
                   _buildSlider(
                     label: 'Distance',
@@ -419,7 +428,9 @@ class _Animate3DGraphicState extends State<Animate3DGraphic>
                     max: 180,
                     onChanged: (value) {
                       setModalState(() => _cameraHeading = value);
-                      setState(() => _cameraController.cameraHeadingOffset = value);
+                      setState(
+                            () => _cameraController.cameraHeadingOffset = value,
+                      );
                     },
                   ),
                   _buildSlider(
@@ -429,7 +440,9 @@ class _Animate3DGraphicState extends State<Animate3DGraphic>
                     max: 180,
                     onChanged: (value) {
                       setModalState(() => _cameraPitch = value);
-                      setState(() => _cameraController.cameraPitchOffset = value);
+                      setState(
+                            () => _cameraController.cameraPitchOffset = value,
+                      );
                     },
                   ),
                   SwitchListTile(
@@ -437,7 +450,9 @@ class _Animate3DGraphicState extends State<Animate3DGraphic>
                     value: _autoHeading,
                     onChanged: (value) {
                       setModalState(() => _autoHeading = value);
-                      setState(() => _cameraController.isAutoHeadingEnabled = value);
+                      setState(
+                            () => _cameraController.isAutoHeadingEnabled = value,
+                      );
                     },
                   ),
                   SwitchListTile(
@@ -445,7 +460,9 @@ class _Animate3DGraphicState extends State<Animate3DGraphic>
                     value: _autoPitch,
                     onChanged: (value) {
                       setModalState(() => _autoPitch = value);
-                      setState(() => _cameraController.isAutoPitchEnabled = value);
+                      setState(
+                            () => _cameraController.isAutoPitchEnabled = value,
+                      );
                     },
                   ),
                   SwitchListTile(
@@ -453,7 +470,9 @@ class _Animate3DGraphicState extends State<Animate3DGraphic>
                     value: _autoRoll,
                     onChanged: (value) {
                       setModalState(() => _autoRoll = value);
-                      setState(() => _cameraController.isAutoRollEnabled = value);
+                      setState(
+                            () => _cameraController.isAutoRollEnabled = value,
+                      );
                     },
                   ),
                 ],
@@ -499,20 +518,28 @@ extension MissionLabel on Mission {
   /// A human-readable label of the mission name.
   String get label {
     switch (this) {
-      case Mission.grandCanyon: return 'Grand Canyon';
-      case Mission.hawaii: return 'Hawaii';
-      case Mission.pyrenees: return 'Pyrenees';
-      case Mission.snowdon: return 'Snowdon';
+      case Mission.grandCanyon:
+        return 'Grand Canyon';
+      case Mission.hawaii:
+        return 'Hawaii';
+      case Mission.pyrenees:
+        return 'Pyrenees';
+      case Mission.snowdon:
+        return 'Snowdon';
     }
   }
 
   // The ArcGIS Online item ID for the mission CSV file.
   String get itemId {
     switch (this) {
-      case Mission.grandCanyon: return '290f0c571c394461a8b58b6775d0bd63';
-      case Mission.hawaii: return 'e87c154fb9c2487f999143df5b08e9b1';
-      case Mission.pyrenees: return '5a9b60cee9ba41e79640a06bcdf8084d';
-      case Mission.snowdon: return '12509ffdc684437f8f2656b0129d2c13';
+      case Mission.grandCanyon:
+        return '290f0c571c394461a8b58b6775d0bd63';
+      case Mission.hawaii:
+        return 'e87c154fb9c2487f999143df5b08e9b1';
+      case Mission.pyrenees:
+        return '5a9b60cee9ba41e79640a06bcdf8084d';
+      case Mission.snowdon:
+        return '12509ffdc684437f8f2656b0129d2c13';
     }
   }
 }
@@ -525,9 +552,12 @@ extension AnimationSpeedValue on AnimationSpeed {
   /// The number of frames to advance per tick.
   int get frameStep {
     switch (this) {
-      case AnimationSpeed.slow: return 1;
-      case AnimationSpeed.medium: return 2;
-      case AnimationSpeed.fast: return 4;
+      case AnimationSpeed.slow:
+        return 1;
+      case AnimationSpeed.medium:
+        return 2;
+      case AnimationSpeed.fast:
+        return 4;
     }
   }
 
@@ -537,17 +567,15 @@ extension AnimationSpeedValue on AnimationSpeed {
 
 // A struct containing the location data for a single frame in a 3D animation.
 class Frame {
-
   Frame({
     required this.position,
     required this.heading,
     required this.pitch,
     required this.roll,
   });
+
   final ArcGISPoint position;
   final double heading;
   final double pitch;
   final double roll;
 }
-
-
