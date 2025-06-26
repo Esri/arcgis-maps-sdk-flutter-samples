@@ -14,7 +14,7 @@ The application loads a map of the Southwestern United States. Click the "Start"
 
 ## How it works
 
-1. Create an `ImageOverlay` and add it to the `SceneViewController`.
+1. Create an `ImageOverlay` and add it to the `ArcGISSceneViewController`.
 2. Set up a timer with an initial interval time of 68ms, which will display approximately 15 `ImageFrame`s per second.
 3. When `Start` is clicked, start the timer.
 4. The timer updates the `ImageFrame` of the `ImageOverlay` at the given time interval.
@@ -23,7 +23,7 @@ The application loads a map of the Southwestern United States. Click the "Start"
 
 * ImageFrame
 * ImageOverlay
-* SceneViewController
+* ArcGISSceneViewController
 
 ## About the data
 

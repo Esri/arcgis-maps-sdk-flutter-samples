@@ -16,13 +16,13 @@
         "rendering",
         "ImageFrame",
         "ImageOverlay",
-        "SceneViewController"
+        "ArcGISSceneViewController"
     ],
     "redirect_from": [],
     "relevant_apis": [
         "ImageFrame",
         "ImageOverlay",
-        "SceneViewController"
+        "ArcGISSceneViewController"
     ],
     "snippets": [
         "animate_images_with_image_overlay.dart"
