@@ -76,12 +76,14 @@ class _Animate3DGraphicState extends State<Animate3DGraphic>
   @override
   void initState() {
     super.initState();
+    // Start the animation ticker.
     _ticker = createTicker(_onTick)..start();
   }
 
   @override
   void dispose() {
     _ticker.dispose();
+    // Cleanup the ticker.
     super.dispose();
   }
 
@@ -173,7 +175,6 @@ class _Animate3DGraphicState extends State<Animate3DGraphic>
 
   // Loads the 3D plane model from local sample data and returns it as a Graphic.
   Future<Graphic> _loadPlaneGraphic() async {
-
     await downloadSampleData(['681d6f7694644709a7c830ec57a2d72b']);
     final documentsDirPath =
         (await getApplicationDocumentsDirectory()).absolute.path;
@@ -225,17 +226,17 @@ class _Animate3DGraphicState extends State<Animate3DGraphic>
   // Configures the orbit camera controller to follow the plane graphic.
   void _setupCameraController(Graphic planeGraphic) {
     _cameraController =
-    OrbitGeoElementCameraController(
-      targetGeoElement: planeGraphic,
-      distance: _cameraDistance,
-    )
-      ..cameraHeadingOffset = _cameraHeading
-      ..cameraPitchOffset = _cameraPitch
-      ..isAutoHeadingEnabled = _autoHeading
-      ..isAutoPitchEnabled = _autoPitch
-      ..isAutoRollEnabled = _autoRoll
-      ..minCameraDistance = 500
-      ..maxCameraDistance = 8000;
+        OrbitGeoElementCameraController(
+            targetGeoElement: planeGraphic,
+            distance: _cameraDistance,
+          )
+          ..cameraHeadingOffset = _cameraHeading
+          ..cameraPitchOffset = _cameraPitch
+          ..isAutoHeadingEnabled = _autoHeading
+          ..isAutoPitchEnabled = _autoPitch
+          ..isAutoRollEnabled = _autoRoll
+          ..minCameraDistance = 500
+          ..maxCameraDistance = 8000;
 
     _sceneViewController.cameraController = _cameraController;
   }
@@ -429,7 +430,7 @@ class _Animate3DGraphicState extends State<Animate3DGraphic>
                     onChanged: (value) {
                       setModalState(() => _cameraHeading = value);
                       setState(
-                            () => _cameraController.cameraHeadingOffset = value,
+                        () => _cameraController.cameraHeadingOffset = value,
                       );
                     },
                   ),
@@ -441,7 +442,7 @@ class _Animate3DGraphicState extends State<Animate3DGraphic>
                     onChanged: (value) {
                       setModalState(() => _cameraPitch = value);
                       setState(
-                            () => _cameraController.cameraPitchOffset = value,
+                        () => _cameraController.cameraPitchOffset = value,
                       );
                     },
                   ),
@@ -451,7 +452,7 @@ class _Animate3DGraphicState extends State<Animate3DGraphic>
                     onChanged: (value) {
                       setModalState(() => _autoHeading = value);
                       setState(
-                            () => _cameraController.isAutoHeadingEnabled = value,
+                        () => _cameraController.isAutoHeadingEnabled = value,
                       );
                     },
                   ),
@@ -461,7 +462,7 @@ class _Animate3DGraphicState extends State<Animate3DGraphic>
                     onChanged: (value) {
                       setModalState(() => _autoPitch = value);
                       setState(
-                            () => _cameraController.isAutoPitchEnabled = value,
+                        () => _cameraController.isAutoPitchEnabled = value,
                       );
                     },
                   ),
@@ -471,7 +472,7 @@ class _Animate3DGraphicState extends State<Animate3DGraphic>
                     onChanged: (value) {
                       setModalState(() => _autoRoll = value);
                       setState(
-                            () => _cameraController.isAutoRollEnabled = value,
+                        () => _cameraController.isAutoRollEnabled = value,
                       );
                     },
                   ),
