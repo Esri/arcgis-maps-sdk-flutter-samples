@@ -183,7 +183,7 @@ class _Animate3DGraphicState extends State<Animate3DGraphic>
     final planeSymbol = ModelSceneSymbol.withUri(
       uri: Uri.parse(planeModelPath),
       scale: 20,
-    );
+    )..anchorPosition = SceneSymbolAnchorPosition.center;
 
     // Define the initial position of the plane in the scene.
     final planePosition = ArcGISPoint(
