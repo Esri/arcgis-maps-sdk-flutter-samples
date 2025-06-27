@@ -14,6 +14,7 @@
         "rotation",
         "visualize",
         "ArcGISScene",
+        "ArcGISSceneViewController",
         "Camera",
         "GlobeCameraController",
         "Graphic",
@@ -22,12 +23,12 @@
         "OrbitGeoElementCameraController",
         "Renderer",
         "SceneProperties",
-        "SceneView",
         "SurfacePlacement"
     ],
     "redirect_from": [],
     "relevant_apis": [
         "ArcGISScene",
+        "ArcGISSceneViewController",
         "Camera",
         "GlobeCameraController",
         "Graphic",
@@ -36,7 +37,6 @@
         "OrbitGeoElementCameraController",
         "Renderer",
         "SceneProperties",
-        "SceneView",
         "SurfacePlacement"
     ],
     "snippets": [

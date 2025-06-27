@@ -32,6 +32,7 @@ Tap the buttons on the bottom toolbar to adjust the settings for the animation:
 ## Relevant API
 
 * ArcGISScene
+* ArcGISSceneViewController
 * Camera
 * GlobeCameraController
 * Graphic
@@ -40,7 +41,6 @@ Tap the buttons on the bottom toolbar to adjust the settings for the animation:
 * OrbitGeoElementCameraController
 * Renderer
 * SceneProperties
-* ArcGISSceneViewController
 * SurfacePlacement
 
 ## Offline data
