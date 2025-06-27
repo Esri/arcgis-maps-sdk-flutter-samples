@@ -1,0 +1,269 @@
+// Copyright 2025 Esri
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//   https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+
+import 'dart:async';
+import 'dart:io';
+
+import 'package:arcgis_maps/arcgis_maps.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
+import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
+
+class AnimateImagesWithImageOverlay extends StatefulWidget {
+  const AnimateImagesWithImageOverlay({super.key});
+
+  @override
+  State<AnimateImagesWithImageOverlay> createState() =>
+      _AnimateImagesWithImageOverlayState();
+}
+
+class _AnimateImagesWithImageOverlayState
+    extends State<AnimateImagesWithImageOverlay>
+    with SampleStateSupport {
+  // Create a controller for the scene view.
+  final _sceneViewController = ArcGISSceneView.createController();
+  // A flag to toggle the start/stop of the image animation.
+  var _started = false;
+  // Define the animated speeds available in the dropdown button.
+  final _animatedSpeeds = ['Fast', 'Medium', 'Slow'];
+  // The initial selected animated speed.
+  var _selectedAnimatedSpeed = 'Slow';
+  // The initial opacity of the image overlay.
+  var _opacity = 0.5;
+  // Create an ImageOverlay to display the animated images.
+  final _imageOverlay = ImageOverlay();
+  // A list to hold the image frames for the animation.
+  var _imageFrames = <ImageFrame>[];
+  // A string to display the download progress.
+  var _downloadProgress = '';
+  // An integer to track the current image frame index.
+  var _imageFrameIndex = 0;
+  // A timer to control and change the image frame periodically.
+  Timer? _timer;
+  // A flag for when the scene view is ready and controls can be used.
+  var _ready = false;
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: SafeArea(
+        top: false,
+        left: false,
+        right: false,
+        child: Stack(
+          children: [
+            Column(
+              spacing: 10,
+              children: [
+                Expanded(
+                  // Add a scene view to the widget tree and set a controller.
+                  child: ArcGISSceneView(
+                    controllerProvider: () => _sceneViewController,
+                    onSceneViewReady: onSceneViewReady,
+                  ),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    // A button to start/stop the animation.
+                    ElevatedButton(
+                      onPressed: () {
+                        final imageFrameSpeed =
+                            switch (_selectedAnimatedSpeed) {
+                              'Fast' => 17,
+                              'Medium' => 34,
+                              'Slow' => 68,
+                              _ => 68, // Default speed
+                            };
+                        beginImageAnimation(!_started, imageFrameSpeed);
+                        setState(() => _started = !_started);
+                      },
+                      child: _started
+                          ? const Text('Stop')
+                          : const Text('Start'),
+                    ),
+                    // A dropdown button to select the animated speed.
+                    DropdownButton<String>(
+                      value: _selectedAnimatedSpeed,
+                      onChanged: _started
+                          ? null // Disable when _started is true
+                          : (value) {
+                              if (value != null) {
+                                setState(() {
+                                  _selectedAnimatedSpeed = value;
+                                });
+                              }
+                            },
+                      items: _animatedSpeeds.map((String speed) {
+                        return DropdownMenuItem<String>(
+                          value: speed,
+                          child: Text(
+                            speed,
+                            style: TextStyle(
+                              color: Theme.of(context).primaryColor,
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  ],
+                ),
+                // A Slider to control opacity of the image overlay.
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  spacing: 10,
+                  children: [
+                    const SizedBox(width: 20),
+                    Text('Opacity: ${(_opacity * 100).toStringAsFixed(0)}%'),
+                    Expanded(
+                      child: Slider(
+                        value: _opacity * 100,
+                        onChanged: (value) {
+                          setState(() {
+                            _opacity = value / 100;
+                            // Set the opacity of the image overlay.
+                            _imageOverlay.opacity = _opacity;
+                          });
+                        },
+                        max: 100,
+                        divisions: 100 * 2,
+                        label: '$_opacity Opacity',
+                      ),
+                    ),
+                    const SizedBox(width: 20),
+                  ],
+                ),
+              ],
+            ),
+            // Display a progress indicator and prevent interaction until state is ready.
+            LoadingIndicator(visible: !_ready, text: _downloadProgress),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // Starts or stops the image animation.
+  void beginImageAnimation(bool isStart, int imageFrameSpeed) {
+    if (!isStart) {
+      _timer?.cancel();
+      return;
+    }
+    _timer = Timer.periodic(Duration(milliseconds: imageFrameSpeed), (timer) {
+      if (_imageFrames.isEmpty) return;
+      _imageFrameIndex = (_imageFrameIndex + 1) % _imageFrames.length;
+      setImageFrame(_imageFrameIndex);
+    });
+  }
+
+  Future<void> onSceneViewReady() async {
+    // Create a Scene with a topographic baseScene style.
+    final scene = ArcGISScene.withBasemapStyle(BasemapStyle.arcGISLightGray);
+    _sceneViewController.arcGISScene = scene;
+    // Add a elevation source for the base surface of the scene.
+    final elevationSource = ArcGISTiledElevationSource.withUri(
+      Uri.parse(
+        'https://elevation3d.arcgis.com/arcgis/rest/services/WorldElevation3D/Terrain3D/ImageServer',
+      ),
+    );
+    scene.baseSurface.elevationSources.add(elevationSource);
+
+    // Set the initial camera position and orientation.
+    // The camera is positioned over the Pacific South West region.
+    final camera = Camera.withLocation(
+      location: ArcGISPoint(
+        x: -116.621,
+        y: 24.7773,
+        z: 856977,
+        spatialReference: SpatialReference.wgs84,
+      ),
+      heading: 353.994,
+      pitch: 48.5495,
+      roll: 0,
+    );
+    _sceneViewController.setViewpointCamera(camera);
+    // Set the initial opacity of the image overlay.
+    _imageOverlay.opacity = _opacity;
+    // Set the image overlay to the scene view.
+    _sceneViewController.imageOverlays.add(_imageOverlay);
+
+    // Initialize the image frames and set them to the image overlay.
+    await initImageFrames();
+
+    // Set the ready state variable to true to enable the sample UI.
+    setState(() => _ready = true);
+  }
+
+  Future<void> initImageFrames() async {
+    final appDir = await getApplicationDocumentsDirectory();
+    // Define the path for the sample data zip file and the directory to extract it.
+    // The sample data contains images of the Pacific South West region.
+    final imageFile = File('${appDir.absolute.path}/PacificSouthWest.zip');
+    final directory = Directory.fromUri(
+      Uri.parse('${appDir.absolute.path}/PacificSouthWest/PacificSouthWest'),
+    );
+
+    // Download the sample data if it does not exist.
+    if (!imageFile.existsSync()) {
+      await downloadSampleDataWithProgress(
+        itemId: '9465e8c02b294c69bdb42de056a23ab1',
+        file: imageFile,
+        onProgress: (progress) {
+          _downloadProgress =
+              'Downloading images: ${(progress * 100).toStringAsFixed(0)}%';
+          setState(() {});
+        },
+      );
+      await extractZipArchive(imageFile);
+    }
+    // Get a list of all PNG image files in the extracted directory.
+    final imageList = directory
+        .listSync()
+        .whereType<File>()
+        .where((file) => file.path.endsWith('.png'))
+        .toList();
+    // Calculate the extent for the image frames based on a known point and size.
+    final pointForImageFrame = ArcGISPoint(
+      x: -120.0724273439448,
+      y: 35.131016955536694,
+      spatialReference: SpatialReference.wgs84,
+    );
+    final imageEnvelope = Envelope.fromCenter(
+      pointForImageFrame,
+      width: 15.09589635986124,
+      height: -14.3770441522488,
+    );
+    // Create a list of ImageFrame objects from the image files and the extent. 
+    _imageFrames = imageList.map((file) {
+      return ImageFrame.withImageEnvelope(
+        image: ArcGISImage.fromFile(file.uri)!,
+        extent: imageEnvelope,
+      );
+    }).toList();
+    // show the first image frame in the image overlay.
+    setImageFrame(0);
+  }
+
+  void setImageFrame(int index) {
+    // Set the image frame to the image overlay.
+    _imageOverlay.imageFrame = _imageFrames[index];
+  }
+}
