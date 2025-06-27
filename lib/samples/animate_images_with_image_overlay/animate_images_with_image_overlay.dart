@@ -225,11 +225,12 @@ class _AnimateImagesWithImageOverlayState
     if (!imageFile.existsSync()) {
       await downloadSampleDataWithProgress(
         itemId: '9465e8c02b294c69bdb42de056a23ab1',
-        file: imageFile,
+        destinationFile: imageFile,
         onProgress: (progress) {
-          _downloadProgress =
-              'Downloading images: ${(progress * 100).toStringAsFixed(0)}%';
-          setState(() {});
+          setState(
+            () => _downloadProgress =
+                'Downloading images: ${(progress * 100).toStringAsFixed(0)}%',
+          );
         },
       );
       await extractZipArchive(imageFile);
@@ -251,7 +252,7 @@ class _AnimateImagesWithImageOverlayState
       width: 15.09589635986124,
       height: -14.3770441522488,
     );
-    // Create a list of ImageFrame objects from the image files and the extent. 
+    // Create a list of ImageFrame objects from the image files and the extent.
     _imageFrames = imageList.map((file) {
       return ImageFrame.withImageEnvelope(
         image: ArcGISImage.fromFile(file.uri)!,
