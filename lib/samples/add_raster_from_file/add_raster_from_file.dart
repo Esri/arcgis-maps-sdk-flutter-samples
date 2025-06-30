@@ -31,6 +31,8 @@ class _AddRasterFromFileState extends State<AddRasterFromFile>
     with SampleStateSupport {
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
+  // download message
+  var _downloadMessage = '';
 
   // A flag for when the map view is ready and controls can be used.
   var _ready = false;
@@ -46,7 +48,7 @@ class _AddRasterFromFileState extends State<AddRasterFromFile>
             onMapViewReady: onMapViewReady,
           ),
           // Display a progress indicator and prevent interaction until state is ready.
-          LoadingIndicator(visible: !_ready),
+          LoadingIndicator(visible: !_ready, text: _downloadMessage),
         ],
       ),
     );
@@ -56,37 +58,51 @@ class _AddRasterFromFileState extends State<AddRasterFromFile>
     // Create a map with the ArcGIS ImageryStandard basemap style and set to the map view.
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISImageryStandard);
 
+    // Set the map on the map view controller.
+    _mapViewController.arcGISMap = map;
+
     // Load the raster layer.
     final rasterLayer = await loadRasterLayerFromFile();
 
-    // Add the raster layer to the map's operational layers.
-    map.operationalLayers.add(rasterLayer);
+    if (rasterLayer != null) {
+      // Add the raster layer to the map's operational layers.
+      map.operationalLayers.add(rasterLayer);
 
-    // Set the viewpoint to the center of the raster layer's full extent.
-    final fullExtent = rasterLayer.fullExtent;
-    if (fullExtent != null) {
-      final viewpoint = Viewpoint.fromCenter(fullExtent.center, scale: 80000);
+      // Set the viewpoint to the center of the raster layer's full extent.
+      final fullExtent = rasterLayer.fullExtent;
+      if (fullExtent != null) {
+        final viewpoint = Viewpoint.fromCenter(fullExtent.center, scale: 80000);
 
-      // Set the map on the map view controller.
-      _mapViewController.arcGISMap = map;
-
-      // Set the viewpoint to the raster layer.
-      _mapViewController.setViewpoint(viewpoint);
-
-      // Set the ready state variable to true to enable the sample UI.
-      setState(() => _ready = true);
+        // Set the viewpoint to the raster layer.
+        _mapViewController.setViewpoint(viewpoint);
+      }
     }
+    // Set the ready state variable to true to enable the sample UI.
+    setState(() => _ready = true);
   }
 
-  Future<RasterLayer> loadRasterLayerFromFile() async {
-    // Download the sample data.
-    await downloadSampleData(['7c4c679ab06a4df19dc497f577f111bd']);
-    // Get the temp directory.
-    final directory = await getApplicationDocumentsDirectory();
-    // Create a file to the Shasta tif file.
+  Future<RasterLayer?> loadRasterLayerFromFile() async {
+    const downloadFileName = 'raster-file';
+    final appDir = await getApplicationDocumentsDirectory();
+    final zipFile = File('${appDir.absolute.path}/$downloadFileName.zip');
     final shastaTifFile = File(
-      '${directory.absolute.path}/raster-file/raster-file/Shasta.tif',
+      '${appDir.absolute.path}/$downloadFileName/$downloadFileName/Shasta.tif',
     );
+
+    // Download the sample data if it does not exist.
+    if (!zipFile.existsSync()) {
+      await downloadSampleDataWithProgress(
+        itemId: '7c4c679ab06a4df19dc497f577f111bd',
+        destinationFile: zipFile,
+        onProgress: (progress) {
+          setState(() =>
+            _downloadMessage = 'Downloading raster file... ${progress * 100}%'
+          );
+        },
+      );
+      await extractZipArchive(zipFile);
+    }
+
     // Create a raster from the file URI.
     final raster = Raster.withFileUri(shastaTifFile.uri);
     // Load the raster object.

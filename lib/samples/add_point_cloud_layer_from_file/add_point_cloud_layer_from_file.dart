@@ -126,11 +126,11 @@ class _AddPointCloudLayerFromFileState extends State<AddPointCloudLayerFromFile>
       // If the file does not exist, download it.
       await downloadSampleDataWithProgress(
         itemId: '34da965ca51d4c68aa9b3a38edb29e00',
-        file: sanDiegoPointCloudFile,
+        destinationFile: sanDiegoPointCloudFile,
         onProgress: (progress) {
-          setState(() {
-            _downloadProgress = progress;
-          });
+          setState(() =>
+            _downloadProgress = progress
+          );
         },
       );
     }
