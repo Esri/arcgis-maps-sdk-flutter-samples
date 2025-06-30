@@ -159,6 +159,7 @@ enum FilterType {
     name: 'Total Population',
     extrusionExpression: '[POP2007] / 10',
   ),
+
   populationDensity(
     name: 'Population Density',
     extrusionExpression: '[POP07_SQMI] * 5000 + 100000',
