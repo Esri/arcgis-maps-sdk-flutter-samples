@@ -148,7 +148,7 @@ class _ShowExtrudedFeaturesState extends State<ShowExtrudedFeatures>
     // Get the scene properties from the feature layer's renderer.
     final sceneProperties = renderer!.sceneProperties;
     // Update renderer's scene properties extrusion expression.
-    sceneProperties.extrusionExpression = filterType.extrusionExpression;
+    sceneProperties.extrusionExpression = _filterType.extrusionExpression;
   }
 }
 
