@@ -30,8 +30,7 @@ class _ShowExtrudedFeaturesState extends State<ShowExtrudedFeatures>
   final _sceneViewController = ArcGISSceneView.createController();
   // A flag for when the map view is ready and controls can be used.
   var _ready = false;
-
-  // Enum representing types of population statistics.
+  // An enum representing types of population statistics.
   FilterType _filterType = FilterType.totalPopulation;
 
   @override
