@@ -262,7 +262,6 @@ class _Animate3DGraphicState extends State<Animate3DGraphic>
     );
   }
 
-
   // Configures the orbit camera controller to follow the plane graphic.
   void _setupCameraController(Graphic planeGraphic) {
     _cameraController =
