@@ -10,7 +10,7 @@ Extrusion is the process of stretching a flat, 2D shape vertically to create a 3
 
 ## How to use the sample
 
-Press the button to switch between using population density and total population for extrusion. Higher extrusion directly corresponds to higher attribute values.
+Tap the button to switch between using population density and total population for extrusion. Higher extrusion directly corresponds to higher attribute values.
 
 ## How it works
 
