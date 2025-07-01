@@ -1,0 +1,41 @@
+{
+    "category": "Scenes",
+    "description": "Show various kinds of 3D symbols in a scene.",
+    "ignore": false,
+    "images": [
+        "style_point_with_scene_symbol.png"
+    ],
+    "keywords": [
+        "3D",
+        "cone",
+        "cube",
+        "cylinder",
+        "diamond",
+        "geometry",
+        "graphic",
+        "graphics overlay",
+        "pyramid",
+        "scene",
+        "shape",
+        "sphere",
+        "symbol",
+        "tetrahedron",
+        "tube",
+        "visualization",
+        "ArcGISScene",
+        "Graphic",
+        "GraphicsOverlay",
+        "SimpleMarkerSceneSymbol"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+        "ArcGISScene",
+        "Graphic",
+        "GraphicsOverlay",
+        "SimpleMarkerSceneSymbol"
+    ],
+    "snippets": [
+        "style_point_with_scene_symbol.dart"
+    ],
+    "title": "Style point with scene symbol"
+}
