@@ -88,8 +88,8 @@ class _Animate3DGraphicState extends State<Animate3DGraphic>
 
   @override
   void dispose() {
-    _ticker.dispose();
     // Cleanup the ticker.
+    _ticker.dispose();
     super.dispose();
   }
 
@@ -236,6 +236,13 @@ class _Animate3DGraphicState extends State<Animate3DGraphic>
       ..graphics.add(planeGraphic)
       ..sceneProperties.surfacePlacement = SurfacePlacement.absolute;
 
+    // Apply renderer expressions for heading, pitch, and roll.
+    final renderer = SimpleRenderer()
+      ..sceneProperties.headingExpression = '[HEADING]'
+      ..sceneProperties.pitchExpression = '[PITCH]'
+      ..sceneProperties.rollExpression = '[ROLL]';
+    graphicsOverlay.renderer = renderer;
+
     _sceneViewController.graphicsOverlays.add(graphicsOverlay);
 
     // Set the initial viewpoint centered on the plane's position.
@@ -255,6 +262,7 @@ class _Animate3DGraphicState extends State<Animate3DGraphic>
     );
   }
 
+
   // Configures the orbit camera controller to follow the plane graphic.
   void _setupCameraController(Graphic planeGraphic) {
     _cameraController =
@@ -272,7 +280,6 @@ class _Animate3DGraphicState extends State<Animate3DGraphic>
 
     _sceneViewController.cameraController = _cameraController;
   }
-
 
   // Loads mission frames from a CSV file using a PortalItem.
   Future<void> _loadMissionFrames(Mission mission) async {
@@ -360,7 +367,6 @@ class _Animate3DGraphicState extends State<Animate3DGraphic>
       ),
     );
   }
-
 
   // Called on each tick to advance the animation.
   void _onTick(Duration elapsed) {
