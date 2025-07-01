@@ -53,6 +53,8 @@ class _ShowExtrudedFeaturesState extends State<ShowExtrudedFeatures>
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  // Create a set of evenly spaced buttons for each FilterType value, and when a button is pressed,
+                  // it triggers the changeExtrusionExpression function with the selected filter.
                   children: FilterType.values
                       .map<Widget>(
                         (filterType) => ElevatedButton(
