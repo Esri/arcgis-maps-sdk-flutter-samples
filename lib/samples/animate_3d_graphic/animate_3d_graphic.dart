@@ -67,6 +67,12 @@ class _Animate3DGraphicState extends State<Animate3DGraphic>
   var _autoPitch = false;
   var _autoRoll = false;
 
+  // State variables for real-time telemetry tracking.
+  double _altitude = 0;
+  double _heading = 0;
+  double _pitch = 0;
+  double _roll = 0;
+
   // The current progress of the animation.
   double get _progress {
     if (_frames.isEmpty) return 0;
@@ -127,6 +133,32 @@ class _Animate3DGraphicState extends State<Animate3DGraphic>
                 ),
               ],
             ),
+            // Show real-time telemetry data.
+            if (_planeGraphic != null)
+              SafeArea(
+                child: Align(
+                  alignment: Alignment.topRight,
+                  child: Container(
+                    margin: const EdgeInsets.all(16),
+                    width: 170,
+                    height: 120,
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Colors.black.withValues(alpha: 0.3),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildTelemetryRow('Altitude', _altitude),
+                        _buildTelemetryRow('Heading', _heading),
+                        _buildTelemetryRow('Pitch', _pitch),
+                        _buildTelemetryRow('Roll', _roll),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
             // Display a loading indicator until the scene is ready.
             if (!_ready) const Center(child: CircularProgressIndicator()),
           ],
@@ -241,6 +273,7 @@ class _Animate3DGraphicState extends State<Animate3DGraphic>
     _sceneViewController.cameraController = _cameraController;
   }
 
+
   // Loads mission frames from a CSV file using a PortalItem.
   Future<void> _loadMissionFrames(Mission mission) async {
     final portal = Portal.arcGISOnline();
@@ -300,7 +333,34 @@ class _Animate3DGraphicState extends State<Animate3DGraphic>
     _planeGraphic!.attributes['HEADING'] = frame.heading;
     _planeGraphic!.attributes['PITCH'] = frame.pitch;
     _planeGraphic!.attributes['ROLL'] = frame.roll;
+
+    setState(() {
+      _altitude = frame.position.z ?? 0;
+      _heading = frame.heading;
+      _pitch = frame.pitch;
+      _roll = frame.roll;
+    });
   }
+
+  // Telemetry Row Widget.
+  Widget _buildTelemetryRow(String label, double value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 2),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(label, style: const TextStyle(color: Colors.white)),
+          Text(
+            label == 'Altitude'
+                ? '${value.toStringAsFixed(0)} m'
+                : '${value.toStringAsFixed(0)}°',
+            style: const TextStyle(color: Colors.white),
+          ),
+        ],
+      ),
+    );
+  }
+
 
   // Called on each tick to advance the animation.
   void _onTick(Duration elapsed) {
