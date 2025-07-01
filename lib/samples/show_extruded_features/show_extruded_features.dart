@@ -28,7 +28,7 @@ class _ShowExtrudedFeaturesState extends State<ShowExtrudedFeatures>
     with SampleStateSupport {
   // Create a controller for the scene view.
   final _sceneViewController = ArcGISSceneView.createController();
-  // A flag for when the map view is ready and controls can be used.
+  // A flag for when the scene view is ready and controls can be used.
   var _ready = false;
   // An enum representing types of population statistics.
   FilterType _filterType = FilterType.totalPopulation;
