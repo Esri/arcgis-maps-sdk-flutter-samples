@@ -45,6 +45,7 @@ class _ShowExtrudedFeaturesState extends State<ShowExtrudedFeatures>
             Column(
               children: [
                 Expanded(
+                  // Add a scene view to the widget tree and set a controller.
                   child: ArcGISSceneView(
                     controllerProvider: () => _sceneViewController,
                     onSceneViewReady: onSceneViewReady,
