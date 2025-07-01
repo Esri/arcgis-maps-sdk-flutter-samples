@@ -141,7 +141,7 @@ class _ShowExtrudedFeaturesState extends State<ShowExtrudedFeatures>
   void changeExtrusionExpression(FilterType filterType) {
     setState(() => _filterType = filterType);
 
-    // Get the first layer from the scene view's operation layers.
+    // Get the first layer from the scene view's operational layers.
     final featureLayer =
         _sceneViewController.arcGISScene!.operationalLayers[0] as FeatureLayer;
     // Get the renderer from the feature layer.
