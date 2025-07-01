@@ -18,7 +18,7 @@ Tap the button to switch between using population density and total population f
 2. Create a feature layer from the service feature table.
    * Make sure to set the rendering mode to dynamic, `featureLayer.renderingMode = FeatureRenderingMode.dynamic`.
 3. Apply a `SimpleRenderer` to the feature layer.
-4. Set `ExtrusionMode` of render, `sceneProperties.extrusionMode = ExtrusionMode.absoluteHeight`.
+4. Set `ExtrusionMode` of renderer, `sceneProperties.extrusionMode = ExtrusionMode.absoluteHeight`.
 5. Set extrusion expression of renderer, `sceneProperties.extrusionExpression = '[POP2007]/ 10'`.
 
 ## Relevant API
