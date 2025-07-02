@@ -37,6 +37,7 @@ class _StylePointWithSceneSymbolState extends State<StylePointWithSceneSymbol>
     return Scaffold(
       body: Stack(
         children: [
+          // Add a scene view to the widget tree and set a controller.
           ArcGISSceneView(
             controllerProvider: () => _sceneViewController,
             onSceneViewReady: onSceneViewReady,
