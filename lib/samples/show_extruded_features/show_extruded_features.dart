@@ -31,7 +31,7 @@ class _ShowExtrudedFeaturesState extends State<ShowExtrudedFeatures>
   // A flag for when the scene view is ready and controls can be used.
   var _ready = false;
   // An enum representing types of population statistics.
-  FilterType _filterType = FilterType.totalPopulation;
+  var _filterType = FilterType.totalPopulation;
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +56,7 @@ class _ShowExtrudedFeaturesState extends State<ShowExtrudedFeatures>
                   // Create a set of evenly spaced buttons for each FilterType value, and when a button is pressed,
                   // it triggers the changeExtrusionExpression function with the selected filter.
                   children: FilterType.values
-                      .map<Widget>(
+                      .map(
                         (filterType) => ElevatedButton(
                           onPressed: () =>
                               changeExtrusionExpression(filterType),
@@ -75,7 +75,7 @@ class _ShowExtrudedFeaturesState extends State<ShowExtrudedFeatures>
     );
   }
 
-  Future<void> onSceneViewReady() async {
+  void onSceneViewReady() {
     // Define the Uri for the service feature table (US state polygons).
     final serviceFeatureTableUri = Uri.parse(
       'https://sampleserver6.arcgisonline.com/arcgis/rest/services/Census/MapServer/3',
@@ -108,7 +108,7 @@ class _ShowExtrudedFeaturesState extends State<ShowExtrudedFeatures>
     sceneProperties.extrusionMode = ExtrusionMode.absoluteHeight;
     sceneProperties.extrusionExpression = _filterType.extrusionExpression;
 
-    // Set the feature layer's renderer to the define simple renderer.
+    // Set the feature layer's renderer to the defined simple renderer.
     featureLayer.renderer = simpleRenderer;
 
     // Create a scene with a topographic basemap style.
@@ -146,12 +146,10 @@ class _ShowExtrudedFeaturesState extends State<ShowExtrudedFeatures>
     // Get the first layer from the scene view's operational layers.
     final featureLayer =
         _sceneViewController.arcGISScene!.operationalLayers[0] as FeatureLayer;
-    // Get the renderer from the feature layer.
-    final renderer = featureLayer.renderer;
-    // Get the scene properties from the feature layer's renderer.
-    final sceneProperties = renderer!.sceneProperties;
-    // Update renderer's scene properties extrusion expression.
-    sceneProperties.extrusionExpression = _filterType.extrusionExpression;
+
+    // Update the renderer's scene properties to the selected extrusion expression.
+    featureLayer.renderer!.sceneProperties.extrusionExpression =
+        _filterType.extrusionExpression;
   }
 }
 
