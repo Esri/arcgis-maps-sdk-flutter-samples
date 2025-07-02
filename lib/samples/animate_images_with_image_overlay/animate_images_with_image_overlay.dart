@@ -19,6 +19,7 @@ import 'dart:io';
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:path_provider/path_provider.dart';
 
 class AnimateImagesWithImageOverlay extends StatefulWidget {
@@ -31,7 +32,7 @@ class AnimateImagesWithImageOverlay extends StatefulWidget {
 
 class _AnimateImagesWithImageOverlayState
     extends State<AnimateImagesWithImageOverlay>
-    with SampleStateSupport {
+    with TickerProviderStateMixin, SampleStateSupport {
   // Create a controller for the scene view.
   final _sceneViewController = ArcGISSceneView.createController();
   // A flag to toggle the start/stop of the image animation.
@@ -40,6 +41,10 @@ class _AnimateImagesWithImageOverlayState
   final _animatedSpeeds = ['Fast', 'Medium', 'Slow'];
   // The initial selected animated speed.
   var _selectedAnimatedSpeed = 'Slow';
+  // The speed of the image frame animation in milliseconds.
+  var _imageFrameSpeed = 68;
+  // The last frame time in milliseconds to control the animation speed.
+  var _lastFrameTime = 0;
   // The initial opacity of the image overlay.
   var _opacity = 0.5;
   // Create an ImageOverlay to display the animated images.
@@ -51,13 +56,15 @@ class _AnimateImagesWithImageOverlayState
   // An integer to track the current image frame index.
   var _imageFrameIndex = 0;
   // A timer to control and change the image frame periodically.
-  Timer? _timer;
+  Ticker? _ticker;
   // A flag for when the scene view is ready and controls can be used.
   var _ready = false;
 
   @override
   void dispose() {
-    _timer?.cancel();
+    _ticker?.dispose();
+    _ticker = null;
+    _imageFrames.clear();
     super.dispose();
   }
 
@@ -86,15 +93,11 @@ class _AnimateImagesWithImageOverlayState
                     // A button to start/stop the animation.
                     ElevatedButton(
                       onPressed: () {
-                        resetTimer();
-                        if (_started) {
-                          // If the animation is already started, stop it.
-                          _timer?.cancel();
+                        if (!_started) {
+                          startTicker();
                         } else {
-                          // If the animation is not started, begin it.
-                          beginImageAnimation(getAnimatedSpeed(_selectedAnimatedSpeed));
+                          stopTicker();
                         }
-                        setState(() => _started = !_started);
                       },
                       child: _started
                           ? const Text('Stop')
@@ -104,16 +107,16 @@ class _AnimateImagesWithImageOverlayState
                     DropdownButton<String>(
                       value: _selectedAnimatedSpeed,
                       onChanged: (value) {
-                              if (value != null) {
-                                setState(() {
-                                  _selectedAnimatedSpeed = value;
-                                });
-                                if (_started) {
-                                  resetTimer();
-                                  beginImageAnimation(getAnimatedSpeed(value));
-                                }
-                              }
-                            },
+                        if (value != null) {
+                          _imageFrameSpeed = getAnimatedSpeed(value);
+                          if (_started) {
+                            startTicker();
+                          }
+                          setState(() {
+                            _selectedAnimatedSpeed = value;
+                          });
+                        }
+                      },
                       items: _animatedSpeeds.map((String speed) {
                         return DropdownMenuItem<String>(
                           value: speed,
@@ -163,11 +166,6 @@ class _AnimateImagesWithImageOverlayState
     );
   }
 
-  // Resets the timer to stop the image animation.
-  void resetTimer() {
-    _timer?.cancel();
-  }
-
   int getAnimatedSpeed(String selectedSpeed) {
     // Returns the speed of the animation based on the selected speed.
     return switch (selectedSpeed) {
@@ -178,14 +176,28 @@ class _AnimateImagesWithImageOverlayState
     };
   }
 
-  // Starts or stops the image animation.
-  void beginImageAnimation(int imageFrameSpeed) {
-    print('Image frame speed: $imageFrameSpeed ms');
-    _timer = Timer.periodic(Duration(milliseconds: imageFrameSpeed), (timer) {
-      if (_imageFrames.isEmpty) return;
-      _imageFrameIndex = (_imageFrameIndex + 1) % _imageFrames.length;
-      setImageFrame(_imageFrameIndex);
+  void stopTicker() {
+    _ticker?.stop();
+    _ticker?.dispose();
+    _ticker = null;
+    setState(() => _started = false);
+  }
+
+  void startTicker() {
+    if (_ticker != null) {
+      _ticker!.dispose();
+    }
+    _lastFrameTime = 0;
+    _ticker = createTicker((elapsed) {
+      final ms = elapsed.inMilliseconds;
+      if (ms - _lastFrameTime >= _imageFrameSpeed) {
+        _imageFrameIndex = (_imageFrameIndex + 1) % _imageFrames.length;
+        setImageFrame(_imageFrameIndex);
+        _lastFrameTime = ms;
+      }
     });
+    _ticker!.start();
+    setState(() => _started = true);
   }
 
   Future<void> onSceneViewReady() async {
