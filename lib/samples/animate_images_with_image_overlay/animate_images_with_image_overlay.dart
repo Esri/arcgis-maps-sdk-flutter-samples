@@ -86,14 +86,14 @@ class _AnimateImagesWithImageOverlayState
                     // A button to start/stop the animation.
                     ElevatedButton(
                       onPressed: () {
-                        final imageFrameSpeed =
-                            switch (_selectedAnimatedSpeed) {
-                              'Fast' => 17,
-                              'Medium' => 34,
-                              'Slow' => 68,
-                              _ => 68, // Default speed
-                            };
-                        beginImageAnimation(!_started, imageFrameSpeed);
+                        resetTimer();
+                        if (_started) {
+                          // If the animation is already started, stop it.
+                          _timer?.cancel();
+                        } else {
+                          // If the animation is not started, begin it.
+                          beginImageAnimation(getAnimatedSpeed(_selectedAnimatedSpeed));
+                        }
                         setState(() => _started = !_started);
                       },
                       child: _started
@@ -103,13 +103,15 @@ class _AnimateImagesWithImageOverlayState
                     // A dropdown button to select the animated speed.
                     DropdownButton<String>(
                       value: _selectedAnimatedSpeed,
-                      onChanged: _started
-                          ? null // Disable when _started is true
-                          : (value) {
+                      onChanged: (value) {
                               if (value != null) {
                                 setState(() {
                                   _selectedAnimatedSpeed = value;
                                 });
+                                if (_started) {
+                                  resetTimer();
+                                  beginImageAnimation(getAnimatedSpeed(value));
+                                }
                               }
                             },
                       items: _animatedSpeeds.map((String speed) {
@@ -161,12 +163,24 @@ class _AnimateImagesWithImageOverlayState
     );
   }
 
+  // Resets the timer to stop the image animation.
+  void resetTimer() {
+    _timer?.cancel();
+  }
+
+  int getAnimatedSpeed(String selectedSpeed) {
+    // Returns the speed of the animation based on the selected speed.
+    return switch (selectedSpeed) {
+      'Fast' => 17,
+      'Medium' => 34,
+      'Slow' => 68,
+      _ => 68, // Default speed
+    };
+  }
+
   // Starts or stops the image animation.
-  void beginImageAnimation(bool isStart, int imageFrameSpeed) {
-    if (!isStart) {
-      _timer?.cancel();
-      return;
-    }
+  void beginImageAnimation(int imageFrameSpeed) {
+    print('Image frame speed: $imageFrameSpeed ms');
     _timer = Timer.periodic(Duration(milliseconds: imageFrameSpeed), (timer) {
       if (_imageFrames.isEmpty) return;
       _imageFrameIndex = (_imageFrameIndex + 1) % _imageFrames.length;
@@ -176,7 +190,7 @@ class _AnimateImagesWithImageOverlayState
 
   Future<void> onSceneViewReady() async {
     // Create a Scene with a topographic baseScene style.
-    final scene = ArcGISScene.withBasemapStyle(BasemapStyle.arcGISLightGray);
+    final scene = ArcGISScene.withBasemapStyle(BasemapStyle.arcGISDarkGray);
     _sceneViewController.arcGISScene = scene;
     // Add a elevation source for the base surface of the scene.
     final elevationSource = ArcGISTiledElevationSource.withUri(
