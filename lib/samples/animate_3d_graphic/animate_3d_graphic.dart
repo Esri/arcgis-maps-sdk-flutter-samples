@@ -575,7 +575,10 @@ enum Mission {
 
   const Mission(this.label, this.itemId);
 
+  // A human-readable label of the mission name.
   final String label;
+  
+  // The ArcGIS Online item ID for the mission CSV file.
   final String itemId;
 }
 
