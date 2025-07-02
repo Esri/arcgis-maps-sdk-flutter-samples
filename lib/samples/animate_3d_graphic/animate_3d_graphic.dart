@@ -134,8 +134,9 @@ class _Animate3DGraphicState extends State<Animate3DGraphic>
               ],
             ),
             // Show real-time telemetry data.
-            if (_planeGraphic != null)
-              SafeArea(
+            Visibility(
+              visible: _ready,
+              child: SafeArea(
                 child: Align(
                   alignment: Alignment.topRight,
                   child: Container(
@@ -159,8 +160,9 @@ class _Animate3DGraphicState extends State<Animate3DGraphic>
                   ),
                 ),
               ),
+            ),
             // Display a loading indicator until the scene is ready.
-            if (!_ready) const Center(child: CircularProgressIndicator()),
+            LoadingIndicator(visible: !_ready),
           ],
         ),
       ),
@@ -377,17 +379,15 @@ class _Animate3DGraphicState extends State<Animate3DGraphic>
         _currentFrameIndex = 0;
         _isPlaying = false;
       }
-      _updateFrame(_frames[_currentFrameIndex]);
     });
+    _updateFrame(_frames[_currentFrameIndex]);
   }
 
   // Toggles the animation play/pause state.
   void _toggleAnimation() {
     if (_planeGraphic == null || _frames.isEmpty) return;
 
-    setState(() {
-      _isPlaying = !_isPlaying;
-    });
+    setState(() => _isPlaying = !_isPlaying);
   }
 
   // Shows the mission settings in a bottom sheet.
@@ -412,7 +412,7 @@ class _Animate3DGraphicState extends State<Animate3DGraphic>
               LinearProgressIndicator(value: _progress),
               const SizedBox(height: 24),
               // Dropdown to select mission.
-              DropdownButton<Mission>(
+              DropdownButton(
                 value: _currentMission,
                 isExpanded: true,
                 onChanged: (mission) {
@@ -435,7 +435,7 @@ class _Animate3DGraphicState extends State<Animate3DGraphic>
               ),
               const SizedBox(height: 16),
               // Dropdown to select animation speed.
-              DropdownButton<AnimationSpeed>(
+              DropdownButton(
                 value: _animationSpeed,
                 isExpanded: true,
                 onChanged: (speed) {
@@ -484,7 +484,7 @@ class _Animate3DGraphicState extends State<Animate3DGraphic>
                     max: 8000,
                     onChanged: (value) {
                       setModalState(() => _cameraDistance = value);
-                      setState(() => _cameraController.cameraDistance = value);
+                      _cameraController.cameraDistance = value;
                     },
                   ),
                   _buildSlider(
@@ -494,9 +494,7 @@ class _Animate3DGraphicState extends State<Animate3DGraphic>
                     max: 180,
                     onChanged: (value) {
                       setModalState(() => _cameraHeading = value);
-                      setState(
-                        () => _cameraController.cameraHeadingOffset = value,
-                      );
+                      _cameraController.cameraHeadingOffset = value;
                     },
                   ),
                   _buildSlider(
@@ -506,9 +504,7 @@ class _Animate3DGraphicState extends State<Animate3DGraphic>
                     max: 180,
                     onChanged: (value) {
                       setModalState(() => _cameraPitch = value);
-                      setState(
-                        () => _cameraController.cameraPitchOffset = value,
-                      );
+                      _cameraController.cameraPitchOffset = value;
                     },
                   ),
                   SwitchListTile(
@@ -516,9 +512,7 @@ class _Animate3DGraphicState extends State<Animate3DGraphic>
                     value: _autoHeading,
                     onChanged: (value) {
                       setModalState(() => _autoHeading = value);
-                      setState(
-                        () => _cameraController.isAutoHeadingEnabled = value,
-                      );
+                      _cameraController.isAutoHeadingEnabled = value;
                     },
                   ),
                   SwitchListTile(
@@ -526,9 +520,7 @@ class _Animate3DGraphicState extends State<Animate3DGraphic>
                     value: _autoPitch,
                     onChanged: (value) {
                       setModalState(() => _autoPitch = value);
-                      setState(
-                        () => _cameraController.isAutoPitchEnabled = value,
-                      );
+                      _cameraController.isAutoPitchEnabled = value;
                     },
                   ),
                   SwitchListTile(
@@ -536,9 +528,7 @@ class _Animate3DGraphicState extends State<Animate3DGraphic>
                     value: _autoRoll,
                     onChanged: (value) {
                       setModalState(() => _autoRoll = value);
-                      setState(
-                        () => _cameraController.isAutoRollEnabled = value,
-                      );
+                      _cameraController.isAutoRollEnabled = value;
                     },
                   ),
                 ],
@@ -577,55 +567,28 @@ class _Animate3DGraphicState extends State<Animate3DGraphic>
 }
 
 // An enum of the different mission selections available in this sample.
-enum Mission { grandCanyon, hawaii, pyrenees, snowdon }
+enum Mission {
+  grandCanyon('Grand Canyon', '290f0c571c394461a8b58b6775d0bd63'),
+  hawaii('Hawaii', 'e87c154fb9c2487f999143df5b08e9b1'),
+  pyrenees('Pyrenees', '5a9b60cee9ba41e79640a06bcdf8084d'),
+  snowdon('Snowdon', '12509ffdc684437f8f2656b0129d2c13');
 
-// To provide labels and ArcGIS Online item IDs for each mission.
-extension MissionLabel on Mission {
-  /// A human-readable label of the mission name.
-  String get label {
-    switch (this) {
-      case Mission.grandCanyon:
-        return 'Grand Canyon';
-      case Mission.hawaii:
-        return 'Hawaii';
-      case Mission.pyrenees:
-        return 'Pyrenees';
-      case Mission.snowdon:
-        return 'Snowdon';
-    }
-  }
+  const Mission(this.label, this.itemId);
 
-  // The ArcGIS Online item ID for the mission CSV file.
-  String get itemId {
-    switch (this) {
-      case Mission.grandCanyon:
-        return '290f0c571c394461a8b58b6775d0bd63';
-      case Mission.hawaii:
-        return 'e87c154fb9c2487f999143df5b08e9b1';
-      case Mission.pyrenees:
-        return '5a9b60cee9ba41e79640a06bcdf8084d';
-      case Mission.snowdon:
-        return '12509ffdc684437f8f2656b0129d2c13';
-    }
-  }
+  final String label;
+  final String itemId;
 }
 
-// An enumeration representing the speed of the animation.
-enum AnimationSpeed { slow, medium, fast }
+// An enum representing the speed of the animation.
+enum AnimationSpeed {
+  slow(1),
+  medium(2),
+  fast(4);
 
-// Extension to provide speed values and labels.
-extension AnimationSpeedValue on AnimationSpeed {
-  /// The number of frames to advance per tick.
-  int get frameStep {
-    switch (this) {
-      case AnimationSpeed.slow:
-        return 1;
-      case AnimationSpeed.medium:
-        return 2;
-      case AnimationSpeed.fast:
-        return 4;
-    }
-  }
+  const AnimationSpeed(this.frameStep);
+
+  // The number of frames to advance per tick.
+  final int frameStep;
 
   // A label for the speed.
   String get label => name[0].toUpperCase() + name.substring(1);

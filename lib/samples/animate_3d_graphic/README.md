@@ -20,7 +20,7 @@ Tap the buttons on the bottom toolbar to adjust the settings for the animation:
 
 1. Create a `GraphicsOverlay` and add it to the `ArcGISSceneViewController`.
 2. Create a `ModelSceneSymbol` object.
-3. Create a `Graphic` object and set its geometry to a `Point`.
+3. Create a `Graphic` object and set its geometry to a `ArcGISPoint`.
 4. Set the `ModelSceneSymbol` object to the graphic.
 5. Add heading, pitch, and roll attributes to the graphic.
 6. Create a `SimpleRenderer` object and set its expression properties.
