@@ -100,7 +100,7 @@ class _ShowViewshedFromGeoelementInSceneState
     _setupCameraController(_tankGraphic!);
 
     // Add the viewshed to the scene.
-    _addViewShedToScene(_tankGraphic!);
+    _addViewshedToScene(_tankGraphic!);
 
     setState(() => _ready = true);
   }
@@ -255,9 +255,9 @@ class _ShowViewshedFromGeoelementInSceneState
   }
 
   // Add viewshed to the scene.
-  void _addViewShedToScene(Graphic tankGraphic) {
+  void _addViewshedToScene(Graphic tankGraphic) {
     // Create a GeoElementViewShed attached to the scene.
-    final geoElementViewShed =
+    final geoElementViewshed =
         GeoElementViewshed(
             geoElement: tankGraphic,
             horizontalAngle: 90,
@@ -271,7 +271,7 @@ class _ShowViewshedFromGeoelementInSceneState
           ..offsetZ = 3;
 
     // Create an Analysis Overlay and add the viewshed to it.
-    final analysisOverlay = AnalysisOverlay()..analyses.add(geoElementViewShed);
+    final analysisOverlay = AnalysisOverlay()..analyses.add(geoElementViewshed);
 
     // Add the analysis overlay to the scene view.
     _sceneViewController.analysisOverlays.add(analysisOverlay);
