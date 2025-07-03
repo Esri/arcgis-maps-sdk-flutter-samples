@@ -55,6 +55,7 @@ class _ShowViewshedFromGeoelementInSceneState
         right: false,
         child: Stack(
           children: [
+            // Add a scene view to the widget tree and set a controller.
             ArcGISSceneView(
               controllerProvider: () => _sceneViewController,
               onSceneViewReady: onSceneViewReady,
@@ -130,7 +131,7 @@ class _ShowViewshedFromGeoelementInSceneState
 
   // Convert the tapped location into a waypoint within the scene and initiate the tank's animation towards the waypoint.
   Future<void> onTap(Offset localPosition) async {
-    // Convert localPosition to scenePoint,
+    // Convert localPosition to scenePoint.
     final scenePoint = await _sceneViewController.screenToLocation(
       screen: localPosition,
     );
