@@ -108,12 +108,9 @@ class _AnimateImagesWithImageOverlayState
                       value: _selectedAnimatedSpeed,
                       onChanged: (value) {
                         if (value != null) {
-                          _imageFrameSpeed = getAnimatedSpeed(value);
-                          if (_started) {
-                            startTicker();
-                          }
                           setState(() {
                             _selectedAnimatedSpeed = value;
+                            _imageFrameSpeed = getAnimatedSpeed(value);
                           });
                         }
                       },
