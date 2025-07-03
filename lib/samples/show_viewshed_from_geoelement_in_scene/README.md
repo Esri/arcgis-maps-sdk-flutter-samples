@@ -33,11 +33,7 @@ Tap to set a destination for the vehicle (a GeoElement). The vehicle will 'drive
 
 ## Offline data
 
-Offline sample data will be downloaded by the sample viewer automatically.
-
-| Link | Local Location |
-|------|----------------|
-|[Model Marker Symbol Data](https://www.arcgis.com/home/item.html?id=07d62a792ab6496d9b772a24efea45d0)| `<userhome>`/ArcGIS/Runtime/Data/3D/bradley_low_3ds/bradle.3ds |
+[Model Marker Symbol Data](https://www.arcgis.com/home/item.html?id=07d62a792ab6496d9b772a24efea45d0)
 
 ## About the data
 

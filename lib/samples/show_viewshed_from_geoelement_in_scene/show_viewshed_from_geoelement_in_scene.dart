@@ -37,7 +37,7 @@ class _ShowViewshedFromGeoelementInSceneState
   // The graphic for the tank.
   Graphic? _tankGraphic;
 
-  // Timer for animation
+  // Timer for animation.
   Timer? _animationTimer;
 
   // Waypoint for tank graphic.
@@ -62,7 +62,7 @@ class _ShowViewshedFromGeoelementInSceneState
             ),
             // Display a progress indicator and prevent interaction until state is ready.
             LoadingIndicator(visible: !_ready),
-            // Banner at the top
+            // Banner at the top.
             SafeArea(
               child: IgnorePointer(
                 child: Container(
@@ -94,13 +94,13 @@ class _ShowViewshedFromGeoelementInSceneState
     _tankGraphic = await _loadTankGraphic();
 
     // Add the tank graphic to the scene.
-    await _addTankToScene(_tankGraphic!);
+    _addTankToScene(_tankGraphic!);
 
     // Set up the orbit camera controller to follow the tank.
     _setupCameraController(_tankGraphic!);
 
     // Add the viewshed to the scene.
-    await _addViewShedToScene(_tankGraphic!);
+    _addViewShedToScene(_tankGraphic!);
 
     setState(() => _ready = true);
   }
@@ -128,9 +128,9 @@ class _ShowViewshedFromGeoelementInSceneState
     return scene;
   }
 
-  // Handle the on tap function.
+  // Convert the tapped location into a waypoint within the scene and initiate the tank's animation towards the waypoint.
   Future<void> onTap(Offset localPosition) async {
-    // Convert localPosition to scenePoint
+    // Convert localPosition to scenePoint,
     final scenePoint = await _sceneViewController.screenToLocation(
       screen: localPosition,
     );
@@ -140,9 +140,10 @@ class _ShowViewshedFromGeoelementInSceneState
     _startTankAnimation();
   }
 
-  // Animate the tank toward the waypoint
+  // Animate the tank toward the waypoint.
   void _startTankAnimation() {
-    _animationTimer?.cancel(); // Cancel any existing timer
+    // Cancel any existing timer.
+    _animationTimer?.cancel();
     _animationTimer = Timer.periodic(const Duration(milliseconds: 100), (
       timer,
     ) async {
@@ -161,7 +162,7 @@ class _ShowViewshedFromGeoelementInSceneState
         spatialReference: SpatialReference.wgs84,
       );
 
-      // Use geodetic distance to get distance and azimuth
+      // Use geodetic distance to get distance and azimuth.
       final result = GeometryEngine.distanceGeodetic(
         point1: currentPos,
         point2: target,
@@ -173,14 +174,14 @@ class _ShowViewshedFromGeoelementInSceneState
       final distance = result.distance;
       final azimuth = result.azimuth1;
 
-      // Stop if close enough
+      // Stop if close enough.
       if (distance <= 5) {
         _waypoint = null;
         timer.cancel();
         return;
       }
 
-      // Move a small step toward the waypoint
+      // Move a small step toward the waypoint.
       const step = 1.0; // meters
       final movedPoints = GeometryEngine.moveGeodetic(
         pointCollection: [currentPos],
@@ -196,7 +197,7 @@ class _ShowViewshedFromGeoelementInSceneState
       final newPoint = movedPoints.first;
       _tankGraphic!.geometry = newPoint;
 
-      // Update heading
+      // Update heading.
       final currentHeading =
           (_tankGraphic!.attributes['HEADING'] as num?)?.toDouble() ?? 0.0;
 
@@ -207,8 +208,7 @@ class _ShowViewshedFromGeoelementInSceneState
     });
   }
 
-  // Calculate shortest angle to rotate
-
+  // Calculate shortest angle to rotate.
   double shortestAngle(double from, double to) {
     final difference = (to - from + 540) % 360 - 180;
     return difference;
@@ -236,7 +236,7 @@ class _ShowViewshedFromGeoelementInSceneState
   }
 
   // Adds the tank graphic to a graphics overlay and sets the initial viewpoint.
-  Future<void> _addTankToScene(Graphic tankGraphic) async {
+  void _addTankToScene(Graphic tankGraphic) {
     final graphicsOverlay = GraphicsOverlay()
       ..graphics.add(tankGraphic)
       ..sceneProperties = LayerSceneProperties(
@@ -254,8 +254,8 @@ class _ShowViewshedFromGeoelementInSceneState
     _sceneViewController.graphicsOverlays.add(graphicsOverlay);
   }
 
-  // Add viewshed to the scene
-  Future<void> _addViewShedToScene(Graphic tankGraphic) async {
+  // Add viewshed to the scene.
+  void _addViewShedToScene(Graphic tankGraphic) {
     // Create a GeoElementViewShed attached to the scene.
     final geoElementViewShed =
         GeoElementViewshed(
