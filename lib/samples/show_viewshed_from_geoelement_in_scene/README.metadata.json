@@ -1,0 +1,38 @@
+{
+    "category": "Analysis",
+    "description": "Analyze the viewshed for an object (GeoElement) in a scene.",
+    "ignore": false,
+    "images": [
+        "show_viewshed_from_geoelement_in_scene.png"
+    ],
+    "keywords": [
+        "3D",
+        "analysis",
+        "buildings",
+        "model",
+        "scene",
+        "viewshed",
+        "visibility analysis",
+        "AnalysisOverlay",
+        "GeoElementViewshed",
+        "GeodeticDistanceResult",
+        "GeometryEngine.distanceGeodetic",
+        "GeometryEngine.moveGeodetic",
+        "ModelSceneSymbol",
+        "OrbitGeoElementCameraController"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+        "AnalysisOverlay",
+        "GeoElementViewshed",
+        "GeodeticDistanceResult",
+        "GeometryEngine.distanceGeodetic",
+        "GeometryEngine.moveGeodetic",
+        "ModelSceneSymbol",
+        "OrbitGeoElementCameraController"
+    ],
+    "snippets": [
+        "show_viewshed_from_geoelement_in_scene.dart"
+    ],
+    "title": "Show viewshed from geoelement in scene"
+}
