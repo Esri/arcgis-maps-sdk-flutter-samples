@@ -256,7 +256,7 @@ class _ShowViewshedFromGeoelementInSceneState
 
   // Add viewshed to the scene.
   void _addViewshedToScene(Graphic tankGraphic) {
-    // Create a GeoElementViewShed attached to the scene.
+    // Create a GeoElementViewshed attached to the scene.
     final geoElementViewshed =
         GeoElementViewshed(
             geoElement: tankGraphic,
