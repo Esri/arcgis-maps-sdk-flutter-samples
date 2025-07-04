@@ -95,13 +95,11 @@ def main():
     parser.add_argument('-c', '--category', help='The category for the sample')
     args = parser.parse_args()
 
-    if args.single and args.category:
-        try:
-            run_check(args.single, args.category)
-        except Exception as err:
-            raise err
+    if args.single:
+        run_check(args.single, args.category or "")
     else:
         raise Exception('Invalid arguments, abort.')
+
 
 
 if __name__ == '__main__':
