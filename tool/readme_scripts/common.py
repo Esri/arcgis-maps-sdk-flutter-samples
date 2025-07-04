@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# Copyright 2024 Esri
+# Copyright 2025 Esri
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -281,6 +281,9 @@ class Metadata:
         self.readme_path = os.path.join(folder_path, 'README.md')
         self.json_path = os.path.join(folder_path, 'README.metadata.json')
 
+        # For class name.
+        self.class_name = None
+
     def get_source_code_paths(self) -> List[str]:
         """
         Traverse the directory and get all filenames for source code.
@@ -372,11 +375,16 @@ class Metadata:
         data["relevant_apis"] = self.relevant_apis
         data["snippets"] = self.snippets
         data["title"] = self.title
+
         if self.offline_data:
             # Only write offline_data when it is not empty.
             data["offline_data"] = self.offline_data
 
+        if hasattr(self, "class_name") and self.class_name:
+            data["className"] = self.class_name
+
         return json.dumps(data, indent=4, sort_keys=True)
+
 
     def check_category(self) -> None:
         """
