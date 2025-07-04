@@ -115,9 +115,19 @@ class SampleWidgetsBuilder implements Builder {
 
     buffer.writeln('final sampleWidgets = {');
     for (final sampleName in sortedSampleNames) {
-      final camelCaseName = snakeToCamel(sampleName);
-      buffer.writeln("  '$sampleName': () => const $camelCaseName(),");
+      final metadataFile = File('lib/samples/$sampleName/README.metadata.json');
+      String className;
+
+      if (metadataFile.existsSync()) {
+        final metadata = jsonDecode(metadataFile.readAsStringSync());
+        className = metadata['className'] ?? snakeToCamel(sampleName);
+      } else {
+        className = snakeToCamel(sampleName);
+      }
+
+      buffer.writeln("  '$sampleName': () => const $className(),");
     }
+
     buffer.writeln('};');
     return buffer.toString();
   }

@@ -42,5 +42,7 @@
     "snippets": [
         "animate_3d_graphic.dart"
     ],
-    "title": "Animate 3D graphic"
+    "title": "Animate 3D graphic",
+    "className": "Animate3DGraphic"
+
 }
