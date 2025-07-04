@@ -20,14 +20,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:path_provider/path_provider.dart';
 
-class Animate3DGraphic extends StatefulWidget {
-  const Animate3DGraphic({super.key});
+class Animate_3dGraphic extends StatefulWidget {
+  const Animate_3dGraphic({super.key});
 
   @override
-  State<Animate3DGraphic> createState() => _Animate3DGraphicState();
+  State<Animate_3dGraphic> createState() => _Animate_3dGraphicState();
 }
 
-class _Animate3DGraphicState extends State<Animate3DGraphic>
+class _Animate_3dGraphicState extends State<Animate_3dGraphic>
     with TickerProviderStateMixin, SampleStateSupport {
   // Create a controller for the scene view.
   final _sceneViewController = ArcGISSceneView.createController();
