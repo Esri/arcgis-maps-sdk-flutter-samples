@@ -20,14 +20,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:path_provider/path_provider.dart';
 
-class Animate_3dGraphic extends StatefulWidget {
-  const Animate_3dGraphic({super.key});
+class Animate3dGraphic extends StatefulWidget {
+  const Animate3dGraphic({super.key});
 
   @override
-  State<Animate_3dGraphic> createState() => _Animate_3dGraphicState();
+  State<Animate3dGraphic> createState() => _Animate3dGraphicState();
 }
 
-class _Animate_3dGraphicState extends State<Animate_3dGraphic>
+class _Animate3dGraphicState extends State<Animate3dGraphic>
     with TickerProviderStateMixin, SampleStateSupport {
   // Create a controller for the scene view.
   final _sceneViewController = ArcGISSceneView.createController();
@@ -577,7 +577,7 @@ enum Mission {
 
   // A human-readable label of the mission name.
   final String label;
-  
+
   // The ArcGIS Online item ID for the mission CSV file.
   final String itemId;
 }
