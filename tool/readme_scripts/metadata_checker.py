@@ -29,7 +29,7 @@ def run_check(path: str, category: str) -> None:
 
     The path may look like /samples/display_map/
     """
-    checker = Checker(path, category)
+    checker = (path, category)
 
     # 1. Populate from README.
     try:
