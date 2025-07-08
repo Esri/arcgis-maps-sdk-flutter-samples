@@ -18,14 +18,13 @@ import 'dart:async';
 import 'dart:io';
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:flutter_archive/flutter_archive.dart';
-import 'package:path_provider/path_provider.dart';
 
 const portal = 'https://arcgis.com';
 
 /// Fetch the Sample data from the provided PortalItem ID.
 /// Parameters:
-/// - [itemIds]: The list of IDs of the Portal Items to download.
-/// - [destinationFiles]: The list of files to write the downloaded data to.
+/// - [itemIds]: A list of Portal Item IDs to be downloaded.
+/// - [destinationFiles]: A list of files where the downloaded data will be written..
 /// - [onProgress] is called with a value from 0.0 to 1.0 as the download progresses.
 Future<List<ResponseInfo>> downloadSampleDataWithProgress({
   required List<String> itemIds,
