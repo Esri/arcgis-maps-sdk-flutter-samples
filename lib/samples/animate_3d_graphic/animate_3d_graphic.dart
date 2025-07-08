@@ -38,6 +38,10 @@ class _Animate3dGraphicState extends State<Animate3dGraphic>
   // The graphic for the plane.
   Graphic? _planeGraphic;
 
+  // Track mission modal status.
+  bool _isMissionModalOpen = false;
+  StateSetter? _modalStateSetter;
+
   // The camera controller that follows the plane.
   late OrbitGeoElementCameraController _cameraController;
 
@@ -76,7 +80,7 @@ class _Animate3dGraphicState extends State<Animate3dGraphic>
   // The current progress of the animation.
   double get _progress {
     if (_frames.isEmpty) return 0;
-    return _currentFrameIndex / _frames.length;
+    return _currentFrameIndex.toDouble() / _frames.length.toDouble();
   }
 
   @override
@@ -380,6 +384,11 @@ class _Animate3dGraphicState extends State<Animate3dGraphic>
         _isPlaying = false;
       }
     });
+
+    // Update modal sheet if it's open
+    if (_isMissionModalOpen && _modalStateSetter != null) {
+      _modalStateSetter!(() {});
+    }
     _updateFrame(_frames[_currentFrameIndex]);
   }
 
@@ -392,69 +401,88 @@ class _Animate3dGraphicState extends State<Animate3dGraphic>
 
   // Shows the mission settings in a bottom sheet.
   void _showMissionSettings() {
+    _isMissionModalOpen = true;
     showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
       builder: (context) {
-        return Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                'Mission Settings',
-                style: Theme.of(context).textTheme.titleLarge,
+        return StatefulBuilder(
+          builder: (context, setModalState) {
+            // Store the setter.
+            _modalStateSetter = setModalState;
+            return Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'Mission Settings',
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
+                  const SizedBox(height: 16),
+                  Padding(
+                    padding: const EdgeInsets.all(8),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text('Progress', style: TextStyle(fontSize: 18)),
+                        Text(
+                          '${(_progress * 100).toStringAsFixed(1)}%',
+                          style: const TextStyle(fontSize: 18),
+                        ),
+                      ],
+                    ),
+                  ),
+                  LinearProgressIndicator(value: _progress),
+
+                  const SizedBox(height: 24),
+                  // Dropdown to select mission.
+                  DropdownMenu(
+                    initialSelection: _currentMission,
+                    onSelected: (mission) {
+                      if (mission != null) {
+                        setState(() {
+                          _currentMission = mission;
+                          _currentFrameIndex = 0;
+                          _isPlaying = false;
+                        });
+                        _loadMissionFrames(mission);
+                      }
+                    },
+                    dropdownMenuEntries: Mission.values.map((mission) {
+                      return DropdownMenuEntry(
+                        value: mission,
+                        label: mission.label,
+                      );
+                    }).toList(),
+                  ),
+                  const SizedBox(height: 16),
+                  DropdownMenu(
+                    initialSelection: _animationSpeed,
+                    onSelected: (speed) {
+                      if (speed != null) {
+                        setState(() => _animationSpeed = speed);
+                      }
+                    },
+                    dropdownMenuEntries: AnimationSpeed.values.map((speed) {
+                      return DropdownMenuEntry(
+                        value: speed,
+                        label: 'Speed: ${speed.label}',
+                      );
+                    }).toList(),
+                  ),
+                ],
               ),
-              const SizedBox(height: 16),
-              // Progress bar showing animation progress.
-              LinearProgressIndicator(value: _progress),
-              const SizedBox(height: 24),
-              // Dropdown to select mission.
-              DropdownButton(
-                value: _currentMission,
-                isExpanded: true,
-                onChanged: (mission) {
-                  if (mission != null) {
-                    Navigator.pop(context);
-                    setState(() {
-                      _currentMission = mission;
-                      _currentFrameIndex = 0;
-                      _isPlaying = false;
-                    });
-                    _loadMissionFrames(mission);
-                  }
-                },
-                items: Mission.values.map((mission) {
-                  return DropdownMenuItem(
-                    value: mission,
-                    child: Text(mission.label),
-                  );
-                }).toList(),
-              ),
-              const SizedBox(height: 16),
-              // Dropdown to select animation speed.
-              DropdownButton(
-                value: _animationSpeed,
-                isExpanded: true,
-                onChanged: (speed) {
-                  if (speed != null) {
-                    setState(() => _animationSpeed = speed);
-                  }
-                },
-                items: AnimationSpeed.values.map((speed) {
-                  return DropdownMenuItem(
-                    value: speed,
-                    child: Text('Speed: ${speed.label}'),
-                  );
-                }).toList(),
-              ),
-            ],
-          ),
+            );
+          },
         );
       },
-    );
+    ).whenComplete(() {
+      _isMissionModalOpen = false;
+      _modalStateSetter = null;
+    });
   }
 
   // Shows the camera settings in a bottom sheet.
