@@ -90,14 +90,22 @@ class _ApplySymbologyToShapefileState extends State<ApplySymbologyToShapefile>
       scale: 200000,
     );
 
-    // Download the sample data.
-    await downloadSampleData(['d98b3e5293834c5f852f13c569930caa']);
     // Get the application documents directory.
     final appDir = await getApplicationDocumentsDirectory();
+    const downloadFileName = 'Aurora_CO_shp';
+    final zipFile = File('${appDir.absolute.path}/$downloadFileName.zip');
     // Get the Shapefile from the download resource.
     final shapefile = File(
-      '${appDir.absolute.path}/Aurora_CO_shp/Subdivisions.shp',
+      '${appDir.absolute.path}/$downloadFileName/Subdivisions.shp',
     );
+
+    // Download the sample data.
+    if (!zipFile.existsSync()) {
+      await downloadSampleDataWithProgress(
+        itemIds: ['d98b3e5293834c5f852f13c569930caa'],
+        destinationFiles: [zipFile],
+      );
+    }
     // Create a feature table from the Shapefile URI.
     final shapefileFeatureTable = ShapefileFeatureTable.withFileUri(
       shapefile.uri,

@@ -55,11 +55,19 @@ class _DisplayMapFromMobileMapPackageState
   }
 
   Future<void> onMapViewReady() async {
-    await downloadSampleData(['e1f3a7254cb845b09450f54937c16061']);
     final appDir = await getApplicationDocumentsDirectory();
 
     // Load the local mobile map package.
     final mmpkFile = File('${appDir.absolute.path}/Yellowstone.mmpk');
+
+    // Download the mobile map package.
+    if (!mmpkFile.existsSync()) {
+      await downloadSampleDataWithProgress(
+        itemIds: ['e1f3a7254cb845b09450f54937c16061'],
+        destinationFiles: [mmpkFile],
+      );
+    }
+
     final mmpk = MobileMapPackage.withFileUri(mmpkFile.uri);
     await mmpk.load();
 

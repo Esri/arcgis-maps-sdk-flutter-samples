@@ -166,14 +166,22 @@ class _AddFeatureLayersState extends State<AddFeatureLayers>
   }
 
   Future<void> loadGeodatabase() async {
-    // Download the sample data.
-    await downloadSampleData(['cb1b20748a9f4d128dad8a87244e3e37']);
+    const downloadFileName = 'LA_Trails';
     // Get the application documents directory.
     final appDir = await getApplicationDocumentsDirectory();
+    final zipFile = File('${appDir.absolute.path}/$downloadFileName.zip');
     // Create a file to the geodatabase.
     final geodatabaseFile = File(
-      '${appDir.absolute.path}/LA_Trails/LA_Trails.geodatabase',
+      '${appDir.absolute.path}/$downloadFileName/$downloadFileName.geodatabase',
     );
+    // Download the sample data.
+    if (!zipFile.existsSync()) {
+      await downloadSampleDataWithProgress(
+        itemIds: ['cb1b20748a9f4d128dad8a87244e3e37'],
+        destinationFiles: [zipFile],
+      );
+    }
+
     // Create a geodatabase with the file uri.
     final geodatabase = Geodatabase.withFileUri(geodatabaseFile.uri);
     // Load the geodatabase.
@@ -235,14 +243,22 @@ class _AddFeatureLayersState extends State<AddFeatureLayers>
   }
 
   Future<void> loadGeopackage() async {
-    // Download the sample data.
-    await downloadSampleData(['68ec42517cdd439e81b036210483e8e7']);
+    const downloadFileName = 'AuroraCO';
     // Get the application documents directory.
     final appDir = await getApplicationDocumentsDirectory();
+    final zipFile = File('${appDir.absolute.path}/$downloadFileName.zip');
     // Create a file to the geopackage.
     final geopackageFile = File(
-      '${appDir.absolute.path}/AuroraCO/AuroraCO.gpkg',
+      '${appDir.absolute.path}/$downloadFileName/$downloadFileName.gpkg',
     );
+
+    if (!zipFile.existsSync()) {
+      await downloadSampleDataWithProgress(
+        itemIds: ['68ec42517cdd439e81b036210483e8e7'],
+        destinationFiles: [zipFile],
+      );
+    }
+
     // Create a geopackage with the file uri.
     final geopackage = GeoPackage.withFileUri(geopackageFile.uri);
     // Load the geopackage.
@@ -268,14 +284,21 @@ class _AddFeatureLayersState extends State<AddFeatureLayers>
 
   /// Load a feature layer with a local shapefile.
   Future<void> loadShapefile() async {
-    // Download the sample data.
-    await downloadSampleData(['15a7cbd3af1e47cfa5d2c6b93dc44fc2']);
+    const downloadFileName = 'ScottishWildlifeTrust_reserves';
     // Get the application documents directory.
     final appDir = await getApplicationDocumentsDirectory();
+    final zipFile = File('${appDir.absolute.path}/$downloadFileName.zip');
     // Get the Shapefile from the download resource.
     final shapefile = File(
-      '${appDir.absolute.path}/ScottishWildlifeTrust_reserves/ScottishWildlifeTrust_ReserveBoundaries_20201102.shp',
+      '${appDir.absolute.path}/$downloadFileName/ScottishWildlifeTrust_ReserveBoundaries_20201102.shp',
     );
+
+    if (!zipFile.existsSync()) {
+      await downloadSampleDataWithProgress(
+        itemIds: ['15a7cbd3af1e47cfa5d2c6b93dc44fc2'],
+        destinationFiles: [zipFile],
+      );
+    }
     // Create a feature table from the Shapefile URI.
     final shapefileFeatureTable = ShapefileFeatureTable.withFileUri(
       shapefile.uri,

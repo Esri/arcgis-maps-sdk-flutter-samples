@@ -22,35 +22,57 @@ import 'package:path_provider/path_provider.dart';
 
 const portal = 'https://arcgis.com';
 
-/// Download sample data for the provided list of Portal Item IDs.
-Future<void> downloadSampleData(List<String> portalItemIds) async {
-  // Location where files are saved to on the device. Persists while the app persists.
-  final appDirPath = (await getApplicationDocumentsDirectory()).absolute.path;
+/// Fetch the Sample data from the provided PortalItem ID.
+/// Parameters:
+/// - [itemIds]: The list of IDs of the Portal Items to download.
+/// - [destinationFiles]: The list of files to write the downloaded data to.
+/// - [onProgress] is called with a value from 0.0 to 1.0 as the download progresses.
+Future<List<ResponseInfo>> downloadSampleDataWithProgress({
+  required List<String> itemIds,
+  required List<File> destinationFiles,
+  void Function(double progress)? onProgress,
+}) async {
+  final responses = <ResponseInfo>[];
+  final totalItems = itemIds.length;
 
-  for (final itemId in portalItemIds) {
-    // Create a portal item to ensure it exists and load to access properties.
-    final portalItem = PortalItem.withUri(
-      Uri.parse('$portal/home/item.html?id=$itemId'),
+  for (var i = 0; i < itemIds.length; i++) {
+    final itemId = itemIds[i];
+    final destinationFile = destinationFiles[i];
+
+    final requestUri = Uri.parse('$portal/sharing/rest/content/items/$itemId/data');
+    final response = await ArcGISHttpClient.download(
+      requestUri,
+      destinationFile.uri,
+      requestInfo: RequestInfo(
+        onReceiveProgress: (bytesReceived, totalBytes) {
+          if (onProgress != null) {
+            // Calculate progress: completed items + current item progress
+            final completedItems = i;
+            final currentItemProgress = truncateTo2Decimals(bytesReceived / (totalBytes ?? 1));
+            final overallProgress = (completedItems + currentItemProgress) / totalItems;
+            onProgress(truncateTo2Decimals(overallProgress));
+          }
+        },
+      ),
     );
-    if (portalItem == null) continue;
 
-    await portalItem.load();
-    final itemName = portalItem.name;
-    final filePath = '$appDirPath/$itemName';
-    final file = File(filePath);
-    if (file.existsSync()) continue;
-
-    final data = await portalItem.fetchData();
-    file.createSync(recursive: true);
-    file.writeAsBytesSync(data, flush: true);
-
-    if (itemName.contains('.zip')) {
+    if (destinationFile.path.contains('.zip')) {
       // If the data is a zip we need to extract it.
-      await extractZipArchive(file);
+      await extractZipArchive(destinationFile);
     }
+
+    responses.add(response);
   }
+
+  return responses;
 }
-/// Extract the contents of a zip archive to a directory 
+
+/// Truncate a double to two decimal digits (does not round).
+double truncateTo2Decimals(double value) {
+  return (value * 100).truncate() / 100;
+}
+
+/// Extract the contents of a zip archive to a directory
 /// with the same name as the zip file (without the .zip extension).
 /// Parameters:
 /// - [archiveFile]: The zip file to extract.
@@ -60,34 +82,4 @@ Future<void> extractZipArchive(File archiveFile) async {
   final dir = Directory.fromUri(Uri.parse(pathWithoutExt));
   if (dir.existsSync()) dir.deleteSync(recursive: true);
   await ZipFile.extractToDirectory(zipFile: archiveFile, destinationDir: dir);
-}
-
-/// Fetch the Sample data from the provided PortalItem ID.
-/// Parameters:
-/// - [itemId]: The ID of the Portal Item to download.
-/// - [destinationFile]: The file to write the downloaded data to.
-/// - [onProgress] is called with a value from 0.0 to 1.0 as the download progresses.
-Future<ResponseInfo> downloadSampleDataWithProgress({
-  required String itemId,
-  required File destinationFile, 
-  void Function(double progress)? onProgress,
-}) async {
-  final requestUri = Uri.parse('$portal/sharing/rest/content/items/$itemId/data');
-  final response = await ArcGISHttpClient.download(
-    requestUri, 
-    destinationFile.uri,
-    requestInfo: RequestInfo(
-      onReceiveProgress: (bytesReceived, totalBytes) {
-        if (onProgress != null) {
-          onProgress(truncateTo2Decimals(bytesReceived / (totalBytes ?? 1)));
-        }
-      },
-    ),
-  );
-  return response;
-}
-
-/// Truncate a double to two decimal digits (does not round).
-double truncateTo2Decimals(double value) {
-  return (value * 100).truncate() / 100;
 }

@@ -13,6 +13,8 @@
 // limitations under the License.
 //
 
+import 'dart:io';
+
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
@@ -200,11 +202,20 @@ class _ChangeCameraControllerState extends State<ChangeCameraController>
   }
 
   Future<Graphic> _setupPlaneGraphic() async {
+    const downloadFileName = 'Bristol';
+    final appDir = await getApplicationDocumentsDirectory();
+    print(appDir.absolute.path);
+    final zipFile = File('${appDir.absolute.path}/$downloadFileName.zip');
+    final bristolFile = File(
+      '${appDir.absolute.path}/$downloadFileName/$downloadFileName.dae',
+    );
     // Download the plane model files.
-    await downloadSampleData(['681d6f7694644709a7c830ec57a2d72b']);
-    final documentsDirPath =
-        (await getApplicationDocumentsDirectory()).absolute.path;
-    final planeModelPath = '$documentsDirPath/Bristol/Bristol.dae';
+    if (!zipFile.existsSync()) {
+      await downloadSampleDataWithProgress(
+        itemIds: ['681d6f7694644709a7c830ec57a2d72b'],
+        destinationFiles: [zipFile],
+      );
+    }
 
     // Define the plane's position.
     final planePosition = ArcGISPoint(
@@ -216,7 +227,7 @@ class _ChangeCameraControllerState extends State<ChangeCameraController>
 
     // Define the plane symbol.
     final planeSymbol = ModelSceneSymbol.withUri(
-      uri: Uri.parse(planeModelPath),
+      uri: Uri.parse(bristolFile.path),
       scale: 50,
     );
 
