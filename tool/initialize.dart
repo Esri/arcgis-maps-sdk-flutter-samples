@@ -34,10 +34,9 @@ void main(List<String> arguments) async {
 
 Future<void> runDart(List<String> arguments) async {
   final command = 'dart ${arguments.join(' ')}';
-  final executable =
-      Platform.isWindows
-          ? '${Platform.environment['FLUTTER_ROOT']}\\bin\\dart.bat'
-          : '${Platform.environment['FLUTTER_ROOT']}/bin/dart';
+  final executable = Platform.isWindows
+      ? '${Platform.environment['FLUTTER_ROOT']}\\bin\\dart.bat'
+      : '${Platform.environment['FLUTTER_ROOT']}/bin/dart';
   final result = await Process.run(executable, arguments);
   print(result.stdout);
   print(result.stderr);

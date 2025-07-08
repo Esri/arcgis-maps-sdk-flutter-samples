@@ -107,7 +107,9 @@ class _AddPointCloudLayerFromFileState extends State<AddPointCloudLayerFromFile>
 
     // Add surface elevation to the scene.
     final elevationSource = ArcGISTiledElevationSource.withUri(
-      Uri.parse('https://elevation3d.arcgis.com/arcgis/rest/services/WorldElevation3D/Terrain3D/ImageServer'),
+      Uri.parse(
+        'https://elevation3d.arcgis.com/arcgis/rest/services/WorldElevation3D/Terrain3D/ImageServer',
+      ),
     );
     scene.baseSurface.elevationSources.add(elevationSource);
 
@@ -128,18 +130,16 @@ class _AddPointCloudLayerFromFileState extends State<AddPointCloudLayerFromFile>
         itemId: '34da965ca51d4c68aa9b3a38edb29e00',
         destinationFile: sanDiegoPointCloudFile,
         onProgress: (progress) {
-          setState(() =>
-            _downloadProgress = progress
-          );
+          setState(() => _downloadProgress = progress);
         },
       );
     }
-    
+
     // Create a Point Cloud Layer from the file URI.
     final pointCloudLayer = PointCloudLayer.withUri(sanDiegoPointCloudFile.uri);
     await pointCloudLayer.load();
     // Add the point cloud layer to the map's operational layers.
-     _sceneViewController.arcGISScene?.operationalLayers.add(pointCloudLayer);
+    _sceneViewController.arcGISScene?.operationalLayers.add(pointCloudLayer);
     // Set the ready state variable to true to enable the sample UI.
     setState(() => _ready = true);
   }

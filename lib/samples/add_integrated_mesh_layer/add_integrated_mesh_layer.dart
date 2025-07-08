@@ -48,7 +48,7 @@ class _AddIntegratedMeshLayerState extends State<AddIntegratedMeshLayer>
     );
   }
 
-  void onSceneViewReady()  {
+  void onSceneViewReady() {
     // Create a scene.
     _setupScene();
 
@@ -66,7 +66,7 @@ class _AddIntegratedMeshLayerState extends State<AddIntegratedMeshLayer>
         'https://elevation3d.arcgis.com/arcgis/rest/services/WorldElevation3D/Terrain3D/ImageServer',
       ),
     );
-     // Create an IntegratedMeshLayer with the URI to an integrated mesh layer scene service.
+    // Create an IntegratedMeshLayer with the URI to an integrated mesh layer scene service.
     final integratedMeshLayer = IntegratedMeshLayer.withUri(
       Uri.parse(
         'https://tiles.arcgis.com/tiles/z2tnIkrLQ2BRzr6P/arcgis/rest/services/Girona_Spain/SceneServer',
@@ -81,13 +81,15 @@ class _AddIntegratedMeshLayerState extends State<AddIntegratedMeshLayer>
     _sceneViewController.arcGISScene = scene;
 
     // Set controller viewpoint to camera.
-    _sceneViewController.setViewpointCamera(Camera.withLatLong(
-      latitude: 41.9906,
-      longitude: 2.8259,
-      altitude: 200,
-      heading: 190,
-      pitch: 65,
-      roll: 0,
-    ));
+    _sceneViewController.setViewpointCamera(
+      Camera.withLatLong(
+        latitude: 41.9906,
+        longitude: 2.8259,
+        altitude: 200,
+        heading: 190,
+        pitch: 65,
+        roll: 0,
+      ),
+    );
   }
 }

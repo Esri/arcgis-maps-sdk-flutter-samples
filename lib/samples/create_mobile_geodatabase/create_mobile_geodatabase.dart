@@ -153,13 +153,12 @@ class _CreateMobileGeodatabaseState extends State<CreateMobileGeodatabase>
   // Create a feature table to store location history.
   Future<void> _createGeodatabaseFeatureTable() async {
     // Create and define a table description for the feature table.
-    final tableDescription =
-        TableDescription(name: 'LocationHistory')
-          ..geometryType = GeometryType.point
-          ..spatialReference = SpatialReference.wgs84
-          ..hasAttachments = false
-          ..hasM = false
-          ..hasZ = false;
+    final tableDescription = TableDescription(name: 'LocationHistory')
+      ..geometryType = GeometryType.point
+      ..spatialReference = SpatialReference.wgs84
+      ..hasAttachments = false
+      ..hasM = false
+      ..hasZ = false;
 
     tableDescription.fieldDescriptions.addAll([
       FieldDescription(name: 'oid', fieldType: FieldType.oid),

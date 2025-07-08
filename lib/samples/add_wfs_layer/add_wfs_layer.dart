@@ -128,10 +128,9 @@ class _AddWfsLayerState extends State<AddWfsLayer> with SampleStateSupport {
     final currentExtent = _mapViewController.visibleArea;
 
     // Create a query based on the current visible extent.
-    final visibleExtentQuery =
-        QueryParameters()
-          ..geometry = currentExtent
-          ..spatialRelationship = SpatialRelationship.intersects;
+    final visibleExtentQuery = QueryParameters()
+      ..geometry = currentExtent
+      ..spatialRelationship = SpatialRelationship.intersects;
 
     // Populate the table with the query, leaving existing table entries intact.
     await _featureTable.populateFromService(

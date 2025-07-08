@@ -92,36 +92,35 @@ class _ControlAnnotationSublayerVisibilityState
   Widget buildSettings(BuildContext context) {
     return BottomSheetSettings(
       onCloseIconPressed: () => setState(() => _settingsVisible = false),
-      settingsWidgets:
-          (context) => [
-            Row(
-              children: [
-                Text(_openLabel, style: TextStyle(color: _openLabelColor)),
-                const Spacer(),
-                Switch(
-                  value: _openSublayer.isVisible,
-                  onChanged: (value) {
-                    // Set the visibility of the open sub layer.
-                    setState(() => _openSublayer.isVisible = value);
-                  },
-                ),
-              ],
+      settingsWidgets: (context) => [
+        Row(
+          children: [
+            Text(_openLabel, style: TextStyle(color: _openLabelColor)),
+            const Spacer(),
+            Switch(
+              value: _openSublayer.isVisible,
+              onChanged: (value) {
+                // Set the visibility of the open sub layer.
+                setState(() => _openSublayer.isVisible = value);
+              },
             ),
-            Row(
-              children: [
-                Text(_closedLabel),
-                const Spacer(),
-                Switch(
-                  value: _closedSublayer.isVisible,
-                  onChanged: (value) {
-                    // Set the visibility of the closed sub layer.
-                    setState(() => _closedSublayer.isVisible = value);
-                  },
-                ),
-              ],
-            ),
-            Text(_currentScaleLabel),
           ],
+        ),
+        Row(
+          children: [
+            Text(_closedLabel),
+            const Spacer(),
+            Switch(
+              value: _closedSublayer.isVisible,
+              onChanged: (value) {
+                // Set the visibility of the closed sub layer.
+                setState(() => _closedSublayer.isVisible = value);
+              },
+            ),
+          ],
+        ),
+        Text(_currentScaleLabel),
+      ],
     );
   }
 
@@ -140,10 +139,9 @@ class _ControlAnnotationSublayerVisibilityState
       _mapViewController.arcGISMap = mmpk.maps.first;
 
       // Get the annotation layer from the MapView operational layers.
-      final annotationLayer =
-          _mapViewController.arcGISMap!.operationalLayers
-              .whereType<AnnotationLayer>()
-              .first;
+      final annotationLayer = _mapViewController.arcGISMap!.operationalLayers
+          .whereType<AnnotationLayer>()
+          .first;
 
       // Load the annotation layer.
       await annotationLayer.load();
@@ -176,9 +174,8 @@ class _ControlAnnotationSublayerVisibilityState
         }
         // Set the current map scale text.
         setState(
-          () =>
-              _currentScaleLabel =
-                  'Current map scale: 1:${_mapViewController.scale.toInt()}',
+          () => _currentScaleLabel =
+              'Current map scale: 1:${_mapViewController.scale.toInt()}',
         );
       });
 

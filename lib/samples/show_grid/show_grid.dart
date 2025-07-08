@@ -68,16 +68,15 @@ class _ShowGridState extends State<ShowGrid> with SampleStateSupport {
               children: [
                 Expanded(
                   // Add a map view to the widget tree and set a controller.
-                  child:
-                      _isMapView
-                          ? ArcGISMapView(
-                            controllerProvider: () => _mapViewController,
-                            onMapViewReady: onMapViewReady,
-                          )
-                          : ArcGISSceneView(
-                            controllerProvider: () => _sceneViewController,
-                            onSceneViewReady: onMapViewReady,
-                          ),
+                  child: _isMapView
+                      ? ArcGISMapView(
+                          controllerProvider: () => _mapViewController,
+                          onMapViewReady: onMapViewReady,
+                        )
+                      : ArcGISSceneView(
+                          controllerProvider: () => _sceneViewController,
+                          onSceneViewReady: onMapViewReady,
+                        ),
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -333,10 +332,9 @@ class _GridOptionsState extends State<GridOptions> with SampleStateSupport {
         onChanged(newValue!);
       },
       label: Text(labelText),
-      dropdownMenuEntries:
-          items.map((value) {
-            return DropdownMenuEntry(value: value, label: value.toString());
-          }).toList(),
+      dropdownMenuEntries: items.map((value) {
+        return DropdownMenuEntry(value: value, label: value.toString());
+      }).toList(),
     );
   }
 
@@ -405,8 +403,8 @@ class _GridOptionsState extends State<GridOptions> with SampleStateSupport {
     final isUnsupportedGrid = gridType != GridType.latitudeLongitude;
     final filteredItems = widget.isSceneView && isUnsupportedGrid
         ? GridLabelPositionType.values
-        .where((type) => !unsupportedInSceneView.contains(type))
-        .toList()
+              .where((type) => !unsupportedInSceneView.contains(type))
+              .toList()
         : GridLabelPositionType.values;
 
     return _createDropdownMenu(
@@ -450,7 +448,8 @@ class _GridOptionsState extends State<GridOptions> with SampleStateSupport {
       GridLabelPositionType.allSides,
     };
 
-    final isUnsupported = widget.isSceneView &&
+    final isUnsupported =
+        widget.isSceneView &&
         newGridType != GridType.latitudeLongitude &&
         unsupportedInSceneView.contains(labelPositionType);
 
@@ -462,7 +461,6 @@ class _GridOptionsState extends State<GridOptions> with SampleStateSupport {
     widget.onLabelPositionChanged(labelPositionType);
     widget.onLabelVisibilityChanged(labelVisible);
   }
-
 
   // Set the visibility of the label format dropdown based on the grid type.
   bool _shouldShowLabelFormat(GridType grid) =>

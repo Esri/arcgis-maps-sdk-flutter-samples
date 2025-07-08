@@ -75,21 +75,19 @@ class _CodeViewPageState extends State<CodeViewPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   ElevatedButton(
-                    onPressed:
-                        _selectedFileIndex > 0
-                            ? () {
-                              setState(() => _selectedFileIndex -= 1);
-                            }
-                            : null,
+                    onPressed: _selectedFileIndex > 0
+                        ? () {
+                            setState(() => _selectedFileIndex -= 1);
+                          }
+                        : null,
                     child: const Text('Prev.'),
                   ),
                   ElevatedButton(
-                    onPressed:
-                        _selectedFileIndex < codeMap.length - 1
-                            ? () {
-                              setState(() => _selectedFileIndex += 1);
-                            }
-                            : null,
+                    onPressed: _selectedFileIndex < codeMap.length - 1
+                        ? () {
+                            setState(() => _selectedFileIndex += 1);
+                          }
+                        : null,
                     child: const Text('Next'),
                   ),
                 ],

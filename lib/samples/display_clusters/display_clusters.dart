@@ -133,8 +133,8 @@ class _DisplayClustersState extends State<DisplayClusters>
       tolerance: 12,
     );
     // Get the aggregate geoelements from the identify result.
-    final aggregateGeoElements =
-        identifyLayerResult.geoElements.whereType<AggregateGeoElement>();
+    final aggregateGeoElements = identifyLayerResult.geoElements
+        .whereType<AggregateGeoElement>();
     if (aggregateGeoElements.isEmpty) return;
     // Select the first aggregate geoelement.
     final aggregateGeoElement = aggregateGeoElements.first;
@@ -167,15 +167,14 @@ class _DisplayClustersState extends State<DisplayClusters>
                 child: SingleChildScrollView(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children:
-                        geoElements
-                            .map(
-                              (geoElement) => Text(
-                                geoElement.attributes['name'] ??
-                                    'Geoelement: ${geoElements.indexOf(geoElement)}}',
-                              ),
-                            )
-                            .toList(),
+                    children: geoElements
+                        .map(
+                          (geoElement) => Text(
+                            geoElement.attributes['name'] ??
+                                'Geoelement: ${geoElements.indexOf(geoElement)}}',
+                          ),
+                        )
+                        .toList(),
                   ),
                 ),
               ),

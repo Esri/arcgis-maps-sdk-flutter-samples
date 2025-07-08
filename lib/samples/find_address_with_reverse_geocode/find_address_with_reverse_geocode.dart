@@ -76,10 +76,9 @@ class _FindAddressWithReverseGeocodeState
 
     // Create a picture marker symbol using an image asset.
     final image = await ArcGISImage.fromAsset('assets/pin_circle_red.png');
-    final pictureMarkerSymbol =
-        PictureMarkerSymbol.withImage(image)
-          ..width = 35
-          ..height = 35;
+    final pictureMarkerSymbol = PictureMarkerSymbol.withImage(image)
+      ..width = 35
+      ..height = 35;
     pictureMarkerSymbol.offsetY = pictureMarkerSymbol.height / 2;
 
     // Create a renderer using the picture marker symbol and set to the graphics overlay.

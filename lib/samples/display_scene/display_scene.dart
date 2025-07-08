@@ -50,8 +50,9 @@ class _DisplaySceneState extends State<DisplayScene> with SampleStateSupport {
     // Create an ArcGIS tiled elevation.
     final arcGISTiledElevationSource = ArcGISTiledElevationSource.withUri(
       Uri.parse(
-      'https://elevation3d.arcgis.com/arcgis/rest/services/WorldElevation3D/Terrain3D/ImageServer',
-    ));
+        'https://elevation3d.arcgis.com/arcgis/rest/services/WorldElevation3D/Terrain3D/ImageServer',
+      ),
+    );
 
     // Add the ArcGIS tiled elevation source to the surface's elevated sources collection.
     scene.baseSurface.elevationSources.add(arcGISTiledElevationSource);

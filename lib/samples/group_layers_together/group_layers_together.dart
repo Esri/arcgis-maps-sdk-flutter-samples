@@ -77,25 +77,24 @@ class _GroupLayersTogetherState extends State<GroupLayersTogether>
   Widget buildSettings(BuildContext context) {
     return BottomSheetSettings(
       onCloseIconPressed: () => setState(() => _settingsVisible = false),
-      settingsWidgets:
-          (context) => [
-            Container(
-              constraints: BoxConstraints(
-                maxHeight: MediaQuery.sizeOf(context).height * 0.4,
-              ),
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children:
-                      _sceneViewController.arcGISScene?.operationalLayers
-                          .whereType<GroupLayer>()
-                          .map(buildGroupLayerSettings)
-                          .toList() ??
-                      [],
-                ),
-              ),
+      settingsWidgets: (context) => [
+        Container(
+          constraints: BoxConstraints(
+            maxHeight: MediaQuery.sizeOf(context).height * 0.4,
+          ),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children:
+                  _sceneViewController.arcGISScene?.operationalLayers
+                      .whereType<GroupLayer>()
+                      .map(buildGroupLayerSettings)
+                      .toList() ??
+                  [],
             ),
-          ],
+          ),
+        ),
+      ],
     );
   }
 
@@ -130,13 +129,12 @@ class _GroupLayersTogetherState extends State<GroupLayersTogether>
               // Create a Switch to toggle the visibility of the individual layer.
               Switch(
                 value: layer.isVisible,
-                onChanged:
-                    groupLayer.isVisible
-                        ? (value) {
-                          layer.isVisible = value;
-                          setState(() {});
-                        }
-                        : null,
+                onChanged: groupLayer.isVisible
+                    ? (value) {
+                        layer.isVisible = value;
+                        setState(() {});
+                      }
+                    : null,
               ),
             ],
           );
@@ -178,10 +176,9 @@ class _GroupLayersTogetherState extends State<GroupLayersTogether>
     ]);
 
     // Create a Group Layer for the Buildings Group with "exclusive" visibility.
-    final buildingsGroupLayer =
-        GroupLayer()
-          ..name = 'Buildings Group'
-          ..visibilityMode = GroupVisibilityMode.exclusive;
+    final buildingsGroupLayer = GroupLayer()
+      ..name = 'Buildings Group'
+      ..visibilityMode = GroupVisibilityMode.exclusive;
     // Create a Scene Layer for the Dev A buildings.
     final buildingsALayer = ArcGISSceneLayer.withUri(
       Uri.parse(

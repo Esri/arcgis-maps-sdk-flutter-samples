@@ -96,13 +96,12 @@ class _CreateBuffersAroundPointsState extends State<CreateBuffersAroundPoints>
                     ),
                     // A button to clear the buffers.
                     ElevatedButton(
-                      onPressed:
-                          _bufferPoints.isEmpty
-                              ? null
-                              : () {
-                                clearBufferPoints();
-                                setState(() => _status = Status.addPoints);
-                              },
+                      onPressed: _bufferPoints.isEmpty
+                          ? null
+                          : () {
+                              clearBufferPoints();
+                              setState(() => _status = Status.addPoints);
+                            },
                       child: const Text('Clear'),
                     ),
                   ],
@@ -209,47 +208,43 @@ class _CreateBuffersAroundPointsState extends State<CreateBuffersAroundPoints>
   Widget buildSettings(BuildContext context, StateSetter setState) {
     return BottomSheetSettings(
       onCloseIconPressed: () => setState(() => _showSettings = false),
-      settingsWidgets:
-          (context) => [
-            Row(
-              children: [
-                const Text('Buffer Radius (miles)'),
-                const Spacer(),
-                Text(
-                  _bufferRadius.round().toString(),
-                  textAlign: TextAlign.right,
-                ),
-              ],
-            ),
-            Row(
-              children: [
-                Expanded(
-                  // A slider to adjust the buffer radius.
-                  child: Slider(
-                    value: _bufferRadius,
-                    min: 10,
-                    max: 300,
-                    onChanged: (value) => setState(() => _bufferRadius = value),
-                  ),
-                ),
-              ],
-            ),
-            Row(
-              children: [
-                Text(_shouldUnion ? 'Union Enabled' : 'Union Disabled'),
-                const Spacer(),
-                Switch(
-                  value: _shouldUnion,
-                  onChanged: (value) {
-                    setState(() => _shouldUnion = value);
-                    if (_bufferPoints.isNotEmpty) {
-                      drawBuffers(unionized: _shouldUnion);
-                    }
-                  },
-                ),
-              ],
+      settingsWidgets: (context) => [
+        Row(
+          children: [
+            const Text('Buffer Radius (miles)'),
+            const Spacer(),
+            Text(_bufferRadius.round().toString(), textAlign: TextAlign.right),
+          ],
+        ),
+        Row(
+          children: [
+            Expanded(
+              // A slider to adjust the buffer radius.
+              child: Slider(
+                value: _bufferRadius,
+                min: 10,
+                max: 300,
+                onChanged: (value) => setState(() => _bufferRadius = value),
+              ),
             ),
           ],
+        ),
+        Row(
+          children: [
+            Text(_shouldUnion ? 'Union Enabled' : 'Union Disabled'),
+            const Spacer(),
+            Switch(
+              value: _shouldUnion,
+              onChanged: (value) {
+                setState(() => _shouldUnion = value);
+                if (_bufferPoints.isNotEmpty) {
+                  drawBuffers(unionized: _shouldUnion);
+                }
+              },
+            ),
+          ],
+        ),
+      ],
     );
   }
 

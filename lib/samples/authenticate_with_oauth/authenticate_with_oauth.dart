@@ -49,8 +49,9 @@ class _AuthenticateWithOAuthState extends State<AuthenticateWithOAuth>
     // which allows it to handle authentication challenges via calls to its
     // handleArcGISAuthenticationChallenge() method.
     ArcGISEnvironment
-        .authenticationManager
-        .arcGISAuthenticationChallengeHandler = this;
+            .authenticationManager
+            .arcGISAuthenticationChallengeHandler =
+        this;
   }
 
   @override
@@ -58,8 +59,9 @@ class _AuthenticateWithOAuthState extends State<AuthenticateWithOAuth>
     // We do not want to handle authentication challenges outside of this sample,
     // so we remove this as the challenge handler.
     ArcGISEnvironment
-        .authenticationManager
-        .arcGISAuthenticationChallengeHandler = null;
+            .authenticationManager
+            .arcGISAuthenticationChallengeHandler =
+        null;
 
     // Revoke OAuth tokens and remove all credentials to log out.
     Future.wait(
