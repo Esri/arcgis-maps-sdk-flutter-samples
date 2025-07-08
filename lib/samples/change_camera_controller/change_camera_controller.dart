@@ -204,7 +204,6 @@ class _ChangeCameraControllerState extends State<ChangeCameraController>
   Future<Graphic> _setupPlaneGraphic() async {
     const downloadFileName = 'Bristol';
     final appDir = await getApplicationDocumentsDirectory();
-    print(appDir.absolute.path);
     final zipFile = File('${appDir.absolute.path}/$downloadFileName.zip');
     final bristolFile = File(
       '${appDir.absolute.path}/$downloadFileName/$downloadFileName.dae',
