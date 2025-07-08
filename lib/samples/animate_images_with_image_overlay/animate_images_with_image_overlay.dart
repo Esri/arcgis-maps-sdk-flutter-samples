@@ -164,12 +164,18 @@ class _AnimateImagesWithImageOverlayState
   }
 
   int getAnimatedSpeed(String selectedSpeed) {
+    var factor = 1;
+    if (Platform.isIOS) {
+      // On iOS, the animation speed is faster, so we adjust the factor.
+      // This is to ensure the animation speed is consistent across platforms.
+      factor = 2;
+    }
     // Returns the speed of the animation based on the selected speed.
     return switch (selectedSpeed) {
-      'Fast' => 17,
-      'Medium' => 34,
-      'Slow' => 68,
-      _ => 68, // Default speed
+      'Fast' => 17 * factor,
+      'Medium' => 34 * factor,
+      'Slow' => 68 * factor,
+      _ => 68 * factor,
     };
   }
 
@@ -185,16 +191,18 @@ class _AnimateImagesWithImageOverlayState
       _ticker!.dispose();
     }
     _lastFrameTime = 0;
-    _ticker = createTicker((elapsed) {
-      final ms = elapsed.inMilliseconds;
-      if (ms - _lastFrameTime >= _imageFrameSpeed) {
-        _imageFrameIndex = (_imageFrameIndex + 1) % _imageFrames.length;
-        setImageFrame(_imageFrameIndex);
-        _lastFrameTime = ms;
-      }
-    });
+    _ticker = createTicker(_onTicker);
     _ticker!.start();
     setState(() => _started = true);
+  }
+
+  void _onTicker(Duration elapsed) {
+    final ms = elapsed.inMilliseconds;
+    if (ms - _lastFrameTime >= _imageFrameSpeed) {
+      _imageFrameIndex = (_imageFrameIndex + 1) % _imageFrames.length;
+      setImageFrame(_imageFrameIndex);
+      _lastFrameTime = ms;
+    }
   }
 
   Future<void> onSceneViewReady() async {
