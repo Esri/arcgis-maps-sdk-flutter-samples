@@ -224,8 +224,8 @@ class _AnimateImagesWithImageOverlayState
     // Download the sample data if it does not exist.
     if (!imageFile.existsSync()) {
       await downloadSampleDataWithProgress(
-        itemId: '9465e8c02b294c69bdb42de056a23ab1',
-        destinationFile: imageFile,
+        itemIds: ['9465e8c02b294c69bdb42de056a23ab1'],
+        destinationFiles: [imageFile],
         onProgress: (progress) {
           setState(
             () => _downloadProgress =
@@ -233,7 +233,6 @@ class _AnimateImagesWithImageOverlayState
           );
         },
       );
-      await extractZipArchive(imageFile);
     }
     // Get a list of all PNG image files in the extracted directory.
     final imageList = directory

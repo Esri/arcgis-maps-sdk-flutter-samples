@@ -636,13 +636,21 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
 
   // Download the San Diego geodatabase.
   Future<String> downloadSanDiegoGeodatabase() async {
-    // Download the sample data.
-    await downloadSampleData(['df193653ed39449195af0c9725701dca']);
     // Get the application documents directory.
     final appDir = await getApplicationDocumentsDirectory();
+    const downloadFileName = 'san_diego_offline_routing';
+    final zipFile = File('${appDir.absolute.path}/$downloadFileName.zip');
+
+    // Download the sample data if it does not exist.
+    if (!zipFile.existsSync()) {
+      await downloadSampleDataWithProgress(
+        itemIds: ['df193653ed39449195af0c9725701dca'],
+        destinationFiles: [zipFile],
+      );
+    }
     // Create a file to the geodatabase.
     final geodatabaseFile = File(
-      '${appDir.absolute.path}/san_diego_offline_routing/sandiego.geodatabase',
+      '${appDir.absolute.path}/$downloadFileName/sandiego.geodatabase',
     );
     // Return the path to the geodatabase.
     return geodatabaseFile.path;
@@ -650,13 +658,21 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
 
   // Download San Diego tour path.
   Future<String> downloadSanDiegoTourPath() async {
-    // Download the tour path.
-    await downloadSampleData(['4caec8c55ea2463982f1af7d9611b8d5']);
     // Get the application documents directory.
     final appDir = await getApplicationDocumentsDirectory();
+    const downloadFileName = 'SanDiegoTourPath';
+    final zipFile = File('${appDir.absolute.path}/$downloadFileName.zip');
+
+    // Download the sample data if it does not exist.
+    if (!zipFile.existsSync()) {
+      await downloadSampleDataWithProgress(
+        itemIds: ['4caec8c55ea2463982f1af7d9611b8d5'],
+        destinationFiles: [zipFile],
+      );
+    }
     // Create the SanDiegoTourPath.json file.
     final tourPathFile = File(
-      '${appDir.absolute.path}/SanDiegoTourPath.json/SanDiegoTourPath.json',
+      '${appDir.absolute.path}/$downloadFileName/$downloadFileName.json',
     );
     // Return the path of the JSON file.
     return tourPathFile.path;

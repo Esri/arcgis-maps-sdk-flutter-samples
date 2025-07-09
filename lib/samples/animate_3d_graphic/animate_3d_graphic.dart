@@ -14,6 +14,7 @@
 //
 
 import 'dart:convert';
+import 'dart:io';
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
@@ -212,10 +213,18 @@ class _Animate3dGraphicState extends State<Animate3dGraphic>
 
   // Loads the 3D plane model from local sample data and returns it as a Graphic.
   Future<Graphic> _loadPlaneGraphic() async {
-    await downloadSampleData(['681d6f7694644709a7c830ec57a2d72b']);
-    final documentsDirPath =
-        (await getApplicationDocumentsDirectory()).absolute.path;
-    final planeModelPath = '$documentsDirPath/Bristol/Bristol.dae';
+    const downloadFileName = 'Bristol';
+    final appDir = await getApplicationDocumentsDirectory();
+    final zipFile = File('${appDir.absolute.path}/$downloadFileName.zip');
+    // Download the plane model files.
+    if (!zipFile.existsSync()) {
+      await downloadSampleDataWithProgress(
+        itemIds: ['681d6f7694644709a7c830ec57a2d72b'],
+        destinationFiles: [zipFile],
+      );
+    }
+    final planeModelPath =
+        '${appDir.absolute.path}/$downloadFileName/$downloadFileName.dae';
 
     // Define the plane symbol.
     final planeSymbol = ModelSceneSymbol.withUri(
@@ -320,7 +329,7 @@ class _Animate3dGraphicState extends State<Animate3dGraphic>
         frames.add(
           Frame(position: position, heading: heading, pitch: pitch, roll: roll),
         );
-      } catch (_) {
+      } on Exception {
         continue;
       }
     }

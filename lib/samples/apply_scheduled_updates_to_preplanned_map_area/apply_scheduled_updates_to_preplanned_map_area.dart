@@ -193,13 +193,12 @@ class _ApplyScheduledUpdatesToPreplannedMapAreaState
   // Function that extracts the map package archive to restore the original map data.
   // Downloads and extracts the map package archive if the file is not currently on the device.
   Future<void> _prepareData() async {
-    final archiveFile = File.fromUri(Uri.parse('${_dataUri.path}.zip'));
-    if (archiveFile.existsSync()) {
-      // The map package is already downladed. Extract it.
-      await extractZipArchive(archiveFile);
-    } else {
-      // Download the map package and extract it.
-      await downloadSampleData(['740b663bff5e4198b9b6674af93f638a']);
+    final archiveFile = File('${_dataUri.path}.zip');
+    if (!archiveFile.existsSync()) {
+      await downloadSampleDataWithProgress(
+        itemIds: ['740b663bff5e4198b9b6674af93f638a'],
+        destinationFiles: [archiveFile],
+      );
     }
 
     // Load the map package from the extracted map package.

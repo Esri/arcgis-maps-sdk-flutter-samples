@@ -126,11 +126,16 @@ class _ControlAnnotationSublayerVisibilityState
 
   Future<void> onMapViewReady() async {
     try {
-      await downloadSampleData(['b87307dcfb26411eb2e92e1627cb615b']);
       final appDir = await getApplicationDocumentsDirectory();
 
       // Load the mobile map package.
       final mmpkFile = File('${appDir.absolute.path}/GasDeviceAnno.mmpk');
+      if (!mmpkFile.existsSync()) {
+        await downloadSampleDataWithProgress(
+          itemIds: ['b87307dcfb26411eb2e92e1627cb615b'],
+          destinationFiles: [mmpkFile],
+        );
+      }
       // Mobile map package that contains annotation layers.
       final mmpk = MobileMapPackage.withFileUri(mmpkFile.uri);
       await mmpk.load();

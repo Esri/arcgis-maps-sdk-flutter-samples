@@ -108,10 +108,18 @@ class SimulatedNmeaDataSource {
   // Downloads the sample NMEA data file and returns the NMEA sentences as a
   // list of Strings.
   Future<List<String>> _loadNmeaFile() async {
-    // Download the file from arcgis.com.
-    await downloadSampleData(['d5bad9f4fee9483791e405880fb466da']);
     final appDir = await getApplicationDocumentsDirectory();
-    final filePath = '${appDir.path}/RedlandsNMEA/Redlands.nmea';
+    const downloadFileName = 'RedlandsNMEA';
+    final zipFile = File('${appDir.absolute.path}/$downloadFileName.zip');
+    // Download the sample data if it does not exist.
+    if (!zipFile.existsSync()) {
+      await downloadSampleDataWithProgress(
+        itemIds: ['d5bad9f4fee9483791e405880fb466da'],
+        destinationFiles: [zipFile],
+      );
+    }
+
+    final filePath = '${appDir.path}/$downloadFileName/Redlands.nmea';
     final nmeaFile = File(filePath);
 
     // Read and return the file as a list of String lines.

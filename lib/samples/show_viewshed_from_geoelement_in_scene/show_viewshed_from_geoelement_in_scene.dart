@@ -14,6 +14,7 @@
 //
 
 import 'dart:async';
+import 'dart:io';
 
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
@@ -217,10 +218,19 @@ class _ShowViewshedFromGeoelementInSceneState
 
   // Loads the 3D tank model from local sample data and returns it as a Graphic.
   Future<Graphic> _loadTankGraphic() async {
-    await downloadSampleData(['07d62a792ab6496d9b772a24efea45d0']);
-    final documentsDirPath =
-        (await getApplicationDocumentsDirectory()).absolute.path;
-    final tankModelPath = '$documentsDirPath/bradley_low_3ds/bradle.3ds';
+    const downloadFileName = 'bradley_low_3ds';
+
+    final appDir = await getApplicationDocumentsDirectory();
+    final zipFile = File('${appDir.absolute.path}/$downloadFileName.zip');
+    if (!zipFile.existsSync()) {
+      await downloadSampleDataWithProgress(
+        itemIds: ['07d62a792ab6496d9b772a24efea45d0'],
+        destinationFiles: [zipFile],
+      );
+    }
+
+    final tankModelPath =
+        '${appDir.absolute.path}/$downloadFileName/bradle.3ds';
 
     // Define the tank symbol.
     final tankSymbol =

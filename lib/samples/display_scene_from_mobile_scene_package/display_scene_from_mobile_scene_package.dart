@@ -83,8 +83,8 @@ class _DisplaySceneFromMobileScenePackageState
 
     if (!mspkFile.existsSync()) {
       await downloadSampleDataWithProgress(
-        itemId: '7dd2f97bb007466ea939160d0de96a9d',
-        destinationFile: mspkFile,
+        itemIds: ['7dd2f97bb007466ea939160d0de96a9d'],
+        destinationFiles: [mspkFile],
         onProgress: (progress) {
           setState(() => _downloadProgress = progress);
         },
