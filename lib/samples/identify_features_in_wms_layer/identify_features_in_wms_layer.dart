@@ -126,8 +126,9 @@ class _IdentifyFeaturesInWmsLayerState extends State<IdentifyFeaturesInWmsLayer>
     );
 
     // Check if there are any features identified.
-    final features =
-        identifyLayerResult.geoElements.whereType<WmsFeature>().toList();
+    final features = identifyLayerResult.geoElements
+        .whereType<WmsFeature>()
+        .toList();
     if (features.isNotEmpty) {
       // Get the identified WMS feature.
       final identifiedWmsFeature = features.first;
@@ -153,19 +154,18 @@ class _IdentifyFeaturesInWmsLayerState extends State<IdentifyFeaturesInWmsLayer>
     // Show a dialog containing a web view widget.
     showDialog(
       context: context,
-      builder:
-          (context) => AlertDialog(
-            title: Text(
-              'Identify Result',
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
-            content: SizedBox(
-              height: 150,
-              width: MediaQuery.of(context).size.width * 0.75,
-              // Create a web view widget and set the controller to provide the content.
-              child: WebViewWidget(controller: _webViewController),
-            ),
-          ),
+      builder: (context) => AlertDialog(
+        title: Text(
+          'Identify Result',
+          style: Theme.of(context).textTheme.titleMedium,
+        ),
+        content: SizedBox(
+          height: 150,
+          width: MediaQuery.of(context).size.width * 0.75,
+          // Create a web view widget and set the controller to provide the content.
+          child: WebViewWidget(controller: _webViewController),
+        ),
+      ),
     );
   }
 

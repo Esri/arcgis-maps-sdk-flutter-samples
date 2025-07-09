@@ -146,11 +146,10 @@ class _FilterByDefinitionExpressionOrDisplayFilterState
     _featureLayer.displayFilterDefinition = _displayFilterDefinition;
     _featureLayer.definitionExpression = _definitionExpression;
     // Get the current extent of the map view.
-    final extent =
-        _mapViewController
-            .getCurrentViewpoint(ViewpointType.boundingGeometry)
-            ?.targetGeometry
-            .extent;
+    final extent = _mapViewController
+        .getCurrentViewpoint(ViewpointType.boundingGeometry)
+        ?.targetGeometry
+        .extent;
 
     // Create query parameters.
     final queryParameters = QueryParameters();

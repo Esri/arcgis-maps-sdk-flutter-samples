@@ -79,17 +79,17 @@ class _DownloadVectorTilesToLocalCacheState
                   ),
                 ),
                 Center(
-                  child:
-                      _previewMap
-                          ? ElevatedButton(
-                            onPressed: closePreviewVectorTiles,
-                            child: const Text('Close Preview Vector Tiles'),
-                          )
-                          : ElevatedButton(
-                            onPressed:
-                                _isJobStarted ? null : startDownloadVectorTiles,
-                            child: const Text('Download Vector Tiles'),
-                          ),
+                  child: _previewMap
+                      ? ElevatedButton(
+                          onPressed: closePreviewVectorTiles,
+                          child: const Text('Close Preview Vector Tiles'),
+                        )
+                      : ElevatedButton(
+                          onPressed: _isJobStarted
+                              ? null
+                              : startDownloadVectorTiles,
+                          child: const Text('Download Vector Tiles'),
+                        ),
                 ),
               ],
             ),

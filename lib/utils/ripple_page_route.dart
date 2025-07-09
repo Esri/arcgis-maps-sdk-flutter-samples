@@ -29,12 +29,13 @@ class RipplePageRoute extends PageRouteBuilder {
             pow(screenSize.width, 2) + pow(screenSize.height, 2),
           );
 
-          final rippleAnim = Tween<double>(
-            begin: 0,
-            end: diagonal, // ensures ripple reaches all corners.
-          ).animate(
-            CurvedAnimation(parent: animation, curve: Curves.easeOutCubic),
-          );
+          final rippleAnim =
+              Tween<double>(
+                begin: 0,
+                end: diagonal, // ensures ripple reaches all corners.
+              ).animate(
+                CurvedAnimation(parent: animation, curve: Curves.easeOutCubic),
+              );
 
           return AnimatedBuilder(
             animation: rippleAnim,

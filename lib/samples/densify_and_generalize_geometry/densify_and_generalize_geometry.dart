@@ -151,13 +151,12 @@ class _DensifyAndGeneralizeGeometryState
                   value: _maxDeviation,
                   min: 1,
                   max: 250,
-                  onChanged:
-                      _generalize
-                          ? (value) {
-                            setState(() => _maxDeviation = value);
-                            updateGraphics();
-                          }
-                          : null,
+                  onChanged: _generalize
+                      ? (value) {
+                          setState(() => _maxDeviation = value);
+                          updateGraphics();
+                        }
+                      : null,
                 ),
               ),
             ],
@@ -193,13 +192,12 @@ class _DensifyAndGeneralizeGeometryState
                   value: _maxSegmentLength,
                   min: 50,
                   max: 500,
-                  onChanged:
-                      _densify
-                          ? (value) {
-                            setState(() => _maxSegmentLength = value);
-                            updateGraphics();
-                          }
-                          : null,
+                  onChanged: _densify
+                      ? (value) {
+                          setState(() => _maxSegmentLength = value);
+                          updateGraphics();
+                        }
+                      : null,
                 ),
               ),
             ],
@@ -259,14 +257,13 @@ class _DensifyAndGeneralizeGeometryState
     );
 
     // Add the graphics to a graphics overlay, and add the overlay to the map view.
-    final graphicsOverlay =
-        GraphicsOverlay()
-          ..graphics.addAll([
-            originalPointGraphic,
-            originalPolylineGraphic,
-            _resultPointsGraphic,
-            _resultPolylineGraphic,
-          ]);
+    final graphicsOverlay = GraphicsOverlay()
+      ..graphics.addAll([
+        originalPointGraphic,
+        originalPolylineGraphic,
+        _resultPointsGraphic,
+        _resultPolylineGraphic,
+      ]);
     _mapViewController.graphicsOverlays.add(graphicsOverlay);
 
     // Create a map with a basemap style and an initial viewpoint to show the extent of the polyline.

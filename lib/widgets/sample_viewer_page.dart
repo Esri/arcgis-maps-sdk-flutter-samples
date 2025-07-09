@@ -115,8 +115,8 @@ class _SampleViewerPageState extends State<SampleViewerPage> {
       appBar: AppBar(
         title:
             (widget.category != null && widget.category != SampleCategory.all)
-                ? Text(widget.category!.title)
-                : const Text(applicationTitle),
+            ? Text(widget.category!.title)
+            : const Text(applicationTitle),
       ),
       body: Column(
         children: [
@@ -142,25 +142,25 @@ class _SampleViewerPageState extends State<SampleViewerPage> {
           if (_ready)
             Expanded(
               child: Listener(
-                onPointerDown:
-                    (_) => FocusManager.instance.primaryFocus?.unfocus(),
+                onPointerDown: (_) =>
+                    FocusManager.instance.primaryFocus?.unfocus(),
                 child:
                     _filteredSamples.isEmpty &&
-                            _textEditingController.text.isEmpty &&
-                            widget.isSearchable &&
-                            _hintMessages.isNotEmpty
-                        ? Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 12),
-                          child: AnimatedSwitcher(
-                            duration: const Duration(milliseconds: 400),
-                            child: Text(
-                              _hintMessages[_currentHintIndex],
-                              key: ValueKey(_currentHintIndex),
-                              textAlign: TextAlign.center,
-                            ),
+                        _textEditingController.text.isEmpty &&
+                        widget.isSearchable &&
+                        _hintMessages.isNotEmpty
+                    ? Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        child: AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 400),
+                          child: Text(
+                            _hintMessages[_currentHintIndex],
+                            key: ValueKey(_currentHintIndex),
+                            textAlign: TextAlign.center,
                           ),
-                        )
-                        : SampleListView(samples: _filteredSamples),
+                        ),
+                      )
+                    : SampleListView(samples: _filteredSamples),
               ),
             )
           else
@@ -211,27 +211,23 @@ class _SampleViewerPageState extends State<SampleViewerPage> {
       }
     } else {
       if (widget.category == null || widget.category == SampleCategory.all) {
-        results =
-            _allSamples.where((sample) {
-              final lowerSearchText = searchText.toLowerCase();
-              return sample.title.toLowerCase().contains(lowerSearchText) ||
-                  sample.category.toLowerCase().contains(lowerSearchText) ||
-                  sample.keywords.any(
-                    (keyword) =>
-                        keyword.toLowerCase().contains(lowerSearchText),
-                  );
-            }).toList();
+        results = _allSamples.where((sample) {
+          final lowerSearchText = searchText.toLowerCase();
+          return sample.title.toLowerCase().contains(lowerSearchText) ||
+              sample.category.toLowerCase().contains(lowerSearchText) ||
+              sample.keywords.any(
+                (keyword) => keyword.toLowerCase().contains(lowerSearchText),
+              );
+        }).toList();
         // If the category is not null, the only samples within the category are searched.
       } else {
-        results =
-            getSamplesByCategory(widget.category).where((sample) {
-              final lowerSearchText = searchText.toLowerCase();
-              return sample.title.toLowerCase().contains(lowerSearchText) ||
-                  sample.keywords.any(
-                    (keyword) =>
-                        keyword.toLowerCase().contains(lowerSearchText),
-                  );
-            }).toList();
+        results = getSamplesByCategory(widget.category).where((sample) {
+          final lowerSearchText = searchText.toLowerCase();
+          return sample.title.toLowerCase().contains(lowerSearchText) ||
+              sample.keywords.any(
+                (keyword) => keyword.toLowerCase().contains(lowerSearchText),
+              );
+        }).toList();
       }
     }
     setState(() => _filteredSamples = results);
@@ -260,10 +256,9 @@ class _SampleViewerPageState extends State<SampleViewerPage> {
       // Generate a hint from title (if short).
       if (title.length <= _maxHintLength) {
         final useQuestion = random.nextBool();
-        final prefix =
-            useQuestion
-                ? _questionPrefixes[random.nextInt(_questionPrefixes.length)]
-                : _searchPrefixes[random.nextInt(_searchPrefixes.length)];
+        final prefix = useQuestion
+            ? _questionPrefixes[random.nextInt(_questionPrefixes.length)]
+            : _searchPrefixes[random.nextInt(_searchPrefixes.length)];
         final hint = useQuestion ? '$prefix "$title"?' : '$prefix "$title".';
         uniqueHints.add(hint);
       }

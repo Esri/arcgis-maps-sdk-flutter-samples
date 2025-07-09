@@ -45,7 +45,10 @@ class _LoadingIndicatorState extends State<LoadingIndicator> {
                 const CircularProgressIndicator(),
                 if (widget.text != null) ...[
                   const SizedBox(height: 16),
-                  Text(widget.text!, style: Theme.of(context).textTheme.bodyMedium),
+                  Text(
+                    widget.text!,
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
                 ],
               ],
             ),

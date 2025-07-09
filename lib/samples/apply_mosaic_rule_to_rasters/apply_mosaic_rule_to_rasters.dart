@@ -188,25 +188,23 @@ class _ApplyMosaicRuleToRastersState extends State<ApplyMosaicRuleToRasters>
               if (_showMosaicOptions)
                 ListView(
                   shrinkWrap: true,
-                  children:
-                      MosaicMethodEnum.values.map((method) {
-                        return ListTile(
-                          leading:
-                              (method == _selectedMosaicMethod)
-                                  ? const Icon(Icons.check, color: Colors.blue)
-                                  : const SizedBox(width: 16),
-                          title: Text(method.value),
-                          subtitle: Text(method.description),
-                          onTap: () {
-                            setState(() {
-                              _selectedMosaicMethod = method;
-                              _showMosaicOptions = false;
-                              _ready = false;
-                            });
-                            _updateMosaicMethod();
-                          },
-                        );
-                      }).toList(),
+                  children: MosaicMethodEnum.values.map((method) {
+                    return ListTile(
+                      leading: (method == _selectedMosaicMethod)
+                          ? const Icon(Icons.check, color: Colors.blue)
+                          : const SizedBox(width: 16),
+                      title: Text(method.value),
+                      subtitle: Text(method.description),
+                      onTap: () {
+                        setState(() {
+                          _selectedMosaicMethod = method;
+                          _showMosaicOptions = false;
+                          _ready = false;
+                        });
+                        _updateMosaicMethod();
+                      },
+                    );
+                  }).toList(),
                 ),
             ],
           ),

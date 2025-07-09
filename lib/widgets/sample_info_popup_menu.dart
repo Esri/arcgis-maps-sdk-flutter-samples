@@ -35,27 +35,26 @@ class _SampleInfoPopupMenuState extends State<SampleInfoPopupMenu>
   Widget build(BuildContext context) {
     return PopupMenuButton(
       icon: const Icon(Icons.more_vert),
-      itemBuilder:
-          (context) => const [
-            PopupMenuItem(
-              value: 'README',
-              child: ListTile(
-                leading: Icon(Icons.description),
-                title: Text('README'),
-              ),
-            ),
-            PopupMenuItem(
-              value: 'Code',
-              child: ListTile(leading: Icon(Icons.source), title: Text('Code')),
-            ),
-            PopupMenuItem(
-              value: 'Website',
-              child: ListTile(
-                leading: Icon(Icons.link_rounded),
-                title: Text('Website'),
-              ),
-            ),
-          ],
+      itemBuilder: (context) => const [
+        PopupMenuItem(
+          value: 'README',
+          child: ListTile(
+            leading: Icon(Icons.description),
+            title: Text('README'),
+          ),
+        ),
+        PopupMenuItem(
+          value: 'Code',
+          child: ListTile(leading: Icon(Icons.source), title: Text('Code')),
+        ),
+        PopupMenuItem(
+          value: 'Website',
+          child: ListTile(
+            leading: Icon(Icons.link_rounded),
+            title: Text('Website'),
+          ),
+        ),
+      ],
       onSelected: (result) {
         switch (result) {
           case 'Website':

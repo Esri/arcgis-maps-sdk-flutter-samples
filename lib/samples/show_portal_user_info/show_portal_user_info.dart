@@ -42,8 +42,9 @@ class _ShowPortalUserInfoState extends State<ShowPortalUserInfo>
     // which allows it to handle authentication challenges via calls to its
     // handleArcGISAuthenticationChallenge() method.
     ArcGISEnvironment
-        .authenticationManager
-        .arcGISAuthenticationChallengeHandler = this;
+            .authenticationManager
+            .arcGISAuthenticationChallengeHandler =
+        this;
 
     // Load the portal (which will trigger an authentication challenge), and then load the thumbnails.
     _portalLoadFuture = _portal.load().then((_) => loadThumbnails());
@@ -54,8 +55,9 @@ class _ShowPortalUserInfoState extends State<ShowPortalUserInfo>
     // We do not want to handle authentication challenges outside of this sample,
     // so we remove this as the challenge handler.
     ArcGISEnvironment
-        .authenticationManager
-        .arcGISAuthenticationChallengeHandler = null;
+            .authenticationManager
+            .arcGISAuthenticationChallengeHandler =
+        null;
 
     // Revoke OAuth tokens and remove all credentials to log out.
     Future.wait(

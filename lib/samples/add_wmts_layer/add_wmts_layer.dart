@@ -63,8 +63,9 @@ class _AddWmtsLayerState extends State<AddWmtsLayer> with SampleStateSupport {
                       child: const Text('From URI'),
                     ),
                     ElevatedButton(
-                      onPressed:
-                          _fromUriActive ? createWmtsLayerFromLayerInfo : null,
+                      onPressed: _fromUriActive
+                          ? createWmtsLayerFromLayerInfo
+                          : null,
                       child: const Text('From LayerInfo'),
                     ),
                   ],
