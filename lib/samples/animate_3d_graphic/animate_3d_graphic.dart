@@ -38,6 +38,9 @@ class _Animate3dGraphicState extends State<Animate3dGraphic>
   // The graphic for the plane.
   Graphic? _planeGraphic;
 
+  // Track mission modal status.
+  StateSetter? _modalStateSetter;
+
   // The camera controller that follows the plane.
   late OrbitGeoElementCameraController _cameraController;
 
@@ -76,7 +79,7 @@ class _Animate3dGraphicState extends State<Animate3dGraphic>
   // The current progress of the animation.
   double get _progress {
     if (_frames.isEmpty) return 0;
-    return _currentFrameIndex / _frames.length;
+    return _currentFrameIndex.toDouble() / _frames.length.toDouble();
   }
 
   @override
@@ -380,6 +383,10 @@ class _Animate3dGraphicState extends State<Animate3dGraphic>
         _isPlaying = false;
       }
     });
+
+    // Update modal sheet if it's open.
+    _modalStateSetter?.call(() {});
+
     _updateFrame(_frames[_currentFrameIndex]);
   }
 
@@ -408,45 +415,73 @@ class _Animate3dGraphicState extends State<Animate3dGraphic>
                 style: Theme.of(context).textTheme.titleLarge,
               ),
               const SizedBox(height: 16),
-              // Progress bar showing animation progress.
-              LinearProgressIndicator(value: _progress),
+
+              // Progress widgets have to update for every frame, so wrapped with a StatefulBuilder.
+              StatefulBuilder(
+                builder: (context, setModalState) {
+                  // Store the setter.
+                  _modalStateSetter = setModalState;
+                  return Column(
+                    children: [
+                      // Progress Indicator
+                      Padding(
+                        padding: const EdgeInsets.all(8),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text(
+                              'Progress',
+                              style: TextStyle(fontSize: 18),
+                            ),
+                            Text(
+                              '${(_progress * 100).toStringAsFixed(1)}%',
+                              style: const TextStyle(fontSize: 18),
+                            ),
+                          ],
+                        ),
+                      ),
+                      LinearProgressIndicator(value: _progress),
+                    ],
+                  );
+                },
+              ),
+
               const SizedBox(height: 24),
               // Dropdown to select mission.
-              DropdownButton(
-                value: _currentMission,
-                isExpanded: true,
-                onChanged: (mission) {
+              DropdownMenu(
+                initialSelection: _currentMission,
+                onSelected: (mission) {
                   if (mission != null) {
-                    Navigator.pop(context);
                     setState(() {
                       _currentMission = mission;
                       _currentFrameIndex = 0;
                       _isPlaying = false;
                     });
+                    // Update the modal to show progress reset to 0
+                    _modalStateSetter?.call(() {});
+
                     _loadMissionFrames(mission);
                   }
                 },
-                items: Mission.values.map((mission) {
-                  return DropdownMenuItem(
+                dropdownMenuEntries: Mission.values.map((mission) {
+                  return DropdownMenuEntry(
                     value: mission,
-                    child: Text(mission.label),
+                    label: mission.label,
                   );
                 }).toList(),
               ),
               const SizedBox(height: 16),
-              // Dropdown to select animation speed.
-              DropdownButton(
-                value: _animationSpeed,
-                isExpanded: true,
-                onChanged: (speed) {
+              DropdownMenu(
+                initialSelection: _animationSpeed,
+                onSelected: (speed) {
                   if (speed != null) {
                     setState(() => _animationSpeed = speed);
                   }
                 },
-                items: AnimationSpeed.values.map((speed) {
-                  return DropdownMenuItem(
+                dropdownMenuEntries: AnimationSpeed.values.map((speed) {
+                  return DropdownMenuEntry(
                     value: speed,
-                    child: Text('Speed: ${speed.label}'),
+                    label: 'Speed: ${speed.label}',
                   );
                 }).toList(),
               ),
@@ -454,7 +489,9 @@ class _Animate3dGraphicState extends State<Animate3dGraphic>
           ),
         );
       },
-    );
+    ).whenComplete(() {
+      _modalStateSetter = null;
+    });
   }
 
   // Shows the camera settings in a bottom sheet.
