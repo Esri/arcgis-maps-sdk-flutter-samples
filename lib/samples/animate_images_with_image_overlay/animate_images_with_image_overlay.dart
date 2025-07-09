@@ -49,16 +49,26 @@ class _AnimateImagesWithImageOverlayState
   var _opacity = 0.5;
   // Create an ImageOverlay to display the animated images.
   final _imageOverlay = ImageOverlay();
-  // A list to hold the image frames for the animation.
-  var _imageFrames = <ImageFrame>[];
+  // A list to hold the ArcGIS images for the animation.
+  List<ArcGISImage> _imageList = [];
   // A string to display the download progress.
   var _downloadProgress = '';
-  // An integer to track the current image frame index.
+  // An integer to track the current ArcGIS image index.
   var _imageFrameIndex = 0;
-  // A timer to control and change the image frame periodically.
+  // A timer to control and change the ArcGIS image periodically.
   Ticker? _ticker;
   // A flag for when the scene view is ready and controls can be used.
   var _ready = false;
+  // The image envelope defines the extent of the image frame.
+  final imageEnvelope = Envelope.fromCenter(
+      ArcGISPoint(
+      x: -120.0724273439448,
+      y: 35.131016955536694,
+      spatialReference: SpatialReference.wgs84,
+    ),
+      width: 15.09589635986124,
+      height: -14.3770441522488,
+    );
 
   @override
   void initState() {
@@ -70,7 +80,7 @@ class _AnimateImagesWithImageOverlayState
   void dispose() {
     _ticker?.dispose();
     _ticker = null;
-    _imageFrames.clear();
+    _imageList.clear();
     super.dispose();
   }
 
@@ -197,7 +207,7 @@ class _AnimateImagesWithImageOverlayState
   void _onTicker(Duration elapsed) {
     final delta = elapsed.inMilliseconds - _lastFrameTime;
     if (delta >= _imageFrameSpeed) {
-      _imageFrameIndex = (_imageFrameIndex + 1) % _imageFrames.length;
+      _imageFrameIndex = (_imageFrameIndex + 1) % _imageList.length;
       setImageFrame(_imageFrameIndex);
       _lastFrameTime = elapsed.inMilliseconds;
     }
@@ -265,38 +275,27 @@ class _AnimateImagesWithImageOverlayState
       await extractZipArchive(imageFile);
     }
     // Get a list of all PNG image files in the extracted directory.
-    final imageList = directory
+    final imageFileList = directory
         .listSync()
         .whereType<File>()
         .where((file) => file.path.endsWith('.png'))
         .toList();
     // Sort the list by file path name.
-    imageList.sort((file1, file2) => file1.path.compareTo(file2.path));
+    imageFileList.sort((file1, file2) => file1.path.compareTo(file2.path));
 
-    // Calculate the extent for the image frames based on a known point and size.
-    final pointForImageFrame = ArcGISPoint(
-      x: -120.0724273439448,
-      y: 35.131016955536694,
-      spatialReference: SpatialReference.wgs84,
-    );
-    final imageEnvelope = Envelope.fromCenter(
-      pointForImageFrame,
-      width: 15.09589635986124,
-      height: -14.3770441522488,
-    );
-    // Create a list of ImageFrame objects from the image files and the extent.
-    _imageFrames = imageList.map((file) {
-      return ImageFrame.withImageEnvelope(
-        image: ArcGISImage.fromFile(file.uri)!,
-        extent: imageEnvelope,
-      );
+    //Create a list of ArcGISImage objects from the image files.
+    _imageList = imageFileList.map((file) {
+      return ArcGISImage.fromFile(file.uri)!;
     }).toList();
+
     // show the first image frame in the image overlay.
     setImageFrame(0);
   }
-
+  /// Sets the image frame to the image overlay based on the index.
   void setImageFrame(int index) {
-    // Set the image frame to the image overlay.
-    _imageOverlay.imageFrame = _imageFrames[index];
+    _imageOverlay.imageFrame = ImageFrame.withImageEnvelope(
+      image: _imageList[index],
+      extent: imageEnvelope,
+    );
   }
 }
