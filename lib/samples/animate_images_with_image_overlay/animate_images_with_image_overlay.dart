@@ -32,7 +32,7 @@ class AnimateImagesWithImageOverlay extends StatefulWidget {
 
 class _AnimateImagesWithImageOverlayState
     extends State<AnimateImagesWithImageOverlay>
-    with TickerProviderStateMixin, SampleStateSupport {
+    with SingleTickerProviderStateMixin, SampleStateSupport {
   // Create a controller for the scene view.
   final _sceneViewController = ArcGISSceneView.createController();
   // A flag to toggle the start/stop of the image animation.
@@ -42,7 +42,7 @@ class _AnimateImagesWithImageOverlayState
   // The initial selected animated speed.
   var _selectedAnimatedSpeed = 'Slow';
   // The speed of the image frame animation in milliseconds.
-  var _imageFrameSpeed = 68;
+  var _imageFrameSpeed = 0;
   // The last frame time in milliseconds to control the animation speed.
   var _lastFrameTime = 0;
   // The initial opacity of the image overlay.
@@ -59,6 +59,12 @@ class _AnimateImagesWithImageOverlayState
   Ticker? _ticker;
   // A flag for when the scene view is ready and controls can be used.
   var _ready = false;
+
+  @override
+  void initState() {
+    _imageFrameSpeed = getAnimatedSpeed(_selectedAnimatedSpeed);
+    super.initState();
+  }
 
   @override
   void dispose() {
@@ -164,13 +170,11 @@ class _AnimateImagesWithImageOverlayState
   }
 
   int getAnimatedSpeed(String selectedSpeed) {
-    var factor = 1;
-    if (Platform.isIOS) {
-      // On iOS, the animation speed is faster, so we adjust the factor.
-      // This is to ensure the animation speed is consistent across platforms.
-      factor = 2;
-    }
+    // on iOS the FPS is 120, on Android it is 60.
+    // the speed is slowed down one time on iOS.
+    final factor = Platform.isIOS ? 4 : 1;
     // Returns the speed of the animation based on the selected speed.
+    // Usually a frame changes every 15~17 milliseconds.
     return switch (selectedSpeed) {
       'Fast' => 17 * factor,
       'Medium' => 34 * factor,
@@ -187,15 +191,15 @@ class _AnimateImagesWithImageOverlayState
   }
 
   void startTicker() {
-    if (_ticker != null) {
-      _ticker!.dispose();
-    }
+    _ticker?.dispose();
     _lastFrameTime = 0;
+    // create a ticker to control the image frame animation.
     _ticker = createTicker(_onTicker);
     _ticker!.start();
     setState(() => _started = true);
   }
 
+  // Callback function for the ticker to change the image frame.
   void _onTicker(Duration elapsed) {
     final ms = elapsed.inMilliseconds;
     if (ms - _lastFrameTime >= _imageFrameSpeed) {
