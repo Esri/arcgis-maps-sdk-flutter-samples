@@ -61,14 +61,14 @@ class _AnimateImagesWithImageOverlayState
   var _ready = false;
   // The image envelope defines the extent of the image frame.
   final imageEnvelope = Envelope.fromCenter(
-      ArcGISPoint(
+    ArcGISPoint(
       x: -120.0724273439448,
       y: 35.131016955536694,
       spatialReference: SpatialReference.wgs84,
     ),
-      width: 15.09589635986124,
-      height: -14.3770441522488,
-    );
+    width: 15.09589635986124,
+    height: -14.3770441522488,
+  );
 
   @override
   void initState() {
@@ -291,6 +291,7 @@ class _AnimateImagesWithImageOverlayState
     // show the first image frame in the image overlay.
     setImageFrame(0);
   }
+
   /// Sets the image frame to the image overlay based on the index.
   void setImageFrame(int index) {
     _imageOverlay.imageFrame = ImageFrame.withImageEnvelope(
