@@ -170,16 +170,13 @@ class _AnimateImagesWithImageOverlayState
   }
 
   int getAnimatedSpeed(String selectedSpeed) {
-    // On iOS the FPS is 120, on Android it is 60.
-    // The animation speed is reduced to one-quarter on iOS. 
-    final factor = Platform.isIOS ? 2 : 1;
     // Returns the speed of the animation based on the selected speed.
-    // Usually a frame changes every 15~17 milliseconds.
+    // Usually a frame changes every 16 milliseconds.
     return switch (selectedSpeed) {
-      'Fast' => 17 * factor,
-      'Medium' => 34 * factor,
-      'Slow' => 68 * factor,
-      _ => 68 * factor,
+      'Fast' => 15,
+      'Medium' => 30,
+      'Slow' => 60,
+      _ => 60,
     };
   }
 
@@ -191,7 +188,7 @@ class _AnimateImagesWithImageOverlayState
   void startTicker() {
     _lastFrameTime = 0;
     // create a ticker to control the image frame animation.
-    _ticker = createTicker(_onTicker);
+    _ticker = _ticker ?? createTicker(_onTicker);
     _ticker!.start();
     setState(() => _started = true);
   }
