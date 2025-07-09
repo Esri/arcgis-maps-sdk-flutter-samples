@@ -201,11 +201,11 @@ class _AnimateImagesWithImageOverlayState
 
   // Callback function for the ticker to change the image frame.
   void _onTicker(Duration elapsed) {
-    final ms = elapsed.inMilliseconds;
-    if (ms - _lastFrameTime >= _imageFrameSpeed) {
+    final delta = elapsed.inMilliseconds - _lastFrameTime;
+    if (delta >= _imageFrameSpeed) {
       _imageFrameIndex = (_imageFrameIndex + 1) % _imageFrames.length;
       setImageFrame(_imageFrameIndex);
-      _lastFrameTime = ms;
+      _lastFrameTime = elapsed.inMilliseconds;
     }
   }
 
