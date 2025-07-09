@@ -24,7 +24,7 @@ const portal = 'https://arcgis.com';
 /// Fetch the Sample data from the provided PortalItem ID.
 /// Parameters:
 /// - [itemIds]: A list of Portal Item IDs to be downloaded.
-/// - [destinationFiles]: A list of files where the downloaded data will be written..
+/// - [destinationFiles]: A list of files where the downloaded data will be written.
 /// - [onProgress] is called with a value from 0.0 to 1.0 as the download progresses.
 Future<List<ResponseInfo>> downloadSampleDataWithProgress({
   required List<String> itemIds,
