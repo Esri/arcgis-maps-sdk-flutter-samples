@@ -25,12 +25,8 @@ class DisplayMap extends StatelessWidget {
     return Scaffold(
       // Add a map view to the widget tree and set a controller and a map with a basemap style.
       body: ArcGISMapView(
-        controllerProvider:
-            () =>
-                ArcGISMapView.createController()
-                  ..arcGISMap = ArcGISMap.withBasemapStyle(
-                    BasemapStyle.arcGISImagery,
-                  ),
+        controllerProvider: () => ArcGISMapView.createController()
+          ..arcGISMap = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISImagery),
       ),
     );
   }

@@ -80,10 +80,9 @@ class _ApplyStyleToWmsLayerState extends State<ApplyStyleToWmsLayer>
         trailingIcon: const Icon(Icons.arrow_drop_down),
         textStyle: Theme.of(context).textTheme.labelMedium,
         initialSelection: _selectedStyle,
-        dropdownMenuEntries:
-            _stylesTitles.map((item) {
-              return DropdownMenuEntry(value: item, label: item);
-            }).toList(),
+        dropdownMenuEntries: _stylesTitles.map((item) {
+          return DropdownMenuEntry(value: item, label: item);
+        }).toList(),
         onSelected: (style) {
           if (style != null) {
             changeStyle(style);

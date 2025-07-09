@@ -71,7 +71,9 @@ class _AddPointSceneLayerState extends State<AddPointSceneLayer>
     scene.operationalLayers.add(pointSceneLayer);
     // Add surface elevation to the scene.
     final elevationSource = ArcGISTiledElevationSource.withUri(
-      Uri.parse('https://elevation3d.arcgis.com/arcgis/rest/services/WorldElevation3D/Terrain3D/ImageServer'),
+      Uri.parse(
+        'https://elevation3d.arcgis.com/arcgis/rest/services/WorldElevation3D/Terrain3D/ImageServer',
+      ),
     );
     scene.baseSurface.elevationSources.add(elevationSource);
     // Disable the loading indicator when the layer is loaded.

@@ -94,8 +94,9 @@ class _GenerateOfflineMapState extends State<GenerateOfflineMap>
                 Center(
                   // Add a button to take the outlined region offline.
                   child: ElevatedButton(
-                    onPressed:
-                        _progress != null || _offline ? null : takeOffline,
+                    onPressed: _progress != null || _offline
+                        ? null
+                        : takeOffline,
                     child: const Text('Take Map Offline'),
                   ),
                 ),

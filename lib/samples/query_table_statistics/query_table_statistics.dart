@@ -125,9 +125,8 @@ class _QueryTableStatisticsState extends State<QueryTableStatistics>
             children: [
               Checkbox(
                 value: _onlyCitiesInCurrentExtent,
-                onChanged:
-                    (value) =>
-                        setState(() => _onlyCitiesInCurrentExtent = value!),
+                onChanged: (value) =>
+                    setState(() => _onlyCitiesInCurrentExtent = value!),
               ),
               const Text('Only cities in current extent'),
             ],
@@ -136,9 +135,8 @@ class _QueryTableStatisticsState extends State<QueryTableStatistics>
             children: [
               Checkbox(
                 value: _onlyCitiesGreaterThan5M,
-                onChanged:
-                    (value) =>
-                        setState(() => _onlyCitiesGreaterThan5M = value!),
+                onChanged: (value) =>
+                    setState(() => _onlyCitiesGreaterThan5M = value!),
               ),
               const Text('Only cities greater than 5M'),
             ],
@@ -196,13 +194,13 @@ class _QueryTableStatisticsState extends State<QueryTableStatistics>
     final records = statisticsQueryResult.statisticRecords();
     for (final record in records) {
       record.statistics.forEach((key, value) {
-        final displayName =
-            key.toLowerCase() == 'count_pop' ? 'CITY_COUNT' : key;
+        final displayName = key.toLowerCase() == 'count_pop'
+            ? 'CITY_COUNT'
+            : key;
         final n = value as num?;
-        final displayValue =
-            key.toLowerCase() == 'count_pop'
-                ? n?.toStringAsFixed(0)
-                : n?.toStringAsFixed(2);
+        final displayValue = key.toLowerCase() == 'count_pop'
+            ? n?.toStringAsFixed(0)
+            : n?.toStringAsFixed(2);
         statistics.add('[$displayName]  $displayValue');
       });
     }

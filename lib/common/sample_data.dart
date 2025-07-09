@@ -50,7 +50,8 @@ Future<void> downloadSampleData(List<String> portalItemIds) async {
     }
   }
 }
-/// Extract the contents of a zip archive to a directory 
+
+/// Extract the contents of a zip archive to a directory
 /// with the same name as the zip file (without the .zip extension).
 /// Parameters:
 /// - [archiveFile]: The zip file to extract.
@@ -69,12 +70,14 @@ Future<void> extractZipArchive(File archiveFile) async {
 /// - [onProgress] is called with a value from 0.0 to 1.0 as the download progresses.
 Future<ResponseInfo> downloadSampleDataWithProgress({
   required String itemId,
-  required File destinationFile, 
+  required File destinationFile,
   void Function(double progress)? onProgress,
 }) async {
-  final requestUri = Uri.parse('$portal/sharing/rest/content/items/$itemId/data');
+  final requestUri = Uri.parse(
+    '$portal/sharing/rest/content/items/$itemId/data',
+  );
   final response = await ArcGISHttpClient.download(
-    requestUri, 
+    requestUri,
     destinationFile.uri,
     requestInfo: RequestInfo(
       onReceiveProgress: (bytesReceived, totalBytes) {

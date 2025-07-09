@@ -61,7 +61,8 @@ class _ReadmePageState extends State<ReadmePage> {
       final html = md.markdownToHtml(markdownData);
 
       // Inject custom CSS for styling.
-      final styledHtml = '''
+      final styledHtml =
+          '''
       <html>
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -127,10 +128,9 @@ class _ReadmePageState extends State<ReadmePage> {
           ),
 
           Expanded(
-            child:
-                _isLoading
-                    ? const Center(child: CircularProgressIndicator())
-                    : WebViewWidget(controller: _controller),
+            child: _isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : WebViewWidget(controller: _controller),
           ),
         ],
       ),

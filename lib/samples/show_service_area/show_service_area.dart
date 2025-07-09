@@ -216,20 +216,17 @@ class _ShowServiceAreaState extends State<ShowServiceArea>
       _serviceAreaGraphicsOverlay.graphics.clear();
 
       // For each graphic in the facilities graphics overlay, add a facility to the parameters.
-      final facilities =
-          _facilityGraphicsOverlay.graphics
-              .map(
-                (graphic) =>
-                    ServiceAreaFacility(graphic.geometry! as ArcGISPoint),
-              )
-              .toList();
+      final facilities = _facilityGraphicsOverlay.graphics
+          .map(
+            (graphic) => ServiceAreaFacility(graphic.geometry! as ArcGISPoint),
+          )
+          .toList();
       _serviceAreaParameters.setFacilities(facilities);
 
       // For each graphic in the barriers graphics overlay, add a polygon barrier to the parameters.
-      final barriers =
-          _barrierGraphicsOverlay.graphics
-              .map((graphic) => PolygonBarrier(graphic.geometry! as Polygon))
-              .toList();
+      final barriers = _barrierGraphicsOverlay.graphics
+          .map((graphic) => PolygonBarrier(graphic.geometry! as Polygon))
+          .toList();
       _serviceAreaParameters.setPolygonBarriers(barriers);
 
       // Solve the service area using the parameters.

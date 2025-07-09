@@ -83,8 +83,9 @@ class _SelectFeaturesInFeatureLayerState
       maximumResults: 1000,
     );
     // Get the features from the identify layer result.
-    final features =
-        identifyLayerResult.geoElements.whereType<Feature>().toList();
+    final features = identifyLayerResult.geoElements
+        .whereType<Feature>()
+        .toList();
 
     // If no features are identified, unselect all features.
     if (features.isEmpty) {

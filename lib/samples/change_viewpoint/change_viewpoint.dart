@@ -117,10 +117,9 @@ class _ChangeViewpointState extends State<ChangeViewpoint>
         trailingIcon: const Icon(Icons.arrow_drop_down),
         textStyle: Theme.of(context).textTheme.labelMedium,
         initialSelection: _selectedViewpoint,
-        dropdownMenuEntries:
-            _viewpointTitles.map((items) {
-              return DropdownMenuEntry(value: items, label: items);
-            }).toList(),
+        dropdownMenuEntries: _viewpointTitles.map((items) {
+          return DropdownMenuEntry(value: items, label: items);
+        }).toList(),
         onSelected: (viewpoint) {
           if (viewpoint != null) {
             changeViewpoint(viewpoint);
