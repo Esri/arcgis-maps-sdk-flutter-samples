@@ -172,7 +172,7 @@ class _AnimateImagesWithImageOverlayState
   int getAnimatedSpeed(String selectedSpeed) {
     // On iOS the FPS is 120, on Android it is 60.
     // The animation speed is reduced to one-quarter on iOS. 
-    final factor = Platform.isIOS ? 4 : 1;
+    final factor = Platform.isIOS ? 2 : 1;
     // Returns the speed of the animation based on the selected speed.
     // Usually a frame changes every 15~17 milliseconds.
     return switch (selectedSpeed) {
@@ -273,6 +273,9 @@ class _AnimateImagesWithImageOverlayState
         .whereType<File>()
         .where((file) => file.path.endsWith('.png'))
         .toList();
+    // Sort the list by file path name.
+    imageList.sort((file1, file2) => file1.path.compareTo(file2.path));
+
     // Calculate the extent for the image frames based on a known point and size.
     final pointForImageFrame = ArcGISPoint(
       x: -120.0724273439448,
