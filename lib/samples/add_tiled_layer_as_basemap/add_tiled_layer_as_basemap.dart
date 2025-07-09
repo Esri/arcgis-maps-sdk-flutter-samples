@@ -14,6 +14,8 @@
 // limitations under the License.
 //
 
+import 'dart:io';
+
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
@@ -51,13 +53,16 @@ class AddTiledLayerAsBasemapState extends State<AddTiledLayerAsBasemap>
   }
 
   Future<void> onMapViewReady() async {
-    await downloadSampleData(['e4a398afe9a945f3b0f4dca1e4faccb5']);
     final appDir = await getApplicationDocumentsDirectory();
-
-    // Create a tile cache, specifying the path to the local tile package.
-    const tilePackageName = 'SanFrancisco.tpkx';
-    final pathToFile = '${appDir.absolute.path}/$tilePackageName';
-    final tileCache = TileCache.withFileUri(Uri.parse(pathToFile));
+    final tpkxFile = File('${appDir.absolute.path}/SanFrancisco.tpkx');
+    // Download the sample data if it does not exist.
+    if (!tpkxFile.existsSync()) {
+      await downloadSampleDataWithProgress(
+        itemIds: ['e4a398afe9a945f3b0f4dca1e4faccb5'],
+        destinationFiles: [tpkxFile],
+      );
+    }
+    final tileCache = TileCache.withFileUri(tpkxFile.uri);
 
     // Create a tiled layer with the tile cache.
     final tiledLayer = ArcGISTiledLayer.withTileCache(tileCache);

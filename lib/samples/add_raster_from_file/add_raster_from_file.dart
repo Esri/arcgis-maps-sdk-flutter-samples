@@ -92,15 +92,15 @@ class _AddRasterFromFileState extends State<AddRasterFromFile>
     // Download the sample data if it does not exist.
     if (!zipFile.existsSync()) {
       await downloadSampleDataWithProgress(
-        itemId: '7c4c679ab06a4df19dc497f577f111bd',
-        destinationFile: zipFile,
+        itemIds: ['7c4c679ab06a4df19dc497f577f111bd'],
+        destinationFiles: [zipFile],
         onProgress: (progress) {
-          setState(() =>
-            _downloadMessage = 'Downloading raster file... ${progress * 100}%'
+          setState(
+            () => _downloadMessage =
+                'Downloading raster file... ${progress * 100}%',
           );
         },
       );
-      await extractZipArchive(zipFile);
     }
 
     // Create a raster from the file URI.

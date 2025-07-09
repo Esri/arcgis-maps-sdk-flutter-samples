@@ -110,14 +110,20 @@ class _DisplayDimensionsState extends State<DisplayDimensions>
   }
 
   Future<void> onMapViewReady() async {
-    // Download the mobile map package.
-    await downloadSampleData(['f5ff6f5556a945bca87ca513b8729a1e']);
-
     // Load the local mobile map package.
     final appDir = await getApplicationDocumentsDirectory();
     final mmpkFile = File(
       '${appDir.absolute.path}/Edinburgh_Pylon_Dimensions.mmpk',
     );
+
+    // Download the mobile map package.
+    if (!mmpkFile.existsSync()) {
+      await downloadSampleDataWithProgress(
+        itemIds: ['f5ff6f5556a945bca87ca513b8729a1e'],
+        destinationFiles: [mmpkFile],
+      );
+    }
+
     final mmpk = MobileMapPackage.withFileUri(mmpkFile.uri);
     await mmpk.load();
 
