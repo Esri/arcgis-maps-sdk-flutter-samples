@@ -19,6 +19,7 @@ import 'dart:io';
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:path_provider/path_provider.dart';
 
 class AnimateImagesWithImageOverlay extends StatefulWidget {
@@ -31,7 +32,7 @@ class AnimateImagesWithImageOverlay extends StatefulWidget {
 
 class _AnimateImagesWithImageOverlayState
     extends State<AnimateImagesWithImageOverlay>
-    with SampleStateSupport {
+    with TickerProviderStateMixin, SampleStateSupport {
   // Create a controller for the scene view.
   final _sceneViewController = ArcGISSceneView.createController();
   // A flag to toggle the start/stop of the image animation.
@@ -40,24 +41,46 @@ class _AnimateImagesWithImageOverlayState
   final _animatedSpeeds = ['Fast', 'Medium', 'Slow'];
   // The initial selected animated speed.
   var _selectedAnimatedSpeed = 'Slow';
+  // The speed of the image frame animation in milliseconds.
+  var _imageFrameSpeed = 0;
+  // The last frame time in milliseconds to control the animation speed.
+  var _lastFrameTime = 0;
   // The initial opacity of the image overlay.
   var _opacity = 0.5;
   // Create an ImageOverlay to display the animated images.
   final _imageOverlay = ImageOverlay();
-  // A list to hold the image frames for the animation.
-  var _imageFrames = <ImageFrame>[];
+  // A list to hold the ArcGIS images for the animation.
+  List<ArcGISImage> _imageList = [];
   // A string to display the download progress.
   var _downloadProgress = '';
-  // An integer to track the current image frame index.
+  // An integer to track the current ArcGIS image index.
   var _imageFrameIndex = 0;
-  // A timer to control and change the image frame periodically.
-  Timer? _timer;
+  // A timer to control and change the ArcGIS image periodically.
+  Ticker? _ticker;
   // A flag for when the scene view is ready and controls can be used.
   var _ready = false;
+  // The image envelope defines the extent of the image frame.
+  final imageEnvelope = Envelope.fromCenter(
+    ArcGISPoint(
+      x: -120.0724273439448,
+      y: 35.131016955536694,
+      spatialReference: SpatialReference.wgs84,
+    ),
+    width: 15.09589635986124,
+    height: -14.3770441522488,
+  );
+
+  @override
+  void initState() {
+    _imageFrameSpeed = getAnimatedSpeed(_selectedAnimatedSpeed);
+    super.initState();
+  }
 
   @override
   void dispose() {
-    _timer?.cancel();
+    _ticker?.dispose();
+    _ticker = null;
+    _imageList.clear();
     super.dispose();
   }
 
@@ -86,15 +109,11 @@ class _AnimateImagesWithImageOverlayState
                     // A button to start/stop the animation.
                     ElevatedButton(
                       onPressed: () {
-                        final imageFrameSpeed =
-                            switch (_selectedAnimatedSpeed) {
-                              'Fast' => 17,
-                              'Medium' => 34,
-                              'Slow' => 68,
-                              _ => 68, // Default speed
-                            };
-                        beginImageAnimation(!_started, imageFrameSpeed);
-                        setState(() => _started = !_started);
+                        if (!_started) {
+                          startTicker();
+                        } else {
+                          stopTicker();
+                        }
                       },
                       child: _started
                           ? const Text('Stop')
@@ -103,15 +122,14 @@ class _AnimateImagesWithImageOverlayState
                     // A dropdown button to select the animated speed.
                     DropdownButton<String>(
                       value: _selectedAnimatedSpeed,
-                      onChanged: _started
-                          ? null // Disable when _started is true
-                          : (value) {
-                              if (value != null) {
-                                setState(() {
-                                  _selectedAnimatedSpeed = value;
-                                });
-                              }
-                            },
+                      onChanged: (value) {
+                        if (value != null) {
+                          setState(() {
+                            _selectedAnimatedSpeed = value;
+                            _imageFrameSpeed = getAnimatedSpeed(value);
+                          });
+                        }
+                      },
                       items: _animatedSpeeds.map((String speed) {
                         return DropdownMenuItem<String>(
                           value: speed,
@@ -161,22 +179,43 @@ class _AnimateImagesWithImageOverlayState
     );
   }
 
-  // Starts or stops the image animation.
-  void beginImageAnimation(bool isStart, int imageFrameSpeed) {
-    if (!isStart) {
-      _timer?.cancel();
-      return;
-    }
-    _timer = Timer.periodic(Duration(milliseconds: imageFrameSpeed), (timer) {
-      if (_imageFrames.isEmpty) return;
-      _imageFrameIndex = (_imageFrameIndex + 1) % _imageFrames.length;
+  int getAnimatedSpeed(String selectedSpeed) {
+    // Returns the speed of the animation based on the selected speed.
+    // Usually a frame changes every 16 milliseconds.
+    return switch (selectedSpeed) {
+      'Fast' => 15,
+      'Medium' => 30,
+      'Slow' => 60,
+      _ => 60,
+    };
+  }
+
+  void stopTicker() {
+    _ticker?.stop();
+    setState(() => _started = false);
+  }
+
+  void startTicker() {
+    _lastFrameTime = 0;
+    // create a ticker to control the image frame animation.
+    _ticker = _ticker ?? createTicker(_onTicker);
+    _ticker!.start();
+    setState(() => _started = true);
+  }
+
+  // Callback function for the ticker to change the image frame.
+  void _onTicker(Duration elapsed) {
+    final delta = elapsed.inMilliseconds - _lastFrameTime;
+    if (delta >= _imageFrameSpeed) {
+      _imageFrameIndex = (_imageFrameIndex + 1) % _imageList.length;
       setImageFrame(_imageFrameIndex);
-    });
+      _lastFrameTime = elapsed.inMilliseconds;
+    }
   }
 
   Future<void> onSceneViewReady() async {
     // Create a Scene with a topographic baseScene style.
-    final scene = ArcGISScene.withBasemapStyle(BasemapStyle.arcGISLightGray);
+    final scene = ArcGISScene.withBasemapStyle(BasemapStyle.arcGISDarkGray);
     _sceneViewController.arcGISScene = scene;
     // Add a elevation source for the base surface of the scene.
     final elevationSource = ArcGISTiledElevationSource.withUri(
@@ -235,35 +274,28 @@ class _AnimateImagesWithImageOverlayState
       );
     }
     // Get a list of all PNG image files in the extracted directory.
-    final imageList = directory
+    final imageFileList = directory
         .listSync()
         .whereType<File>()
         .where((file) => file.path.endsWith('.png'))
         .toList();
-    // Calculate the extent for the image frames based on a known point and size.
-    final pointForImageFrame = ArcGISPoint(
-      x: -120.0724273439448,
-      y: 35.131016955536694,
-      spatialReference: SpatialReference.wgs84,
-    );
-    final imageEnvelope = Envelope.fromCenter(
-      pointForImageFrame,
-      width: 15.09589635986124,
-      height: -14.3770441522488,
-    );
-    // Create a list of ImageFrame objects from the image files and the extent.
-    _imageFrames = imageList.map((file) {
-      return ImageFrame.withImageEnvelope(
-        image: ArcGISImage.fromFile(file.uri)!,
-        extent: imageEnvelope,
-      );
+    // Sort the list by file path name.
+    imageFileList.sort((file1, file2) => file1.path.compareTo(file2.path));
+
+    //Create a list of ArcGISImage objects from the image files.
+    _imageList = imageFileList.map((file) {
+      return ArcGISImage.fromFile(file.uri)!;
     }).toList();
+
     // show the first image frame in the image overlay.
     setImageFrame(0);
   }
 
+  /// Sets the image frame to the image overlay based on the index.
   void setImageFrame(int index) {
-    // Set the image frame to the image overlay.
-    _imageOverlay.imageFrame = _imageFrames[index];
+    _imageOverlay.imageFrame = ImageFrame.withImageEnvelope(
+      image: _imageList[index],
+      extent: imageEnvelope,
+    );
   }
 }
