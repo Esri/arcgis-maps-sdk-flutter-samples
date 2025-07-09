@@ -185,13 +185,10 @@ class _AnimateImagesWithImageOverlayState
 
   void stopTicker() {
     _ticker?.stop();
-    _ticker?.dispose();
-    _ticker = null;
     setState(() => _started = false);
   }
 
   void startTicker() {
-    _ticker?.dispose();
     _lastFrameTime = 0;
     // create a ticker to control the image frame animation.
     _ticker = createTicker(_onTicker);
