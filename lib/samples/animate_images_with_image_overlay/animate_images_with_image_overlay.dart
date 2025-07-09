@@ -32,7 +32,7 @@ class AnimateImagesWithImageOverlay extends StatefulWidget {
 
 class _AnimateImagesWithImageOverlayState
     extends State<AnimateImagesWithImageOverlay>
-    with SingleTickerProviderStateMixin, SampleStateSupport {
+    with TickerProviderStateMixin, SampleStateSupport {
   // Create a controller for the scene view.
   final _sceneViewController = ArcGISSceneView.createController();
   // A flag to toggle the start/stop of the image animation.
