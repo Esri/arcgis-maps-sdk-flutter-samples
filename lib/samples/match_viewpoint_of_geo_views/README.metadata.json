@@ -17,21 +17,21 @@
         "pan",
         "zoom",
         "GeoViewController",
-        "getCurrentViewpoint",
         "MapView",
+        "SceneView",
+        "getCurrentViewpoint",
         "onNavigationChanged",
         "onViewpointChanged",
-        "SceneView",
         "setViewpoint"
     ],
     "redirect_from": [],
     "relevant_apis": [
         "GeoViewController",
-        "getCurrentViewpoint",
         "MapView",
+        "SceneView",
+        "getCurrentViewpoint",
         "onNavigationChanged",
         "onViewpointChanged",
-        "SceneView",
         "setViewpoint"
     ],
     "snippets": [

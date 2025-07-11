@@ -23,10 +23,10 @@ Interact with the MapView or SceneView by zooming or panning. The other MapView 
 * GeoViewController
 * getCurrentViewpoint
 * MapView
-* OnNavigationChanged
-* OnViewpointChanged
+* onNavigationChanged
+* onViewpointChanged
 * SceneView
-* setViewPoint
+* setViewpoint
 
 ## About the data
 
