@@ -113,11 +113,6 @@ class _MatchViewpointOfGeoViewsState extends State<MatchViewpointOfGeoViews>
         .onNavigationChanged
         .listen((isNavigating) {
           _isMapViewNavigation = isNavigating;
-          if (_isMapViewNavigation == false &&
-              _isSceneViewNavigation == false &&
-              _mapViewViewpoint != null) {
-            _sceneViewController.setViewpoint(_mapViewViewpoint!);
-          }
         });
 
     // Listen for viewpoint changes in the map view.
@@ -126,6 +121,9 @@ class _MatchViewpointOfGeoViewsState extends State<MatchViewpointOfGeoViews>
           _mapViewViewpoint = _mapViewController.getCurrentViewpoint(
             ViewpointType.centerAndScale,
           );
+          if (_isMapViewNavigation || !_isSceneViewNavigation) {
+            _sceneViewController.setViewpoint(_mapViewViewpoint!);
+          }
         });
 
     // Set the ready state variable to true to enable the sample UI.
@@ -143,11 +141,6 @@ class _MatchViewpointOfGeoViewsState extends State<MatchViewpointOfGeoViews>
         .onNavigationChanged
         .listen((isNavigating) {
           _isSceneViewNavigation = isNavigating;
-          if (_isSceneViewNavigation == false &&
-              _isMapViewNavigation == false &&
-              _sceneViewViewpoint != null) {
-            _mapViewController.setViewpoint(_sceneViewViewpoint!);
-          }
         });
 
     // Listen for viewpoint changes in the scene view.
@@ -157,6 +150,10 @@ class _MatchViewpointOfGeoViewsState extends State<MatchViewpointOfGeoViews>
           _sceneViewViewpoint = _sceneViewController.getCurrentViewpoint(
             ViewpointType.centerAndScale,
           );
+
+          if (_isSceneViewNavigation) {
+            _mapViewController.setViewpoint(_sceneViewViewpoint!);
+          }
         });
 
     // Set the ready state variable to true to enable the sample UI.
