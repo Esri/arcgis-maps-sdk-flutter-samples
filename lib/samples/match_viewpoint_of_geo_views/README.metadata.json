@@ -19,20 +19,20 @@
         "GeoViewController",
         "getCurrentViewpoint",
         "MapView",
-        "OnNavigationChanged",
-        "OnViewpointChanged",
+        "onNavigationChanged",
+        "onViewpointChanged",
         "SceneView",
-        "SetViewpoint"
+        "setViewpoint"
     ],
     "redirect_from": [],
     "relevant_apis": [
         "GeoViewController",
         "getCurrentViewpoint",
         "MapView",
-        "OnNavigationChanged",
-        "OnViewpointChanged",
+        "onNavigationChanged",
+        "onViewpointChanged",
         "SceneView",
-        "SetViewpoint"
+        "setViewpoint"
     ],
     "snippets": [
         "match_viewpoint_of_geo_views.dart"

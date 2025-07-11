@@ -26,7 +26,7 @@ Interact with the MapView or SceneView by zooming or panning. The other MapView 
 * OnNavigationChanged
 * OnViewpointChanged
 * SceneView
-* SetViewPoint
+* setViewPoint
 
 ## About the data
 

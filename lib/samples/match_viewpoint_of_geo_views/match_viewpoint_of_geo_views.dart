@@ -114,7 +114,8 @@ class _MatchViewpointOfGeoViewsState extends State<MatchViewpointOfGeoViews>
         .listen((isNavigating) {
           _isMapViewNavigation = isNavigating;
           if (_isMapViewNavigation == false &&
-              _isSceneViewNavigation == false) {
+              _isSceneViewNavigation == false &&
+              _mapViewViewpoint != null) {
             _sceneViewController.setViewpoint(_mapViewViewpoint!);
           }
         });
@@ -143,7 +144,8 @@ class _MatchViewpointOfGeoViewsState extends State<MatchViewpointOfGeoViews>
         .listen((isNavigating) {
           _isSceneViewNavigation = isNavigating;
           if (_isSceneViewNavigation == false &&
-              _isMapViewNavigation == false) {
+              _isMapViewNavigation == false &&
+              _sceneViewViewpoint != null) {
             _mapViewController.setViewpoint(_sceneViewViewpoint!);
           }
         });
