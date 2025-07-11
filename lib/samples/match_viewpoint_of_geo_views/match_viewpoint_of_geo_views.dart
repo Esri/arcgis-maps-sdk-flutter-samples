@@ -39,22 +39,18 @@ class _MatchViewpointOfGeoViewsState extends State<MatchViewpointOfGeoViews>
   Viewpoint? _sceneViewViewpoint;
   // A flag to indicate if the map view is currently navigating.
   bool _isMapViewNavigation = false;
-  // A flag to indicate if the scene view is currently navigating.
-  bool _isSceneViewNavigation = false;
   // Stream subscriptions for viewpoint and navigation changes.
   late StreamSubscription _mapViewViewpointChangedSubscription;
-  late StreamSubscription _sceneViewViewpointChangedSubscription;
   late StreamSubscription _mapViewNavigationChangedSubscription;
-  late StreamSubscription _sceneViewNavigationChangedSubscription;
+  late StreamSubscription _sceneViewViewpointChangedSubscription;
   // A flag for when the map view is ready and controls can be used.
   var _ready = false;
 
   @override
   void dispose() {
     _mapViewViewpointChangedSubscription.cancel();
-    _sceneViewViewpointChangedSubscription.cancel();
     _mapViewNavigationChangedSubscription.cancel();
-    _sceneViewNavigationChangedSubscription.cancel();
+    _sceneViewViewpointChangedSubscription.cancel();
     super.dispose();
   }
 
@@ -121,7 +117,7 @@ class _MatchViewpointOfGeoViewsState extends State<MatchViewpointOfGeoViews>
           _mapViewViewpoint = _mapViewController.getCurrentViewpoint(
             ViewpointType.centerAndScale,
           );
-          if (_isMapViewNavigation || !_isSceneViewNavigation) {
+          if (_isMapViewNavigation) {
             _sceneViewController.setViewpoint(_mapViewViewpoint!);
           }
         });
@@ -136,14 +132,8 @@ class _MatchViewpointOfGeoViewsState extends State<MatchViewpointOfGeoViews>
     final scene = ArcGISScene.withBasemapStyle(BasemapStyle.arcGISImagery);
     _sceneViewController.arcGISScene = scene;
 
-    // Listen for navigation changes in the scene view.
-    _sceneViewNavigationChangedSubscription = _sceneViewController
-        .onNavigationChanged
-        .listen((isNavigating) {
-          _isSceneViewNavigation = isNavigating;
-        });
-
     // Listen for viewpoint changes in the scene view.
+    // This will update the map view's viewpoint when the scene view changes.
     _sceneViewViewpointChangedSubscription = _sceneViewController
         .onViewpointChanged
         .listen((_) {
@@ -151,11 +141,11 @@ class _MatchViewpointOfGeoViewsState extends State<MatchViewpointOfGeoViews>
             ViewpointType.centerAndScale,
           );
 
-          if (_isSceneViewNavigation) {
+          if (!_isMapViewNavigation) {
             _mapViewController.setViewpoint(_sceneViewViewpoint!);
           }
         });
-
+    
     // Set the ready state variable to true to enable the sample UI.
     setState(() => _ready = true);
   }
