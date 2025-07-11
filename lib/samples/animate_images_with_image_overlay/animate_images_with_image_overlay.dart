@@ -49,8 +49,8 @@ class _AnimateImagesWithImageOverlayState
   var _opacity = 0.5;
   // Create an ImageOverlay to display the animated images.
   final _imageOverlay = ImageOverlay();
-  // A list to hold the ArcGIS images for the animation.
-  List<ArcGISImage> _imageList = [];
+  // A list to hold the image URIs for the animation.
+  List<Uri> _imageUriList = [];
   // A string to display the download progress.
   var _downloadProgress = '';
   // An integer to track the current ArcGIS image index.
@@ -80,7 +80,7 @@ class _AnimateImagesWithImageOverlayState
   void dispose() {
     _ticker?.dispose();
     _ticker = null;
-    _imageList.clear();
+    _imageUriList.clear();
     super.dispose();
   }
 
@@ -183,10 +183,10 @@ class _AnimateImagesWithImageOverlayState
     // Returns the speed of the animation based on the selected speed.
     // Usually a frame changes every 16 milliseconds.
     return switch (selectedSpeed) {
-      'Fast' => 15,
-      'Medium' => 30,
-      'Slow' => 60,
-      _ => 60,
+      'Fast' => 17,
+      'Medium' => 34,
+      'Slow' => 68,
+      _ => 68,
     };
   }
 
@@ -207,7 +207,7 @@ class _AnimateImagesWithImageOverlayState
   void _onTicker(Duration elapsed) {
     final delta = elapsed.inMilliseconds - _lastFrameTime;
     if (delta >= _imageFrameSpeed) {
-      _imageFrameIndex = (_imageFrameIndex + 1) % _imageList.length;
+      _imageFrameIndex = (_imageFrameIndex + 1) % _imageUriList.length;
       setImageFrame(_imageFrameIndex);
       _lastFrameTime = elapsed.inMilliseconds;
     }
@@ -282,9 +282,9 @@ class _AnimateImagesWithImageOverlayState
     // Sort the list by file path name.
     imageFileList.sort((file1, file2) => file1.path.compareTo(file2.path));
 
-    //Create a list of ArcGISImage objects from the image files.
-    _imageList = imageFileList.map((file) {
-      return ArcGISImage.fromFile(file.uri)!;
+    // Generate the Uris from the image files.
+    _imageUriList = imageFileList.map((file) {
+      return file.uri;
     }).toList();
 
     // show the first image frame in the image overlay.
@@ -293,8 +293,9 @@ class _AnimateImagesWithImageOverlayState
 
   /// Sets the image frame to the image overlay based on the index.
   void setImageFrame(int index) {
+    final image = ArcGISImage.fromFile(_imageUriList[index]);
     _imageOverlay.imageFrame = ImageFrame.withImageEnvelope(
-      image: _imageList[index],
+      image: image!,
       extent: imageEnvelope,
     );
   }
