@@ -166,9 +166,9 @@ class _EditGeometriesWithProgrammaticReticleToolState
           // We only select a mid-vertex if vertex creation is allowed because mid-vertices only exist in the display as a visual cue
           // to indicate new vertices can be inserted between existing vertices.
           zoomToPoint(geometryEditorElement.point);
-          _geometryEditor.selectVertex(
+          _geometryEditor.selectMidVertex(
             partIndex: geometryEditorElement.partIndex,
-            vertexIndex: geometryEditorElement.segmentIndex,
+            segmentIndex: geometryEditorElement.segmentIndex,
           );
         }
       }
