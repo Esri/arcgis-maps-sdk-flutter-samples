@@ -29,7 +29,7 @@ Use the buttons in the settings view to undo or redo changes made to the geometr
         * Access the geometry associated with the `Graphic` using `Graphic.geometry` - this will be used in the `GeometryEditor.StartWithGeometry()` method.
 3. Create a `ProgrammaticReticleTool` and set the `GeometryEditor.tool`.
 4. Subscribe to the `GeometryEditor.onHoveredElementChanged` and `GeometryEditor.onPickedUpElementChanged` events.
-    * These events can be used to determine the effect a button press will have and set the button text accordingly.
+    * These events can be used to update the UI state, such as determining the effect a button press will have.
 5. Listen to tap events when the geometry editor is active to select and navigate to tapped vertices and mid-vertices.
     * To retrieve the tapped element and update the viewpoint:
         * Use `ArcGISMapViewController.identifyGeometryEditor()` to identify geometry editor elements at the location of the tap.
