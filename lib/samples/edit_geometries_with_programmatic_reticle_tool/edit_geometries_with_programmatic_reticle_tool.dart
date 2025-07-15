@@ -379,12 +379,12 @@ class _EditGeometriesWithProgrammaticReticleToolState
   Widget buildBottomSheet() {
     return BottomSheetSettings(
       onCloseIconPressed: () => setState(() => _showSettings = false),
-      settingsWidgets: (context) => [buildSettings()],
+      settingsWidgets: (context) => [buildSettings(context)],
     );
   }
 
   // Returns a toolbar of buttons with icons for editing functions. Tooltips are used to aid the user experience.
-  Widget buildSettings() {
+  Widget buildSettings(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(10),
       child: Column(
