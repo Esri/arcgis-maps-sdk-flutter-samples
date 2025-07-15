@@ -333,7 +333,7 @@ class _EditGeometriesWithProgrammaticReticleToolState
         );
       }
       // If there is no picked up or hovered element and vertex creation is allowed,
-      // the button insers a new vertex.
+      // the button inserts a new vertex.
       return ElevatedButton(
         onPressed: _allowVertexCreation
             ? () {
@@ -346,7 +346,7 @@ class _EditGeometriesWithProgrammaticReticleToolState
     }
   }
 
-  // Returns a series of buttons used to control and configue the geometry editor.
+  // Returns a series of buttons used to control and configure the geometry editor.
   Widget buildTopMenu() {
     return Padding(
       padding: const EdgeInsets.all(10),
@@ -515,7 +515,7 @@ class _EditGeometriesWithProgrammaticReticleToolState
       color: Colors.black,
     );
     _polygonSymbol = SimpleFillSymbol(
-      color: Colors.red.withValues(alpha: 0.3),
+      color: Colors.red.withAlpha(76), // 0.3 * 255 = 76
       outline: outlineSymbol,
     );
 
