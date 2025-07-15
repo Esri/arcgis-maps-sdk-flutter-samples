@@ -188,7 +188,7 @@ class _EditGeometriesWithProgrammaticReticleToolState
           // Select the graphic, hide it, and start an editing session with a copy of it.
           identifiedGraphic.isSelected = true;
           identifiedGraphic.isVisible = false;
-          _geometryEditor.startWithGeometry(_selectedGraphic!.geometry!);
+          _geometryEditor.startWithGeometry(identifiedGraphic.geometry!);
           setState(() {
             _geometryEditorIsStarted = true;
             _selectedGraphic = identifiedGraphic;
