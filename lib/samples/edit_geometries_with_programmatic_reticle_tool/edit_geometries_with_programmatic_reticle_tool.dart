@@ -566,6 +566,6 @@ class _EditGeometriesWithProgrammaticReticleToolState
 extension on String {
   // An extension on String to capitalize the first character of the String.
   String capitalize() {
-    return '${this[0].toUpperCase()}${substring(1).toLowerCase()}';
+    return '${this[0].toUpperCase()}${substring(1)}';
   }
 }
