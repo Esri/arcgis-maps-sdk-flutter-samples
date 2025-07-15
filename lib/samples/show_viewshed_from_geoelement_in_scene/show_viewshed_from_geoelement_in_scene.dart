@@ -278,8 +278,9 @@ class _ShowViewshedFromGeoelementInSceneState
             minDistance: 0.1,
             maxDistance: 250,
           )
-          // Offset the observer location to the top of the tank.
-          ..offsetZ = 3;
+          // Offset the observer location to the front of the tank.
+          ..offsetZ = 0.5
+          ..offsetY = 4;
 
     // Create an Analysis Overlay and add the viewshed to it.
     final analysisOverlay = AnalysisOverlay()..analyses.add(geoElementViewshed);
