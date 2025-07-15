@@ -83,7 +83,6 @@ class _EditGeometriesWithProgrammaticReticleToolState
                     onTap: onTap,
                   ),
                 ),
-
                 Padding(
                   padding: const EdgeInsets.all(10),
                   child: Row(
