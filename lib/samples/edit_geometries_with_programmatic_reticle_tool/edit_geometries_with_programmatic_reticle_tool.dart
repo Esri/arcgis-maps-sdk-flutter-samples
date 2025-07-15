@@ -120,7 +120,7 @@ class _EditGeometriesWithProgrammaticReticleToolState
         ArcGISPoint(
           x: -0.775395,
           y: 51.523806,
-          spatialReference: SpatialReference(wkid: 4326),
+          spatialReference: SpatialReference.wgs84,
         ),
         scale: 20000,
       ),
