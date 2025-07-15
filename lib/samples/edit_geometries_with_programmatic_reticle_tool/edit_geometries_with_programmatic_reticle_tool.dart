@@ -66,6 +66,8 @@ class _EditGeometriesWithProgrammaticReticleToolState
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
+        left: false,
+        right: false,
         child: Stack(
           children: [
             Column(
