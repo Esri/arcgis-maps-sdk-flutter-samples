@@ -56,6 +56,8 @@ class _EditGeometriesWithProgrammaticReticleToolState
   // Create variables for holding state relating to the geometry editor for controlling the UI.
   Graphic? _selectedGraphic;
   GeometryType? _selectedGeometryType;
+  var _hasPickedUpElement = false;
+  GeometryEditorHoverable? _hoveredElement;
   var _allowVertexCreation = true;
   var _geometryEditorCanUndo = false;
   var _geometryEditorCanRedo = false;
@@ -129,10 +131,14 @@ class _EditGeometriesWithProgrammaticReticleToolState
     _geometryEditor.tool = _programmaticReticleTool;
     // Listen to changes in the geometry editor to manage the UI.
     // When the picked up element changes, we update the state.
-    _geometryEditor.onPickedUpElementChanged.listen((_) => setState(() {}));
+    _geometryEditor.onPickedUpElementChanged.listen(
+      (pickedUpElement) =>
+          setState(() => _hasPickedUpElement = pickedUpElement != null),
+    );
     // When the hovered element changes, we update the state.
-    _geometryEditor.onHoveredElementChanged.listen((_) => setState(() {}));
-    // Listen to changes in canUndo and canRedo in order to enable/disable the UI.
+    _geometryEditor.onHoveredElementChanged.listen(
+      (hoveredElement) => setState(() => _hoveredElement = hoveredElement),
+    ); // Listen to changes in canUndo and canRedo in order to enable/disable the UI.
     _geometryEditor.onCanUndoChanged.listen(
       (canUndo) => setState(() => _geometryEditorCanUndo = canUndo),
     );
@@ -252,7 +258,7 @@ class _EditGeometriesWithProgrammaticReticleToolState
 
   // Called from the UI to undo edits in the geometry editor.
   void onUndo() {
-    if (_geometryEditor.pickedUpElement != null) {
+    if (_hasPickedUpElement) {
       // If there is a picked up element, use the cancelCurrentAction function to move the picked up geometry back to its original position before it is placed.
       _geometryEditor.cancelCurrentAction();
     } else {
@@ -298,29 +304,24 @@ class _EditGeometriesWithProgrammaticReticleToolState
         child: const Text('Start geometry editor'),
       );
     } else {
-      if (_geometryEditor.pickedUpElement != null) {
+      if (_hasPickedUpElement) {
         // If something is picked up - the button will drop it.
         return ElevatedButton(
-          onPressed: () {
-            _programmaticReticleTool.placeElementAtReticle();
-            // We also update the state so that the button can redraw now that the element has been placed.
-            setState(() {});
-          },
+          onPressed: _programmaticReticleTool.placeElementAtReticle,
           child: const Text('Drop point'),
         );
       }
       // If a hovered element exists - the button will select it and pick it up.
-      if (_geometryEditor.hoveredElement is GeometryEditorVertex) {
+      if (_hoveredElement is GeometryEditorVertex) {
         return ElevatedButton(
           onPressed: () {
             _programmaticReticleTool.selectElementAtReticle();
             _programmaticReticleTool.pickUpSelectedElement();
-            setState(() {});
           },
           child: const Text('Pick up point'),
         );
       }
-      if (_geometryEditor.hoveredElement is GeometryEditorMidVertex) {
+      if (_hoveredElement is GeometryEditorMidVertex) {
         return ElevatedButton(
           // We only pick up a mid-vertex if vertex creation is allowed because mid-vertices only exist in the display
           // as a visual cue to indicate new vertices can be inserted between existing vertices.
@@ -328,7 +329,6 @@ class _EditGeometriesWithProgrammaticReticleToolState
               ? () {
                   _programmaticReticleTool.selectElementAtReticle();
                   _programmaticReticleTool.pickUpSelectedElement();
-                  setState(() {});
                 }
               : null,
           child: const Text('Pick up point'),
@@ -338,10 +338,7 @@ class _EditGeometriesWithProgrammaticReticleToolState
       // the button inserts a new vertex.
       return ElevatedButton(
         onPressed: _allowVertexCreation
-            ? () {
-                _programmaticReticleTool.placeElementAtReticle();
-                setState(() {});
-              }
+            ? _programmaticReticleTool.placeElementAtReticle
             : null,
         child: const Text('Insert point'),
       );
@@ -444,9 +441,7 @@ class _EditGeometriesWithProgrammaticReticleToolState
                 Tooltip(
                   message: 'Undo',
                   child: ElevatedButton(
-                    onPressed:
-                        _geometryEditorCanUndo ||
-                            _geometryEditor.pickedUpElement != null
+                    onPressed: _geometryEditorCanUndo || _hasPickedUpElement
                         ? onUndo
                         : null,
                     child: const Icon(Icons.undo),
