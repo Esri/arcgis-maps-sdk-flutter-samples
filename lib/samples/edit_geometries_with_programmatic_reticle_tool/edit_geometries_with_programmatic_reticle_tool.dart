@@ -138,7 +138,8 @@ class _EditGeometriesWithProgrammaticReticleToolState
     // When the hovered element changes, we update the state.
     _geometryEditor.onHoveredElementChanged.listen(
       (hoveredElement) => setState(() => _hoveredElement = hoveredElement),
-    ); // Listen to changes in canUndo and canRedo in order to enable/disable the UI.
+    ); 
+    // Listen to changes in canUndo and canRedo in order to enable/disable the UI.
     _geometryEditor.onCanUndoChanged.listen(
       (canUndo) => setState(() => _geometryEditorCanUndo = canUndo),
     );
