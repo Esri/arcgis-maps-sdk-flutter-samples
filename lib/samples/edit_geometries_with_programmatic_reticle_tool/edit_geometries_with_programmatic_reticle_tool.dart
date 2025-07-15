@@ -428,7 +428,7 @@ class _EditGeometriesWithProgrammaticReticleToolState
               style: Theme.of(context).textTheme.labelMedium,
               value: _selectedGeometryType,
               items: configureGeometryTypeMenuItems(),
-              onChanged: (GeometryType? geometryType) {
+              onChanged: (geometryType) {
                 setState(() => _selectedGeometryType = geometryType);
               },
             ),
