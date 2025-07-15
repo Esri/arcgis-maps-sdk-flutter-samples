@@ -132,14 +132,15 @@ class _EditGeometriesWithProgrammaticReticleToolState
     _geometryEditor.onPickedUpElementChanged.listen((_) => setState(() {}));
     // When the hovered element changes, we update the state.
     _geometryEditor.onHoveredElementChanged.listen((_) => setState(() {}));
-    // Set the initial state of variables relating to the geometry editor.
-    setState(() {
-      _selectedGeometryType = GeometryType.point;
-      // No UI controls update canUndo or canRedo in this sample, so we just set once.
-      // Listen to the relevant events if you want to handle changes to these values.
-      _geometryEditorCanUndo = _geometryEditor.canUndo;
-      _geometryEditorCanRedo = _geometryEditor.canRedo;
-    });
+    // Listen to changes in canUndo and canRedo in order to enable/disable the UI.
+    _geometryEditor.onCanUndoChanged.listen(
+      (canUndo) => setState(() => _geometryEditorCanUndo = canUndo),
+    );
+    _geometryEditor.onCanRedoChanged.listen(
+      (canRedo) => setState(() => _geometryEditorCanRedo = canRedo),
+    );
+    // Set the initial state of the geometry type.
+    setState(() => _selectedGeometryType = GeometryType.point);
     // Set the geometry editor to the map view controller.
     _mapViewController.geometryEditor = _geometryEditor;
   }
@@ -443,8 +444,10 @@ class _EditGeometriesWithProgrammaticReticleToolState
                 Tooltip(
                   message: 'Undo',
                   child: ElevatedButton(
-                    onPressed: _geometryEditorCanUndo
-                        ? _geometryEditor.undo
+                    onPressed:
+                        _geometryEditorCanUndo ||
+                            _geometryEditor.pickedUpElement != null
+                        ? onUndo
                         : null,
                     child: const Icon(Icons.undo),
                   ),
@@ -452,9 +455,7 @@ class _EditGeometriesWithProgrammaticReticleToolState
                 Tooltip(
                   message: 'Redo',
                   child: ElevatedButton(
-                    onPressed: _geometryEditorCanRedo
-                        ? _geometryEditor.redo
-                        : null,
+                    onPressed: _geometryEditorCanRedo ? onRedo : null,
                     child: const Icon(Icons.redo),
                   ),
                 ),
