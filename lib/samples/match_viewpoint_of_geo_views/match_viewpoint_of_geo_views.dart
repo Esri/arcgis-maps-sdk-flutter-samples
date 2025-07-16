@@ -85,7 +85,7 @@ class _MatchViewpointOfGeoViewsState extends State<MatchViewpointOfGeoViews>
             _isMapViewInteraction = true;
             _isSceneViewInteraction = false;
           }),
-          onDoubleTapDown: (details) => setState(() {
+          onDoubleTapDown: (_) => setState(() {
             _isMapViewInteraction = true;
             _isSceneViewInteraction = false;
           }),
@@ -99,11 +99,11 @@ class _MatchViewpointOfGeoViewsState extends State<MatchViewpointOfGeoViews>
       Expanded(
         child: GestureDetector(
           behavior: HitTestBehavior.translucent,
-          onDoubleTapDown: (details) => setState(() {
+          onDoubleTapDown: (_) => setState(() {
             _isMapViewInteraction = false;
             _isSceneViewInteraction = true;
           }),
-          onTapDown: (details) => setState(() {
+          onTapDown: (_) => setState(() {
             _isMapViewInteraction = false;
             _isSceneViewInteraction = true;
           }),
