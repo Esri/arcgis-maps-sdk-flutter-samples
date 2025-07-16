@@ -33,15 +33,12 @@ class _MatchViewpointOfGeoViewsState extends State<MatchViewpointOfGeoViews>
   final _mapViewController = ArcGISMapView.createController();
   // A controller for the scene view.
   final _sceneViewController = ArcGISSceneView.createController();
-  // Viewpoint for the map view.
-  Viewpoint? _mapViewViewpoint;
-  // Viewpoint for the scene view.
-  Viewpoint? _sceneViewViewpoint;
-  // A flag to indicate if the map view is currently navigating.
-  bool _isMapViewNavigation = false;
-  // Stream subscriptions for viewpoint and navigation changes.
+  // A flag to indicate if the map view is currently interacting.
+  bool _isMapViewInteraction = false;
+  // A flag to indicate if the scene view is currently interacting.
+  bool _isSceneViewInteraction = false;
+  // Stream subscriptions for viewpoint changes.
   late StreamSubscription _mapViewViewpointChangedSubscription;
-  late StreamSubscription _mapViewNavigationChangedSubscription;
   late StreamSubscription _sceneViewViewpointChangedSubscription;
   // A flag for when the map view is ready and controls can be used.
   var _ready = false;
@@ -49,7 +46,6 @@ class _MatchViewpointOfGeoViewsState extends State<MatchViewpointOfGeoViews>
   @override
   void dispose() {
     _mapViewViewpointChangedSubscription.cancel();
-    _mapViewNavigationChangedSubscription.cancel();
     _sceneViewViewpointChangedSubscription.cancel();
     super.dispose();
   }
@@ -83,16 +79,39 @@ class _MatchViewpointOfGeoViewsState extends State<MatchViewpointOfGeoViews>
     return [
       // Add a map view to the widget tree and set a controller.
       Expanded(
-        child: ArcGISMapView(
-          controllerProvider: () => _mapViewController,
-          onMapViewReady: onMapViewReady,
+        child: GestureDetector(
+          behavior: HitTestBehavior.translucent,
+          onTapDown: (_) => setState(() {
+            _isMapViewInteraction = true;
+            _isSceneViewInteraction = false;
+          }),
+          onDoubleTapDown: (details) => setState(() {
+            _isMapViewInteraction = true;
+            _isSceneViewInteraction = false;
+          }),
+          child: ArcGISMapView(
+            controllerProvider: () => _mapViewController,
+            onMapViewReady: onMapViewReady,
+          ),
         ),
       ),
       // Add a scene view to the widget tree and set a controller.
       Expanded(
-        child: ArcGISSceneView(
-          controllerProvider: () => _sceneViewController,
-          onSceneViewReady: onSceneViewReady,
+        child: GestureDetector(
+          behavior: HitTestBehavior.translucent,
+          onDoubleTapDown: (details) => setState(() {
+            _isMapViewInteraction = false;
+            _isSceneViewInteraction = true;
+          }),
+          onTapDown: (details) => setState(() {
+            _isMapViewInteraction = false;
+            _isSceneViewInteraction = true;
+          }),
+
+          child: ArcGISSceneView(
+            controllerProvider: () => _sceneViewController,
+            onSceneViewReady: onSceneViewReady,
+          ),
         ),
       ),
     ];
@@ -104,21 +123,14 @@ class _MatchViewpointOfGeoViewsState extends State<MatchViewpointOfGeoViews>
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISImagery);
     _mapViewController.arcGISMap = map;
 
-    // Listen for navigation changes in the map view.
-    _mapViewNavigationChangedSubscription = _mapViewController
-        .onNavigationChanged
-        .listen((isNavigating) {
-          _isMapViewNavigation = isNavigating;
-        });
-
     // Listen for viewpoint changes in the map view.
     _mapViewViewpointChangedSubscription = _mapViewController.onViewpointChanged
         .listen((_) {
-          _mapViewViewpoint = _mapViewController.getCurrentViewpoint(
-            ViewpointType.centerAndScale,
-          );
-          if (_isMapViewNavigation) {
-            _sceneViewController.setViewpoint(_mapViewViewpoint!);
+          if (_isMapViewInteraction) {
+            final mapViewViewpoint = _mapViewController.getCurrentViewpoint(
+              ViewpointType.centerAndScale,
+            );
+            _sceneViewController.setViewpoint(mapViewViewpoint!);
           }
         });
 
@@ -137,15 +149,14 @@ class _MatchViewpointOfGeoViewsState extends State<MatchViewpointOfGeoViews>
     _sceneViewViewpointChangedSubscription = _sceneViewController
         .onViewpointChanged
         .listen((_) {
-          _sceneViewViewpoint = _sceneViewController.getCurrentViewpoint(
-            ViewpointType.centerAndScale,
-          );
-
-          if (!_isMapViewNavigation) {
-            _mapViewController.setViewpoint(_sceneViewViewpoint!);
+          if (_isSceneViewInteraction) {
+            final sceneViewViewpoint = _sceneViewController.getCurrentViewpoint(
+              ViewpointType.centerAndScale,
+            );
+            _mapViewController.setViewpoint(sceneViewViewpoint!);
           }
         });
-    
+
     // Set the ready state variable to true to enable the sample UI.
     setState(() => _ready = true);
   }
