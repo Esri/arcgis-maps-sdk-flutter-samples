@@ -38,7 +38,9 @@ Future<List<ResponseInfo>> downloadSampleDataWithProgress({
     final itemId = itemIds[i];
     final destinationFile = destinationFiles[i];
 
-    final requestUri = Uri.parse('$portal/sharing/rest/content/items/$itemId/data');
+    final requestUri = Uri.parse(
+      '$portal/sharing/rest/content/items/$itemId/data',
+    );
     final response = await ArcGISHttpClient.download(
       requestUri,
       destinationFile.uri,
@@ -47,8 +49,11 @@ Future<List<ResponseInfo>> downloadSampleDataWithProgress({
           if (onProgress != null) {
             // Calculate progress: completed items + current item progress
             final completedItems = i;
-            final currentItemProgress = truncateTo2Decimals(bytesReceived / (totalBytes ?? 1));
-            final overallProgress = (completedItems + currentItemProgress) / totalItems;
+            final currentItemProgress = truncateTo2Decimals(
+              bytesReceived / (totalBytes ?? 1),
+            );
+            final overallProgress =
+                (completedItems + currentItemProgress) / totalItems;
             onProgress(truncateTo2Decimals(overallProgress));
           }
         },
