@@ -283,12 +283,14 @@ class _AnimateImagesWithImageOverlayState
     imageFileList.sort((file1, file2) => file1.path.compareTo(file2.path));
 
     // Generate the Uris from the image files.
-    _imageList = imageFileList.map((file) {
-      return ArcGISImage.fromFile(Uri.file(file.path))!;
+    _imageList = imageFileList.map((file)  {
+      final bytes = file.readAsBytesSync();
+      return ArcGISImage.fromBytes(bytes);
     }).toList();
 
     // show the first image frame in the image overlay.
     setImageFrame(0);
+    imageFileList.clear();
   }
 
   /// Sets the image frame to the image overlay based on the index.
