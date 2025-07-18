@@ -49,8 +49,8 @@ class _AnimateImagesWithImageOverlayState
   var _opacity = 0.5;
   // Create an ImageOverlay to display the animated images.
   final _imageOverlay = ImageOverlay();
-  // A list to hold the image URIs for the animation.
-  List<Uri> _imageUriList = [];
+  // A list to hold the image frames for the animation.
+  List<ImageFrame?> _imageFrames = [];
   // A string to display the download progress.
   var _downloadProgress = '';
   // An integer to track the current ArcGIS image index.
@@ -80,7 +80,6 @@ class _AnimateImagesWithImageOverlayState
   void dispose() {
     _ticker?.dispose();
     _ticker = null;
-    _imageUriList.clear();
     super.dispose();
   }
 
@@ -207,7 +206,7 @@ class _AnimateImagesWithImageOverlayState
   void _onTicker(Duration elapsed) {
     final delta = elapsed.inMilliseconds - _lastFrameTime;
     if (delta >= _imageFrameSpeed) {
-      _imageFrameIndex = (_imageFrameIndex + 1) % _imageUriList.length;
+      _imageFrameIndex = (_imageFrameIndex + 1) % _imageFrames.length;
       setImageFrame(_imageFrameIndex);
       _lastFrameTime = elapsed.inMilliseconds;
     }
@@ -282,9 +281,11 @@ class _AnimateImagesWithImageOverlayState
     // Sort the list by file path name.
     imageFileList.sort((file1, file2) => file1.path.compareTo(file2.path));
 
-    // Generate the Uris from the image files.
-    _imageUriList = imageFileList.map((file) {
-      return file.uri;
+    // Generate image frames from the image files.
+    _imageFrames = imageFileList.map((file) {
+      final image = ArcGISImage.fromFile(file.uri);
+      if (image == null) return null;
+      return ImageFrame.withImageEnvelope(image: image, extent: imageEnvelope);
     }).toList();
 
     // show the first image frame in the image overlay.
@@ -293,10 +294,6 @@ class _AnimateImagesWithImageOverlayState
 
   /// Sets the image frame to the image overlay based on the index.
   void setImageFrame(int index) {
-    final image = ArcGISImage.fromFile(_imageUriList[index]);
-    _imageOverlay.imageFrame = ImageFrame.withImageEnvelope(
-      image: image!,
-      extent: imageEnvelope,
-    );
+    _imageOverlay.imageFrame = _imageFrames[index];
   }
 }
