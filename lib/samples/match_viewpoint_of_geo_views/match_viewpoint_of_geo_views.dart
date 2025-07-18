@@ -75,20 +75,23 @@ class _MatchViewpointOfGeoViewsState extends State<MatchViewpointOfGeoViews>
     );
   }
 
+  void updateViewInteraction(bool isMapViewInteraction) {
+    setState(() {
+      _isMapViewInteraction = isMapViewInteraction;
+      _isSceneViewInteraction = !isMapViewInteraction;
+    });
+  }
+
   List<Widget> getViews() {
     return [
       // Add a map view to the widget tree and set a controller.
       Expanded(
         child: GestureDetector(
           behavior: HitTestBehavior.deferToChild,
-          onTapDown: (_) => setState(() {
-            _isMapViewInteraction = true;
-            _isSceneViewInteraction = false;
-          }),
-          onDoubleTapDown: (_) => setState(() {
-            _isMapViewInteraction = true;
-            _isSceneViewInteraction = false;
-          }),
+          onTapDown: (_) => updateViewInteraction(true),
+          onDoubleTapDown: (_) => updateViewInteraction(true),
+          onLongPressDown: (_) => updateViewInteraction(true),
+          onScaleStart:(_) => updateViewInteraction(true),
           child: ArcGISMapView(
             controllerProvider: () => _mapViewController,
             onMapViewReady: onMapViewReady,
@@ -99,15 +102,10 @@ class _MatchViewpointOfGeoViewsState extends State<MatchViewpointOfGeoViews>
       Expanded(
         child: GestureDetector(
           behavior: HitTestBehavior.deferToChild,
-          onDoubleTapDown: (_) => setState(() {
-            _isMapViewInteraction = false;
-            _isSceneViewInteraction = true;
-          }),
-          onTapDown: (_) => setState(() {
-            _isMapViewInteraction = false;
-            _isSceneViewInteraction = true;
-          }),
-
+          onTapDown: (_) => updateViewInteraction(false),
+          onDoubleTapDown: (_) => updateViewInteraction(false),
+          onLongPressDown: (_) => updateViewInteraction(false),
+          onScaleStart:(_) => updateViewInteraction(false),
           child: ArcGISSceneView(
             controllerProvider: () => _sceneViewController,
             onSceneViewReady: onSceneViewReady,
