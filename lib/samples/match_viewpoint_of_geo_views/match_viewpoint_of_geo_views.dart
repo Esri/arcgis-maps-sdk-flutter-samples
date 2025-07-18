@@ -80,7 +80,7 @@ class _MatchViewpointOfGeoViewsState extends State<MatchViewpointOfGeoViews>
       // Add a map view to the widget tree and set a controller.
       Expanded(
         child: GestureDetector(
-          behavior: HitTestBehavior.translucent,
+          behavior: HitTestBehavior.deferToChild,
           onTapDown: (_) => setState(() {
             _isMapViewInteraction = true;
             _isSceneViewInteraction = false;
@@ -98,7 +98,7 @@ class _MatchViewpointOfGeoViewsState extends State<MatchViewpointOfGeoViews>
       // Add a scene view to the widget tree and set a controller.
       Expanded(
         child: GestureDetector(
-          behavior: HitTestBehavior.translucent,
+          behavior: HitTestBehavior.deferToChild,
           onDoubleTapDown: (_) => setState(() {
             _isMapViewInteraction = false;
             _isSceneViewInteraction = true;
