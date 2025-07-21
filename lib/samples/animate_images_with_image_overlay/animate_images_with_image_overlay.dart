@@ -49,7 +49,7 @@ class _AnimateImagesWithImageOverlayState
   var _opacity = 0.5;
   // Create an ImageOverlay to display the animated images.
   final _imageOverlay = ImageOverlay();
-  // A list to hold the ArcGIS images for the animation.
+  // A list to hold the ArcGIS image files for the animation.
   List<File> _imageFileList = [];
   // A string to display the download progress.
   var _downloadProgress = '';
