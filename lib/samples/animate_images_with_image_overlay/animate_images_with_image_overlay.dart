@@ -37,20 +37,16 @@ class _AnimateImagesWithImageOverlayState
   final _sceneViewController = ArcGISSceneView.createController();
   // A flag to toggle the start/stop of the image animation.
   var _started = false;
-  // Define the animated speeds available in the dropdown button.
-  final _animatedSpeeds = ['Fast', 'Medium', 'Slow'];
-  // The initial selected animated speed.
-  var _selectedAnimatedSpeed = 'Slow';
   // The speed of the image frame animation in milliseconds.
-  var _imageFrameSpeed = 0;
+  final _imageFrameSpeed = 68;
   // The last frame time in milliseconds to control the animation speed.
   var _lastFrameTime = 0;
   // The initial opacity of the image overlay.
   var _opacity = 0.5;
   // Create an ImageOverlay to display the animated images.
   final _imageOverlay = ImageOverlay();
-  // A list to hold the image URIs for the animation.
-  List<Uri> _imageUriList = [];
+  // A list to hold the ArcGIS image files for the animation.
+  List<File> _imageFileList = [];
   // A string to display the download progress.
   var _downloadProgress = '';
   // An integer to track the current ArcGIS image index.
@@ -71,16 +67,10 @@ class _AnimateImagesWithImageOverlayState
   );
 
   @override
-  void initState() {
-    _imageFrameSpeed = getAnimatedSpeed(_selectedAnimatedSpeed);
-    super.initState();
-  }
-
-  @override
   void dispose() {
     _ticker?.dispose();
     _ticker = null;
-    _imageUriList.clear();
+    _imageFileList.clear();
     super.dispose();
   }
 
@@ -119,29 +109,6 @@ class _AnimateImagesWithImageOverlayState
                           ? const Text('Stop')
                           : const Text('Start'),
                     ),
-                    // A dropdown button to select the animated speed.
-                    DropdownButton<String>(
-                      value: _selectedAnimatedSpeed,
-                      onChanged: (value) {
-                        if (value != null) {
-                          setState(() {
-                            _selectedAnimatedSpeed = value;
-                            _imageFrameSpeed = getAnimatedSpeed(value);
-                          });
-                        }
-                      },
-                      items: _animatedSpeeds.map((String speed) {
-                        return DropdownMenuItem<String>(
-                          value: speed,
-                          child: Text(
-                            speed,
-                            style: TextStyle(
-                              color: Theme.of(context).primaryColor,
-                            ),
-                          ),
-                        );
-                      }).toList(),
-                    ),
                   ],
                 ),
                 // A Slider to control opacity of the image overlay.
@@ -179,22 +146,13 @@ class _AnimateImagesWithImageOverlayState
     );
   }
 
-  int getAnimatedSpeed(String selectedSpeed) {
-    // Returns the speed of the animation based on the selected speed.
-    // Usually a frame changes every 16 milliseconds.
-    return switch (selectedSpeed) {
-      'Fast' => 17,
-      'Medium' => 34,
-      'Slow' => 68,
-      _ => 68,
-    };
-  }
-
+  // Stop the image animation ticker.
   void stopTicker() {
     _ticker?.stop();
     setState(() => _started = false);
   }
 
+  // Start the image animation ticker.
   void startTicker() {
     _lastFrameTime = 0;
     // create a ticker to control the image frame animation.
@@ -207,7 +165,7 @@ class _AnimateImagesWithImageOverlayState
   void _onTicker(Duration elapsed) {
     final delta = elapsed.inMilliseconds - _lastFrameTime;
     if (delta >= _imageFrameSpeed) {
-      _imageFrameIndex = (_imageFrameIndex + 1) % _imageUriList.length;
+      _imageFrameIndex = (_imageFrameIndex + 1) % _imageFileList.length;
       setImageFrame(_imageFrameIndex);
       _lastFrameTime = elapsed.inMilliseconds;
     }
@@ -274,28 +232,24 @@ class _AnimateImagesWithImageOverlayState
       );
     }
     // Get a list of all PNG image files in the extracted directory.
-    final imageFileList = directory
+    _imageFileList = directory
         .listSync()
         .whereType<File>()
         .where((file) => file.path.endsWith('.png'))
         .toList();
     // Sort the list by file path name.
-    imageFileList.sort((file1, file2) => file1.path.compareTo(file2.path));
-
-    // Generate the Uris from the image files.
-    _imageUriList = imageFileList.map((file) {
-      return file.uri;
-    }).toList();
-
+    _imageFileList.sort((file1, file2) => file1.path.compareTo(file2.path));
+    
     // show the first image frame in the image overlay.
     setImageFrame(0);
   }
 
   /// Sets the image frame to the image overlay based on the index.
   void setImageFrame(int index) {
-    final image = ArcGISImage.fromFile(_imageUriList[index]);
+    // Quickly release the previous image frame to avoid memory issues.
+    _imageOverlay.imageFrame = null;
     _imageOverlay.imageFrame = ImageFrame.withImageEnvelope(
-      image: image!,
+      image: ArcGISImage.fromFile(_imageFileList[index].uri)!,
       extent: imageEnvelope,
     );
   }
