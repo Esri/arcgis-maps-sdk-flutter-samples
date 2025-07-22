@@ -37,12 +37,8 @@ class _AnimateImagesWithImageOverlayState
   final _sceneViewController = ArcGISSceneView.createController();
   // A flag to toggle the start/stop of the image animation.
   var _started = false;
-  // Define the animated speeds available in the dropdown button.
-  final _animatedSpeeds = ['Fast', 'Slow'];
-  // The initial selected animated speed.
-  var _selectedAnimatedSpeed = 'Slow';
   // The speed of the image frame animation in milliseconds.
-  var _imageFrameSpeed = 0;
+  final _imageFrameSpeed = 68;
   // The last frame time in milliseconds to control the animation speed.
   var _lastFrameTime = 0;
   // The initial opacity of the image overlay.
@@ -69,12 +65,6 @@ class _AnimateImagesWithImageOverlayState
     width: 15.09589635986124,
     height: -14.3770441522488,
   );
-
-  @override
-  void initState() {
-    _imageFrameSpeed = getAnimatedSpeed(_selectedAnimatedSpeed);
-    super.initState();
-  }
 
   @override
   void dispose() {
@@ -119,29 +109,6 @@ class _AnimateImagesWithImageOverlayState
                           ? const Text('Stop')
                           : const Text('Start'),
                     ),
-                    // A dropdown button to select the animated speed.
-                    DropdownButton<String>(
-                      value: _selectedAnimatedSpeed,
-                      onChanged: (value) {
-                        if (value != null) {
-                          setState(() {
-                            _selectedAnimatedSpeed = value;
-                            _imageFrameSpeed = getAnimatedSpeed(value);
-                          });
-                        }
-                      },
-                      items: _animatedSpeeds.map((String speed) {
-                        return DropdownMenuItem<String>(
-                          value: speed,
-                          child: Text(
-                            speed,
-                            style: TextStyle(
-                              color: Theme.of(context).primaryColor,
-                            ),
-                          ),
-                        );
-                      }).toList(),
-                    ),
                   ],
                 ),
                 // A Slider to control opacity of the image overlay.
@@ -179,21 +146,13 @@ class _AnimateImagesWithImageOverlayState
     );
   }
 
-  int getAnimatedSpeed(String selectedSpeed) {
-    // Returns the speed of the animation based on the selected speed.
-    // Usually a frame changes every 16 milliseconds.
-    return switch (selectedSpeed) {
-      'Fast' => 34,
-      'Slow' => 68,
-      _ => 68,
-    };
-  }
-
+  // Stop the image animation ticker.
   void stopTicker() {
     _ticker?.stop();
     setState(() => _started = false);
   }
 
+  // Start the image animation ticker.
   void startTicker() {
     _lastFrameTime = 0;
     // create a ticker to control the image frame animation.

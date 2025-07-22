@@ -10,14 +10,14 @@ An image overlay is useful for displaying fast and dynamic images; for example, 
 
 ## How to use the sample
 
-The application loads a map of the Southwestern United States. Tap the "Start" or "Stop" buttons to start or stop the radar animation. Use the drop down menu to select how quickly the animation plays. Move the slider to change the opacity of the image overlay.
+The application loads a map of the Southwestern United States. Tap the "Start" or "Stop" buttons to start or stop the radar animation. Move the slider to change the opacity of the image overlay.
 
 ## How it works
 
 1. Create an `ImageOverlay` and add it to the `ArcGISSceneViewController`.
-2. Set up a timer with an initial interval time of 68ms, which will display approximately 15 `ImageFrame`s per second.
+2. Set up a ticker with the interval time of 68ms, which will display approximately 15 `ImageFrame`s per second.
 3. When `Start` is clicked, start the timer.
-4. The timer updates the `ImageFrame` of the `ImageOverlay` at the given time interval.
+4. The ticker updates the `ImageFrame` of the `ImageOverlay` at the given time interval.
 
 ## Relevant API
 
