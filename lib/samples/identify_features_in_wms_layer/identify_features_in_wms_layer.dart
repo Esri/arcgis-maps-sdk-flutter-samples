@@ -161,7 +161,7 @@ class _IdentifyFeaturesInWmsLayerState extends State<IdentifyFeaturesInWmsLayer>
         ),
         content: SizedBox(
           height: 150,
-          width: MediaQuery.of(context).size.width * 0.75,
+          width: MediaQuery.sizeOf(context).width * 0.75,
           // Create a web view widget and set the controller to provide the content.
           child: WebViewWidget(controller: _webViewController),
         ),

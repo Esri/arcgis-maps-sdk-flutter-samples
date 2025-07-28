@@ -639,8 +639,8 @@ class FeatureDetailsState extends State<FeatureDetails> {
                 return const Center(child: Text('Loading...'));
               }
               return SizedBox(
-                height: MediaQuery.of(context).size.height,
-                width: MediaQuery.of(context).size.width * 0.75,
+                height: MediaQuery.sizeOf(context).height,
+                width: MediaQuery.sizeOf(context).width * 0.75,
                 child: WebViewWidget(controller: _webViewController),
               );
             },

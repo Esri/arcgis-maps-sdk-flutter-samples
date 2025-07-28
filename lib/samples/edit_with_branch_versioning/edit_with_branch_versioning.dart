@@ -299,7 +299,7 @@ class _EditWithBranchVersioningState extends State<EditWithBranchVersioning>
           builder: (context, setModalState) {
             return Padding(
               padding: EdgeInsets.only(
-                bottom: MediaQuery.of(context).viewInsets.bottom,
+                bottom: MediaQuery.viewInsetsOf(context).bottom,
               ),
               child: SingleChildScrollView(
                 child: Column(

@@ -109,7 +109,7 @@ class _GenerateOfflineMapState extends State<GenerateOfflineMap>
               visible: _progress != null,
               child: Center(
                 child: Container(
-                  width: MediaQuery.of(context).size.width / 2,
+                  width: MediaQuery.sizeOf(context).width / 2,
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
                     color: Colors.white,
