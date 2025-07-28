@@ -70,7 +70,7 @@ class _ShowLegendState extends State<ShowLegend> with SampleStateSupport {
 
   Future<void> onMapViewReady() async {
     // Get the screen scale.
-    final screenScale = MediaQuery.of(context).devicePixelRatio;
+    final screenScale = MediaQuery.devicePixelRatioOf(context);
     // Create an image layer.
     final imageLayer = ArcGISMapImageLayer.withUri(
       Uri.parse(

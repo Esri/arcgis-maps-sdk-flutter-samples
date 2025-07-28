@@ -53,7 +53,7 @@ class _MatchViewpointOfGeoViewsState extends State<MatchViewpointOfGeoViews>
   @override
   Widget build(BuildContext context) {
     final isPortrait =
-        MediaQuery.of(context).orientation == Orientation.portrait;
+        MediaQuery.orientationOf(context) == Orientation.portrait;
 
     return Scaffold(
       body: SafeArea(
@@ -91,7 +91,7 @@ class _MatchViewpointOfGeoViewsState extends State<MatchViewpointOfGeoViews>
           onTapDown: (_) => updateViewInteraction(true),
           onDoubleTapDown: (_) => updateViewInteraction(true),
           onLongPressDown: (_) => updateViewInteraction(true),
-          onScaleStart:(_) => updateViewInteraction(true),
+          onScaleStart: (_) => updateViewInteraction(true),
           child: ArcGISMapView(
             controllerProvider: () => _mapViewController,
             onMapViewReady: onMapViewReady,
@@ -105,7 +105,7 @@ class _MatchViewpointOfGeoViewsState extends State<MatchViewpointOfGeoViews>
           onTapDown: (_) => updateViewInteraction(false),
           onDoubleTapDown: (_) => updateViewInteraction(false),
           onLongPressDown: (_) => updateViewInteraction(false),
-          onScaleStart:(_) => updateViewInteraction(false),
+          onScaleStart: (_) => updateViewInteraction(false),
           child: ArcGISSceneView(
             controllerProvider: () => _sceneViewController,
             onSceneViewReady: onSceneViewReady,

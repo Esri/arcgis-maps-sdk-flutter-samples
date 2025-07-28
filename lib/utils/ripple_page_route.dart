@@ -24,7 +24,7 @@ class RipplePageRoute extends PageRouteBuilder {
         transitionDuration: const Duration(milliseconds: 600),
         pageBuilder: (_, _, _) => child,
         transitionsBuilder: (context, animation, _, child) {
-          final screenSize = MediaQuery.of(context).size;
+          final screenSize = MediaQuery.sizeOf(context);
           final diagonal = sqrt(
             pow(screenSize.width, 2) + pow(screenSize.height, 2),
           );
