@@ -63,7 +63,7 @@ class _ApplyMosaicRuleToRastersState extends State<ApplyMosaicRuleToRasters>
   var _selectedMosaicMethod = MosaicMethodEnum.objectID;
   // Raster to apply the mosaic rule.
   late ImageServiceRaster _raster;
-  late StreamSubscription<DrawStatus> _drawStatusSubscription;
+  StreamSubscription<DrawStatus>? _drawStatusSubscription;
 
   @override
   Widget build(BuildContext context) {
@@ -131,7 +131,7 @@ class _ApplyMosaicRuleToRastersState extends State<ApplyMosaicRuleToRasters>
 
   @override
   void dispose() {
-    _drawStatusSubscription.cancel();
+    _drawStatusSubscription?.cancel();
     super.dispose();
   }
 
