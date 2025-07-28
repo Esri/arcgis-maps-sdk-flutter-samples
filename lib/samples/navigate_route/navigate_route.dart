@@ -151,9 +151,9 @@ class _NavigateRouteState extends State<NavigateRoute> with SampleStateSupport {
                       // Gets activated only when the focus changes from navigation.
                       onPressed:
                           _mapViewController.locationDisplay.autoPanMode ==
-                              LocationDisplayAutoPanMode.navigation
-                          ? null
-                          : recenter,
+                                  LocationDisplayAutoPanMode.navigation
+                              ? null
+                              : recenter,
                       child: const Text('Recenter'),
                     ),
                     // A button to reset navigation.
@@ -341,11 +341,12 @@ class _NavigateRouteState extends State<NavigateRoute> with SampleStateSupport {
 
   Future<void> _createAndConfigureRouteTracker() async {
     // Create a route tracker with the route result.
-    _routeTracker = RouteTracker.create(
-      routeResult: _routeResult,
-      routeIndex: 0,
-      skipCoincidentStops: true,
-    )!;
+    _routeTracker =
+        RouteTracker.create(
+          routeResult: _routeResult,
+          routeIndex: 0,
+          skipCoincidentStops: true,
+        )!;
     _routeTracker.voiceGuidanceUnitSystem = UnitSystem.imperial;
 
     // Set the speech engine ready callback.
@@ -422,8 +423,7 @@ class _NavigateRouteState extends State<NavigateRoute> with SampleStateSupport {
     final formattedTime = formatDuration(
       Duration(seconds: remainingTimeInSeconds.toInt()),
     );
-    _statusTextNotifier.value =
-        '''
+    _statusTextNotifier.value = '''
   Distance remaining: ${status.routeProgress.remainingDistance.displayText} ${status.routeProgress.remainingDistance.displayTextUnits.abbreviation}
   Time remaining: $formattedTime
   Next direction: ${_directionsList[status.currentManeuverIndex + 1].directionText}

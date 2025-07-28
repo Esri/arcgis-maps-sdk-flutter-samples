@@ -80,9 +80,10 @@ class _ShowDeviceLocationState extends State<ShowDeviceLocation>
                 ),
                 Center(
                   child: ElevatedButton(
-                    onPressed: _status == LocationDataSourceStatus.failedToStart
-                        ? null
-                        : () => setState(() => _settingsVisible = true),
+                    onPressed:
+                        _status == LocationDataSourceStatus.failedToStart
+                            ? null
+                            : () => setState(() => _settingsVisible = true),
                     child: const Text('Location Settings'),
                   ),
                 ),

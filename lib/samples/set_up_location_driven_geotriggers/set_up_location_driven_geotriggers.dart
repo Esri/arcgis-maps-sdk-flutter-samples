@@ -105,30 +105,34 @@ class _SetUpLocationDrivenGeotriggersState
                   children: [
                     // Button to show the details of the current Section.
                     ElevatedButton(
-                      onPressed: _currentSections.isEmpty
-                          ? null
-                          : () => showDialog(
-                              context: context,
-                              builder: (context) => showFeatureDetails(
+                      onPressed:
+                          _currentSections.isEmpty
+                              ? null
+                              : () => showDialog(
                                 context: context,
-                                title: 'Section Details:',
-                                features: [_currentSections.values.last],
+                                builder:
+                                    (context) => showFeatureDetails(
+                                      context: context,
+                                      title: 'Section Details:',
+                                      features: [_currentSections.values.last],
+                                    ),
                               ),
-                            ),
                       child: const Text('Section detail'),
                     ),
                     // Button to show the details of the nearby POIs.
                     ElevatedButton(
-                      onPressed: _currentPois.isEmpty
-                          ? null
-                          : () => showDialog(
-                              context: context,
-                              builder: (context) => showFeatureDetails(
+                      onPressed:
+                          _currentPois.isEmpty
+                              ? null
+                              : () => showDialog(
                                 context: context,
-                                title: 'POI Details:',
-                                features: _currentPois.values.toList(),
+                                builder:
+                                    (context) => showFeatureDetails(
+                                      context: context,
+                                      title: 'POI Details:',
+                                      features: _currentPois.values.toList(),
+                                    ),
                               ),
-                            ),
                       child: const Text('POIs detail'),
                     ),
                   ],
@@ -243,8 +247,8 @@ class _SetUpLocationDrivenGeotriggersState
     // Set which feature list to update based on which monitor triggered this event.
     final featureMap =
         fenceInfo.geotriggerMonitor.geotrigger.name == _poiGeotriggerName
-        ? _currentPois
-        : _currentSections;
+            ? _currentPois
+            : _currentSections;
 
     // Add or remove the feature name from the list based on event type.
     setState(() {
@@ -289,11 +293,12 @@ class _SetUpLocationDrivenGeotriggersState
         ),
         Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: _currentPois.isEmpty
-              ? [const Text('No Points of Interest nearby')]
-              : _currentPois.keys.map((featureName) {
-                  return Text(featureName);
-                }).toList(),
+          children:
+              _currentPois.isEmpty
+                  ? [const Text('No Points of Interest nearby')]
+                  : _currentPois.keys.map((featureName) {
+                    return Text(featureName);
+                  }).toList(),
         ),
       ],
     );
@@ -562,9 +567,10 @@ class MultiFeatureDetailsState extends State<MultiFeatureDetails> {
       children: [
         Expanded(
           // Build the details of the selected Feature.
-          child: features.isEmpty
-              ? const Text('No features to display.')
-              : FeatureDetails(feature: features[_featureIndex]),
+          child:
+              features.isEmpty
+                  ? const Text('No features to display.')
+                  : FeatureDetails(feature: features[_featureIndex]),
         ),
         if (features.length > 1)
           Row(
@@ -572,18 +578,20 @@ class MultiFeatureDetailsState extends State<MultiFeatureDetails> {
             children: [
               // Go to previous feature.
               ElevatedButton(
-                onPressed: _featureIndex == 0
-                    ? null
-                    : () => setState(() => _featureIndex -= 1),
+                onPressed:
+                    _featureIndex == 0
+                        ? null
+                        : () => setState(() => _featureIndex -= 1),
                 child: const Text('Prev'),
               ),
               // Show current feature of total features.
               Text('${_featureIndex + 1}/${features.length}'),
               // Go to next feature.
               ElevatedButton(
-                onPressed: _featureIndex == features.length - 1
-                    ? null
-                    : () => setState(() => _featureIndex += 1),
+                onPressed:
+                    _featureIndex == features.length - 1
+                        ? null
+                        : () => setState(() => _featureIndex += 1),
                 child: const Text('Next'),
               ),
             ],

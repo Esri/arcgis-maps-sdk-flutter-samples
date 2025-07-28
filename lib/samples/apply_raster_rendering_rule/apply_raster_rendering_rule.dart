@@ -90,9 +90,13 @@ class _ApplyRasterRenderingRuleState extends State<ApplyRasterRenderingRule>
           setState(() => _selectedRasterLayer = rasterLayer);
           setLayer(rasterLayer!);
         },
-        dropdownMenuEntries: _rasterLayers.map((rasterLayer) {
-          return DropdownMenuEntry(value: rasterLayer, label: rasterLayer.name);
-        }).toList(),
+        dropdownMenuEntries:
+            _rasterLayers.map((rasterLayer) {
+              return DropdownMenuEntry(
+                value: rasterLayer,
+                label: rasterLayer.name,
+              );
+            }).toList(),
       ),
     );
   }

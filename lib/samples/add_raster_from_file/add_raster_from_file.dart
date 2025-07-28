@@ -96,8 +96,9 @@ class _AddRasterFromFileState extends State<AddRasterFromFile>
         destinationFiles: [zipFile],
         onProgress: (progress) {
           setState(
-            () => _downloadMessage =
-                'Downloading raster file... ${progress * 100}%',
+            () =>
+                _downloadMessage =
+                    'Downloading raster file... ${progress * 100}%',
           );
         },
       );

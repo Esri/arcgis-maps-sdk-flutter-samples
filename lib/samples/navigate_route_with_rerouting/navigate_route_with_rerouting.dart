@@ -156,13 +156,15 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
                       ),
                       // Add a button to start/stop navigation.
                       child: IconButton(
-                        onPressed: _setupDataAndInitNavigation
-                            ? null
-                            : (_isNavigating ? stop : start),
+                        onPressed:
+                            _setupDataAndInitNavigation
+                                ? null
+                                : (_isNavigating ? stop : start),
                         color: Colors.white,
-                        icon: _isNavigating
-                            ? const Icon(Icons.stop)
-                            : const Icon(Icons.play_arrow),
+                        icon:
+                            _isNavigating
+                                ? const Icon(Icons.stop)
+                                : const Icon(Icons.play_arrow),
                       ),
                     ),
                     Container(
@@ -172,9 +174,10 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
                       ),
                       // Add a button to reset location display to navigation mode.
                       child: IconButton(
-                        onPressed: _resetToNavigationMode
-                            ? resetToNavigationMode
-                            : null,
+                        onPressed:
+                            _resetToNavigationMode
+                                ? resetToNavigationMode
+                                : null,
                         color: Colors.white,
                         icon: const Icon(Icons.navigation),
                       ),
@@ -337,11 +340,12 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
     );
 
     // Create route parameters.
-    final routeParameters = await _routeTask.createDefaultParameters()
-      ..returnDirections = true
-      ..returnStops = true
-      ..returnRoutes = true
-      ..outputSpatialReference = SpatialReference.wgs84;
+    final routeParameters =
+        await _routeTask.createDefaultParameters()
+          ..returnDirections = true
+          ..returnStops = true
+          ..returnRoutes = true
+          ..outputSpatialReference = SpatialReference.wgs84;
 
     // Sets the start and destination stops for the route.
     routeParameters.setStops([
@@ -372,11 +376,12 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
   // Initialize the route tracker, location display, and route graphics.
   Future<void> initNavigation() async {
     // Create the route tracker with rerouting enabled.
-    _routeTracker = RouteTracker.create(
-      routeResult: _routeResult,
-      routeIndex: 0,
-      skipCoincidentStops: true,
-    )!;
+    _routeTracker =
+        RouteTracker.create(
+          routeResult: _routeResult,
+          routeIndex: 0,
+          skipCoincidentStops: true,
+        )!;
 
     // Enable rerouting on the route tracker.
     if (_routeTask.getRouteTaskInfo().supportsRerouting) {
@@ -414,8 +419,8 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
     // Set the route tracker locale.
     _routeTracker.voiceGuidanceUnitSystem =
         const Locale.fromSubtags().languageCode == 'en'
-        ? UnitSystem.imperial
-        : UnitSystem.metric;
+            ? UnitSystem.imperial
+            : UnitSystem.metric;
 
     // Listen for voice guidance and tracking status changes.
     _voiceGuidanceSubscription = _routeTracker.onNewVoiceGuidance.listen(
@@ -464,11 +469,12 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
         // Format the route's remaining distance and time.
         final distanceRemainingText =
             status.routeProgress.remainingDistance.displayText;
-        final displayUnit = status
-            .routeProgress
-            .remainingDistance
-            .displayTextUnits
-            .abbreviation;
+        final displayUnit =
+            status
+                .routeProgress
+                .remainingDistance
+                .displayTextUnits
+                .abbreviation;
         final remainingTimeInSeconds = status.routeProgress.remainingTime * 60;
         final timeRemainingText = formatDuration(
           remainingTimeInSeconds.toInt(),
@@ -573,15 +579,15 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
     final jsonString = await File(tourJsonPath).readAsString();
     final routeLine = Geometry.fromJsonString(jsonString) as Polyline;
 
-    final simulatedLocationDataSource = SimulatedLocationDataSource()
-      ..setLocationsWithPolyline(
-        routeLine,
-        simulationParameters: SimulationParameters(
-          startTime: DateTime.now(),
-          horizontalAccuracy: 5,
-          verticalAccuracy: 5,
-        ),
-      );
+    final simulatedLocationDataSource =
+        SimulatedLocationDataSource()..setLocationsWithPolyline(
+          routeLine,
+          simulationParameters: SimulationParameters(
+            startTime: DateTime.now(),
+            horizontalAccuracy: 5,
+            verticalAccuracy: 5,
+          ),
+        );
     return simulatedLocationDataSource;
   }
 

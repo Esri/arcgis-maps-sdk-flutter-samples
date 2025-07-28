@@ -75,12 +75,13 @@ class _QueryRelatedFeaturesState extends State<QueryRelatedFeatures>
           Row(
             children: [
               Expanded(
-                child: _loadingFeatures
-                    ? const Center(child: CircularProgressIndicator())
-                    : Text(
-                        _selectedParkName,
-                        style: Theme.of(context).textTheme.titleLarge,
-                      ),
+                child:
+                    _loadingFeatures
+                        ? const Center(child: CircularProgressIndicator())
+                        : Text(
+                          _selectedParkName,
+                          style: Theme.of(context).textTheme.titleLarge,
+                        ),
               ),
               IconButton(
                 alignment: Alignment.centerRight,
@@ -174,15 +175,16 @@ class _QueryRelatedFeaturesState extends State<QueryRelatedFeatures>
     ]);
 
     // Assign map to the map view.
-    _mapViewController.arcGISMap = map
-      ..initialViewpoint = Viewpoint.fromCenter(
-        ArcGISPoint(
-          x: -16507762.575543,
-          y: 9058828.127243,
-          spatialReference: SpatialReference.webMercator,
-        ),
-        scale: 36764077,
-      );
+    _mapViewController.arcGISMap =
+        map
+          ..initialViewpoint = Viewpoint.fromCenter(
+            ArcGISPoint(
+              x: -16507762.575543,
+              y: 9058828.127243,
+              spatialReference: SpatialReference.webMercator,
+            ),
+            scale: 36764077,
+          );
 
     // Set selection color.
     _mapViewController.selectionProperties = SelectionProperties(
@@ -211,9 +213,8 @@ class _QueryRelatedFeaturesState extends State<QueryRelatedFeatures>
       _featurePreserves = [];
       _featureSpecies = [];
     });
-    final features = identifyLayerResult.geoElements
-        .whereType<Feature>()
-        .toList();
+    final features =
+        identifyLayerResult.geoElements.whereType<Feature>().toList();
     if (features.isNotEmpty) {
       _alaskaNationalParksLayer.selectFeatures(features);
       final selectedFeature = features.first as ArcGISFeature;

@@ -75,8 +75,8 @@ class _DownloadPreplannedMapAreaState extends State<DownloadPreplannedMapArea>
                   children: [
                     // Create a button to open the map selection view.
                     ElevatedButton(
-                      onPressed: () =>
-                          setState(() => _mapSelectionVisible = true),
+                      onPressed:
+                          () => setState(() => _mapSelectionVisible = true),
                       child: const Text('Select Map'),
                     ),
                   ],
@@ -105,9 +105,8 @@ class _DownloadPreplannedMapAreaState extends State<DownloadPreplannedMapArea>
         ),
       ),
       // Display a list of available maps in a bottom sheet.
-      bottomSheet: _mapSelectionVisible
-          ? buildMapSelectionSheet(context)
-          : null,
+      bottomSheet:
+          _mapSelectionVisible ? buildMapSelectionSheet(context) : null,
     );
   }
 
@@ -172,12 +171,15 @@ class _DownloadPreplannedMapAreaState extends State<DownloadPreplannedMapArea>
           // Create a list tile for the web map.
           ListTile(
             title: const Text('Web Map (online)'),
-            trailing: _mapViewController.arcGISMap == _webMap
-                ? const Icon(Icons.check)
-                : null,
-            onTap: () => _mapViewController.arcGISMap != _webMap
-                ? setMapAndViewpoint(_webMap)
-                : null,
+            trailing:
+                _mapViewController.arcGISMap == _webMap
+                    ? const Icon(Icons.check)
+                    : null,
+            onTap:
+                () =>
+                    _mapViewController.arcGISMap != _webMap
+                        ? setMapAndViewpoint(_webMap)
+                        : null,
           ),
           Text(
             'Preplanned Map Areas:',
@@ -224,9 +226,10 @@ class _DownloadPreplannedMapAreaState extends State<DownloadPreplannedMapArea>
         final map = job.result!.offlineMap;
         return ListTile(
           title: title,
-          trailing: _mapViewController.arcGISMap == map
-              ? const Icon(Icons.check)
-              : null,
+          trailing:
+              _mapViewController.arcGISMap == map
+                  ? const Icon(Icons.check)
+                  : null,
           onTap: () => setMapAndViewpoint(map),
         );
       } else if (job.status == JobStatus.failed) {

@@ -79,9 +79,8 @@ class _EditFeatureAttachmentsState extends State<EditFeatureAttachments>
 
     // If there are features identified, show the bottom sheet to display the
     // attachment information for the selected feature.
-    final features = identifyLayerResult.geoElements
-        .whereType<Feature>()
-        .toList();
+    final features =
+        identifyLayerResult.geoElements.whereType<Feature>().toList();
     if (features.isNotEmpty) {
       _featureLayer.selectFeatures(features);
       final selectedFeature = features.first as ArcGISFeature;
@@ -93,10 +92,11 @@ class _EditFeatureAttachmentsState extends State<EditFeatureAttachments>
   void _showBottomSheet(ArcGISFeature selectedFeature) {
     showModalBottomSheet(
       context: context,
-      builder: (context) => AttachmentsOptions(
-        arcGISFeature: selectedFeature,
-        applyEdits: _applyEdits,
-      ),
+      builder:
+          (context) => AttachmentsOptions(
+            arcGISFeature: selectedFeature,
+            applyEdits: _applyEdits,
+          ),
     );
   }
 
@@ -216,13 +216,13 @@ class _AttachmentsOptionsState extends State<AttachmentsOptions>
                           children: [
                             IconButton(
                               icon: const Icon(Icons.remove_red_eye),
-                              onPressed: () =>
-                                  viewAttachment(_attachments[index]),
+                              onPressed:
+                                  () => viewAttachment(_attachments[index]),
                             ),
                             IconButton(
                               icon: const Icon(Icons.delete),
-                              onPressed: () =>
-                                  deleteAttachment(_attachments[index]),
+                              onPressed:
+                                  () => deleteAttachment(_attachments[index]),
                             ),
                           ],
                         ),

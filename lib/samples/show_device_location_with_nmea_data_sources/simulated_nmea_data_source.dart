@@ -48,8 +48,8 @@ class SimulatedNmeaDataSource {
     // Increment the index. If the end is reached, start back at 0.
     _currentNmeaBlockIndex =
         _currentNmeaBlockIndex + 1 == _sentencesByTimeBlock.length
-        ? 0
-        : _currentNmeaBlockIndex + 1;
+            ? 0
+            : _currentNmeaBlockIndex + 1;
 
     _timer.reset();
   }

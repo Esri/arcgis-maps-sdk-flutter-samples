@@ -66,9 +66,10 @@ class _CutGeometryState extends State<CutGeometry> with SampleStateSupport {
                     // Button to trigger the cut function or reset to the original state.
                     ElevatedButton(
                       onPressed: _geometryCut ? resetGeometry : cutGeometry,
-                      child: _geometryCut
-                          ? const Text('Reset')
-                          : const Text('Cut'),
+                      child:
+                          _geometryCut
+                              ? const Text('Reset')
+                              : const Text('Cut'),
                     ),
                   ],
                 ),

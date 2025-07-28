@@ -75,9 +75,10 @@ class _EditWithBranchVersioningState extends State<EditWithBranchVersioning>
                     ),
                     // A button to select a version to switch to.
                     ElevatedButton(
-                      onPressed: _model.isVersionCreated
-                          ? () => showSwitchVersionDialog(context, _model)
-                          : null,
+                      onPressed:
+                          _model.isVersionCreated
+                              ? () => showSwitchVersionDialog(context, _model)
+                              : null,
                       child: const Text('Switch'),
                     ),
                   ],
@@ -114,9 +115,10 @@ class _EditWithBranchVersioningState extends State<EditWithBranchVersioning>
         ),
       ),
       // The Feature Details bottom sheet.
-      bottomSheet: _featureBottomSheetVisible
-          ? buildFeatureDetails(context, _model.selectedFeature!)
-          : null,
+      bottomSheet:
+          _featureBottomSheetVisible
+              ? buildFeatureDetails(context, _model.selectedFeature!)
+              : null,
     );
   }
 
@@ -153,9 +155,8 @@ class _EditWithBranchVersioningState extends State<EditWithBranchVersioning>
     );
 
     // If there are features identified select the first feature.
-    final features = identifyLayerResult.geoElements
-        .whereType<Feature>()
-        .toList();
+    final features =
+        identifyLayerResult.geoElements.whereType<Feature>().toList();
 
     if (features.isNotEmpty) {
       _model.selectFeature(features.first);
@@ -197,10 +198,11 @@ class _EditWithBranchVersioningState extends State<EditWithBranchVersioning>
               const Spacer(),
               IconButton(
                 icon: const Icon(Icons.close),
-                onPressed: () => setState(() {
-                  _featureBottomSheetVisible = false;
-                  _model.clearSelection();
-                }),
+                onPressed:
+                    () => setState(() {
+                      _featureBottomSheetVisible = false;
+                      _model.clearSelection();
+                    }),
               ),
             ],
           ),
@@ -208,13 +210,14 @@ class _EditWithBranchVersioningState extends State<EditWithBranchVersioning>
           Text('Damage Type: ${damageType ?? 'Unknown'}'),
           const Divider(),
           TextButton(
-            onPressed: _model.onDefaultVersion
-                ? null
-                : () {
-                    setState(() {
-                      _editDamageType(feature);
-                    });
-                  },
+            onPressed:
+                _model.onDefaultVersion
+                    ? null
+                    : () {
+                      setState(() {
+                        _editDamageType(feature);
+                      });
+                    },
             child: const Text('Edit Damage Type'),
           ),
         ],
@@ -225,31 +228,32 @@ class _EditWithBranchVersioningState extends State<EditWithBranchVersioning>
   void _showMoveConfirmationDialog(Feature feature, ArcGISPoint mapPoint) {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Confirm Move'),
-        content: const Text('Do you want to move the selected feature?'),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-              _model.clearSelection();
-              setState(() => _featureBottomSheetVisible = false);
-            },
-            child: const Text('Cancel'),
+      builder:
+          (context) => AlertDialog(
+            title: const Text('Confirm Move'),
+            content: const Text('Do you want to move the selected feature?'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  _model.clearSelection();
+                  setState(() => _featureBottomSheetVisible = false);
+                },
+                child: const Text('Cancel'),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  setState(() {
+                    feature.geometry = mapPoint;
+                    _model.updateFeature();
+                    setState(() => _featureBottomSheetVisible = false);
+                  });
+                },
+                child: const Text('Move'),
+              ),
+            ],
           ),
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-              setState(() {
-                feature.geometry = mapPoint;
-                _model.updateFeature();
-                setState(() => _featureBottomSheetVisible = false);
-              });
-            },
-            child: const Text('Move'),
-          ),
-        ],
-      ),
     );
   }
 
@@ -261,22 +265,23 @@ class _EditWithBranchVersioningState extends State<EditWithBranchVersioning>
           title: const Text('Damage Type'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
-            children: DamageType.values.map((damageType) {
-              return ListTile(
-                title: Text(damageType.label),
-                onTap: () {
-                  Navigator.of(context).pop();
+            children:
+                DamageType.values.map((damageType) {
+                  return ListTile(
+                    title: Text(damageType.label),
+                    onTap: () {
+                      Navigator.of(context).pop();
 
-                  // Update the feature's attribute with the selected value.
-                  feature.attributes['typdamage'] = damageType.label;
-                  _model.updateFeature();
+                      // Update the feature's attribute with the selected value.
+                      feature.attributes['typdamage'] = damageType.label;
+                      _model.updateFeature();
 
-                  setState(() {
-                    _featureBottomSheetVisible = false;
-                  });
-                },
-              );
-            }).toList(),
+                      setState(() {
+                        _featureBottomSheetVisible = false;
+                      });
+                    },
+                  );
+                }).toList(),
           ),
         );
       },
@@ -334,14 +339,13 @@ class _EditWithBranchVersioningState extends State<EditWithBranchVersioning>
                                 }
                               },
                               // Display the version access values in a dropdown.
-                              dropdownMenuEntries: VersionAccess.values.map((
-                                value,
-                              ) {
-                                return DropdownMenuEntry(
-                                  value: value,
-                                  label: value.name,
-                                );
-                              }).toList(),
+                              dropdownMenuEntries:
+                                  VersionAccess.values.map((value) {
+                                    return DropdownMenuEntry(
+                                      value: value,
+                                      label: value.name,
+                                    );
+                                  }).toList(),
                             ),
                           ),
                           Row(
@@ -400,9 +404,11 @@ class _EditWithBranchVersioningState extends State<EditWithBranchVersioning>
                                               ),
                                               actions: [
                                                 TextButton(
-                                                  onPressed: () => Navigator.of(
-                                                    context,
-                                                  ).pop(),
+                                                  onPressed:
+                                                      () =>
+                                                          Navigator.of(
+                                                            context,
+                                                          ).pop(),
                                                   child: const Text('OK'),
                                                 ),
                                               ],
@@ -423,8 +429,11 @@ class _EditWithBranchVersioningState extends State<EditWithBranchVersioning>
                                           ),
                                           actions: [
                                             TextButton(
-                                              onPressed: () =>
-                                                  Navigator.of(context).pop(),
+                                              onPressed:
+                                                  () =>
+                                                      Navigator.of(
+                                                        context,
+                                                      ).pop(),
                                               child: const Text('OK'),
                                             ),
                                           ],
@@ -461,38 +470,40 @@ class _EditWithBranchVersioningState extends State<EditWithBranchVersioning>
           title: const Text('Switch Version'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
-            children: model.existingVersionNames.map((versionName) {
-              return ListTile(
-                title: Text(versionName),
-                onTap: () async {
-                  Navigator.of(context).pop();
-                  try {
-                    await model.switchToVersion(versionName);
-                    // catch ArcGISException when switching to a version fails.
-                    // ignore: avoid_catches_without_on_clauses
-                  } catch (e) {
-                    // Show an error message if an exception occurs.
-                    if (context.mounted) {
-                      await showDialog<void>(
-                        context: context,
-                        builder: (context) {
-                          return AlertDialog(
-                            title: const Text('Error'),
-                            content: Text('Error: $e'),
-                            actions: [
-                              TextButton(
-                                onPressed: () => Navigator.of(context).pop(),
-                                child: const Text('OK'),
-                              ),
-                            ],
+            children:
+                model.existingVersionNames.map((versionName) {
+                  return ListTile(
+                    title: Text(versionName),
+                    onTap: () async {
+                      Navigator.of(context).pop();
+                      try {
+                        await model.switchToVersion(versionName);
+                        // catch ArcGISException when switching to a version fails.
+                        // ignore: avoid_catches_without_on_clauses
+                      } catch (e) {
+                        // Show an error message if an exception occurs.
+                        if (context.mounted) {
+                          await showDialog<void>(
+                            context: context,
+                            builder: (context) {
+                              return AlertDialog(
+                                title: const Text('Error'),
+                                content: Text('Error: $e'),
+                                actions: [
+                                  TextButton(
+                                    onPressed:
+                                        () => Navigator.of(context).pop(),
+                                    child: const Text('OK'),
+                                  ),
+                                ],
+                              );
+                            },
                           );
-                        },
-                      );
-                    }
-                  }
-                },
-              );
-            }).toList(),
+                        }
+                      }
+                    },
+                  );
+                }).toList(),
           ),
           actions: [
             TextButton(

@@ -51,13 +51,15 @@ class _CategoryCardState extends State<CategoryCard>
       duration: const Duration(milliseconds: 1000),
     );
 
-    _slideAnimation = Tween(begin: const Offset(0, 1.2), end: Offset.zero)
-        .animate(
-          CurvedAnimation(
-            parent: _controller,
-            curve: const Interval(0, 0.6, curve: Curves.easeOut),
-          ),
-        );
+    _slideAnimation = Tween(
+      begin: const Offset(0, 1.2),
+      end: Offset.zero,
+    ).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: const Interval(0, 0.6, curve: Curves.easeOut),
+      ),
+    );
 
     _fadeAnimation = Tween<double>(begin: 0, end: 1).animate(
       CurvedAnimation(
@@ -93,10 +95,11 @@ class _CategoryCardState extends State<CategoryCard>
         });
         widget.onClick();
       },
-      onTapCancel: () => setState(() {
-        _scale = 1.0;
-        _iconPressed = false;
-      }),
+      onTapCancel:
+          () => setState(() {
+            _scale = 1.0;
+            _iconPressed = false;
+          }),
       child: AnimatedScale(
         scale: _scale,
         duration: const Duration(milliseconds: 200),

@@ -81,12 +81,13 @@ class _FindRouteState extends State<FindRoute> with SampleStateSupport {
                       ),
                       // Create a button to show the directions.
                       ElevatedButton(
-                        onPressed: _routeGenerated
-                            ? () => showDialog(
-                                context: context,
-                                builder: showDirections,
-                              )
-                            : null,
+                        onPressed:
+                            _routeGenerated
+                                ? () => showDialog(
+                                  context: context,
+                                  builder: showDirections,
+                                )
+                                : null,
                         child: const Text('Directions'),
                       ),
                     ],
@@ -181,12 +182,13 @@ class _FindRouteState extends State<FindRoute> with SampleStateSupport {
 
   Future<void> initRouteParameters() async {
     // Create default route parameters.
-    _routeParameters = await _routeTask.createDefaultParameters()
-      ..setStops(_stops)
-      ..returnDirections = true
-      ..directionsDistanceUnits = UnitSystem.imperial
-      ..returnRoutes = true
-      ..returnStops = true;
+    _routeParameters =
+        await _routeTask.createDefaultParameters()
+          ..setStops(_stops)
+          ..returnDirections = true
+          ..directionsDistanceUnits = UnitSystem.imperial
+          ..returnRoutes = true
+          ..returnStops = true;
   }
 
   void resetRoute() {
@@ -246,9 +248,10 @@ class _FindRouteState extends State<FindRoute> with SampleStateSupport {
               ),
             ),
             Expanded(
-              child: _directions.isEmpty
-                  ? const Center(child: Text('No directions to show.'))
-                  : buildDirectionsListView(),
+              child:
+                  _directions.isEmpty
+                      ? const Center(child: Text('No directions to show.'))
+                      : buildDirectionsListView(),
             ),
             TextButton(
               onPressed: () {
