@@ -36,14 +36,14 @@ class _AddRasterFromServiceState extends State<AddRasterFromService>
   // A flag for when the map view is ready and controls can be used.
   var _ready = false;
   // A subscription to listen for MapViewController draw status state changes.
-  late final StreamSubscription _drawStatusChangedSubscription;
+  StreamSubscription? _drawStatusChangedSubscription;
   // A subscription to listen for layer view state changes.
-  late final StreamSubscription _layerViewChangedSubscription;
+  StreamSubscription? _layerViewChangedSubscription;
 
   @override
   void dispose() {
-    _drawStatusChangedSubscription.cancel();
-    _layerViewChangedSubscription.cancel();
+    _drawStatusChangedSubscription?.cancel();
+    _layerViewChangedSubscription?.cancel();
     super.dispose();
   }
 
