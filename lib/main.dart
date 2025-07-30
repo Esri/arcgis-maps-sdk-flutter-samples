@@ -17,6 +17,7 @@
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/theme_data.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/models/category.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/utils/ripple_page_route.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/widgets/about_info.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/widgets/category_card.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/widgets/sample_viewer_page.dart';
@@ -28,11 +29,7 @@ void main() {
   const apiKey = String.fromEnvironment('API_KEY');
   // Alternatively, replace the above line with the following and hard-code your apiKey here:
   // const apiKey = ''; // Your API Key here.
-  if (apiKey.isEmpty) {
-    throw Exception('apiKey undefined');
-  } else {
-    ArcGISEnvironment.apiKey = apiKey;
-  }
+  ArcGISEnvironment.apiKey = apiKey;
 
   runApp(
     MaterialApp(
@@ -57,7 +54,8 @@ class SampleViewerApp extends StatefulWidget {
   State<SampleViewerApp> createState() => _SampleViewerAppState();
 }
 
-class _SampleViewerAppState extends State<SampleViewerApp> {
+class _SampleViewerAppState extends State<SampleViewerApp>
+    with SingleTickerProviderStateMixin {
   static const double cardSpacing = 6;
 
   @override
@@ -68,45 +66,44 @@ class _SampleViewerAppState extends State<SampleViewerApp> {
         actions: [
           IconButton(
             icon: const Icon(Icons.info_outline),
-            onPressed:
-                () => showModalBottomSheet(
-                  context: context,
-                  isScrollControlled: true,
-                  useSafeArea: true,
-                  builder: (context) {
-                    return FractionallySizedBox(
-                      heightFactor: 0.5,
-                      child: Column(
-                        children: [
-                          AppBar(
-                            automaticallyImplyLeading: false,
-                            title: const Text('About'),
-                            actions: [
-                              IconButton(
-                                icon: const Icon(Icons.close),
-                                onPressed: () => Navigator.pop(context),
-                              ),
-                            ],
-                            shape: const RoundedRectangleBorder(
-                              borderRadius: BorderRadius.vertical(
-                                top: Radius.circular(30),
-                              ),
-                            ),
-                          ),
-                          Container(
-                            padding: const EdgeInsets.all(20),
-                            child: const AboutInfo(title: applicationTitle),
+            onPressed: () => showModalBottomSheet(
+              context: context,
+              isScrollControlled: true,
+              useSafeArea: true,
+              builder: (context) {
+                return FractionallySizedBox(
+                  heightFactor: 0.5,
+                  child: Column(
+                    children: [
+                      AppBar(
+                        automaticallyImplyLeading: false,
+                        title: const Text('About'),
+                        actions: [
+                          IconButton(
+                            icon: const Icon(Icons.close),
+                            onPressed: () => Navigator.pop(context),
                           ),
                         ],
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.vertical(
+                            top: Radius.circular(30),
+                          ),
+                        ),
                       ),
-                    );
-                  },
-                ),
+                      Container(
+                        padding: const EdgeInsets.all(20),
+                        child: const AboutInfo(title: applicationTitle),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
           ),
         ],
       ),
       body: Padding(
-        padding: const EdgeInsets.fromLTRB(cardSpacing, cardSpacing, 0, 0),
+        padding: const EdgeInsets.all(cardSpacing),
         child: OrientationBuilder(
           builder: (context, orientation) {
             return SingleChildScrollView(
@@ -115,14 +112,24 @@ class _SampleViewerAppState extends State<SampleViewerApp> {
           },
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const SampleViewerPage()),
+      floatingActionButton: Builder(
+        builder: (context) {
+          return FloatingActionButton(
+            onPressed: () {
+              // Get the position of the FAB.
+              final box = context.findRenderObject()! as RenderBox;
+              final position = box.localToGlobal(box.size.center(Offset.zero));
+
+              Navigator.of(context).push(
+                RipplePageRoute(
+                  position: position,
+                  child: const SampleViewerPage(),
+                ),
+              );
+            },
+            child: const Icon(Icons.search),
           );
         },
-        child: const Icon(Icons.search),
       ),
     );
   }
@@ -137,9 +144,9 @@ class _ResponsiveCategoryGrid extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        var cardSize = constraints.maxWidth / 2 - cardSpacing * 2;
+        var cardSize = (constraints.maxWidth - cardSpacing) / 2;
         if (orientation == Orientation.landscape) {
-          cardSize = constraints.maxHeight / 2 - cardSpacing * 2;
+          cardSize = (constraints.maxHeight - cardSpacing) / 2;
         }
         return Wrap(
           spacing: cardSpacing,
@@ -151,8 +158,9 @@ class _ResponsiveCategoryGrid extends StatelessWidget {
               width: cardSize,
               child: CategoryCard(
                 category: SampleCategory.values[i],
-                onClick:
-                    () => _onCategoryClick(context, SampleCategory.values[i]),
+                onClick: () =>
+                    _onCategoryClick(context, SampleCategory.values[i]),
+                index: i,
               ),
             ),
           ),
@@ -162,10 +170,23 @@ class _ResponsiveCategoryGrid extends StatelessWidget {
   }
 
   void _onCategoryClick(BuildContext context, SampleCategory category) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => SampleViewerPage(category: category),
+    Navigator.of(context).push(
+      PageRouteBuilder(
+        transitionDuration: const Duration(milliseconds: 500),
+        pageBuilder: (context, animation, secondaryAnimation) =>
+            SampleViewerPage(category: category),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          // scale + fade + curve.
+          final curved = CurvedAnimation(
+            parent: animation,
+            curve: Curves.easeOutBack,
+          );
+
+          return ScaleTransition(
+            scale: Tween<double>(begin: 0.6, end: 1).animate(curved),
+            child: FadeTransition(opacity: animation, child: child),
+          );
+        },
       ),
     );
   }

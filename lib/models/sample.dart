@@ -28,6 +28,7 @@ class Sample {
       _snippets = List<String>.from(json['snippets']),
       _title = json['title'],
       _keywords = List<String>.from(json['keywords']),
+      _key = json['key'],
       _sampleWidget = sampleWidgets[json['key']]!();
   final String _category;
   final String _description;
@@ -35,6 +36,7 @@ class Sample {
   final String _title;
   final List<String> _keywords;
   final Widget _sampleWidget;
+  final String _key;
 
   String get title => _title;
 
@@ -45,6 +47,8 @@ class Sample {
   List<String> get snippets => _snippets;
 
   List<String> get keywords => _keywords;
+
+  String get key => _key;
 
   Widget getSampleWidget() => _sampleWidget;
 }

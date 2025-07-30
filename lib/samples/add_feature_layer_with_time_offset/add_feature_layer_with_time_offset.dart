@@ -87,58 +87,57 @@ class _AddFeatureLayerWithTimeOffsetState
   Widget buildSettings(BuildContext context) {
     return BottomSheetSettings(
       onCloseIconPressed: () => setState(() => _settingsVisible = false),
-      settingsWidgets:
-          (context) => [
-            // Display the current date range.
-            Text(_dateRangeMessage),
-            Row(
-              children: [
-                Expanded(
-                  // A slider to adjust the interval.
-                  child: Slider(
-                    value: _intervalFraction,
-                    onChanged: (value) {
-                      setState(() => _intervalFraction = value);
-                      updateTimeExtent();
-                    },
-                  ),
-                ),
-              ],
-            ),
-            Row(
-              spacing: 10,
-              children: [
-                SizedBox(
-                  width: 20,
-                  height: 20,
-                  child: Container(
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.red,
-                    ),
-                  ),
-                ),
-                const Text('Hurricane tracks, offset 10 days'),
-              ],
-            ),
-            const SizedBox(height: 10),
-            Row(
-              spacing: 10,
-              children: [
-                SizedBox(
-                  width: 20,
-                  height: 20,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.blue.shade900,
-                    ),
-                  ),
-                ),
-                const Text('Hurricane tracks, no offset'),
-              ],
+      settingsWidgets: (context) => [
+        // Display the current date range.
+        Text(_dateRangeMessage),
+        Row(
+          children: [
+            Expanded(
+              // A slider to adjust the interval.
+              child: Slider(
+                value: _intervalFraction,
+                onChanged: (value) {
+                  setState(() => _intervalFraction = value);
+                  updateTimeExtent();
+                },
+              ),
             ),
           ],
+        ),
+        Row(
+          spacing: 10,
+          children: [
+            SizedBox(
+              width: 20,
+              height: 20,
+              child: Container(
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.red,
+                ),
+              ),
+            ),
+            const Text('Hurricane tracks, offset 10 days'),
+          ],
+        ),
+        const SizedBox(height: 10),
+        Row(
+          spacing: 10,
+          children: [
+            SizedBox(
+              width: 20,
+              height: 20,
+              child: Container(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.blue.shade900,
+                ),
+              ),
+            ),
+            const Text('Hurricane tracks, no offset'),
+          ],
+        ),
+      ],
     );
   }
 

@@ -1,0 +1,33 @@
+{
+    "category": "Scenes",
+    "description": "Show realistic lighting and shadows for a given time of day.",
+    "ignore": false,
+    "images": [
+        "show_realistic_light_and_shadows.png"
+    ],
+    "keywords": [
+        "3D",
+        "lighting",
+        "realism",
+        "realistic",
+        "rendering",
+        "shadows",
+        "sun",
+        "time",
+        "ArcGISScene",
+        "ArcGISSceneViewController.sunLighting",
+        "ArcGISSceneViewController.sunTime",
+        "LightingMode"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+        "ArcGISScene",
+        "ArcGISSceneViewController.sunLighting",
+        "ArcGISSceneViewController.sunTime",
+        "LightingMode"
+    ],
+    "snippets": [
+        "show_realistic_light_and_shadows.dart"
+    ],
+    "title": "Show realistic light and shadows"
+}

@@ -26,9 +26,9 @@ class GroupLayersTogether extends StatefulWidget {
 
 class _GroupLayersTogetherState extends State<GroupLayersTogether>
     with SampleStateSupport {
-  // Create a controller for the map view.
-  final _mapViewController = ArcGISMapView.createController();
-  // A flag for when the map view is ready and controls can be used.
+  // Create a controller for the scene view.
+  final _sceneViewController = ArcGISSceneView.createController();
+  // A flag for when the scene view is ready and controls can be used.
   var _ready = false;
   // A flag for when the settings bottom sheet is visible.
   var _settingsVisible = false;
@@ -45,10 +45,10 @@ class _GroupLayersTogetherState extends State<GroupLayersTogether>
             Column(
               children: [
                 Expanded(
-                  // Add a map view to the widget tree and set a controller.
-                  child: ArcGISMapView(
-                    controllerProvider: () => _mapViewController,
-                    onMapViewReady: onMapViewReady,
+                  // Add a scene view to the widget tree and set a controller.
+                  child: ArcGISSceneView(
+                    controllerProvider: () => _sceneViewController,
+                    onSceneViewReady: onSceneViewReady,
                   ),
                 ),
                 Row(
@@ -77,32 +77,26 @@ class _GroupLayersTogetherState extends State<GroupLayersTogether>
   Widget buildSettings(BuildContext context) {
     return BottomSheetSettings(
       onCloseIconPressed: () => setState(() => _settingsVisible = false),
-      settingsWidgets:
-          (context) => [
-            Container(
-              constraints: BoxConstraints(
-                maxHeight: MediaQuery.sizeOf(context).height * 0.4,
-              ),
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children:
-                      _mapViewController.arcGISMap?.operationalLayers
-                          .whereType<GroupLayer>()
-                          .map(buildGroupLayerSettings)
-                          .toList() ??
-                      [],
-                ),
-              ),
+      settingsWidgets: (context) => [
+        Container(
+          constraints: BoxConstraints(
+            maxHeight: MediaQuery.sizeOf(context).height * 0.4,
+          ),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children:
+                  _sceneViewController.arcGISScene?.operationalLayers
+                      .whereType<GroupLayer>()
+                      .map(buildGroupLayerSettings)
+                      .toList() ??
+                  [],
             ),
-          ],
+          ),
+        ),
+      ],
     );
   }
-
-  static const displayName = <String, String>{
-    'DevelopmentProjectArea': 'Project Area',
-    'DevA_Pathways': 'Pathways',
-  };
 
   // Create Widgets to control the Group Layer and its layers.
   Widget buildGroupLayerSettings(GroupLayer groupLayer) {
@@ -130,18 +124,17 @@ class _GroupLayersTogetherState extends State<GroupLayersTogether>
         ...groupLayer.layers.map((layer) {
           return Row(
             children: [
-              Text(displayName[layer.name] ?? layer.name),
+              Text(layer.name),
               const Spacer(),
               // Create a Switch to toggle the visibility of the individual layer.
               Switch(
                 value: layer.isVisible,
-                onChanged:
-                    groupLayer.isVisible
-                        ? (value) {
-                          layer.isVisible = value;
-                          setState(() {});
-                        }
-                        : null,
+                onChanged: groupLayer.isVisible
+                    ? (value) {
+                        layer.isVisible = value;
+                        setState(() {});
+                      }
+                    : null,
               ),
             ],
           );
@@ -150,7 +143,7 @@ class _GroupLayersTogetherState extends State<GroupLayersTogether>
     );
   }
 
-  Future<void> onMapViewReady() async {
+  Future<void> onSceneViewReady() async {
     // Create a Group Layer for the Project Area Group.
     final projectAreaGroupLayer = GroupLayer()..name = 'Project Area Group';
     // Create a Feature Layer for the Project Area.
@@ -159,33 +152,72 @@ class _GroupLayersTogetherState extends State<GroupLayersTogether>
         'https://services.arcgis.com/P3ePLMYs2RVChkJx/arcgis/rest/services/DevelopmentProjectArea/FeatureServer/0',
       ),
     );
-    final projectAreaLayer = FeatureLayer.withFeatureTable(projectAreaTable);
+    final projectAreaLayer = FeatureLayer.withFeatureTable(projectAreaTable)
+      ..name = 'Project Area';
     // Create a Feature Layer for the Pathways.
     final pathwaysTable = ServiceFeatureTable.withUri(
       Uri.parse(
         'https://services.arcgis.com/P3ePLMYs2RVChkJx/arcgis/rest/services/DevA_Pathways/FeatureServer/1',
       ),
     );
-    final pathwaysLayer = FeatureLayer.withFeatureTable(pathwaysTable);
+    final pathwaysLayer = FeatureLayer.withFeatureTable(pathwaysTable)
+      ..name = 'Pathways';
+    // Create a Scene Layer for the Trees.
+    final treesLayer = ArcGISSceneLayer.withUri(
+      Uri.parse(
+        'https://tiles.arcgis.com/tiles/P3ePLMYs2RVChkJx/arcgis/rest/services/DevA_Trees/SceneServer/layers/0',
+      ),
+    )..name = 'Trees';
     // Add the layers to the Group Layer.
-    projectAreaGroupLayer.layers.addAll([projectAreaLayer, pathwaysLayer]);
+    projectAreaGroupLayer.layers.addAll([
+      projectAreaLayer,
+      pathwaysLayer,
+      treesLayer,
+    ]);
 
-    // Create a map with the ArcGIS Streets basemap style.
-    final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISStreets);
-    // Add the Group Layers to the map.
-    map.operationalLayers.addAll([projectAreaGroupLayer]);
+    // Create a Group Layer for the Buildings Group with "exclusive" visibility.
+    final buildingsGroupLayer = GroupLayer()
+      ..name = 'Buildings Group'
+      ..visibilityMode = GroupVisibilityMode.exclusive;
+    // Create a Scene Layer for the Dev A buildings.
+    final buildingsALayer = ArcGISSceneLayer.withUri(
+      Uri.parse(
+        'https://tiles.arcgis.com/tiles/P3ePLMYs2RVChkJx/arcgis/rest/services/DevA_BuildingShells/SceneServer/layers/0',
+      ),
+    )..name = 'Dev A';
+    // Create a Scene Layer for the Dev B buildings.
+    final buildingsBLayer = ArcGISSceneLayer.withUri(
+      Uri.parse(
+        'https://tiles.arcgis.com/tiles/P3ePLMYs2RVChkJx/arcgis/rest/services/DevB_BuildingShells/SceneServer/layers/0',
+      ),
+    )..name = 'Dev B';
+    buildingsGroupLayer.layers.addAll([buildingsALayer, buildingsBLayer]);
 
-    // Load a layer so that the group layer has a full extent.
+    // Create a scene with the ArcGIS Imagery basemap style.
+    final scene = ArcGISScene.withBasemapStyle(BasemapStyle.arcGISImagery);
+    // Add the Group Layers to the scene.
+    scene.operationalLayers.addAll([
+      projectAreaGroupLayer,
+      buildingsGroupLayer,
+    ]);
+    // Set the scene to the scene view.
+    _sceneViewController.arcGISScene = scene;
+
+    // Load the project area layer to get its extent.
     await projectAreaLayer.load();
-    if (projectAreaGroupLayer.fullExtent != null) {
-      // Set the initial viewpoint to the full extent of the group layer.
-      map.initialViewpoint = Viewpoint.fromTargetExtent(
-        projectAreaGroupLayer.fullExtent!,
+    // Set the initial viewpoint centered on the extent of the project area layer.
+    if (projectAreaLayer.fullExtent != null) {
+      _sceneViewController.setViewpointCamera(
+        Camera.withLookAtPoint(
+          lookAtPoint: projectAreaLayer.fullExtent!.center,
+          distance: 800,
+          heading: 0,
+          pitch: 60,
+          roll: 0,
+        ),
       );
     }
 
-    // Set the map to the map view.
-    _mapViewController.arcGISMap = map;
     // Set the ready state variable to true to enable the UI.
     setState(() => _ready = true);
   }

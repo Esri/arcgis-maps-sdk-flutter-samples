@@ -1,0 +1,36 @@
+{
+    "category": "Visualization",
+    "description": "Extrude features based on their attributes.",
+    "ignore": false,
+    "images": [
+        "show_extruded_features.png"
+    ],
+    "keywords": [
+        "3D",
+        "extrude",
+        "extrusion",
+        "extrusion expression",
+        "height",
+        "renderer",
+        "scene",
+        "ExtrusionExpression",
+        "ExtrusionMode",
+        "FeatureLayer",
+        "SceneProperties",
+        "ServiceFeatureTable",
+        "SimpleRenderer"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+        "ExtrusionExpression",
+        "ExtrusionMode",
+        "FeatureLayer",
+        "SceneProperties",
+        "ServiceFeatureTable",
+        "SimpleRenderer"
+    ],
+    "snippets": [
+        "show_extruded_features.dart"
+    ],
+    "title": "Show extruded features"
+}

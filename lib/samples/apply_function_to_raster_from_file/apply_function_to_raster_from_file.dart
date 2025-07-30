@@ -75,20 +75,29 @@ class _ApplyFunctionToRasterFromFileState
   }
 
   Future<void> loadRasterLayer() async {
-    // Download the raster file and the color json file.
-    await downloadSampleData([
-      'b051f5c3e01048f3bf11c59b41507896',
-      '5356dbf91788474493467519e268cf87',
-    ]);
     // Get the application documents directory.
     final appDir = await getApplicationDocumentsDirectory();
+    final destinationFiles = [
+      File('${appDir.absolute.path}/Shasta_Elevation.zip'),
+      File('${appDir.absolute.path}/color.json'),
+    ];
+
+    // Download the raster file and the color json file.
+    await downloadSampleDataWithProgress(
+      itemIds: [
+        'b051f5c3e01048f3bf11c59b41507896',
+        '5356dbf91788474493467519e268cf87',
+      ],
+      destinationFiles: destinationFiles,
+    );
+
     // Create and load a Raster from the local tif file.
     final shastaElevationRaster = Raster.withFileUri(
       Uri.file('${appDir.absolute.path}/Shasta_Elevation/Shasta_Elevation.tif'),
     );
     await shastaElevationRaster.load();
     // Load the color configuration from the JSON file located in the app's directory.
-    final file = File('${appDir.absolute.path}/color.json');
+    final file = File(destinationFiles[1].path);
     final rasterColorJson = await file.readAsString();
 
     // Create a RasterFunction.

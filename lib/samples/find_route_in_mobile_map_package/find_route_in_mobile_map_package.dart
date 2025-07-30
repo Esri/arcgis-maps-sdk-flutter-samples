@@ -40,17 +40,23 @@ class _FindRouteInMobileMapPackageState
   final mobileMapPackages = loadMobileMapPackages();
 
   static Future<List<MobileMapPackage>> loadMobileMapPackages() async {
-    await downloadSampleData([
-      'e1f3a7254cb845b09450f54937c16061',
-      '260eb6535c824209964cf281766ebe43',
-    ]);
     final appDir = await getApplicationDocumentsDirectory();
+    final destinationFiles =
+        ['SanFrancisco', 'Yellowstone']
+            .map((filename) => File('${appDir.absolute.path}/$filename.mmpk'))
+            .toList();
+    await downloadSampleDataWithProgress(
+      itemIds: [
+        'e1f3a7254cb845b09450f54937c16061',
+        '260eb6535c824209964cf281766ebe43',
+      ],
+      destinationFiles: destinationFiles,
+    );
 
     // Load the local mobile map packages.
     final mobileMapPackages = <MobileMapPackage>[];
-    for (final filename in ['SanFrancisco', 'Yellowstone']) {
-      final mmpkFile = File('${appDir.absolute.path}/$filename.mmpk');
-      final mmpk = MobileMapPackage.withFileUri(mmpkFile.uri);
+    for (final file in destinationFiles) {
+      final mmpk = MobileMapPackage.withFileUri(file.uri);
       mobileMapPackages.add(mmpk);
     }
     await Future.wait(mobileMapPackages.map((mmpk) => mmpk.load()));

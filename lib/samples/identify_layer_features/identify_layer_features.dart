@@ -137,10 +137,9 @@ class _IdentifyLayerFeaturesState extends State<IdentifyLayerFeatures>
 
     // Display the results in the banner.
     setState(() {
-      _message =
-          identifyTotal == 0
-              ? 'No features identified.'
-              : layerCounts.join('\n');
+      _message = identifyTotal == 0
+          ? 'No features identified.'
+          : layerCounts.join('\n');
     });
   }
 }

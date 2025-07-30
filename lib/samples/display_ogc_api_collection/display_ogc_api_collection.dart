@@ -102,11 +102,10 @@ class _DisplayOGCAPICollectionState extends State<DisplayOGCAPICollection>
           // Create a query based on the current visible extent.
           // Set a limit of 5000 on the number of returned features per request,
           // because the default on some services could be as low as 10.
-          final queryParameters =
-              QueryParameters()
-                ..geometry = _mapViewController.visibleArea!.extent
-                ..spatialRelationship = SpatialRelationship.intersects
-                ..maxFeatures = 5000;
+          final queryParameters = QueryParameters()
+            ..geometry = _mapViewController.visibleArea!.extent
+            ..spatialRelationship = SpatialRelationship.intersects
+            ..maxFeatures = 5000;
           // Populate the table with the query, leaving existing table entries intact.
           // Setting outFields to empty requests all fields.
           await ogcFeatureCollectionTable.populateFromService(

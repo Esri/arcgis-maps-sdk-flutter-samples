@@ -1,0 +1,41 @@
+{
+    "category": "Scenes",
+    "description": "Keep the viewpoints of two views -- for example, a map view and a scene view -- synchronized with each other.",
+    "ignore": false,
+    "images": [
+        "match_viewpoint_of_geo_views.png"
+    ],
+    "keywords": [
+        "3D",
+        "automatic refresh",
+        "event",
+        "event handler",
+        "events",
+        "extent",
+        "interaction",
+        "interactions",
+        "pan",
+        "zoom",
+        "GeoViewController",
+        "MapView",
+        "SceneView",
+        "getCurrentViewpoint",
+        "onNavigationChanged",
+        "onViewpointChanged",
+        "setViewpoint"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+        "GeoViewController",
+        "MapView",
+        "SceneView",
+        "getCurrentViewpoint",
+        "onNavigationChanged",
+        "onViewpointChanged",
+        "setViewpoint"
+    ],
+    "snippets": [
+        "match_viewpoint_of_geo_views.dart"
+    ],
+    "title": "Match viewpoint of geo views"
+}

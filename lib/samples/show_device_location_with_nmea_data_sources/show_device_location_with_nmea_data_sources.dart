@@ -93,27 +93,27 @@ class _ShowDeviceLocationWithNmeaDataSourcesState
                     ElevatedButton(
                       onPressed:
                           _locationDataSource.status ==
-                                  LocationDataSourceStatus.stopped
-                              ? _startDataSource
-                              : null,
+                              LocationDataSourceStatus.stopped
+                          ? _startDataSource
+                          : null,
                       child: const Text('Start'),
                     ),
                     // Recenter the map on the blue dot.
                     ElevatedButton(
-                      onPressed:
-                          _enableRecenter
-                              ? () {
-                                // Set the autoPanMode to recenter.
-                                _mapViewController.locationDisplay.autoPanMode =
-                                    LocationDisplayAutoPanMode.recenter;
-                              }
-                              : null,
+                      onPressed: _enableRecenter
+                          ? () {
+                              // Set the autoPanMode to recenter.
+                              _mapViewController.locationDisplay.autoPanMode =
+                                  LocationDisplayAutoPanMode.recenter;
+                            }
+                          : null,
                       child: const Text('Recenter'),
                     ),
                     // Stop and reset the location data source.
                     ElevatedButton(
-                      onPressed:
-                          _locationDataSourceRunning ? _stopDataSource : null,
+                      onPressed: _locationDataSourceRunning
+                          ? _stopDataSource
+                          : null,
                       child: const Text('Reset'),
                     ),
                   ],
@@ -229,10 +229,9 @@ class NmeaLocationDetails extends StatelessWidget {
 
     // If there is no location object, show placeholder text. Otherwise, compose
     // accuracy data string.
-    final accuracy =
-        nmeaLocation == null
-            ? 'Accuracy will be shown here.'
-            : 'Accuracy: Horizontal: ${nmeaLocation!.horizontalAccuracy.toStringAsFixed(3)}, Vertical: ${nmeaLocation!.verticalAccuracy.toStringAsFixed(3)}';
+    final accuracy = nmeaLocation == null
+        ? 'Accuracy will be shown here.'
+        : 'Accuracy: Horizontal: ${nmeaLocation!.horizontalAccuracy.toStringAsFixed(3)}, Vertical: ${nmeaLocation!.verticalAccuracy.toStringAsFixed(3)}';
     children.add(Text(accuracy));
 
     // If there are no satellites, show placeholder text. Otherwise, compose the

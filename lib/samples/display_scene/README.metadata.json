@@ -1,0 +1,28 @@
+{
+  "category": "Scenes",
+  "description": "Display a scene with a terrain surface and some imagery.",
+  "ignore": false,
+  "images": [
+    "display_scene.png"
+  ],
+  "keywords": [
+    "3D",
+    "basemap",
+    "elevation",
+    "scene",
+    "surface",
+    "ArcGISScene",
+    "ArcGISTiledElevationSource",
+    "SceneView"
+  ],
+  "redirect_from": [],
+  "relevant_apis": [
+    "ArcGISScene",
+    "ArcGISTiledElevationSource",
+    "SceneView"
+  ],
+  "snippets": [
+    "display_scene.dart"
+  ],
+  "title": "Display scene"
+}

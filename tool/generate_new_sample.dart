@@ -115,7 +115,8 @@ void createNewSampleFile(
   print('>A sample file $sampleSnakeName.dart created');
 }
 
-final copyright = '''
+final copyright =
+    '''
 // Copyright ${DateTime.now().year} Esri
 //
 // Licensed under the Apache License, Version 2.0 (the "License");

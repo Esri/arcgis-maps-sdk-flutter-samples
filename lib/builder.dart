@@ -125,7 +125,7 @@ class SampleWidgetsBuilder implements Builder {
   // Convert a snake case string to camel case.
   String snakeToCamel(String input) {
     final camelCase = input.replaceAllMapped(
-      RegExp('(_[a-z])'),
+      RegExp('(_[a-z0-9])'),
       (Match match) => match.group(0)!.toUpperCase().substring(1),
     );
     var newName = camelCase[0].toUpperCase() + camelCase.substring(1);

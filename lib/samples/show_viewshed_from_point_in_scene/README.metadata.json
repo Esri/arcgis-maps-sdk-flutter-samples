@@ -1,0 +1,32 @@
+{
+    "category": "Analysis",
+    "description": "Perform a viewshed analysis from a defined vantage point.",
+    "ignore": false,
+    "images": [
+        "show_viewshed_from_point_in_scene.png"
+    ],
+    "keywords": [
+        "3D",
+        "frustum",
+        "scene",
+        "viewshed",
+        "visibility analysis",
+        "AnalysisOverlay",
+        "ArcGISSceneLayer",
+        "ArcGISTiledElevationSource",
+        "LocationViewshed",
+        "Viewshed"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+        "AnalysisOverlay",
+        "ArcGISSceneLayer",
+        "ArcGISTiledElevationSource",
+        "LocationViewshed",
+        "Viewshed"
+    ],
+    "snippets": [
+        "show_viewshed_from_point_in_scene.dart"
+    ],
+    "title": "Show viewshed from point in scene"
+}

@@ -16,6 +16,7 @@
 
 import 'package:arcgis_maps_sdk_flutter_samples/models/sample.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/widgets/sample_detail_page.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/widgets/sample_info_popup_menu.dart';
 import 'package:flutter/material.dart';
 
 class SampleListView extends StatelessWidget {
@@ -42,6 +43,8 @@ class SampleListView extends StatelessWidget {
                 ),
               );
             },
+            contentPadding: const EdgeInsets.only(left: 20),
+            trailing: SampleInfoPopupMenu(sample: sample),
           ),
         );
       },

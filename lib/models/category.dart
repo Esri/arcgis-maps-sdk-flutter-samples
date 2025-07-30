@@ -48,6 +48,11 @@ enum SampleCategory {
     Icons.route,
     'assets/category_images/routing_and_logistics_background.webp',
   ),
+  scenes(
+    'Scenes',
+    Icons.public,
+    'assets/category_images/scenes_background.webp',
+  ),
   searchAndQuery(
     'Search and Query',
     Icons.search,

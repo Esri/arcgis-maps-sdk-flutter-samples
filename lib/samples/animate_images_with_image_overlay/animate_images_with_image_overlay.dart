@@ -1,0 +1,256 @@
+// Copyright 2025 Esri
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//   https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+
+import 'dart:async';
+import 'dart:io';
+
+import 'package:arcgis_maps/arcgis_maps.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
+import 'package:path_provider/path_provider.dart';
+
+class AnimateImagesWithImageOverlay extends StatefulWidget {
+  const AnimateImagesWithImageOverlay({super.key});
+
+  @override
+  State<AnimateImagesWithImageOverlay> createState() =>
+      _AnimateImagesWithImageOverlayState();
+}
+
+class _AnimateImagesWithImageOverlayState
+    extends State<AnimateImagesWithImageOverlay>
+    with TickerProviderStateMixin, SampleStateSupport {
+  // Create a controller for the scene view.
+  final _sceneViewController = ArcGISSceneView.createController();
+  // A flag to toggle the start/stop of the image animation.
+  var _started = false;
+  // The speed of the image frame animation in milliseconds.
+  final _imageFrameSpeed = 68;
+  // The last frame time in milliseconds to control the animation speed.
+  var _lastFrameTime = 0;
+  // The initial opacity of the image overlay.
+  var _opacity = 0.5;
+  // Create an ImageOverlay to display the animated images.
+  final _imageOverlay = ImageOverlay();
+  // A list to hold the ArcGIS image files for the animation.
+  List<File> _imageFileList = [];
+  // A string to display the download progress.
+  var _downloadProgress = '';
+  // An integer to track the current ArcGIS image index.
+  var _imageFrameIndex = 0;
+  // A timer to control and change the ArcGIS image periodically.
+  Ticker? _ticker;
+  // A flag for when the scene view is ready and controls can be used.
+  var _ready = false;
+  // The image envelope defines the extent of the image frame.
+  final imageEnvelope = Envelope.fromCenter(
+    ArcGISPoint(
+      x: -120.0724273439448,
+      y: 35.131016955536694,
+      spatialReference: SpatialReference.wgs84,
+    ),
+    width: 15.09589635986124,
+    height: -14.3770441522488,
+  );
+
+  @override
+  void dispose() {
+    _ticker?.dispose();
+    _ticker = null;
+    _imageFileList.clear();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: SafeArea(
+        top: false,
+        left: false,
+        right: false,
+        child: Stack(
+          children: [
+            Column(
+              spacing: 10,
+              children: [
+                Expanded(
+                  // Add a scene view to the widget tree and set a controller.
+                  child: ArcGISSceneView(
+                    controllerProvider: () => _sceneViewController,
+                    onSceneViewReady: onSceneViewReady,
+                  ),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    // A button to start/stop the animation.
+                    ElevatedButton(
+                      onPressed: () {
+                        if (!_started) {
+                          startTicker();
+                        } else {
+                          stopTicker();
+                        }
+                      },
+                      child: _started
+                          ? const Text('Stop')
+                          : const Text('Start'),
+                    ),
+                  ],
+                ),
+                // A Slider to control opacity of the image overlay.
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  spacing: 10,
+                  children: [
+                    const SizedBox(width: 20),
+                    Text('Opacity: ${(_opacity * 100).toStringAsFixed(0)}%'),
+                    Expanded(
+                      child: Slider(
+                        value: _opacity * 100,
+                        onChanged: (value) {
+                          setState(() {
+                            _opacity = value / 100;
+                            // Set the opacity of the image overlay.
+                            _imageOverlay.opacity = _opacity;
+                          });
+                        },
+                        max: 100,
+                        divisions: 100 * 2,
+                        label: '$_opacity Opacity',
+                      ),
+                    ),
+                    const SizedBox(width: 20),
+                  ],
+                ),
+              ],
+            ),
+            // Display a progress indicator and prevent interaction until state is ready.
+            LoadingIndicator(visible: !_ready, text: _downloadProgress),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // Stop the image animation ticker.
+  void stopTicker() {
+    _ticker?.stop();
+    setState(() => _started = false);
+  }
+
+  // Start the image animation ticker.
+  void startTicker() {
+    _lastFrameTime = 0;
+    // create a ticker to control the image frame animation.
+    _ticker = _ticker ?? createTicker(_onTicker);
+    _ticker!.start();
+    setState(() => _started = true);
+  }
+
+  // Callback function for the ticker to change the image frame.
+  void _onTicker(Duration elapsed) {
+    final delta = elapsed.inMilliseconds - _lastFrameTime;
+    if (delta >= _imageFrameSpeed) {
+      _imageFrameIndex = (_imageFrameIndex + 1) % _imageFileList.length;
+      setImageFrame(_imageFrameIndex);
+      _lastFrameTime = elapsed.inMilliseconds;
+    }
+  }
+
+  Future<void> onSceneViewReady() async {
+    // Create a Scene with a topographic baseScene style.
+    final scene = ArcGISScene.withBasemapStyle(BasemapStyle.arcGISDarkGray);
+    _sceneViewController.arcGISScene = scene;
+    // Add a elevation source for the base surface of the scene.
+    final elevationSource = ArcGISTiledElevationSource.withUri(
+      Uri.parse(
+        'https://elevation3d.arcgis.com/arcgis/rest/services/WorldElevation3D/Terrain3D/ImageServer',
+      ),
+    );
+    scene.baseSurface.elevationSources.add(elevationSource);
+
+    // Set the initial camera position and orientation.
+    // The camera is positioned over the Pacific South West region.
+    final camera = Camera.withLocation(
+      location: ArcGISPoint(
+        x: -116.621,
+        y: 24.7773,
+        z: 856977,
+        spatialReference: SpatialReference.wgs84,
+      ),
+      heading: 353.994,
+      pitch: 48.5495,
+      roll: 0,
+    );
+    _sceneViewController.setViewpointCamera(camera);
+    // Set the initial opacity of the image overlay.
+    _imageOverlay.opacity = _opacity;
+    // Set the image overlay to the scene view.
+    _sceneViewController.imageOverlays.add(_imageOverlay);
+
+    // Initialize the image frames and set them to the image overlay.
+    await initImageFrames();
+
+    // Set the ready state variable to true to enable the sample UI.
+    setState(() => _ready = true);
+  }
+
+  Future<void> initImageFrames() async {
+    final appDir = await getApplicationDocumentsDirectory();
+    // Define the path for the sample data zip file and the directory to extract it.
+    // The sample data contains images of the Pacific South West region.
+    final imageFile = File('${appDir.absolute.path}/PacificSouthWest.zip');
+    final directory = Directory.fromUri(
+      Uri.parse('${appDir.absolute.path}/PacificSouthWest/PacificSouthWest'),
+    );
+
+    // Download the sample data if it does not exist.
+    if (!imageFile.existsSync()) {
+      await downloadSampleDataWithProgress(
+        itemIds: ['9465e8c02b294c69bdb42de056a23ab1'],
+        destinationFiles: [imageFile],
+        onProgress: (progress) {
+          setState(
+            () => _downloadProgress =
+                'Downloading images: ${(progress * 100).toStringAsFixed(0)}%',
+          );
+        },
+      );
+    }
+    // Get a list of all PNG image files in the extracted directory.
+    _imageFileList = directory
+        .listSync()
+        .whereType<File>()
+        .where((file) => file.path.endsWith('.png'))
+        .toList();
+    // Sort the list by file path name.
+    _imageFileList.sort((file1, file2) => file1.path.compareTo(file2.path));
+    
+    // show the first image frame in the image overlay.
+    setImageFrame(0);
+  }
+
+  /// Sets the image frame to the image overlay based on the index.
+  void setImageFrame(int index) {
+    // Quickly release the previous image frame to avoid memory issues.
+    _imageOverlay.imageFrame = null;
+    _imageOverlay.imageFrame = ImageFrame.withImageEnvelope(
+      image: ArcGISImage.fromFile(_imageFileList[index].uri)!,
+      extent: imageEnvelope,
+    );
+  }
+}
