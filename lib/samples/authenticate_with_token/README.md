@@ -14,19 +14,17 @@ Once you launch the app, you will be challenged for an ArcGIS Online login to vi
 
 ## How it works
 
-1. Implement the `ArcGISAuthenticationChallengeHandler` interface to handle the challenges sent by the protected map service.
-2. Set the `arcGISAuthenticationChallengeHandler` property on `AuthenticationManager`.
-3. Create a `Portal`.
-4. Create a `PortalItem` for the protected web map using the `Portal` and Item ID of the protected map service.
-5. Create a map to display in the `ArcGISMapView` using the `PortalItem`.
-6. Set the map to display in the `ArcGISMapView`.
+1. Create a toolkit component `Authenticator` widget.
+2. Create a `Portal`.
+3. Create a `PortalItem` for the protected web map using the `Portal` and Item ID of the protected map service.
+4. Create a map to display in the `ArcGISMapView` using the `PortalItem`.
+5. Set the map to display in the `ArcGISMapView`.
 
 ## Relevant API
 
-* ArcGISAuthenticationChallengeHandler
 * ArcGISMap
 * ArcGISMapView
-* AuthenticationManager
+* Authenticator
 * Portal
 * PortalItem
 

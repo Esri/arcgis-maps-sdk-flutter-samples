@@ -11,19 +11,17 @@
         "portal",
         "remember",
         "security",
-        "ArcGISAuthenticationChallengeHandler",
         "ArcGISMap",
         "ArcGISMapView",
-        "AuthenticationManager",
+        "Authenticator",
         "Portal",
         "PortalItem"
     ],
     "redirect_from": [],
     "relevant_apis": [
-        "ArcGISAuthenticationChallengeHandler",
         "ArcGISMap",
         "ArcGISMapView",
-        "AuthenticationManager",
+        "Authenticator",
         "Portal",
         "PortalItem"
     ],

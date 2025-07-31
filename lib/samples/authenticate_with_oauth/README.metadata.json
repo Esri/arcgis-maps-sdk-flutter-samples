@@ -13,7 +13,6 @@
         "credential",
         "portal",
         "security",
-        "AuthenticationManager",
         "Authenticator",
         "OAuthConfiguration",
         "Portal",
@@ -21,7 +20,6 @@
     ],
     "redirect_from": [],
     "relevant_apis": [
-        "AuthenticationManager",
         "Authenticator",
         "OAuthConfiguration",
         "Portal",
