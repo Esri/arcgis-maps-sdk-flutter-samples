@@ -13,19 +13,17 @@
         "credential",
         "portal",
         "security",
-        "ArcGISAuthenticationChallengeHandler",
         "AuthenticationManager",
+        "Authenticator",
         "OAuthConfiguration",
-        "OAuthUserCredential",
         "Portal",
         "PortalItem"
     ],
     "redirect_from": [],
     "relevant_apis": [
-        "ArcGISAuthenticationChallengeHandler",
         "AuthenticationManager",
+        "Authenticator",
         "OAuthConfiguration",
-        "OAuthUserCredential",
         "Portal",
         "PortalItem"
     ],

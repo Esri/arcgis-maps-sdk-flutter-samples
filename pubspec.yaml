@@ -9,10 +9,11 @@ environment:
 
 dependencies:
   arcgis_maps: ^200.8.0
+  arcgis_maps_toolkit: ^200.8.0
   async: ^2.12.0
   build: ^2.4.2
   build_config: ^1.1.2
-  file_picker: ^9.0.0
+  file_picker: ^10.2.0
   flutter:
     sdk: flutter
   flutter_archive: ^6.0.3
