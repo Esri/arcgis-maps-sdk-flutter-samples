@@ -170,7 +170,7 @@ class _DisplayClustersState extends State<DisplayClusters>
                     children: geoElements
                         .map(
                           (geoElement) => Text(
-                            geoElement.attributes['name'] ??
+                            geoElement.attributes['name'] as String? ??
                                 'Geoelement: ${geoElements.indexOf(geoElement)}}',
                           ),
                         )
