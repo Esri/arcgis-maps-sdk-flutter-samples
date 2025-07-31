@@ -142,7 +142,7 @@ class _AttachmentsOptionsState extends State<AttachmentsOptions>
   @override
   void initState() {
     super.initState();
-    _damageType = widget.arcGISFeature.attributes['typdamage'];
+    _damageType = widget.arcGISFeature.attributes['typdamage'] as String? ?? '';
     _loadAttachments();
   }
 

@@ -628,7 +628,7 @@ class FeatureDetailsState extends State<FeatureDetails> {
       mainAxisSize: MainAxisSize.min,
       children: [
         Text(
-          _feature.attributes['name'],
+          _feature.attributes['name'] as String? ?? '',
           style: Theme.of(context).textTheme.headlineMedium,
         ),
         Flexible(
@@ -655,7 +655,7 @@ class FeatureDetailsState extends State<FeatureDetails> {
       const Color.fromARGB(0, 255, 255, 255),
     );
 
-    final description = _feature.attributes['description'];
+    final description = _feature.attributes['description'] as String? ?? '';
     final attachmentUrls = await _fetchAttachmentsForFeature();
     final htmlDescription = _wrapDescriptionInHtml(description, attachmentUrls);
     await _webViewController.loadHtmlString(htmlDescription);

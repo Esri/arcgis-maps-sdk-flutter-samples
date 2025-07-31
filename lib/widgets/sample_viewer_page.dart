@@ -186,7 +186,7 @@ class _SampleViewerPageState extends State<SampleViewerPage> {
     );
     final sampleData = jsonDecode(jsonString) as Map<String, dynamic>;
     for (final s in sampleData.entries) {
-      _allSamples.add(Sample.fromJson(s.value));
+      _allSamples.add(Sample.fromJson(s.value as Map<String, dynamic>));
     }
 
     if (widget.category != null) {
