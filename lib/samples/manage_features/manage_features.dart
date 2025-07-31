@@ -222,7 +222,7 @@ class _ManageFeaturesState extends State<ManageFeatures>
       _damageFeatureLayer.selectFeature(feature);
       setState(() {
         _selectedFeature = feature;
-        _selectedDamageType = feature.attributes['typdamage'];
+        _selectedDamageType = feature.attributes['typdamage'] as String?;
       });
     }
     // Re-enable the UI.

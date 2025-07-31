@@ -251,7 +251,8 @@ class _QueryRelatedFeaturesState extends State<QueryRelatedFeatures>
         final displayFieldName = relatedTable.layerInfo!.displayFieldName;
 
         // Get the display name for the feature.
-        final featureDisplayname = relatedFeature.attributes[displayFieldName];
+        final featureDisplayname =
+            relatedFeature.attributes[displayFieldName] as String? ?? '';
 
         // Add the display name to the list.
         relatedFeatures.add(featureDisplayname);
@@ -262,7 +263,7 @@ class _QueryRelatedFeaturesState extends State<QueryRelatedFeatures>
     // Update the UI with the related features.
     setState(() {
       _loadingFeatures = false;
-      _selectedParkName = selectedPark.attributes['UNIT_NAME'];
+      _selectedParkName = selectedPark.attributes['UNIT_NAME'] as String? ?? '';
 
       _featurePreserves = relatedFeaturesLists[0];
 
