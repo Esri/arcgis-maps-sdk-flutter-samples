@@ -325,11 +325,11 @@ class _GridOptionsState extends State<GridOptions> with SampleStateSupport {
     required List<T> items,
     required Function(T) onChanged,
   }) {
-    return DropdownMenu(
+    return DropdownMenu<T>(
       width: double.infinity,
       initialSelection: value,
       onSelected: (newValue) {
-        onChanged(newValue!);
+        onChanged(newValue as T);
       },
       label: Text(labelText),
       dropdownMenuEntries: items.map((value) {

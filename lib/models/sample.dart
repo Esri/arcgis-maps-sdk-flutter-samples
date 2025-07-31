@@ -25,9 +25,9 @@ class Sample {
   Sample.fromJson(Map<String, dynamic> json)
     : _category = json['category'] as String? ?? '',
       _description = json['description'] as String? ?? '',
-      _snippets = List<String>.from(json['snippets']),
+      _snippets = List<String>.from(json['snippets'] as List? ?? []),
       _title = json['title'] as String? ?? '',
-      _keywords = List<String>.from(json['keywords']),
+      _keywords = List<String>.from(json['keywords'] as List? ?? []),
       _key = json['key'] as String? ?? '',
       _sampleWidget = sampleWidgets[json['key']]!();
   final String _category;
