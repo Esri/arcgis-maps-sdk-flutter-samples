@@ -88,57 +88,15 @@ class _GroupLayersTogetherState extends State<GroupLayersTogether>
               children:
                   _sceneViewController.arcGISScene?.operationalLayers
                       .whereType<GroupLayer>()
-                      .map(buildGroupLayerSettings)
+                      .map(
+                        (groupLayer) =>
+                            GroupLayerWidget(groupLayer: groupLayer),
+                      )
                       .toList() ??
                   [],
             ),
           ),
         ),
-      ],
-    );
-  }
-
-  // Create Widgets to control the Group Layer and its layers.
-  Widget buildGroupLayerSettings(GroupLayer groupLayer) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Row(
-          children: [
-            Text(
-              groupLayer.name,
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
-            const Spacer(),
-            // Create a Switch to toggle the visibility of the Group Layer.
-            Switch(
-              value: groupLayer.isVisible,
-              onChanged: (value) {
-                groupLayer.isVisible = value;
-                setState(() {});
-              },
-            ),
-          ],
-        ),
-        // Create a list of Switches to toggle the visibility of the individual layers.
-        ...groupLayer.layers.map((layer) {
-          return Row(
-            children: [
-              Text(layer.name),
-              const Spacer(),
-              // Create a Switch to toggle the visibility of the individual layer.
-              Switch(
-                value: layer.isVisible,
-                onChanged: groupLayer.isVisible
-                    ? (value) {
-                        layer.isVisible = value;
-                        setState(() {});
-                      }
-                    : null,
-              ),
-            ],
-          );
-        }),
       ],
     );
   }
@@ -220,5 +178,66 @@ class _GroupLayersTogetherState extends State<GroupLayersTogether>
 
     // Set the ready state variable to true to enable the UI.
     setState(() => _ready = true);
+  }
+}
+
+// A widget to display a Group Layer and its individual layers with visibility toggles.
+class GroupLayerWidget extends StatelessWidget {
+  const GroupLayerWidget({required this.groupLayer, super.key});
+
+  final GroupLayer groupLayer;
+
+  @override
+  Widget build(BuildContext context) {
+    // Create a StreamBuilder to listen for changes to the visibility of the Group Layer.
+    return StreamBuilder(
+      initialData: groupLayer.isVisible,
+      stream: groupLayer.onVisibilityChanged,
+      builder: (context, snapshot) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Row(
+              children: [
+                // Display the name of the Group Layer.
+                Text(
+                  groupLayer.name,
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+                const Spacer(),
+                // Create a Switch to toggle the visibility of the Group Layer.
+                Switch(
+                  value: groupLayer.isVisible,
+                  onChanged: (value) => groupLayer.isVisible = value,
+                ),
+              ],
+            ),
+            // Create a list of Switches to toggle the visibility of the individual layers.
+            ...groupLayer.layers.map((layer) {
+              return Row(
+                children: [
+                  Text(layer.name),
+                  const Spacer(),
+                  // Create a StreamBuilder to listen for changes to the visibility of the individual layer.
+                  StreamBuilder(
+                    initialData: layer.isVisible,
+                    stream: layer.onVisibilityChanged,
+                    builder: (context, snapshot) {
+                      // Create a Switch to toggle the visibility of the individual layer.
+                      return Switch(
+                        value: layer.isVisible,
+                        onChanged: groupLayer.isVisible
+                            ? (value) => layer.isVisible = value
+                            : null,
+                      );
+                    },
+                  ),
+                ],
+              );
+            }),
+          ],
+        );
+      },
+    );
   }
 }
