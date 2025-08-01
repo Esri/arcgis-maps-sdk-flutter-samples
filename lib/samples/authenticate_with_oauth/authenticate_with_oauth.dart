@@ -16,6 +16,7 @@
 
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
+import 'package:arcgis_maps_toolkit/arcgis_maps_toolkit.dart';
 import 'package:flutter/material.dart';
 
 class AuthenticateWithOAuth extends StatefulWidget {
@@ -26,8 +27,7 @@ class AuthenticateWithOAuth extends StatefulWidget {
 }
 
 class _AuthenticateWithOAuthState extends State<AuthenticateWithOAuth>
-    with SampleStateSupport
-    implements ArcGISAuthenticationChallengeHandler {
+    with SampleStateSupport {
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
 
@@ -41,45 +41,15 @@ class _AuthenticateWithOAuthState extends State<AuthenticateWithOAuth>
   );
 
   @override
-  void initState() {
-    super.initState();
-
-    // Set this class to the arcGISAuthenticationChallengeHandler property on the authentication manager.
-    // This class implements the ArcGISAuthenticationChallengeHandler interface,
-    // which allows it to handle authentication challenges via calls to its
-    // handleArcGISAuthenticationChallenge() method.
-    ArcGISEnvironment
-            .authenticationManager
-            .arcGISAuthenticationChallengeHandler =
-        this;
-  }
-
-  @override
   void dispose() {
-    // We do not want to handle authentication challenges outside of this sample,
-    // so we remove this as the challenge handler.
-    ArcGISEnvironment
-            .authenticationManager
-            .arcGISAuthenticationChallengeHandler =
-        null;
-
     // Revoke OAuth tokens and remove all credentials to log out.
-    Future.wait(
-          ArcGISEnvironment.authenticationManager.arcGISCredentialStore
-              .getCredentials()
-              .whereType<OAuthUserCredential>()
-              .map((credential) => credential.revokeToken()),
-        )
+    Authenticator.revokeOAuthTokens()
         .catchError((error) {
           // This sample has been disposed, so we can only report errors to the console.
           // ignore: avoid_print
           print('Error revoking tokens: $error');
-          return [];
         })
-        .whenComplete(() {
-          ArcGISEnvironment.authenticationManager.arcGISCredentialStore
-              .removeAll();
-        });
+        .whenComplete(Authenticator.clearCredentials);
 
     super.dispose();
   }
@@ -87,10 +57,15 @@ class _AuthenticateWithOAuthState extends State<AuthenticateWithOAuth>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // Add a map view to the widget tree and set a controller.
-      body: ArcGISMapView(
-        controllerProvider: () => _mapViewController,
-        onMapViewReady: onMapViewReady,
+      // Add an Authenticator to handle authentication challenges.
+      body: Authenticator(
+        // Provide the OAuthUserConfiguration to the Authenticator.
+        oAuthUserConfigurations: [_oauthUserConfiguration],
+        // Add a map view to the widget tree and set a controller.
+        child: ArcGISMapView(
+          controllerProvider: () => _mapViewController,
+          onMapViewReady: onMapViewReady,
+        ),
       ),
     );
   }
@@ -102,30 +77,8 @@ class _AuthenticateWithOAuthState extends State<AuthenticateWithOAuth>
       itemId: 'e5039444ef3c48b8a8fdc9227f9be7c1',
     );
     final map = ArcGISMap.withItem(portalItem);
+
     // Set the map to map view controller.
     _mapViewController.arcGISMap = map;
-  }
-
-  @override
-  Future<void> handleArcGISAuthenticationChallenge(
-    ArcGISAuthenticationChallenge challenge,
-  ) async {
-    try {
-      // Initiate the sign in process to the OAuth server using the defined user configuration.
-      final credential = await OAuthUserCredential.create(
-        configuration: _oauthUserConfiguration,
-      );
-
-      // Sign in was successful, so continue with the provided credential.
-      challenge.continueWithCredential(credential);
-    } on ArcGISException catch (error) {
-      // Sign in was canceled, or there was some other error.
-      final e = (error.wrappedException as ArcGISException?) ?? error;
-      if (e.errorType == ArcGISExceptionType.commonUserCanceled) {
-        challenge.cancel();
-      } else {
-        challenge.continueAndFail();
-      }
-    }
   }
 }
