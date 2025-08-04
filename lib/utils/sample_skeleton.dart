@@ -75,7 +75,7 @@ class _SampleWidgetState extends State<SampleWidget> with SampleStateSupport {
     _mapViewController.arcGISMap = map;
 
     // Perform some long-running setup task.
-    await Future.delayed(const Duration(seconds: 10));
+    await Future<void>.delayed(const Duration(seconds: 10));
 
     // Set the ready state variable to true to enable the sample UI.
     setState(() => _ready = true);
@@ -93,7 +93,7 @@ class _SampleWidgetState extends State<SampleWidget> with SampleStateSupport {
     // Perform some task.
     // ignore: avoid_print
     print('Perform task');
-    await Future.delayed(const Duration(seconds: 5));
+    await Future<void>.delayed(const Duration(seconds: 5));
 
     setState(() => _ready = true);
   }

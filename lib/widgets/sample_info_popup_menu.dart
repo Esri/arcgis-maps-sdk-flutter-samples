@@ -62,14 +62,14 @@ class _SampleInfoPopupMenuState extends State<SampleInfoPopupMenu>
           case 'README':
             Navigator.push(
               context,
-              MaterialPageRoute(
+              MaterialPageRoute<void>(
                 builder: (context) => ReadmePage(sample: widget.sample),
               ),
             );
           case 'Code':
             Navigator.push(
               context,
-              MaterialPageRoute(
+              MaterialPageRoute<void>(
                 builder: (context) => CodeViewPage(sample: widget.sample),
               ),
             );

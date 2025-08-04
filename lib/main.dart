@@ -66,7 +66,7 @@ class _SampleViewerAppState extends State<SampleViewerApp>
         actions: [
           IconButton(
             icon: const Icon(Icons.info_outline),
-            onPressed: () => showModalBottomSheet(
+            onPressed: () => showModalBottomSheet<void>(
               context: context,
               isScrollControlled: true,
               useSafeArea: true,
@@ -171,7 +171,7 @@ class _ResponsiveCategoryGrid extends StatelessWidget {
 
   void _onCategoryClick(BuildContext context, SampleCategory category) {
     Navigator.of(context).push(
-      PageRouteBuilder(
+      PageRouteBuilder<void>(
         transitionDuration: const Duration(milliseconds: 500),
         pageBuilder: (context, animation, secondaryAnimation) =>
             SampleViewerPage(category: category),

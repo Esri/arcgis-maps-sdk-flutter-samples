@@ -263,12 +263,12 @@ class GridOptions extends StatefulWidget {
     super.key,
   });
 
-  final Function(GridType) onGridChanged;
-  final Function(GridColorType) onGridColorChanged;
-  final Function(GridColorType) onLabelColorChanged;
-  final Function(GridLabelPositionType) onLabelPositionChanged;
-  final Function(LatLongLabelFormatType) onLabelFormatChanged;
-  final Function(bool) onLabelVisibilityChanged;
+  final void Function(GridType) onGridChanged;
+  final void Function(GridColorType) onGridColorChanged;
+  final void Function(GridColorType) onLabelColorChanged;
+  final void Function(GridLabelPositionType) onLabelPositionChanged;
+  final void Function(LatLongLabelFormatType) onLabelFormatChanged;
+  final void Function(bool) onLabelVisibilityChanged;
   final MapViewGrids grids;
   final bool isSceneView;
 
@@ -323,7 +323,7 @@ class _GridOptionsState extends State<GridOptions> with SampleStateSupport {
     required T value,
     required String labelText,
     required List<T> items,
-    required Function(T) onChanged,
+    required void Function(T) onChanged,
   }) {
     return DropdownMenu<T>(
       width: double.infinity,

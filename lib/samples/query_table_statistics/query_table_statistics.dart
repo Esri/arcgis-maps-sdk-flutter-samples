@@ -190,7 +190,7 @@ class _QueryTableStatisticsState extends State<QueryTableStatistics>
     );
 
     // Prepare the statistics results for display.
-    final statistics = [];
+    final statistics = <String>[];
     final records = statisticsQueryResult.statisticRecords();
     for (final record in records) {
       record.statistics.forEach((key, value) {

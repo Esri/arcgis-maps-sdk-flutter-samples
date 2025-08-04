@@ -314,10 +314,10 @@ class PreplannedEntryListTile extends StatelessWidget {
   final PreplannedEntry preplannedEntry;
 
   // A callback function that is called to initiate the download job for the preplanned entry.
-  final Function() onDownload;
+  final void Function() onDownload;
 
   // A callback function that is called to select the preplanned entry.
-  final Function() onSelect;
+  final void Function() onSelect;
 
   @override
   Widget build(BuildContext context) {

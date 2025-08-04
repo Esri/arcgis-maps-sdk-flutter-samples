@@ -408,7 +408,7 @@ class _Animate3dGraphicState extends State<Animate3dGraphic>
 
   // Shows the mission settings in a bottom sheet.
   void _showMissionSettings() {
-    showModalBottomSheet(
+    showModalBottomSheet<void>(
       context: context,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
@@ -505,7 +505,7 @@ class _Animate3dGraphicState extends State<Animate3dGraphic>
 
   // Shows the camera settings in a bottom sheet.
   void _showCameraSettings() {
-    showModalBottomSheet(
+    showModalBottomSheet<void>(
       context: context,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
