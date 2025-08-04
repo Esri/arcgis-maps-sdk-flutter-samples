@@ -14,6 +14,7 @@
 // limitations under the License.
 //
 
+import 'dart:async';
 import 'dart:io';
 
 import 'package:arcgis_maps/arcgis_maps.dart';
@@ -91,7 +92,7 @@ class _EditFeatureAttachmentsState extends State<EditFeatureAttachments>
 
   // Show the bottom sheet to display the attachment information.
   void _showBottomSheet(ArcGISFeature selectedFeature) {
-    showModalBottomSheet(
+    showModalBottomSheet<void>(
       context: context,
       builder: (context) => AttachmentsOptions(
         arcGISFeature: selectedFeature,
@@ -126,7 +127,7 @@ class AttachmentsOptions extends StatefulWidget {
     super.key,
   });
   final ArcGISFeature arcGISFeature;
-  final Function(ArcGISFeature) applyEdits;
+  final FutureOr<void> Function(ArcGISFeature) applyEdits;
 
   @override
   State<AttachmentsOptions> createState() => _AttachmentsOptionsState();
@@ -256,7 +257,7 @@ class _AttachmentsOptionsState extends State<AttachmentsOptions>
 
     // Display the attachment image/pdf file in a dialog.
     if (mounted) {
-      await showDialog(
+      await showDialog<void>(
         context: context,
         builder: (context) {
           return AlertDialog(

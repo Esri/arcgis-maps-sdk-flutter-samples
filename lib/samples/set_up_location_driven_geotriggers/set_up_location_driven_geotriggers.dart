@@ -107,7 +107,7 @@ class _SetUpLocationDrivenGeotriggersState
                     ElevatedButton(
                       onPressed: _currentSections.isEmpty
                           ? null
-                          : () => showDialog(
+                          : () => showDialog<void>(
                               context: context,
                               builder: (context) => showFeatureDetails(
                                 context: context,
@@ -121,7 +121,7 @@ class _SetUpLocationDrivenGeotriggersState
                     ElevatedButton(
                       onPressed: _currentPois.isEmpty
                           ? null
-                          : () => showDialog(
+                          : () => showDialog<void>(
                               context: context,
                               builder: (context) => showFeatureDetails(
                                 context: context,

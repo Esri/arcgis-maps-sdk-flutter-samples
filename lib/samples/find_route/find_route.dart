@@ -82,7 +82,7 @@ class _FindRouteState extends State<FindRoute> with SampleStateSupport {
                       // Create a button to show the directions.
                       ElevatedButton(
                         onPressed: _routeGenerated
-                            ? () => showDialog(
+                            ? () => showDialog<void>(
                                 context: context,
                                 builder: showDirections,
                               )

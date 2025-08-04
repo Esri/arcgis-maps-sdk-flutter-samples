@@ -223,7 +223,7 @@ class _EditWithBranchVersioningState extends State<EditWithBranchVersioning>
   }
 
   void _showMoveConfirmationDialog(Feature feature, ArcGISPoint mapPoint) {
-    showDialog(
+    showDialog<void>(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Confirm Move'),
@@ -254,7 +254,7 @@ class _EditWithBranchVersioningState extends State<EditWithBranchVersioning>
   }
 
   void _editDamageType(Feature feature) {
-    showDialog(
+    showDialog<void>(
       context: context,
       builder: (context) {
         return AlertDialog(

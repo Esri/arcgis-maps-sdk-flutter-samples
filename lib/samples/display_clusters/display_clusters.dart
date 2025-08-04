@@ -148,7 +148,7 @@ class _DisplayClustersState extends State<DisplayClusters>
 
   void showResultsDialog(List<GeoElement> geoElements) {
     // Create a dialog that lists the count and names of the provided list of geoelements.
-    showDialog(
+    showDialog<void>(
       context: context,
       builder: (context) {
         return AlertDialog(
