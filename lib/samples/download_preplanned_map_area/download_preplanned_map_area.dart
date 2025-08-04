@@ -40,11 +40,14 @@ class _DownloadPreplannedMapAreaState extends State<DownloadPreplannedMapArea>
   late ArcGISMap _webMap;
   // The location to save offline maps to.
   Directory? _downloadDirectory;
-  // Create a Map to track preplanned map areas and their associated download jobs.
-  final _preplannedMapAreas =
-      <PreplannedMapArea, DownloadPreplannedOfflineMapJob?>{};
+  // A list to hold entries for preplanned map areas and their associated download jobs.
+  final _preplannedEntries = <PreplannedEntry>[];
   // A flag for when the map view is ready and controls can be used.
   var _ready = false;
+  // The title of the selected map.
+  var _title = '';
+  // Whether the web map is selected.
+  var _webMapSelected = false;
   // A flag for when the map selection UI should be displayed.
   var _mapSelectionVisible = false;
 
@@ -91,8 +94,7 @@ class _DownloadPreplannedMapAreaState extends State<DownloadPreplannedMapArea>
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    // Use the name of the item if available.
-                    _mapViewController.arcGISMap?.item?.title ?? '',
+                    _title,
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.customWhiteStyle,
                   ),
@@ -129,14 +131,20 @@ class _DownloadPreplannedMapAreaState extends State<DownloadPreplannedMapArea>
 
     // Get the preplanned map areas from the offline map task and load each.
     final preplannedMapAreas = await _offlineMapTask.getPreplannedMapAreas();
+    await Future.wait(preplannedMapAreas.map((mapArea) => mapArea.load()));
+
+    // Add each map area to the preplanned entries list.
     for (final mapArea in preplannedMapAreas) {
-      await mapArea.load();
-      // Add each map area as a key in the Map, setting the Job to null initially.
-      _preplannedMapAreas[mapArea] = null;
+      _preplannedEntries.add(PreplannedEntry(mapArea: mapArea));
     }
 
     // Initially set the web map to the map view controller.
     _mapViewController.arcGISMap = _webMap;
+    await _webMap.load();
+    setState(() {
+      _title = _webMap.item?.title ?? '';
+      _webMapSelected = true;
+    });
 
     // Upate the state with the preplanned map areas and set the UI state to ready.
     setState(() => _ready = true);
@@ -172,26 +180,29 @@ class _DownloadPreplannedMapAreaState extends State<DownloadPreplannedMapArea>
           // Create a list tile for the web map.
           ListTile(
             title: const Text('Web Map (online)'),
-            trailing: _mapViewController.arcGISMap == _webMap
-                ? const Icon(Icons.check)
-                : null,
-            onTap: () => _mapViewController.arcGISMap != _webMap
-                ? setMapAndViewpoint(_webMap)
-                : null,
+            trailing: _webMapSelected ? const Icon(Icons.check) : null,
+            onTap: () => !_webMapSelected ? setMapAndViewpoint(_webMap) : null,
           ),
           Text(
             'Preplanned Map Areas:',
             style: Theme.of(context).textTheme.titleMedium,
           ),
+          // Create a list of preplanned map areas with their controls.
           ListView.builder(
             shrinkWrap: true,
-            itemCount: _preplannedMapAreas.length,
+            itemCount: _preplannedEntries.length,
             itemBuilder: (context, index) {
-              return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 5),
-                child: buildMapAreaListTile(
-                  _preplannedMapAreas.keys.toList()[index],
-                ),
+              final preplannedEntry = _preplannedEntries[index];
+              return PreplannedEntryListTile(
+                preplannedEntry: preplannedEntry,
+                // "Download" callback to download the offline map.
+                onDownload: () => downloadOfflineMap(preplannedEntry),
+                // "Select" callback to set the map and viewpoint of the preplanned entry.
+                onSelect: () {
+                  selectPreplannedEntry(preplannedEntry);
+                  final map = preplannedEntry.job.value?.result?.offlineMap;
+                  if (map != null) setMapAndViewpoint(map);
+                },
               );
             },
           ),
@@ -200,64 +211,20 @@ class _DownloadPreplannedMapAreaState extends State<DownloadPreplannedMapArea>
     );
   }
 
-  // Builds a list tile for each preplanned area and updates the UI depending on the status of the job.
-  Widget buildMapAreaListTile(PreplannedMapArea mapArea) {
-    final title = Text(mapArea.portalItem.title);
-    final job = _preplannedMapAreas[mapArea];
-
-    // If a job has been associated with the preplanned area, check the status and display the relevant UI.
-    if (job != null) {
-      if (job.status == JobStatus.started) {
-        return ListTile(
-          enabled: false,
-          title: title,
-          trailing: Column(
-            children: [
-              // When the job is started, display the progress.
-              CircularProgressIndicator(value: job.progress.toDouble() / 100.0),
-              Text('${job.progress}%'),
-            ],
-          ),
-        );
-      } else if (job.status == JobStatus.succeeded && job.result != null) {
-        // When the job has succeeded, get the result and then get the map from the result.
-        final map = job.result!.offlineMap;
-        return ListTile(
-          title: title,
-          trailing: _mapViewController.arcGISMap == map
-              ? const Icon(Icons.check)
-              : null,
-          onTap: () => setMapAndViewpoint(map),
-        );
-      } else if (job.status == JobStatus.failed) {
-        return ListTile(
-          enabled: false,
-          title: title,
-          trailing: const Icon(Icons.error),
-        );
-      }
-    }
-
-    // Otherwise display a default list tile to initiate downloading the offline map.
-    return ListTile(
-      title: title,
-      trailing: const Icon(Icons.download),
-      onTap: () => downloadOfflineMap(mapArea),
-    );
-  }
-
   // Download an offline map for a provided preplanned map area.
-  Future<void> downloadOfflineMap(PreplannedMapArea mapArea) async {
+  Future<void> downloadOfflineMap(PreplannedEntry preplannedEntry) async {
     // Create default parameters using the map area.
     final defaultDownloadParams = await _offlineMapTask
-        .createDefaultDownloadPreplannedOfflineMapParameters(mapArea);
+        .createDefaultDownloadPreplannedOfflineMapParameters(
+          preplannedEntry.mapArea,
+        );
 
     // Set the required update mode. This sample map is not setup for updates so we use noUpdates.
     defaultDownloadParams.updateMode = PreplannedUpdateMode.noUpdates;
 
     // Create a directory for the map in the downloads directory.
     final mapDir = Directory(
-      '${_downloadDirectory!.path}${Platform.pathSeparator}${mapArea.portalItem.title}',
+      '${_downloadDirectory!.path}${Platform.pathSeparator}${preplannedEntry.mapArea.portalItem.title}',
     );
     mapDir.createSync();
 
@@ -268,11 +235,11 @@ class _DownloadPreplannedMapAreaState extends State<DownloadPreplannedMapArea>
           downloadDirectoryUri: mapDir.uri,
         );
 
-    // Associate the job with the map area and update the UI.
-    setState(() => _preplannedMapAreas[mapArea] = downloadMapJob);
-    // Update the UI when the progress changes.
-    downloadMapJob.onProgressChanged.listen((_) => setState(() {}));
+    // Start the download job.
     unawaited(downloadMapJob.run());
+
+    // Update the preplanned entry with the running job.
+    preplannedEntry.job.value = downloadMapJob;
   }
 
   // Create the directory for downloading offline map areas into.
@@ -288,15 +255,28 @@ class _DownloadPreplannedMapAreaState extends State<DownloadPreplannedMapArea>
     return downloadDir;
   }
 
+  // Select a preplanned entry (and unselect others).
+  void selectPreplannedEntry(PreplannedEntry? preplannedEntry) {
+    for (final e in _preplannedEntries) {
+      e.selected.value = preplannedEntry == e;
+    }
+  }
+
   // Sets the provided map to the map view and updates the viewpoint.
   void setMapAndViewpoint(ArcGISMap map) {
     // Set the map to the map view and update the UI to reflect the newly selected map.
     _mapViewController.arcGISMap = map;
-    setState(() {});
+    setState(() {
+      _title = map.item?.title ?? '';
+      _webMapSelected = map == _webMap;
+    });
 
-    if (map != _webMap) {
-      // If the map is one of the offline maps,
-      // build an envelope zoomed into the extent of the map to better see the features.
+    if (map == _webMap) {
+      // If the web map was selected, make sure all the preplanned entries are unselected.
+      selectPreplannedEntry(null);
+    } else {
+      // If the selected map is one of the preplanned entries,  build an envelope zoomed
+      // into the extent of the map to better see the features.
       final envBuilder = EnvelopeBuilder.fromEnvelope(
         map.initialViewpoint!.targetGeometry.extent,
       )..expandBy(0.5);
@@ -304,5 +284,113 @@ class _DownloadPreplannedMapAreaState extends State<DownloadPreplannedMapArea>
       // Set the viewpoint to the mapview controller.
       _mapViewController.setViewpoint(viewpoint);
     }
+  }
+}
+
+// An entry for a preplanned map area, including its download job and selected status.
+class PreplannedEntry {
+  PreplannedEntry({required this.mapArea});
+
+  final PreplannedMapArea mapArea;
+
+  // The download job corresponding to the preplanned map area, wrapped in a ValueNotifier
+  // to signal updates in the UI. Starts as null and is set when the download begins.
+  final job = ValueNotifier<DownloadPreplannedOfflineMapJob?>(null);
+
+  // A value indicating whether this preplanned entry is currently selected, wrapped in a
+  // ValueNotifier to signal updates in the UI.
+  final selected = ValueNotifier<bool>(false);
+}
+
+// A widget representing a preplanned entry in a list with download and select options.
+class PreplannedEntryListTile extends StatelessWidget {
+  const PreplannedEntryListTile({
+    required this.preplannedEntry,
+    required this.onDownload,
+    required this.onSelect,
+    super.key,
+  });
+
+  final PreplannedEntry preplannedEntry;
+
+  // A callback function that is called to initiate the download job for the preplanned entry.
+  final Function() onDownload;
+
+  // A callback function that is called to select the preplanned entry.
+  final Function() onSelect;
+
+  @override
+  Widget build(BuildContext context) {
+    // Use a ValueListenableBuilder to listen for the download job getting created.
+    return ValueListenableBuilder(
+      valueListenable: preplannedEntry.job,
+      child: Text(preplannedEntry.mapArea.portalItem.title),
+      builder: (context, job, title) {
+        // If the job is null, present a download button to create the download job.
+        if (job == null) {
+          return ListTile(
+            title: title,
+            trailing: const Icon(Icons.download),
+            onTap: onDownload,
+          );
+        }
+
+        // Use a StreamBuilder to listen for job status updates.
+        return StreamBuilder(
+          initialData: job.status,
+          stream: job.onStatusChanged,
+          builder: (context, snapshot) {
+            final status = snapshot.data ?? JobStatus.started;
+
+            switch (status) {
+              case JobStatus.started:
+                // If the job has started, show a loading indicator with progress.
+                return ListTile(
+                  enabled: false,
+                  title: title,
+                  // Use a StreamBuilder to listen for job progress updates.
+                  trailing: StreamBuilder(
+                    initialData: job.progress,
+                    stream: job.onProgressChanged,
+                    builder: (context, snapshot) {
+                      final progress = snapshot.data ?? 0;
+                      return Column(
+                        children: [
+                          CircularProgressIndicator(
+                            value: progress.toDouble() / 100.0,
+                          ),
+                          Text('$progress%'),
+                        ],
+                      );
+                    },
+                  ),
+                );
+              case JobStatus.succeeded:
+                // If the job has succeeded, allow the preplanned entry to be selected.
+                return ListTile(
+                  title: title,
+                  // Use a ValueListenableBuilder to show whether the preplanned entry is selected.
+                  trailing: ValueListenableBuilder(
+                    valueListenable: preplannedEntry.selected,
+                    builder: (context, selected, _) {
+                      return selected
+                          ? const Icon(Icons.check)
+                          : const SizedBox.shrink();
+                    },
+                  ),
+                  onTap: onSelect,
+                );
+              default:
+                // In all other statuses, show an error icon and disable interaction.
+                return ListTile(
+                  enabled: false,
+                  title: title,
+                  trailing: const Icon(Icons.error),
+                );
+            }
+          },
+        );
+      },
+    );
   }
 }
