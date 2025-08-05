@@ -38,7 +38,7 @@ class _SetBasemapState extends State<SetBasemap> with SampleStateSupport {
   // Create a default image.
   final _defaultImage = Image.asset('assets/basemap_default.png');
   // Create a future to load basemaps.
-  late Future _loadBasemapsFuture;
+  late Future<void> _loadBasemapsFuture;
   // Create a variable to store the selected basemap.
   Basemap? _selectedBasemap;
 
@@ -132,7 +132,7 @@ class _SetBasemapState extends State<SetBasemap> with SampleStateSupport {
     _mapViewController.arcGISMap = _arcGISMap;
   }
 
-  Future loadBasemaps() async {
+  Future<void> loadBasemaps() async {
     // Create a portal to access online items.
     final portal = Portal.arcGISOnline();
     // Load basemaps from portal.
