@@ -38,8 +38,8 @@ class _MatchViewpointOfGeoViewsState extends State<MatchViewpointOfGeoViews>
   // A flag to indicate if the scene view is currently interacting.
   bool _isSceneViewInteraction = false;
   // Stream subscriptions for viewpoint changes.
-  StreamSubscription? _mapViewViewpointChangedSubscription;
-  StreamSubscription? _sceneViewViewpointChangedSubscription;
+  StreamSubscription<void>? _mapViewViewpointChangedSubscription;
+  StreamSubscription<void>? _sceneViewViewpointChangedSubscription;
   // A flag for when the map view is ready and controls can be used.
   var _ready = false;
 

@@ -18,7 +18,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 
-class RipplePageRoute extends PageRouteBuilder {
+class RipplePageRoute extends PageRouteBuilder<dynamic> {
   RipplePageRoute({required this.position, required this.child})
     : super(
         transitionDuration: const Duration(milliseconds: 600),

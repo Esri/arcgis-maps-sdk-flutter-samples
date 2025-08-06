@@ -30,7 +30,7 @@ class SampleCatalogBuilder implements Builder {
   };
 
   @override
-  Future build(BuildStep buildStep) async {
+  Future<void> build(BuildStep buildStep) async {
     final assets = buildStep.findAssets(
       Glob('lib/samples/*/README.metadata.json'),
     );
@@ -80,7 +80,7 @@ class SampleWidgetsBuilder implements Builder {
   };
 
   @override
-  Future build(BuildStep buildStep) async {
+  Future<void> build(BuildStep buildStep) async {
     final assets = buildStep.findAssets(
       Glob('lib/samples/*/README.metadata.json'),
     );

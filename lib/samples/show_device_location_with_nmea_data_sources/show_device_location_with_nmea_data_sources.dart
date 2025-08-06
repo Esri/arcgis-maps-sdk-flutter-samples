@@ -38,18 +38,18 @@ class _ShowDeviceLocationWithNmeaDataSourcesState
   final _locationDataSource = NmeaLocationDataSource();
 
   // Subscriptions to location data source events and members to keep current data.
-  StreamSubscription? _locationSubscription;
+  StreamSubscription<ArcGISLocation>? _locationSubscription;
   ArcGISLocation? _currentNmeaLocation;
-  StreamSubscription? _satelliteSubscription;
+  StreamSubscription<List<NmeaSatelliteInfo>>? _satelliteSubscription;
   var _currentSatelliteInfos = <NmeaSatelliteInfo>[];
 
   // Simulated NMEA data provider members.
   SimulatedNmeaDataSource? _nmeaDataSimulator;
-  StreamSubscription? _nmeaDataSubscription;
+  StreamSubscription<String>? _nmeaDataSubscription;
 
   // Enable or disable the Recenter button.
   var _enableRecenter = false;
-  StreamSubscription? _autopanSubscription;
+  StreamSubscription<LocationDisplayAutoPanMode>? _autopanSubscription;
 
   // A flag for when the NmeaLocationDataSource is running.
   var _locationDataSourceRunning = false;

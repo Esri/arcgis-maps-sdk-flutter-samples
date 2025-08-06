@@ -44,7 +44,8 @@ class _SetUpLocationDrivenGeotriggersState
   final _sectionGeotriggerName = 'Section Geotrigger';
 
   // Stream subscriptions for the geotrigger event changes.
-  final _streamSubscriptions = <StreamSubscription>[];
+  final _streamSubscriptions =
+      <StreamSubscription<GeotriggerNotificationInfo>>[];
 
   // Maps to contain current section and POI features. Keys are the feature
   // name, values are the full Feature. Using LinkedHashMaps to maintain insertion order.

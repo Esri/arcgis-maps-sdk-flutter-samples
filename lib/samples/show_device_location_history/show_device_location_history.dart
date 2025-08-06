@@ -36,7 +36,7 @@ class _ShowDeviceLocationHistoryState extends State<ShowDeviceLocationHistory>
   // A location data source to simulate location updates.
   final _locationDataSource = SimulatedLocationDataSource();
   // Subscription to listen for location changes.
-  StreamSubscription? _locationSubscription;
+  StreamSubscription<ArcGISLocation>? _locationSubscription;
   // A GraphicsOverlay to display the location history polyline.
   final _locationHistoryLineOverlay = GraphicsOverlay();
   // A GraphicsOverlay to display the location history points.
