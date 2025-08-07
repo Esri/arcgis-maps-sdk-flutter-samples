@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
+import 'package:arcgis_maps_toolkit/arcgis_maps_toolkit.dart';
 import 'package:flutter/material.dart';
 import 'package:simple_html_css/simple_html_css.dart';
 
@@ -60,22 +61,13 @@ class _ShowPortalUserInfoState extends State<ShowPortalUserInfo>
         null;
 
     // Revoke OAuth tokens and remove all credentials to log out.
-    Future.wait(
-          ArcGISEnvironment.authenticationManager.arcGISCredentialStore
-              .getCredentials()
-              .whereType<OAuthUserCredential>()
-              .map((credential) => credential.revokeToken()),
-        )
+    Authenticator.revokeOAuthTokens()
         .catchError((error) {
           // This sample has been disposed, so we can only report errors to the console.
           // ignore: avoid_print
           print('Error revoking tokens: $error');
-          return [];
         })
-        .whenComplete(() {
-          ArcGISEnvironment.authenticationManager.arcGISCredentialStore
-              .removeAll();
-        });
+        .whenComplete(Authenticator.clearCredentials);
 
     super.dispose();
   }
