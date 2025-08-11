@@ -17,12 +17,12 @@
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/theme_data.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/models/category.dart';
-import 'package:arcgis_maps_sdk_flutter_samples/utils/ripple_page_route.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/widgets/about_info.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/widgets/category_card.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/widgets/sample_viewer_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:go_router/go_router.dart';
 
 void main() {
   // Supply your apiKey using the --dart-define-from-file command line argument.
@@ -31,8 +31,38 @@ void main() {
   // const apiKey = ''; // Your API Key here.
   ArcGISEnvironment.apiKey = apiKey;
 
+  final router = GoRouter(
+    routes: [
+      GoRoute(
+        path: '/',
+        builder: (context, state) => const SampleViewerApp(),
+        routes: [
+          GoRoute(
+            path: 'category/:category',
+            pageBuilder: (context, state) {
+              final categoryName = state.pathParameters['category'];
+              final category = SampleCategory.values.firstWhere(
+                (c) => c.name == categoryName,
+                orElse: () => SampleCategory.all,
+              );
+              return CategoryTransitionPage(
+                child: SampleViewerPage(category: category),
+              );
+            },
+          ),
+          GoRoute(
+            path: 'search',
+            pageBuilder: (context, state) =>
+                CategoryTransitionPage(child: const SampleViewerPage()),
+          ),
+        ],
+      ),
+    ],
+  );
+
   runApp(
-    MaterialApp(
+    MaterialApp.router(
+      routerConfig: router,
       localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
@@ -42,7 +72,6 @@ void main() {
         return locale;
       },
       theme: sampleViewerTheme,
-      home: const SampleViewerApp(),
     ),
   );
 }
@@ -115,18 +144,7 @@ class _SampleViewerAppState extends State<SampleViewerApp>
       floatingActionButton: Builder(
         builder: (context) {
           return FloatingActionButton(
-            onPressed: () {
-              // Get the position of the FAB.
-              final box = context.findRenderObject()! as RenderBox;
-              final position = box.localToGlobal(box.size.center(Offset.zero));
-
-              Navigator.of(context).push(
-                RipplePageRoute(
-                  position: position,
-                  child: const SampleViewerPage(),
-                ),
-              );
-            },
+            onPressed: () => context.go('/search'),
             child: const Icon(Icons.search),
           );
         },
@@ -159,7 +177,7 @@ class _ResponsiveCategoryGrid extends StatelessWidget {
               child: CategoryCard(
                 category: SampleCategory.values[i],
                 onClick: () =>
-                    _onCategoryClick(context, SampleCategory.values[i]),
+                    context.go('/category/${SampleCategory.values[i].name}'),
                 index: i,
               ),
             ),
@@ -168,26 +186,21 @@ class _ResponsiveCategoryGrid extends StatelessWidget {
       },
     );
   }
+}
 
-  void _onCategoryClick(BuildContext context, SampleCategory category) {
-    Navigator.of(context).push(
-      PageRouteBuilder<void>(
-        transitionDuration: const Duration(milliseconds: 500),
-        pageBuilder: (context, animation, secondaryAnimation) =>
-            SampleViewerPage(category: category),
+// Custom transition page for category navigation (scale + fade + curve).
+class CategoryTransitionPage extends CustomTransitionPage<void> {
+  CategoryTransitionPage({required super.child})
+    : super(
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
-          // scale + fade + curve.
           final curved = CurvedAnimation(
             parent: animation,
             curve: Curves.easeOutBack,
           );
-
           return ScaleTransition(
             scale: Tween<double>(begin: 0.6, end: 1).animate(curved),
             child: FadeTransition(opacity: animation, child: child),
           );
         },
-      ),
-    );
-  }
+      );
 }
