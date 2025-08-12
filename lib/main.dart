@@ -17,18 +17,11 @@
 import 'dart:convert';
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/theme_data.dart';
-import 'package:arcgis_maps_sdk_flutter_samples/models/category.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/models/sample.dart';
-import 'package:arcgis_maps_sdk_flutter_samples/widgets/about_info.dart';
-import 'package:arcgis_maps_sdk_flutter_samples/widgets/category_card.dart';
-import 'package:arcgis_maps_sdk_flutter_samples/widgets/code_view_page.dart';
-import 'package:arcgis_maps_sdk_flutter_samples/widgets/readme_page.dart';
-import 'package:arcgis_maps_sdk_flutter_samples/widgets/sample_detail_page.dart';
-import 'package:arcgis_maps_sdk_flutter_samples/widgets/sample_viewer_page.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/router_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:go_router/go_router.dart';
 
 void main() async {
   // Supply your apiKey using the --dart-define-from-file command line argument.
@@ -46,71 +39,7 @@ void main() async {
     allSamples.add(Sample.fromJson(s.value as Map<String, dynamic>));
   }
 
-  final router = GoRouter(
-    routes: [
-      GoRoute(
-        path: '/',
-        builder: (context, state) => const SampleViewerApp(),
-        routes: [
-          GoRoute(
-            path: 'search',
-            pageBuilder: (context, state) => CategoryTransitionPage(
-              child: SampleViewerPage(allSamples: allSamples),
-            ),
-          ),
-          GoRoute(
-            path: 'category/:category',
-            pageBuilder: (context, state) {
-              final categoryName = state.pathParameters['category'];
-              final category = SampleCategory.values.firstWhere(
-                (c) => c.name == categoryName,
-                orElse: () => SampleCategory.all,
-              );
-              return CategoryTransitionPage(
-                child: SampleViewerPage(
-                  allSamples: allSamples,
-                  category: category,
-                ),
-              );
-            },
-          ),
-          GoRoute(
-            path: 'sample/:sample/live',
-            builder: (context, state) {
-              final sampleKey = state.pathParameters['sample'];
-              final sample = allSamples
-                  .where((sample) => sample.key == sampleKey)
-                  .first;
-
-              return SampleDetailPage(sample: sample);
-            },
-          ),
-          GoRoute(
-            path: 'sample/:sample/README',
-            builder: (context, state) {
-              final sampleKey = state.pathParameters['sample'];
-              final sample = allSamples
-                  .where((sample) => sample.key == sampleKey)
-                  .first;
-
-              return ReadmePage(sample: sample);
-            },
-          ),
-          GoRoute(
-            path: 'sample/:sample/Code',
-            builder: (context, state) {
-              final sampleKey = state.pathParameters['sample'];
-              final sample = allSamples
-                  .where((sample) => sample.key == sampleKey)
-                  .first;
-
-              return CodeViewPage(sample: sample);
-            },
-          ),
-        ],
-      ),
-    ],
-  );
+  final router = routerConfig(allSamples);
 
   runApp(
     MaterialApp.router(
@@ -126,133 +55,4 @@ void main() async {
       theme: sampleViewerTheme,
     ),
   );
-}
-
-class SampleViewerApp extends StatefulWidget {
-  const SampleViewerApp({super.key});
-
-  @override
-  State<SampleViewerApp> createState() => _SampleViewerAppState();
-}
-
-class _SampleViewerAppState extends State<SampleViewerApp>
-    with SingleTickerProviderStateMixin {
-  static const double cardSpacing = 6;
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Sample Categories'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.info_outline),
-            onPressed: () => showModalBottomSheet<void>(
-              context: context,
-              isScrollControlled: true,
-              useSafeArea: true,
-              builder: (context) {
-                return FractionallySizedBox(
-                  heightFactor: 0.5,
-                  child: Column(
-                    children: [
-                      AppBar(
-                        automaticallyImplyLeading: false,
-                        title: const Text('About'),
-                        actions: [
-                          IconButton(
-                            icon: const Icon(Icons.close),
-                            onPressed: () => Navigator.pop(context),
-                          ),
-                        ],
-                        shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.vertical(
-                            top: Radius.circular(30),
-                          ),
-                        ),
-                      ),
-                      Container(
-                        padding: const EdgeInsets.all(20),
-                        child: const AboutInfo(title: applicationTitle),
-                      ),
-                    ],
-                  ),
-                );
-              },
-            ),
-          ),
-        ],
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(cardSpacing),
-        child: OrientationBuilder(
-          builder: (context, orientation) {
-            return SingleChildScrollView(
-              child: _ResponsiveCategoryGrid(orientation: orientation),
-            );
-          },
-        ),
-      ),
-      floatingActionButton: Builder(
-        builder: (context) {
-          return FloatingActionButton(
-            onPressed: () => context.push('/search'),
-            child: const Icon(Icons.search),
-          );
-        },
-      ),
-    );
-  }
-}
-
-class _ResponsiveCategoryGrid extends StatelessWidget {
-  const _ResponsiveCategoryGrid({required this.orientation});
-  final Orientation orientation;
-  static const double cardSpacing = 6;
-
-  @override
-  Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        var cardSize = (constraints.maxWidth - cardSpacing) / 2;
-        if (orientation == Orientation.landscape) {
-          cardSize = (constraints.maxHeight - cardSpacing) / 2;
-        }
-        return Wrap(
-          spacing: cardSpacing,
-          runSpacing: cardSpacing,
-          children: List.generate(
-            SampleCategory.values.length,
-            (i) => SizedBox(
-              height: cardSize,
-              width: cardSize,
-              child: CategoryCard(
-                category: SampleCategory.values[i],
-                onClick: () =>
-                    context.push('/category/${SampleCategory.values[i].name}'),
-                index: i,
-              ),
-            ),
-          ),
-        );
-      },
-    );
-  }
-}
-
-// Custom transition page for category navigation (scale + fade + curve).
-class CategoryTransitionPage extends CustomTransitionPage<void> {
-  CategoryTransitionPage({required super.child})
-    : super(
-        transitionsBuilder: (context, animation, secondaryAnimation, child) {
-          final curved = CurvedAnimation(
-            parent: animation,
-            curve: Curves.easeOutBack,
-          );
-          return ScaleTransition(
-            scale: Tween<double>(begin: 0.6, end: 1).animate(curved),
-            child: FadeTransition(opacity: animation, child: child),
-          );
-        },
-      );
 }
