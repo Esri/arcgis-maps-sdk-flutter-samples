@@ -27,8 +27,14 @@ const applicationTitle = 'ArcGIS Maps SDK for Flutter Samples';
 
 /// A page that displays a list of sample categories.
 class SampleViewerPage extends StatefulWidget {
-  const SampleViewerPage({super.key, this.category, this.isSearchable = true});
+  const SampleViewerPage({
+    required this.allSamples,
+    this.category,
+    this.isSearchable = true,
+    super.key,
+  });
 
+  final List<Sample> allSamples;
   final SampleCategory? category;
   final bool isSearchable;
 
@@ -37,7 +43,6 @@ class SampleViewerPage extends StatefulWidget {
 }
 
 class _SampleViewerPageState extends State<SampleViewerPage> {
-  final _allSamples = <Sample>[];
   final _searchFocusNode = FocusNode();
   final _textEditingController = TextEditingController();
   var _filteredSamples = <Sample>[];
@@ -186,7 +191,7 @@ class _SampleViewerPageState extends State<SampleViewerPage> {
     );
     final sampleData = jsonDecode(jsonString) as Map<String, dynamic>;
     for (final s in sampleData.entries) {
-      _allSamples.add(Sample.fromJson(s.value as Map<String, dynamic>));
+      widget.allSamples.add(Sample.fromJson(s.value as Map<String, dynamic>));
     }
 
     if (widget.category != null) {
@@ -205,13 +210,13 @@ class _SampleViewerPageState extends State<SampleViewerPage> {
       if (widget.category == null) {
         results = [];
       } else if (widget.category == SampleCategory.all) {
-        results = _allSamples;
+        results = widget.allSamples;
       } else {
         results = getSamplesByCategory(widget.category);
       }
     } else {
       if (widget.category == null || widget.category == SampleCategory.all) {
-        results = _allSamples.where((sample) {
+        results = widget.allSamples.where((sample) {
           final lowerSearchText = searchText.toLowerCase();
           return sample.title.toLowerCase().contains(lowerSearchText) ||
               sample.category.toLowerCase().contains(lowerSearchText) ||
@@ -238,10 +243,10 @@ class _SampleViewerPageState extends State<SampleViewerPage> {
       return [];
     }
     if (category.title == SampleCategory.all.title) {
-      return _allSamples;
+      return widget.allSamples;
     }
 
-    return _allSamples.where((sample) {
+    return widget.allSamples.where((sample) {
       return sample.category.toLowerCase() == category.title.toLowerCase();
     }).toList();
   }
@@ -250,7 +255,7 @@ class _SampleViewerPageState extends State<SampleViewerPage> {
     final uniqueHints = <String>{};
     final random = Random();
 
-    for (final sample in _allSamples) {
+    for (final sample in widget.allSamples) {
       final title = sample.title;
 
       // Generate a hint from title (if short).

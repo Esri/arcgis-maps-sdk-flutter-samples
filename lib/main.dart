@@ -14,22 +14,37 @@
 // limitations under the License.
 //
 
+import 'dart:convert';
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/theme_data.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/models/category.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/models/sample.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/widgets/about_info.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/widgets/category_card.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/widgets/code_view_page.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/widgets/readme_page.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/widgets/sample_detail_page.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/widgets/sample_viewer_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:go_router/go_router.dart';
 
-void main() {
+void main() async {
   // Supply your apiKey using the --dart-define-from-file command line argument.
   const apiKey = String.fromEnvironment('API_KEY');
   // Alternatively, replace the above line with the following and hard-code your apiKey here:
   // const apiKey = ''; // Your API Key here.
   ArcGISEnvironment.apiKey = apiKey;
+
+  final allSamples = <Sample>[];
+  final jsonString = await rootBundle.loadString(
+    'assets/generated_samples_list.json',
+  );
+  final sampleData = jsonDecode(jsonString) as Map<String, dynamic>;
+  for (final s in sampleData.entries) {
+    allSamples.add(Sample.fromJson(s.value as Map<String, dynamic>));
+  }
 
   final router = GoRouter(
     routes: [
@@ -37,6 +52,12 @@ void main() {
         path: '/',
         builder: (context, state) => const SampleViewerApp(),
         routes: [
+          GoRoute(
+            path: 'search',
+            pageBuilder: (context, state) => CategoryTransitionPage(
+              child: SampleViewerPage(allSamples: allSamples),
+            ),
+          ),
           GoRoute(
             path: 'category/:category',
             pageBuilder: (context, state) {
@@ -46,14 +67,45 @@ void main() {
                 orElse: () => SampleCategory.all,
               );
               return CategoryTransitionPage(
-                child: SampleViewerPage(category: category),
+                child: SampleViewerPage(
+                  allSamples: allSamples,
+                  category: category,
+                ),
               );
             },
           ),
           GoRoute(
-            path: 'search',
-            pageBuilder: (context, state) =>
-                CategoryTransitionPage(child: const SampleViewerPage()),
+            path: 'sample/:sample/live',
+            builder: (context, state) {
+              final sampleKey = state.pathParameters['sample'];
+              final sample = allSamples
+                  .where((sample) => sample.key == sampleKey)
+                  .first;
+
+              return SampleDetailPage(sample: sample);
+            },
+          ),
+          GoRoute(
+            path: 'sample/:sample/README',
+            builder: (context, state) {
+              final sampleKey = state.pathParameters['sample'];
+              final sample = allSamples
+                  .where((sample) => sample.key == sampleKey)
+                  .first;
+
+              return ReadmePage(sample: sample);
+            },
+          ),
+          GoRoute(
+            path: 'sample/:sample/Code',
+            builder: (context, state) {
+              final sampleKey = state.pathParameters['sample'];
+              final sample = allSamples
+                  .where((sample) => sample.key == sampleKey)
+                  .first;
+
+              return CodeViewPage(sample: sample);
+            },
           ),
         ],
       ),
@@ -144,7 +196,7 @@ class _SampleViewerAppState extends State<SampleViewerApp>
       floatingActionButton: Builder(
         builder: (context) {
           return FloatingActionButton(
-            onPressed: () => context.go('/search'),
+            onPressed: () => context.push('/search'),
             child: const Icon(Icons.search),
           );
         },
@@ -177,7 +229,7 @@ class _ResponsiveCategoryGrid extends StatelessWidget {
               child: CategoryCard(
                 category: SampleCategory.values[i],
                 onClick: () =>
-                    context.go('/category/${SampleCategory.values[i].name}'),
+                    context.push('/category/${SampleCategory.values[i].name}'),
                 index: i,
               ),
             ),

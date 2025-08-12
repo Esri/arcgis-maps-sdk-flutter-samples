@@ -15,9 +15,9 @@
 //
 
 import 'package:arcgis_maps_sdk_flutter_samples/models/sample.dart';
-import 'package:arcgis_maps_sdk_flutter_samples/widgets/sample_detail_page.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/widgets/sample_info_popup_menu.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class SampleListView extends StatelessWidget {
   const SampleListView({required this.samples, super.key});
@@ -35,14 +35,7 @@ class SampleListView extends StatelessWidget {
           child: ListTile(
             title: Text(sample.title),
             subtitle: Text(sample.description),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute<void>(
-                  builder: (context) => SampleDetailPage(sample: sample),
-                ),
-              );
-            },
+            onTap: () => context.push('/sample/${sample.key}/live'),
             contentPadding: const EdgeInsets.only(left: 20),
             trailing: SampleInfoPopupMenu(sample: sample),
           ),

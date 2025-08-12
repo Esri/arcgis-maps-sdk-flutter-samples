@@ -15,6 +15,7 @@
 //
 
 import 'package:arcgis_maps_sdk_flutter_samples/models/sample.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/widgets/sample_info_popup_menu.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_syntax_view/flutter_syntax_view.dart';
 import 'package:http/http.dart' as http;
@@ -37,7 +38,13 @@ class _CodeViewPageState extends State<CodeViewPage> {
     final fileName = filePath.split('/').last;
 
     return Scaffold(
-      appBar: AppBar(title: Text(widget.sample.title)),
+      appBar: AppBar(
+        title: FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Text(widget.sample.title),
+        ),
+        actions: [SampleInfoPopupMenu(sample: widget.sample)],
+      ),
       body: SafeArea(
         top: false,
         left: false,
