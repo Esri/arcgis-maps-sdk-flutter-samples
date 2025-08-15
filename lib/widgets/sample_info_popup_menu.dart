@@ -16,9 +16,8 @@
 
 import 'package:arcgis_maps_sdk_flutter_samples/common/sample_state_support.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/models/sample.dart';
-import 'package:arcgis_maps_sdk_flutter_samples/widgets/code_view_page.dart';
-import 'package:arcgis_maps_sdk_flutter_samples/widgets/readme_page.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class SampleInfoPopupMenu extends StatefulWidget {
@@ -59,20 +58,8 @@ class _SampleInfoPopupMenuState extends State<SampleInfoPopupMenu>
         switch (result) {
           case 'Website':
             _launchSampleUrl();
-          case 'README':
-            Navigator.push(
-              context,
-              MaterialPageRoute<void>(
-                builder: (context) => ReadmePage(sample: widget.sample),
-              ),
-            );
-          case 'Code':
-            Navigator.push(
-              context,
-              MaterialPageRoute<void>(
-                builder: (context) => CodeViewPage(sample: widget.sample),
-              ),
-            );
+          default:
+            _navigateTo(context, result);
         }
       },
     );
@@ -90,5 +77,36 @@ class _SampleInfoPopupMenuState extends State<SampleInfoPopupMenu>
         'https://developers.arcgis.com/flutter/sample-code/$formattedKey/';
 
     return Uri.parse(formattedUrl);
+  }
+
+  void _navigateTo(BuildContext context, String selection) {
+    // Get the navigation stack, filtering out anything not related to the current sample.
+    final stack = GoRouter.of(context)
+        .routerDelegate
+        .currentConfiguration
+        .matches
+        .map((match) => match.matchedLocation)
+        .where(
+          (location) => location.startsWith('/sample/${widget.sample.key}/'),
+        );
+
+    // The location we are navigating to.
+    final toLocation = '/sample/${widget.sample.key}/$selection';
+
+    if (stack.isEmpty || stack.last.endsWith('/live')) {
+      // If there is nothing on the stack from this sample, or if we're on the live
+      // running sample, push the location onto the stack.
+      context.push(toLocation);
+    } else {
+      if (stack.last != toLocation) {
+        if (stack.contains(toLocation)) {
+          // If toLocation is already on the navigation stack, pop() to get to it.
+          context.pop();
+        } else {
+          // Otherwise push the new location onto the navigation stack.
+          context.push(toLocation);
+        }
+      }
+    }
   }
 }

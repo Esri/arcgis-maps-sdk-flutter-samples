@@ -15,14 +15,14 @@
 //
 
 import 'dart:math';
-
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
-class RipplePageRoute extends PageRouteBuilder<dynamic> {
-  RipplePageRoute({required this.position, required this.child})
+/// Custom transition page to ripple out from a given screen offset.
+class RippleTransitionPage extends CustomTransitionPage<void> {
+  RippleTransitionPage({required this.position, required super.child})
     : super(
         transitionDuration: const Duration(milliseconds: 600),
-        pageBuilder: (_, _, _) => child,
         transitionsBuilder: (context, animation, _, child) {
           final screenSize = MediaQuery.sizeOf(context);
           final diagonal = sqrt(
@@ -54,8 +54,8 @@ class RipplePageRoute extends PageRouteBuilder<dynamic> {
           );
         },
       );
+
   final Offset position;
-  final Widget child;
 }
 
 class _RippleClipper extends CustomClipper<Path> {
