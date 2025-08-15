@@ -146,13 +146,13 @@ class _Animate3dGraphicState extends State<Animate3dGraphic>
                   child: Container(
                     margin: const EdgeInsets.all(16),
                     width: 170,
-                    height: 120,
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
                       color: Colors.black.withValues(alpha: 0.3),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Column(
+                      mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         _buildTelemetryRow('Altitude', _altitude),
