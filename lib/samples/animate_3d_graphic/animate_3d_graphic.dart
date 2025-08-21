@@ -29,7 +29,7 @@ class Animate3dGraphic extends StatefulWidget {
 }
 
 class _Animate3dGraphicState extends State<Animate3dGraphic>
-    with TickerProviderStateMixin, SampleStateSupport {
+    with SingleTickerProviderStateMixin, SampleStateSupport {
   // Create a controller for the scene view.
   final _sceneViewController = ArcGISSceneView.createController();
 
