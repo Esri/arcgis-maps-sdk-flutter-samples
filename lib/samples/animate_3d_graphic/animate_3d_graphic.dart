@@ -86,8 +86,8 @@ class _Animate3dGraphicState extends State<Animate3dGraphic>
   @override
   void initState() {
     super.initState();
-    // Start the animation ticker.
-    _ticker = createTicker(_onTick)..start();
+    // Create the animation ticker.
+    _ticker = createTicker(_onTick);
   }
 
   @override
@@ -334,10 +334,13 @@ class _Animate3dGraphicState extends State<Animate3dGraphic>
       }
     }
 
+    if (_ticker.isActive) {
+      _ticker.stop();
+      setState(() => _isPlaying = false);
+    }
     setState(() {
       _frames = frames;
       _currentFrameIndex = 0;
-      _isPlaying = false;
     });
 
     if (_frames.isNotEmpty) {
@@ -383,27 +386,34 @@ class _Animate3dGraphicState extends State<Animate3dGraphic>
 
   // Called on each tick to advance the animation.
   void _onTick(Duration elapsed) {
-    if (!_isPlaying || _frames.isEmpty || _planeGraphic == null) return;
+    // Calculate which frame should be shown at this elapsed time.
+    final framesPerSecond = 60 * _animationSpeed.frameStep;
+    var nextFrame = elapsed.inMilliseconds ~/ (1000 / framesPerSecond);
+    if (nextFrame >= _frames.length) {
+      nextFrame = 0;
+      _ticker.stop();
+      setState(() => _isPlaying = false);
+    }
+    if (nextFrame == _currentFrameIndex) return;
 
-    setState(() {
-      _currentFrameIndex += _animationSpeed.frameStep;
-      if (_currentFrameIndex >= _frames.length) {
-        _currentFrameIndex = 0;
-        _isPlaying = false;
-      }
-    });
+    // Advance to the specified frame.
+    setState(() => _currentFrameIndex = nextFrame);
+    _updateFrame(_frames[_currentFrameIndex]);
 
     // Update modal sheet if it's open.
     _modalStateSetter?.call(() {});
-
-    _updateFrame(_frames[_currentFrameIndex]);
   }
 
-  // Toggles the animation play/pause state.
+  // Toggles the animation play/stop state.
   void _toggleAnimation() {
     if (_planeGraphic == null || _frames.isEmpty) return;
 
-    setState(() => _isPlaying = !_isPlaying);
+    if (_ticker.isActive) {
+      _ticker.stop();
+    } else {
+      _ticker.start();
+    }
+    setState(() => _isPlaying = _ticker.isActive);
   }
 
   // Shows the mission settings in a bottom sheet.
@@ -461,10 +471,13 @@ class _Animate3dGraphicState extends State<Animate3dGraphic>
                 initialSelection: _currentMission,
                 onSelected: (mission) {
                   if (mission != null) {
+                    if (_ticker.isActive) {
+                      _ticker.stop();
+                      setState(() => _isPlaying = false);
+                    }
                     setState(() {
                       _currentMission = mission;
                       _currentFrameIndex = 0;
-                      _isPlaying = false;
                     });
                     // Update the modal to show progress reset to 0
                     _modalStateSetter?.call(() {});
