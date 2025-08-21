@@ -57,6 +57,9 @@ class _Animate3dGraphicState extends State<Animate3dGraphic>
   // The ticker that drives the animation.
   late final Ticker _ticker;
 
+  // The interval between animation frames in milliseconds.
+  var _frameIntervalMs = 0;
+
   // The currently selected mission.
   var _currentMission = Mission.grandCanyon;
 
@@ -88,6 +91,7 @@ class _Animate3dGraphicState extends State<Animate3dGraphic>
     super.initState();
     // Create the animation ticker.
     _ticker = createTicker(_onTick);
+    _updateFrameInterval();
   }
 
   @override
@@ -387,8 +391,7 @@ class _Animate3dGraphicState extends State<Animate3dGraphic>
   // Called on each tick to advance the animation.
   void _onTick(Duration elapsed) {
     // Calculate which frame should be shown at this elapsed time.
-    final framesPerSecond = 60 * _animationSpeed.frameStep;
-    var nextFrame = elapsed.inMilliseconds ~/ (1000 / framesPerSecond);
+    var nextFrame = elapsed.inMilliseconds ~/ _frameIntervalMs;
     if (nextFrame >= _frames.length) {
       nextFrame = 0;
       _ticker.stop();
@@ -402,6 +405,12 @@ class _Animate3dGraphicState extends State<Animate3dGraphic>
 
     // Update modal sheet if it's open.
     _modalStateSetter?.call(() {});
+  }
+
+  // Updates the frame interval based on the current animation speed.
+  void _updateFrameInterval() {
+    final framesPerSecond = 60 * _animationSpeed.frameStep;
+    _frameIntervalMs = (1000 / framesPerSecond).round();
   }
 
   // Toggles the animation play/stop state.
@@ -498,6 +507,7 @@ class _Animate3dGraphicState extends State<Animate3dGraphic>
                 onSelected: (speed) {
                   if (speed != null) {
                     setState(() => _animationSpeed = speed);
+                    _updateFrameInterval();
                   }
                 },
                 dropdownMenuEntries: AnimationSpeed.values.map((speed) {
