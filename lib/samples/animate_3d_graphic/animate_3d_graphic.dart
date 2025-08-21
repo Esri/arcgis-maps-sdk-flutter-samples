@@ -74,11 +74,8 @@ class _Animate3dGraphicState extends State<Animate3dGraphic>
   var _autoPitch = false;
   var _autoRoll = false;
 
-  // State variables for real-time telemetry tracking.
-  double _altitude = 0;
-  double _heading = 0;
-  double _pitch = 0;
-  double _roll = 0;
+  // Data for real-time telemetry tracking.
+  final _telemetryData = TelemetryData();
 
   // The current progress of the animation.
   double get _progress {
@@ -98,6 +95,7 @@ class _Animate3dGraphicState extends State<Animate3dGraphic>
   void dispose() {
     // Cleanup the ticker.
     _ticker.dispose();
+    _telemetryData.dispose();
     super.dispose();
   }
 
@@ -159,10 +157,10 @@ class _Animate3dGraphicState extends State<Animate3dGraphic>
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        _buildTelemetryRow('Altitude', _altitude),
-                        _buildTelemetryRow('Heading', _heading),
-                        _buildTelemetryRow('Pitch', _pitch),
-                        _buildTelemetryRow('Roll', _roll),
+                        _buildTelemetryRow('Altitude', _telemetryData.altitude),
+                        _buildTelemetryRow('Heading', _telemetryData.heading),
+                        _buildTelemetryRow('Pitch', _telemetryData.pitch),
+                        _buildTelemetryRow('Roll', _telemetryData.roll),
                       ],
                     ),
                   ),
@@ -361,30 +359,33 @@ class _Animate3dGraphicState extends State<Animate3dGraphic>
     _planeGraphic!.attributes['PITCH'] = frame.pitch;
     _planeGraphic!.attributes['ROLL'] = frame.roll;
 
-    setState(() {
-      _altitude = frame.position.z ?? 0;
-      _heading = frame.heading;
-      _pitch = frame.pitch;
-      _roll = frame.roll;
-    });
+    _telemetryData.altitude.value = frame.position.z ?? 0;
+    _telemetryData.heading.value = frame.heading;
+    _telemetryData.pitch.value = frame.pitch;
+    _telemetryData.roll.value = frame.roll;
   }
 
   // Telemetry Row Widget.
-  Widget _buildTelemetryRow(String label, double value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 2),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(label, style: const TextStyle(color: Colors.white)),
-          Text(
-            label == 'Altitude'
-                ? '${value.toStringAsFixed(0)} m'
-                : '${value.toStringAsFixed(0)}°',
-            style: const TextStyle(color: Colors.white),
+  Widget _buildTelemetryRow(String label, ValueNotifier<double> valueNotifier) {
+    return ValueListenableBuilder(
+      valueListenable: valueNotifier,
+      builder: (context, value, child) {
+        return Padding(
+          padding: const EdgeInsets.symmetric(vertical: 2),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(label, style: const TextStyle(color: Colors.white)),
+              Text(
+                label == 'Altitude'
+                    ? '${value.toStringAsFixed(0)} m'
+                    : '${value.toStringAsFixed(0)}°',
+                style: const TextStyle(color: Colors.white),
+              ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 
@@ -632,6 +633,21 @@ class _Animate3dGraphicState extends State<Animate3dGraphic>
         const SizedBox(height: 8),
       ],
     );
+  }
+}
+
+// A class to hold telemetry data in ValueNotifiers.
+class TelemetryData {
+  final altitude = ValueNotifier<double>(0);
+  final heading = ValueNotifier<double>(0);
+  final pitch = ValueNotifier<double>(0);
+  final roll = ValueNotifier<double>(0);
+
+  void dispose() {
+    altitude.dispose();
+    heading.dispose();
+    pitch.dispose();
+    roll.dispose();
   }
 }
 
