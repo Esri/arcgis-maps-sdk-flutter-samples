@@ -125,10 +125,10 @@ class _Animate3dGraphicState extends State<Animate3dGraphic>
                       onPressed: _showMissionSettings,
                       child: const Text('Mission'),
                     ),
-                    // Play/pause button.
+                    // Play/stop button.
                     IconButton(
                       onPressed: _toggleAnimation,
-                      icon: Icon(_isPlaying ? Icons.pause : Icons.play_arrow),
+                      icon: Icon(_isPlaying ? Icons.stop : Icons.play_arrow),
                     ),
                     // Button to open camera settings.
                     ElevatedButton(
