@@ -29,7 +29,7 @@ class Animate3dGraphic extends StatefulWidget {
 }
 
 class _Animate3dGraphicState extends State<Animate3dGraphic>
-    with TickerProviderStateMixin, SampleStateSupport {
+    with SingleTickerProviderStateMixin, SampleStateSupport {
   // Create a controller for the scene view.
   final _sceneViewController = ArcGISSceneView.createController();
 
@@ -57,6 +57,9 @@ class _Animate3dGraphicState extends State<Animate3dGraphic>
   // The ticker that drives the animation.
   late final Ticker _ticker;
 
+  // The interval between animation frames in milliseconds.
+  var _frameIntervalMs = 0;
+
   // The currently selected mission.
   var _currentMission = Mission.grandCanyon;
 
@@ -71,11 +74,8 @@ class _Animate3dGraphicState extends State<Animate3dGraphic>
   var _autoPitch = false;
   var _autoRoll = false;
 
-  // State variables for real-time telemetry tracking.
-  double _altitude = 0;
-  double _heading = 0;
-  double _pitch = 0;
-  double _roll = 0;
+  // Data for real-time telemetry tracking.
+  final _telemetryData = TelemetryData();
 
   // The current progress of the animation.
   double get _progress {
@@ -86,14 +86,16 @@ class _Animate3dGraphicState extends State<Animate3dGraphic>
   @override
   void initState() {
     super.initState();
-    // Start the animation ticker.
-    _ticker = createTicker(_onTick)..start();
+    // Create the animation ticker.
+    _ticker = createTicker(_onTick);
+    _updateFrameInterval();
   }
 
   @override
   void dispose() {
     // Cleanup the ticker.
     _ticker.dispose();
+    _telemetryData.dispose();
     super.dispose();
   }
 
@@ -123,10 +125,10 @@ class _Animate3dGraphicState extends State<Animate3dGraphic>
                       onPressed: _showMissionSettings,
                       child: const Text('Mission'),
                     ),
-                    // Play/pause button.
+                    // Play/stop button.
                     IconButton(
                       onPressed: _toggleAnimation,
-                      icon: Icon(_isPlaying ? Icons.pause : Icons.play_arrow),
+                      icon: Icon(_isPlaying ? Icons.stop : Icons.play_arrow),
                     ),
                     // Button to open camera settings.
                     ElevatedButton(
@@ -155,10 +157,10 @@ class _Animate3dGraphicState extends State<Animate3dGraphic>
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        _buildTelemetryRow('Altitude', _altitude),
-                        _buildTelemetryRow('Heading', _heading),
-                        _buildTelemetryRow('Pitch', _pitch),
-                        _buildTelemetryRow('Roll', _roll),
+                        _buildTelemetryRow('Altitude', _telemetryData.altitude),
+                        _buildTelemetryRow('Heading', _telemetryData.heading),
+                        _buildTelemetryRow('Pitch', _telemetryData.pitch),
+                        _buildTelemetryRow('Roll', _telemetryData.roll),
                       ],
                     ),
                   ),
@@ -334,10 +336,13 @@ class _Animate3dGraphicState extends State<Animate3dGraphic>
       }
     }
 
+    if (_ticker.isActive) {
+      _ticker.stop();
+      setState(() => _isPlaying = false);
+    }
     setState(() {
       _frames = frames;
       _currentFrameIndex = 0;
-      _isPlaying = false;
     });
 
     if (_frames.isNotEmpty) {
@@ -354,56 +359,71 @@ class _Animate3dGraphicState extends State<Animate3dGraphic>
     _planeGraphic!.attributes['PITCH'] = frame.pitch;
     _planeGraphic!.attributes['ROLL'] = frame.roll;
 
-    setState(() {
-      _altitude = frame.position.z ?? 0;
-      _heading = frame.heading;
-      _pitch = frame.pitch;
-      _roll = frame.roll;
-    });
+    _telemetryData.altitude.value = frame.position.z ?? 0;
+    _telemetryData.heading.value = frame.heading;
+    _telemetryData.pitch.value = frame.pitch;
+    _telemetryData.roll.value = frame.roll;
   }
 
   // Telemetry Row Widget.
-  Widget _buildTelemetryRow(String label, double value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 2),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(label, style: const TextStyle(color: Colors.white)),
-          Text(
-            label == 'Altitude'
-                ? '${value.toStringAsFixed(0)} m'
-                : '${value.toStringAsFixed(0)}°',
-            style: const TextStyle(color: Colors.white),
+  Widget _buildTelemetryRow(String label, ValueNotifier<double> valueNotifier) {
+    return ValueListenableBuilder(
+      valueListenable: valueNotifier,
+      builder: (context, value, child) {
+        return Padding(
+          padding: const EdgeInsets.symmetric(vertical: 2),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(label, style: const TextStyle(color: Colors.white)),
+              Text(
+                label == 'Altitude'
+                    ? '${value.toStringAsFixed(0)} m'
+                    : '${value.toStringAsFixed(0)}°',
+                style: const TextStyle(color: Colors.white),
+              ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 
   // Called on each tick to advance the animation.
   void _onTick(Duration elapsed) {
-    if (!_isPlaying || _frames.isEmpty || _planeGraphic == null) return;
+    // Calculate which frame should be shown at this elapsed time.
+    var nextFrame = elapsed.inMilliseconds ~/ _frameIntervalMs;
+    if (nextFrame >= _frames.length) {
+      nextFrame = 0;
+      _ticker.stop();
+      setState(() => _isPlaying = false);
+    }
+    if (nextFrame == _currentFrameIndex) return;
 
-    setState(() {
-      _currentFrameIndex += _animationSpeed.frameStep;
-      if (_currentFrameIndex >= _frames.length) {
-        _currentFrameIndex = 0;
-        _isPlaying = false;
-      }
-    });
+    // Advance to the specified frame.
+    setState(() => _currentFrameIndex = nextFrame);
+    _updateFrame(_frames[_currentFrameIndex]);
 
     // Update modal sheet if it's open.
     _modalStateSetter?.call(() {});
-
-    _updateFrame(_frames[_currentFrameIndex]);
   }
 
-  // Toggles the animation play/pause state.
+  // Updates the frame interval based on the current animation speed.
+  void _updateFrameInterval() {
+    final framesPerSecond = 60 * _animationSpeed.frameStep;
+    _frameIntervalMs = (1000 / framesPerSecond).round();
+  }
+
+  // Toggles the animation play/stop state.
   void _toggleAnimation() {
     if (_planeGraphic == null || _frames.isEmpty) return;
 
-    setState(() => _isPlaying = !_isPlaying);
+    if (_ticker.isActive) {
+      _ticker.stop();
+    } else {
+      _ticker.start();
+    }
+    setState(() => _isPlaying = _ticker.isActive);
   }
 
   // Shows the mission settings in a bottom sheet.
@@ -461,10 +481,13 @@ class _Animate3dGraphicState extends State<Animate3dGraphic>
                 initialSelection: _currentMission,
                 onSelected: (mission) {
                   if (mission != null) {
+                    if (_ticker.isActive) {
+                      _ticker.stop();
+                      setState(() => _isPlaying = false);
+                    }
                     setState(() {
                       _currentMission = mission;
                       _currentFrameIndex = 0;
-                      _isPlaying = false;
                     });
                     // Update the modal to show progress reset to 0
                     _modalStateSetter?.call(() {});
@@ -485,6 +508,7 @@ class _Animate3dGraphicState extends State<Animate3dGraphic>
                 onSelected: (speed) {
                   if (speed != null) {
                     setState(() => _animationSpeed = speed);
+                    _updateFrameInterval();
                   }
                 },
                 dropdownMenuEntries: AnimationSpeed.values.map((speed) {
@@ -609,6 +633,21 @@ class _Animate3dGraphicState extends State<Animate3dGraphic>
         const SizedBox(height: 8),
       ],
     );
+  }
+}
+
+// A class to hold telemetry data in ValueNotifiers.
+class TelemetryData {
+  final altitude = ValueNotifier<double>(0);
+  final heading = ValueNotifier<double>(0);
+  final pitch = ValueNotifier<double>(0);
+  final roll = ValueNotifier<double>(0);
+
+  void dispose() {
+    altitude.dispose();
+    heading.dispose();
+    pitch.dispose();
+    roll.dispose();
   }
 }
 
