@@ -44,7 +44,6 @@ class _SampleViewerPageState extends State<SampleViewerPage> {
   final _searchFocusNode = FocusNode();
   final _textEditingController = TextEditingController();
   var _filteredSamples = <Sample>[];
-  var _ready = false;
   var _searchHasFocus = false;
 
   final _searchPrefixes = [
@@ -78,27 +77,27 @@ class _SampleViewerPageState extends State<SampleViewerPage> {
   @override
   void initState() {
     super.initState();
-    // Delay search after first frame.
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      if (mounted) {
-        await loadSamples();
-        _searchFocusNode.addListener(() {
-          if (_searchFocusNode.hasFocus != _searchHasFocus) {
-            setState(() => _searchHasFocus = _searchFocusNode.hasFocus);
-          }
-        });
 
-        _hintTimer = Timer.periodic(const Duration(seconds: 3), (_) {
-          if (!mounted) return;
+    if (widget.category != null) {
+      _filteredSamples = getSamplesByCategory(widget.category);
+    }
 
-          if (_hintMessages.isNotEmpty &&
-              !_searchHasFocus &&
-              _textEditingController.text.isEmpty) {
-            setState(() {
-              _currentHintIndex =
-                  (_currentHintIndex + 1) % _hintMessages.length;
-            });
-          }
+    generateSearchHints();
+
+    _searchFocusNode.addListener(() {
+      if (_searchFocusNode.hasFocus != _searchHasFocus) {
+        setState(() => _searchHasFocus = _searchFocusNode.hasFocus);
+      }
+    });
+
+    _hintTimer = Timer.periodic(const Duration(seconds: 3), (_) {
+      if (!mounted) return;
+
+      if (_hintMessages.isNotEmpty &&
+          !_searchHasFocus &&
+          _textEditingController.text.isEmpty) {
+        setState(() {
+          _currentHintIndex = (_currentHintIndex + 1) % _hintMessages.length;
         });
       }
     });
@@ -142,32 +141,29 @@ class _SampleViewerPageState extends State<SampleViewerPage> {
               ),
             ),
           ),
-          if (_ready)
-            Expanded(
-              child: Listener(
-                onPointerDown: (_) =>
-                    FocusManager.instance.primaryFocus?.unfocus(),
-                child:
-                    _filteredSamples.isEmpty &&
-                        _textEditingController.text.isEmpty &&
-                        widget.isSearchable &&
-                        _hintMessages.isNotEmpty
-                    ? Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 12),
-                        child: AnimatedSwitcher(
-                          duration: const Duration(milliseconds: 400),
-                          child: Text(
-                            _hintMessages[_currentHintIndex],
-                            key: ValueKey(_currentHintIndex),
-                            textAlign: TextAlign.center,
-                          ),
+          Expanded(
+            child: Listener(
+              onPointerDown: (_) =>
+                  FocusManager.instance.primaryFocus?.unfocus(),
+              child:
+                  _filteredSamples.isEmpty &&
+                      _textEditingController.text.isEmpty &&
+                      widget.isSearchable &&
+                      _hintMessages.isNotEmpty
+                  ? Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      child: AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 400),
+                        child: Text(
+                          _hintMessages[_currentHintIndex],
+                          key: ValueKey(_currentHintIndex),
+                          textAlign: TextAlign.center,
                         ),
-                      )
-                    : SampleListView(samples: _filteredSamples),
-              ),
-            )
-          else
-            const Center(child: Text('Loading samples...')),
+                      ),
+                    )
+                  : SampleListView(samples: _filteredSamples),
+            ),
+          ),
         ],
       ),
     );
@@ -181,16 +177,6 @@ class _SampleViewerPageState extends State<SampleViewerPage> {
     } else {
       _searchFocusNode.requestFocus();
     }
-  }
-
-  Future<void> loadSamples() async {
-    if (widget.category != null) {
-      _filteredSamples = getSamplesByCategory(widget.category);
-    }
-
-    generateSearchHints();
-
-    setState(() => _ready = true);
   }
 
   void onSearchChanged(String searchText) {
