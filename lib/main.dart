@@ -30,14 +30,14 @@ void main() async {
   // const apiKey = ''; // Your API Key here.
   ArcGISEnvironment.apiKey = apiKey;
 
-  final allSamples = <Sample>[];
   final jsonString = await rootBundle.loadString(
     'assets/generated_samples_list.json',
   );
   final sampleData = jsonDecode(jsonString) as Map<String, dynamic>;
-  for (final s in sampleData.entries) {
-    allSamples.add(Sample.fromJson(s.value as Map<String, dynamic>));
-  }
+
+  final allSamples = List<Sample>.unmodifiable(
+    sampleData.values.whereType<Map<String, dynamic>>().map(Sample.fromJson),
+  );
 
   final router = routerConfig(allSamples);
 
