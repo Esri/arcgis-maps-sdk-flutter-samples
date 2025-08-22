@@ -186,14 +186,6 @@ class _SampleViewerPageState extends State<SampleViewerPage> {
   }
 
   Future<void> loadSamples() async {
-    final jsonString = await rootBundle.loadString(
-      'assets/generated_samples_list.json',
-    );
-    final sampleData = jsonDecode(jsonString) as Map<String, dynamic>;
-    for (final s in sampleData.entries) {
-      widget.allSamples.add(Sample.fromJson(s.value as Map<String, dynamic>));
-    }
-
     if (widget.category != null) {
       _filteredSamples = getSamplesByCategory(widget.category);
     }
