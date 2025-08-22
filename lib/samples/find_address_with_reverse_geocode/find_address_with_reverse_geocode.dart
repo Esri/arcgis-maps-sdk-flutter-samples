@@ -97,7 +97,7 @@ class _FindAddressWithReverseGeocodeState
 
     // Convert the screen point to a map point.
     final mapTapPoint = _mapViewController.screenToLocation(
-      screen: localPosition,
+      localPosition,
     );
     if (mapTapPoint == null) return;
 

@@ -79,7 +79,7 @@ class _ShowPortalUserInfoState extends State<ShowPortalUserInfo>
     try {
       // Initiate the sign in process to the OAuth server using the defined user configuration.
       final credential = await OAuthUserCredential.create(
-        configuration: _oauthUserConfiguration,
+         _oauthUserConfiguration,
       );
 
       // Sign in was successful, so continue with the provided credential.

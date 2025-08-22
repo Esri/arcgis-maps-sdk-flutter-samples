@@ -188,7 +188,7 @@ class _AddFeatureLayersState extends State<AddFeatureLayers>
     await geodatabase.load();
     // Get the feature table with the table name.
     final geodatabaseFeatureTables = geodatabase.getGeodatabaseFeatureTable(
-      tableName: 'Trailheads',
+      'Trailheads',
     );
     // Check if the feature table is not null.
     if (geodatabaseFeatureTables != null) {

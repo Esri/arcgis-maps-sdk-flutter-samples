@@ -319,7 +319,7 @@ class _ShowViewshedFromPointInSceneState
 
   void onTap(Offset offset) {
     final tapLocation = _sceneViewController.screenToBaseSurface(
-      screen: offset,
+      offset,
     );
     if (tapLocation == null) return;
 

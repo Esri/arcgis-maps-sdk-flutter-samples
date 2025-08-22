@@ -162,7 +162,7 @@ class _StyleGraphicsWithRendererState extends State<StyleGraphicsWithRenderer>
       semiAxis2Length: 400,
     );
     final ellipseGeometry = GeometryEngine.ellipseGeodesic(
-      parameters: parameters,
+      parameters,
     );
     final ellipseGraphic = Graphic(geometry: ellipseGeometry);
 

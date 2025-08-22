@@ -137,7 +137,7 @@ class _ManageFeaturesState extends State<ManageFeatures>
 
       // Get the feature table from the service geodatabase referencing the Damage Assessment feature service.
       // Creating the feature table from the feature service will cause the service geodatabase to be null.
-      _damageServiceFeatureTable = serviceGeodatabase.getTable(layerId: 0)!;
+      _damageServiceFeatureTable = serviceGeodatabase.getTable(0)!;
       // Load the table.
       await _damageServiceFeatureTable.load();
       // Get the required field from the table - in this case, damage type.
@@ -237,7 +237,7 @@ class _ManageFeaturesState extends State<ManageFeatures>
     final feature = _damageServiceFeatureTable.createFeature();
 
     // Get the normalized geometry for the tapped location and use it as the feature's geometry.
-    final geometry = _mapViewController.screenToLocation(screen: localPosition);
+    final geometry = _mapViewController.screenToLocation(localPosition);
     if (geometry != null) {
       final normalizedGeometry = GeometryEngine.normalizeCentralMeridian(
         geometry,
@@ -287,7 +287,7 @@ class _ManageFeaturesState extends State<ManageFeatures>
 
     // Get the normalized geometry for the tapped location and use it as the feature's geometry.
     final newGeometry = _mapViewController.screenToLocation(
-      screen: localPosition,
+      localPosition,
     );
     if (newGeometry != null) {
       final normalizedNewGeometry = GeometryEngine.normalizeCentralMeridian(

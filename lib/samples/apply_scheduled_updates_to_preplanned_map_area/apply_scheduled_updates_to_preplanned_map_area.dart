@@ -117,7 +117,7 @@ class _ApplyScheduledUpdatesToPreplannedMapAreaState
     setState(() => _canUpdate = false);
 
     final mapSyncJob = _offlineMapSyncTask.syncOfflineMap(
-      parameters: _mapSyncParameters,
+      _mapSyncParameters,
     );
     try {
       await mapSyncJob.run();

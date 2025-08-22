@@ -205,7 +205,7 @@ class _CreatePlanarAndGeodeticBuffersState
 
   void onTap(Offset screenPoint) {
     // Capture the tapped point and convert it to a map point.
-    final mapPoint = _mapViewController.screenToLocation(screen: screenPoint);
+    final mapPoint = _mapViewController.screenToLocation(screenPoint);
     if (mapPoint == null) return;
 
     // Create a geodetic buffer around the tapped point at the specified distance.

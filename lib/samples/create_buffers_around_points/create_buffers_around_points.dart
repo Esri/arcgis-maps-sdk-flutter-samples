@@ -173,7 +173,7 @@ class _CreateBuffersAroundPointsState extends State<CreateBuffersAroundPoints>
 
   void onTap(Offset offset) {
     // Convert the screen point to a map point.
-    final mapPoint = _mapViewController.screenToLocation(screen: offset);
+    final mapPoint = _mapViewController.screenToLocation(offset);
 
     // Ensure the map point is within the boundary.
     if (!GeometryEngine.contains(

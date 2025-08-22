@@ -134,7 +134,7 @@ class _ShowViewshedFromGeoelementInSceneState
   Future<void> onTap(Offset localPosition) async {
     // Convert localPosition to scenePoint.
     final scenePoint = await _sceneViewController.screenToLocation(
-      screen: localPosition,
+      localPosition,
     );
 
     setState(() => _waypoint = scenePoint);

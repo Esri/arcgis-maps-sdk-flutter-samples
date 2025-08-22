@@ -111,7 +111,7 @@ class _ShowLineOfSightBetweenPointsState
   void onTap(Offset offset) {
     // Get the new observer point from the screen tap offset.
     final newObserverPoint = _sceneViewController.screenToBaseSurface(
-      screen: offset,
+      offset,
     );
     // Return if a point could not be returned.
     if (newObserverPoint == null) return;
@@ -123,7 +123,7 @@ class _ShowLineOfSightBetweenPointsState
   void onLongPressEnd(Offset offset) {
     // Get the new target point from the long press offset.
     final newTargetPoint = _sceneViewController.screenToBaseSurface(
-      screen: offset,
+      offset,
     );
     // Return if a point could not be returned.
     if (newTargetPoint == null) return;

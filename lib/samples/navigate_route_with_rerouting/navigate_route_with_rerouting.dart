@@ -380,7 +380,7 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
 
     // Enable rerouting on the route tracker.
     if (_routeTask.getRouteTaskInfo().supportsRerouting) {
-      await _routeTracker.enableRerouting(parameters: _reroutingParameters);
+      await _routeTracker.enableRerouting(_reroutingParameters);
     } else {
       showMessageDialog('Rerouting is not supported.');
     }
@@ -513,7 +513,7 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
       routeLine!.extent.center,
       scale: 25000,
     );
-    await _mapViewController.setViewpointRotation(angleDegrees: 0);
+    await _mapViewController.setViewpointRotation(0);
   }
 
   // Start the navigation.

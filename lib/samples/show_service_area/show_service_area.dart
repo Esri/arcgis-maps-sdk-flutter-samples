@@ -190,7 +190,7 @@ class _ShowServiceAreaState extends State<ShowServiceArea>
   void onTap(Offset screenPoint) {
     // Capture the tapped point and convert it to a map point.
     final mapTapPoint = _mapViewController.screenToLocation(
-      screen: screenPoint,
+      screenPoint,
     );
     if (mapTapPoint == null) return;
 
@@ -238,7 +238,7 @@ class _ShowServiceAreaState extends State<ShowServiceArea>
       // geometryAtOverlap set to dissolve and the impedence cutoff values are the same across facilities,
       // we only need to draw the joined polygons for one of the facilities.
       final serviceAreaPolygons = serviceAreaResult.getResultPolygons(
-        facilityIndex: 0,
+        0,
       );
       for (var i = 0; i < serviceAreaPolygons.length; i++) {
         _serviceAreaGraphicsOverlay.graphics.add(

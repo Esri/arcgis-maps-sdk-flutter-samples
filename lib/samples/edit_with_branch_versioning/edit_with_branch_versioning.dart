@@ -134,7 +134,7 @@ class _EditWithBranchVersioningState extends State<EditWithBranchVersioning>
   Future<void> onTap(Offset localPosition) async {
     if (_model.selectedFeature != null && !_model.onDefaultVersion) {
       final mapPoint = _mapViewController.screenToLocation(
-        screen: localPosition,
+        localPosition,
       );
 
       // Show the move confirmation dialog if a feature is already selected.
@@ -560,7 +560,7 @@ class EditWithBranchVersioningModel extends ChangeNotifier {
     // Adds the credential to access the feature service for the service geodatabase.
     final credential = await getPublicSampleCredential();
     ArcGISEnvironment.authenticationManager.arcGISCredentialStore.add(
-      credential: credential,
+      credential,
     );
     await serviceGeodatabase.load();
     existingVersionNames.add(serviceGeodatabase.defaultVersionName);
@@ -569,7 +569,7 @@ class EditWithBranchVersioningModel extends ChangeNotifier {
     updateCurrentVersionName();
 
     // Creates a feature layer from the geodatabase and adds it to the map.
-    final serviceFeatureTable = serviceGeodatabase.getTable(layerId: 0)!;
+    final serviceFeatureTable = serviceGeodatabase.getTable(0)!;
     featureLayer = FeatureLayer.withFeatureTable(serviceFeatureTable);
     map.operationalLayers.add(featureLayer);
   }
@@ -579,7 +579,7 @@ class EditWithBranchVersioningModel extends ChangeNotifier {
   // - Returns: The name of the created version.
   Future<String> createVersion(ServiceVersionParameters parameters) async {
     final versionInfo = await serviceGeodatabase.createVersion(
-      newVersion: parameters,
+      parameters,
     );
     existingVersionNames.add(versionInfo.name);
     // Set the flag to true when a version is created.
@@ -602,7 +602,7 @@ class EditWithBranchVersioningModel extends ChangeNotifier {
       await serviceGeodatabase.applyEdits();
     }
     clearSelection();
-    await serviceGeodatabase.switchVersion(versionName: versionName);
+    await serviceGeodatabase.switchVersion(versionName);
     // Update the current version name.
     updateCurrentVersionName();
   }

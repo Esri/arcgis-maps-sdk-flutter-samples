@@ -209,7 +209,7 @@ class _FindClosestFacilityFromPointState
       ++incidentIdx
     ) {
       final rankedFacilities = result.getRankedFacilityIndexes(
-        incidentIndex: incidentIdx,
+        incidentIdx,
       );
       if (rankedFacilities.isEmpty) {
         continue;

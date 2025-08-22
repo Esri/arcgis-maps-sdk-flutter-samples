@@ -298,7 +298,7 @@ class _FindRouteInMapState extends State<FindRouteInMap>
     } else {
       // If no graphic was identified, add a new marker at the tapped location.
       final location = _mapViewController.screenToLocation(
-        screen: localPosition,
+        localPosition,
       );
       if (location != null) {
         graphicToSelect = Graphic(geometry: location);

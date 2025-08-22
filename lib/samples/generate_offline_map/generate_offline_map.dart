@@ -177,10 +177,10 @@ class _GenerateOfflineMapState extends State<GenerateOfflineMap>
 
     // Convert the local screen rect to map coordinates.
     final locationTopLeft = _mapViewController.screenToLocation(
-      screen: mapLocalScreenRect.topLeft,
+      mapLocalScreenRect.topLeft,
     );
     final locationBottomRight = _mapViewController.screenToLocation(
-      screen: mapLocalScreenRect.bottomRight,
+      mapLocalScreenRect.bottomRight,
     );
     if (locationTopLeft == null || locationBottomRight == null) return null;
 

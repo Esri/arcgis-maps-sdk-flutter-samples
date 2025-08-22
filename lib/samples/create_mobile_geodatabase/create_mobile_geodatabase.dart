@@ -129,7 +129,7 @@ class _CreateMobileGeodatabaseState extends State<CreateMobileGeodatabase>
 
   // When the map is tapped, add a feature to the feature table.
   void onTap(Offset localPosition) {
-    final mapPoint = _mapViewController.screenToLocation(screen: localPosition);
+    final mapPoint = _mapViewController.screenToLocation(localPosition);
     if (mapPoint != null) _addFeature(mapPoint);
   }
 
@@ -142,7 +142,7 @@ class _CreateMobileGeodatabaseState extends State<CreateMobileGeodatabase>
     if (geodatabaseFile.existsSync()) geodatabaseFile.deleteSync();
 
     try {
-      _geodatabase = await Geodatabase.create(fileUri: geodatabaseFile.uri);
+      _geodatabase = await Geodatabase.create(geodatabaseFile.uri);
       await _createGeodatabaseFeatureTable();
     } on Exception catch (e) {
       showMessageDialog(e.toString(), title: 'Error');
