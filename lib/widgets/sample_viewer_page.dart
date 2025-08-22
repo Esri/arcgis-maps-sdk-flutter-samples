@@ -15,13 +15,11 @@
 //
 
 import 'dart:async';
-import 'dart:convert';
 import 'dart:math';
 import 'package:arcgis_maps_sdk_flutter_samples/models/category.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/models/sample.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/widgets/sample_list_view.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 const applicationTitle = 'ArcGIS Maps SDK for Flutter Samples';
 
