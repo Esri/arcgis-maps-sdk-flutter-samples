@@ -1,0 +1,51 @@
+{
+    "category": "Utility Networks",
+    "description": "Use the Geometry Editor to edit geometries using utility network connectivity rules.",
+    "ignore": false,
+    "images": [
+        "snap_geometry_edits_with_utility_network_rules.png"
+    ],
+    "keywords": [
+        "edit",
+        "feature",
+        "geometry editor",
+        "graphics",
+        "layers",
+        "map",
+        "snapping",
+        "utility network",
+        "ArcGISMapView",
+        "FeatureLayer",
+        "Geometry",
+        "GeometryEditor",
+        "GeometryEditorStyle",
+        "GraphicsOverlay",
+        "SnapRuleBehavior",
+        "SnapRules",
+        "SnapSettings",
+        "SnapSource",
+        "SnapSourceEnablingBehavior",
+        "SnapSourceSettings",
+        "UtilityNetwork"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+        "ArcGISMapView",
+        "FeatureLayer",
+        "Geometry",
+        "GeometryEditor",
+        "GeometryEditorStyle",
+        "GraphicsOverlay",
+        "SnapRuleBehavior",
+        "SnapRules",
+        "SnapSettings",
+        "SnapSource",
+        "SnapSourceEnablingBehavior",
+        "SnapSourceSettings",
+        "UtilityNetwork"
+    ],
+    "snippets": [
+        "snap_geometry_edits_with_utility_network_rules.dart"
+    ],
+    "title": "Snap geometry edits with utility network rules"
+}
