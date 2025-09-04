@@ -16,7 +16,7 @@
 
 import 'dart:async';
 import 'dart:io';
-import 'package:arcgis_maps_sdk_flutter_samples/common/sample_data.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/common/download_util.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/models/downloadable_resource.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -67,27 +67,22 @@ class _DownloadableResourcesPageState extends State<DownloadableResourcesPage> {
   }
 
   Future<void> _checkIfResourcesExist() async {
-    try {
-      final appDir = await getApplicationDocumentsDirectory();
-      bool allResourcesExist = true;
+    final appDir = await getApplicationDocumentsDirectory();
+    var allResourcesExist = true;
 
-      for (final resource in widget.resources) {
-        final file = File(
-          '${appDir.absolute.path}/${resource.fileName.split('.').first}',
-        );
-        if (!file.existsSync()) {
-          allResourcesExist = false;
-          break;
-        }
+    for (final resource in widget.resources) {
+      final file = File('${appDir.absolute.path}/${resource.fileName}');
+      if (!file.existsSync()) {
+        allResourcesExist = false;
+        break;
       }
+    }
 
-      if (allResourcesExist) {
-        setState(() {
-          _isComplete = true;
-        });
-      }
-    } catch (e) {
-      // If checking fails, assume resources need to be downloaded
+    if (allResourcesExist) {
+      setState(() {
+        _isComplete = true;
+        _progress = 1.0;
+      });
     }
   }
 
@@ -135,12 +130,13 @@ class _DownloadableResourcesPageState extends State<DownloadableResourcesPage> {
 
   Future<List<String>> _getDownloadFilePaths() async {
     final appDir = await getApplicationDocumentsDirectory();
-    return widget.resources
-        .map(
-          (r) =>
-              '${appDir.absolute.path}/${r.fileName.split('.').first}/${r.fileName.split('.').first}',
-        )
-        .toList();
+    return widget.resources.map((r) {
+      if (r.fileName.endsWith('.zip')) {
+        return '${appDir.absolute.path}/${r.fileName.split('.').first}/${r.fileName.split('.').first}';
+      } else {
+        return '${appDir.absolute.path}/${r.fileName}';
+      }
+    }).toList();
   }
 
   Future<void> _cancelDownload() async {
@@ -170,9 +166,6 @@ class _DownloadableResourcesPageState extends State<DownloadableResourcesPage> {
   void _openSample() async {
     final downloadPaths = await _getDownloadFilePaths();
     print(downloadPaths);
-    // GoRouter.of(
-    //   context,
-    // ).go('/sample/${widget.sampleTitle}/live', extra: downloadPaths);
     widget.onComplete(downloadPaths);
   }
 
@@ -193,42 +186,47 @@ class _DownloadableResourcesPageState extends State<DownloadableResourcesPage> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(40),
-        child: Column(
-          spacing: 20,
-          children: [
-            Text(
-              'This sample requires downloadable resources:',
-              style: Theme.of(context).textTheme.titleMedium,
-              textAlign: TextAlign.center,
-            ),
-
-            SizedBox(
-              width: 100,
-              height: 100,
-              child: CircularProgressIndicator(value: _progress),
-            ),
-
-            Text(
-              '${(_progress * 100).toInt()}% download complete',
-              style: Theme.of(context).textTheme.bodyMedium,
-              textAlign: TextAlign.center,
-            ),
-
-            ElevatedButton(
-              onPressed: _isDownloading
-                  ? _cancelDownload
-                  : _isComplete
-                  ? _openSample
-                  : _startDownload,
-              child: Text(
-                _isDownloading
-                    ? 'Cancel'
-                    : _isComplete
-                    ? 'Open'
-                    : 'Download',
+        child: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'This sample requires downloadable resources',
+                style: Theme.of(context).textTheme.titleMedium,
+                textAlign: TextAlign.center,
               ),
-            ),
-          ],
+              const SizedBox(height: 20),
+              SizedBox(
+                width: 60,
+                height: 60,
+                child: CircularProgressIndicator(
+                  value: _progress,
+                  backgroundColor: Colors.grey[300],
+                ),
+              ),
+              const SizedBox(height: 20),
+              Text(
+                '${(_progress * 100).toInt()}% download complete',
+                style: Theme.of(context).textTheme.bodyMedium,
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: _isDownloading
+                    ? _cancelDownload
+                    : _isComplete
+                    ? _openSample
+                    : _startDownload,
+                child: Text(
+                  _isDownloading
+                      ? 'Cancel'
+                      : _isComplete
+                      ? 'Open'
+                      : 'Download',
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

@@ -20,5 +20,9 @@
     "snippets": [
         "display_map_from_mobile_map_package.dart"
     ],
-    "title": "Display map from mobile map package"
+    "title": "Display map from mobile map package",
+    "downloadableResources": [{
+        "itemId": "e1f3a7254cb845b09450f54937c16061",
+        "fileName": "Yellowstone.mmpk"
+    }]
 }

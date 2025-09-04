@@ -42,5 +42,9 @@
     "snippets": [
         "animate_3d_graphic.dart"
     ],
-    "title": "Animate 3D graphic"
+    "title": "Animate 3D graphic",
+    "downloadableResources": [{
+        "itemId": "681d6f7694644709a7c830ec57a2d72b",
+        "fileName": "Bristol.zip"
+    }]
 }

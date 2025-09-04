@@ -64,6 +64,7 @@ Future<List<ResponseInfo>> downloadSampleDataWithProgress({
       // If the data is a zip we need to extract it.
       await extractZipArchive(destinationFile);
     }
+    print("download into: ${destinationFile.absolute.path}");
 
     responses.add(response);
   }
@@ -85,5 +86,6 @@ Future<void> extractZipArchive(File archiveFile) async {
   final pathWithoutExt = archiveFile.path.replaceFirst(RegExp(r'.zip$'), '');
   final dir = Directory.fromUri(Uri.parse(pathWithoutExt));
   if (dir.existsSync()) dir.deleteSync(recursive: true);
+  print('>>>>>> extract directory: ${dir.path}');
   await ZipFile.extractToDirectory(zipFile: archiveFile, destinationDir: dir);
 }

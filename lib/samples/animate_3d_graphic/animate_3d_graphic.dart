@@ -19,6 +19,7 @@ import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:go_router/go_router.dart';
 import 'package:path_provider/path_provider.dart';
 
 class Animate3dGraphic extends StatefulWidget {
@@ -215,25 +216,6 @@ class _Animate3dGraphicState extends State<Animate3dGraphic>
 
   // Loads the 3D plane model from local sample data and returns it as a Graphic.
   Future<Graphic> _loadPlaneGraphic() async {
-    const downloadFileName = 'Bristol';
-    final appDir = await getApplicationDocumentsDirectory();
-    final zipFile = File('${appDir.absolute.path}/$downloadFileName.zip');
-    // Download the plane model files.
-    if (!zipFile.existsSync()) {
-      await downloadSampleDataWithProgress(
-        itemIds: ['681d6f7694644709a7c830ec57a2d72b'],
-        destinationFiles: [zipFile],
-      );
-    }
-    final planeModelPath =
-        '${appDir.absolute.path}/$downloadFileName/$downloadFileName.dae';
-
-    // Define the plane symbol.
-    final planeSymbol = ModelSceneSymbol.withUri(
-      uri: Uri.parse(planeModelPath),
-      scale: 20,
-    )..anchorPosition = SceneSymbolAnchorPosition.center;
-
     // Define the initial position of the plane in the scene.
     final planePosition = ArcGISPoint(
       x: -109.937516,
@@ -242,8 +224,23 @@ class _Animate3dGraphicState extends State<Animate3dGraphic>
       spatialReference: SpatialReference.wgs84,
     );
 
-    // Return the graphic that combines geometry and symbol.
-    return Graphic(geometry: planePosition, symbol: planeSymbol);
+    if (GoRouterState.of(context).extra != null) {
+      final listPaths = GoRouterState.of(context).extra! as List<String>;
+      final downloadFileName = listPaths.first;
+      final planeModelPath = '$downloadFileName.dae';
+
+      // Define the plane symbol.
+      final planeSymbol = ModelSceneSymbol.withUri(
+        uri: Uri.parse(planeModelPath),
+        scale: 20,
+      )..anchorPosition = SceneSymbolAnchorPosition.center;
+
+      // Return the graphic that combines geometry and symbol.
+      return Graphic(geometry: planePosition, symbol: planeSymbol);
+    } else {
+      // Return the graphic that combines geometry and a dummy symbol.
+      return Graphic(geometry: planePosition, symbol: SimpleMarkerSymbol());
+    }
   }
 
   // Adds the plane graphic to a graphics overlay and sets the initial viewpoint.

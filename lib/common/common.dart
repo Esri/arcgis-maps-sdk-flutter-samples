@@ -17,6 +17,6 @@
 export 'bottom_sheet_settings.dart';
 export 'dialogs.dart';
 export 'loading_indicator.dart';
-export 'sample_data.dart';
+export 'download_util.dart';
 export 'sample_state_support.dart';
 export 'theme_data.dart';
