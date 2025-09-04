@@ -35,7 +35,13 @@ class SampleListView extends StatelessWidget {
           child: ListTile(
             title: Text(sample.title),
             subtitle: Text(sample.description),
-            onTap: () => context.push('/sample/${sample.key}/live'),
+            onTap: () {
+              if (sample.hasDownloadableResources) {
+                context.push('/sample/${sample.key}/resources');
+              } else {
+                context.push('/sample/${sample.key}/live');
+              }
+            },
             contentPadding: const EdgeInsets.only(left: 20),
             trailing: SampleInfoPopupMenu(sample: sample),
           ),

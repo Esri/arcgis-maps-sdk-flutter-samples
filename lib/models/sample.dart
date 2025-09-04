@@ -15,6 +15,7 @@
 //
 
 // run `dart run build_runner build` to generate samples_widget_list.dart
+import 'package:arcgis_maps_sdk_flutter_samples/models/downloadable_resource.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/models/samples_widget_list.dart';
 import 'package:flutter/material.dart';
 
@@ -29,6 +30,7 @@ class Sample {
       _title = json['title'] as String? ?? '',
       _keywords = List<String>.from(json['keywords'] as List? ?? []),
       _key = json['key'] as String? ?? '',
+      _downloadableResources = _parseDownloadableResources(json['downloadableResources']),
       _sampleWidget = sampleWidgets[json['key']]!();
   final String _category;
   final String _description;
@@ -37,6 +39,17 @@ class Sample {
   final List<String> _keywords;
   final Widget _sampleWidget;
   final String _key;
+  final List<DownloadableResource> _downloadableResources;
+
+  static List<DownloadableResource> _parseDownloadableResources(dynamic resources) {
+    if (resources == null) return [];
+    if (resources is! List) return [];
+    
+    return resources
+        .whereType<Map<String, dynamic>>()
+        .map(DownloadableResource.fromJson)
+        .toList();
+  }
 
   String get title => _title;
 
@@ -49,6 +62,11 @@ class Sample {
   List<String> get keywords => _keywords;
 
   String get key => _key;
+
+  List<DownloadableResource> get downloadableResources => _downloadableResources;
+
+  /// Returns true if this sample requires downloadable resources.
+  bool get hasDownloadableResources => _downloadableResources.isNotEmpty;
 
   Widget getSampleWidget() => _sampleWidget;
 }

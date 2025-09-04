@@ -27,5 +27,9 @@
     "snippets": [
         "animate_images_with_image_overlay.dart"
     ],
-    "title": "Animate images with image overlay"
+    "title": "Animate images with image overlay",
+    "downloadableResources": [{
+        "itemId": "9465e8c02b294c69bdb42de056a23ab1",
+        "fileName": "PacificSouthWest.zip"
+    }]
 }

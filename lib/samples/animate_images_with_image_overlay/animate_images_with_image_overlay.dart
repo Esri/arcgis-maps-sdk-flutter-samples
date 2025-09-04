@@ -20,6 +20,7 @@ import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:go_router/go_router.dart';
 import 'package:path_provider/path_provider.dart';
 
 class AnimateImagesWithImageOverlay extends StatefulWidget {
@@ -254,38 +255,42 @@ class _AnimateImagesWithImageOverlayState
   }
 
   Future<void> initImageFrames() async {
-    final appDir = await getApplicationDocumentsDirectory();
-    // Define the path for the sample data zip file and the directory to extract it.
-    // The sample data contains images of the Pacific South West region.
-    final imageFile = File('${appDir.absolute.path}/PacificSouthWest.zip');
-    final directory = Directory.fromUri(
-      Uri.parse('${appDir.absolute.path}/PacificSouthWest/PacificSouthWest'),
-    );
+    if (GoRouterState.of(context).extra != null) {
+      final listPaths = GoRouterState.of(context).extra! as List<String>;
+      print(">>>> ${listPaths.first}");
 
-    // Download the sample data if it does not exist.
-    if (!imageFile.existsSync()) {
-      await downloadSampleDataWithProgress(
-        itemIds: ['9465e8c02b294c69bdb42de056a23ab1'],
-        destinationFiles: [imageFile],
-        onProgress: (progress) {
-          setState(
-            () => _downloadProgress =
-                'Downloading images: ${(progress * 100).toStringAsFixed(0)}%',
-          );
-        },
-      );
+      // final appDir = await getApplicationDocumentsDirectory();
+      // // Define the path for the sample data zip file and the directory to extract it.
+      // // The sample data contains images of the Pacific South West region.
+      // final imageFile = File('${appDir.absolute.path}/PacificSouthWest.zip');
+      final directory = Directory.fromUri(Uri.parse(listPaths.first));
+
+      // // Download the sample data if it does not exist.
+      // if (!imageFile.existsSync()) {
+      //   await downloadSampleDataWithProgress(
+      //     itemIds: ['9465e8c02b294c69bdb42de056a23ab1'],
+      //     destinationFiles: [imageFile],
+      //     onProgress: (progress) {
+      //       setState(
+      //         () => _downloadProgress =
+      //             'Downloading images: ${(progress * 100).toStringAsFixed(0)}%',
+      //       );
+      //     },
+      //   );
+      // }
+
+      // Get a list of all PNG image files in the extracted directory.
+      _imageFileList = directory
+          .listSync()
+          .whereType<File>()
+          .where((file) => file.path.endsWith('.png'))
+          .toList();
+      // Sort the list by file path name.
+      _imageFileList.sort((file1, file2) => file1.path.compareTo(file2.path));
+
+      // show the first image frame in the image overlay.
+      setImageFrame(0);
     }
-    // Get a list of all PNG image files in the extracted directory.
-    _imageFileList = directory
-        .listSync()
-        .whereType<File>()
-        .where((file) => file.path.endsWith('.png'))
-        .toList();
-    // Sort the list by file path name.
-    _imageFileList.sort((file1, file2) => file1.path.compareTo(file2.path));
-
-    // show the first image frame in the image overlay.
-    setImageFrame(0);
   }
 
   /// Sets the image frame to the image overlay based on the index.
