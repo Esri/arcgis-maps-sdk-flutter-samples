@@ -46,14 +46,21 @@ class _SnapGeometryEditsWithUtilityNetworkRulesState
       width: 3,
     ),
   );
-  // A flag for when the map view is ready and controls can be used.
-  var _ready = false;
-  // The currently selected feature and element, if any.
-  ArcGISFeature? _selectedFeature;
-  UtilityElement? _selectedElement;
+  // Hold references to the distribtion pipe and service pipe sublayers and renderers.
+  late SubtypeSublayer _distributionPipeSublayer;
+  late SubtypeSublayer _servicePipeSublayer;
+  Renderer? _distributionPipeRenderer;
+  Renderer? _servicePipeRenderer;
   // A flag for whether there are outstanding edits.
   var _canUndo = false;
   StreamSubscription<bool>? _canUndoSubscription;
+
+  // A flag for when the map view is ready and controls can be used.
+  var _ready = false;
+
+  // The currently selected feature and element, if any.
+  ArcGISFeature? _selectedFeature;
+  UtilityElement? _selectedElement;
 
   @override
   void dispose() {
@@ -157,8 +164,9 @@ class _SnapGeometryEditsWithUtilityNetworkRulesState
     _mapViewController.arcGISMap = map;
 
     // Add a GraphicsOverlay to be used as a snap source.
-    final graphicsOverlay = GraphicsOverlay();
-    graphicsOverlay.renderer = _defaultGraphicRenderer;
+    final graphicsOverlay = GraphicsOverlay()
+      ..id = 'Graphics'
+      ..renderer = _defaultGraphicRenderer;
     final geometry = Geometry.fromJsonString(
       '{"paths":[[[-9811826.6810284462,5132074.7700250093],[-9811786.4643617794,5132440.9533583419],[-9811384.2976951133,5132354.1700250087],[-9810372.5310284477,5132360.5200250093],[-9810353.4810284469,5132066.3033583425]]],"spatialReference":{"wkid":102100,"latestWkid":3857}}',
     );
@@ -175,7 +183,7 @@ class _SnapGeometryEditsWithUtilityNetworkRulesState
     await _utilityNetwork.load();
 
     // Create feature layers from the geodatabase tables.
-    final pipelineLayer = SubtypeFeatureLayer.withFeatureTable(
+    final pipeLayer = SubtypeFeatureLayer.withFeatureTable(
       geodatabase.getGeodatabaseFeatureTable(tableName: 'PipelineLine')!,
     );
     final deviceLayer = SubtypeFeatureLayer.withFeatureTable(
@@ -187,20 +195,34 @@ class _SnapGeometryEditsWithUtilityNetworkRulesState
     _geodatabase = geodatabase;
 
     // Add the layers to the map and load them.
-    map.operationalLayers.addAll([pipelineLayer, deviceLayer, junctionLayer]);
+    map.operationalLayers.addAll([pipeLayer, deviceLayer, junctionLayer]);
     await Future.wait(map.operationalLayers.map((layer) => layer.load()));
 
-    // Make visible the desired sublayers from the pipeline and device layers.
-    final visibleSublayers = {
-      'Distribution Pipe',
-      'Service Pipe',
-      'Excess Flow Valve',
-      'Controllable Tee',
-    };
-    final sublayers =
-        pipelineLayer.subtypeSublayers + deviceLayer.subtypeSublayers;
-    for (final sublayer in sublayers) {
-      sublayer.isVisible = visibleSublayers.contains(sublayer.name);
+    // Store values from the desired sublayers and set their visibility.
+    for (final sublayer in pipeLayer.subtypeSublayers) {
+      switch (sublayer.name) {
+        case 'Distribution Pipe':
+          _distributionPipeSublayer = sublayer;
+          _distributionPipeRenderer = sublayer.renderer;
+          sublayer.isVisible = true;
+        case 'Service Pipe':
+          _servicePipeSublayer = sublayer;
+          _servicePipeRenderer = sublayer.renderer;
+          sublayer.isVisible = true;
+        default:
+          sublayer.isVisible = false;
+      }
+    }
+
+    // Hide unwanted device sublayers.
+    for (final sublayer in deviceLayer.subtypeSublayers) {
+      switch (sublayer.name) {
+        case 'Excess Flow Valve':
+        case 'Controllable Tee':
+          sublayer.isVisible = true;
+        default:
+          sublayer.isVisible = false;
+      }
     }
 
     // Create and configure the geometry editor.
