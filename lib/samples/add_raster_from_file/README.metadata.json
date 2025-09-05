@@ -23,5 +23,11 @@
     "snippets": [
         "add_raster_from_file.dart"
     ],
-    "title": "Add raster from file"
+    "title": "Add raster from file",
+    "downloadableResources": [
+        {
+            "itemId": "7c4c679ab06a4df19dc497f577f111bd",
+            "fileName": "raster-file.zip"
+        }
+    ]
 }

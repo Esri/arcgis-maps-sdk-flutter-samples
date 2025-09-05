@@ -21,5 +21,11 @@
     "snippets": [
         "add_point_cloud_layer_from_file.dart"
     ],
-    "title": "Add point cloud layer from file"
+    "title": "Add point cloud layer from file",
+    "downloadableResources": [
+        {
+            "itemId": "34da965ca51d4c68aa9b3a38edb29e00",
+            "fileName": "sandiego-north-balboa-pointcloud.slpk"
+        }
+    ]
 }

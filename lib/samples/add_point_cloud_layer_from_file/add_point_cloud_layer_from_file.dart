@@ -18,7 +18,7 @@ import 'dart:io';
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:go_router/go_router.dart';
 
 class AddPointCloudLayerFromFile extends StatefulWidget {
   const AddPointCloudLayerFromFile({super.key});
@@ -118,22 +118,8 @@ class _AddPointCloudLayerFromFileState extends State<AddPointCloudLayerFromFile>
 
   Future<void> loadCloudPointLayerFromFile() async {
     // Download the sample data.
-    // Get the temp directory.
-    final directory = await getApplicationDocumentsDirectory();
-    // Create a file reference to the scene layer package for Balboa Park, San Diego, CA.
-    final sanDiegoPointCloudFile = File(
-      '${directory.absolute.path}/sandiego-north-balboa-pointcloud.slpk',
-    );
-    if (!sanDiegoPointCloudFile.existsSync()) {
-      // If the file does not exist, download it.
-      await downloadSampleDataWithProgress(
-        itemIds: ['34da965ca51d4c68aa9b3a38edb29e00'],
-        destinationFiles: [sanDiegoPointCloudFile],
-        onProgress: (progress) {
-          setState(() => _downloadProgress = progress);
-        },
-      );
-    }
+    final listPaths = GoRouter.of(context).state.extra! as List<String>;
+    final sanDiegoPointCloudFile = File('${listPaths.first}',);
 
     // Create a Point Cloud Layer from the file URI.
     final pointCloudLayer = PointCloudLayer.withUri(sanDiegoPointCloudFile.uri);

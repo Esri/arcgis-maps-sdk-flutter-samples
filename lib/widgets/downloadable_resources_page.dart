@@ -130,11 +130,19 @@ class _DownloadableResourcesPageState extends State<DownloadableResourcesPage> {
 
   Future<List<String>> _getDownloadFilePaths() async {
     final appDir = await getApplicationDocumentsDirectory();
-    return widget.resources.map((r) {
-      if (r.fileName.endsWith('.zip')) {
-        return '${appDir.absolute.path}/${r.fileName.split('.').first}/${r.fileName.split('.').first}';
+    return widget.resources.map((res) {
+      final fileNamePrefix = res.fileName.split('.').first;
+      if (res.fileName.endsWith('.zip')) {
+        // if the downloadable resource is a zip file,
+        // the directory path is returned.
+        final path = '${appDir.absolute.path}/$fileNamePrefix';
+        if (Directory('$path/$fileNamePrefix').existsSync()) {
+          return '$path/$fileNamePrefix';
+        } else {
+          return path;
+        }
       } else {
-        return '${appDir.absolute.path}/${r.fileName}';
+        return '${appDir.absolute.path}/${res.fileName}';
       }
     }).toList();
   }

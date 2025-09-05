@@ -30,5 +30,11 @@
     "snippets": [
         "apply_scheduled_updates_to_preplanned_map_area.dart"
     ],
-    "title": "Apply scheduled updates to preplanned map area"
+    "title": "Apply scheduled updates to preplanned map area",
+    "downloadableResources": [
+        {
+            "itemId": "740b663bff5e4198b9b6674af93f638a",
+            "fileName": "canyonlands.zip"
+        }
+    ]
 }

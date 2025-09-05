@@ -37,6 +37,7 @@ Future<List<ResponseInfo>> downloadSampleDataWithProgress({
   for (var i = 0; i < itemIds.length; i++) {
     final itemId = itemIds[i];
     final destinationFile = destinationFiles[i];
+    if (onProgress != null) onProgress(0);
 
     final requestUri = Uri.parse(
       '$portal/sharing/rest/content/items/$itemId/data',
