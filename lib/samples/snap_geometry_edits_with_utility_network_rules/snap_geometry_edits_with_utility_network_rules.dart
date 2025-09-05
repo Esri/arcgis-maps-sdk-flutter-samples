@@ -33,50 +33,62 @@ class _SnapGeometryEditsWithUtilityNetworkRulesState
     with SampleStateSupport {
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
+  // The geodatabase containing the utility network data.
+  Geodatabase? _geodatabase;
   // A flag for when the map view is ready and controls can be used.
   var _ready = false;
 
   @override
+  void dispose() {
+    _geodatabase?.close();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        top: false,
-        left: false,
-        right: false,
-        child: Stack(
-          children: [
-            Column(
-              children: [
-                Expanded(
-                  // Add a map view to the widget tree and set a controller.
-                  child: ArcGISMapView(
-                    controllerProvider: () => _mapViewController,
-                    onMapViewReady: onMapViewReady,
-                    onTap: onTap,
-                  ),
+      body: Stack(
+        children: [
+          Column(
+            children: [
+              Expanded(
+                // Add a map view to the widget tree and set a controller.
+                child: ArcGISMapView(
+                  controllerProvider: () => _mapViewController,
+                  onMapViewReady: onMapViewReady,
+                  onTap: onTap,
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              ),
+            ],
+          ),
+          // Display a progress indicator and prevent interaction until state is ready.
+          LoadingIndicator(visible: !_ready),
+          // Display a banner with instructions at the top.
+          SafeArea(
+            child: IgnorePointer(
+              child: Container(
+                padding: const EdgeInsets.all(10),
+                color: Colors.white.withValues(alpha: 0.7),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    // A button to perform a task.
-                    ElevatedButton(
-                      onPressed: performTask,
-                      child: const Text('Perform Task'),
+                    Text(
+                      'Tap a point feature to edit',
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context).textTheme.labelMedium,
                     ),
                   ],
                 ),
-              ],
+              ),
             ),
-            // Display a progress indicator and prevent interaction until state is ready.
-            LoadingIndicator(visible: !_ready),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 
-  //fixme comments
   Future<void> onMapViewReady() async {
+    // Download the Naperville utility network geodatabase.
     const downloadFileName = 'NapervilleGasUtilities';
     final appDir = await getApplicationDocumentsDirectory();
     final zipFile = File('${appDir.absolute.path}/$downloadFileName.zip');
@@ -90,6 +102,7 @@ class _SnapGeometryEditsWithUtilityNetworkRulesState
       '${appDir.absolute.path}/$downloadFileName/$downloadFileName.geodatabase',
     );
 
+    // Configure the map, centered on Naperville, IL.
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISStreetsNight);
     map.initialViewpoint = Viewpoint.fromCenter(
       ArcGISPoint(
@@ -103,15 +116,44 @@ class _SnapGeometryEditsWithUtilityNetworkRulesState
         FeatureTilingMode.enabledWithFullResolutionWhenSupported;
     _mapViewController.arcGISMap = map;
 
+    // Load the geodatabase from the downloaded file.
     final geodatabase = Geodatabase.withFileUri(geodatabaseFile.uri);
     await geodatabase.load();
-    final pipelineLayer = SubtypeFeatureLayer.withFeatureTable(
-      geodatabase.getGeodatabaseFeatureTable(tableName: 'PipelineLine')!
-          as ArcGISFeatureTable,
-    );
-    map.operationalLayers.add(pipelineLayer);
 
-    //fixme
+    // Create feature layers from the geodatabase tables.
+    final pipelineLayer = SubtypeFeatureLayer.withFeatureTable(
+      geodatabase.getGeodatabaseFeatureTable(tableName: 'PipelineLine')!,
+    );
+    final deviceLayer = SubtypeFeatureLayer.withFeatureTable(
+      geodatabase.getGeodatabaseFeatureTable(tableName: 'PipelineDevice')!,
+    );
+    final junctionLayer = SubtypeFeatureLayer.withFeatureTable(
+      geodatabase.getGeodatabaseFeatureTable(tableName: 'PipelineJunction')!,
+    );
+    _geodatabase = geodatabase;
+
+    // Add the layers to the map and load them.
+    map.operationalLayers.addAll([pipelineLayer, deviceLayer, junctionLayer]);
+    await Future.wait(map.operationalLayers.map((layer) => layer.load()));
+
+    // Make visible the desired sublayers from the pipeline and device layers.
+    final visibleSublayers = {
+      'Distribution Pipe',
+      'Service Pipe',
+      'Excess Flow Valve',
+      'Controllable Tee',
+    };
+    final sublayers =
+        pipelineLayer.subtypeSublayers + deviceLayer.subtypeSublayers;
+    for (final sublayer in sublayers) {
+      sublayer.isVisible = visibleSublayers.contains(sublayer.name);
+    }
+
+    // Create and configure the geometry editor.
+    _mapViewController.geometryEditor = GeometryEditor()
+      ..snapSettings.isEnabled = true
+      ..snapSettings.isFeatureSnappingEnabled = true
+      ..tool = ReticleVertexTool();
 
     // Set the ready state variable to true to enable the sample UI.
     setState(() => _ready = true);
@@ -121,16 +163,5 @@ class _SnapGeometryEditsWithUtilityNetworkRulesState
     // Do something with a tap.
     // ignore: avoid_print
     print('Tapped at $offset');
-  }
-
-  Future<void> performTask() async {
-    setState(() => _ready = false);
-
-    // Perform some task.
-    // ignore: avoid_print
-    print('Perform task');
-    await Future<void>.delayed(const Duration(seconds: 5));
-
-    setState(() => _ready = true);
   }
 }
