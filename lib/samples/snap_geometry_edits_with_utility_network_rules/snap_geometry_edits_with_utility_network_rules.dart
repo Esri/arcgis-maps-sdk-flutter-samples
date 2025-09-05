@@ -38,6 +38,14 @@ class _SnapGeometryEditsWithUtilityNetworkRulesState
   Geodatabase? _geodatabase;
   // The utility network from the geodatabase.
   late UtilityNetwork _utilityNetwork;
+  // A default renderer for graphics overlays when not being used as a snap source.
+  final _defaultGraphicRenderer = SimpleRenderer(
+    symbol: SimpleLineSymbol(
+      style: SimpleLineSymbolStyle.dash,
+      color: Colors.grey,
+      width: 3,
+    ),
+  );
   // A flag for when the map view is ready and controls can be used.
   var _ready = false;
   // The currently selected feature and element, if any.
@@ -148,6 +156,15 @@ class _SnapGeometryEditsWithUtilityNetworkRulesState
         FeatureTilingMode.enabledWithFullResolutionWhenSupported;
     _mapViewController.arcGISMap = map;
 
+    // Add a GraphicsOverlay to be used as a snap source.
+    final graphicsOverlay = GraphicsOverlay();
+    graphicsOverlay.renderer = _defaultGraphicRenderer;
+    final geometry = Geometry.fromJsonString(
+      '{"paths":[[[-9811826.6810284462,5132074.7700250093],[-9811786.4643617794,5132440.9533583419],[-9811384.2976951133,5132354.1700250087],[-9810372.5310284477,5132360.5200250093],[-9810353.4810284469,5132066.3033583425]]],"spatialReference":{"wkid":102100,"latestWkid":3857}}',
+    );
+    graphicsOverlay.graphics.add(Graphic(geometry: geometry));
+    _mapViewController.graphicsOverlays.add(graphicsOverlay);
+
     // Load the geodatabase from the downloaded file.
     final geodatabase = Geodatabase.withFileUri(geodatabaseFile.uri);
     await geodatabase.load();
@@ -217,7 +234,7 @@ class _SnapGeometryEditsWithUtilityNetworkRulesState
 
     // Select the first point feature found.
     final feature = pointFeatures.first;
-    selectFeature(feature);
+    await selectFeature(feature);
   }
 
   // Clear any existing selection.
@@ -225,17 +242,19 @@ class _SnapGeometryEditsWithUtilityNetworkRulesState
     if (_selectedFeature == null) return;
 
     final featureLayer = _selectedFeature!.featureTable?.layer as FeatureLayer?;
+    if (featureLayer == null) return;
+
+    featureLayer.clearSelection();
+    featureLayer.resetFeaturesVisible();
+
     setState(() {
       _selectedFeature = null;
       _selectedElement = null;
     });
-
-    featureLayer?.clearSelection();
-    featureLayer?.resetFeaturesVisible();
   }
 
   // Select a feature and start editing its geometry.
-  void selectFeature(ArcGISFeature feature) {
+  Future<void> selectFeature(ArcGISFeature feature) async {
     if (!_ready) return;
 
     clearSelection();
@@ -247,17 +266,35 @@ class _SnapGeometryEditsWithUtilityNetworkRulesState
     featureLayer.selectFeature(feature);
 
     // Start editing this feature in the Geometry Editor.
+    final geometryEditor = _mapViewController.geometryEditor!;
     final utilityElement = _utilityNetwork.createElement(
       arcGISFeature: feature,
     );
     final geometry = feature.geometry!;
-    _mapViewController.geometryEditor!.startWithGeometry(geometry);
+    geometryEditor.startWithGeometry(geometry);
 
     // Center the map on the feature.
-    _mapViewController.setViewpointCenter(geometry.extent.center);
+    _mapViewController.setViewpointCenter(geometry.extent.center).ignore();
 
-    //fixme setup snap rules and renderers
+    // Get the snapping rules for this asset type.
+    final snapRules = await SnapRules.createFromAssetType(
+      utilityNetwork: _utilityNetwork,
+      assetType: utilityElement.assetType,
+    );
 
+    // Configure the Geometry Editor's snapping settings to use these rules.
+    geometryEditor.snapSettings.syncSourceSettingsUsingRules(
+      snapRules,
+      snapSourceEnablingBehavior: SnapSourceEnablingBehavior.setFromRules,
+    );
+    // Additionally, enable snapping to the graphics overlay.
+    geometryEditor.snapSettings.sourceSettings
+        .where((settings) => settings.source is GraphicsOverlay)
+        .forEach((settings) => settings.isEnabled = true);
+
+    //fixme set renderers
+
+    // Mark this feature as selected.
     setState(() {
       _selectedFeature = feature;
       _selectedElement = utilityElement;
