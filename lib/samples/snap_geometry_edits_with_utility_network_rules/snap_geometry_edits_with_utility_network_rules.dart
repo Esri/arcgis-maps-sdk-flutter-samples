@@ -206,8 +206,9 @@ class _SnapGeometryEditsWithUtilityNetworkRulesState
     // Create and configure the geometry editor.
     final geometryEditor = GeometryEditor()
       ..snapSettings.isEnabled = true
-      ..snapSettings.isFeatureSnappingEnabled = true
-      ..tool = ReticleVertexTool();
+      ..snapSettings.isFeatureSnappingEnabled = true;
+    final tool = ReticleVertexTool()..style.vertexTextSymbol = null;
+    geometryEditor.tool = tool;
     _canUndoSubscription = geometryEditor.onCanUndoChanged.listen((canUndo) {
       setState(() => _canUndo = canUndo);
     });
@@ -262,8 +263,9 @@ class _SnapGeometryEditsWithUtilityNetworkRulesState
     final featureLayer = feature.featureTable?.layer as FeatureLayer?;
     if (featureLayer == null) return;
 
-    // Select this feature in its layer.
+    // Select this feature in its layer and hide it.
     featureLayer.selectFeature(feature);
+    featureLayer.setFeatureVisible(feature: feature, visible: false);
 
     // Start editing this feature in the Geometry Editor.
     final geometryEditor = _mapViewController.geometryEditor!;
@@ -272,6 +274,18 @@ class _SnapGeometryEditsWithUtilityNetworkRulesState
     );
     final geometry = feature.geometry!;
     geometryEditor.startWithGeometry(geometry);
+    geometryEditor.selectVertex(partIndex: 0, vertexIndex: 0);
+
+    // Use the feature's symbol for the editor's symbols.
+    final symbol = (feature.featureTable as GeodatabaseFeatureTable?)
+        ?.layerInfo
+        ?.drawingInfo
+        ?.renderer
+        ?.symbolForFeature(feature: feature);
+    geometryEditor.tool.style
+      ..vertexSymbol = symbol
+      ..feedbackVertexSymbol = symbol
+      ..selectedVertexSymbol = symbol;
 
     // Center the map on the feature.
     _mapViewController.setViewpointCenter(geometry.extent.center).ignore();
