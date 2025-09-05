@@ -13,6 +13,7 @@
 // limitations under the License.
 //
 
+import 'dart:async';
 import 'dart:io';
 
 import 'package:arcgis_maps/arcgis_maps.dart';
@@ -36,16 +37,20 @@ class _SnapGeometryEditsWithUtilityNetworkRulesState
   // The geodatabase containing the utility network data.
   Geodatabase? _geodatabase;
   // The utility network from the geodatabase.
-  UtilityNetwork? _utilityNetwork;
+  late UtilityNetwork _utilityNetwork;
   // A flag for when the map view is ready and controls can be used.
   var _ready = false;
   // The currently selected feature and element, if any.
   ArcGISFeature? _selectedFeature;
   UtilityElement? _selectedElement;
+  // A flag for whether there are outstanding edits.
+  var _canUndo = false;
+  StreamSubscription<bool>? _canUndoSubscription;
 
   @override
   void dispose() {
     _geodatabase?.close();
+    _canUndoSubscription?.cancel();
     super.dispose();
   }
 
@@ -54,17 +59,37 @@ class _SnapGeometryEditsWithUtilityNetworkRulesState
     return Scaffold(
       body: Stack(
         children: [
-          Column(
-            children: [
-              Expanded(
-                // Add a map view to the widget tree and set a controller.
-                child: ArcGISMapView(
-                  controllerProvider: () => _mapViewController,
-                  onMapViewReady: onMapViewReady,
-                  onTap: onTap,
+          SafeArea(
+            top: false,
+            left: false,
+            right: false,
+            child: Column(
+              children: [
+                Expanded(
+                  // Add a map view to the widget tree and set a controller.
+                  child: ArcGISMapView(
+                    controllerProvider: () => _mapViewController,
+                    onMapViewReady: onMapViewReady,
+                    onTap: _selectedElement != null ? null : onTap,
+                  ),
                 ),
-              ),
-            ],
+                Row(
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.delete),
+                      onPressed: _selectedElement == null ? null : discardEdits,
+                    ),
+                    const Spacer(),
+                    const Text('Snap Sources'), //fixme toggle sources
+                    const Spacer(),
+                    IconButton(
+                      icon: const Icon(Icons.save),
+                      onPressed: _canUndo ? saveEdits : null,
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
           // Display a progress indicator and prevent interaction until state is ready.
           LoadingIndicator(visible: !_ready),
@@ -130,7 +155,7 @@ class _SnapGeometryEditsWithUtilityNetworkRulesState
       throw Exception('No utility networks found in geodatabase');
     }
     _utilityNetwork = geodatabase.utilityNetworks.first;
-    await _utilityNetwork!.load();
+    await _utilityNetwork.load();
 
     // Create feature layers from the geodatabase tables.
     final pipelineLayer = SubtypeFeatureLayer.withFeatureTable(
@@ -162,10 +187,14 @@ class _SnapGeometryEditsWithUtilityNetworkRulesState
     }
 
     // Create and configure the geometry editor.
-    _mapViewController.geometryEditor = GeometryEditor()
+    final geometryEditor = GeometryEditor()
       ..snapSettings.isEnabled = true
       ..snapSettings.isFeatureSnappingEnabled = true
       ..tool = ReticleVertexTool();
+    _canUndoSubscription = geometryEditor.onCanUndoChanged.listen((canUndo) {
+      setState(() => _canUndo = canUndo);
+    });
+    _mapViewController.geometryEditor = geometryEditor;
 
     // Set the ready state variable to true to enable the sample UI.
     setState(() => _ready = true);
@@ -218,10 +247,14 @@ class _SnapGeometryEditsWithUtilityNetworkRulesState
     featureLayer.selectFeature(feature);
 
     // Start editing this feature in the Geometry Editor.
-    final utilityElement = _utilityNetwork!.createElement(
+    final utilityElement = _utilityNetwork.createElement(
       arcGISFeature: feature,
     );
-    _mapViewController.geometryEditor!.startWithGeometry(feature.geometry!);
+    final geometry = feature.geometry!;
+    _mapViewController.geometryEditor!.startWithGeometry(geometry);
+
+    // Center the map on the feature.
+    _mapViewController.setViewpointCenter(geometry.extent.center);
 
     //fixme setup snap rules and renderers
 
@@ -229,5 +262,25 @@ class _SnapGeometryEditsWithUtilityNetworkRulesState
       _selectedFeature = feature;
       _selectedElement = utilityElement;
     });
+  }
+
+  // Stop the Geometry Editor and discard any changes made to the geometry.
+  void discardEdits() {
+    if (!_ready) return;
+
+    _mapViewController.geometryEditor!.stop();
+
+    clearSelection();
+  }
+
+  // Save the edits made to the geometry and stop the Geometry Editor.
+  void saveEdits() {
+    if (!_ready) return;
+
+    final geometry = _mapViewController.geometryEditor!.stop()!;
+    _selectedFeature!.geometry = geometry;
+    _selectedFeature!.featureTable!.updateFeature(_selectedFeature!);
+
+    clearSelection();
   }
 }
