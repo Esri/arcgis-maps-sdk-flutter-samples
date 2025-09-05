@@ -35,8 +35,13 @@ class _SnapGeometryEditsWithUtilityNetworkRulesState
   final _mapViewController = ArcGISMapView.createController();
   // The geodatabase containing the utility network data.
   Geodatabase? _geodatabase;
+  // The utility network from the geodatabase.
+  UtilityNetwork? _utilityNetwork;
   // A flag for when the map view is ready and controls can be used.
   var _ready = false;
+  // The currently selected feature and element, if any.
+  ArcGISFeature? _selectedFeature;
+  UtilityElement? _selectedElement;
 
   @override
   void dispose() {
@@ -73,7 +78,9 @@ class _SnapGeometryEditsWithUtilityNetworkRulesState
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      'Tap a point feature to edit',
+                      _selectedElement == null
+                          ? 'Tap a point feature to edit'
+                          : 'Group: ${_selectedElement!.assetGroup.name}, Type: ${_selectedElement!.assetType.name}',
                       textAlign: TextAlign.center,
                       style: Theme.of(context).textTheme.labelMedium,
                     ),
@@ -119,6 +126,11 @@ class _SnapGeometryEditsWithUtilityNetworkRulesState
     // Load the geodatabase from the downloaded file.
     final geodatabase = Geodatabase.withFileUri(geodatabaseFile.uri);
     await geodatabase.load();
+    if (geodatabase.utilityNetworks.isEmpty) {
+      throw Exception('No utility networks found in geodatabase');
+    }
+    _utilityNetwork = geodatabase.utilityNetworks.first;
+    await _utilityNetwork!.load();
 
     // Create feature layers from the geodatabase tables.
     final pipelineLayer = SubtypeFeatureLayer.withFeatureTable(
@@ -159,9 +171,63 @@ class _SnapGeometryEditsWithUtilityNetworkRulesState
     setState(() => _ready = true);
   }
 
-  void onTap(Offset offset) {
-    // Do something with a tap.
-    // ignore: avoid_print
-    print('Tapped at $offset');
+  Future<void> onTap(Offset localPosition) async {
+    final identifyLayersResults = await _mapViewController.identifyLayers(
+      screenPoint: localPosition,
+      tolerance: 12,
+    );
+    if (!mounted) return;
+
+    // Look through the sublayer results for a point feature to edit.
+    final pointFeatures = identifyLayersResults
+        .expand((result) => result.sublayerResults)
+        .expand((result) => result.geoElements)
+        .whereType<ArcGISFeature>()
+        .where((feature) => feature.geometry is ArcGISPoint);
+    if (pointFeatures.isEmpty) return;
+
+    // Select the first point feature found.
+    final feature = pointFeatures.first;
+    selectFeature(feature);
+  }
+
+  // Clear any existing selection.
+  void clearSelection() {
+    if (_selectedFeature == null) return;
+
+    final featureLayer = _selectedFeature!.featureTable?.layer as FeatureLayer?;
+    setState(() {
+      _selectedFeature = null;
+      _selectedElement = null;
+    });
+
+    featureLayer?.clearSelection();
+    featureLayer?.resetFeaturesVisible();
+  }
+
+  // Select a feature and start editing its geometry.
+  void selectFeature(ArcGISFeature feature) {
+    if (!_ready) return;
+
+    clearSelection();
+
+    final featureLayer = feature.featureTable?.layer as FeatureLayer?;
+    if (featureLayer == null) return;
+
+    // Select this feature in its layer.
+    featureLayer.selectFeature(feature);
+
+    // Start editing this feature in the Geometry Editor.
+    final utilityElement = _utilityNetwork!.createElement(
+      arcGISFeature: feature,
+    );
+    _mapViewController.geometryEditor!.startWithGeometry(feature.geometry!);
+
+    //fixme setup snap rules and renderers
+
+    setState(() {
+      _selectedFeature = feature;
+      _selectedElement = utilityElement;
+    });
   }
 }
