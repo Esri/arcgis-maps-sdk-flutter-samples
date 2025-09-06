@@ -18,6 +18,7 @@ import 'dart:io';
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:path_provider/path_provider.dart';
 
 class IdentifyRasterCell extends StatefulWidget {
@@ -118,21 +119,11 @@ class _IdentifyRasterCellState extends State<IdentifyRasterCell>
   }
 
   Future<void> loadRasterLayer() async {
-    // Get the application documents directory.
-    final appDir = await getApplicationDocumentsDirectory();
-    const downloadFileName = 'SA_EVI_8Day_03May20';
-    final zipFile = File('${appDir.absolute.path}/$downloadFileName.zip');
-    // Download the raster file if it does not exist.
-    if (!zipFile.existsSync()) {
-      await downloadSampleDataWithProgress(
-        itemIds: ['b5f977c78ec74b3a8857ca86d1d9b318'],
-        destinationFiles: [zipFile],
-      );
-    }
+    final listPaths = GoRouter.of(context).state.extra! as List<String>;
     // Create a Raster from the local tif file.
     final raster = Raster.withFileUri(
       Uri.file(
-        '${appDir.absolute.path}/$downloadFileName/$downloadFileName.tif',
+        '${listPaths.first}/SA_EVI_8Day_03May20.tif',
       ),
     );
     // Create a Raster Layer.

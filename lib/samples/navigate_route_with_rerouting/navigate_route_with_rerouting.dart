@@ -21,7 +21,7 @@ import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:go_router/go_router.dart';
 
 class NavigateRouteWithRerouting extends StatefulWidget {
   const NavigateRouteWithRerouting({super.key});
@@ -109,10 +109,11 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
 
   @override
   void initState() {
+    final listPaths = GoRouter.of(context).state.extra! as List<String>;
     // Downloads the San Diego geodatabase required for offline routing in San Diego.
-    _geodatabasePathFuture = downloadSanDiegoGeodatabase();
+    _geodatabasePathFuture = downloadSanDiegoGeodatabase(listPaths[0]);
     // Downloads the data source's locations using a local JSON file.
-    _simulatedLocationDataSourceFuture = getLocationDataSource();
+    _simulatedLocationDataSourceFuture = getLocationDataSource(listPaths[1]);
     super.initState();
   }
 
@@ -567,9 +568,9 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
   }
 
   // Create a simulated location data source.
-  Future<SimulatedLocationDataSource> getLocationDataSource() async {
+  Future<SimulatedLocationDataSource> getLocationDataSource(String jsonPath) async {
     // Load the route point JSON file.
-    final tourJsonPath = await downloadSanDiegoTourPath();
+    final tourJsonPath = await downloadSanDiegoTourPath(jsonPath);
     final jsonString = await File(tourJsonPath).readAsString();
     final routeLine = Geometry.fromJsonString(jsonString) as Polyline;
 
@@ -635,45 +636,18 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
   }
 
   // Download the San Diego geodatabase.
-  Future<String> downloadSanDiegoGeodatabase() async {
-    // Get the application documents directory.
-    final appDir = await getApplicationDocumentsDirectory();
-    const downloadFileName = 'san_diego_offline_routing';
-    final zipFile = File('${appDir.absolute.path}/$downloadFileName.zip');
-
-    // Download the sample data if it does not exist.
-    if (!zipFile.existsSync()) {
-      await downloadSampleDataWithProgress(
-        itemIds: ['df193653ed39449195af0c9725701dca'],
-        destinationFiles: [zipFile],
-      );
-    }
+  Future<String> downloadSanDiegoGeodatabase(String path) async {
     // Create a file to the geodatabase.
-    final geodatabaseFile = File(
-      '${appDir.absolute.path}/$downloadFileName/sandiego.geodatabase',
-    );
+    final geodatabaseFile = File('$path/sandiego.geodatabase');
+
     // Return the path to the geodatabase.
     return geodatabaseFile.path;
   }
 
   // Download San Diego tour path.
-  Future<String> downloadSanDiegoTourPath() async {
-    // Get the application documents directory.
-    final appDir = await getApplicationDocumentsDirectory();
-    const downloadFileName = 'SanDiegoTourPath';
-    final zipFile = File('${appDir.absolute.path}/$downloadFileName.zip');
-
-    // Download the sample data if it does not exist.
-    if (!zipFile.existsSync()) {
-      await downloadSampleDataWithProgress(
-        itemIds: ['4caec8c55ea2463982f1af7d9611b8d5'],
-        destinationFiles: [zipFile],
-      );
-    }
+  Future<String> downloadSanDiegoTourPath(String jsonPath) async {
     // Create the SanDiegoTourPath.json file.
-    final tourPathFile = File(
-      '${appDir.absolute.path}/$downloadFileName/$downloadFileName.json',
-    );
+    final tourPathFile = File(jsonPath);
     // Return the path of the JSON file.
     return tourPathFile.path;
   }

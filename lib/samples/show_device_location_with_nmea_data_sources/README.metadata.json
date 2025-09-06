@@ -29,5 +29,9 @@
         "show_device_location_with_nmea_data_sources.dart",
         "simulated_nmea_data_source.dart"
     ],
-    "title": "Show device location with NMEA data sources"
+    "title": "Show device location with NMEA data sources",
+    "downloadableResources": [{
+        "itemId": "d5bad9f4fee9483791e405880fb466da",
+        "fileName": "RedlandsNMEA.zip"
+    }]
 }

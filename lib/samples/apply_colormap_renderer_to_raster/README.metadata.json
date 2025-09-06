@@ -24,5 +24,9 @@
     "snippets": [
         "apply_colormap_renderer_to_raster.dart"
     ],
-    "title": "Apply colormap renderer to raster"
+    "title": "Apply colormap renderer to raster",
+    "downloadableResources": [{
+        "itemId": "cc68728b5904403ba637e1f1cd2995ae",
+        "fileName": "ShastaBW.zip"
+    }]
 }

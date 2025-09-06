@@ -28,5 +28,9 @@
     "snippets": [
         "apply_symbology_to_shapefile.dart"
     ],
-    "title": "Apply symbology to shapefile"
+    "title": "Apply symbology to shapefile",
+    "downloadableResources": [{
+        "itemId": "d98b3e5293834c5f852f13c569930caa",
+        "fileName": "Aurora_CO_shp.zip"
+    }]
 }

@@ -39,5 +39,15 @@
     "snippets": [
         "find_route_in_mobile_map_package.dart"
     ],
-    "title": "Find route in mobile map package"
+    "title": "Find route in mobile map package",
+    "downloadableResources": [
+      {
+        "itemId": "e1f3a7254cb845b09450f54937c16061",
+        "fileName": "SanFrancisco.mmpk"
+      },
+      {
+        "itemId": "260eb6535c824209964cf281766ebe43",
+        "fileName": "Yellowstone..mmpk"
+      }
+    ]
 }

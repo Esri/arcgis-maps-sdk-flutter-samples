@@ -25,5 +25,9 @@
     "snippets": [
         "add_tiled_layer_as_basemap.dart"
     ],
-    "title": "Add tiled layer as basemap"
+    "title": "Add tiled layer as basemap",
+    "downloadableResources": [{
+        "itemId": "e4a398afe9a945f3b0f4dca1e4faccb5",
+        "fileName": "SanFrancisco.tpkx"
+    }]
 }

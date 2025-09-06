@@ -18,7 +18,7 @@ import 'dart:io';
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:go_router/go_router.dart';
 
 class ApplyColormapRendererToRaster extends StatefulWidget {
   const ApplyColormapRendererToRaster({super.key});
@@ -57,21 +57,10 @@ class _ApplyColormapRendererToRasterState
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISImageryStandard);
     _mapViewController.arcGISMap = map;
 
-    const downloadFileName = 'ShastaBW';
     // Get the application documents directory.
-    final appDir = await getApplicationDocumentsDirectory();
-    final zipFile = File('${appDir.absolute.path}/$downloadFileName.zip');
-    final mspkFile = File(
-      '${appDir.absolute.path}/$downloadFileName/$downloadFileName.tif',
-    );
+    final listPaths = GoRouter.of(context).state.extra! as List<String>;
+    final mspkFile = File('${listPaths.first}.tif');
 
-    // Download the ShastaBW tif file.
-    if (!zipFile.existsSync()) {
-      await downloadSampleDataWithProgress(
-        itemIds: ['cc68728b5904403ba637e1f1cd2995ae'],
-        destinationFiles: [zipFile],
-      );
-    }
     // Create a Raster from the local tif file.
     final raster = Raster.withFileUri(mspkFile.uri);
 

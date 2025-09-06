@@ -18,7 +18,7 @@ import 'dart:io';
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:go_router/go_router.dart';
 
 class ApplyFunctionToRasterFromFile extends StatefulWidget {
   const ApplyFunctionToRasterFromFile({super.key});
@@ -76,28 +76,15 @@ class _ApplyFunctionToRasterFromFileState
 
   Future<void> loadRasterLayer() async {
     // Get the application documents directory.
-    final appDir = await getApplicationDocumentsDirectory();
-    final destinationFiles = [
-      File('${appDir.absolute.path}/Shasta_Elevation.zip'),
-      File('${appDir.absolute.path}/color.json'),
-    ];
-
-    // Download the raster file and the color json file.
-    await downloadSampleDataWithProgress(
-      itemIds: [
-        'b051f5c3e01048f3bf11c59b41507896',
-        '5356dbf91788474493467519e268cf87',
-      ],
-      destinationFiles: destinationFiles,
-    );
+    final listPaths = GoRouter.of(context).state.extra! as List<String>;
 
     // Create and load a Raster from the local tif file.
     final shastaElevationRaster = Raster.withFileUri(
-      Uri.file('${appDir.absolute.path}/Shasta_Elevation/Shasta_Elevation.tif'),
+      Uri.file('${listPaths.first}/Shasta_Elevation.tif'),
     );
     await shastaElevationRaster.load();
     // Load the color configuration from the JSON file located in the app's directory.
-    final file = File(destinationFiles[1].path);
+    final file = File(listPaths[1]);
     final rasterColorJson = await file.readAsString();
 
     // Create a RasterFunction.

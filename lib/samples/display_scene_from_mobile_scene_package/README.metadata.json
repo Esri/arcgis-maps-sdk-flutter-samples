@@ -19,5 +19,9 @@
     "snippets": [
         "display_scene_from_mobile_scene_package.dart"
     ],
-    "title": "Display scene from mobile scene package"
+    "title": "Display scene from mobile scene package",
+    "downloadableResources": [{
+        "itemId": "7dd2f97bb007466ea939160d0de96a9d",
+        "fileName": "philadelphia.mspk"
+    }]
 }

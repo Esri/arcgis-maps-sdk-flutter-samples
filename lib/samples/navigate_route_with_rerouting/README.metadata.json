@@ -41,5 +41,15 @@
     "snippets": [
         "navigate_route_with_rerouting.dart"
     ],
-    "title": "Navigate route with rerouting"
+    "title": "Navigate route with rerouting",
+    "downloadableResources": [
+      {
+        "itemId": "df193653ed39449195af0c9725701dca",
+        "fileName": "san_diego_offline_routing.zip"
+      },
+      {
+        "itemId": "4caec8c55ea2463982f1af7d9611b8d5",
+        "fileName": "SanDiegoTourPath.json"
+      }
+    ]
 }

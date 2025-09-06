@@ -27,5 +27,15 @@
   "snippets": [
     "apply_function_to_raster_from_file.dart"
   ],
-  "title": "Apply function to raster from file"
+  "title": "Apply function to raster from file",
+  "downloadableResources": [
+    {
+      "itemId": "b051f5c3e01048f3bf11c59b41507896",
+      "fileName": "Shasta_Elevation.zip"
+    },
+    {
+      "itemId": "5356dbf91788474493467519e268cf87",
+      "fileName": "color.json"
+    }
+  ]
 }

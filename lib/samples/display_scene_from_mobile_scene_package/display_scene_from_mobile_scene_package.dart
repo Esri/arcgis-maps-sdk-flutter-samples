@@ -19,7 +19,7 @@ import 'dart:io';
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:go_router/go_router.dart';
 
 class DisplaySceneFromMobileScenePackage extends StatefulWidget {
   const DisplaySceneFromMobileScenePackage({super.key});
@@ -77,20 +77,9 @@ class _DisplaySceneFromMobileScenePackageState
   }
 
   Future<void> onSceneViewReady() async {
-    final appDir = await getApplicationDocumentsDirectory();
+    final listPaths = GoRouter.of(context).state.extra! as List<String>;
     // Load the local mobile scene package.
-    final mspkFile = File('${appDir.absolute.path}/philadelphia.mspk');
-
-    if (!mspkFile.existsSync()) {
-      await downloadSampleDataWithProgress(
-        itemIds: ['7dd2f97bb007466ea939160d0de96a9d'],
-        destinationFiles: [mspkFile],
-        onProgress: (progress) {
-          setState(() => _downloadProgress = progress);
-        },
-      );
-    }
-
+    final mspkFile = File('${listPaths.first}/philadelphia.mspk');
     final mspk = MobileScenePackage.withFileUri(mspkFile.uri);
     await mspk.load();
 

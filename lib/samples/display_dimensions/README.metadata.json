@@ -25,5 +25,9 @@
     "snippets": [
         "display_dimensions.dart"
     ],
-    "title": "Display dimensions"
+    "title": "Display dimensions",
+    "downloadableResources": [{
+        "itemId": "f5ff6f5556a945bca87ca513b8729a1e",
+        "fileName": "Edinburgh_Pylon_Dimensions.mmpk"
+    }]
 }

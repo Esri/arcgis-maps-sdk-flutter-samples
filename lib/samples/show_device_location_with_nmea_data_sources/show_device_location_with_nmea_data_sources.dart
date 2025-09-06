@@ -14,11 +14,13 @@
 //
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/show_device_location_with_nmea_data_sources/simulated_nmea_data_source.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class ShowDeviceLocationWithNmeaDataSources extends StatefulWidget {
   const ShowDeviceLocationWithNmeaDataSources({super.key});
@@ -56,6 +58,12 @@ class _ShowDeviceLocationWithNmeaDataSourcesState
 
   // A flag for when the map view is ready and controls can be used.
   var _ready = false;
+
+  @override
+  Future<void> initState() async {
+    
+    super.initState();
+  }
 
   @override
   void dispose() {
@@ -174,8 +182,10 @@ class _ShowDeviceLocationWithNmeaDataSourcesState
   }
 
   Future<void> _startDataSource() async {
+    final nmeaSentences = await _loadNmeaFile();
+
     // Create new instance of the NmeaSourceSimulator.
-    _nmeaDataSimulator ??= SimulatedNmeaDataSource();
+    _nmeaDataSimulator ??= SimulatedNmeaDataSource(nmeaSentences);
 
     // Subscribe to the simulator data.
     _nmeaDataSubscription ??= _nmeaDataSimulator!.nmeaMessages.listen((
@@ -208,6 +218,18 @@ class _ShowDeviceLocationWithNmeaDataSourcesState
       _currentSatelliteInfos = <NmeaSatelliteInfo>[];
       _locationDataSourceRunning = false;
     });
+  }
+
+  // Downloads the sample NMEA data file and returns the NMEA sentences as a
+  // list of Strings.
+  Future<List<String>> _loadNmeaFile() async {
+    final listPaths = GoRouter.of(context).state.extra! as List<String>;
+
+    final filePath = '${listPaths.first}/Redlands.nmea';
+    final nmeaFile = File(filePath);
+
+    // Read and return the file as a list of String lines.
+    return nmeaFile.readAsLines();
   }
 }
 
@@ -282,6 +304,8 @@ class NmeaLocationDetails extends StatelessWidget {
       ],
     );
   }
+
+  
 }
 
 // Extension on NmeaGnssSystem to provide a readable label.
