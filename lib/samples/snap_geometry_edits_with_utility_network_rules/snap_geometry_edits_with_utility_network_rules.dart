@@ -38,29 +38,21 @@ class _SnapGeometryEditsWithUtilityNetworkRulesState
   Geodatabase? _geodatabase;
   // The utility network from the geodatabase.
   late UtilityNetwork _utilityNetwork;
-  // A default renderer for graphics overlays when not being used as a snap source.
-  final _defaultGraphicRenderer = SimpleRenderer(
-    symbol: SimpleLineSymbol(
-      style: SimpleLineSymbolStyle.dash,
-      color: Colors.grey,
-      width: 3,
-    ),
-  );
-  // Hold references to the distribtion pipe and service pipe sublayers and renderers.
-  late SubtypeSublayer _distributionPipeSublayer;
-  late SubtypeSublayer _servicePipeSublayer;
-  Renderer? _distributionPipeRenderer;
-  Renderer? _servicePipeRenderer;
-  // A flag for whether there are outstanding edits.
-  var _canUndo = false;
-  StreamSubscription<bool>? _canUndoSubscription;
-
   // A flag for when the map view is ready and controls can be used.
   var _ready = false;
 
   // The currently selected feature and element, if any.
   ArcGISFeature? _selectedFeature;
   UtilityElement? _selectedElement;
+  // The Snap Sources of the selected item.
+  var _snapSources = <SnapSourceItem>[];
+
+  // A flag for whether there are outstanding edits.
+  var _canUndo = false;
+  StreamSubscription<bool>? _canUndoSubscription;
+
+  // A flag for when the settings bottom sheet is visible.
+  var _settingsVisible = false;
 
   @override
   void dispose() {
@@ -90,13 +82,21 @@ class _SnapGeometryEditsWithUtilityNetworkRulesState
                 ),
                 Row(
                   children: [
+                    // A button to discard edits.
                     IconButton(
                       icon: const Icon(Icons.delete),
                       onPressed: _selectedElement == null ? null : discardEdits,
                     ),
                     const Spacer(),
-                    const Text('Snap Sources'), //fixme toggle sources
+                    // A button to show the Snap Sources bottom sheet.
+                    ElevatedButton(
+                      onPressed: _snapSources.isEmpty
+                          ? null
+                          : () => setState(() => _settingsVisible = true),
+                      child: const Text('Snap Sources'),
+                    ),
                     const Spacer(),
+                    // A button to save edits.
                     IconButton(
                       icon: const Icon(Icons.save),
                       onPressed: _canUndo ? saveEdits : null,
@@ -131,6 +131,17 @@ class _SnapGeometryEditsWithUtilityNetworkRulesState
           ),
         ],
       ),
+      // The Settings bottom sheet.
+      bottomSheet: _settingsVisible ? buildSettings(context) : null,
+    );
+  }
+
+  // The build method for the Snap Sources bottom sheet.
+  Widget buildSettings(BuildContext context) {
+    return BottomSheetSettings(
+      onCloseIconPressed: () => setState(() => _settingsVisible = false),
+      settingsWidgets: (context) =>
+          _snapSources.map((source) => Text(source.name)).toList(),
     );
   }
 
@@ -166,7 +177,13 @@ class _SnapGeometryEditsWithUtilityNetworkRulesState
     // Add a GraphicsOverlay to be used as a snap source.
     final graphicsOverlay = GraphicsOverlay()
       ..id = 'Graphics'
-      ..renderer = _defaultGraphicRenderer;
+      ..renderer = SimpleRenderer(
+        symbol: SimpleLineSymbol(
+          style: SimpleLineSymbolStyle.dash,
+          color: Colors.grey,
+          width: 3,
+        ),
+      );
     final geometry = Geometry.fromJsonString(
       '{"paths":[[[-9811826.6810284462,5132074.7700250093],[-9811786.4643617794,5132440.9533583419],[-9811384.2976951133,5132354.1700250087],[-9810372.5310284477,5132360.5200250093],[-9810353.4810284469,5132066.3033583425]]],"spatialReference":{"wkid":102100,"latestWkid":3857}}',
     );
@@ -198,16 +215,11 @@ class _SnapGeometryEditsWithUtilityNetworkRulesState
     map.operationalLayers.addAll([pipeLayer, deviceLayer, junctionLayer]);
     await Future.wait(map.operationalLayers.map((layer) => layer.load()));
 
-    // Store values from the desired sublayers and set their visibility.
+    // Hide unwanted pipe sublayers.
     for (final sublayer in pipeLayer.subtypeSublayers) {
       switch (sublayer.name) {
         case 'Distribution Pipe':
-          _distributionPipeSublayer = sublayer;
-          _distributionPipeRenderer = sublayer.renderer;
-          sublayer.isVisible = true;
         case 'Service Pipe':
-          _servicePipeSublayer = sublayer;
-          _servicePipeRenderer = sublayer.renderer;
           sublayer.isVisible = true;
         default:
           sublayer.isVisible = false;
@@ -270,7 +282,12 @@ class _SnapGeometryEditsWithUtilityNetworkRulesState
     featureLayer.clearSelection();
     featureLayer.resetFeaturesVisible();
 
+    for (final snapSource in _snapSources) {
+      snapSource.restoreRenderer();
+    }
+
     setState(() {
+      _snapSources = [];
       _selectedFeature = null;
       _selectedElement = null;
     });
@@ -312,10 +329,16 @@ class _SnapGeometryEditsWithUtilityNetworkRulesState
     // Center the map on the feature.
     _mapViewController.setViewpointCenter(geometry.extent.center).ignore();
 
+    // Mark this feature as selected.
+    setState(() {
+      _selectedFeature = feature;
+      _selectedElement = utilityElement;
+    });
+
     // Get the snapping rules for this asset type.
     final snapRules = await SnapRules.createFromAssetType(
       utilityNetwork: _utilityNetwork,
-      assetType: utilityElement.assetType,
+      assetType: _selectedElement!.assetType,
     );
 
     // Configure the Geometry Editor's snapping settings to use these rules.
@@ -328,13 +351,28 @@ class _SnapGeometryEditsWithUtilityNetworkRulesState
         .where((settings) => settings.source is GraphicsOverlay)
         .forEach((settings) => settings.isEnabled = true);
 
-    //fixme set renderers
-
-    // Mark this feature as selected.
-    setState(() {
-      _selectedFeature = feature;
-      _selectedElement = utilityElement;
-    });
+    // Find the snap sources that we want to control.
+    final snapSources = <SnapSourceItem>[];
+    for (final sourceSetting in geometryEditor.snapSettings.sourceSettings) {
+      if (sourceSetting.source is GraphicsOverlay) {
+        snapSources.add(SnapSourceItem(sourceSetting));
+      } else if (sourceSetting.source is SubtypeFeatureLayer) {
+        final layer = sourceSetting.source as SubtypeFeatureLayer;
+        if (layer.featureTable?.tableName == 'PipelineLine') {
+          for (final sublayer in sourceSetting.childSourceSettings) {
+            if (sublayer.source is SubtypeSublayer) {
+              final subtypeSublayer = sublayer.source as SubtypeSublayer;
+              if (subtypeSublayer.name == 'Distribution Pipe') {
+                snapSources.add(SnapSourceItem(sublayer));
+              } else if (subtypeSublayer.name == 'Service Pipe') {
+                snapSources.add(SnapSourceItem(sublayer));
+              }
+            }
+          }
+        }
+      }
+    }
+    setState(() => _snapSources = snapSources);
   }
 
   // Stop the Geometry Editor and discard any changes made to the geometry.
@@ -356,4 +394,59 @@ class _SnapGeometryEditsWithUtilityNetworkRulesState
 
     clearSelection();
   }
+}
+
+// A Snap Source that can be displayed and controlled.
+class SnapSourceItem {
+  // Create a Snap Source item from the given settings, applying a renderer based on the snapping rules.
+  SnapSourceItem(this._snapSourceSettings) {
+    // The renderer to apply based on the snapping rules behavior.
+    final guideRenderer = _ruleRenderers[_snapSourceSettings.ruleBehavior];
+
+    if (_snapSourceSettings.source is GraphicsOverlay) {
+      final overlay = _snapSourceSettings.source as GraphicsOverlay;
+      name = overlay.id;
+      _originalRenderer = overlay.renderer;
+      overlay.renderer = guideRenderer;
+    } else if (_snapSourceSettings.source is SubtypeSublayer) {
+      final sublayer = _snapSourceSettings.source as SubtypeSublayer;
+      name = sublayer.name;
+      _originalRenderer = sublayer.renderer;
+      sublayer.renderer = guideRenderer;
+    }
+
+    //fixme swatch?
+    //fixme enabled?
+  }
+
+  // Restore the original renderer.
+  void restoreRenderer() {
+    if (_snapSourceSettings.source is GraphicsOverlay) {
+      final overlay = _snapSourceSettings.source as GraphicsOverlay;
+      overlay.renderer = _originalRenderer;
+    } else if (_snapSourceSettings.source is SubtypeSublayer) {
+      final sublayer = _snapSourceSettings.source as SubtypeSublayer;
+      sublayer.renderer = _originalRenderer;
+    }
+  }
+
+  // The Snap Source Settings being controlled.
+  final SnapSourceSettings _snapSourceSettings;
+  // The name of the source.
+  late final String name;
+  // The original renderer of the source, to be restored later.
+  late final Renderer? _originalRenderer;
+
+  // Renderers to apply based on the snapping rules behavior.
+  static final _ruleRenderers = {
+    SnapRuleBehavior.rulesPreventSnapping: SimpleRenderer(
+      symbol: SimpleLineSymbol(color: Colors.red, width: 4),
+    ),
+    SnapRuleBehavior.rulesLimitSnapping: SimpleRenderer(
+      symbol: SimpleLineSymbol(color: Colors.orange, width: 3),
+    ),
+    SnapRuleBehavior.none: SimpleRenderer(
+      symbol: SimpleLineSymbol(color: Colors.green, width: 3),
+    ),
+  };
 }
