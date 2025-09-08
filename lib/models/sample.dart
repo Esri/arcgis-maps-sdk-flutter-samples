@@ -30,7 +30,7 @@ class Sample {
       _title = json['title'] as String? ?? '',
       _keywords = List<String>.from(json['keywords'] as List? ?? []),
       _key = json['key'] as String? ?? '',
-      _downloadableResources = _parseDownloadableResources(json['downloadableResources']),
+      _downloadableResources = _parseDownloadableResources(json['offline_data']),
       _sampleWidget = sampleWidgets[json['key']]!();
   final String _category;
   final String _description;

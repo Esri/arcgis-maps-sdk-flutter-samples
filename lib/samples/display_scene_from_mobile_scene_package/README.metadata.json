@@ -1,10 +1,6 @@
 {
     "category": "Scenes",
     "description": "Opens and displays a scene from a Mobile Scene Package (.mspk).",
-    "downloadableResources": [{
-        "itemId": "7dd2f97bb007466ea939160d0de96a9d",
-        "downloadable": "philadelphia.mspk"
-    }],
     "ignore": false,
     "images": [
         "display_scene_from_mobile_scene_package.png"
@@ -15,6 +11,10 @@
         "ArcGISSceneView",
         "MobileScenePackage"
     ],
+    "offline_data": [{
+        "itemId": "7dd2f97bb007466ea939160d0de96a9d",
+        "downloadable": "philadelphia.mspk"
+    }],
     "redirect_from": [],
     "relevant_apis": [
         "ArcGISSceneView",

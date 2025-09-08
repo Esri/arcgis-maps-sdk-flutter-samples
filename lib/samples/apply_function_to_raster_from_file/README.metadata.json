@@ -1,7 +1,7 @@
 {
   "category": "Layers",
   "description": "Apply a raster function to a local raster file and display the output with a raster layer.",
-  "downloadableResources": [
+  "offline_data": [
     {
       "itemId": "b051f5c3e01048f3bf11c59b41507896",
       "downloadable": "Shasta_Elevation.zip",

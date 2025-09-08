@@ -1,10 +1,6 @@
 {
     "category": "Layers",
     "description": "Display dimension features from a mobile map package.",
-    "downloadableResources": [{
-        "itemId": "f5ff6f5556a945bca87ca513b8729a1e",
-        "downloadable": "Edinburgh_Pylon_Dimensions.mmpk"
-    }],
     "ignore": false,
     "images": [
         "display_dimensions.png"
@@ -21,6 +17,10 @@
         "DimensionLayer",
         "MobileMapPackage"
     ],
+    "offline_data": [{
+        "itemId": "f5ff6f5556a945bca87ca513b8729a1e",
+        "downloadable": "Edinburgh_Pylon_Dimensions.mmpk"
+    }],
     "redirect_from": [],
     "relevant_apis": [
         "DimensionLayer",

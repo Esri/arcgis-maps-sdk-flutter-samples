@@ -1,10 +1,6 @@
 {
     "category": "Maps",
     "description": "Display a map from a mobile map package.",
-     "downloadableResources": [{
-        "itemId": "e1f3a7254cb845b09450f54937c16061",
-        "downloadable": "Yellowstone.mmpk"
-    }],
     "ignore": false,
     "images": [
         "display_map_from_mobile_map_package.png"
@@ -16,6 +12,10 @@
         "ArcGISMapView",
         "MobileMapPackage"
     ],
+    "offline_data": [{
+        "itemId": "e1f3a7254cb845b09450f54937c16061",
+        "downloadable": "Yellowstone.mmpk"
+    }],
     "redirect_from": [],
     "relevant_apis": [
         "ArcGISMapView",

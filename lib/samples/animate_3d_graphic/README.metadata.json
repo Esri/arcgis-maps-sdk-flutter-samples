@@ -1,11 +1,6 @@
 {
     "category": "Scenes",
     "description": "An `OrbitGeoElementCameraController` follows a graphic while the graphic's position and rotation are animated.",
-    "downloadableResources": [{
-        "itemId": "681d6f7694644709a7c830ec57a2d72b",
-        "downloadable": "Bristol.zip",
-        "resource": "Bristol.dae"
-    }],
     "ignore": false,
     "images": [
         "animate_3d_graphic.png"
@@ -30,6 +25,11 @@
         "SceneProperties",
         "SurfacePlacement"
     ],
+    "offline_data": [{
+        "itemId": "681d6f7694644709a7c830ec57a2d72b",
+        "downloadable": "Bristol.zip",
+        "resource": "Bristol.dae"
+    }],
     "redirect_from": [],
     "relevant_apis": [
         "ArcGISScene",

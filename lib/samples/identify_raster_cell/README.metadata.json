@@ -22,9 +22,11 @@
         "Raster",
         "RasterLayer"
     ],
-    "offline_data": [
-        "b5f977c78ec74b3a8857ca86d1d9b318"
-    ],
+    "offline_data": [{
+        "itemId": "b5f977c78ec74b3a8857ca86d1d9b318",
+        "downloadable": "SA_EVI_8Day_03May20.zip",
+        "resource": "SA_EVI_8Day_03May20.tif"
+    }],
     "redirect_from": [],
     "relevant_apis": [
         "ArcGISMapViewController.identifyLayer",
@@ -36,11 +38,5 @@
     "snippets": [
         "identify_raster_cell.dart"
     ],
-    "title": "Identify raster cell",
-    "downloadableResources": [{
-        "itemId": "b5f977c78ec74b3a8857ca86d1d9b318",
-        "downloadable": "SA_EVI_8Day_03May20.zip",
-        "resource": "SA_EVI_8Day_03May20.tif"
-    }]
-
+    "title": "Identify raster cell"
 }

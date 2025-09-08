@@ -1,11 +1,6 @@
 {
     "category": "Analysis",
     "description": "Analyze the viewshed for an object (GeoElement) in a scene.",
-    "downloadableResources": [{
-        "itemId": "07d62a792ab6496d9b772a24efea45d0",
-        "": "bradley_low_3ds.zip",
-        "resource": "bradle.3ds"
-    }],
     "ignore": false,
     "images": [
         "show_viewshed_from_geoelement_in_scene.png"
@@ -26,6 +21,11 @@
         "ModelSceneSymbol",
         "OrbitGeoElementCameraController"
     ],
+    "offline_data": [{
+        "itemId": "07d62a792ab6496d9b772a24efea45d0",
+        "downloadable": "bradley_low_3ds.zip",
+        "resource": "bradle.3ds"
+    }],
     "redirect_from": [],
     "relevant_apis": [
         "AnalysisOverlay",

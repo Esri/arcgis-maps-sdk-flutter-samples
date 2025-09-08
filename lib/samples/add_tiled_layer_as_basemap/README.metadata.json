@@ -1,10 +1,6 @@
 {
     "category": "Layers",
     "description": "Load an offline copy of a tiled map service as a basemap.",
-     "downloadableResources": [{
-        "itemId": "e4a398afe9a945f3b0f4dca1e4faccb5",
-        "downloadable": "SanFrancisco.tpkx"
-    }],
     "ignore": false,
     "images": [
         "add_tiled_layer_as_basemap.png"
@@ -19,6 +15,10 @@
         "Basemap",
         "TileCache"
     ],
+    "offline_data": [{
+        "itemId": "e4a398afe9a945f3b0f4dca1e4faccb5",
+        "downloadable": "SanFrancisco.tpkx"
+    }],
     "redirect_from": [],
     "relevant_apis": [
         "ArcGISMap",

@@ -1,7 +1,7 @@
 {
     "category": "Layers",
     "description": "Apply a colormap renderer to a raster.",
-    "downloadableResources": [{
+    "offline_data": [{
         "itemId": "cc68728b5904403ba637e1f1cd2995ae",
         "downloadable": "ShastaBW.zip",
         "resource": "ShastaBW.tif"
