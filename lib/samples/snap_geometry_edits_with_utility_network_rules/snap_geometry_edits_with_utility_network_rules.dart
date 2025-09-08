@@ -547,6 +547,9 @@ class SnapSourceSwatch extends StatefulWidget {
 }
 
 class _SnapSourceSwatchState extends State<SnapSourceSwatch> {
+  // The width and height of the swatch image, in device-independent pixels.
+  static const _dimension = 8.0;
+
   // A Completer that completes when the swatch image is ready.
   final _swatchCompleter = Completer<Uint8List>();
 
@@ -589,6 +592,4 @@ class _SnapSourceSwatchState extends State<SnapSourceSwatch> {
       },
     );
   }
-
-  static const _dimension = 8.0;
 }
