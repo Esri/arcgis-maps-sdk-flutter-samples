@@ -1,6 +1,11 @@
 {
     "category": "Analysis",
     "description": "Analyze the viewshed for an object (GeoElement) in a scene.",
+    "downloadableResources": [{
+        "itemId": "07d62a792ab6496d9b772a24efea45d0",
+        "": "bradley_low_3ds.zip",
+        "resource": "bradle.3ds"
+    }],
     "ignore": false,
     "images": [
         "show_viewshed_from_geoelement_in_scene.png"
@@ -34,10 +39,5 @@
     "snippets": [
         "show_viewshed_from_geoelement_in_scene.dart"
     ],
-    "title": "Show viewshed from geoelement in scene",
-    "downloadableResources": [{
-        "itemId": "07d62a792ab6496d9b772a24efea45d0",
-        "downloadable": "bradley_low_3ds.zip",
-        "resource": "bradle.3ds"
-    }]
+    "title": "Show viewshed from geoelement in scene"
 }

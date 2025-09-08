@@ -1,6 +1,10 @@
 {
     "category": "Maps",
     "description": "Display a map from a mobile map package.",
+     "downloadableResources": [{
+        "itemId": "e1f3a7254cb845b09450f54937c16061",
+        "downloadable": "Yellowstone.mmpk"
+    }],
     "ignore": false,
     "images": [
         "display_map_from_mobile_map_package.png"
@@ -20,9 +24,5 @@
     "snippets": [
         "display_map_from_mobile_map_package.dart"
     ],
-    "title": "Display map from mobile map package",
-    "downloadableResources": [{
-        "itemId": "e1f3a7254cb845b09450f54937c16061",
-        "downloadable": "Yellowstone.mmpk"
-    }]
+    "title": "Display map from mobile map package"
 }

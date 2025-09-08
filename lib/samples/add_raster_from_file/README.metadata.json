@@ -1,6 +1,13 @@
 {
     "category": "Layers",
     "description": "Create and use a raster layer made from a local raster file.",
+      "downloadableResources": [
+        {
+            "itemId": "7c4c679ab06a4df19dc497f577f111bd",
+            "downloadable": "raster-file.zip",
+            "resource": "raster-file/Shasta.tif"
+        }
+    ],
     "ignore": false,
     "images": [
         "add_raster_from_file.png"
@@ -23,12 +30,5 @@
     "snippets": [
         "add_raster_from_file.dart"
     ],
-    "title": "Add raster from file",
-    "downloadableResources": [
-        {
-            "itemId": "7c4c679ab06a4df19dc497f577f111bd",
-            "downloadable": "raster-file.zip",
-            "resource": "raster-file/Shasta.tif"
-        }
-    ]
+    "title": "Add raster from file"
 }

@@ -1,6 +1,17 @@
 {
     "category": "Routing and Logistics",
     "description": "Navigate between two points and dynamically recalculate an alternate route when the original route is unavailable.",
+    "downloadableResources": [
+      {
+        "itemId": "df193653ed39449195af0c9725701dca",
+        "downloadable": "san_diego_offline_routing.zip",
+        "resource": "sandiego.geodatabase"
+      },
+      {
+        "itemId": "4caec8c55ea2463982f1af7d9611b8d5",
+        "downloadable": "SanDiegoTourPath.json"
+      }
+    ],
     "ignore": false,
     "images": [
         "navigate_route_with_rerouting.png"
@@ -41,16 +52,5 @@
     "snippets": [
         "navigate_route_with_rerouting.dart"
     ],
-    "title": "Navigate route with rerouting",
-    "downloadableResources": [
-      {
-        "itemId": "df193653ed39449195af0c9725701dca",
-        "downloadable": "san_diego_offline_routing.zip",
-        "resource": "sandiego.geodatabase"
-      },
-      {
-        "itemId": "4caec8c55ea2463982f1af7d9611b8d5",
-        "downloadable": "SanDiegoTourPath.json"
-      }
-    ]
+    "title": "Navigate route with rerouting"
 }

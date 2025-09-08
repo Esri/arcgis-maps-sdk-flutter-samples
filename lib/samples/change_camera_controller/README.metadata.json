@@ -1,6 +1,13 @@
 {
     "category": "Scenes",
     "description": "Control the behavior of the camera in a scene.",
+    "downloadableResources": [
+        {
+            "downloadable": "Bristol.zip",
+            "itemId": "681d6f7694644709a7c830ec57a2d72b",
+            "resource": "Bristol.dae"
+        }
+    ],
     "ignore": false,
     "images": [
         "change_camera_controller.png"
@@ -29,10 +36,5 @@
     "snippets": [
         "change_camera_controller.dart"
     ],
-    "title": "Change camera controller",
-    "downloadableResources": [{
-        "itemId": "681d6f7694644709a7c830ec57a2d72b",
-        "downloadable": "Bristol.zip",
-        "resource": "Bristol.dae"
-    }]
+    "title": "Change camera controller"
 }

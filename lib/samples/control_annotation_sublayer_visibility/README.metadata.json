@@ -1,6 +1,10 @@
 {
   "category": "Layers",
   "description": "Use annotation sublayers to gain finer control of annotation layer subtypes.",
+  "downloadableResources": [{
+      "itemId": "b87307dcfb26411eb2e92e1627cb615b",
+      "downloadable": "GasDeviceAnno.mmpk"
+  }],
   "ignore": false,
   "images": [
     "control_annotation_sublayer_visibility.png"
@@ -24,9 +28,5 @@
   "snippets": [
     "control_annotation_sublayer_visibility.dart"
   ],
-  "title": "Control annotation sublayer visibility",
-  "downloadableResources": [{
-      "itemId": "b87307dcfb26411eb2e92e1627cb615b",
-      "downloadable": "GasDeviceAnno.mmpk"
-  }]
+  "title": "Control annotation sublayer visibility"
 }

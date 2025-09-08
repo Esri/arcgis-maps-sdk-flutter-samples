@@ -1,6 +1,16 @@
 {
     "category": "Maps",
     "description": "Display maps and use locators to enable search and routing offline using a Mobile Map Package.",
+     "downloadableResources": [
+      {
+        "itemId": "e1f3a7254cb845b09450f54937c16061",
+        "downloadable": "SanFrancisco.mmpk"
+      },
+      {
+        "itemId": "260eb6535c824209964cf281766ebe43",
+        "downloadable": "Yellowstone.mmpk"
+      }
+    ],
     "ignore": false,
     "images": [
         "find_route_in_mobile_map_package.png",
@@ -39,15 +49,5 @@
     "snippets": [
         "find_route_in_mobile_map_package.dart"
     ],
-    "title": "Find route in mobile map package",
-    "downloadableResources": [
-      {
-        "itemId": "e1f3a7254cb845b09450f54937c16061",
-        "downloadable": "SanFrancisco.mmpk"
-      },
-      {
-        "itemId": "260eb6535c824209964cf281766ebe43",
-        "downloadable": "Yellowstone.mmpk"
-      }
-    ]
+    "title": "Find route in mobile map package"
 }
