@@ -178,6 +178,7 @@ class _SnapGeometryEditsWithUtilityNetworkRulesState
   Widget buildSettings(BuildContext context) {
     return BottomSheetSettings(
       onCloseIconPressed: () => setState(() => _settingsVisible = false),
+      // A widget for each snap source to control its enabled state.
       settingsWidgets: (context) => _snapSources
           .map((source) => SnapSourceWidget(snapSourceItem: source))
           .toList(),
@@ -282,6 +283,7 @@ class _SnapGeometryEditsWithUtilityNetworkRulesState
       ..snapSettings.isFeatureSnappingEnabled = true;
     final tool = ReticleVertexTool()..style.vertexTextSymbol = null;
     geometryEditor.tool = tool;
+    // Track when the Geometry Editor has unsaved edits.
     _canUndoSubscription = geometryEditor.onCanUndoChanged.listen((canUndo) {
       setState(() => _canUndo = canUndo);
     });
@@ -292,6 +294,7 @@ class _SnapGeometryEditsWithUtilityNetworkRulesState
   }
 
   Future<void> onTap(Offset localPosition) async {
+    // Identify the tapped feature.
     final identifyLayersResults = await _mapViewController.identifyLayers(
       screenPoint: localPosition,
       tolerance: 12,
@@ -394,8 +397,10 @@ class _SnapGeometryEditsWithUtilityNetworkRulesState
     final snapSources = <SnapSourceItem>[];
     for (final sourceSetting in geometryEditor.snapSettings.sourceSettings) {
       if (sourceSetting.source is GraphicsOverlay) {
+        // Add the graphics overlay snap source.
         snapSources.add(SnapSourceItem(sourceSetting));
       } else if (sourceSetting.source is SubtypeFeatureLayer) {
+        // Add particular pipe sublayers as snap sources.
         final layer = sourceSetting.source as SubtypeFeatureLayer;
         if (layer.featureTable?.tableName == 'PipelineLine') {
           for (final sublayer in sourceSetting.childSourceSettings) {
@@ -414,7 +419,7 @@ class _SnapGeometryEditsWithUtilityNetworkRulesState
     setState(() => _snapSources = snapSources);
   }
 
-  // Stop the Geometry Editor and discard any changes made to the geometry.
+  // Stop the Geometry Editor and discard any changes made to the selected feature.
   void discardEdits() {
     if (!_ready) return;
 
@@ -423,7 +428,7 @@ class _SnapGeometryEditsWithUtilityNetworkRulesState
     clearSelection();
   }
 
-  // Save the edits made to the geometry and stop the Geometry Editor.
+  // Stop the Geometry Editor and save changes made to the selected feature.
   void saveEdits() {
     if (!_ready) return;
 
@@ -442,6 +447,7 @@ class SnapSourceItem {
     // The renderer to apply based on the snapping rules behavior.
     final guideRenderer = ruleRenderers[_snapSourceSettings.ruleBehavior];
 
+    // Determine the name of the source and store its original renderer.
     if (_snapSourceSettings.source is GraphicsOverlay) {
       final overlay = _snapSourceSettings.source as GraphicsOverlay;
       name = overlay.id;
@@ -454,6 +460,7 @@ class SnapSourceItem {
       sublayer.renderer = guideRenderer;
     }
 
+    // Listen for changes to the enabled state and update the settings.
     isEnabled.addListener(
       () => _snapSourceSettings.isEnabled = isEnabled.value,
     );
@@ -470,6 +477,7 @@ class SnapSourceItem {
     }
 
     _snapSourceSettings.isEnabled = true;
+
     isEnabled.dispose();
   }
 
@@ -505,6 +513,7 @@ class SnapSourceItem {
 class SnapSourceWidget extends StatelessWidget {
   const SnapSourceWidget({required this.snapSourceItem, super.key});
 
+  // The SnapSourceItem being controlled.
   final SnapSourceItem snapSourceItem;
 
   @override
@@ -528,6 +537,7 @@ class SnapSourceWidget extends StatelessWidget {
 class SnapSourceSwatch extends StatefulWidget {
   const SnapSourceSwatch({required this.snapRuleBehavior, super.key});
 
+  // The SnapRuleBehavior to display a swatch for.
   final SnapRuleBehavior snapRuleBehavior;
 
   @override
@@ -535,6 +545,7 @@ class SnapSourceSwatch extends StatefulWidget {
 }
 
 class _SnapSourceSwatchState extends State<SnapSourceSwatch> {
+  // A Completer that completes when the swatch image is ready.
   final _swatchCompleter = Completer<Uint8List>();
 
   @override
@@ -554,6 +565,7 @@ class _SnapSourceSwatchState extends State<SnapSourceSwatch> {
             height: _dimension,
           )
           .then((image) {
+            // Signal that the swatch image is ready.
             _swatchCompleter.complete(image.getEncodedBuffer());
           });
     });
@@ -566,9 +578,11 @@ class _SnapSourceSwatchState extends State<SnapSourceSwatch> {
       future: _swatchCompleter.future,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
+          // The swatch image is ready -- display it.
           return Image.memory(snapshot.data!);
         }
 
+        // Until the image is ready, reserve space to avoid layout changes.
         return const SizedBox(width: _dimension, height: _dimension);
       },
     );
