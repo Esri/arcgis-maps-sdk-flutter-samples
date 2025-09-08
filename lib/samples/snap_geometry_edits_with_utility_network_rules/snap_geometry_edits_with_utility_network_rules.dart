@@ -58,8 +58,10 @@ class _SnapGeometryEditsWithUtilityNetworkRulesState
 
   @override
   void dispose() {
-    _geodatabase?.close();
+    // Release resources.
     _canUndoSubscription?.cancel();
+    _geodatabase?.close();
+
     super.dispose();
   }
 
