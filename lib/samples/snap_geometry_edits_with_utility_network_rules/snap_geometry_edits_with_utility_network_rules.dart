@@ -88,12 +88,12 @@ class _SnapGeometryEditsWithUtilityNetworkRulesState
                       onPressed: _selectedElement == null ? null : discardEdits,
                     ),
                     const Spacer(),
-                    // A button to show the Snap Sources bottom sheet.
+                    // A button to show the Settings bottom sheet.
                     ElevatedButton(
                       onPressed: _snapSources.isEmpty
                           ? null
                           : () => setState(() => _settingsVisible = true),
-                      child: const Text('Snap Sources'),
+                      child: const Text('Settings'),
                     ),
                     const Spacer(),
                     // A button to save edits.
@@ -110,6 +110,8 @@ class _SnapGeometryEditsWithUtilityNetworkRulesState
           LoadingIndicator(visible: !_ready),
           // Display a banner with instructions at the top.
           SafeArea(
+            left: false,
+            right: false,
             child: IgnorePointer(
               child: Container(
                 padding: const EdgeInsets.all(10),
@@ -136,12 +138,13 @@ class _SnapGeometryEditsWithUtilityNetworkRulesState
     );
   }
 
-  // The build method for the Snap Sources bottom sheet.
+  // The build method for the Settings bottom sheet.
   Widget buildSettings(BuildContext context) {
     return BottomSheetSettings(
       onCloseIconPressed: () => setState(() => _settingsVisible = false),
-      settingsWidgets: (context) =>
-          _snapSources.map((source) => Text(source.name)).toList(),
+      settingsWidgets: (context) => _snapSources
+          .map((source) => SnapSourceWidget(snapSourceItem: source))
+          .toList(),
     );
   }
 
@@ -283,7 +286,7 @@ class _SnapGeometryEditsWithUtilityNetworkRulesState
     featureLayer.resetFeaturesVisible();
 
     for (final snapSource in _snapSources) {
-      snapSource.restoreRenderer();
+      snapSource.dispose();
     }
 
     setState(() {
@@ -415,12 +418,15 @@ class SnapSourceItem {
       sublayer.renderer = guideRenderer;
     }
 
+    isEnabled.addListener(
+      () => _snapSourceSettings.isEnabled = isEnabled.value,
+    );
+
     //fixme swatch?
-    //fixme enabled?
   }
 
-  // Restore the original renderer.
-  void restoreRenderer() {
+  // Restore the original settings and dispose.
+  void dispose() {
     if (_snapSourceSettings.source is GraphicsOverlay) {
       final overlay = _snapSourceSettings.source as GraphicsOverlay;
       overlay.renderer = _originalRenderer;
@@ -428,14 +434,20 @@ class SnapSourceItem {
       final sublayer = _snapSourceSettings.source as SubtypeSublayer;
       sublayer.renderer = _originalRenderer;
     }
+
+    _snapSourceSettings.isEnabled = true;
+    isEnabled.dispose();
   }
 
   // The Snap Source Settings being controlled.
   final SnapSourceSettings _snapSourceSettings;
-  // The name of the source.
-  late final String name;
   // The original renderer of the source, to be restored later.
   late final Renderer? _originalRenderer;
+
+  // The name of the source.
+  late final String name;
+  // The enabled state of the snap source.
+  final isEnabled = ValueNotifier<bool>(true);
 
   // Renderers to apply based on the snapping rules behavior.
   static final _ruleRenderers = {
@@ -449,4 +461,27 @@ class SnapSourceItem {
       symbol: SimpleLineSymbol(color: Colors.green, width: 3),
     ),
   };
+}
+
+// A widget to display and control a SnapSourceItem.
+class SnapSourceWidget extends StatelessWidget {
+  const SnapSourceWidget({required this.snapSourceItem, super.key});
+
+  final SnapSourceItem snapSourceItem;
+
+  @override
+  Widget build(BuildContext context) {
+    // Listen to changes in the enabled state of the snap source.
+    return ValueListenableBuilder(
+      valueListenable: snapSourceItem.isEnabled,
+      builder: (context, value, child) {
+        return SwitchListTile(
+          title: Text(snapSourceItem.name),
+          value: value,
+          // Toggle the enabled state of the snap source.
+          onChanged: (value) => snapSourceItem.isEnabled.value = value,
+        );
+      },
+    );
+  }
 }
