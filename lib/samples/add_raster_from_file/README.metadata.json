@@ -27,7 +27,8 @@
     "downloadableResources": [
         {
             "itemId": "7c4c679ab06a4df19dc497f577f111bd",
-            "downloadable": "raster-file.zip"
+            "downloadable": "raster-file.zip",
+            "resource": "Shasta.tif"
         }
     ]
 }

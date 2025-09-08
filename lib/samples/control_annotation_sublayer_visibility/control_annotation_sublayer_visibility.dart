@@ -129,7 +129,7 @@ class _ControlAnnotationSublayerVisibilityState
       final listPaths = GoRouter.of(context).state.extra! as List<String>;
 
       // Load the mobile map package.
-      final mmpkFile = File('${listPaths.first}/GasDeviceAnno.mmpk');
+      final mmpkFile = File(listPaths.first);
       // Mobile map package that contains annotation layers.
       final mmpk = MobileMapPackage.withFileUri(mmpkFile.uri);
       await mmpk.load();

@@ -92,9 +92,7 @@ class _ApplySymbologyToShapefileState extends State<ApplySymbologyToShapefile>
 
     final listPaths = GoRouter.of(context).state.extra! as List<String>;
     // Get the Shapefile from the download resource.
-    final shapefile = File(
-      '${listPaths.first}/Subdivisions.shp',
-    );
+    final shapefile = File(listPaths.first);
 
     // Create a feature table from the Shapefile URI.
     final shapefileFeatureTable = ShapefileFeatureTable.withFileUri(

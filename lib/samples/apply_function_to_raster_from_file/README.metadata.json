@@ -31,7 +31,8 @@
   "downloadableResources": [
     {
       "itemId": "b051f5c3e01048f3bf11c59b41507896",
-      "downloadable": "Shasta_Elevation.zip"
+      "downloadable": "Shasta_Elevation.zip",
+      "resource": "Shasta_Elevation.tif"
     },
     {
       "itemId": "5356dbf91788474493467519e268cf87",

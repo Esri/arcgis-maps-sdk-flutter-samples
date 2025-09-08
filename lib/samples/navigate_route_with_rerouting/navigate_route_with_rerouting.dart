@@ -638,7 +638,7 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
   // Download the San Diego geodatabase.
   Future<String> downloadSanDiegoGeodatabase(String path) async {
     // Create a file to the geodatabase.
-    final geodatabaseFile = File('$path/sandiego.geodatabase');
+    final geodatabaseFile = File(path);
 
     // Return the path to the geodatabase.
     return geodatabaseFile.path;

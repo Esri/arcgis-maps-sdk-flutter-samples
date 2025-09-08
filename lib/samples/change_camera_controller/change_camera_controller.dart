@@ -203,7 +203,7 @@ class _ChangeCameraControllerState extends State<ChangeCameraController>
 
   Future<Graphic> _setupPlaneGraphic() async {
     final listPaths = GoRouter.of(context).state.extra! as List<String>;
-    final bristolFile = File('${listPaths.first}/Bristol.dae');
+    final bristolFile = File(listPaths.first);
 
     // Define the plane's position.
     final planePosition = ArcGISPoint(

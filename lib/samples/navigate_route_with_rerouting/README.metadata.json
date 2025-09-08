@@ -45,7 +45,8 @@
     "downloadableResources": [
       {
         "itemId": "df193653ed39449195af0c9725701dca",
-        "downloadable": "san_diego_offline_routing.zip"
+        "downloadable": "san_diego_offline_routing.zip",
+        "resource": "sandiego.geodatabase"
       },
       {
         "itemId": "4caec8c55ea2463982f1af7d9611b8d5",

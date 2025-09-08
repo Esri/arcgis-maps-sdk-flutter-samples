@@ -218,7 +218,7 @@ class _ShowViewshedFromGeoelementInSceneState
   // Loads the 3D tank model from local sample data and returns it as a Graphic.
   Future<Graphic> _loadTankGraphic() async {
     final listPaths = GoRouter.of(context).state.extra! as List<String>;
-    final tankModelPath = '${listPaths.first}/bradle.3ds';
+    final tankModelPath = listPaths.first;
 
     // Define the tank symbol.
     final tankSymbol =

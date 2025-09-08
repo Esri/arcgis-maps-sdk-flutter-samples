@@ -68,9 +68,9 @@ class _AddFeatureLayersState extends State<AddFeatureLayers>
 
   void _initDownloadResources() {
     final listPaths = GoRouter.of(context).state.extra! as List<String>;
-    _dataSources[Source.geodatabase] = '${listPaths[0]}/LA_Trails.geodatabase';
-    _dataSources[Source.geopackage] = '${listPaths[1]}/AuroraCO.gpkg';
-    _dataSources[Source.shapefile] = '${listPaths[2]}/ScottishWildlifeTrust_ReserveBoundaries_20201102.shp';
+    _dataSources[Source.geodatabase] = listPaths[0];
+    _dataSources[Source.geopackage] = listPaths[1];
+    _dataSources[Source.shapefile] = listPaths[2];
   }
 
   @override

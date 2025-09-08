@@ -224,8 +224,7 @@ class _Animate3dGraphicState extends State<Animate3dGraphic>
 
     if (GoRouterState.of(context).extra != null) {
       final listPaths = GoRouterState.of(context).extra! as List<String>;
-      final downloadFileName = listPaths.first;
-      final planeModelPath = '$downloadFileName.dae';
+      final planeModelPath = listPaths.first;
 
       // Define the plane symbol.
       final planeSymbol = ModelSceneSymbol.withUri(

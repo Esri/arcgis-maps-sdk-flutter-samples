@@ -119,7 +119,7 @@ class _AddPointCloudLayerFromFileState extends State<AddPointCloudLayerFromFile>
   Future<void> loadCloudPointLayerFromFile() async {
     // Download the sample data.
     final listPaths = GoRouter.of(context).state.extra! as List<String>;
-    final sanDiegoPointCloudFile = File('${listPaths.first}',);
+    final sanDiegoPointCloudFile = File(listPaths.first);
 
     // Create a Point Cloud Layer from the file URI.
     final pointCloudLayer = PointCloudLayer.withUri(sanDiegoPointCloudFile.uri);

@@ -45,6 +45,7 @@
     "title": "Animate 3D graphic",
     "downloadableResources": [{
         "itemId": "681d6f7694644709a7c830ec57a2d72b",
-        "downloadable": "Bristol.zip"
+        "downloadable": "Bristol.zip",
+        "resource": "Bristol.dae"
     }]
 }

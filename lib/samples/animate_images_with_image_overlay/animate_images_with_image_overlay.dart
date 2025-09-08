@@ -254,33 +254,21 @@ class _AnimateImagesWithImageOverlayState
   }
 
   Future<void> initImageFrames() async {
-    if (GoRouterState.of(context).extra != null) {
-      final listPaths = GoRouterState.of(context).extra! as List<String>;
-      // The sample data contains images of the Pacific South West region.
-      final directory = Directory.fromUri(Uri.parse(listPaths.first));
+    final listPaths = GoRouterState.of(context).extra! as List<String>;
+    // The sample data contains images of the Pacific South West region.
+    final directory = Directory.fromUri(Uri.parse(listPaths.first));
 
-      // Get a list of all PNG image files in the extracted directory.
-      _imageFileList = directory
-          .listSync()
-          .whereType<File>()
-          .where((file) => file.path.endsWith('.png'))
-          .toList();
-      // Sort the list by file path name.
-      _imageFileList.sort((file1, file2) => file1.path.compareTo(file2.path));
+    // Get a list of all PNG image files in the extracted directory.
+    _imageFileList = directory
+        .listSync()
+        .whereType<File>()
+        .where((file) => file.path.endsWith('.png'))
+        .toList();
+    // Sort the list by file path name.
+    _imageFileList.sort((file1, file2) => file1.path.compareTo(file2.path));
 
-      // show the first image frame in the image overlay.
-      setImageFrame(0);
-    } else {
-      // Show snackbar when no extra data is found
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('No data found'),
-            duration: Duration(seconds: 3),
-          ),
-        );
-      }
-    }
+    // show the first image frame in the image overlay.
+    setImageFrame(0);
   }
 
   /// Sets the image frame to the image overlay based on the index.

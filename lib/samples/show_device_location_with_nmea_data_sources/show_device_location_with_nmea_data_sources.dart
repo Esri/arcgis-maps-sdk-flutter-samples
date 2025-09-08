@@ -225,8 +225,7 @@ class _ShowDeviceLocationWithNmeaDataSourcesState
   Future<List<String>> _loadNmeaFile() async {
     final listPaths = GoRouter.of(context).state.extra! as List<String>;
 
-    final filePath = '${listPaths.first}/Redlands.nmea';
-    final nmeaFile = File(filePath);
+    final nmeaFile = File(listPaths.first);
 
     // Read and return the file as a list of String lines.
     return nmeaFile.readAsLines();
