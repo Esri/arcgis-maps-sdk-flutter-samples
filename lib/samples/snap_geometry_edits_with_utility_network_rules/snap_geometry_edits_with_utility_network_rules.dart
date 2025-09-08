@@ -15,10 +15,12 @@
 
 import 'dart:async';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:path_provider/path_provider.dart';
 
 class SnapGeometryEditsWithUtilityNetworkRules extends StatefulWidget {
@@ -78,6 +80,40 @@ class _SnapGeometryEditsWithUtilityNetworkRulesState
                     controllerProvider: () => _mapViewController,
                     onMapViewReady: onMapViewReady,
                     onTap: _selectedElement != null ? null : onTap,
+                  ),
+                ),
+                // A legend to explain the representation of the snapping rules.
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
+                  child: Row(
+                    children: [
+                      Text(
+                        'Snapping',
+                        style: Theme.of(context).textTheme.labelMedium,
+                      ),
+                      const Spacer(),
+                      const SnapSourceSwatch(
+                        snapRuleBehavior: SnapRuleBehavior.none,
+                      ),
+                      Text(
+                        'Allowed',
+                        style: Theme.of(context).textTheme.labelMedium,
+                      ),
+                      const SnapSourceSwatch(
+                        snapRuleBehavior: SnapRuleBehavior.rulesLimitSnapping,
+                      ),
+                      Text(
+                        'Limited',
+                        style: Theme.of(context).textTheme.labelMedium,
+                      ),
+                      const SnapSourceSwatch(
+                        snapRuleBehavior: SnapRuleBehavior.rulesPreventSnapping,
+                      ),
+                      Text(
+                        'Prevented',
+                        style: Theme.of(context).textTheme.labelMedium,
+                      ),
+                    ],
                   ),
                 ),
                 Row(
@@ -404,7 +440,7 @@ class SnapSourceItem {
   // Create a Snap Source item from the given settings, applying a renderer based on the snapping rules.
   SnapSourceItem(this._snapSourceSettings) {
     // The renderer to apply based on the snapping rules behavior.
-    final guideRenderer = _ruleRenderers[_snapSourceSettings.ruleBehavior];
+    final guideRenderer = ruleRenderers[_snapSourceSettings.ruleBehavior];
 
     if (_snapSourceSettings.source is GraphicsOverlay) {
       final overlay = _snapSourceSettings.source as GraphicsOverlay;
@@ -421,8 +457,6 @@ class SnapSourceItem {
     isEnabled.addListener(
       () => _snapSourceSettings.isEnabled = isEnabled.value,
     );
-
-    //fixme swatch?
   }
 
   // Restore the original settings and dispose.
@@ -450,7 +484,7 @@ class SnapSourceItem {
   final isEnabled = ValueNotifier<bool>(true);
 
   // Renderers to apply based on the snapping rules behavior.
-  static final _ruleRenderers = {
+  static final ruleRenderers = {
     SnapRuleBehavior.rulesPreventSnapping: SimpleRenderer(
       symbol: SimpleLineSymbol(color: Colors.red, width: 4),
     ),
@@ -458,7 +492,11 @@ class SnapSourceItem {
       symbol: SimpleLineSymbol(color: Colors.orange, width: 3),
     ),
     SnapRuleBehavior.none: SimpleRenderer(
-      symbol: SimpleLineSymbol(color: Colors.green, width: 3),
+      symbol: SimpleLineSymbol(
+        style: SimpleLineSymbolStyle.dash,
+        color: Colors.green,
+        width: 3,
+      ),
     ),
   };
 }
@@ -484,4 +522,57 @@ class SnapSourceWidget extends StatelessWidget {
       },
     );
   }
+}
+
+// A widget to load and display a swatch for a given SnapRuleBehavior.
+class SnapSourceSwatch extends StatefulWidget {
+  const SnapSourceSwatch({required this.snapRuleBehavior, super.key});
+
+  final SnapRuleBehavior snapRuleBehavior;
+
+  @override
+  State<SnapSourceSwatch> createState() => _SnapSourceSwatchState();
+}
+
+class _SnapSourceSwatchState extends State<SnapSourceSwatch> {
+  final _swatchCompleter = Completer<Uint8List>();
+
+  @override
+  void initState() {
+    super.initState();
+
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      // Get the device pixel ratio after the first frame to ensure it is accurate.
+      final devicePixelRatio = MediaQuery.devicePixelRatioOf(context);
+
+      // Create a swatch image using the renderer for the given SnapRuleBehavior.
+      final renderer = SnapSourceItem.ruleRenderers[widget.snapRuleBehavior]!;
+      renderer.symbol!
+          .createSwatch(
+            screenScale: devicePixelRatio,
+            width: _dimension,
+            height: _dimension,
+          )
+          .then((image) {
+            _swatchCompleter.complete(image.getEncodedBuffer());
+          });
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // Use a FutureBuilder to display the swatch image when it is ready.
+    return FutureBuilder(
+      future: _swatchCompleter.future,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          return Image.memory(snapshot.data!);
+        }
+
+        return const SizedBox(width: _dimension, height: _dimension);
+      },
+    );
+  }
+
+  static const _dimension = 8.0;
 }
