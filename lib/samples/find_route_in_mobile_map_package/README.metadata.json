@@ -43,11 +43,11 @@
     "downloadableResources": [
       {
         "itemId": "e1f3a7254cb845b09450f54937c16061",
-        "fileName": "SanFrancisco.mmpk"
+        "downloadable": "SanFrancisco.mmpk"
       },
       {
         "itemId": "260eb6535c824209964cf281766ebe43",
-        "fileName": "Yellowstone..mmpk"
+        "downloadable": "Yellowstone..mmpk"
       }
     ]
 }

@@ -25,7 +25,7 @@
     "downloadableResources": [
         {
             "itemId": "34da965ca51d4c68aa9b3a38edb29e00",
-            "fileName": "sandiego-north-balboa-pointcloud.slpk"
+            "downloadable": "sandiego-north-balboa-pointcloud.slpk"
         }
     ]
 }

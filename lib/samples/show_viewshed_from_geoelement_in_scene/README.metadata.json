@@ -37,7 +37,7 @@
     "title": "Show viewshed from geoelement in scene",
     "downloadableResources": [{
         "itemId": "07d62a792ab6496d9b772a24efea45d0",
-        "fileName": "bradley_low_3ds.zip"
+        "downloadable": "bradley_low_3ds.zip"
     }]
 
 }

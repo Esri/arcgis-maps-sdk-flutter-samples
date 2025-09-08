@@ -27,6 +27,6 @@
     "title": "Apply colormap renderer to raster",
     "downloadableResources": [{
         "itemId": "cc68728b5904403ba637e1f1cd2995ae",
-        "fileName": "ShastaBW.zip"
+        "downloadable": "ShastaBW.zip"
     }]
 }

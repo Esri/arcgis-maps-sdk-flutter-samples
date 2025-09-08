@@ -31,11 +31,11 @@
   "downloadableResources": [
     {
       "itemId": "b051f5c3e01048f3bf11c59b41507896",
-      "fileName": "Shasta_Elevation.zip"
+      "downloadable": "Shasta_Elevation.zip"
     },
     {
       "itemId": "5356dbf91788474493467519e268cf87",
-      "fileName": "color.json"
+      "downloadable": "color.json"
     }
   ]
 }

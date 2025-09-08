@@ -22,6 +22,6 @@
     "title": "Display scene from mobile scene package",
     "downloadableResources": [{
         "itemId": "7dd2f97bb007466ea939160d0de96a9d",
-        "fileName": "philadelphia.mspk"
+        "downloadable": "philadelphia.mspk"
     }]
 }

@@ -32,6 +32,6 @@
     "title": "Show device location with NMEA data sources",
     "downloadableResources": [{
         "itemId": "d5bad9f4fee9483791e405880fb466da",
-        "fileName": "RedlandsNMEA.zip"
+        "downloadable": "RedlandsNMEA.zip"
     }]
 }

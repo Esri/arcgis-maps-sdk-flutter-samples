@@ -18,23 +18,23 @@
 class DownloadableResource {
   const DownloadableResource({
     required this.itemId,
-    required this.fileName,
+    required this.downloadable,
   });
 
   factory DownloadableResource.fromJson(Map<String, dynamic> json) {
     return DownloadableResource(
       itemId: json['itemId'] as String,
-      fileName: json['fileName'] as String,
+      downloadable: json['downloadable'] as String,
     );
   }
 
   final String itemId;
-  final String fileName;
+  final String downloadable;
 
   Map<String, dynamic> toJson() {
     return {
       'itemId': itemId,
-      'fileName': fileName,
+      'downloadable': downloadable,
     };
   }
 }

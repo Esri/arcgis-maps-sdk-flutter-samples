@@ -71,7 +71,7 @@ class _DownloadableResourcesPageState extends State<DownloadableResourcesPage> {
     var allResourcesExist = true;
 
     for (final resource in widget.resources) {
-      final file = File('${appDir.absolute.path}/${resource.fileName}');
+      final file = File('${appDir.absolute.path}/${resource.downloadable}');
       if (!file.existsSync()) {
         allResourcesExist = false;
         break;
@@ -96,7 +96,7 @@ class _DownloadableResourcesPageState extends State<DownloadableResourcesPage> {
       final appDir = await getApplicationDocumentsDirectory();
       final itemIds = widget.resources.map((r) => r.itemId).toList();
       final destinationFiles = widget.resources.map((r) {
-        return File('${appDir.absolute.path}/${r.fileName}');
+        return File('${appDir.absolute.path}/${r.downloadable}');
       }).toList();
 
       await downloadSampleDataWithProgress(
@@ -131,8 +131,8 @@ class _DownloadableResourcesPageState extends State<DownloadableResourcesPage> {
   Future<List<String>> _getDownloadFilePaths() async {
     final appDir = await getApplicationDocumentsDirectory();
     return widget.resources.map((res) {
-      final fileNamePrefix = res.fileName.split('.').first;
-      if (res.fileName.endsWith('.zip')) {
+      final fileNamePrefix = res.downloadable.split('.').first;
+      if (res.downloadable.endsWith('.zip')) {
         // if the downloadable resource is a zip file,
         // the directory path is returned.
         final path = '${appDir.absolute.path}/$fileNamePrefix';
@@ -142,7 +142,7 @@ class _DownloadableResourcesPageState extends State<DownloadableResourcesPage> {
           return path;
         }
       } else {
-        return '${appDir.absolute.path}/${res.fileName}';
+        return '${appDir.absolute.path}/${res.downloadable}';
       }
     }).toList();
   }
@@ -155,7 +155,7 @@ class _DownloadableResourcesPageState extends State<DownloadableResourcesPage> {
       final appDir = await getApplicationDocumentsDirectory();
       for (final resource in widget.resources) {
         final file = File(
-          '${appDir.absolute.path}/${resource.fileName.split('.').first}',
+          '${appDir.absolute.path}/${resource.downloadable.split('.').first}',
         );
         if (file.existsSync()) {
           file.deleteSync();
