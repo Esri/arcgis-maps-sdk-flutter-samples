@@ -104,7 +104,7 @@ class _DownloadableResourcesPageState extends State<DownloadableResourcesPage> {
         destinationFiles: destinationFiles,
         onProgress: (progress) {
           setState(() {
-            _progress = progress;
+            _progress = progress >= 1.0 ? 1.0 : progress;
           });
         },
       );
@@ -166,9 +166,8 @@ class _DownloadableResourcesPageState extends State<DownloadableResourcesPage> {
     });
   }
 
-  void _openSample() async {
+  Future<void> _openSample() async {
     final downloadPaths = await _getDownloadFilePaths();
-    print(downloadPaths);
     widget.onComplete(downloadPaths);
   }
 

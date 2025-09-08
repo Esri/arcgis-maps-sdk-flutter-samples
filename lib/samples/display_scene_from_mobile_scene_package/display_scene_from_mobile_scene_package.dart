@@ -36,8 +36,6 @@ class _DisplaySceneFromMobileScenePackageState
   final _sceneViewController = ArcGISSceneView.createController();
   // A flag for when the scene view is ready.
   var _ready = false;
-  // The download progress of the sample data.
-  var _downloadProgress = 0.0;
 
   @override
   Widget build(BuildContext context) {
@@ -49,28 +47,6 @@ class _DisplaySceneFromMobileScenePackageState
             controllerProvider: () => _sceneViewController,
             onSceneViewReady: onSceneViewReady,
           ),
-          // Display a progress indicator and prevent interaction until state is ready.
-          Visibility(
-            visible: !_ready,
-            child: Center(
-              child: Column(
-                spacing: 10,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  CircularProgressIndicator(
-                    value: _downloadProgress,
-                    backgroundColor: Colors.white,
-                    valueColor: const AlwaysStoppedAnimation<Color>(
-                      Colors.blue,
-                    ),
-                  ),
-                  Text(
-                    'Downloading sample data ${(_downloadProgress * 100).toStringAsFixed(0)}%',
-                  ),
-                ],
-              ),
-            ),
-          ),
         ],
       ),
     );
@@ -79,7 +55,7 @@ class _DisplaySceneFromMobileScenePackageState
   Future<void> onSceneViewReady() async {
     final listPaths = GoRouter.of(context).state.extra! as List<String>;
     // Load the local mobile scene package.
-    final mspkFile = File('${listPaths.first}/philadelphia.mspk');
+    final mspkFile = File(listPaths.first);
     final mspk = MobileScenePackage.withFileUri(mspkFile.uri);
     await mspk.load();
 

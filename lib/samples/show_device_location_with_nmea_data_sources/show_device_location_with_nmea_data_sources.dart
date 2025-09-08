@@ -60,12 +60,6 @@ class _ShowDeviceLocationWithNmeaDataSourcesState
   var _ready = false;
 
   @override
-  Future<void> initState() async {
-    
-    super.initState();
-  }
-
-  @override
   void dispose() {
     // Cancel all the subscriptions.
     _nmeaDataSubscription?.cancel();

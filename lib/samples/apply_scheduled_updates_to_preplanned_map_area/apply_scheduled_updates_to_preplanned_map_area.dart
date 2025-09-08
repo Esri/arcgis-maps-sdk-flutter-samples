@@ -97,16 +97,14 @@ class _ApplyScheduledUpdatesToPreplannedMapAreaState
   }
 
   Future<void> onMapViewReady() async {
-    if (GoRouter.of(context).state.extra != null) {
-      final listPaths = GoRouter.of(context).state.extra! as List<String>;
-      _dataUri = Uri.parse(listPaths.first);
-      await _loadMapPackageMap();
+    final listPaths = GoRouter.of(context).state.extra! as List<String>;
+    _dataUri = Uri.parse(listPaths.first);
+    await _loadMapPackageMap();
 
-      // Check if there is an update for the map package.
-      await _checkForUpdates();
+    // Check if there is an update for the map package.
+    await _checkForUpdates();
 
-      setState(() => _ready = true);
-    }
+    setState(() => _ready = true);
   }
 
   // Perform the map data update.

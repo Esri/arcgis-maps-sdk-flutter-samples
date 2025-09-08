@@ -19,7 +19,6 @@ import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:path_provider/path_provider.dart';
 
 class DisplayDimensions extends StatefulWidget {
   const DisplayDimensions({super.key});
@@ -113,9 +112,7 @@ class _DisplayDimensionsState extends State<DisplayDimensions>
   Future<void> onMapViewReady() async {
     // Load the local mobile map package.
     final listPaths = GoRouter.of(context).state.extra! as List<String>;
-    final mmpkFile = File(
-      '${listPaths.first}/Edinburgh_Pylon_Dimensions.mmpk',
-    );
+    final mmpkFile = File(listPaths.first);
     final mmpk = MobileMapPackage.withFileUri(mmpkFile.uri);
     await mmpk.load();
 

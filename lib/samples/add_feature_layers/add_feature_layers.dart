@@ -45,7 +45,8 @@ class _AddFeatureLayersState extends State<AddFeatureLayers>
   // Create a variable to store the selected feature layer source.
   Source? _selectedFeatureLayerSource;
 
-  final _dataSources = Map<Source, String>();
+  // Stores the data source by resource types.
+  final _dataSources = <Source, String>{};
 
   @override
   void initState() {

@@ -55,13 +55,6 @@ class _DisplayMapFromMobileMapPackageState
   }
 
   Future<void> onMapViewReady() async {
-    if (GoRouter.of(context).state.extra == null) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('No data found')));
-      setState(() => _ready = true);
-      return;
-    }
     final listPaths = GoRouter.of(context).state.extra! as List<String>;
     // Load the local mobile map package.
     final mmpkFile = File(listPaths.first);

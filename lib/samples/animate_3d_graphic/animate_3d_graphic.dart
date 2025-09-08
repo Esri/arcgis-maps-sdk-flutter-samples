@@ -222,23 +222,18 @@ class _Animate3dGraphicState extends State<Animate3dGraphic>
       spatialReference: SpatialReference.wgs84,
     );
 
-    if (GoRouterState.of(context).extra != null) {
-      final listPaths = GoRouterState.of(context).extra! as List<String>;
-      final planeModelPath = listPaths.first;
+    final listPaths = GoRouterState.of(context).extra! as List<String>;
+    final planeModelPath = listPaths.first;
 
-      // Define the plane symbol.
-      final planeSymbol = ModelSceneSymbol.withUri(
-        uri: Uri.parse(planeModelPath),
-        scale: 20,
-      )..anchorPosition = SceneSymbolAnchorPosition.center;
+    // Define the plane symbol.
+    final planeSymbol = ModelSceneSymbol.withUri(
+      uri: Uri.parse(planeModelPath),
+      scale: 20,
+    )..anchorPosition = SceneSymbolAnchorPosition.center;
 
-      // Return the graphic that combines geometry and symbol.
-      return Graphic(geometry: planePosition, symbol: planeSymbol);
-    } else {
-      // Return the graphic that combines geometry and a dummy symbol.
-      return Graphic(geometry: planePosition, symbol: SimpleMarkerSymbol());
-    }
-  }
+    // Return the graphic that combines geometry and symbol.
+    return Graphic(geometry: planePosition, symbol: planeSymbol);
+}
 
   // Adds the plane graphic to a graphics overlay and sets the initial viewpoint.
   Future<void> _addPlaneToScene(Graphic planeGraphic) async {

@@ -31,8 +31,6 @@ class _AddRasterFromFileState extends State<AddRasterFromFile>
     with SampleStateSupport {
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
-  // download message
-  var _downloadMessage = '';
 
   // A flag for when the map view is ready and controls can be used.
   var _ready = false;
@@ -48,7 +46,7 @@ class _AddRasterFromFileState extends State<AddRasterFromFile>
             onMapViewReady: onMapViewReady,
           ),
           // Display a progress indicator and prevent interaction until state is ready.
-          LoadingIndicator(visible: !_ready, text: _downloadMessage),
+          LoadingIndicator(visible: !_ready),
         ],
       ),
     );
