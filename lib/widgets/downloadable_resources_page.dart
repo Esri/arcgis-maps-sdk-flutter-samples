@@ -19,6 +19,7 @@ import 'dart:io';
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/download_util.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/models/downloadable_resource.dart';
+import 'package:async/async.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:path/path.dart' as path;
@@ -53,9 +54,10 @@ class DownloadableResourcesPage extends StatefulWidget {
 class _DownloadableResourcesPageState extends State<DownloadableResourcesPage> {
   var _isDownloading = false;
   var _isComplete = false;
-  var _progress = 0.0;
   var _isCancelled = false;
-  Future<List<ResponseInfo>>? _downloadFuture;
+
+  var _progress = 0.0;
+  CancelableOperation<List<ResponseInfo>>? _cancelableDownload;
 
   @override
   void initState() {
@@ -97,26 +99,41 @@ class _DownloadableResourcesPageState extends State<DownloadableResourcesPage> {
         return File(path.join(appDir.absolute.path, r.downloadable));
       }).toList();
 
-      _downloadFuture = downloadSampleDataWithProgress(
-        itemIds: itemIds,
-        destinationFiles: destinationFiles,
-        onProgress: (progress) {
-          if (!_isCancelled) {
-            setState(() {
-              if (_isDownloading) {
-                _progress = progress >= 1.0 ? 1.0 : progress;
-              }
-            });
-          }
+      _cancelableDownload = CancelableOperation.fromFuture(
+        downloadSampleDataWithProgress(
+          itemIds: itemIds,
+          destinationFiles: destinationFiles,
+          onProgress: (progress) {
+            if (!_isCancelled) {
+              setState(() {
+                if (_isDownloading) {
+                  _progress = progress >= 1.0 ? 1.0 : progress;
+                }
+              });
+            }
+          },
+        ),
+        
+        onCancel: () async {
+          await _cleanupFiles();
+
+          setState(() {
+            _isCancelled = true;
+            _isDownloading = false;
+            _isComplete = false;
+            _progress = 0;
+          });
         },
       );
 
-      await _downloadFuture?.whenComplete(() {
+      final result = await _cancelableDownload!.value;
+      if (result.isNotEmpty && !_isCancelled) {
         setState(() {
           _isComplete = true;
           _isDownloading = false;
+          _progress = 1.0;
         });
-      });
+      }
     } on Exception catch (_) {
       // Handle download error
       setState(() {
@@ -141,31 +158,31 @@ class _DownloadableResourcesPageState extends State<DownloadableResourcesPage> {
     }).toList();
   }
 
-  Future<void> _cancelDownload() async {
-    _isCancelled = true;
-    _downloadFuture?.ignore();
-    _downloadFuture = null;
-
-    // Clean up any partial files
-    try {
-      final appDir = await getApplicationDocumentsDirectory();
-      for (final resource in widget.resources) {
-        final file = File(
-          path.join(appDir.absolute.path, resource.downloadable),
-        );
+  Future<void> _cleanupFiles() async {
+    final appDir = await getApplicationDocumentsDirectory();
+    for (final resource in widget.resources) {
+      final file = File(
+        path.join(appDir.absolute.path, resource.downloadable),
+      );
         if (file.existsSync()) {
           file.deleteSync();
         }
+        final dir = Directory(
+          path.join(
+            appDir.absolute.path,
+            resource.downloadable.split('.').first,
+          ),
+        );
+        if (dir.existsSync()) {
+          dir.deleteSync(recursive: true);
+        }
       }
-    } on Exception catch (_) {
-      // Ignore cleanup errors
-    }
+  }
 
-    setState(() {
-      _isDownloading = false;
-      _isComplete = false;
-      _progress = 0;
-    });
+  Future<void> _cancelDownload() async {
+    await _cancelableDownload?.cancel();
+    _cancelableDownload = null;
+    
   }
 
   Future<void> _openSample() async {
