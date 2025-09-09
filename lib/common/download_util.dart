@@ -33,6 +33,15 @@ Future<List<ResponseInfo>> downloadSampleDataWithProgress({
 }) async {
   final responses = <ResponseInfo>[];
   final totalItems = itemIds.length;
+  if (totalItems != destinationFiles.length) {
+    throw ArgumentError(
+      'itemIds and destinationFiles must have the same length: '
+      '${itemIds.length} != ${destinationFiles.length}',
+    );
+  } else if (totalItems == 0) {
+    onProgress?.call(1);
+    return <ResponseInfo>[];
+  }
 
   for (var i = 0; i < itemIds.length; i++) {
     final itemId = itemIds[i];
