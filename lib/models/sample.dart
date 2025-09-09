@@ -30,7 +30,9 @@ class Sample {
       _title = json['title'] as String? ?? '',
       _keywords = List<String>.from(json['keywords'] as List? ?? []),
       _key = json['key'] as String? ?? '',
-      _downloadableResources = _parseDownloadableResources(json['offline_data']),
+      _downloadableResources = _parseDownloadableResources(
+        json['offline_data'],
+      ),
       _sampleWidget = sampleWidgets[json['key']]!();
   final String _category;
   final String _description;
@@ -41,10 +43,12 @@ class Sample {
   final String _key;
   final List<DownloadableResource> _downloadableResources;
 
-  static List<DownloadableResource> _parseDownloadableResources(dynamic resources) {
+  static List<DownloadableResource> _parseDownloadableResources(
+    dynamic resources,
+  ) {
     if (resources == null) return [];
     if (resources is! List) return [];
-    
+
     return resources
         .whereType<Map<String, dynamic>>()
         .map(DownloadableResource.fromJson)
@@ -63,7 +67,8 @@ class Sample {
 
   String get key => _key;
 
-  List<DownloadableResource> get downloadableResources => _downloadableResources;
+  List<DownloadableResource> get downloadableResources =>
+      _downloadableResources;
 
   /// Returns true if this sample requires downloadable resources.
   bool get hasDownloadableResources => _downloadableResources.isNotEmpty;

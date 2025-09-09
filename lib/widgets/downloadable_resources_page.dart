@@ -22,7 +22,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:path_provider/path_provider.dart';
 
-typedef OnComplete = void Function(Object);
+typedef OnComplete = void Function(List<String>);
 
 /// A page that handles downloading resources required by a sample before opening it.
 ///
