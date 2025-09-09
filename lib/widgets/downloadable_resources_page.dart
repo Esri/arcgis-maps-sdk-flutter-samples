@@ -21,6 +21,7 @@ import 'package:arcgis_maps_sdk_flutter_samples/common/download_util.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/models/downloadable_resource.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 
 typedef OnComplete = void Function(List<String>);
@@ -66,7 +67,7 @@ class _DownloadableResourcesPageState extends State<DownloadableResourcesPage> {
     var allResourcesExist = true;
 
     for (final resource in widget.resources) {
-      final file = File('${appDir.absolute.path}/${resource.downloadable}');
+      final file = File(path.join(appDir.absolute.path, resource.downloadable));
       if (!file.existsSync()) {
         allResourcesExist = false;
         break;
@@ -91,7 +92,7 @@ class _DownloadableResourcesPageState extends State<DownloadableResourcesPage> {
       final appDir = await getApplicationDocumentsDirectory();
       final itemIds = widget.resources.map((r) => r.itemId).toList();
       final destinationFiles = widget.resources.map((r) {
-        return File('${appDir.absolute.path}/${r.downloadable}');
+        return File(path.join(appDir.absolute.path, r.downloadable));
       }).toList();
 
       _downloadFuture = downloadSampleDataWithProgress(
@@ -128,10 +129,10 @@ class _DownloadableResourcesPageState extends State<DownloadableResourcesPage> {
       final downloadablePrefix = res.downloadable.split('.').first;
       if (res.downloadable.toLowerCase().endsWith('.zip')) {
         return res.resource != null
-            ? '${appDir.absolute.path}/$downloadablePrefix/${res.resource}'
-            : '${appDir.absolute.path}/$downloadablePrefix';
+            ? path.join(appDir.absolute.path, downloadablePrefix, res.resource!)
+            : path.join(appDir.absolute.path, downloadablePrefix);
       } else {
-        return '${appDir.absolute.path}/${res.downloadable}';
+        return path.join(appDir.absolute.path, res.downloadable);
       }
     }).toList();
   }
@@ -144,7 +145,9 @@ class _DownloadableResourcesPageState extends State<DownloadableResourcesPage> {
     try {
       final appDir = await getApplicationDocumentsDirectory();
       for (final resource in widget.resources) {
-        final file = File('${appDir.absolute.path}/${resource.downloadable}');
+        final file = File(
+          path.join(appDir.absolute.path, resource.downloadable),
+        );
         if (file.existsSync()) {
           file.deleteSync();
         }
