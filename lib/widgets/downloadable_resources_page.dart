@@ -55,139 +55,15 @@ class _DownloadableResourcesPageState extends State<DownloadableResourcesPage> {
   var _isDownloading = false;
   var _isComplete = false;
   var _isCancelled = false;
-
   var _progress = 0.0;
+  
+  // To manage cancellation of download
   CancelableOperation<List<ResponseInfo>>? _cancelableDownload;
 
   @override
   void initState() {
     super.initState();
     _checkIfResourcesExist();
-  }
-
-  Future<void> _checkIfResourcesExist() async {
-    final appDir = await getApplicationDocumentsDirectory();
-    var allResourcesExist = true;
-
-    for (final resource in widget.resources) {
-      final file = File(path.join(appDir.absolute.path, resource.downloadable));
-      if (!file.existsSync()) {
-        allResourcesExist = false;
-        break;
-      }
-    }
-
-    if (allResourcesExist) {
-      setState(() {
-        _isComplete = true;
-        _progress = 1.0;
-      });
-    }
-  }
-
-  Future<void> _startDownload() async {
-    setState(() {
-      _isDownloading = true;
-      _progress = 0;
-      _isCancelled = false;
-    });
-
-    try {
-      final appDir = await getApplicationDocumentsDirectory();
-      final itemIds = widget.resources.map((r) => r.itemId).toList();
-      final destinationFiles = widget.resources.map((r) {
-        return File(path.join(appDir.absolute.path, r.downloadable));
-      }).toList();
-
-      _cancelableDownload = CancelableOperation.fromFuture(
-        downloadSampleDataWithProgress(
-          itemIds: itemIds,
-          destinationFiles: destinationFiles,
-          onProgress: (progress) {
-            if (!_isCancelled) {
-              setState(() {
-                if (_isDownloading) {
-                  _progress = progress >= 1.0 ? 1.0 : progress;
-                }
-              });
-            }
-          },
-        ),
-        
-        onCancel: () async {
-          await _cleanupFiles();
-
-          setState(() {
-            _isCancelled = true;
-            _isDownloading = false;
-            _isComplete = false;
-            _progress = 0;
-          });
-        },
-      );
-
-      final result = await _cancelableDownload!.value;
-      if (result.isNotEmpty && !_isCancelled) {
-        setState(() {
-          _isComplete = true;
-          _isDownloading = false;
-          _progress = 1.0;
-        });
-      }
-    } on Exception catch (_) {
-      // Handle download error
-      setState(() {
-        _isDownloading = false;
-        _isComplete = false;
-        _progress = 0;
-      });
-    }
-  }
-
-  Future<List<String>> _getDownloadFilePaths() async {
-    final appDir = await getApplicationDocumentsDirectory();
-    return widget.resources.map((res) {
-      final downloadablePrefix = res.downloadable.split('.').first;
-      if (res.downloadable.toLowerCase().endsWith('.zip')) {
-        return res.resource != null
-            ? path.join(appDir.absolute.path, downloadablePrefix, res.resource!)
-            : path.join(appDir.absolute.path, downloadablePrefix);
-      } else {
-        return path.join(appDir.absolute.path, res.downloadable);
-      }
-    }).toList();
-  }
-
-  Future<void> _cleanupFiles() async {
-    final appDir = await getApplicationDocumentsDirectory();
-    for (final resource in widget.resources) {
-      final file = File(
-        path.join(appDir.absolute.path, resource.downloadable),
-      );
-        if (file.existsSync()) {
-          file.deleteSync();
-        }
-        final dir = Directory(
-          path.join(
-            appDir.absolute.path,
-            resource.downloadable.split('.').first,
-          ),
-        );
-        if (dir.existsSync()) {
-          dir.deleteSync(recursive: true);
-        }
-      }
-  }
-
-  Future<void> _cancelDownload() async {
-    await _cancelableDownload?.cancel();
-    _cancelableDownload = null;
-    
-  }
-
-  Future<void> _openSample() async {
-    final downloadPaths = await _getDownloadFilePaths();
-    widget.onComplete(downloadPaths);
   }
 
   @override
@@ -251,5 +127,141 @@ class _DownloadableResourcesPageState extends State<DownloadableResourcesPage> {
         ),
       ),
     );
+  }
+
+  // Check if all resources already exist.
+  Future<void> _checkIfResourcesExist() async {
+    final appDir = await getApplicationDocumentsDirectory();
+    var allResourcesExist = true;
+
+    for (final resource in widget.resources) {
+      final file = File(path.join(appDir.absolute.path, resource.downloadable));
+      if (!file.existsSync()) {
+        allResourcesExist = false;
+        break;
+      }
+    }
+
+    if (allResourcesExist) {
+      setState(() {
+        _isComplete = true;
+        _progress = 1.0;
+      });
+    }
+  }
+
+  // Start the download of resources.
+  Future<void> _startDownload() async {
+    setState(() {
+      _isDownloading = true;
+      _progress = 0;
+      _isCancelled = false;
+    });
+
+    try {
+      final appDir = await getApplicationDocumentsDirectory();
+      final itemIds = widget.resources.map((r) => r.itemId).toList();
+      final destinationFiles = widget.resources.map((r) {
+        return File(path.join(appDir.absolute.path, r.downloadable));
+      }).toList();
+
+      _cancelableDownload = CancelableOperation.fromFuture(
+        // Start the download process
+        downloadSampleDataWithProgress(
+          itemIds: itemIds,
+          destinationFiles: destinationFiles,
+          onProgress: (progress) {
+            if (!_isCancelled) {
+              setState(() {
+                if (_isDownloading) {
+                  _progress = progress >= 1.0 ? 1.0 : progress;
+                }
+              });
+            }
+          },
+        ),
+        // Handle cancellation
+        onCancel: () async {
+          await _cleanupFiles();
+
+          setState(() {
+            _isCancelled = true;
+            _isDownloading = false;
+            _isComplete = false;
+            _progress = 0;
+          });
+        },
+      );
+
+      // Await the download result.
+      final result = await _cancelableDownload!.value;
+      if (result.isNotEmpty && !_isCancelled) {
+        setState(() {
+          _isComplete = true;
+          _isDownloading = false;
+          _progress = 1.0;
+        });
+      }
+    } on Exception catch (_) {
+      // Handle download error
+      setState(() {
+        _isDownloading = false;
+        _isComplete = false;
+        _progress = 0;
+      });
+
+      // show a snackbar with error message
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Error downloading resources. Please try again.'),
+          ),
+        );
+      }
+    }
+  }
+
+  // Get the file paths of the downloaded resources.
+  Future<List<String>> _getDownloadFilePaths() async {
+    final appDir = await getApplicationDocumentsDirectory();
+    return widget.resources.map((res) {
+      final downloadablePrefix = res.downloadable.split('.').first;
+      if (res.downloadable.toLowerCase().endsWith('.zip')) {
+        return res.resource != null
+            ? path.join(appDir.absolute.path, downloadablePrefix, res.resource!)
+            : path.join(appDir.absolute.path, downloadablePrefix);
+      } else {
+        return path.join(appDir.absolute.path, res.downloadable);
+      }
+    }).toList();
+  }
+
+  // Clean up partially downloaded files.
+  Future<void> _cleanupFiles() async {
+    final appDir = await getApplicationDocumentsDirectory();
+    for (final resource in widget.resources) {
+      final file = File(path.join(appDir.absolute.path, resource.downloadable));
+      if (file.existsSync()) {
+        file.deleteSync();
+      }
+      final dir = Directory(
+        path.join(appDir.absolute.path, resource.downloadable.split('.').first),
+      );
+      if (dir.existsSync()) {
+        dir.deleteSync(recursive: true);
+      }
+    }
+  }
+
+  // Cancel the ongoing download.
+  Future<void> _cancelDownload() async {
+    await _cancelableDownload?.cancel();
+    _cancelableDownload = null;
+  }
+
+  // Call back to onComplete.
+  Future<void> _openSample() async {
+    final downloadPaths = await _getDownloadFilePaths();
+    widget.onComplete(downloadPaths);
   }
 }
