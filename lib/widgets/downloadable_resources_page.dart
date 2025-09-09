@@ -54,6 +54,7 @@ class _DownloadableResourcesPageState extends State<DownloadableResourcesPage> {
   var _isDownloading = false;
   var _isComplete = false;
   var _progress = 0.0;
+  var _isCancelled = false;
   Future<List<ResponseInfo>>? _downloadFuture;
 
   @override
@@ -86,6 +87,7 @@ class _DownloadableResourcesPageState extends State<DownloadableResourcesPage> {
     setState(() {
       _isDownloading = true;
       _progress = 0;
+      _isCancelled = false;
     });
 
     try {
@@ -99,11 +101,13 @@ class _DownloadableResourcesPageState extends State<DownloadableResourcesPage> {
         itemIds: itemIds,
         destinationFiles: destinationFiles,
         onProgress: (progress) {
-          setState(() {
-            if (_isDownloading) {
-              _progress = progress >= 1.0 ? 1.0 : progress;
-            }
-          });
+          if (!_isCancelled) {
+            setState(() {
+              if (_isDownloading) {
+                _progress = progress >= 1.0 ? 1.0 : progress;
+              }
+            });
+          }
         },
       );
 
@@ -113,7 +117,7 @@ class _DownloadableResourcesPageState extends State<DownloadableResourcesPage> {
           _isDownloading = false;
         });
       });
-    } on Exception catch (e) {
+    } on Exception catch (_) {
       // Handle download error
       setState(() {
         _isDownloading = false;
@@ -138,6 +142,7 @@ class _DownloadableResourcesPageState extends State<DownloadableResourcesPage> {
   }
 
   Future<void> _cancelDownload() async {
+    _isCancelled = true;
     _downloadFuture?.ignore();
     _downloadFuture = null;
 
