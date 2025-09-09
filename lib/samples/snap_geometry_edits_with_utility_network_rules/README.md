@@ -2,7 +2,7 @@
 
 Use the Geometry Editor to edit geometries using utility network connectivity rules.
 
-![Image of snapping](snap_geometry_edits_with_utility_network_rules.jpg)
+![Image of snapping](snap_geometry_edits_with_utility_network_rules.png)
 
 ## Use case
 
