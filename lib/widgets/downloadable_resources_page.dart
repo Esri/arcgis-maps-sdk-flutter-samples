@@ -16,6 +16,7 @@
 
 import 'dart:async';
 import 'dart:io';
+import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/download_util.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/models/downloadable_resource.dart';
 import 'package:flutter/material.dart';
@@ -52,18 +53,12 @@ class _DownloadableResourcesPageState extends State<DownloadableResourcesPage> {
   var _isDownloading = false;
   var _isComplete = false;
   var _progress = 0.0;
-  StreamSubscription<double>? _progressSubscription;
+  Future<List<ResponseInfo>>? _downloadFuture;
 
   @override
   void initState() {
     super.initState();
     _checkIfResourcesExist();
-  }
-
-  @override
-  void dispose() {
-    _progressSubscription?.cancel();
-    super.dispose();
   }
 
   Future<void> _checkIfResourcesExist() async {
@@ -99,32 +94,31 @@ class _DownloadableResourcesPageState extends State<DownloadableResourcesPage> {
         return File('${appDir.absolute.path}/${r.downloadable}');
       }).toList();
 
-      await downloadSampleDataWithProgress(
+      _downloadFuture = downloadSampleDataWithProgress(
         itemIds: itemIds,
         destinationFiles: destinationFiles,
         onProgress: (progress) {
           setState(() {
-            _progress = progress >= 1.0 ? 1.0 : progress;
+            if (_isDownloading) {
+              _progress = progress >= 1.0 ? 1.0 : progress;
+            }
           });
         },
       );
 
-      setState(() {
-        _isComplete = true;
-        _isDownloading = false;
+      await _downloadFuture?.whenComplete(() {
+        setState(() {
+          _isComplete = true;
+          _isDownloading = false;
+        });
       });
     } on Exception catch (e) {
       // Handle download error
       setState(() {
         _isDownloading = false;
+        _isComplete = false;
         _progress = 0;
       });
-
-      if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Download failed: $e')));
-      }
     }
   }
 
@@ -143,15 +137,14 @@ class _DownloadableResourcesPageState extends State<DownloadableResourcesPage> {
   }
 
   Future<void> _cancelDownload() async {
-    await _progressSubscription?.cancel();
+    _downloadFuture?.ignore();
+    _downloadFuture = null;
 
     // Clean up any partial files
     try {
       final appDir = await getApplicationDocumentsDirectory();
       for (final resource in widget.resources) {
-        final file = File(
-          '${appDir.absolute.path}/${resource.downloadable.split('.').first}',
-        );
+        final file = File('${appDir.absolute.path}/${resource.downloadable}');
         if (file.existsSync()) {
           file.deleteSync();
         }
@@ -162,6 +155,7 @@ class _DownloadableResourcesPageState extends State<DownloadableResourcesPage> {
 
     setState(() {
       _isDownloading = false;
+      _isComplete = false;
       _progress = 0;
     });
   }
