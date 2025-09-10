@@ -52,8 +52,8 @@ class _ConfigureClustersState extends State<ConfigureClusters>
   ];
 
   // Current selections.
-  var _selectedRadius = 60; // default cluster radius
-  var _selectedMaxScale = 0; // default max scale (0 = unlimited)
+  var _selectedRadius = 60; // default cluster radius.
+  var _selectedMaxScale = 0; // default max scale (0 = unlimited).
 
   // Pre-built dropdown entries .
   late final _radiusEntries = _clusterRadiusOptions
@@ -73,7 +73,7 @@ class _ConfigureClustersState extends State<ConfigureClusters>
         right: false,
         child: Column(
           children: [
-            // MapView
+            // MapView.
             Expanded(
               child: ArcGISMapView(
                 controllerProvider: () => _mapViewController,
