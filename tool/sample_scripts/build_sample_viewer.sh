@@ -1,6 +1,6 @@
 #!/bin/bash -e
 #
-# COPYRIGHT 1995-2023 ESRI
+# COPYRIGHT 1995-2025 ESRI
 #
 # TRADE SECRETS: ESRI PROPRIETARY AND CONFIDENTIAL
 # Unpublished material - all rights reserved under the
