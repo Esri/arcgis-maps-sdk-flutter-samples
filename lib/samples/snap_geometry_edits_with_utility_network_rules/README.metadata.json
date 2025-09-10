@@ -28,6 +28,13 @@
         "SnapSourceSettings",
         "UtilityNetwork"
     ],
+    "offline_data": [
+      {
+        "itemId": "0fd3a39660d54c12b05d5f81f207dffd",
+        "downloadable": "NapervilleGasUtilities.zip",
+        "resource": "NapervilleGasUtilities.geodatabase"
+      }
+    ],
     "redirect_from": [],
     "relevant_apis": [
         "ArcGISMapView",
