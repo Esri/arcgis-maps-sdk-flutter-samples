@@ -70,9 +70,8 @@ APK_PATH="$PROJECT_ROOT/build/app/outputs/flutter-apk/app-release.apk"
 IOS_APP_PATH="$PROJECT_ROOT/build/ios/iphoneos/Runner.app"
 
 
-ls -lh "$PROJECT_ROOT/build/app/outputs/flutter-apk/" || echo "[DEBUG] APK output directory not found."
 
-echo "[SUCCESS] Build process completed. Artifacts are in $RELEASE_DIR."
+ls -lh "$PROJECT_ROOT/build/app/outputs/flutter-apk/" || echo "[DEBUG] APK output directory not found."
 ls -lh "$PROJECT_ROOT/build/ios/iphoneos/" || echo "[DEBUG] iOS output directory not found."
 
 if [ -f "$APK_PATH" ]; then
@@ -86,6 +85,9 @@ if [ -d "$IOS_APP_PATH" ]; then
   cp -R "$IOS_APP_PATH" "$RELEASE_DIR/" || die "Failed to copy iOS .app bundle."
   echo "[INFO] iOS .app bundle copied to $RELEASE_DIR."
   echo "[INFO] To install on a physical device, open the project in Xcode and deploy to your device."
+
 else
   echo "[WARNING] iOS .app bundle not found at $IOS_APP_PATH."
 fi
+
+echo "[SUCCESS] Build process completed. Artifacts are in $RELEASE_DIR."
