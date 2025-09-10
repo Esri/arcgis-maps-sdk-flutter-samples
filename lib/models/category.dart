@@ -58,6 +58,11 @@ enum SampleCategory {
     Icons.search,
     'assets/category_images/search_and_query_background.webp',
   ),
+  utilityNetworks(
+    'Utility Networks',
+    Icons.polyline,
+    'assets/category_images/utility_background.webp',
+  ),
   visualization(
     'Visualization',
     Icons.visibility,
