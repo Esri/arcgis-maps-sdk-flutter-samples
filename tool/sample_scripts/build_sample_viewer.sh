@@ -65,7 +65,7 @@ flutter build apk --release --dart-define-from-file=env.json --no-tree-shake-ico
 echo "[INFO] Building Flutter iOS app (release mode, for physical device)..."
 flutter build ios --release --dart-define-from-file=env.json --no-tree-shake-icons || die "iOS app build failed."
 
-# Step 5: Copy APK and iOS .app files (use absolute paths).
+# Step 6: Copy APK and iOS .app files (use absolute paths).
 APK_PATH="$PROJECT_ROOT/build/app/outputs/flutter-apk/app-release.apk"
 IOS_APP_PATH="$PROJECT_ROOT/build/ios/iphoneos/Runner.app"
 
