@@ -34,21 +34,16 @@ class _DisplaySceneFromMobileScenePackageState
     with SampleStateSupport {
   // Create a controller for the scene view.
   final _sceneViewController = ArcGISSceneView.createController();
-  // A flag for when the scene view is ready.
-  var _ready = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       // Add a scene view to the widget tree and set a controller.
-      body: Stack(
-        children: [
+      body: 
           ArcGISSceneView(
             controllerProvider: () => _sceneViewController,
             onSceneViewReady: onSceneViewReady,
           ),
-        ],
-      ),
     );
   }
 
@@ -63,8 +58,5 @@ class _DisplaySceneFromMobileScenePackageState
       // Get the first scene in the mobile scene package and set to the scene view.
       _sceneViewController.arcGISScene = mspk.scenes.first;
     }
-
-    // Set the ready state variable to true to enable the sample UI.
-    setState(() => _ready = true);
   }
 }

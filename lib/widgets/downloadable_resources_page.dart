@@ -93,20 +93,37 @@ class _DownloadableResourcesPageState extends State<DownloadableResourcesPage> {
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 20),
-              SizedBox(
-                width: 60,
-                height: 60,
-                child: CircularProgressIndicator(
-                  value: _progress,
-                  backgroundColor: Colors.grey[300],
+              // Download progress indicator
+              Visibility(
+                visible: _isDownloading,
+                child: Column(
+                  children: [
+                    SizedBox(
+                      width: 60,
+                      height: 60,
+                      child: CircularProgressIndicator(
+                        value: _progress,
+                        backgroundColor: Colors.grey[300],
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    Text(
+                      '${(_progress * 100).toInt()}% download complete',
+                      style: Theme.of(context).textTheme.bodyMedium,
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
                 ),
               ),
-              const SizedBox(height: 20),
-              Text(
-                '${(_progress * 100).toInt()}% download complete',
-                style: Theme.of(context).textTheme.bodyMedium,
-                textAlign: TextAlign.center,
+              Visibility(
+                visible: _isComplete,
+                child: Text(
+                      'The resources have been downloaded.',
+                      style: Theme.of(context).textTheme.bodySmall,
+                      textAlign: TextAlign.center,
+                    ),
               ),
+              // Button [Download|Cancel|Open]
               const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: _isDownloading
