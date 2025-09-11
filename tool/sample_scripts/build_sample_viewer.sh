@@ -32,11 +32,9 @@ set -v
 project_root="$(git rev-parse --show-toplevel)"
 cd "$project_root"
 
-
 # Step 2: Clean previous builds.
 echo "[INFO] Cleaning previous builds..."
 flutter clean
-
 
 # Step 3: Run build_runner to generate code.
 echo "[INFO] Running build_runner to generate code..."
@@ -50,21 +48,13 @@ flutter build apk --release --dart-define-from-file=env.json --no-tree-shake-ico
 echo "[INFO] Building Flutter iOS app (release mode, for physical device)..."
 flutter build ios --release --dart-define-from-file=env.json --no-tree-shake-icons
 
-apk_path="$project_root/build/app/outputs/flutter-apk/app-release.apk"
-ios_app_path="$project_root/build/ios/iphoneos/Runner.app"
-
-ls -lh "$project_root/build/app/outputs/flutter-apk/" || echo "[DEBUG] APK output directory not found."
-ls -lh "$project_root/build/ios/iphoneos/" || echo "[DEBUG] iOS output directory not found."
-
-
 echo "[SUCCESS] Build process completed."
 
 # Step 6: Install to first available physical iOS/Android device.
 echo "[INFO] Searching for physical iOS/Android devices for installation..."
 
 # Find all matching physical iOS/Android devices.
-device_ids=( $(flutter devices --machine | \
-  jq -r '.[] | select((.targetPlatform=="ios" or .targetPlatform=="android") and (.emulator==false) and (.isSupported==true)) | .id') )
+mapfile -t device_ids < <(flutter devices --machine | jq -r '.[] | select((.targetPlatform=="ios" or .targetPlatform=="android") and (.emulator==false) and (.isSupported==true)) | .id')
 
 if [ ${#device_ids[@]} -eq 0 ]; then
   echo "[INFO] No physical iOS/Android device found for installation."
