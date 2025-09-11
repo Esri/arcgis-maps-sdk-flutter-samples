@@ -28,20 +28,10 @@
 
 set -v
 
-# Always change to project root.
+# Step 1: Move to the project root directory.
 project_root="$(git rev-parse --show-toplevel)"
 cd "$project_root"
 
-
-# Step 1: Ensure release_builds/ folder exists and clean its contents if not empty.
-release_dir="$project_root/release_builds"
-if [ ! -d "$release_dir" ]; then
-  echo "[INFO] Creating release_builds/ directory at $release_dir..."
-  mkdir -p "$release_dir"
-elif [ "$(ls -A "$release_dir")" ]; then
-  echo "[INFO] Cleaning previous contents of $release_dir..."
-  rm -rf "${release_dir:?}"/*
-fi
 
 # Step 2: Clean previous builds.
 echo "[INFO] Cleaning previous builds..."
@@ -60,27 +50,27 @@ flutter build apk --release --dart-define-from-file=env.json --no-tree-shake-ico
 echo "[INFO] Building Flutter iOS app (release mode, for physical device)..."
 flutter build ios --release --dart-define-from-file=env.json --no-tree-shake-icons
 
-# Step 6: Copy APK and iOS .app files (use absolute paths).
-
 apk_path="$project_root/build/app/outputs/flutter-apk/app-release.apk"
 ios_app_path="$project_root/build/ios/iphoneos/Runner.app"
 
 ls -lh "$project_root/build/app/outputs/flutter-apk/" || echo "[DEBUG] APK output directory not found."
 ls -lh "$project_root/build/ios/iphoneos/" || echo "[DEBUG] iOS output directory not found."
-if [ -f "$apk_path" ]; then
-  cp "$apk_path" "$release_dir/"
-  echo "[INFO] APK copied to $release_dir."
+
+
+echo "[SUCCESS] Build process completed."
+
+# Step 6: Install to first available physical iOS/Android device.
+echo "[INFO] Searching for physical iOS/Android devices for installation..."
+
+# Find all matching physical iOS/Android devices.
+device_ids=( $(flutter devices --machine | \
+  jq -r '.[] | select((.targetPlatform=="ios" or .targetPlatform=="android") and (.emulator==false) and (.isSupported==true)) | .id') )
+
+if [ ${#device_ids[@]} -eq 0 ]; then
+  echo "[INFO] No physical iOS/Android device found for installation."
 else
-  echo "[WARNING] APK not found at $apk_path."
+  for device_id in "${device_ids[@]}"; do
+    echo "[INFO] Installing app to device: $device_id"
+    flutter install -d "$device_id" --release
+  done
 fi
-
-
-if [ -d "$ios_app_path" ]; then
-  cp -R "$ios_app_path" "$release_dir/"
-  echo "[INFO] iOS .app bundle copied to $release_dir."
-  echo "[INFO] To install on a physical device, open the project in Xcode and deploy to your device."
-else
-  echo "[WARNING] iOS .app bundle not found at $ios_app_path."
-fi
-
-echo "[SUCCESS] Build process completed. Artifacts are in $release_dir."
