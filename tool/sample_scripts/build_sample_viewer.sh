@@ -50,7 +50,10 @@ echo "[SUCCESS] Build process completed."
 # Step 6: Find and install to all matching physical iOS/Android devices.
 echo "[INFO] Searching for physical iOS/Android devices for installation..."
 
-mapfile -t device_ids < <(flutter devices --machine | jq -r '.[] | select((.targetPlatform=="ios" or .targetPlatform=="android") and (.emulator==false) and (.isSupported==true)) | .id')
+device_ids=()
+while IFS= read -r line; do
+  device_ids+=("$line")
+done < <(flutter devices --machine | jq -r '.[] | select((.targetPlatform=="ios" or .targetPlatform=="android") and (.emulator==false) and (.isSupported==true)) | .id')
 
 if [ ${#device_ids[@]} -eq 0 ]; then
   echo "[INFO] No physical iOS/Android device found for installation."
