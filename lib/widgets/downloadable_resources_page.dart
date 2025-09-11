@@ -187,6 +187,7 @@ class _DownloadableResourcesPageState extends State<DownloadableResourcesPage> {
         downloadSampleDataWithProgress(
           itemIds: itemIds,
           destinationFiles: destinationFiles,
+          shouldCancel: () => _isCancelled,
           onProgress: (progress) {
             if (!_isCancelled) {
               setState(() {
@@ -245,7 +246,7 @@ class _DownloadableResourcesPageState extends State<DownloadableResourcesPage> {
       final downloadablePrefix = res.downloadable.split('.').first;
       if (res.downloadable.toLowerCase().endsWith('.zip')) {
         return res.resource != null
-            ? path.join(appDir.absolute.path, downloadablePrefix, res.resource!)
+            ? path.join(appDir.absolute.path, downloadablePrefix, res.resource)
             : path.join(appDir.absolute.path, downloadablePrefix);
       } else {
         return path.join(appDir.absolute.path, res.downloadable);

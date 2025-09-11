@@ -33,49 +33,13 @@ class _AddPointCloudLayerFromFileState extends State<AddPointCloudLayerFromFile>
   // Create a controller for the scene view.
   final _sceneViewController = ArcGISSceneView.createController();
 
-  // A flag for when the scene view is ready.
-  var _ready = false;
-  // The download progress of the sample data.
-  var _downloadProgress = 0.0;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: [
-          ArcGISSceneView(
+      body: ArcGISSceneView(
             controllerProvider: () => _sceneViewController,
             onSceneViewReady: onSceneViewReady,
-          ),
-          // Display a progress indicator and prevent interaction until state is ready.
-          Visibility(
-            visible: !_ready,
-            child: Center(
-              child: Column(
-                spacing: 10,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  CircularProgressIndicator(
-                    value: _downloadProgress,
-                    backgroundColor: Colors.white,
-                    valueColor: const AlwaysStoppedAnimation<Color>(
-                      Colors.blue,
-                    ),
-                  ),
-                  Text(
-                    'Downloading sample data ${(_downloadProgress * 100).toStringAsFixed(0)}%',
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
+          ),      
     );
   }
 
@@ -126,7 +90,5 @@ class _AddPointCloudLayerFromFileState extends State<AddPointCloudLayerFromFile>
     await pointCloudLayer.load();
     // Add the point cloud layer to the map's operational layers.
     _sceneViewController.arcGISScene?.operationalLayers.add(pointCloudLayer);
-    // Set the ready state variable to true to enable the sample UI.
-    setState(() => _ready = true);
   }
 }
