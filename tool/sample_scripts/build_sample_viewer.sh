@@ -24,7 +24,7 @@
 # the necessary certificates and provisioning profiles for iOS.
 # It also assumes that env.json is present at the root of the repository.
 #
-# Note: This script does not produce an IPA file, but generate the .app bundle for iOS.
+# Note: This script does not produce an IPA file, but generates the .app bundle for iOS.
 
 set -v
 
