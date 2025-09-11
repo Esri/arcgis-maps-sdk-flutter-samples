@@ -31,7 +31,7 @@ class Sample {
       _keywords = List<String>.from(json['keywords'] as List? ?? []),
       _key = json['key'] as String? ?? '',
       _downloadableResources = _parseDownloadableResources(
-        json['offline_data'],
+        json['offline_data'] as List? ?? [],
       ),
       _sampleWidget = sampleWidgets[json['key']]!();
   final String _category;
@@ -44,11 +44,8 @@ class Sample {
   final List<DownloadableResource> _downloadableResources;
 
   static List<DownloadableResource> _parseDownloadableResources(
-    dynamic resources,
+    List<dynamic> resources,
   ) {
-    if (resources == null) return [];
-    if (resources is! List) return [];
-
     return resources
         .whereType<Map<String, dynamic>>()
         .map(DownloadableResource.fromJson)

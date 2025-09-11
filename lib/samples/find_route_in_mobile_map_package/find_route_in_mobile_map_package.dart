@@ -38,6 +38,13 @@ typedef SampleData = ({
 class _FindRouteInMobileMapPackageState
     extends State<FindRouteInMobileMapPackage>
     with SampleStateSupport {
+  
+  late Future<List<MobileMapPackage>> _mobileMapPackage;
+  @override
+  void initState() {
+    _mobileMapPackage = _loadMobileMapPackages();
+    super.initState();
+  }
 
   Future<List<MobileMapPackage>> _loadMobileMapPackages() async {
     final listPaths = GoRouter.of(context).state.extra! as List<String>;
@@ -57,7 +64,7 @@ class _FindRouteInMobileMapPackageState
       body: SafeArea(
         // Display a list of maps from the mobile map packages once loaded.
         child: FutureBuilder(
-          future: _loadMobileMapPackages(),
+          future: _mobileMapPackage,
           builder: (context, snapshot) {
             // Show a progress indicator until the mobile map packages finish loading.
             if (snapshot.connectionState != ConnectionState.done) {

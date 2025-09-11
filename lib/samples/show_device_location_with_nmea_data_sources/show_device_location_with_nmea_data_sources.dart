@@ -214,7 +214,7 @@ class _ShowDeviceLocationWithNmeaDataSourcesState
     });
   }
 
-  // Downloads the sample NMEA data file and returns the NMEA sentences as a
+  // Loads the sample NMEA data file and returns the NMEA sentences as a
   // list of Strings.
   Future<List<String>> _loadNmeaFile() async {
     final listPaths = GoRouter.of(context).state.extra! as List<String>;
