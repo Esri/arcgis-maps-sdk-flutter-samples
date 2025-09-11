@@ -65,12 +65,8 @@ flutter build ios --release --dart-define-from-file=env.json --no-tree-shake-ico
 apk_path="$project_root/build/app/outputs/flutter-apk/app-release.apk"
 ios_app_path="$project_root/build/ios/iphoneos/Runner.app"
 
-
-
 ls -lh "$project_root/build/app/outputs/flutter-apk/" || echo "[DEBUG] APK output directory not found."
 ls -lh "$project_root/build/ios/iphoneos/" || echo "[DEBUG] iOS output directory not found."
-
-
 if [ -f "$apk_path" ]; then
   cp "$apk_path" "$release_dir/"
   echo "[INFO] APK copied to $release_dir."
