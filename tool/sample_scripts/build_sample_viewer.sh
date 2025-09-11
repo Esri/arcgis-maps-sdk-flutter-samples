@@ -17,14 +17,11 @@
 # email: contracts@esri.com
 #
 
-# This script builds the Sample Viewer App for both Android and iOS in release mode,
-# using environment variables defined in env.json, and places the resulting
-# APK and iOS .app bundle into a release_builds/ folder at the root of the repository.
-# It assumes that you have already set up your Flutter environment and have
-# the necessary certificates and provisioning profiles for iOS.
-# It also assumes that env.json is present at the root of the repository.
-#
-# Note: This script does not produce an IPA file, but generates the .app bundle for iOS.
+# Builds the Sample Viewer App for both Android and iOS in release mode.
+# Uses environment variables defined in env.json (must be present at repo root)
+# Outputs APK and iOS .app bundle to build/ directories
+# Assumes Flutter environment, iOS certificates/profiles are set up
+# Installs the built app to all connected, supported physical iOS/Android devices
 
 set -v
 
