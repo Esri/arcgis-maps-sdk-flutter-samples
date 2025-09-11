@@ -14,13 +14,19 @@
 // limitations under the License.
 //
 
+import 'dart:convert';
+
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/models/sample.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/models/samples_widget_list.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/router_config.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 /// Run an individual sample outside of the Sample Viewer App.
-void main() {
+void main() async {
   // Supply your apiKey using the --dart-define-from-file command line argument.
   const apiKey = String.fromEnvironment('API_KEY');
   // Alternatively, replace the above line with the following and hard-code your apiKey here:
@@ -29,9 +35,31 @@ void main() {
 
   // Supply the directory name of a sample via the --dart-define command line argument
   // e.g. --dart-define=SAMPLE=display_map
-  const sample = String.fromEnvironment('SAMPLE');
+  const sampleFolderName = String.fromEnvironment('SAMPLE');
   // Alternatively, replace sample below with the directory name of the individual sample in snake case
   // const sample = 'display_map';
 
-  runApp(MaterialApp(theme: sampleViewerTheme, home: sampleWidgets[sample]!()));
+  final jsonString = await rootBundle.loadString(
+    'assets/generated_samples_list.json',
+  );
+  final sampleData = jsonDecode(jsonString) as Map<String, dynamic>;
+  final allSamples = List<Sample>.unmodifiable(
+    sampleData.values.whereType<Map<String, dynamic>>().map(Sample.fromJson),
+  );
+  final sample = allSamples.firstWhere((s) {
+    return s.key == sampleFolderName;
+  });
+  
+  final initialRoute = sample.hasDownloadableResources
+      ? '/${sample.key}/resources'
+      : '/${sample.key}/live';
+  
+  final router = routerConfigWithSample(sample, initialRoute);
+  
+  runApp(
+    MaterialApp.router(
+      routerConfig: router,
+      theme: sampleViewerTheme,
+    ),
+  );
 }

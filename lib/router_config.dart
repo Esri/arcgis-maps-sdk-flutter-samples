@@ -124,3 +124,29 @@ GoRouter routerConfig(List<Sample> allSamples) {
     ],
   );
 }
+
+GoRouter routerConfigWithSample(Sample sample, String initialLocation) {
+  return GoRouter(
+    initialLocation: initialLocation,
+    routes: [
+      GoRoute(
+        path: '/:sample/resources',
+        builder: (context, state) {
+          return DownloadableResourcesPage(
+            sampleTitle: sample.title,
+            resources: sample.downloadableResources,
+            onComplete: (downloadPaths) {
+              context.go('/${sample.key}/live', extra: downloadPaths);
+            },
+          );
+        },
+      ),
+      GoRoute(
+        path: '/:sample/live',
+        builder: (context, state) {
+          return sample.getSampleWidget();
+        },
+      ),
+    ],
+  );
+}
