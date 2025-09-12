@@ -86,7 +86,7 @@ class _TraceUtilityNetworkState extends State<TraceUtilityNetwork>
       'I68VGU^nMurF',
     );
 
-    initElectricalDistributionRenderer();
+    _initElectricalDistributionRenderer();
     super.initState();
   }
 
@@ -124,9 +124,8 @@ class _TraceUtilityNetworkState extends State<TraceUtilityNetwork>
                 Container(
                   padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
                   child: Column(
-                    //crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      // Add starting locations or barriers buttons
+                      // Add starting locations or barriers radio buttons 
                       Row(
                         children: [
                           Expanded(
@@ -191,7 +190,6 @@ class _TraceUtilityNetworkState extends State<TraceUtilityNetwork>
                           const SizedBox(width: 10),
                         ],
                       ),
-                      //const SizedBox(height: 8),
                       // Action Reset and Trace buttons
                       Row(
                         children: [
@@ -247,7 +245,7 @@ class _TraceUtilityNetworkState extends State<TraceUtilityNetwork>
                           DropdownButton<UtilityTerminal>(
                             value: _availableTerminals!.first,
                             onChanged: (value) {
-                              //_selectTerminal(value!);
+                              _selectTerminal(value!);
                             },
                             items: _availableTerminals!.map((terminal) {
                               return DropdownMenuItem<UtilityTerminal>(
@@ -258,8 +256,8 @@ class _TraceUtilityNetworkState extends State<TraceUtilityNetwork>
                           ),
                           const SizedBox(height: 16),
                           ElevatedButton(
-                            onPressed: () => {},
-                            //_selectTerminal(_availableTerminals!.first),
+                            onPressed: () => 
+                            _selectTerminal(_availableTerminals!.first),
                             child: const Text('Select'),
                           ),
                         ],
@@ -339,7 +337,7 @@ class _TraceUtilityNetworkState extends State<TraceUtilityNetwork>
   }
 
   // Create renderer for line layer with different symbols for voltage levels.
-  void initElectricalDistributionRenderer() {
+  void _initElectricalDistributionRenderer() {
     final lowVoltageValue = UniqueValue(
       description: 'Low voltage',
       label: 'Low voltage',
@@ -367,20 +365,20 @@ class _TraceUtilityNetworkState extends State<TraceUtilityNetwork>
     );
   }
 
+  // Callback when the map view is tapped.
   Future<void> _onTap(Offset localPosition) async {
     if (!_ready) return;
-    _updateHintMessage('Identifying trace locations...');
 
     // Identify the feature to be used.
     final identifyResults = await _mapViewController.identifyLayers(
       screenPoint: localPosition,
       tolerance: 10,
     );
+    // Check if there are features identified.
     if (identifyResults.isEmpty) {
-      _updateHintMessage('Could not identify location.');
+      _updateHintMessage('No utility element(s) identified.');
     } else {
       final point = _mapViewController.screenToLocation(screen: localPosition);
-      print('reults =  ${identifyResults.length}');
       final result = identifyResults.first;
       if (result.geoElements.isNotEmpty) {
         final feature = result.geoElements.first as ArcGISFeature;
@@ -397,7 +395,6 @@ class _TraceUtilityNetworkState extends State<TraceUtilityNetwork>
           return source.featureTable.tableName ==
               feature.featureTable?.tableName;
         });
-        
     if (networkSource == null) {
       _updateHintMessage(
         'Selected feature does not contain a Utility Network Source.',
@@ -419,10 +416,11 @@ class _TraceUtilityNetworkState extends State<TraceUtilityNetwork>
   ) {
     // Find the code matching the asset group name in the feature's attributes
     final assetGroupCode = feature.attributes['assetgroup'] as int;
-    // Find the network source's asset group with the matching code
+    // Find the network source's UtilityAssetGroup with the matching code
     final assetGroup = source.assetGroups.firstWhere(
       (group) => group.code == assetGroupCode,
     );
+    // Find the UtilityAssetType
     final assetType = assetGroup.assetTypes.firstWhere(
       (type) => type.code == feature.attributes['assettype'] as int,
     );
@@ -432,23 +430,25 @@ class _TraceUtilityNetworkState extends State<TraceUtilityNetwork>
       setState(() => _message = 'Error retrieving terminal configuration');
       return;
     }
-
     // If there is only one terminal, use it to create a utility element
-    if (terminals!.length == 1) {
+    if (terminals.length == 1) {
       final element = _utilityNetwork?.createElement(
         arcGISFeature: feature,
         terminal: terminals.first,
       );
       _addUtilityElement(feature, element!, feature.geometry! as ArcGISPoint);
     } else {
-      // handle multiple terminals; //TODO
-      final element = _utilityNetwork?.createElement(
-        arcGISFeature: feature,
-        terminal: terminals.first,
-      );
-      _addUtilityElement(feature, element!, feature.geometry! as ArcGISPoint);
+      setState(() => _availableTerminals = terminals);
+     
     }
   }
+
+  void _selectTerminal(UtilityTerminal terminal) {
+     //_addUtilityElement(feature, element!, feature.geometry! as ArcGISPoint);
+
+     print(terminal.name);
+  }
+  
 
   void _createEdgeJunctionElement(ArcGISFeature feature, ArcGISPoint point) {
     // Create a utility element with the identified feature
@@ -457,15 +457,18 @@ class _TraceUtilityNetworkState extends State<TraceUtilityNetwork>
       setState(() => _message = 'Error creating element');
       return;
     }
-    final line = feature as Polyline;
-    element.fractionAlongEdge = GeometryEngine.fractionAlong(
-      line: line,
-      point: point,
-      tolerance: -1,
-    );
-    _addUtilityElement(feature, element, point);
-    // Update the hint text
-    _updateHintMessage('Fraction along the edge: ${element.fractionAlongEdge}');
+    if (feature.geometry?.geometryType ==GeometryType.polyline) {
+      final line = GeometryEngine.removeZ(feature.geometry!) as Polyline;
+      // Compute how far tapped location is along the edge feature.
+      element.fractionAlongEdge = GeometryEngine.fractionAlong(
+        line: line,
+        point: point,
+        tolerance: -1,
+      );
+      _addUtilityElement(feature, element, point);
+      // Update the hint text
+      _updateHintMessage('Fraction along the edge: ${element.fractionAlongEdge}');
+    }
   }
 
   void _addUtilityElement(
@@ -504,6 +507,12 @@ class _TraceUtilityNetworkState extends State<TraceUtilityNetwork>
 
     // Clear the map of any locations, barriers and trace result.
     _graphicsOverlay.graphics.clear();
+    // Clear the selections on the feature layer
+    _mapViewController.arcGISMap?.operationalLayers.forEach((layer) {
+      if (layer is FeatureLayer) {
+        layer.clearSelection();
+      }
+    });
   }
 
   Future<void> _onTrace() async {
