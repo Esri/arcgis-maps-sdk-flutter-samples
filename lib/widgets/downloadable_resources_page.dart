@@ -164,6 +164,11 @@ class _DownloadableResourcesPageState extends State<DownloadableResourcesPage> {
         _isComplete = true;
         _progress = 1.0;
       });
+      
+      // if the data has been downloaded, directly open the sample.
+      if (mounted) {
+        unawaited(_openSample());
+      }
     }
   }
 
@@ -219,6 +224,9 @@ class _DownloadableResourcesPageState extends State<DownloadableResourcesPage> {
           _isDownloading = false;
           _progress = 1.0;
         });
+
+        // directly open the sample after downloading
+        unawaited(_openSample());
       }
     } on Exception catch (_) {
       // Handle download error

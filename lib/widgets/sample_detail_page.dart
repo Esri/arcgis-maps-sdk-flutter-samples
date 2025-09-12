@@ -17,6 +17,7 @@
 import 'package:arcgis_maps_sdk_flutter_samples/models/sample.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/widgets/sample_info_popup_menu.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class SampleDetailPage extends StatelessWidget {
   const SampleDetailPage({required this.sample, super.key});
@@ -28,9 +29,25 @@ class SampleDetailPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: FittedBox(fit: BoxFit.scaleDown, child: Text(sample.title)),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => _handleBackNavigation(context),
+        ),
         actions: [SampleInfoPopupMenu(sample: sample)],
       ),
       body: sample.getSampleWidget(),
     );
+  }
+
+  void _handleBackNavigation(BuildContext context) {
+    final router = GoRouter.of(context);
+    // Check if we came from the resources page
+    if (router.state.extra != null) {
+      // Skip the previous download page to go to category page directly.
+      context.go('/category/${sample.category}');
+    } else {
+      // Normal back navigation
+      context.pop();
+    }
   }
 }

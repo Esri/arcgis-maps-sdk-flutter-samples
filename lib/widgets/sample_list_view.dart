@@ -14,6 +14,8 @@
 // limitations under the License.
 //
 
+import 'dart:async';
+
 import 'package:arcgis_maps_sdk_flutter_samples/models/sample.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/widgets/sample_info_popup_menu.dart';
 import 'package:flutter/material.dart';
@@ -35,11 +37,13 @@ class SampleListView extends StatelessWidget {
           child: ListTile(
             title: Text(sample.title),
             subtitle: Text(sample.description),
-            onTap: () {
-              if (sample.hasDownloadableResources) {
-                context.push('/sample/${sample.key}/resources');
-              } else {
-                context.push('/sample/${sample.key}/live');
+            onTap: () async {
+              if (context.mounted) {
+                if (sample.hasDownloadableResources) {
+                  unawaited(context.push('/sample/${sample.key}/resources'));
+                } else {
+                  unawaited(context.push('/sample/${sample.key}/live'));
+                }
               }
             },
             contentPadding: const EdgeInsets.only(left: 20),
