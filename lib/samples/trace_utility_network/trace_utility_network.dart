@@ -73,8 +73,8 @@ class _TraceUtilityNetworkState extends State<TraceUtilityNetwork>
   ];
 
   // Terminal selection state.
-  List<UtilityTerminal>? _availableTerminals;
-  UtilityElement? _pendingElement;
+  //List<UtilityTerminal>? _availableTerminals;
+  //UtilityElement? _pendingElement;
 
   @override
   void initState() {
@@ -222,50 +222,6 @@ class _TraceUtilityNetworkState extends State<TraceUtilityNetwork>
                 ),
               ],
             ),
-            // Terminal selection dialog
-            if (_availableTerminals != null)
-              ColoredBox(
-                color: Colors.black54,
-                child: Center(
-                  child: Card(
-                    margin: const EdgeInsets.all(16),
-                    child: Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Text(
-                            'Select the terminal for this junction.',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(height: 16),
-                          DropdownButton<UtilityTerminal>(
-                            value: _availableTerminals!.first,
-                            onChanged: (value) {
-                              _selectTerminal(value!);
-                            },
-                            items: _availableTerminals!.map((terminal) {
-                              return DropdownMenuItem<UtilityTerminal>(
-                                value: terminal,
-                                child: Text(terminal.name),
-                              );
-                            }).toList(),
-                          ),
-                          const SizedBox(height: 16),
-                          ElevatedButton(
-                            onPressed: () => 
-                            _selectTerminal(_availableTerminals!.first),
-                            child: const Text('Select'),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ),
             // Loading indicator
             LoadingIndicator(visible: !_ready),
           ],
@@ -401,7 +357,7 @@ class _TraceUtilityNetworkState extends State<TraceUtilityNetwork>
       );
       return;
     }
-
+    // Create UtilityElement by its source type.
     if (networkSource.sourceType == UtilityNetworkSourceType.junction) {
       _createJunctionElement(feature, networkSource);
     } else if (networkSource.sourceType ==
@@ -410,10 +366,10 @@ class _TraceUtilityNetworkState extends State<TraceUtilityNetwork>
     }
   }
 
-  void _createJunctionElement(
+  Future<void> _createJunctionElement(
     ArcGISFeature feature,
     UtilityNetworkSource source,
-  ) {
+  ) async {
     // Find the code matching the asset group name in the feature's attributes
     final assetGroupCode = feature.attributes['assetgroup'] as int;
     // Find the network source's UtilityAssetGroup with the matching code
@@ -438,15 +394,65 @@ class _TraceUtilityNetworkState extends State<TraceUtilityNetwork>
       );
       _addUtilityElement(feature, element!, feature.geometry! as ArcGISPoint);
     } else {
-      setState(() => _availableTerminals = terminals);
-     
+      final selectedTerminal = await _showTerminalSelect(terminals);
+      if (selectedTerminal != null) {
+         final element = _utilityNetwork?.createElement(
+        arcGISFeature: feature,
+        terminal: selectedTerminal,
+      );
+      _addUtilityElement(feature, element!, feature.geometry! as ArcGISPoint);
+      }
     }
   }
 
-  void _selectTerminal(UtilityTerminal terminal) {
-     //_addUtilityElement(feature, element!, feature.geometry! as ArcGISPoint);
 
-     print(terminal.name);
+  Future<UtilityTerminal?> _showTerminalSelect(List<UtilityTerminal> terminals) {
+    return showDialog<UtilityTerminal>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        var selectedTerminal = terminals.first;
+        
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: const Text('Select Terminal'),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text('Select the terminal for this junction.'),
+                  const SizedBox(height: 16),
+                  DropdownButton<UtilityTerminal>(
+                    value: selectedTerminal,
+                    onChanged: (value) {
+                      setState(() {
+                        selectedTerminal = value!;
+                      });
+                    },
+                    items: terminals.map((terminal) {
+                      return DropdownMenuItem<UtilityTerminal>(
+                        value: terminal,
+                        child: Text(terminal.name),
+                      );
+                    }).toList(),
+                  ),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: const Text('Cancel'),
+                ),
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(selectedTerminal),
+                  child: const Text('OK'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
   }
   
 
