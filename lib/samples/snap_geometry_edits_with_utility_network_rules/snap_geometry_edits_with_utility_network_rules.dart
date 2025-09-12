@@ -181,9 +181,19 @@ class _SnapGeometryEditsWithUtilityNetworkRulesState
     return BottomSheetSettings(
       onCloseIconPressed: () => setState(() => _settingsVisible = false),
       // A widget for each snap source to control its enabled state.
-      settingsWidgets: (context) => _snapSources
-          .map((source) => SnapSourceWidget(snapSourceItem: source))
-          .toList(),
+      settingsWidgets: (context) => [
+        Row(
+          children: [
+            Text(
+              'Snap Sources',
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+          ],
+        ),
+        ..._snapSources.map(
+          (source) => SnapSourceWidget(snapSourceItem: source),
+        ),
+      ],
     );
   }
 
