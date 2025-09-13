@@ -2,7 +2,7 @@
 
 Discover connected features in a utility network using connected, subnetwork, upstream, and downstream traces.
 
-![Image of trace utility network](trace_utility_network.jpg)
+![Image of trace utility network](trace_utility_network.png)
 
 ## Use case
 
@@ -14,21 +14,22 @@ Tap on one or more features while 'Add starting locations' or 'Add barriers' is 
 
 ## How it works
 
-1. Create a `MapView` and subscribe to its `GeoViewTapped` event.
-2. Create and load a `ServiceGeodatabase` with a feature service URL and get tables by their layer IDs.
-3. Create a `Map` that contains `FeatureLayer`(s) created from the `ServiceGeodatabase`'s tables.
-4. Create and load a `UtilityNetwork` with the same feature service URL and this `Map`.
-5. Add a `GraphicsOverlay` with symbology that distinguishes starting locations from barriers.
-6. Identify features on the map and add a `Graphic` that represents its purpose (starting location or barrier) at the tapped location.
-7. Create a `UtilityElement` for the identified feature.
-8. Determine the type of this element using its `UtilityNetworkSource.SourceType` property.
-9. If the element is a junction with more than one terminal, display a terminal picker. Then set the junction's `UtilityTerminal` property with the selected terminal.
-10. If an edge, set its `FractionAlongEdge` property using `GeometryEngine.FractionAlong`.
-11. Add this `UtilityElement` to a collection of starting locations or barriers.
-12. Create `UtilityTraceParameters` with the selected trace type along with the collected starting locations and barriers (if applicable).
-13. Set the `UtilityTraceParameters.TraceConfiguration` with the tier's `UtilityTier.GetDefaultTraceConfiguration()` result.
-14. Run a `UtilityNetwork.TraceAsync` with the specified parameters.
-15. For every `FeatureLayer` in the map, select the features returned with `GetFeaturesForElementsAsync` from the elements matching their `UtilityNetworkSource.FeatureTable` with the layer's `FeatureTable`.
+1. Create a `ArcGISMapViewController` by `ArcGISMapView` and listen for `onTap` event.
+2. Create an `ArcGISMap` with the given portal item, and set the map to the controller.
+3. Get the only `UtilityNetwork` from the map.
+4. Find and load the `ServiceGeodatabase` associated with the utility network.
+5. Find the `FeatureLayer`(s) created from the `ServiceGeodatabase`'s tables.
+6. Add a `GraphicsOverlay` with symbology that distinguishes starting locations from barriers.
+7. Identify features on the map and add a `Graphic` that represents its purpose (starting location or barrier) at the tapped location.
+8. Create a `UtilityElement` for the identified feature.
+9. Determine the type of this element using its `UtilityNetworkSource.SourceType` property.
+10. If the element is a junction with more than one terminal, display a terminal picker. Then set the junction's `UtilityTerminal` property with the selected terminal.
+11. If an edge, set its `FractionAlongEdge` property using `GeometryEngine.FractionAlong`.
+12. Add this `UtilityElement` to a collection of starting locations or barriers.
+13. Create `UtilityTraceParameters` with the selected trace type along with the collected starting locations and barriers (if applicable).
+14. Set the `UtilityTraceParameters.TraceConfiguration` with the tier's `UtilityTier.getDefaultTraceConfiguration()` result.
+15. Run a `UtilityNetwork.trace()` with the specified parameters.
+16. For every `FeatureLayer` in the map, select the features returned with `getFeaturesForElements` from the elements matching their `UtilityNetworkSource.FeatureTable` with the layer's `FeatureTable`.
 
 ## Relevant API
 

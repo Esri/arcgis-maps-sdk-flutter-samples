@@ -72,10 +72,6 @@ class _TraceUtilityNetworkState extends State<TraceUtilityNetwork>
     UtilityTraceType.downstream,
   ];
 
-  // Terminal selection state.
-  //List<UtilityTerminal>? _availableTerminals;
-  //UtilityElement? _pendingElement;
-
   @override
   void initState() {
     // Set up authentication for the sample server
@@ -125,7 +121,7 @@ class _TraceUtilityNetworkState extends State<TraceUtilityNetwork>
                   padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
                   child: Column(
                     children: [
-                      // Add starting locations or barriers radio buttons 
+                      // Add starting locations or barriers radio buttons
                       Row(
                         children: [
                           Expanded(
@@ -170,8 +166,6 @@ class _TraceUtilityNetworkState extends State<TraceUtilityNetwork>
                           const SizedBox(width: 10),
                           const Text('Trace Type: '),
                           const SizedBox(width: 10),
-                          //Expanded(
-                          //  child:
                           DropdownButton<UtilityTraceType>(
                             value: _selectedTraceType,
                             onChanged: _ready
@@ -182,7 +176,10 @@ class _TraceUtilityNetworkState extends State<TraceUtilityNetwork>
                             items: _traceTypes.map((type) {
                               return DropdownMenuItem<UtilityTraceType>(
                                 value: type,
-                                child: Text(_getTraceTypeName(type)),
+                                child: Text(
+                                  _getTraceTypeName(type),
+                                  style: Theme.of(context).textTheme.bodyMedium,
+                                ),
                               );
                             }).toList(),
                           ),
@@ -360,8 +357,7 @@ class _TraceUtilityNetworkState extends State<TraceUtilityNetwork>
     // Create UtilityElement by its source type.
     if (networkSource.sourceType == UtilityNetworkSourceType.junction) {
       _createJunctionElement(feature, networkSource);
-    } else if (networkSource.sourceType ==
-        UtilityNetworkSourceType.edge) {
+    } else if (networkSource.sourceType == UtilityNetworkSourceType.edge) {
       _createEdgeJunctionElement(feature, point);
     }
   }
@@ -393,26 +389,28 @@ class _TraceUtilityNetworkState extends State<TraceUtilityNetwork>
         terminal: terminals.first,
       );
       _addUtilityElement(feature, element!, feature.geometry! as ArcGISPoint);
+    // If there are more than one terminal, ask to select one
     } else {
       final selectedTerminal = await _showTerminalSelect(terminals);
       if (selectedTerminal != null) {
-         final element = _utilityNetwork?.createElement(
-        arcGISFeature: feature,
-        terminal: selectedTerminal,
-      );
-      _addUtilityElement(feature, element!, feature.geometry! as ArcGISPoint);
+        final element = _utilityNetwork?.createElement(
+          arcGISFeature: feature,
+          terminal: selectedTerminal,
+        );
+        _addUtilityElement(feature, element!, feature.geometry! as ArcGISPoint);
       }
     }
   }
 
-
-  Future<UtilityTerminal?> _showTerminalSelect(List<UtilityTerminal> terminals) {
+  Future<UtilityTerminal?> _showTerminalSelect(
+    List<UtilityTerminal> terminals,
+  ) {
     return showDialog<UtilityTerminal>(
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
         var selectedTerminal = terminals.first;
-        
+
         return StatefulBuilder(
           builder: (context, setState) {
             return AlertDialog(
@@ -454,7 +452,6 @@ class _TraceUtilityNetworkState extends State<TraceUtilityNetwork>
       },
     );
   }
-  
 
   void _createEdgeJunctionElement(ArcGISFeature feature, ArcGISPoint point) {
     // Create a utility element with the identified feature
@@ -463,7 +460,7 @@ class _TraceUtilityNetworkState extends State<TraceUtilityNetwork>
       setState(() => _message = 'Error creating element');
       return;
     }
-    if (feature.geometry?.geometryType ==GeometryType.polyline) {
+    if (feature.geometry?.geometryType == GeometryType.polyline) {
       final line = GeometryEngine.removeZ(feature.geometry!) as Polyline;
       // Compute how far tapped location is along the edge feature.
       element.fractionAlongEdge = GeometryEngine.fractionAlong(
@@ -473,7 +470,9 @@ class _TraceUtilityNetworkState extends State<TraceUtilityNetwork>
       );
       _addUtilityElement(feature, element, point);
       // Update the hint text
-      _updateHintMessage('Fraction along the edge: ${element.fractionAlongEdge}');
+      _updateHintMessage(
+        'Fraction along the edge: ${element.fractionAlongEdge}',
+      );
     }
   }
 
@@ -489,7 +488,6 @@ class _TraceUtilityNetworkState extends State<TraceUtilityNetwork>
     final graphic = Graphic(geometry: graphicPoint);
 
     // add a element in either startingLocation(s) or barrier(s) array
-    // visually it in a graphic
     if (_isAddingStartingLocations) {
       _startingLocations.add(element);
       graphic.symbol = _startingPointSymbol;
@@ -498,6 +496,9 @@ class _TraceUtilityNetworkState extends State<TraceUtilityNetwork>
       graphic.symbol = _barrierPointSymbol;
     }
     _graphicsOverlay.graphics.add(graphic);
+
+    _updateHintMessage('Terminal: ${element.terminal?.name}');
+    
   }
 
   void _onReset() {
