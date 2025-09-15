@@ -168,13 +168,12 @@ class _TraceUtilityNetworkState extends State<TraceUtilityNetwork>
                           const SizedBox(width: 10),
                           const Text('Trace Type: '),
                           const SizedBox(width: 10),
-                          DropdownButton<UtilityTraceType>(
+                          DropdownButton(
                             value: _selectedTraceType,
-                            onChanged: _ready
-                                ? (value) => setState(
-                                    () => _selectedTraceType = value!,
-                                  )
-                                : null,
+                            onChanged: (value) => setState(
+                              () => _selectedTraceType =
+                                  value ?? UtilityTraceType.connected,
+                            ),
                             items: _traceTypes.map((type) {
                               return DropdownMenuItem(
                                 value: type,
@@ -623,10 +622,7 @@ class _TraceUtilityNetworkState extends State<TraceUtilityNetwork>
 
 // Handle the token authentication challenge callback.
 class TokenChallengeHandler implements ArcGISAuthenticationChallengeHandler {
-  TokenChallengeHandler(
-    this.username,
-    this.password,
-  );
+  TokenChallengeHandler(this.username, this.password);
 
   final String username;
   final String password;
