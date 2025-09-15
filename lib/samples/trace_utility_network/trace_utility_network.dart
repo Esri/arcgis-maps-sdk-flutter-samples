@@ -281,8 +281,10 @@ class _TraceUtilityNetworkState extends State<TraceUtilityNetwork>
 
     // Find the electric distribution line with the layer ID 3 and reset its renderer.
     final table = serviceGeodatabase?.getTable(layerId: 3);
-    final layer = table!.layer! as FeatureLayer;
-    layer.renderer = _electricalDistributionUvr;
+    if (table != null && table.layer is FeatureLayer) {
+      final layer = table.layer! as FeatureLayer;
+      layer.renderer = _electricalDistributionUvr;
+    }
 
     setState(() {
       _ready = true;
