@@ -289,7 +289,7 @@ class _TraceUtilityNetworkState extends State<TraceUtilityNetwork>
     setState(() {
       _ready = true;
       _message =
-          'Click on the network lines or points to add a utility element.';
+          'Tap on the network lines or points to add a utility element.';
     });
   }
 
@@ -511,7 +511,7 @@ class _TraceUtilityNetworkState extends State<TraceUtilityNetwork>
   void _onReset() {
     setState(() {
       _message =
-          'Click on the network lines or points to add a utility element.';
+          'Tap on the network lines or points to add a utility element.';
       _selectedTraceType = UtilityTraceType.connected;
     });
 
@@ -625,11 +625,8 @@ class _TraceUtilityNetworkState extends State<TraceUtilityNetwork>
 // Handle the token authentication challenge callback.
 class TokenChallengeHandler implements ArcGISAuthenticationChallengeHandler {
   TokenChallengeHandler(this.username, this.password);
-
   final String username;
   final String password;
-
-  final challenges = <ArcGISAuthenticationChallenge>[];
 
   @override
   Future<void> handleArcGISAuthenticationChallenge(
