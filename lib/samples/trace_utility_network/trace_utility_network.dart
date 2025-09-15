@@ -625,7 +625,7 @@ class _TraceUtilityNetworkState extends State<TraceUtilityNetwork>
 class TokenChallengeHandler implements ArcGISAuthenticationChallengeHandler {
   TokenChallengeHandler(
     this.username,
-    this.password
+    this.password,
   );
 
   final String username;
