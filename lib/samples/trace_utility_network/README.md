@@ -14,11 +14,11 @@ Tap on one or more features while 'Add starting locations' or 'Add barriers' is 
 
 ## How it works
 
-1. Create a `ArcGISMapViewController` by `ArcGISMapView` and listen for `onTap` event.
-2. Create an `ArcGISMap` with the given portal item, and set the map to the controller.
+1. Create an `ArcGISMapView` and listen for `onTap` event.
+2. Create an `ArcGISMap` with the given portal item, and set the map to the ArcGISMapView.
 3. Get the only `UtilityNetwork` from the map.
-4. Find and load the `ServiceGeodatabase` associated with the utility network.
-5. Find the `FeatureLayer`(s) created from the `ServiceGeodatabase`'s tables.
+4. Get and load the `ServiceGeodatabase` associated with the utility network.
+5. Get the `FeatureLayer`(s) created from the `ServiceGeodatabase`'s tables.
 6. Add a `GraphicsOverlay` with symbology that distinguishes starting locations from barriers.
 7. Identify features on the map and add a `Graphic` that represents its purpose (starting location or barrier) at the tapped location.
 8. Create a `UtilityElement` for the identified feature.

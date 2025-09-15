@@ -2,7 +2,7 @@
     "category": "Utility Networks",
     "description": "Discover connected features in a utility network using connected, subnetwork, upstream, and downstream traces.",
     "ignore": false,
-    "images": ["trace_utility_network.jpg"],
+    "images": ["trace_utility_network.png"],
     "keywords": [
         "condition barriers",
         "downstream trace",

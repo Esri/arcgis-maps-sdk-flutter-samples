@@ -36,15 +36,17 @@ class _TraceUtilityNetworkState extends State<TraceUtilityNetwork>
   // The message to display to the user.
   var _message = 'Loading Utility Network...';
 
-  // The utility network used for tracing
+  // The utility network used for tracing.
   late UtilityNetwork? _utilityNetwork;
-  // The medium voltage tier used for the electric distribution domain network
+
+  // The medium voltage tier used for the electric distribution domain network.
   UtilityTier? _mediumVoltageTier;
-  // Create lists for starting locations and barriers
+
+  // Create lists for starting locations and barriers.
   final List<UtilityElement> _startingLocations = [];
   final List<UtilityElement> _barriers = [];
 
-  // Graphics overlay for the starting locations and barrier graphics
+  // Graphics overlay for the starting locations and barrier graphics.
   late GraphicsOverlay _graphicsOverlay;
 
   // Symbols for starting points and barriers.
@@ -74,7 +76,7 @@ class _TraceUtilityNetworkState extends State<TraceUtilityNetwork>
 
   @override
   void initState() {
-    // Set up authentication for the sample server
+    // Set up authentication for the sample server.
     ArcGISEnvironment
         .authenticationManager
         .arcGISAuthenticationChallengeHandler = TokenChallengeHandler(
@@ -121,7 +123,7 @@ class _TraceUtilityNetworkState extends State<TraceUtilityNetwork>
                   padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
                   child: Column(
                     children: [
-                      // Add starting locations or barriers radio buttons
+                      // Add starting locations or barriers radio buttons.
                       Row(
                         children: [
                           Expanded(
@@ -160,7 +162,7 @@ class _TraceUtilityNetworkState extends State<TraceUtilityNetwork>
                           ),
                         ],
                       ),
-                      // Trace type dropdown
+                      // Trace type dropdown.
                       Row(
                         children: [
                           const SizedBox(width: 10),
@@ -183,11 +185,10 @@ class _TraceUtilityNetworkState extends State<TraceUtilityNetwork>
                               );
                             }).toList(),
                           ),
-                          //),
-                          const SizedBox(width: 10),
+                                          const SizedBox(width: 10),
                         ],
                       ),
-                      // Action Reset and Trace buttons
+                      // Action Reset and Trace buttons.
                       Row(
                         children: [
                           Expanded(
@@ -219,7 +220,7 @@ class _TraceUtilityNetworkState extends State<TraceUtilityNetwork>
                 ),
               ],
             ),
-            // Loading indicator
+            // Loading indicator.
             LoadingIndicator(visible: !_ready),
           ],
         ),
@@ -257,9 +258,10 @@ class _TraceUtilityNetworkState extends State<TraceUtilityNetwork>
     // Set the map on the controller.
     _mapViewController.arcGISMap = map;
 
-    // Get the utility network
+    // Get the utility network.
     _utilityNetwork = map.utilityNetworks.first;
     await _utilityNetwork!.load();
+    // Get the service geodatabase.
     final serviceGeodatabase = _utilityNetwork!.serviceGeodatabase;
     await serviceGeodatabase?.load();
 
@@ -289,7 +291,7 @@ class _TraceUtilityNetworkState extends State<TraceUtilityNetwork>
     });
   }
 
-  // Create renderer for line layer with different symbols for voltage levels.
+  // Create renderer for line feature layer with different symbols for voltage levels.
   void _initElectricalDistributionRenderer() {
     final lowVoltageValue = UniqueValue(
       description: 'Low voltage',
@@ -342,7 +344,7 @@ class _TraceUtilityNetworkState extends State<TraceUtilityNetwork>
 
   // Identify the utility element associated with the selected feature.
   void addUtilityElement(ArcGISFeature feature, ArcGISPoint point) {
-    // Get the network source of the identified feature
+    // Get the network source of the identified feature.
     final networkSource = _utilityNetwork?.definition?.networkSources
         .firstWhere((source) {
           return source.featureTable.tableName ==
@@ -356,40 +358,43 @@ class _TraceUtilityNetworkState extends State<TraceUtilityNetwork>
     }
     // Create UtilityElement by its source type.
     if (networkSource.sourceType == UtilityNetworkSourceType.junction) {
+      // If the source type is a junction.
       _createJunctionElement(feature, networkSource);
     } else if (networkSource.sourceType == UtilityNetworkSourceType.edge) {
+      // If the source type is an edge.
       _createEdgeJunctionElement(feature, point);
     }
   }
 
+  // Add the identified utility element to the starting locations or barriers array. 
   Future<void> _createJunctionElement(
     ArcGISFeature feature,
     UtilityNetworkSource source,
   ) async {
-    // Find the code matching the asset group name in the feature's attributes
+    // Find the code matching the asset group name in the feature's attributes.
     final assetGroupCode = feature.attributes['assetgroup'] as int;
-    // Find the network source's UtilityAssetGroup with the matching code
+    // Find the network source's UtilityAssetGroup with the matching code.
     final assetGroup = source.assetGroups.firstWhere(
       (group) => group.code == assetGroupCode,
     );
-    // Find the UtilityAssetType
+    // Find the UtilityAssetType.
     final assetType = assetGroup.assetTypes.firstWhere(
       (type) => type.code == feature.attributes['assettype'] as int,
     );
-    // Get the list of terminals for the feature
+    // Get the list of terminals for the feature.
     final terminals = assetType.terminalConfiguration?.terminals;
     if (terminals == null || terminals.isEmpty) {
       setState(() => _message = 'Error retrieving terminal configuration');
       return;
     }
-    // If there is only one terminal, use it to create a utility element
+    // If there is only one terminal, use it to create a utility element.
     if (terminals.length == 1) {
       final element = _utilityNetwork?.createElement(
         arcGISFeature: feature,
         terminal: terminals.first,
       );
       _addUtilityElement(feature, element!, feature.geometry! as ArcGISPoint);
-    // If there are more than one terminal, ask to select one
+    // If there is more than one terminal, ask the user to select one.
     } else {
       final selectedTerminal = await _showTerminalSelect(terminals);
       if (selectedTerminal != null) {
@@ -402,6 +407,7 @@ class _TraceUtilityNetworkState extends State<TraceUtilityNetwork>
     }
   }
 
+  // Show a dialog to select a UtilityTerminal.
   Future<UtilityTerminal?> _showTerminalSelect(
     List<UtilityTerminal> terminals,
   ) {
@@ -453,8 +459,9 @@ class _TraceUtilityNetworkState extends State<TraceUtilityNetwork>
     );
   }
 
+  // Add the identified utility element to the starting locations or barriers array.
   void _createEdgeJunctionElement(ArcGISFeature feature, ArcGISPoint point) {
-    // Create a utility element with the identified feature
+    // Create a utility element with the identified feature.
     final element = _utilityNetwork?.createElement(arcGISFeature: feature);
     if (element == null) {
       setState(() => _message = 'Error creating element');
@@ -469,13 +476,14 @@ class _TraceUtilityNetworkState extends State<TraceUtilityNetwork>
         tolerance: -1,
       );
       _addUtilityElement(feature, element, point);
-      // Update the hint text
+      // Update the hint text.
       _updateHintMessage(
         'Fraction along the edge: ${element.fractionAlongEdge}',
       );
     }
   }
 
+  // Add an element to either the starting locations or barriers array.
   void _addUtilityElement(
     ArcGISFeature feature,
     UtilityElement element,
@@ -486,21 +494,22 @@ class _TraceUtilityNetworkState extends State<TraceUtilityNetwork>
       point: mapPoint,
     )?.coordinate;
     final graphic = Graphic(geometry: graphicPoint);
-
-    // add a element in either startingLocation(s) or barrier(s) array
+    
     if (_isAddingStartingLocations) {
+      // Add the element to the starting locations.
       _startingLocations.add(element);
       graphic.symbol = _startingPointSymbol;
     } else {
+      // Add the element to the barriers.
       _barriers.add(element);
       graphic.symbol = _barrierPointSymbol;
     }
     _graphicsOverlay.graphics.add(graphic);
 
     _updateHintMessage('Terminal: ${element.terminal?.name}');
-    
   }
 
+  // Clear up the previous trace result.
   void _onReset() {
     setState(() {
       _message =
@@ -512,9 +521,9 @@ class _TraceUtilityNetworkState extends State<TraceUtilityNetwork>
     _startingLocations.clear();
     _barriers.clear();
 
-    // Clear the map of any locations, barriers and trace result.
+    // Clear the map of any locations, barriers, and trace results.
     _graphicsOverlay.graphics.clear();
-    // Clear the selections on the feature layer
+    // Clear the selections on the feature layers.
     _mapViewController.arcGISMap?.operationalLayers.forEach((layer) {
       if (layer is FeatureLayer) {
         layer.clearSelection();
@@ -522,6 +531,7 @@ class _TraceUtilityNetworkState extends State<TraceUtilityNetwork>
     });
   }
 
+  // Trace the utility network and show the network tracing result.
   Future<void> _onTrace() async {
     if (_startingLocations.isEmpty) return;
 
@@ -592,10 +602,12 @@ class _TraceUtilityNetworkState extends State<TraceUtilityNetwork>
     }
   }
 
+  // Update the hint message.
   void _updateHintMessage(String message) {
     setState(() => _message = message);
   }
 
+  // Get the trace type name.
   String _getTraceTypeName(UtilityTraceType traceType) {
     switch (traceType) {
       case UtilityTraceType.connected:
@@ -612,6 +624,7 @@ class _TraceUtilityNetworkState extends State<TraceUtilityNetwork>
   }
 }
 
+// Handle the token authentication challenge callback.
 class TokenChallengeHandler implements ArcGISAuthenticationChallengeHandler {
   TokenChallengeHandler(
     this.username,
