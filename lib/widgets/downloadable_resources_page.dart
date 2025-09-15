@@ -56,6 +56,7 @@ class _DownloadableResourcesPageState extends State<DownloadableResourcesPage> {
   var _isComplete = false;
   var _isCancelled = false;
   var _progress = 0.0;
+  var _shouldShowUI = true;
   
   // To manage cancellation of download
   CancelableOperation<List<ResponseInfo>>? _cancelableDownload;
@@ -68,6 +69,11 @@ class _DownloadableResourcesPageState extends State<DownloadableResourcesPage> {
 
   @override
   Widget build(BuildContext context) {
+    // Skip building the UI if resources already exist and we're about to navigate
+    if (!_shouldShowUI) {
+      return const Center(child: CircularProgressIndicator());
+    }
+    
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.sampleTitle),
@@ -132,11 +138,7 @@ class _DownloadableResourcesPageState extends State<DownloadableResourcesPage> {
                     ? _openSample
                     : _startDownload,
                 child: Text(
-                  _isDownloading
-                      ? 'Cancel'
-                      : _isComplete
-                      ? 'Open'
-                      : 'Download',
+                  _isDownloading ? 'Cancel' : 'Download',
                 ),
               ),
             ],
@@ -163,6 +165,7 @@ class _DownloadableResourcesPageState extends State<DownloadableResourcesPage> {
       setState(() {
         _isComplete = true;
         _progress = 1.0;
+        _shouldShowUI = false;
       });
       
       // if the data has been downloaded, directly open the sample.
