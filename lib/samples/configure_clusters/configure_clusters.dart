@@ -31,16 +31,18 @@ class _ConfigureClustersState extends State<ConfigureClusters>
 
   late ArcGISMap _map;
 
-  // Feature layer and clustering FR.
+  // Create a feature layer and clustering feature reduction.
   late FeatureLayer _layer;
   ClusteringFeatureReduction? _featureReduction;
 
-  // Simple UI state.
+  // Create flags to manage the sample UI state.
   var _ready = false;
   var _showLabels = true;
 
-  // Controls .
+  // Create options for configuring the radius and max display scale for clusters.
   final _clusterRadiusOptions = const [30, 45, 60, 75, 90];
+  var _selectedRadius = 60; // default cluster radius.
+
   final _clusterMaxScaleOptions = const [
     0,
     1000,
@@ -50,12 +52,9 @@ class _ConfigureClustersState extends State<ConfigureClusters>
     100000,
     500000,
   ];
-
-  // Current selections.
-  var _selectedRadius = 60; // default cluster radius.
   var _selectedMaxScale = 0; // default max scale (0 = unlimited).
 
-  // Pre-built dropdown entries .
+  // Define the options available for selecting a cluster radius and max display scale.
   late final _radiusEntries = _clusterRadiusOptions
       .map((v) => DropdownMenuEntry(value: v, label: '$v'))
       .toList();
@@ -73,14 +72,13 @@ class _ConfigureClustersState extends State<ConfigureClusters>
         right: false,
         child: Column(
           children: [
-            // MapView.
             Expanded(
+              // Add a map view to the widget tree and set a controller.
               child: ArcGISMapView(
                 controllerProvider: () => _mapViewController,
                 onMapViewReady: _onMapViewReady,
               ),
             ),
-
             Wrap(
               spacing: 12,
               runSpacing: 8,
@@ -101,6 +99,7 @@ class _ConfigureClustersState extends State<ConfigureClusters>
                   children: [
                     const Text('Show labels'),
                     const SizedBox(width: 8),
+                    // Add a switch to toggle the display of labels.
                     Switch(
                       value: _showLabels,
                       onChanged: !_ready
@@ -123,6 +122,7 @@ class _ConfigureClustersState extends State<ConfigureClusters>
                           children: [
                             const Text('Radius'),
                             const SizedBox(width: 8),
+                            // Configure a dropdown menu for selecting the radius of the clusters.
                             DropdownMenu<int>(
                               dropdownMenuEntries: _radiusEntries,
                               initialSelection: _selectedRadius,
@@ -145,6 +145,7 @@ class _ConfigureClustersState extends State<ConfigureClusters>
                         children: [
                           const Text('Max scale'),
                           const SizedBox(width: 8),
+                          // Configure a dropdown menu for selecting the maximum display scale of the clusters.
                           DropdownMenu<int>(
                             dropdownMenuEntries: _maxScaleEntries,
                             initialSelection: _selectedMaxScale,
@@ -171,7 +172,7 @@ class _ConfigureClustersState extends State<ConfigureClusters>
   }
 
   Future<void> _onMapViewReady() async {
-    // Zurich buildings web map from PortalItem.
+    // Create a map using the portal item of a Zurich buildings web map.
     _map = ArcGISMap.withItem(
       PortalItem.withPortalAndItemId(
         portal: Portal.arcGISOnline(),
@@ -179,11 +180,12 @@ class _ConfigureClustersState extends State<ConfigureClusters>
       ),
     );
 
-    // Attach map and load.
+    // Add the map to the map view controller.
     _mapViewController.arcGISMap = _map;
+    // Explicitly load the web map so that we can access the operational layers.
     await _map.load();
 
-    // Grab the Zurich buildings layer (first operational layer).
+    // Get the first layer from the operational layers.
     _layer = _map.operationalLayers.first as FeatureLayer;
 
     // Set initial viewpoint to Zurich.
@@ -195,14 +197,14 @@ class _ConfigureClustersState extends State<ConfigureClusters>
       ),
     );
 
-    // Ready for interaction.
+    // Set the ready state variable to true to enable the sample UI.
     setState(() => _ready = true);
   }
 
   Future<void> _applyClustering() async {
     setState(() => _ready = false);
 
-    // Class breaks renderer for "Average Building Height" 0..8.
+    // Create a class breaks renderer for "Average Building Height".
     final classBreaksRenderer = ClassBreaksRenderer()
       ..fieldName = 'Average Building Height';
 
@@ -229,10 +231,10 @@ class _ConfigureClustersState extends State<ConfigureClusters>
       );
     }
 
-    // Default symbol for anything outside the 0–8 ranges.
+    // Define a default symbol for anything outside the 0–8 ranges.
     classBreaksRenderer.defaultSymbol = SimpleMarkerSymbol(color: Colors.pink);
 
-    // ClusteringFeatureReduction with aggregates & labels.
+    // Create a clustering feature reduction with aggregates and labels.
     final fr = ClusteringFeatureReduction(classBreaksRenderer)
       ..enabled = true
       ..aggregateFields.add(
@@ -255,22 +257,24 @@ class _ConfigureClustersState extends State<ConfigureClusters>
       ..maxScale = _selectedMaxScale.toDouble()
       ..showLabels = _showLabels;
 
-    // Label the cluster with its count, placed at center.
+    // Define a label expression using the cluster count.
     final simpleLabelExpression = SimpleLabelExpression(
       simpleExpression: '[cluster_count]',
     );
+    // Define a label definition using the label expression and a text symbol. Position the placement of the label at the center of the feature geometry.
     final textSymbol = TextSymbol(size: 12);
     final labelDefinition = LabelDefinition(
       labelExpression: simpleLabelExpression,
       textSymbol: textSymbol,
     )..placement = LabelingPlacement.pointCenterCenter;
 
+   // Add the label definition to the feature reduction.
     fr.labelDefinitions.add(labelDefinition);
 
     // Popup for clusters.
     fr.popupDefinition = PopupDefinition.withPopupSource(fr);
 
-    // Apply to layer.
+    // Apply the feature reduction to the feature layer.
     _layer.featureReduction = fr;
     _featureReduction = fr;
 
