@@ -37,8 +37,8 @@ class _ConfigureClustersState extends State<ConfigureClusters>
   ClusteringFeatureReduction? _featureReduction;
 
   // Create flags to manage the sample UI state.
-  var _ready = false;
   var _showLabels = true;
+  var _settingsVisible = false;
 
   // Create options for configuring the radius and max display scale for clusters.
   final _clusterRadiusOptions = const [30, 45, 60, 75, 90];
@@ -54,6 +54,9 @@ class _ConfigureClustersState extends State<ConfigureClusters>
     500000,
   ];
   var _selectedMaxScale = 0; // default max scale (0 = unlimited).
+
+  // Snapshot of the map scale shown in the settings sheet.
+  var _mapScale = 0.0;
 
   // Define the options available for selecting a cluster radius and max display scale.
   late final _radiusEntries = _clusterRadiusOptions
@@ -81,103 +84,27 @@ class _ConfigureClustersState extends State<ConfigureClusters>
                 onTap: _onMapTap,
               ),
             ),
-            Wrap(
-              spacing: 12,
-              runSpacing: 8,
-              crossAxisAlignment: WrapCrossAlignment.center,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 ElevatedButton(
-                  onPressed: _featureReduction == null
-                      ? _applyClustering
-                      : null,
-                  child: const Text('Apply Clustering'),
-                ),
-                ElevatedButton(
-                  onPressed: _featureReduction != null
-                      ? _clearClustering
-                      : null,
-                  child: const Text('Clear'),
-                ),
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Text('Show labels'),
-                    const SizedBox(width: 8),
-                    // Add a switch to toggle the display of labels.
-                    Switch(
-                      value: _showLabels,
-                      onChanged: _featureReduction == null
-                          ? null
-                          : (v) {
-                              setState(() => _showLabels = v);
-                              _featureReduction?.showLabels = v;
-                            },
-                    ),
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.fromLTRB(20, 0, 0, 0),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Text('Radius'),
-                            const SizedBox(width: 8),
-                            // Configure a dropdown menu for selecting the radius of the clusters.
-                            DropdownMenu<int>(
-                              dropdownMenuEntries: _radiusEntries,
-                              initialSelection: _selectedRadius,
-                              onSelected: _featureReduction == null
-                                  ? null
-                                  : (v) {
-                                      if (v == null) return;
-                                      setState(() => _selectedRadius = v);
-                                      _featureReduction?.radius = v.toDouble();
-
-                                      if (_featureReduction != null) {
-                                        // Nudge Refresh. If statle visuals.
-                                        _layer.featureReduction =
-                                            _featureReduction;
-                                      }
-                                    },
-                              width: _calculateMenuWidth(context, '000000'),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Text('Max scale'),
-                          const SizedBox(width: 8),
-                          // Configure a dropdown menu for selecting the maximum display scale of the clusters.
-                          DropdownMenu<int>(
-                            dropdownMenuEntries: _maxScaleEntries,
-                            initialSelection: _selectedMaxScale,
-                            onSelected: _featureReduction == null
-                                ? null
-                                : (v) {
-                                    if (v == null) return;
-                                    setState(() => _selectedMaxScale = v);
-                                    _featureReduction?.maxScale = v.toDouble();
-                                  },
-                            width: _calculateMenuWidth(context, '0000000'),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
+                  onPressed: () {
+                    final vp = _mapViewController.getCurrentViewpoint(
+                      ViewpointType.centerAndScale,
+                    );
+                    setState(() {
+                      _mapScale = vp?.targetScale ?? _mapScale;
+                      _settingsVisible = true;
+                    });
+                  },
+                  child: const Text('Clustering Settings'),
                 ),
               ],
             ),
           ],
         ),
       ),
+      bottomSheet: _settingsVisible ? buildSettings(context) : null,
     );
   }
 
@@ -206,15 +133,11 @@ class _ConfigureClustersState extends State<ConfigureClusters>
         scale: 80000,
       ),
     );
-
-    // Set the ready state variable to true to enable the sample UI.
-    setState(() => _ready = true);
   }
 
   Future<void> _applyClustering() async {
     // If feature reduction already applied.
     if (_featureReduction != null) return;
-    setState(() => _ready = false);
 
     // Create a class breaks renderer for "Average Building Height".
     final classBreaksRenderer = ClassBreaksRenderer()
@@ -288,9 +211,7 @@ class _ConfigureClustersState extends State<ConfigureClusters>
 
     // Apply the feature reduction to the feature layer.
     _layer.featureReduction = fr;
-    _featureReduction = fr;
-
-    setState(() => _ready = true);
+    setState(() => _featureReduction = fr);
   }
 
   Future<void> _onMapTap(Offset offset) async {
@@ -326,7 +247,7 @@ class _ConfigureClustersState extends State<ConfigureClusters>
       isScrollControlled: true,
       useSafeArea: true,
       builder: (_) => SizedBox(
-        height: MediaQuery.of(context).size.height * 0.5,
+        height: MediaQuery.sizeOf(context).height * 0.5,
         child: PopupView(
           popup: popup,
           onClose: () => Navigator.of(context).maybePop(),
@@ -342,15 +263,131 @@ class _ConfigureClustersState extends State<ConfigureClusters>
     setState(() {});
   }
 
-  double _calculateMenuWidth(BuildContext context, String sampleText) {
-    final tp = TextPainter(
-      text: TextSpan(
-        text: sampleText,
-        style: Theme.of(context).textTheme.labelMedium,
-      ),
-      maxLines: 1,
-      textDirection: TextDirection.ltr,
-    )..layout();
-    return tp.size.width * 2;
+  Widget buildSettings(BuildContext context) {
+    final theme = Theme.of(context);
+    final headingStyle = theme.textTheme.titleLarge?.copyWith(
+      fontWeight: FontWeight.w600,
+    );
+    final itemTextStyle = theme.textTheme.bodyLarge;
+
+    const tilePadding = EdgeInsets.symmetric(horizontal: 16);
+
+    return BottomSheetSettings(
+      onCloseIconPressed: () => setState(() => _settingsVisible = false),
+      settingsWidgets: (context) => [
+        SizedBox(
+          height: MediaQuery.sizeOf(context).height * 0.45,
+          child: ListTileTheme(
+            contentPadding: tilePadding,
+            child: ListView(
+              padding: const EdgeInsets.symmetric(vertical: 8),
+              children: [
+                // Clustering heading.
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
+                  child: Text('Clustering', style: headingStyle),
+                ),
+
+                // Apply clustering (switch).
+                SwitchListTile(
+                  title: Text('Apply clustering', style: itemTextStyle),
+                  value: _featureReduction != null,
+                  onChanged: (on) async {
+                    if (on) {
+                      await _applyClustering();
+                    } else {
+                      _clearClustering();
+                    }
+                  },
+                ),
+
+                // Show labels (switch; only active when clustering is on).
+                SwitchListTile(
+                  title: Text('Show labels', style: itemTextStyle),
+                  value: _showLabels,
+                  onChanged: _featureReduction == null
+                      ? null
+                      : (v) {
+                          setState(() => _showLabels = v);
+                          _featureReduction?.showLabels = v;
+                        },
+                ),
+
+                const Divider(height: 24),
+
+                // Cluster Parameters heading.
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
+                  child: Text('Cluster Parameters', style: headingStyle),
+                ),
+
+                // Cluster Radius Dropdown menu.
+                ListTile(
+                  title: Text('Cluster Radius', style: itemTextStyle),
+                  trailing: ConstrainedBox(
+                    constraints: const BoxConstraints(
+                      minWidth: 160,
+                      maxWidth: 220,
+                    ),
+                    child: DropdownMenu<int>(
+                      enabled: _featureReduction != null,
+                      textStyle: itemTextStyle,
+                      initialSelection: _selectedRadius,
+                      dropdownMenuEntries: _radiusEntries,
+                      onSelected: _featureReduction == null
+                          ? null
+                          : (value) {
+                              if (value == null) return;
+                              setState(() => _selectedRadius = value);
+                              _featureReduction?.radius = value.toDouble();
+                              if (_featureReduction != null) {
+                                // Nudge refresh.
+                                _layer.featureReduction = _featureReduction;
+                              }
+                            },
+                    ),
+                  ),
+                ),
+
+                // Cluster Max Scale Dropdown menu.
+                ListTile(
+                  title: Text('Cluster Max Scale', style: itemTextStyle),
+                  trailing: ConstrainedBox(
+                    constraints: const BoxConstraints(
+                      minWidth: 160,
+                      maxWidth: 220,
+                    ),
+                    child: DropdownMenu<int>(
+                      enabled: _featureReduction != null,
+                      textStyle: itemTextStyle,
+                      initialSelection: _selectedMaxScale,
+                      dropdownMenuEntries: _maxScaleEntries,
+                      onSelected: _featureReduction == null
+                          ? null
+                          : (value) {
+                              if (value == null) return;
+                              setState(() => _selectedMaxScale = value);
+                              _featureReduction?.maxScale = value.toDouble();
+                            },
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 12),
+
+                // Current Map Scale.
+                ListTile(
+                  title: Text('Current Map Scale', style: itemTextStyle),
+                  trailing: Text(
+                    _mapScale.toStringAsFixed(0),
+                    style: itemTextStyle,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
   }
 }
