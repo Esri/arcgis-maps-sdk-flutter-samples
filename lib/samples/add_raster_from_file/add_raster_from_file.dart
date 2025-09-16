@@ -18,7 +18,7 @@ import 'dart:io';
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:go_router/go_router.dart';
 
 class AddRasterFromFile extends StatefulWidget {
   const AddRasterFromFile({super.key});
@@ -31,8 +31,6 @@ class _AddRasterFromFileState extends State<AddRasterFromFile>
     with SampleStateSupport {
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
-  // download message
-  var _downloadMessage = '';
 
   // A flag for when the map view is ready and controls can be used.
   var _ready = false;
@@ -48,7 +46,7 @@ class _AddRasterFromFileState extends State<AddRasterFromFile>
             onMapViewReady: onMapViewReady,
           ),
           // Display a progress indicator and prevent interaction until state is ready.
-          LoadingIndicator(visible: !_ready, text: _downloadMessage),
+          LoadingIndicator(visible: !_ready),
         ],
       ),
     );
@@ -82,26 +80,8 @@ class _AddRasterFromFileState extends State<AddRasterFromFile>
   }
 
   Future<RasterLayer?> loadRasterLayerFromFile() async {
-    const downloadFileName = 'raster-file';
-    final appDir = await getApplicationDocumentsDirectory();
-    final zipFile = File('${appDir.absolute.path}/$downloadFileName.zip');
-    final shastaTifFile = File(
-      '${appDir.absolute.path}/$downloadFileName/$downloadFileName/Shasta.tif',
-    );
-
-    // Download the sample data if it does not exist.
-    if (!zipFile.existsSync()) {
-      await downloadSampleDataWithProgress(
-        itemIds: ['7c4c679ab06a4df19dc497f577f111bd'],
-        destinationFiles: [zipFile],
-        onProgress: (progress) {
-          setState(
-            () => _downloadMessage =
-                'Downloading raster file... ${progress * 100}%',
-          );
-        },
-      );
-    }
+    final listPaths = GoRouter.of(context).state.extra! as List<String>;
+    final shastaTifFile = File(listPaths.first);
 
     // Create a raster from the file URI.
     final raster = Raster.withFileUri(shastaTifFile.uri);

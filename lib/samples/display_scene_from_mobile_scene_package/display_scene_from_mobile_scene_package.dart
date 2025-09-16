@@ -19,7 +19,7 @@ import 'dart:io';
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:go_router/go_router.dart';
 
 class DisplaySceneFromMobileScenePackage extends StatefulWidget {
   const DisplaySceneFromMobileScenePackage({super.key});
@@ -34,63 +34,23 @@ class _DisplaySceneFromMobileScenePackageState
     with SampleStateSupport {
   // Create a controller for the scene view.
   final _sceneViewController = ArcGISSceneView.createController();
-  // A flag for when the scene view is ready.
-  var _ready = false;
-  // The download progress of the sample data.
-  var _downloadProgress = 0.0;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       // Add a scene view to the widget tree and set a controller.
-      body: Stack(
-        children: [
+      body: 
           ArcGISSceneView(
             controllerProvider: () => _sceneViewController,
             onSceneViewReady: onSceneViewReady,
           ),
-          // Display a progress indicator and prevent interaction until state is ready.
-          Visibility(
-            visible: !_ready,
-            child: Center(
-              child: Column(
-                spacing: 10,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  CircularProgressIndicator(
-                    value: _downloadProgress,
-                    backgroundColor: Colors.white,
-                    valueColor: const AlwaysStoppedAnimation<Color>(
-                      Colors.blue,
-                    ),
-                  ),
-                  Text(
-                    'Downloading sample data ${(_downloadProgress * 100).toStringAsFixed(0)}%',
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
     );
   }
 
   Future<void> onSceneViewReady() async {
-    final appDir = await getApplicationDocumentsDirectory();
+    final listPaths = GoRouter.of(context).state.extra! as List<String>;
     // Load the local mobile scene package.
-    final mspkFile = File('${appDir.absolute.path}/philadelphia.mspk');
-
-    if (!mspkFile.existsSync()) {
-      await downloadSampleDataWithProgress(
-        itemIds: ['7dd2f97bb007466ea939160d0de96a9d'],
-        destinationFiles: [mspkFile],
-        onProgress: (progress) {
-          setState(() => _downloadProgress = progress);
-        },
-      );
-    }
-
+    final mspkFile = File(listPaths.first);
     final mspk = MobileScenePackage.withFileUri(mspkFile.uri);
     await mspk.load();
 
@@ -98,8 +58,5 @@ class _DisplaySceneFromMobileScenePackageState
       // Get the first scene in the mobile scene package and set to the scene view.
       _sceneViewController.arcGISScene = mspk.scenes.first;
     }
-
-    // Set the ready state variable to true to enable the sample UI.
-    setState(() => _ready = true);
   }
 }

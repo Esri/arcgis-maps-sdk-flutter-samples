@@ -19,6 +19,7 @@ import 'package:arcgis_maps_sdk_flutter_samples/models/sample.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/sample_viewer_app.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/widgets/category_transition_page.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/widgets/code_view_page.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/widgets/downloadable_resources_page.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/widgets/readme_page.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/widgets/ripple_transition_page.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/widgets/sample_detail_page.dart';
@@ -76,6 +77,24 @@ GoRouter routerConfig(List<Sample> allSamples) {
               return SampleDetailPage(sample: sample);
             },
           ),
+          // Route to downloadable resources page for a sample.
+          GoRoute(
+            path: 'sample/:sample/resources',
+            builder: (context, state) {
+              final sampleKey = state.pathParameters['sample'];
+              final sample = allSamples
+                  .where((sample) => sample.key == sampleKey)
+                  .first;
+
+              return DownloadableResourcesPage(
+                sampleTitle: sample.title,
+                resources: sample.downloadableResources,
+                onComplete: (downloadPaths) {
+                  context.go('/sample/${sample.key}/live', extra: downloadPaths);
+                },
+              );
+            },
+          ),
           // Route to the README page for the given sample.
           GoRoute(
             path: 'sample/:sample/README',
@@ -101,6 +120,32 @@ GoRouter routerConfig(List<Sample> allSamples) {
             },
           ),
         ],
+      ),
+    ],
+  );
+}
+
+GoRouter routerConfigWithSample(Sample sample, String initialLocation) {
+  return GoRouter(
+    initialLocation: initialLocation,
+    routes: [
+      GoRoute(
+        path: '/:sample/resources',
+        builder: (context, state) {
+          return DownloadableResourcesPage(
+            sampleTitle: sample.title,
+            resources: sample.downloadableResources,
+            onComplete: (downloadPaths) {
+              context.go('/${sample.key}/live', extra: downloadPaths);
+            },
+          );
+        },
+      ),
+      GoRoute(
+        path: '/:sample/live',
+        builder: (context, state) {
+          return sample.getSampleWidget();
+        },
       ),
     ],
   );

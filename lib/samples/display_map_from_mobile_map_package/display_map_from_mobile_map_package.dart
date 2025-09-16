@@ -19,7 +19,7 @@ import 'dart:io';
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:go_router/go_router.dart';
 
 class DisplayMapFromMobileMapPackage extends StatefulWidget {
   const DisplayMapFromMobileMapPackage({super.key});
@@ -55,19 +55,9 @@ class _DisplayMapFromMobileMapPackageState
   }
 
   Future<void> onMapViewReady() async {
-    final appDir = await getApplicationDocumentsDirectory();
-
+    final listPaths = GoRouter.of(context).state.extra! as List<String>;
     // Load the local mobile map package.
-    final mmpkFile = File('${appDir.absolute.path}/Yellowstone.mmpk');
-
-    // Download the mobile map package.
-    if (!mmpkFile.existsSync()) {
-      await downloadSampleDataWithProgress(
-        itemIds: ['e1f3a7254cb845b09450f54937c16061'],
-        destinationFiles: [mmpkFile],
-      );
-    }
-
+    final mmpkFile = File(listPaths.first);
     final mmpk = MobileMapPackage.withFileUri(mmpkFile.uri);
     await mmpk.load();
 

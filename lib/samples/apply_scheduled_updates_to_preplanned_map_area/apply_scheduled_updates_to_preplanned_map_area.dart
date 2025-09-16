@@ -14,12 +14,10 @@
 // limitations under the License.
 //
 
-import 'dart:io';
-
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:go_router/go_router.dart';
 
 class ApplyScheduledUpdatesToPreplannedMapArea extends StatefulWidget {
   const ApplyScheduledUpdatesToPreplannedMapArea({super.key});
@@ -99,12 +97,9 @@ class _ApplyScheduledUpdatesToPreplannedMapAreaState
   }
 
   Future<void> onMapViewReady() async {
-    // Set the path to the map package data.
-    final appDir = await getApplicationDocumentsDirectory();
-    _dataUri = Uri.parse('${appDir.absolute.path}/canyonlands');
-
-    // Prepare (download and extract) the map package data.
-    await _prepareData();
+    final listPaths = GoRouter.of(context).state.extra! as List<String>;
+    _dataUri = Uri.parse(listPaths.first);
+    await _loadMapPackageMap();
 
     // Check if there is an update for the map package.
     await _checkForUpdates();
@@ -188,20 +183,5 @@ class _ApplyScheduledUpdatesToPreplannedMapAreaState
           ..rollbackOnFailure = true;
 
     return true;
-  }
-
-  // Function that extracts the map package archive to restore the original map data.
-  // Downloads and extracts the map package archive if the file is not currently on the device.
-  Future<void> _prepareData() async {
-    final archiveFile = File('${_dataUri.path}.zip');
-    if (!archiveFile.existsSync()) {
-      await downloadSampleDataWithProgress(
-        itemIds: ['740b663bff5e4198b9b6674af93f638a'],
-        destinationFiles: [archiveFile],
-      );
-    }
-
-    // Load the map package from the extracted map package.
-    await _loadMapPackageMap();
   }
 }

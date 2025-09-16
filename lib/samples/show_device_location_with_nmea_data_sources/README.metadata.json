@@ -18,6 +18,11 @@
         "NmeaLocationDataSource",
         "NmeaSatelliteInfo"
     ],
+     "offline_data": [{
+        "itemId": "d5bad9f4fee9483791e405880fb466da",
+        "downloadable": "RedlandsNMEA.zip",
+        "resource": "Redlands.nmea"
+    }],
     "redirect_from": [],
     "relevant_apis": [
         "ArcGISLocation",

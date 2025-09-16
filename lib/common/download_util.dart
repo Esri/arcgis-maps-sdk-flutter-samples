@@ -26,17 +26,34 @@ const portal = 'https://arcgis.com';
 /// - [itemIds]: A list of Portal Item IDs to be downloaded.
 /// - [destinationFiles]: A list of files where the downloaded data will be written.
 /// - [onProgress] is called with a value from 0.0 to 1.0 as the download progresses.
+/// - [shouldCancel]: Optional callback that returns true if the operation should be cancelled.
 Future<List<ResponseInfo>> downloadSampleDataWithProgress({
   required List<String> itemIds,
   required List<File> destinationFiles,
   void Function(double progress)? onProgress,
+  bool Function()? shouldCancel,
 }) async {
   final responses = <ResponseInfo>[];
   final totalItems = itemIds.length;
+  if (totalItems != destinationFiles.length) {
+    throw ArgumentError(
+      'itemIds and destinationFiles must have the same length: '
+      '${itemIds.length} != ${destinationFiles.length}',
+    );
+  } else if (totalItems == 0) {
+    onProgress?.call(1);
+    return <ResponseInfo>[];
+  }
 
   for (var i = 0; i < itemIds.length; i++) {
+    // Check for cancellation before processing each item
+    if (shouldCancel?.call() ?? false) {
+      break;
+    }
+    
     final itemId = itemIds[i];
     final destinationFile = destinationFiles[i];
+    onProgress?.call(0);
 
     final requestUri = Uri.parse(
       '$portal/sharing/rest/content/items/$itemId/data',
@@ -46,6 +63,11 @@ Future<List<ResponseInfo>> downloadSampleDataWithProgress({
       destinationFile.uri,
       requestInfo: RequestInfo(
         onReceiveProgress: (bytesReceived, totalBytes) {
+          // Check for cancellation during progress updates
+          if (shouldCancel?.call() ?? false) {
+            onProgress = null;
+            return;
+          }
           if (onProgress != null) {
             // Calculate progress: completed items + current item progress
             final completedItems = i;
@@ -54,17 +76,21 @@ Future<List<ResponseInfo>> downloadSampleDataWithProgress({
             );
             final overallProgress =
                 (completedItems + currentItemProgress) / totalItems;
-            onProgress(truncateTo2Decimals(overallProgress));
+            onProgress!(truncateTo2Decimals(overallProgress));
           }
         },
       ),
     );
 
+    // Check for cancellation before extracting zip
+    if (shouldCancel?.call() ?? false) {
+      break;
+    }
+
     if (destinationFile.path.contains('.zip')) {
       // If the data is a zip we need to extract it.
       await extractZipArchive(destinationFile);
     }
-
     responses.add(response);
   }
 

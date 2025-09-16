@@ -17,6 +17,10 @@
         "DimensionLayer",
         "MobileMapPackage"
     ],
+    "offline_data": [{
+        "itemId": "f5ff6f5556a945bca87ca513b8729a1e",
+        "downloadable": "Edinburgh_Pylon_Dimensions.mmpk"
+    }],
     "redirect_from": [],
     "relevant_apis": [
         "DimensionLayer",

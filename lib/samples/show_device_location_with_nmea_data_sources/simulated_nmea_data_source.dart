@@ -13,14 +13,9 @@
 // limitations under the License.
 //
 import 'dart:async';
-import 'dart:io';
-import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
-
 import 'package:async/async.dart';
-import 'package:path_provider/path_provider.dart';
-
 class SimulatedNmeaDataSource {
-  SimulatedNmeaDataSource({Duration interval = const Duration(seconds: 1)})
+  SimulatedNmeaDataSource(this.nmeaSentences, {Duration interval = const Duration(seconds: 1)})
     : _interval = interval {
     _nmeaMessagesController.onListen = _start;
     _nmeaMessagesController.onCancel = _shutdown;
@@ -34,7 +29,7 @@ class SimulatedNmeaDataSource {
   var _running = false;
   var _currentNmeaBlockIndex = 0;
   final _sentencesByTimeBlock = <String>[];
-
+  final List<String> nmeaSentences;
   // Stream to provide the NMEA messages.
   final _nmeaMessagesController = StreamController<String>();
   Stream<String> get nmeaMessages => _nmeaMessagesController.stream;
@@ -57,8 +52,6 @@ class SimulatedNmeaDataSource {
   // Download the sample NMEA file and read the contents into a list of messages
   // that combine all NMEA sentences for the same time into a single message string.
   Future<void> _initData() async {
-    final nmeaSentences = await _loadNmeaFile();
-
     final messageSentences = <String>[];
     for (final sentence in nmeaSentences) {
       final sentenceComponents = sentence.split(',');
@@ -105,24 +98,5 @@ class SimulatedNmeaDataSource {
     _running = false;
   }
 
-  // Downloads the sample NMEA data file and returns the NMEA sentences as a
-  // list of Strings.
-  Future<List<String>> _loadNmeaFile() async {
-    final appDir = await getApplicationDocumentsDirectory();
-    const downloadFileName = 'RedlandsNMEA';
-    final zipFile = File('${appDir.absolute.path}/$downloadFileName.zip');
-    // Download the sample data if it does not exist.
-    if (!zipFile.existsSync()) {
-      await downloadSampleDataWithProgress(
-        itemIds: ['d5bad9f4fee9483791e405880fb466da'],
-        destinationFiles: [zipFile],
-      );
-    }
-
-    final filePath = '${appDir.path}/$downloadFileName/Redlands.nmea';
-    final nmeaFile = File(filePath);
-
-    // Read and return the file as a list of String lines.
-    return nmeaFile.readAsLines();
-  }
+ 
 }

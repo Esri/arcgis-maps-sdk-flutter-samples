@@ -13,13 +13,12 @@
 // limitations under the License.
 //
 
-import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:go_router/go_router.dart';
 
 class FindRouteInMobileMapPackage extends StatefulWidget {
   const FindRouteInMobileMapPackage({super.key});
@@ -39,26 +38,20 @@ typedef SampleData = ({
 class _FindRouteInMobileMapPackageState
     extends State<FindRouteInMobileMapPackage>
     with SampleStateSupport {
-  // A Future that completes with the list of mobile map packages.
-  final mobileMapPackages = loadMobileMapPackages();
+  
+  late Future<List<MobileMapPackage>> _mobileMapPackage;
+  @override
+  void initState() {
+    _mobileMapPackage = _loadMobileMapPackages();
+    super.initState();
+  }
 
-  static Future<List<MobileMapPackage>> loadMobileMapPackages() async {
-    final appDir = await getApplicationDocumentsDirectory();
-    final destinationFiles = ['SanFrancisco', 'Yellowstone']
-        .map((filename) => File('${appDir.absolute.path}/$filename.mmpk'))
-        .toList();
-    await downloadSampleDataWithProgress(
-      itemIds: [
-        'e1f3a7254cb845b09450f54937c16061',
-        '260eb6535c824209964cf281766ebe43',
-      ],
-      destinationFiles: destinationFiles,
-    );
-
+  Future<List<MobileMapPackage>> _loadMobileMapPackages() async {
+    final listPaths = GoRouter.of(context).state.extra! as List<String>;
     // Load the local mobile map packages.
     final mobileMapPackages = <MobileMapPackage>[];
-    for (final file in destinationFiles) {
-      final mmpk = MobileMapPackage.withFileUri(file.uri);
+    for (final file in listPaths) {
+      final mmpk = MobileMapPackage.withFileUri(Uri.parse(file));
       mobileMapPackages.add(mmpk);
     }
     await Future.wait(mobileMapPackages.map((mmpk) => mmpk.load()));
@@ -71,7 +64,7 @@ class _FindRouteInMobileMapPackageState
       body: SafeArea(
         // Display a list of maps from the mobile map packages once loaded.
         child: FutureBuilder(
-          future: mobileMapPackages,
+          future: _mobileMapPackage,
           builder: (context, snapshot) {
             // Show a progress indicator until the mobile map packages finish loading.
             if (snapshot.connectionState != ConnectionState.done) {

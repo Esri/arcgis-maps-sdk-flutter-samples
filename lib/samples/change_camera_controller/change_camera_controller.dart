@@ -18,7 +18,7 @@ import 'dart:io';
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:go_router/go_router.dart';
 
 class ChangeCameraController extends StatefulWidget {
   const ChangeCameraController({super.key});
@@ -202,19 +202,8 @@ class _ChangeCameraControllerState extends State<ChangeCameraController>
   }
 
   Future<Graphic> _setupPlaneGraphic() async {
-    const downloadFileName = 'Bristol';
-    final appDir = await getApplicationDocumentsDirectory();
-    final zipFile = File('${appDir.absolute.path}/$downloadFileName.zip');
-    final bristolFile = File(
-      '${appDir.absolute.path}/$downloadFileName/$downloadFileName.dae',
-    );
-    // Download the plane model files.
-    if (!zipFile.existsSync()) {
-      await downloadSampleDataWithProgress(
-        itemIds: ['681d6f7694644709a7c830ec57a2d72b'],
-        destinationFiles: [zipFile],
-      );
-    }
+    final listPaths = GoRouter.of(context).state.extra! as List<String>;
+    final bristolFile = File(listPaths.first);
 
     // Define the plane's position.
     final planePosition = ArcGISPoint(

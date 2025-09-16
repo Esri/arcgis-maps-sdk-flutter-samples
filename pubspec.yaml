@@ -27,6 +27,7 @@ dependencies:
   intl: ^0.20.2
   markdown: ^7.3.0
   package_info_plus: ^8.2.1
+  path: ^1.9.1
   path_provider: ^2.1.5
   share_plus: ^10.1.4
   simple_html_css: ^5.0.0

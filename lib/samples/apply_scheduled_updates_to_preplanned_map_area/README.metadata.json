@@ -1,6 +1,13 @@
 {
     "category": "Edit and Manage Data",
     "description": "Apply scheduled updates to a downloaded preplanned map area.",
+    "offline_data": [
+        {
+            "itemId": "740b663bff5e4198b9b6674af93f638a",
+            "downloadable": "canyonlands.zip",
+            "resource": ""
+        }
+    ],
     "ignore": false,
     "images": [
         "apply_scheduled_updates_to_preplanned_map_area.png"

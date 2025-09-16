@@ -19,7 +19,7 @@ import 'dart:io';
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:go_router/go_router.dart';
 
 // Create an enumeration to define the feature layer sources.
 enum Source { url, portalItem, geodatabase, geopackage, shapefile }
@@ -45,6 +45,9 @@ class _AddFeatureLayersState extends State<AddFeatureLayers>
   // Create a variable to store the selected feature layer source.
   Source? _selectedFeatureLayerSource;
 
+  // Stores the data source by resource types.
+  final _dataSources = <Source, String>{};
+
   @override
   void initState() {
     super.initState();
@@ -61,6 +64,14 @@ class _AddFeatureLayersState extends State<AddFeatureLayers>
       DropdownMenuEntry(value: Source.geopackage, label: 'Geopackage'),
       DropdownMenuEntry(value: Source.shapefile, label: 'Shapefile'),
     ]);
+    _initDownloadResources();
+  }
+
+  void _initDownloadResources() {
+    final listPaths = GoRouter.of(context).state.extra! as List<String>;
+    _dataSources[Source.geodatabase] = listPaths[0];
+    _dataSources[Source.geopackage] = listPaths[1];
+    _dataSources[Source.shapefile] = listPaths[2];
   }
 
   @override
@@ -166,21 +177,8 @@ class _AddFeatureLayersState extends State<AddFeatureLayers>
   }
 
   Future<void> loadGeodatabase() async {
-    const downloadFileName = 'LA_Trails';
-    // Get the application documents directory.
-    final appDir = await getApplicationDocumentsDirectory();
-    final zipFile = File('${appDir.absolute.path}/$downloadFileName.zip');
     // Create a file to the geodatabase.
-    final geodatabaseFile = File(
-      '${appDir.absolute.path}/$downloadFileName/$downloadFileName.geodatabase',
-    );
-    // Download the sample data.
-    if (!zipFile.existsSync()) {
-      await downloadSampleDataWithProgress(
-        itemIds: ['cb1b20748a9f4d128dad8a87244e3e37'],
-        destinationFiles: [zipFile],
-      );
-    }
+    final geodatabaseFile = File('${_dataSources[Source.geodatabase]}');
 
     // Create a geodatabase with the file uri.
     final geodatabase = Geodatabase.withFileUri(geodatabaseFile.uri);
@@ -243,22 +241,7 @@ class _AddFeatureLayersState extends State<AddFeatureLayers>
   }
 
   Future<void> loadGeopackage() async {
-    const downloadFileName = 'AuroraCO';
-    // Get the application documents directory.
-    final appDir = await getApplicationDocumentsDirectory();
-    final zipFile = File('${appDir.absolute.path}/$downloadFileName.zip');
-    // Create a file to the geopackage.
-    final geopackageFile = File(
-      '${appDir.absolute.path}/$downloadFileName/$downloadFileName.gpkg',
-    );
-
-    if (!zipFile.existsSync()) {
-      await downloadSampleDataWithProgress(
-        itemIds: ['68ec42517cdd439e81b036210483e8e7'],
-        destinationFiles: [zipFile],
-      );
-    }
-
+    final geopackageFile = File('${_dataSources[Source.geopackage]}');
     // Create a geopackage with the file uri.
     final geopackage = GeoPackage.withFileUri(geopackageFile.uri);
     // Load the geopackage.
@@ -284,21 +267,8 @@ class _AddFeatureLayersState extends State<AddFeatureLayers>
 
   /// Load a feature layer with a local shapefile.
   Future<void> loadShapefile() async {
-    const downloadFileName = 'ScottishWildlifeTrust_reserves';
-    // Get the application documents directory.
-    final appDir = await getApplicationDocumentsDirectory();
-    final zipFile = File('${appDir.absolute.path}/$downloadFileName.zip');
     // Get the Shapefile from the download resource.
-    final shapefile = File(
-      '${appDir.absolute.path}/$downloadFileName/ScottishWildlifeTrust_ReserveBoundaries_20201102.shp',
-    );
-
-    if (!zipFile.existsSync()) {
-      await downloadSampleDataWithProgress(
-        itemIds: ['15a7cbd3af1e47cfa5d2c6b93dc44fc2'],
-        destinationFiles: [zipFile],
-      );
-    }
+    final shapefile = File('${_dataSources[Source.shapefile]}');
     // Create a feature table from the Shapefile URI.
     final shapefileFeatureTable = ShapefileFeatureTable.withFileUri(
       shapefile.uri,
