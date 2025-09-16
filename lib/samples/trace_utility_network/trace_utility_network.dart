@@ -79,7 +79,7 @@ class _TraceUtilityNetworkState extends State<TraceUtilityNetwork>
     // Set up authentication for the sample server.
     ArcGISEnvironment
         .authenticationManager
-        .arcGISAuthenticationChallengeHandler = TokenChallengeHandler(
+        .arcGISAuthenticationChallengeHandler = _TokenChallengeHandler(
       'viewer01',
       'I68VGU^nMurF',
     );
@@ -207,8 +207,8 @@ class _TraceUtilityNetworkState extends State<TraceUtilityNetwork>
                           ),
                         ],
                       ),
-                      // Status message
                       const SizedBox(height: 8),
+                      // Status message.
                       Text(
                         _message,
                         style: Theme.of(context).textTheme.bodySmall,
@@ -288,8 +288,7 @@ class _TraceUtilityNetworkState extends State<TraceUtilityNetwork>
 
     setState(() {
       _ready = true;
-      _message =
-          'Tap on the network lines or points to add a utility element.';
+      _message = 'Tap on the network lines or points to add a utility element.';
     });
   }
 
@@ -510,8 +509,7 @@ class _TraceUtilityNetworkState extends State<TraceUtilityNetwork>
   // Clear up the previous trace result.
   void _onReset() {
     setState(() {
-      _message =
-          'Tap on the network lines or points to add a utility element.';
+      _message = 'Tap on the network lines or points to add a utility element.';
       _selectedTraceType = UtilityTraceType.connected;
     });
 
@@ -623,8 +621,8 @@ class _TraceUtilityNetworkState extends State<TraceUtilityNetwork>
 }
 
 // Handle the token authentication challenge callback.
-class TokenChallengeHandler implements ArcGISAuthenticationChallengeHandler {
-  TokenChallengeHandler(this.username, this.password);
+class _TokenChallengeHandler implements ArcGISAuthenticationChallengeHandler {
+  _TokenChallengeHandler(this.username, this.password);
   final String username;
   final String password;
 
