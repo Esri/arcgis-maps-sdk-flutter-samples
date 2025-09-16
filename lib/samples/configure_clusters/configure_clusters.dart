@@ -132,6 +132,12 @@ class _ConfigureClustersState extends State<ConfigureClusters>
                                       if (v == null) return;
                                       setState(() => _selectedRadius = v);
                                       _featureReduction?.radius = v.toDouble();
+
+                                      if (_featureReduction != null) {
+                                        // Nudge Refresh. If statle visuals.
+                                        _layer.featureReduction =
+                                            _featureReduction;
+                                      }
                                     },
                               width: _calculateMenuWidth(context, '000000'),
                             ),
@@ -268,7 +274,7 @@ class _ConfigureClustersState extends State<ConfigureClusters>
       textSymbol: textSymbol,
     )..placement = LabelingPlacement.pointCenterCenter;
 
-   // Add the label definition to the feature reduction.
+    // Add the label definition to the feature reduction.
     fr.labelDefinitions.add(labelDefinition);
 
     // Popup for clusters.
