@@ -15,6 +15,7 @@
 
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
+import 'package:arcgis_maps_toolkit/arcgis_maps_toolkit.dart';
 import 'package:flutter/material.dart';
 
 class ConfigureClusters extends StatefulWidget {
@@ -77,6 +78,7 @@ class _ConfigureClustersState extends State<ConfigureClusters>
               child: ArcGISMapView(
                 controllerProvider: () => _mapViewController,
                 onMapViewReady: _onMapViewReady,
+                onTap: _onMapTap,
               ),
             ),
             Wrap(
@@ -85,11 +87,13 @@ class _ConfigureClustersState extends State<ConfigureClusters>
               crossAxisAlignment: WrapCrossAlignment.center,
               children: [
                 ElevatedButton(
-                  onPressed: _ready ? _applyClustering : null,
+                  onPressed: _featureReduction == null
+                      ? _applyClustering
+                      : null,
                   child: const Text('Apply Clustering'),
                 ),
                 ElevatedButton(
-                  onPressed: (_ready && _featureReduction != null)
+                  onPressed: _featureReduction != null
                       ? _clearClustering
                       : null,
                   child: const Text('Clear'),
@@ -102,7 +106,7 @@ class _ConfigureClustersState extends State<ConfigureClusters>
                     // Add a switch to toggle the display of labels.
                     Switch(
                       value: _showLabels,
-                      onChanged: !_ready
+                      onChanged: _featureReduction == null
                           ? null
                           : (v) {
                               setState(() => _showLabels = v);
@@ -126,7 +130,7 @@ class _ConfigureClustersState extends State<ConfigureClusters>
                             DropdownMenu<int>(
                               dropdownMenuEntries: _radiusEntries,
                               initialSelection: _selectedRadius,
-                              onSelected: !_ready
+                              onSelected: _featureReduction == null
                                   ? null
                                   : (v) {
                                       if (v == null) return;
@@ -155,7 +159,7 @@ class _ConfigureClustersState extends State<ConfigureClusters>
                           DropdownMenu<int>(
                             dropdownMenuEntries: _maxScaleEntries,
                             initialSelection: _selectedMaxScale,
-                            onSelected: !_ready
+                            onSelected: _featureReduction == null
                                 ? null
                                 : (v) {
                                     if (v == null) return;
@@ -208,6 +212,8 @@ class _ConfigureClustersState extends State<ConfigureClusters>
   }
 
   Future<void> _applyClustering() async {
+    // If feature reduction already applied.
+    if (_featureReduction != null) return;
     setState(() => _ready = false);
 
     // Create a class breaks renderer for "Average Building Height".
@@ -287,6 +293,55 @@ class _ConfigureClustersState extends State<ConfigureClusters>
     setState(() => _ready = true);
   }
 
+  Future<void> _onMapTap(Offset offset) async {
+    final result = await _mapViewController.identifyLayer(
+      _layer,
+      screenPoint: offset,
+      tolerance: 22,
+    );
+    if (result.popups.isNotEmpty) {
+      _showPopup(result.popups.first);
+      return;
+    }
+
+    // Fallback: build a Popup from the top GeoElement using an available definition.
+    final fallback = await _mapViewController.identifyLayer(
+      _layer,
+      screenPoint: offset,
+      tolerance: 22,
+    );
+    if (fallback.geoElements.isNotEmpty) {
+      final ge = fallback.geoElements.first;
+      final pd = _featureReduction?.popupDefinition ?? _layer.popupDefinition;
+      if (pd != null) {
+        _showPopup(Popup(geoElement: ge, popupDefinition: pd));
+      }
+    }
+  }
+
+  void _showPopup(Popup popup) {
+    if (!mounted) return;
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
+      builder: (_) => SizedBox(
+        height: MediaQuery.of(context).size.height * 0.5,
+        child: PopupView(
+          popup: popup,
+          onClose: () => Navigator.of(context).maybePop(),
+        ),
+      ),
+    );
+  }
+
+  void _clearClustering() {
+    _layer.featureReduction = null;
+    _featureReduction = null;
+    // Keep UI selections; user can re-apply any time.
+    setState(() {});
+  }
+
   double _calculateMenuWidth(BuildContext context, String sampleText) {
     final tp = TextPainter(
       text: TextSpan(
@@ -297,12 +352,5 @@ class _ConfigureClustersState extends State<ConfigureClusters>
       textDirection: TextDirection.ltr,
     )..layout();
     return tp.size.width * 2;
-  }
-
-  void _clearClustering() {
-    _layer.featureReduction = null;
-    _featureReduction = null;
-    // Keep UI selections; user can re-apply any time.
-    setState(() {});
   }
 }

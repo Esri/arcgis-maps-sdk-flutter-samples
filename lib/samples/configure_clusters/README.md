@@ -22,7 +22,7 @@ Tap the `Apply Clustering` button to set new feature reduction object on the fea
 6. Define the `minSymbolSize` and `maxSymbolSize` for the feature reduction. If these are not defined they default to 12 and 70 respectively.
 7. Add the `ClusteringFeatureReduction` to the `FeatureLayer`.
 8. Create a `LabelDefinition` with a `SimpleLabelExpression` and `TextSymbol` to define the cluster label.
-9. Configure a `GeoViewTapped` event handler on the `MapView` to display feature cluster information in a `PopupViewer`.
+9. Configure a `onTap` event handler on the `MapView` to display feature cluster information in a `PopupView`.
 
 ## Relevant API
 
