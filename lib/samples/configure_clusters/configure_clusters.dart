@@ -26,7 +26,7 @@ class ConfigureClusters extends StatefulWidget {
 
 class _ConfigureClustersState extends State<ConfigureClusters>
     with SampleStateSupport {
-  // MapView controller.
+  // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
 
   late ArcGISMap _map;
