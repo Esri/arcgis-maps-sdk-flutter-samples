@@ -22,7 +22,7 @@
         "FeatureReduction",
         "GeoElement",
         "IdentifyLayerResult",
-        "PopupViewer"
+        "PopupView"
     ],
     "redirect_from": [],
     "relevant_apis": [
@@ -32,7 +32,7 @@
         "FeatureReduction",
         "GeoElement",
         "IdentifyLayerResult",
-        "PopupViewer"
+        "PopupView"
     ],
     "snippets": [
         "configure_clusters.dart"
