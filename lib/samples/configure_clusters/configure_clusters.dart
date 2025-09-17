@@ -30,19 +30,19 @@ class _ConfigureClustersState extends State<ConfigureClusters>
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
 
-  late ArcGISMap _map;
-
   // Create a feature layer and clustering feature reduction.
   late FeatureLayer _layer;
   ClusteringFeatureReduction? _featureReduction;
 
-  // Create flags to manage the sample UI state.
+  // Flags for when the map view is ready and controls can be used.
+  var _ready = false;
   var _showLabels = true;
   var _settingsVisible = false;
 
   // Create options for configuring the radius and max display scale for clusters.
   final _clusterRadiusOptions = const [30, 45, 60, 75, 90];
-  var _selectedRadius = 60; // default cluster radius.
+  // Default cluster radius.
+  var _selectedRadius = 60;
 
   final _clusterMaxScaleOptions = const [
     0,
@@ -53,7 +53,8 @@ class _ConfigureClustersState extends State<ConfigureClusters>
     100000,
     500000,
   ];
-  var _selectedMaxScale = 0; // default max scale (0 = unlimited).
+  // Default max scale (0 = unlimited).
+  var _selectedMaxScale = 0;
 
   // Snapshot of the map scale shown in the settings sheet.
   var _mapScale = 0.0;
@@ -70,39 +71,44 @@ class _ConfigureClustersState extends State<ConfigureClusters>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        top: false,
-        left: false,
-        right: false,
-        child: Column(
-          children: [
-            Expanded(
-              // Add a map view to the widget tree and set a controller.
-              child: ArcGISMapView(
-                controllerProvider: () => _mapViewController,
-                onMapViewReady: _onMapViewReady,
-                onTap: _onMapTap,
-              ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      body: Stack(
+        children: [
+          SafeArea(
+            top: false,
+            left: false,
+            right: false,
+            child: Column(
               children: [
-                ElevatedButton(
-                  onPressed: () {
-                    final vp = _mapViewController.getCurrentViewpoint(
-                      ViewpointType.centerAndScale,
-                    );
-                    setState(() {
-                      _mapScale = vp?.targetScale ?? _mapScale;
-                      _settingsVisible = true;
-                    });
-                  },
-                  child: const Text('Clustering Settings'),
+                Expanded(
+                  // Add a map view to the widget tree and set a controller.
+                  child: ArcGISMapView(
+                    controllerProvider: () => _mapViewController,
+                    onMapViewReady: _onMapViewReady,
+                    onTap: _onMapTap,
+                  ),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {
+                        final vp = _mapViewController.getCurrentViewpoint(
+                          ViewpointType.centerAndScale,
+                        );
+                        setState(() {
+                          _mapScale = vp?.targetScale ?? _mapScale;
+                          _settingsVisible = true;
+                        });
+                      },
+                      child: const Text('Clustering Settings'),
+                    ),
+                  ],
                 ),
               ],
             ),
-          ],
-        ),
+          ),
+          LoadingIndicator(visible: !_ready),
+        ],
       ),
       bottomSheet: _settingsVisible ? buildSettings(context) : null,
     );
@@ -110,7 +116,7 @@ class _ConfigureClustersState extends State<ConfigureClusters>
 
   Future<void> _onMapViewReady() async {
     // Create a map using the portal item of a Zurich buildings web map.
-    _map = ArcGISMap.withItem(
+    final map = ArcGISMap.withItem(
       PortalItem.withPortalAndItemId(
         portal: Portal.arcGISOnline(),
         itemId: 'aa44e79a4836413c89908e1afdace2ea',
@@ -118,12 +124,12 @@ class _ConfigureClustersState extends State<ConfigureClusters>
     );
 
     // Add the map to the map view controller.
-    _mapViewController.arcGISMap = _map;
+    _mapViewController.arcGISMap = map;
     // Explicitly load the web map so that we can access the operational layers.
-    await _map.load();
+    await map.load();
 
     // Get the first layer from the operational layers.
-    _layer = _map.operationalLayers.first as FeatureLayer;
+    _layer = map.operationalLayers.first as FeatureLayer;
 
     // Set initial viewpoint to Zurich.
     _mapViewController.setViewpoint(
@@ -133,6 +139,11 @@ class _ConfigureClustersState extends State<ConfigureClusters>
         scale: 80000,
       ),
     );
+
+    // Apply clustering.
+    await _applyClustering();
+
+    setState(() => _ready = true);
   }
 
   Future<void> _applyClustering() async {
@@ -276,7 +287,7 @@ class _ConfigureClustersState extends State<ConfigureClusters>
       onCloseIconPressed: () => setState(() => _settingsVisible = false),
       settingsWidgets: (context) => [
         SizedBox(
-          height: MediaQuery.sizeOf(context).height * 0.45,
+          height: MediaQuery.sizeOf(context).height * 0.4,
           child: ListTileTheme(
             contentPadding: tilePadding,
             child: ListView(
@@ -286,19 +297,6 @@ class _ConfigureClustersState extends State<ConfigureClusters>
                 Padding(
                   padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
                   child: Text('Clustering', style: headingStyle),
-                ),
-
-                // Apply clustering (switch).
-                SwitchListTile(
-                  title: Text('Apply clustering', style: itemTextStyle),
-                  value: _featureReduction != null,
-                  onChanged: (on) async {
-                    if (on) {
-                      await _applyClustering();
-                    } else {
-                      _clearClustering();
-                    }
-                  },
                 ),
 
                 // Show labels (switch; only active when clustering is on).
@@ -330,21 +328,18 @@ class _ConfigureClustersState extends State<ConfigureClusters>
                       maxWidth: 220,
                     ),
                     child: DropdownMenu<int>(
-                      enabled: _featureReduction != null,
                       textStyle: itemTextStyle,
                       initialSelection: _selectedRadius,
                       dropdownMenuEntries: _radiusEntries,
-                      onSelected: _featureReduction == null
-                          ? null
-                          : (value) {
-                              if (value == null) return;
-                              setState(() => _selectedRadius = value);
-                              _featureReduction?.radius = value.toDouble();
-                              if (_featureReduction != null) {
-                                // Nudge refresh.
-                                _layer.featureReduction = _featureReduction;
-                              }
-                            },
+                      onSelected: (value) {
+                        if (value == null) return;
+                        setState(() => _selectedRadius = value);
+                        _featureReduction?.radius = value.toDouble();
+                        if (_featureReduction != null) {
+                          // Nudge refresh.
+                          _layer.featureReduction = _featureReduction;
+                        }
+                      },
                     ),
                   ),
                 ),
@@ -358,17 +353,14 @@ class _ConfigureClustersState extends State<ConfigureClusters>
                       maxWidth: 220,
                     ),
                     child: DropdownMenu<int>(
-                      enabled: _featureReduction != null,
                       textStyle: itemTextStyle,
                       initialSelection: _selectedMaxScale,
                       dropdownMenuEntries: _maxScaleEntries,
-                      onSelected: _featureReduction == null
-                          ? null
-                          : (value) {
-                              if (value == null) return;
-                              setState(() => _selectedMaxScale = value);
-                              _featureReduction?.maxScale = value.toDouble();
-                            },
+                      onSelected: (value) {
+                        if (value == null) return;
+                        setState(() => _selectedMaxScale = value);
+                        _featureReduction?.maxScale = value.toDouble();
+                      },
                     ),
                   ),
                 ),
