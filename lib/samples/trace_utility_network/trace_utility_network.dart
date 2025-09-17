@@ -207,13 +207,7 @@ class _TraceUtilityNetworkState extends State<TraceUtilityNetwork>
                           ),
                         ],
                       ),
-                      const SizedBox(height: 8),
-                      // Status message.
-                      Text(
-                        _message,
-                        style: Theme.of(context).textTheme.bodySmall,
-                        textAlign: TextAlign.center,
-                      ),
+                      const SizedBox(height: 4),
                     ],
                   ),
                 ),
@@ -221,6 +215,30 @@ class _TraceUtilityNetworkState extends State<TraceUtilityNetwork>
             ),
             // Loading indicator.
             LoadingIndicator(visible: !_ready),
+            // Display a banner with instructions at the top.
+            SafeArea(
+              left: false,
+              right: false,
+              child: IgnorePointer(
+                child: Container(
+                  padding: const EdgeInsets.all(5),
+                  color: Colors.white.withValues(alpha: 0.7),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Text(
+                          _message,
+                          textAlign: TextAlign.center,
+                          style: Theme.of(context).textTheme.labelMedium,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
           ],
         ),
       ),
