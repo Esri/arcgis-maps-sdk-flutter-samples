@@ -140,10 +140,6 @@ class _ConfigureClustersState extends State<ConfigureClusters>
         scale: 80000,
       ),
     );
-
-    // Apply clustering.
-    await _applyClustering();
-
     // Set the ready state variable to true to enable the sample UI.
     setState(() => _ready = true);
   }
@@ -294,6 +290,20 @@ class _ConfigureClustersState extends State<ConfigureClusters>
                   child: Text('Clustering', style: headingStyle),
                 ),
 
+                // Apply clustering (switch).
+                Visibility(
+                  visible: _featureReduction == null,
+                  child: SwitchListTile(
+                    title: Text('Apply clustering', style: itemTextStyle),
+                    value: _featureReduction != null,
+                    onChanged: (on) async {
+                      if (on) {
+                        await _applyClustering();
+                      } else {}
+                    },
+                  ),
+                ),
+
                 // Show labels (switch; only active when clustering is on).
                 SwitchListTile(
                   title: Text('Show labels', style: itemTextStyle),
@@ -323,18 +333,21 @@ class _ConfigureClustersState extends State<ConfigureClusters>
                       maxWidth: 220,
                     ),
                     child: DropdownMenu<int>(
+                      enabled: _featureReduction != null,
                       textStyle: itemTextStyle,
                       initialSelection: _selectedRadius,
                       dropdownMenuEntries: _radiusEntries,
-                      onSelected: (value) {
-                        if (value == null) return;
-                        setState(() => _selectedRadius = value);
-                        _featureReduction?.radius = value.toDouble();
-                        if (_featureReduction != null) {
-                          // Nudge refresh.
-                          _layer.featureReduction = _featureReduction;
-                        }
-                      },
+                      onSelected: _featureReduction == null
+                          ? null
+                          : (value) {
+                              if (value == null) return;
+                              setState(() => _selectedRadius = value);
+                              _featureReduction?.radius = value.toDouble();
+                              if (_featureReduction != null) {
+                                // Nudge refresh.
+                                _layer.featureReduction = _featureReduction;
+                              }
+                            },
                     ),
                   ),
                 ),
@@ -348,14 +361,17 @@ class _ConfigureClustersState extends State<ConfigureClusters>
                       maxWidth: 220,
                     ),
                     child: DropdownMenu<int>(
+                      enabled: _featureReduction != null,
                       textStyle: itemTextStyle,
                       initialSelection: _selectedMaxScale,
                       dropdownMenuEntries: _maxScaleEntries,
-                      onSelected: (value) {
-                        if (value == null) return;
-                        setState(() => _selectedMaxScale = value);
-                        _featureReduction?.maxScale = value.toDouble();
-                      },
+                      onSelected: _featureReduction == null
+                          ? null
+                          : (value) {
+                              if (value == null) return;
+                              setState(() => _selectedMaxScale = value);
+                              _featureReduction?.maxScale = value.toDouble();
+                            },
                     ),
                   ),
                 ),
