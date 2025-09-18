@@ -43,7 +43,7 @@ class _ConfigureClustersState extends State<ConfigureClusters>
   final _clusterRadiusOptions = const [30, 45, 60, 75, 90];
   // Default cluster radius.
   var _selectedRadius = 60;
-
+  // Options for configuring the maximum display scale for clusters (0 = unlimited).
   final _clusterMaxScaleOptions = const [
     0,
     1000,
@@ -64,6 +64,7 @@ class _ConfigureClustersState extends State<ConfigureClusters>
       .map((v) => DropdownMenuEntry(value: v, label: '$v'))
       .toList();
 
+  // Dropdown menu entries for the max scale options.
   late final _maxScaleEntries = _clusterMaxScaleOptions
       .map((v) => DropdownMenuEntry(value: v, label: '$v'))
       .toList();
@@ -143,6 +144,7 @@ class _ConfigureClustersState extends State<ConfigureClusters>
     // Apply clustering.
     await _applyClustering();
 
+    // Set the ready state variable to true to enable the sample UI.
     setState(() => _ready = true);
   }
 
@@ -265,13 +267,6 @@ class _ConfigureClustersState extends State<ConfigureClusters>
         ),
       ),
     );
-  }
-
-  void _clearClustering() {
-    _layer.featureReduction = null;
-    _featureReduction = null;
-    // Keep UI selections; user can re-apply any time.
-    setState(() {});
   }
 
   Widget buildSettings(BuildContext context) {

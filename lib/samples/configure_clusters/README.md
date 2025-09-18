@@ -10,7 +10,7 @@ Feature clustering can be used to dynamically aggregate groups of points that ar
 
 ## How to use the sample
 
-Tap the `Apply Clustering` button to set new feature reduction object on the feature layer. Interact with the controls to customize clustering feature reduction properties. Tap on any clustered aggregate geoelement to see the cluster feature count and aggregate fields in the popup.
+Interact with the controls to customize clustering feature reduction properties. Tap on any clustered aggregate geoelement to see the cluster feature count and aggregate fields in the popup.
 
 ## How it works
 
