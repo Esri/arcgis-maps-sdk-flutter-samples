@@ -36,6 +36,7 @@ class _ShowLabelsOnLayerIn3dState extends State<ShowLabelsOnLayerIn3d>
     return Scaffold(
       body: Stack(
         children: [
+          // Add a scene view to the widget tree and set a controller.
           ArcGISSceneView(
             controllerProvider: () => _sceneViewController,
             onSceneViewReady: onSceneViewReady,
@@ -62,13 +63,11 @@ class _ShowLabelsOnLayerIn3dState extends State<ShowLabelsOnLayerIn3d>
     await scene.load();
 
     // Find the gas layer, then the gas sublayer.
-    final gasLayer = scene.operationalLayers
-        .where((l) => l.name == 'Gas')
-        .first;
+    final gasLayer = scene.operationalLayers.firstWhere((l) => l.name == 'Gas');
     // Obtain the 'Gas Main' feature sublayer.
-    final gasMainLayer =
-        gasLayer.subLayerContents.where((l) => l.name == 'Gas Main').first
-            as FeatureLayer;
+    final gasMainLayer = gasLayer.subLayerContents
+        .whereType<FeatureLayer>()
+        .firstWhere((l) => l.name == 'Gas Main');
 
     gasMainLayer.labelDefinitions.clear();
     // Set the feature layer's labelsEnabled property to true.

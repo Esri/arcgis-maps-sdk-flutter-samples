@@ -18,8 +18,8 @@ Pan and zoom to explore the scene. Notice the labels showing installation dates 
 2. Add the scene to an `ArcGISSceneView` and load it.
 3. After loading is complete, obtain the `FeatureLayer` from one of the `Layer`s in the scene's `operationalLayers`.
 4. Set the feature layer's `labelsEnabled` property to `true`.
-5. Create an `TextSymbol` to use for displaying the label text.
-6. Create an `LabelDefinition` using an  `ArcadeLabelExpression`.
+5. Create a `TextSymbol` to use for displaying the label text.
+6. Create a `LabelDefinition` using an  `ArcadeLabelExpression`.
 7. Add the definition to the feature layer's `labelDefinitions` array.
 
 ## Relevant API
