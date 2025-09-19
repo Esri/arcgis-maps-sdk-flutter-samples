@@ -327,56 +327,44 @@ class _ConfigureClustersState extends State<ConfigureClusters>
                 // Cluster Radius Dropdown menu.
                 ListTile(
                   title: Text('Cluster Radius', style: itemTextStyle),
-                  trailing: ConstrainedBox(
-                    constraints: const BoxConstraints(
-                      minWidth: 160,
-                      maxWidth: 220,
-                    ),
-                    child: DropdownMenu<int>(
-                      enabled: _featureReduction != null,
-                      textStyle: itemTextStyle,
-                      initialSelection: _selectedRadius,
-                      dropdownMenuEntries: _radiusEntries,
-                      onSelected: _featureReduction == null
-                          ? null
-                          : (value) {
-                              if (value == null) return;
-                              setState(() => _selectedRadius = value);
-                              _featureReduction?.radius = value.toDouble();
-                              if (_featureReduction != null) {
-                                // Nudge refresh.
-                                _layer.featureReduction = _featureReduction;
-                              }
-                            },
-                    ),
+                  trailing: DropdownMenu<int>(
+                    enabled: _featureReduction != null,
+                    textAlign: TextAlign.end,
+                    textStyle: itemTextStyle,
+                    initialSelection: _selectedRadius,
+                    dropdownMenuEntries: _radiusEntries,
+                    onSelected: _featureReduction == null
+                        ? null
+                        : (value) {
+                            if (value == null) return;
+                            setState(() => _selectedRadius = value);
+                            _featureReduction?.radius = value.toDouble();
+                            if (_featureReduction != null) {
+                              // Nudge refresh.
+                              _layer.featureReduction = _featureReduction;
+                            }
+                          },
                   ),
                 ),
 
                 // Cluster Max Scale Dropdown menu.
                 ListTile(
                   title: Text('Cluster Max Scale', style: itemTextStyle),
-                  trailing: ConstrainedBox(
-                    constraints: const BoxConstraints(
-                      minWidth: 160,
-                      maxWidth: 220,
-                    ),
-                    child: DropdownMenu<int>(
-                      enabled: _featureReduction != null,
-                      textStyle: itemTextStyle,
-                      initialSelection: _selectedMaxScale,
-                      dropdownMenuEntries: _maxScaleEntries,
-                      onSelected: _featureReduction == null
-                          ? null
-                          : (value) {
-                              if (value == null) return;
-                              setState(() => _selectedMaxScale = value);
-                              _featureReduction?.maxScale = value.toDouble();
-                            },
-                    ),
+                  trailing: DropdownMenu<int>(
+                    enabled: _featureReduction != null,
+                    textStyle: itemTextStyle,
+                    textAlign: TextAlign.end,
+                    initialSelection: _selectedMaxScale,
+                    dropdownMenuEntries: _maxScaleEntries,
+                    onSelected: _featureReduction == null
+                        ? null
+                        : (value) {
+                            if (value == null) return;
+                            setState(() => _selectedMaxScale = value);
+                            _featureReduction?.maxScale = value.toDouble();
+                          },
                   ),
                 ),
-
-                const SizedBox(height: 12),
 
                 // Current Map Scale.
                 ListTile(
