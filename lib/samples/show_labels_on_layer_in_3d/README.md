@@ -25,10 +25,10 @@ Pan and zoom to explore the scene. Notice the labels showing installation dates 
 ## Relevant API
 
 * ArcadeLabelExpression
+* ArcGISScene
+* ArcGISSceneView
 * FeatureLayer
 * LabelDefinition
-* Scene
-* SceneView
 * TextSymbol
 
 ## About the data

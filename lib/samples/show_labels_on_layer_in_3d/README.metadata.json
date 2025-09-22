@@ -17,20 +17,20 @@
         "symbol",
         "text",
         "visualization",
+        "ArcGISScene",
+        "ArcGISSceneView",
         "ArcadeLabelExpression",
         "FeatureLayer",
         "LabelDefinition",
-        "Scene",
-        "SceneView",
         "TextSymbol"
     ],
     "redirect_from": [],
     "relevant_apis": [
+        "ArcGISScene",
+        "ArcGISSceneView",
         "ArcadeLabelExpression",
         "FeatureLayer",
         "LabelDefinition",
-        "Scene",
-        "SceneView",
         "TextSymbol"
     ],
     "snippets": [
