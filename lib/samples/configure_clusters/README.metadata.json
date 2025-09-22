@@ -1,0 +1,41 @@
+{
+    "category": "Layers",
+    "description": "Add client side feature reduction on a point feature layer that is not pre-configured with clustering.",
+    "ignore": false,
+    "images": [
+        "configure_clusters.png"
+    ],
+    "keywords": [
+        "aggregate",
+        "bin",
+        "cluster",
+        "group",
+        "merge",
+        "normalize",
+        "popup",
+        "reduce",
+        "renderer",
+        "summarize",
+        "AggregateGeoElement",
+        "ClassBreaksRenderer",
+        "FeatureLayer",
+        "FeatureReduction",
+        "GeoElement",
+        "IdentifyLayerResult",
+        "PopupView"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+        "AggregateGeoElement",
+        "ClassBreaksRenderer",
+        "FeatureLayer",
+        "FeatureReduction",
+        "GeoElement",
+        "IdentifyLayerResult",
+        "PopupView"
+    ],
+    "snippets": [
+        "configure_clusters.dart"
+    ],
+    "title": "Configure clusters"
+}
