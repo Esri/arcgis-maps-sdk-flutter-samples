@@ -36,7 +36,7 @@ class _ShowLabelsOnLayerState extends State<ShowLabelsOnLayer>
     return Scaffold(
       body: Stack(
         children: [
-          // Add a scene view to the widget tree and set a controller.
+          // Add a map view to the widget tree and set a controller.
           ArcGISMapView(
             controllerProvider: () => _mapViewController,
             onMapViewReady: onMapViewReady,
@@ -51,12 +51,8 @@ class _ShowLabelsOnLayerState extends State<ShowLabelsOnLayer>
   Future<void> onMapViewReady() async {
     // Create a map with a light gray basemap style.
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISLightGray);
-
-    // Assign the map to the controller before setting the viewpoint
-    _mapViewController.arcGISMap = map;
-
     // Set the initial viewpoint near the center of the US.
-    await _mapViewController.setViewpointCenter(
+    map.initialViewpoint = Viewpoint.fromCenter(
       ArcGISPoint(
         x: -10846309.950860,
         y: 4683272.219411,
@@ -64,6 +60,9 @@ class _ShowLabelsOnLayerState extends State<ShowLabelsOnLayer>
       ),
       scale: 20000000,
     );
+
+    // Assign the map to the controller before setting the viewpoint
+    _mapViewController.arcGISMap = map;
 
     // Create a feature layer from an online feature service of US Congressional Districts.
     const serviceUrl =
@@ -78,13 +77,6 @@ class _ShowLabelsOnLayerState extends State<ShowLabelsOnLayer>
 
     // Load the feature layer.
     await featureLayer.load();
-
-    // Show alert if layer fails to load.
-    featureLayer.onLoadStatusChanged.listen((status) {
-      if (status != LoadStatus.loaded && mounted) {
-        showAlertDialog(context, 'Error loading Feature Layer.');
-      }
-    });
 
     // Create label definitions for each party.
     final republicanLabelDefinition = makeLabelDefinition(
