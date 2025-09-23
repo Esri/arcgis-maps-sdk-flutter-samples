@@ -54,7 +54,7 @@ void createNewSample(String sampleCamelName) {
 // Convert a camel case string to snake case.
 String camelToSnake(String input) {
   final snakeCase = input.replaceAllMapped(
-    RegExp('([a-z])([A-Z])'),
+    RegExp('([a-z])([0-9A-Z])'),
     (Match match) => '${match.group(1)}_${match.group(2)!.toLowerCase()}',
   );
   return snakeCase.toLowerCase();
