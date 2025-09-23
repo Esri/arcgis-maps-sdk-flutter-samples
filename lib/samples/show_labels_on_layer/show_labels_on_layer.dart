@@ -61,7 +61,7 @@ class _ShowLabelsOnLayerState extends State<ShowLabelsOnLayer>
       scale: 20000000,
     );
 
-    // Assign the map to the controller before setting the viewpoint
+    // Set the map to the map view.
     _mapViewController.arcGISMap = map;
 
     // Create a feature layer from an online feature service of US Congressional Districts.
