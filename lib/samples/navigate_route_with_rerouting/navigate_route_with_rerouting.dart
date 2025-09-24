@@ -54,7 +54,10 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
   // Rerouting parameters to enable rerouting.
   late ReroutingParameters _reroutingParameters;
 
-  // A SimulatedLocationDataSource to simulate the location data source.
+  // The path to the downloaded geodatabase.
+  late String _geodatabasePath;
+
+  // A SimulatedLocationDataSource to simulate the sequence of location updates.
   SimulatedLocationDataSource? _simulatedLocationDataSource;
 
   // Graphics to show progress on the route.
@@ -92,13 +95,7 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
   var _remainingTime = '';
   var _nextDirection = '';
 
-  // Future to download the geodatabase.
-  late Future<String> _geodatabasePathFuture;
-
-  // Future to download the simulated location data source.
-  late Future<SimulatedLocationDataSource> _simulatedLocationDataSourceFuture;
-
-  // Stream subscriptions
+  // Stream subscriptions tracking various events.
   StreamSubscription<VoiceGuidance>? _voiceGuidanceSubscription;
   StreamSubscription<TrackingStatus>? _trackingStatusSubscription;
   StreamSubscription<void>? _rerouteStartedSubscription;
@@ -110,10 +107,11 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
   @override
   void initState() {
     final listPaths = GoRouter.of(context).state.extra! as List<String>;
-    // Downloads the San Diego geodatabase required for offline routing in San Diego.
-    _geodatabasePathFuture = downloadSanDiegoGeodatabase(listPaths[0]);
-    // Downloads the data source's locations using a local JSON file.
-    _simulatedLocationDataSourceFuture = getLocationDataSource(listPaths[1]);
+    // Store the path of the downloaded geodatabase.
+    _geodatabasePath = listPaths[0];
+    // Create a simulated location data source using the downloaded JSON file.
+    _simulatedLocationDataSource = getLocationDataSource(listPaths[1]);
+
     super.initState();
   }
 
@@ -251,7 +249,7 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       LinearProgressIndicator(),
-                      Text('Downloading data...'),
+                      Text('Initializing navigation...'),
                     ],
                   ),
                 ),
@@ -282,6 +280,8 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
     // Create a map with a navigation basemap style.
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISNavigation);
     _mapViewController.arcGISMap = map;
+
+    // Once the map finishes loading, initialize navigation.
     _mapLoadingSubscription = map.onLoadStatusChanged.listen((
       loadStatus,
     ) async {
@@ -311,9 +311,8 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
     await _flutterTts.setVolume(1);
     await _flutterTts.setPitch(1.3);
 
-    // Check if platform is iOS.
+    // Perform iOS-specific initialization.
     final isIOS = !kIsWeb && Platform.isIOS;
-
     if (isIOS) {
       await _flutterTts.setIosAudioCategory(
         IosTextToSpeechAudioCategory.playback,
@@ -329,11 +328,9 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
 
   // Initialize the route task, route parameters, and route result.
   Future<void> initRouteTask() async {
-    // Get the path to the geodatabase.
-    final geodatabasePath = await _geodatabasePathFuture;
     // Create a route task.
     _routeTask = RouteTask.withGeodatabase(
-      pathToDatabase: Uri.file(geodatabasePath),
+      pathToDatabase: Uri.file(_geodatabasePath),
       networkName: 'Streets_ND',
     );
 
@@ -386,8 +383,6 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
       showMessageDialog('Rerouting is not supported.');
     }
 
-    // Get the simulated location data source.
-    _simulatedLocationDataSource = await _simulatedLocationDataSourceFuture;
     // Create a route tracker location data source to snap the location display to the route.
     final routeTrackerLocationDataSource = RouteTrackerLocationDataSource(
       routeTracker: _routeTracker,
@@ -568,10 +563,9 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
   }
 
   // Create a simulated location data source.
-  Future<SimulatedLocationDataSource> getLocationDataSource(String jsonPath) async {
+  SimulatedLocationDataSource getLocationDataSource(String jsonPath) {
     // Load the route point JSON file.
-    final tourJsonPath = await downloadSanDiegoTourPath(jsonPath);
-    final jsonString = await File(tourJsonPath).readAsString();
+    final jsonString = File(jsonPath).readAsStringSync();
     final routeLine = Geometry.fromJsonString(jsonString) as Polyline;
 
     final simulatedLocationDataSource = SimulatedLocationDataSource()
@@ -633,23 +627,6 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
         ..zIndex = 100,
       Graphic(geometry: _endPoint, symbol: routeEndNumberSymbol)..zIndex = 100,
     ]);
-  }
-
-  // Download the San Diego geodatabase.
-  Future<String> downloadSanDiegoGeodatabase(String path) async {
-    // Create a file to the geodatabase.
-    final geodatabaseFile = File(path);
-
-    // Return the path to the geodatabase.
-    return geodatabaseFile.path;
-  }
-
-  // Download San Diego tour path.
-  Future<String> downloadSanDiegoTourPath(String jsonPath) async {
-    // Create the SanDiegoTourPath.json file.
-    final tourPathFile = File(jsonPath);
-    // Return the path of the JSON file.
-    return tourPathFile.path;
   }
 }
 

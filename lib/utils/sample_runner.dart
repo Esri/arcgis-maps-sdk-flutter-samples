@@ -19,11 +19,9 @@ import 'dart:convert';
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/models/sample.dart';
-import 'package:arcgis_maps_sdk_flutter_samples/models/samples_widget_list.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/router_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 
 /// Run an individual sample outside of the Sample Viewer App.
 void main() async {
@@ -49,17 +47,12 @@ void main() async {
   final sample = allSamples.firstWhere((s) {
     return s.key == sampleFolderName;
   });
-  
+
   final initialRoute = sample.hasDownloadableResources
       ? '/${sample.key}/resources'
       : '/${sample.key}/live';
-  
+
   final router = routerConfigWithSample(sample, initialRoute);
-  
-  runApp(
-    MaterialApp.router(
-      routerConfig: router,
-      theme: sampleViewerTheme,
-    ),
-  );
+
+  runApp(MaterialApp.router(routerConfig: router, theme: sampleViewerTheme));
 }

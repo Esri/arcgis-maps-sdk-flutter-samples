@@ -51,8 +51,6 @@ class _AnimateImagesWithImageOverlayState
   final _imageOverlay = ImageOverlay();
   // A list to hold the ArcGIS image files for the animation.
   List<File> _imageFileList = [];
-  // A string to display the download progress.
-  var _downloadProgress = '';
   // An integer to track the current ArcGIS image index.
   var _imageFrameIndex = 0;
   // A timer to control and change the ArcGIS image periodically.
@@ -172,7 +170,7 @@ class _AnimateImagesWithImageOverlayState
               ],
             ),
             // Display a progress indicator and prevent interaction until state is ready.
-            LoadingIndicator(visible: !_ready, text: _downloadProgress),
+            LoadingIndicator(visible: !_ready),
           ],
         ),
       ),
