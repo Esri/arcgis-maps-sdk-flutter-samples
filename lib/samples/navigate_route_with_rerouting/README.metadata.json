@@ -32,7 +32,8 @@
       },
       {
         "itemId": "4caec8c55ea2463982f1af7d9611b8d5",
-        "downloadable": "SanDiegoTourPath.json"
+        "downloadable": "SanDiegoTourPath.zip",
+        "resource": "SanDiegoTourPath.json"
       }
     ],
     "redirect_from": [],
