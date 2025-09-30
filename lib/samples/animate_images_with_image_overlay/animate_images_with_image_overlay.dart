@@ -271,11 +271,13 @@ class _AnimateImagesWithImageOverlayState
 
   /// Sets the image frame to the image overlay based on the index.
   void setImageFrame(int index) {
-    // Quickly release the previous image frame to avoid memory issues.
-    _imageOverlay.imageFrame = null;
-    _imageOverlay.imageFrame = ImageFrame.withImageEnvelope(
-      image: ArcGISImage.fromFile(_imageFileList[index].uri)!,
+    // Create the image frame at the specified index.
+    final imageFrame = ImageFrame.withUriEnvelope(
+      uri: _imageFileList[index].uri,
       extent: imageEnvelope,
     );
+
+    // Once the image frame is loaded, set it to the image overlay.
+    imageFrame.load().then((_) => _imageOverlay.imageFrame = imageFrame);
   }
 }
