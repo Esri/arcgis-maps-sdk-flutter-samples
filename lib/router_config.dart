@@ -31,23 +31,24 @@ import 'package:go_router/go_router.dart';
 GoRouter routerConfig(List<Sample> allSamples) {
   return GoRouter(
     routes: [
+      // Main route to SampleViewerApp.
       GoRoute(
         path: '/',
         builder: (context, state) => const SampleViewerApp(),
         routes: [
-          // Search route.
+          // Route to the SampleViewerPage in "search" mode.
           GoRoute(
             path: 'search',
             pageBuilder: (context, state) {
               final position = state.extra as Offset? ?? Offset.zero;
+
               return RippleTransitionPage(
                 position: position,
                 child: SampleViewerPage(allSamples: allSamples),
               );
             },
           ),
-
-          // Category route.
+          // Route to the SampleViewerPage with the given category.
           GoRoute(
             path: 'category/:category',
             pageBuilder: (context, state) {
@@ -64,72 +65,59 @@ GoRouter routerConfig(List<Sample> allSamples) {
               );
             },
           ),
-
-          // Unified sample route: redirects to resources or live.
+          // Route to the given sample running live.
           GoRoute(
-            path: 'sample/:sample',
-            redirect: (context, state) {
-              final sampleKey = state.pathParameters['sample']!;
-              final sample = allSamples.firstWhere((s) => s.key == sampleKey);
-              return sample.downloadableResources.isNotEmpty
-                  ? '/sample/$sampleKey/resources'
-                  : '/sample/$sampleKey/live';
+            path: 'sample/:sample/live',
+            builder: (context, state) {
+              final sampleKey = state.pathParameters['sample'];
+              final sample = allSamples
+                  .where((sample) => sample.key == sampleKey)
+                  .first;
+
+              return SampleDetailPage(sample: sample);
             },
-            routes: [
-              // Downloadable resources page.
-              GoRoute(
-                path: 'resources',
-                builder: (context, state) {
-                  final sampleKey = state.pathParameters['sample']!;
-                  final sample = allSamples.firstWhere(
-                    (s) => s.key == sampleKey,
-                  );
-                  return DownloadableResourcesPage(
-                    sampleTitle: sample.title,
-                    resources: sample.downloadableResources,
-                    onComplete: (_) {
-                      context.go('/sample/$sampleKey/live');
-                    },
-                  );
-                },
-              ),
+          ),
+          // Route to downloadable resources page for a sample.
+          GoRoute(
+            path: 'sample/:sample/resources',
+            builder: (context, state) {
+              final sampleKey = state.pathParameters['sample'];
+              final sample = allSamples
+                  .where((sample) => sample.key == sampleKey)
+                  .first;
 
-              // Live sample view.
-              GoRoute(
-                path: 'live',
-                builder: (context, state) {
-                  final sampleKey = state.pathParameters['sample']!;
-                  final sample = allSamples.firstWhere(
-                    (s) => s.key == sampleKey,
-                  );
-                  return SampleDetailPage(sample: sample);
+              return DownloadableResourcesPage(
+                sampleTitle: sample.title,
+                resources: sample.downloadableResources,
+                onComplete: (downloadPaths) {
+                  context.go('/sample/${sample.key}/live', extra: downloadPaths);
                 },
-              ),
+              );
+            },
+          ),
+          // Route to the README page for the given sample.
+          GoRoute(
+            path: 'sample/:sample/README',
+            builder: (context, state) {
+              final sampleKey = state.pathParameters['sample'];
+              final sample = allSamples
+                  .where((sample) => sample.key == sampleKey)
+                  .first;
 
-              // README page.
-              GoRoute(
-                path: 'README',
-                builder: (context, state) {
-                  final sampleKey = state.pathParameters['sample']!;
-                  final sample = allSamples.firstWhere(
-                    (s) => s.key == sampleKey,
-                  );
-                  return ReadmePage(sample: sample);
-                },
-              ),
+              return ReadmePage(sample: sample);
+            },
+          ),
+          // Route to the Code page for the given sample.
+          GoRoute(
+            path: 'sample/:sample/Code',
+            builder: (context, state) {
+              final sampleKey = state.pathParameters['sample'];
+              final sample = allSamples
+                  .where((sample) => sample.key == sampleKey)
+                  .first;
 
-              // Code view page.
-              GoRoute(
-                path: 'Code',
-                builder: (context, state) {
-                  final sampleKey = state.pathParameters['sample']!;
-                  final sample = allSamples.firstWhere(
-                    (s) => s.key == sampleKey,
-                  );
-                  return CodeViewPage(sample: sample);
-                },
-              ),
-            ],
+              return CodeViewPage(sample: sample);
+            },
           ),
         ],
       ),
@@ -137,38 +125,26 @@ GoRouter routerConfig(List<Sample> allSamples) {
   );
 }
 
-/// A minimal GoRouter for running a single sample in isolation,
-/// starting at either its resources page or its live view.
 GoRouter routerConfigWithSample(Sample sample, String initialLocation) {
   return GoRouter(
     initialLocation: initialLocation,
     routes: [
       GoRoute(
-        path: '/sample/:sample/resources',
+        path: '/:sample/resources',
         builder: (context, state) {
-          final key = state.pathParameters['sample']!;
-          assert(
-            key == sample.key,
-            'Expected path parameter "sample" ($key) to match provided sample.key (${sample.key})',
-          );
           return DownloadableResourcesPage(
             sampleTitle: sample.title,
             resources: sample.downloadableResources,
-            onComplete: (_) {
-              context.go('/sample/${sample.key}/live');
+            onComplete: (downloadPaths) {
+              context.go('/${sample.key}/live', extra: downloadPaths);
             },
           );
         },
       ),
       GoRoute(
-        path: '/sample/:sample/live',
+        path: '/:sample/live',
         builder: (context, state) {
-          final key = state.pathParameters['sample']!;
-          assert(
-            key == sample.key,
-            'Expected path parameter "sample" ($key) to match provided sample.key (${sample.key})',
-          );
-          return SampleDetailPage(sample: sample);
+          return sample.getSampleWidget();
         },
       ),
     ],
