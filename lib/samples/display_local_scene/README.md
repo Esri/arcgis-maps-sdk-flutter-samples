@@ -18,16 +18,16 @@ When loaded, the sample will display a local scene clipped to a extent. Pan and 
 2. Create an `ArcGISTiledElevationSource` object and add it to the local scene's base surface.
 3. Create an `ArcGISSceneLayer` with 3d buildings and add it to the local scene's operational layers.
 4. Create and apply a clipping area for the local scene and enable clipping.
-5. Create a `LocalSceneView` object to display the map.
+5. Create a `ArcGISLocalSceneView` object to display the map.
 6. Set the initial viewpoint for the local scene.
 7. Set the local scene to the local scene view.
 
 ## Relevant API
 
+* ArcGISLocalSceneView
+* ArcGISScene
 * ArcGISSceneLayer
 * ArcGISTiledElevationSource
-* LocalSceneView
-* Scene
 
 ## Tags
 
