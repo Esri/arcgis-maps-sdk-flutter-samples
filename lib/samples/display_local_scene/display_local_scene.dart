@@ -55,8 +55,8 @@ class _DisplayLocalSceneState extends State<DisplayLocalScene>
       viewingMode: SceneViewingMode.local,
     );
 
-    // Create the 3d building layer.
-    final buildingLayer = ArcGISSceneLayer.withUri(
+    // Create the 3d scene layer.
+    final sceneLayer = ArcGISSceneLayer.withUri(
       Uri.parse(
         'https://www.arcgis.com/home/item.html?id=61da8dc1a7bc4eea901c20ffb3f8b7af',
       ),
@@ -70,8 +70,8 @@ class _DisplayLocalSceneState extends State<DisplayLocalScene>
     );
     scene.baseSurface.elevationSources.add(elevationSource);
 
-    // Add the building layer to the scene's operational layers.
-    scene.operationalLayers.add(buildingLayer);
+    // Add the scene layer to the scene's operational layers.
+    scene.operationalLayers.add(sceneLayer);
 
     // Set the clipping area for the local scene.
     scene.clippingArea = Envelope.fromXY(

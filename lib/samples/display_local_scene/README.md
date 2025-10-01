@@ -24,10 +24,10 @@ When loaded, the sample will display a local scene clipped to a extent. Pan and 
 
 ## Relevant API
 
-* ArcGISLocalSceneView
-* ArcGISScene
 * ArcGISSceneLayer
 * ArcGISTiledElevationSource
+* LocalSceneView
+* Scene
 
 ## Tags
 
