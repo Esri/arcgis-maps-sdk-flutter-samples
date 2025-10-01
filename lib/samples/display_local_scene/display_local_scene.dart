@@ -83,7 +83,7 @@ class _DisplayLocalSceneState extends State<DisplayLocalScene>
     );
 
     // Enable the clipping area so only the scene elements within the clipping
-    // area is rendered.
+    // area are rendered.
     scene.isClippingEnabled = true;
 
     // Set the scene's initial viewpoint.
