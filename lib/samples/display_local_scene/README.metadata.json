@@ -11,17 +11,17 @@
         "elevation",
         "scene",
         "surface",
-        "ArcGISLocalSceneView",
-        "ArcGISScene",
         "ArcGISSceneLayer",
-        "ArcGISTiledElevationSource"
+        "ArcGISTiledElevationSource",
+        "LocalSceneView",
+        "Scene"
     ],
     "redirect_from": [],
     "relevant_apis": [
-        "ArcGISLocalSceneView",
-        "ArcGISScene",
         "ArcGISSceneLayer",
-        "ArcGISTiledElevationSource"
+        "ArcGISTiledElevationSource",
+        "LocalSceneView",
+        "Scene"
     ],
     "snippets": [
         "display_local_scene.dart"
