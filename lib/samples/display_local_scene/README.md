@@ -6,7 +6,9 @@ Display a local scene with a topographic surface and 3d buildings clipped to a l
 
 ## Use case
 
-A local scene view is a user interface that displays 3d basemaps and layers. Unlike a global scene, a local scene can use any `SpatialReference` and can be clipped to a specific area. The view controls the area of the scene that is visible, supports user interactions such as pan and zoom, and provides access to the underlying layer data in the local scene.
+A local scene view is a user interface that displays 3d basemaps and layers. Unlike a global scene, a local scene is drawn on a flat surface and can support WGS84, CGCS2000, or any projected `SpatialReference`. They are generally used to view local data in a projected coordinate system, and are often clipped to a specific area of interest to focus on the local data.
+
+The `ArcGISLocalSceneView` displays the visible area of the scene, supports user interactions such as pan and zoom, and provides access to the underlying layer data in the local scene.
 
 ## How to use the sample
 
@@ -14,11 +16,11 @@ When loaded, the sample will display a local scene clipped to a extent. Pan and 
 
 ## How it works
 
-1. Create a scene object with the `arcGISTopographic` basemap style and `local` scene viewing mode.
+1. Create a scene object with the `arcGISTopographic` basemap.
 2. Create an `ArcGISTiledElevationSource` object and add it to the local scene's base surface.
 3. Create an `ArcGISSceneLayer` with 3d buildings and add it to the local scene's operational layers.
 4. Create and apply a clipping area for the local scene and enable clipping.
-5. Create a `ArcGISLocalSceneView` object to display the map.
+5. Create a `ArcGISLocalSceneView` object to display the scene.
 6. Set the initial viewpoint for the local scene.
 7. Set the local scene to the local scene view.
 
