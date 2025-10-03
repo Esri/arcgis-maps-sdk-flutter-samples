@@ -15,7 +15,7 @@ The `ArcGISLocalSceneView` displays the clipped area of the local scene, support
 
 ## How to use the sample
 
-When loaded, the sample will display a local scene clipped to a extent. Pan and zoom to explore the scene.
+This sample displays a local scene clipped to an extent. Pan and zoom to explore the scene.
 
 ## How it works
 
