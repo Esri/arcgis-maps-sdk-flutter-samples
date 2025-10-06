@@ -30,6 +30,7 @@ import 'package:go_router/go_router.dart';
 
 GoRouter routerConfig(List<Sample> allSamples) {
   return GoRouter(
+    initialLocation: '/',
     routes: [
       // Main route to SampleViewerApp.
       GoRoute(
@@ -90,7 +91,10 @@ GoRouter routerConfig(List<Sample> allSamples) {
                 sampleTitle: sample.title,
                 resources: sample.downloadableResources,
                 onComplete: (downloadPaths) {
-                  context.go('/sample/${sample.key}/live', extra: downloadPaths);
+                  context.pushReplacement(
+                    '/sample/${sample.key}/live',
+                    extra: downloadPaths,
+                  );
                 },
               );
             },
