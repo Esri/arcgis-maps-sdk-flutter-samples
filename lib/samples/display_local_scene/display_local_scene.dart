@@ -32,18 +32,9 @@ class _DisplayLocalSceneState extends State<DisplayLocalScene>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        top: false,
-        left: false,
-        right: false,
-        child: Stack(
-          children: [
-            ArcGISLocalSceneView(
-              controllerProvider: () => _localSceneViewController,
-              onLocalSceneViewReady: onLocalSceneViewReady,
-            ),
-          ],
-        ),
+      body: ArcGISLocalSceneView(
+        controllerProvider: () => _localSceneViewController,
+        onLocalSceneViewReady: onLocalSceneViewReady,
       ),
     );
   }
