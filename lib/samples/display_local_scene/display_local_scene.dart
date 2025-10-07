@@ -38,6 +38,7 @@ class _DisplayLocalSceneState extends State<DisplayLocalScene>
         right: false,
         child: Stack(
           children: [
+            // Add a local scene view to the widget tree and set a controller.
             ArcGISLocalSceneView(
               controllerProvider: () => _localSceneViewController,
               onLocalSceneViewReady: onLocalSceneViewReady,
