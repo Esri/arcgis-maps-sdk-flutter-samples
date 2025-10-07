@@ -74,7 +74,9 @@ class _ShowLabelsOnLayerIn3dState extends State<ShowLabelsOnLayerIn3d>
     gasMainLayer.labelsEnabled = true;
 
     // Create a text symbol for the label definition.
-    final textSymbol = TextSymbol(color: Colors.orange, size: 16);
+    final textSymbol = TextSymbol(color: Colors.orange, size: 16)
+      ..haloColor = Colors.white
+      ..haloWidth = 2.0;
 
     // Create a label definition from an arcade label expression and the text symbol.
     final labelDefinition = LabelDefinition(
