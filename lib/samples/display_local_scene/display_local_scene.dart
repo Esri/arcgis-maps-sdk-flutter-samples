@@ -32,6 +32,7 @@ class _DisplayLocalSceneState extends State<DisplayLocalScene>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // Add a local scene view to the widget tree and set a controller.
       body: ArcGISLocalSceneView(
         controllerProvider: () => _localSceneViewController,
         onLocalSceneViewReady: onLocalSceneViewReady,
