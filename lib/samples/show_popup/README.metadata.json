@@ -1,0 +1,27 @@
+{
+    "category": "Edit and Manage Data",
+    "description": "Show predefined popups from a web map.",
+    "ignore": false,
+    "images": [
+        "show_popup.png"
+    ],
+    "keywords": [
+        "feature",
+        "feature layer",
+        "popup",
+        "web map",
+        "ArcGISMap",
+        "IdentifyLayerResult",
+        "PopupView"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+        "ArcGISMap",
+        "IdentifyLayerResult",
+        "PopupView"
+    ],
+    "snippets": [
+        "show_popup.dart"
+    ],
+    "title": "Show popup"
+}
