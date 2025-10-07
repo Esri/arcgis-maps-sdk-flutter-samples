@@ -15,8 +15,8 @@ Tap on the features to prompt a popup that displays information about the featur
 ## How it works
 
 1. Create and load an `ArcGISMap` instance from a `PortalItem` of a web map.
-2. Set the map to an `ArcgisMapViewController`.
-3. Use the `ArcgisMapViewController.identifyLayers(_:screenPoint:tolerance:returnPopupsOnly:maximumResultsPerLayer:)` method to identify the top-most feature.
+2. Set the map to an `ArcGISMapViewController`.
+3. Use the `ArcGISMapViewController.identifyLayers()` method to identify the top-most feature.
 4. Create a `PopupView` with the result's first popup.
 
 ## Relevant API
