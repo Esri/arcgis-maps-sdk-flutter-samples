@@ -16,6 +16,7 @@
 import 'dart:convert';
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
+import 'package:arcgis_maps_toolkit/arcgis_maps_toolkit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:go_router/go_router.dart';
@@ -110,10 +111,23 @@ class _Animate3dGraphicState extends State<Animate3dGraphic>
             Column(
               children: [
                 Expanded(
-                  // Add a scene view to the widget tree and set a controller.
-                  child: ArcGISSceneView(
-                    controllerProvider: () => _sceneViewController,
-                    onSceneViewReady: onSceneViewReady,
+                  child: Stack(
+                    children: [
+                      // Add a scene view to the widget tree and set a controller.
+                      ArcGISSceneView(
+                        controllerProvider: () => _sceneViewController,
+                        onSceneViewReady: onSceneViewReady,
+                      ),
+                      // Add an OverviewMap widget to show a 2D map inset.
+                      OverviewMap.withSceneView(
+                        controllerProvider: () => _sceneViewController,
+                        alignment: Alignment.bottomLeft,
+                        padding: const EdgeInsets.fromLTRB(10, 10, 10, 40),
+                        map: ArcGISMap.withBasemapStyle(
+                          BasemapStyle.arcGISStreets,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 Row(
@@ -233,7 +247,7 @@ class _Animate3dGraphicState extends State<Animate3dGraphic>
 
     // Return the graphic that combines geometry and symbol.
     return Graphic(geometry: planePosition, symbol: planeSymbol);
-}
+  }
 
   // Adds the plane graphic to a graphics overlay and sets the initial viewpoint.
   Future<void> _addPlaneToScene(Graphic planeGraphic) async {
