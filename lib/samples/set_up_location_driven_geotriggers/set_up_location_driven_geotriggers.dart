@@ -18,6 +18,7 @@ import 'dart:collection';
 
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
+import 'package:arcgis_maps_toolkit/arcgis_maps_toolkit.dart';
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
@@ -108,13 +109,8 @@ class _SetUpLocationDrivenGeotriggersState
                     ElevatedButton(
                       onPressed: _currentSections.isEmpty
                           ? null
-                          : () => showDialog<void>(
-                              context: context,
-                              builder: (context) => showFeatureDetails(
-                                context: context,
-                                title: 'Section Details:',
-                                features: [_currentSections.values.last],
-                              ),
+                          : () => _showSectionDetail(
+                              _currentSections.values.last,
                             ),
                       child: const Text('Section detail'),
                     ),
@@ -322,6 +318,34 @@ class _SetUpLocationDrivenGeotriggersState
               child: const Text('Close'),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  // Display the section details in a Popup view in a bottom modal sheet.
+  void _showSectionDetail(Feature sectionFeature) {
+    if (!mounted) return;
+
+    // Create a PopupDefinition with a title based on the section name.
+    final popupDefinition = PopupDefinition.withGeoElement(sectionFeature);
+    popupDefinition.title = sectionFeature.attributes['name'] as String? ?? '';
+
+    // Create a Popup for the section feature.
+    final popup = Popup(
+      geoElement: sectionFeature,
+      popupDefinition: popupDefinition,
+    );
+
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
+      builder: (_) => SizedBox(
+        height: MediaQuery.sizeOf(context).height * 0.7,
+        child: PopupView(
+          popup: popup,
+          onClose: () => Navigator.of(context).maybePop(),
         ),
       ),
     );
