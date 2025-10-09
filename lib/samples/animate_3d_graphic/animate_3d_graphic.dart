@@ -16,7 +16,6 @@
 import 'dart:convert';
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
-import 'package:arcgis_maps_toolkit/arcgis_maps_toolkit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:go_router/go_router.dart';
@@ -32,6 +31,21 @@ class _Animate3dGraphicState extends State<Animate3dGraphic>
     with SingleTickerProviderStateMixin, SampleStateSupport {
   // Create a controller for the scene view.
   final _sceneViewController = ArcGISSceneView.createController();
+
+  // Create a controller for the inset map view.
+  final _mapViewController = ArcGISMapView.createController();
+
+  // The graphic for the route in the inset map.
+  final _routeGraphic = Graphic(symbol: SimpleLineSymbol(color: Colors.red));
+
+  // The graphic for the triangle representing the plane on the inset map.
+  final _triangleGraphic = Graphic(
+    symbol: SimpleMarkerSymbol(
+      style: SimpleMarkerSymbolStyle.triangle,
+      color: Colors.blue,
+      size: 10,
+    ),
+  );
 
   // A flag for when the scene view is ready and controls can be used.
   var _ready = false;
@@ -118,13 +132,20 @@ class _Animate3dGraphicState extends State<Animate3dGraphic>
                         controllerProvider: () => _sceneViewController,
                         onSceneViewReady: onSceneViewReady,
                       ),
-                      // Add an OverviewMap widget to show a 2D map inset.
-                      OverviewMap.withSceneView(
-                        controllerProvider: () => _sceneViewController,
+                      // Add an inset map showing the route.
+                      Align(
                         alignment: Alignment.bottomLeft,
-                        padding: const EdgeInsets.fromLTRB(10, 10, 10, 40),
-                        map: ArcGISMap.withBasemapStyle(
-                          BasemapStyle.arcGISStreets,
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(10, 10, 10, 40),
+                          child: Container(
+                            width: 150,
+                            height: 100,
+                            decoration: BoxDecoration(border: Border.all()),
+                            child: ArcGISMapView(
+                              controllerProvider: () => _mapViewController,
+                              onMapViewReady: onMapViewReady,
+                            ),
+                          ),
                         ),
                       ),
                     ],
@@ -224,6 +245,22 @@ class _Animate3dGraphicState extends State<Animate3dGraphic>
     scene.baseSurface.elevationSources.add(elevationSource);
 
     return scene;
+  }
+
+  // Create the inset map and graphics.
+  void onMapViewReady() {
+    // Create a map with the streets basemap.
+    final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISStreets);
+    _mapViewController.arcGISMap = map;
+
+    // Turn off attribution and gestures for the inset map.
+    _mapViewController.isAttributionTextVisible = false;
+    _mapViewController.interactionOptions.enabled = false;
+
+    // Create a graphics overlay with the graphics.
+    final graphicsOverlay = GraphicsOverlay();
+    graphicsOverlay.graphics.addAll([_routeGraphic, _triangleGraphic]);
+    _mapViewController.graphicsOverlays.add(graphicsOverlay);
   }
 
   // Loads the 3D plane model from local sample data and returns it as a Graphic.
@@ -349,23 +386,47 @@ class _Animate3dGraphicState extends State<Animate3dGraphic>
     });
 
     if (_frames.isNotEmpty) {
+      // Create the route graphic for the inset map.
+      final builder = PolylineBuilder(
+        spatialReference: frames.first.position.spatialReference,
+      );
+      for (final frame in frames) {
+        builder.addPoint(frame.position);
+      }
+      _routeGraphic.geometry = builder.toGeometry();
+
+      // Update the frame to the first frame.
       _updateFrame(_frames.first);
     }
   }
 
-  // Updates the plane graphic with the current frame data.
+  // Updates the interface with the current frame data.
   void _updateFrame(Frame frame) {
     if (_planeGraphic == null) return;
 
+    // Update the plane graphic.
     _planeGraphic!.geometry = frame.position;
     _planeGraphic!.attributes['HEADING'] = frame.heading;
     _planeGraphic!.attributes['PITCH'] = frame.pitch;
     _planeGraphic!.attributes['ROLL'] = frame.roll;
 
+    // Update the telemetry overlay.
     _telemetryData.altitude.value = frame.position.z ?? 0;
     _telemetryData.heading.value = frame.heading;
     _telemetryData.pitch.value = frame.pitch;
     _telemetryData.roll.value = frame.roll;
+
+    // Update the triangle graphic on the inset map.
+    _triangleGraphic.geometry = frame.position;
+
+    // Keep the inset map centered on the plane.
+    _mapViewController.setViewpoint(
+      Viewpoint.fromCenter(
+        frame.position,
+        scale: 100000,
+        rotation: frame.heading,
+      ),
+    );
   }
 
   // Telemetry Row Widget.
