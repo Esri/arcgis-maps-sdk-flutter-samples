@@ -134,6 +134,9 @@ class _DisplayClustersState extends State<DisplayClusters>
       tolerance: 12,
     );
 
+    // Ensure that there are popups if there are no popups then
+    if (identifyLayerResult.popups.isEmpty) return;
+
     final popup = identifyLayerResult.popups.first;
     // Get the aggregate geoelements from the identify result.
     final aggregateGeoElements = identifyLayerResult.geoElements
@@ -146,50 +149,11 @@ class _DisplayClustersState extends State<DisplayClusters>
     // Get the list of geoelements associated with the aggregate geoelement.
     final geoElements = await aggregateGeoElement.getGeoElements();
     // Display a dialog with information about the geoelements.
-    _showOutputs(popup, geoElements);
+    showOutputs(popup, geoElements);
   }
 
-  void showResultsDialog(List<GeoElement> geoElements) {
-    // Create a dialog that lists the count and names of the provided list of geoelements.
-    showDialog<void>(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text('Contained GeoElements'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            spacing: 10,
-            children: [
-              Text(
-                'Total GeoElements: ${geoElements.length}',
-                style: Theme.of(context).textTheme.titleMedium,
-              ),
-              SizedBox(
-                height: 200,
-                child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: geoElements
-                        .map(
-                          (geoElement) => Text(
-                            geoElement.attributes['name'] as String? ??
-                                'Geoelement: ${geoElements.indexOf(geoElement)}}',
-                          ),
-                        )
-                        .toList(),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  // Display the results in a Popup view in a bottom modal sheet.
-  void _showOutputs(Popup popup, List<GeoElement> geoElements) {
+  // Display the results in a Popup view in a modal bottom sheet.
+  void showOutputs(Popup popup, List<GeoElement> geoElements) {
     if (!mounted) return;
     showModalBottomSheet<void>(
       context: context,
@@ -203,7 +167,7 @@ class _DisplayClustersState extends State<DisplayClusters>
           ),
           child: Column(
             children: [
-              // Tab bar.
+              // Headings tab bars.
               Material(
                 color: Colors.transparent,
                 child: TabBar(
@@ -223,7 +187,10 @@ class _DisplayClustersState extends State<DisplayClusters>
                 child: TabBarView(
                   children: [
                     // Popup tab.
-                    PopupView(popup: popup),
+                    PopupView(
+                      popup: popup,
+                      onClose: () => Navigator.of(context).maybePop(),
+                    ),
 
                     // GeoElements tab — new:
                     GeoElementsTab(geoElements: geoElements),
@@ -247,9 +214,13 @@ class _DisplayClustersState extends State<DisplayClusters>
   }
 }
 
+/// A simple tab that lists the GeoElements contained in the selected
+/// aggregate cluster. It shows a header with the total count, an empty
+/// state when there are none, and a scrollable list when present.
 class GeoElementsTab extends StatelessWidget {
   const GeoElementsTab({required this.geoElements, super.key});
 
+  /// The individual GeoElements that belong to the tapped cluster.
   final List<GeoElement> geoElements;
 
   @override
@@ -257,6 +228,7 @@ class GeoElementsTab extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        // Header: display the total number of GeoElements in this cluster.
         Padding(
           padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
           child: Text(
@@ -265,6 +237,7 @@ class GeoElementsTab extends StatelessWidget {
           ),
         ),
 
+        // If there are no GeoElements, show a friendly empty-state message.
         if (geoElements.isEmpty)
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
@@ -274,14 +247,19 @@ class GeoElementsTab extends StatelessWidget {
             ),
           )
         else
+          // When elements exist, fill the remaining space with a scrollable list.
           Expanded(
             child: ListView.separated(
               padding: const EdgeInsets.fromLTRB(8, 0, 8, 16),
               itemCount: geoElements.length,
+              // Thin divider between rows.
               separatorBuilder: (_, __) => const Divider(height: 0),
               itemBuilder: (context, index) {
                 final element = geoElements[index];
 
+                // Best-effort display name:
+                // Try to read the 'name' attribute (if present and non-empty),
+                // otherwise fall back to a generic label with the index.
                 final name = () {
                   try {
                     final raw = element.attributes['name'];
@@ -290,6 +268,7 @@ class GeoElementsTab extends StatelessWidget {
                   return 'GeoElement #$index';
                 }();
 
+                // Each row shows a place icon and the resolved name.
                 return ListTile(
                   leading: const Icon(Icons.place_outlined),
                   title: Text(name),
