@@ -14,10 +14,12 @@
 //
 
 import 'dart:async';
+import 'dart:typed_data';
 
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 
 class ShowUtilityAssociations extends StatefulWidget {
   const ShowUtilityAssociations({super.key});
@@ -37,6 +39,20 @@ class _ShowUtilityAssociationsState extends State<ShowUtilityAssociations>
 
   // A graphics overlay to display the utility associations.
   final _associationsOverlay = GraphicsOverlay();
+
+  // A symbol for attachment associations.
+  final _attachmentSymbol = SimpleLineSymbol(
+    style: SimpleLineSymbolStyle.dot,
+    color: Colors.green,
+    width: 5,
+  );
+
+  // A symbol for connectivity associations.
+  final _connectivitySymbol = SimpleLineSymbol(
+    style: SimpleLineSymbolStyle.dot,
+    color: Colors.red,
+    width: 5,
+  );
 
   // A subscription to the viewpoint changed event.
   StreamSubscription<void>? _viewpointChangedSubscription;
@@ -77,9 +93,45 @@ class _ShowUtilityAssociationsState extends State<ShowUtilityAssociations>
     return Scaffold(
       body: Stack(
         children: [
+          // Add a map view to the widget tree and set a controller.
           ArcGISMapView(
             controllerProvider: () => _mapViewController,
             onMapViewReady: onMapViewReady,
+          ),
+          // Add a legend for the association types.
+          SafeArea(
+            child: Align(
+              alignment: Alignment.topLeft,
+              child: Container(
+                margin: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.9),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          SwatchImage(symbol: _attachmentSymbol),
+                          const Text('Attachment'),
+                        ],
+                      ),
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          SwatchImage(symbol: _connectivitySymbol),
+                          const Text('Connectivity'),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
           ),
           // Display a progress indicator and prevent interaction until state is ready.
           LoadingIndicator(visible: !_ready),
@@ -120,21 +172,13 @@ class _ShowUtilityAssociationsState extends State<ShowUtilityAssociations>
       uniqueValues: [
         UniqueValue(
           description: 'Attachment',
-          symbol: SimpleLineSymbol(
-            style: SimpleLineSymbolStyle.dot,
-            color: Colors.green,
-            width: 5,
-          ),
-          values: [UtilityAssociationType.attachment.index],
+          symbol: _attachmentSymbol,
+          values: [UtilityAssociationType.attachment.name],
         ),
         UniqueValue(
           description: 'Connectivity',
-          symbol: SimpleLineSymbol(
-            style: SimpleLineSymbolStyle.dot,
-            color: Colors.red,
-            width: 5,
-          ),
-          values: [UtilityAssociationType.connectivity.index],
+          symbol: _connectivitySymbol,
+          values: [UtilityAssociationType.connectivity.name],
         ),
       ],
     );
@@ -149,50 +193,51 @@ class _ShowUtilityAssociationsState extends State<ShowUtilityAssociations>
     setState(() => _ready = true);
   }
 
-  //fixme overlay, screenshot
-
-  //fixme comments
   Future<void> addAssociationGraphics() async {
-    //fixme need to process only one at a time
-    const maxScale = 2000;
-
+    // Get the current scale.
     final scale =
         _mapViewController
             .getCurrentViewpoint(ViewpointType.centerAndScale)
             ?.targetScale ??
         double.infinity;
+
+    // Don't add graphics if the scale is too large.
+    const maxScale = 2000;
     if (scale > maxScale) return;
 
+    // Get the current extent.
     final extent = _mapViewController
         .getCurrentViewpoint(ViewpointType.boundingGeometry)
         ?.targetGeometry
         .extent;
     if (extent == null) return;
 
+    // Find the associations in the current extent.
+    final associations = await _utilityNetwork.getAssociationsWithEnvelope(
+      extent,
+    );
+
+    // Filter out associations that are already being displayed.
     final existingAssociations = _associationsOverlay.graphics
         .map((graphic) => graphic.attributes['GlobalId'])
         .whereType<Guid>()
         .toSet();
+    final newAssociations = associations.where(
+      (association) => !existingAssociations.contains(association.globalId),
+    );
 
-    final associations =
-        (await _utilityNetwork.getAssociationsWithEnvelope(extent)).where(
-          (association) => !existingAssociations.contains(association.globalId),
-        );
-
-    if (associations.isEmpty) return;
-
-    print('adding ${associations.length} associations'); //fixme
-
-    final newGraphics = associations.map((association) {
-      return Graphic(
-        geometry: association.geometry,
-        attributes: {
-          'GlobalId': association.globalId,
-          'AssociationType': association.associationType.index,
-        },
-      );
-    });
-    _associationsOverlay.graphics.addAll(newGraphics);
+    // Add graphics for the new associations.
+    _associationsOverlay.graphics.addAll(
+      newAssociations.map(
+        (association) => Graphic(
+          geometry: association.geometry,
+          attributes: {
+            'GlobalId': association.globalId,
+            'AssociationType': association.associationType.name,
+          },
+        ),
+      ),
+    );
   }
 }
 
@@ -212,5 +257,65 @@ class _TokenChallengeHandler implements ArcGISAuthenticationChallengeHandler {
       password: password,
     );
     challenge.continueWithCredential(credential);
+  }
+}
+
+// A widget that creates and displays a swatch image for a symbol.
+class SwatchImage extends StatefulWidget {
+  const SwatchImage({
+    required this.symbol,
+    this.width = 10,
+    this.height = 10,
+    super.key,
+  });
+
+  final ArcGISSymbol symbol;
+  final double width;
+  final double height;
+
+  @override
+  State<SwatchImage> createState() => _SwatchImageState();
+}
+
+class _SwatchImageState extends State<SwatchImage> {
+  // A Completer that completes when the swatch image is ready.
+  final _swatchCompleter = Completer<Uint8List>();
+
+  @override
+  void initState() {
+    super.initState();
+
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      // Get the device pixel ratio after the first frame to ensure it is accurate.
+      final devicePixelRatio = MediaQuery.devicePixelRatioOf(context);
+
+      // Create a swatch image from the symbol.
+      widget.symbol
+          .createSwatch(
+            screenScale: devicePixelRatio,
+            width: widget.width,
+            height: widget.height,
+          )
+          .then((image) {
+            // Signal that the swatch image is ready.
+            _swatchCompleter.complete(image.getEncodedBuffer());
+          });
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+      future: _swatchCompleter.future,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          // The swatch image is ready -- display it.
+          return Image.memory(snapshot.data!);
+        }
+
+        // Until the image is ready, reserve space to avoid layout changes.
+        return SizedBox(width: widget.width, height: widget.height);
+      },
+    );
   }
 }
