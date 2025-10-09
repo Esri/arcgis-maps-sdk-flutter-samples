@@ -1,0 +1,30 @@
+{
+    "category": "Scenes",
+    "description": "Display a local scene with a topographic surface and 3D scene layer clipped to a local area.",
+    "ignore": false,
+    "images": [
+        "display_local_scene.png"
+    ],
+    "keywords": [
+        "3D",
+        "basemap",
+        "elevation",
+        "scene",
+        "surface",
+        "ArcGISLocalSceneView",
+        "ArcGISScene",
+        "ArcGISSceneLayer",
+        "ArcGISTiledElevationSource"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+        "ArcGISLocalSceneView",
+        "ArcGISScene",
+        "ArcGISSceneLayer",
+        "ArcGISTiledElevationSource"
+    ],
+    "snippets": [
+        "display_local_scene.dart"
+    ],
+    "title": "Display local scene"
+}
