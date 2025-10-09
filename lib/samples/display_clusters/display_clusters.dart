@@ -16,6 +16,7 @@
 
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
+import 'package:arcgis_maps_toolkit/arcgis_maps_toolkit.dart';
 import 'package:flutter/material.dart';
 
 class DisplayClusters extends StatefulWidget {
@@ -132,6 +133,8 @@ class _DisplayClustersState extends State<DisplayClusters>
       screenPoint: localPosition,
       tolerance: 12,
     );
+
+    final popup = identifyLayerResult.popups.first;
     // Get the aggregate geoelements from the identify result.
     final aggregateGeoElements = identifyLayerResult.geoElements
         .whereType<AggregateGeoElement>();
@@ -143,7 +146,7 @@ class _DisplayClustersState extends State<DisplayClusters>
     // Get the list of geoelements associated with the aggregate geoelement.
     final geoElements = await aggregateGeoElement.getGeoElements();
     // Display a dialog with information about the geoelements.
-    showResultsDialog(geoElements);
+    _showOutputs(popup, geoElements);
   }
 
   void showResultsDialog(List<GeoElement> geoElements) {
@@ -185,6 +188,55 @@ class _DisplayClustersState extends State<DisplayClusters>
     );
   }
 
+  // Display the results in a Popup view in a bottom modal sheet.
+  void _showOutputs(Popup popup, List<GeoElement> geoElements) {
+    if (!mounted) return;
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
+      builder: (_) => DefaultTabController(
+        length: 2,
+        child: ConstrainedBox(
+          constraints: BoxConstraints(
+            maxHeight: MediaQuery.sizeOf(context).height * 0.7,
+          ),
+          child: Column(
+            children: [
+              // Tab bar.
+              Material(
+                color: Colors.transparent,
+                child: TabBar(
+                  labelColor: Theme.of(context).colorScheme.primary,
+                  unselectedLabelColor: Theme.of(
+                    context,
+                  ).textTheme.bodyMedium?.color,
+                  tabs: const [
+                    Tab(text: 'Popup'),
+                    Tab(text: 'Geoelements'),
+                  ],
+                ),
+              ),
+              const Divider(height: 1),
+              // Tab content.
+              Expanded(
+                child: TabBarView(
+                  children: [
+                    // Popup tab.
+                    PopupView(popup: popup),
+
+                    // GeoElements tab — new:
+                    GeoElementsTab(geoElements: geoElements),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   void toggleFeatureClustering() {
     if (_featureLayer.featureReduction != null) {
       // Toggle the feature reduction.
@@ -192,5 +244,60 @@ class _DisplayClustersState extends State<DisplayClusters>
       featureReduction.enabled = !featureReduction.enabled;
       setState(() => _featureReductionEnabled = featureReduction.enabled);
     }
+  }
+}
+
+class GeoElementsTab extends StatelessWidget {
+  const GeoElementsTab({required this.geoElements, super.key});
+
+  final List<GeoElement> geoElements;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+          child: Text(
+            'Total GeoElements: ${geoElements.length}',
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
+        ),
+
+        if (geoElements.isEmpty)
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+            child: Text(
+              'No GeoElements found.',
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
+          )
+        else
+          Expanded(
+            child: ListView.separated(
+              padding: const EdgeInsets.fromLTRB(8, 0, 8, 16),
+              itemCount: geoElements.length,
+              separatorBuilder: (_, __) => const Divider(height: 0),
+              itemBuilder: (context, index) {
+                final element = geoElements[index];
+
+                final name = () {
+                  try {
+                    final raw = element.attributes['name'];
+                    if (raw is String && raw.trim().isNotEmpty) return raw;
+                  } catch (_) {}
+                  return 'GeoElement #$index';
+                }();
+
+                return ListTile(
+                  leading: const Icon(Icons.place_outlined),
+                  title: Text(name),
+                );
+              },
+            ),
+          ),
+      ],
+    );
   }
 }
