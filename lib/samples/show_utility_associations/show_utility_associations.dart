@@ -65,6 +65,8 @@ class _ShowUtilityAssociationsState extends State<ShowUtilityAssociations>
     super.initState();
 
     // Set up authentication for the sample server.
+    // Note: Never hardcode login information in a production application.
+    // This is done solely for the sake of the sample.
     ArcGISEnvironment
         .authenticationManager
         .arcGISAuthenticationChallengeHandler = _TokenChallengeHandler(
@@ -150,6 +152,8 @@ class _ShowUtilityAssociationsState extends State<ShowUtilityAssociations>
       itemId: 'be0e4637620a453584118107931f718b',
     );
     final map = ArcGISMap.withItem(portalItem);
+
+    // Load the map to make the utility network available.
     await map.load();
 
     // Set the initial viewpoint in the utility network area.
