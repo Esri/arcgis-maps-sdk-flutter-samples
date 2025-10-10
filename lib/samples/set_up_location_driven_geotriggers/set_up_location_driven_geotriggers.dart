@@ -108,24 +108,21 @@ class _SetUpLocationDrivenGeotriggersState
                     ElevatedButton(
                       onPressed: _currentSections.isEmpty
                           ? null
-                          : () => showSectionDetail(
+                          : () => showFeatureDetail(
                               context: context,
-                              sectionFeature: _currentSections.values.last,
+                              feature: _currentSections.values.last,
                             ),
                       child: const Text('Section detail'),
                     ),
-                    // Button to show the details of the nearby POIs.
+                    // Button to show the details of the nearby POI.
                     ElevatedButton(
                       onPressed: _currentPois.isEmpty
                           ? null
-                          : () => showDialog<void>(
+                          : () => showFeatureDetail(
                               context: context,
-                              builder: (context) => showFeatureDetails(
-                                context: context,
-                                features: _currentPois.values.toList(),
-                              ),
+                              feature: _currentPois.values.last,
                             ),
-                      child: const Text('POIs detail'),
+                      child: const Text('POI detail'),
                     ),
                   ],
                 ),
@@ -294,10 +291,10 @@ class _SetUpLocationDrivenGeotriggersState
     );
   }
 
-  // Display the section details in a Popup view in a bottom modal sheet.
-  void showSectionDetail({
+  // Display the feature details in a Popup view in a modal bottom sheet.
+  void showFeatureDetail({
     required BuildContext context,
-    required Feature sectionFeature,
+    required Feature feature,
   }) {
     if (!mounted) return;
 
@@ -308,19 +305,11 @@ class _SetUpLocationDrivenGeotriggersState
       builder: (_) => SizedBox(
         height: MediaQuery.sizeOf(context).height * 0.7,
         child: FeaturePopupView(
-          feature: sectionFeature,
+          feature: feature,
           onClose: () => Navigator.of(context).maybePop(),
         ),
       ),
     );
-  }
-
-  // Display the details of a list of Features in a Dialog, with Prev/Next navigation.
-  Dialog showFeatureDetails({
-    required BuildContext context,
-    required List<Feature> features,
-  }) {
-    return Dialog(child: MultiFeatureDetails(features: features));
   }
 
   // Creates the path used for the SimulatedLocationDataSource.
@@ -533,64 +522,6 @@ class _SetUpLocationDrivenGeotriggersState
     }
 
     return polylineBuilder.toGeometry() as Polyline;
-  }
-}
-
-// Widget to show the details of a list of Features. If showing more
-// than one feature, the user can tap through the list of features.
-class MultiFeatureDetails extends StatefulWidget {
-  const MultiFeatureDetails({required this.features, super.key});
-
-  final List<Feature> features;
-
-  @override
-  State<MultiFeatureDetails> createState() => MultiFeatureDetailsState();
-}
-
-class MultiFeatureDetailsState extends State<MultiFeatureDetails> {
-  var _featureIndex = 0;
-
-  @override
-  Widget build(BuildContext context) {
-    final features = widget.features;
-
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Expanded(
-          // Build the details of the selected Feature.
-          child: features.isEmpty
-              ? const Text('No features to display.')
-              : FeaturePopupView(feature: features[_featureIndex]),
-        ),
-        if (features.length > 1)
-          Padding(
-            padding: const EdgeInsets.all(8),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                // Go to previous feature.
-                ElevatedButton(
-                  onPressed: _featureIndex == 0
-                      ? null
-                      : () => setState(() => _featureIndex -= 1),
-                  child: const Text('Prev'),
-                ),
-                // Show current feature of total features.
-                Text('${_featureIndex + 1}/${features.length}'),
-                // Go to next feature.
-                ElevatedButton(
-                  onPressed: _featureIndex == features.length - 1
-                      ? null
-                      : () => setState(() => _featureIndex += 1),
-                  child: const Text('Next'),
-                ),
-              ],
-            ),
-          ),
-      ],
-    );
   }
 }
 
