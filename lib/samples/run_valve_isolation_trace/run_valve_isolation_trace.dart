@@ -510,12 +510,13 @@ class _RunValveIsolationTraceState extends State<RunValveIsolationTrace>
     }
   
 
-    setState((){
+    final statusMessage = _graphicsOverlayBarriers.graphics.isNotEmpty
+        ? 'Trace with filter barriers completed.'
+        : 'Trace with ${_selectedCategory?.name} category completed.';
+    setState(() {
       _resetEnabled = true;
       _traceEnabled = true;
-      _graphicsOverlayBarriers.graphics.isNotEmpty ?
-      _statusMessage = 'Trace with filter barriers completed.' :
-      _statusMessage = 'Trace with ${_selectedCategory?.name} category completed.';  
+      _statusMessage = statusMessage;
     });
   }
 
