@@ -220,7 +220,10 @@ class _RunValveIsolationTraceState extends State<RunValveIsolationTrace>
                     setState(() => _isIncludeIsolatedFeatures = v),
               ),
               const SizedBox(width: 8),
-              if (_isIncludeIsolatedFeatures) const Text('On') else const Text('Off'),
+              if (_isIncludeIsolatedFeatures)
+                const Text('On')
+              else
+                const Text('Off'),
             ],
           ),
         ],
@@ -493,15 +496,15 @@ class _RunValveIsolationTraceState extends State<RunValveIsolationTrace>
 
     // Get the trace result from trace.
     try {
-    final traceResults = await _utilityNetwork.trace(_traceParameters);
+      final traceResults = await _utilityNetwork.trace(_traceParameters);
 
       final traceResult = traceResults.firstOrNull;
       if (traceResult != null && traceResult is UtilityElementTraceResult) {
         await _showTraceResult(traceResult);
       } else {
-         setState(() {
-        _statusMessage = 'Trace completed with no output.';
-      });
+        setState(() {
+          _statusMessage = 'Trace completed with no output.';
+        });
       }
     } on Exception catch (e) {
       setState(() {
