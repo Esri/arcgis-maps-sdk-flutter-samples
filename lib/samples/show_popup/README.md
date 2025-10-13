@@ -2,7 +2,7 @@
 
 Show predefined popups from a web map.
 
-![Show popup screenshot](show-popup.png)
+![Image of show popup](show_popup.png)
 
 ## Use case
 
@@ -27,7 +27,7 @@ Tap on the features to prompt a popup that displays information about the featur
 
 ## About the data
 
-This sample uses a [web map](https://github.com/Esri/arcgis-maps-sdk-swift-samples/tree/main/Shared/Samples/Show%20popup#:~:text=sample%20uses%20a-,web%20map,-that%20displays%20reported) that displays reported incidents in San Francisco.
+This sample uses a [web map](https://www.arcgis.com/home/item.html?id=fb788308ea2e4d8682b9c05ef641f273) that displays reported incidents in San Francisco.
 
 ## Tags
 
