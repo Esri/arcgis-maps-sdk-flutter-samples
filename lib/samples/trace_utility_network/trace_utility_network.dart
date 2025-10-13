@@ -76,7 +76,11 @@ class _TraceUtilityNetworkState extends State<TraceUtilityNetwork>
 
   @override
   void initState() {
+    super.initState();
+
     // Set up authentication for the sample server.
+    // Note: Never hardcode login information in a production application.
+    // This is done solely for the sake of the sample.
     ArcGISEnvironment
         .authenticationManager
         .arcGISAuthenticationChallengeHandler = _TokenChallengeHandler(
@@ -85,7 +89,6 @@ class _TraceUtilityNetworkState extends State<TraceUtilityNetwork>
     );
 
     _initElectricalDistributionRenderer();
-    super.initState();
   }
 
   @override
