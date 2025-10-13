@@ -508,7 +508,6 @@ class _RunValveIsolationTraceState extends State<RunValveIsolationTrace>
         _statusMessage = 'Trace failed: $e.';
       });
     }
-  
 
     final statusMessage = _graphicsOverlayBarriers.graphics.isNotEmpty
         ? 'Trace with filter barriers completed.'
