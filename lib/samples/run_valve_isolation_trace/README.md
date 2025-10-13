@@ -15,7 +15,7 @@ Tap on one or more features to use as filter barriers or create and set the conf
 ## How it works
 
 1. Create a `MapViewController` and subscribe to its `onTap` event.
-2. Create and load a `ArcGISMap` with a web map portal item that conatins a `UtilityNetwork`.
+2. Create and load a `ArcGISMap` with a web map portal item that contains a `UtilityNetwork`.
 3. Create a `Map` that contains `FeatureLayer`(s) created from the `ServiceGeodatabase`'s tables.
 4. Load the `UtilityNetwork` from the `ArcGISMap`.
 5. Create `UtilityTraceParameters` with `UtilityTraceType.Isolation` and a starting location from a given asset type and global ID.
