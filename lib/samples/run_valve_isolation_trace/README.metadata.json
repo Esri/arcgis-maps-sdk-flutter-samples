@@ -1,0 +1,58 @@
+{
+    "category": "Utility Networks",
+    "description": "Run a filtered trace to locate operable features that will isolate an area from the flow of network resources.",
+    "ignore": false,
+    "images": [
+        "run_valve_isolation_trace.png"
+    ],
+    "keywords": [
+        "category comparison",
+        "condition barriers",
+        "filter barriers",
+        "isolated features",
+        "network analysis",
+        "subnetwork trace",
+        "trace configuration",
+        "trace filter",
+        "utility network",
+        "FractionAlong",
+        "ServiceGeodatabase",
+        "UtilityCategory",
+        "UtilityCategoryComparison",
+        "UtilityCategoryComparisonOperator",
+        "UtilityDomainNetwork",
+        "UtilityElement",
+        "UtilityElementTraceResult",
+        "UtilityNetwork",
+        "UtilityNetworkDefinition",
+        "UtilityTerminal",
+        "UtilityTier",
+        "UtilityTraceFilter",
+        "UtilityTraceParameters",
+        "UtilityTraceResult",
+        "UtilityTraceType"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+        "FractionAlong",
+        "ServiceGeodatabase",
+        "UtilityCategory",
+        "UtilityCategoryComparison",
+        "UtilityCategoryComparisonOperator",
+        "UtilityDomainNetwork",
+        "UtilityElement",
+        "UtilityElementTraceResult",
+        "UtilityNetwork",
+        "UtilityNetworkDefinition",
+        "UtilityTerminal",
+        "UtilityTier",
+        "UtilityTraceFilter",
+        "UtilityTraceParameters",
+        "UtilityTraceResult",
+        "UtilityTraceType"
+    ],
+    "snippets": [
+        "run_valve_isolation_trace.dart"
+    ],
+    "title": "Run valve isolation trace"
+}
