@@ -35,7 +35,7 @@ void main() async {
   // e.g. --dart-define=SAMPLE=display_map
   const sampleFolderName = String.fromEnvironment('SAMPLE');
   // Alternatively, replace sample below with the directory name of the individual sample in snake case
-  // const sample = 'display_map';
+  // const sampleFolderName = 'display_map';
 
   final jsonString = await rootBundle.loadString(
     'assets/generated_samples_list.json',
