@@ -32,18 +32,10 @@ class _RunValveIsolationTraceState extends State<RunValveIsolationTrace>
   // Feature service for an electric utility network in Naperville, Illinois.
   late UtilityNetwork _utilityNetwork;
 
-  /// The trace configuration for the utility network.
+  // The trace configuration for the utility network.
   UtilityTraceConfiguration? _configuration;
 
-  // For creating the default trace configuration.
-  final domainNetworkName = 'Pipeline';
-  final tierName = 'Pipe Distribution System';
-
-  // For creating the default starting location.
-  final networkSourceName = 'Gas Device';
-  final assetGroupName = 'Meter';
-  final assetTypeName = 'Customer';
-  final globalId = '{98A06E95-70BE-43E7-91B7-E34C9D3CB9FF}';
+  /// The starting location for the trace.
   late UtilityElement _startingLocationElement;
 
   // The parameters for the trace.
@@ -267,9 +259,9 @@ class _RunValveIsolationTraceState extends State<RunValveIsolationTrace>
 
     // Get a trace configuration from a tier.
     final domainNetwork = _utilityNetwork.definition?.getDomainNetwork(
-      domainNetworkName,
+      'Pipeline',
     );
-    final tier = domainNetwork?.getTier(tierName);
+    final tier = domainNetwork?.getTier('Pipe Distribution System');
     // A tier must be selected
     _configuration = tier!.getDefaultTraceConfiguration();
     // Create a trace filter.
@@ -317,13 +309,13 @@ class _RunValveIsolationTraceState extends State<RunValveIsolationTrace>
   UtilityElement _getStartingLocationElement() {
     // Get a default starting location.
     final networkSource = _utilityNetwork.definition?.getNetworkSource(
-      networkSourceName,
+      'Gas Device',
     );
-    final assetGroup = networkSource?.getAssetGroup(assetGroupName);
-    final assetType = assetGroup?.getAssetType(assetTypeName);
+    final assetGroup = networkSource?.getAssetGroup('Meter');
+    final assetType = assetGroup?.getAssetType('Customer');
     final startingLocationElement = _utilityNetwork.createElementWithAssetType(
       assetType!,
-      globalId: Guid.fromString(globalId)!,
+      globalId: Guid.fromString('{98A06E95-70BE-43E7-91B7-E34C9D3CB9FF}')!,
     );
     return startingLocationElement;
   }
