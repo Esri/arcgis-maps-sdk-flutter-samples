@@ -14,7 +14,7 @@
         "upstream trace",
         "utility network",
         "validate consistency",
-        "FractionAlong",
+        "GeometryEngine.fractionAlong",
         "ServiceGeodatabase",
         "UtilityAssetType",
         "UtilityDomainNetwork",
@@ -33,7 +33,7 @@
     ],
     "redirect_from": [],
     "relevant_apis": [
-        "FractionAlong",
+        "GeometryEngine.fractionAlong",
         "ServiceGeodatabase",
         "UtilityAssetType",
         "UtilityDomainNetwork",
