@@ -59,13 +59,13 @@ class _RunValveIsolationTraceState extends State<RunValveIsolationTrace>
   );
 
   // Indicator for loading state.
-  bool _loading = true;
+  var _loading = true;
 
   // Set to enable/disable trace button.
-  bool _traceEnabled = false;
+  var _traceEnabled = false;
 
   /// Set to enable/disable reset button.
-  bool _resetEnabled = false;
+  var _resetEnabled = false;
 
   // Status message for the banner.
   String? _statusMessage;
@@ -77,7 +77,7 @@ class _RunValveIsolationTraceState extends State<RunValveIsolationTrace>
   UtilityCategory? _selectedCategory;
 
   /// Set to include/exclude isolated features in the trace.
-  bool _isIncludeIsolatedFeatures = true;
+  var _isIncludeIsolatedFeatures = true;
 
   @override
   void initState() {
