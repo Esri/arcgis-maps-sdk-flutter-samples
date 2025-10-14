@@ -14,7 +14,7 @@ Tap on one or more features to use as filter barriers or create and set the conf
 
 ## How it works
 
-1. Create a `ArcGISMapView` and subscribe to its `onTap` event.
+1. Create a new `ArcGISMapView` and subscribe to its `onTap` event.
 2. Create and load a `ArcGISMap` with a web map portal item that contains a `UtilityNetwork`.
 3. Load the `UtilityNetwork` from the `ArcGISMap`.
 4. Create `UtilityTraceParameters` with `UtilityTraceType.isolation` and a starting location from a given asset type and global ID.
@@ -25,12 +25,12 @@ Tap on one or more features to use as filter barriers or create and set the conf
 9. Create a `UtilityElement` for the identified feature and add this `UtilityElement` to a collection of filter barriers.
       * If the element is a junction with more than one terminal, display a terminal picker. Then set the junction's `Terminal` property with the selected terminal.
       * If an edge, set its `fractionAlongLine` property using `GeometryEngine.fractionAlong`.  
-10. If 'Trace' is tapped without filter barriers:
+10. If `Trace` is tapped without filter barriers:
       * Create a new `UtilityCategoryComparison` with the selected category and `UtilityCategoryComparisonOperator.exists`.
       * Create a new `UtilityTraceFilter` with this condition as `Barriers` to set `Filter` and update `includeIsolatedFeatures` properties of the default configuration from step 5.
       * Run a `UtilityNetwork.trace(parameters)`.
 
-    If 'Trace' is tapped with filter barriers:
+    If `Trace` is tapped with filter barriers:
       * Update `includeIsolatedFeatures` property of the default configuration from step 5.
       * Run a `UtilityNetwork.trace(parameters)`.
 11. For every `FeatureLayer` in the map, select the features returned with `getFeaturesForElements(elements)` from the elements matching their `NetworkSource.featureTable` with the layer's `FeatureTable`.

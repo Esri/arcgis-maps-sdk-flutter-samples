@@ -161,7 +161,7 @@ class _RunValveIsolationTraceState extends State<RunValveIsolationTrace>
       padding: const EdgeInsets.fromLTRB(24, 8, 24, 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        spacing: 2,
+        spacing: 4,
         children: [
           const Text('Choose Category for Filter Barriers:'),
           Row(
@@ -494,29 +494,26 @@ class _RunValveIsolationTraceState extends State<RunValveIsolationTrace>
 
     // Get the trace result from trace.
     try {
+      _statusMessage = '';
       final traceResults = await _utilityNetwork.trace(_traceParameters);
 
       final traceResult = traceResults.firstOrNull;
       if (traceResult != null && traceResult is UtilityElementTraceResult) {
         await _showTraceResult(traceResult);
       } else {
-        setState(() {
           _statusMessage = 'Trace completed with no output.';
-        });
       }
     } on Exception catch (e) {
-      setState(() {
         _statusMessage = 'Trace failed: $e.';
-      });
     }
-
     final statusMessage = _graphicsOverlayBarriers.graphics.isNotEmpty
         ? 'Trace with filter barriers completed.'
         : 'Trace with ${_selectedCategory?.name} category completed.';
+
     setState(() {
       _resetEnabled = true;
       _traceEnabled = true;
-      _statusMessage = statusMessage;
+      _statusMessage = _statusMessage!.isNotEmpty ? _statusMessage : statusMessage;
     });
   }
 
