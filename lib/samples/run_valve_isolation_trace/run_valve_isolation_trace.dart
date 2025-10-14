@@ -71,7 +71,7 @@ class _RunValveIsolationTraceState extends State<RunValveIsolationTrace>
   String? _statusMessage;
 
   // Categories (for filter barrier selection).
-  List<UtilityCategory> _categories = [];
+  var _categories = <UtilityCategory>[];
 
   // The selected category for filter barriers.
   UtilityCategory? _selectedCategory;
@@ -83,6 +83,8 @@ class _RunValveIsolationTraceState extends State<RunValveIsolationTrace>
   void initState() {
     super.initState();
     // Set up authentication for the sample server.
+    // Note: Never hardcode login information in a production application.
+    // This is done solely for the sake of the sample.
     ArcGISEnvironment
         .authenticationManager
         .arcGISAuthenticationChallengeHandler = _TokenChallengeHandler(
@@ -108,15 +110,18 @@ class _RunValveIsolationTraceState extends State<RunValveIsolationTrace>
           Column(
             children: [
               Expanded(
+               // Add a map view to the widget tree and set a controller.
                 child: ArcGISMapView(
                   controllerProvider: () => _mapViewController,
                   onMapViewReady: _onMapViewReady,
                   onTap: _onTap,
                 ),
               ),
-              _settingWidget(),
+              // Add the settings widget below the map view.
+              _settingWidget(context),
             ],
           ),
+          // Add a loading indicator while the map and utility network are loading.
           LoadingIndicator(
             visible: _loading,
             text: _loading ? _statusMessage : '',
@@ -151,20 +156,21 @@ class _RunValveIsolationTraceState extends State<RunValveIsolationTrace>
   }
 
   // Configurations for utility network tracing.
-  Widget _settingWidget() {
+  Widget _settingWidget(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(24, 8, 24, 16),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         spacing: 2,
         children: [
-          const Row(children: [Text('Choose Category for Filter Barriers:')]),
+          const Text('Choose Category for Filter Barriers:'),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             spacing: 4,
             children: [
               // The dropdown for categories.
               Expanded(
-                child: DropdownButton<UtilityCategory>(
+                child: DropdownButton(
                   isExpanded: true,
                   value: _selectedCategory,
                   hint: const Text('Select category'),
@@ -184,11 +190,13 @@ class _RunValveIsolationTraceState extends State<RunValveIsolationTrace>
                   },
                 ),
               ),
+              // The button to start tracing.
               ElevatedButton(
                 onPressed: _traceEnabled ? _onTrace : null,
                 child: const Text('Trace'),
               ),
-              OutlinedButton(
+              // The button to reset the trace.
+              ElevatedButton(
                 onPressed: _resetEnabled ? _clear : null,
                 child: const Text('Reset'),
               ),
@@ -196,6 +204,7 @@ class _RunValveIsolationTraceState extends State<RunValveIsolationTrace>
           ),
           // The Switch for including isolated features.
           Row(
+            spacing: 4,
             children: [
               Text(
                 'Include isolated features',
@@ -205,13 +214,11 @@ class _RunValveIsolationTraceState extends State<RunValveIsolationTrace>
                       : Theme.of(context).textTheme.bodyMedium?.color,
                 ),
               ),
-              const SizedBox(width: 8),
               Switch(
                 value: _isIncludeIsolatedFeatures,
                 onChanged: (v) =>
                     setState(() => _isIncludeIsolatedFeatures = v),
               ),
-              const SizedBox(width: 8),
               if (_isIncludeIsolatedFeatures)
                 const Text('On')
               else
@@ -290,7 +297,7 @@ class _RunValveIsolationTraceState extends State<RunValveIsolationTrace>
       startingLocations: [_startingLocationElement],
     );
 
-    // Set viewpoint to starting location
+    // Set viewpoint to starting location.
     _mapViewController.setViewpoint(
       Viewpoint.fromCenter(startingGeometry, scale: 3000),
     );
@@ -395,8 +402,7 @@ class _RunValveIsolationTraceState extends State<RunValveIsolationTrace>
       }
     }
 
-    // Check whether starting location or barrier is added to update the right collection and
-    // symbology.
+    // Add the utility element to the filter barriers of the trace parameters.
     _traceParameters.filterBarriers.add(utilityElement);
 
     // Add a graphic for the new utility element.
@@ -470,7 +476,7 @@ class _RunValveIsolationTraceState extends State<RunValveIsolationTrace>
       // Note: `UtilityNetworkAttributeComparison` or `UtilityCategoryComparison`
       // with `UtilityCategoryComparisonOperator.doesNotExist` can also be used.
       // These conditions can be joined with either `UtilityTraceOrCondition`
-      // or `UtilityTraceAndCondition`. See more in the README.
+      // or `UtilityTraceAndCondition`.
       final utilityCategoryComparison = UtilityCategoryComparison.withCategory(
         _selectedCategory!,
         comparisonOperator: UtilityCategoryComparisonOperator.exists,
