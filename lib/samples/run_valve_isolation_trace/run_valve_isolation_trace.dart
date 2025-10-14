@@ -110,7 +110,7 @@ class _RunValveIsolationTraceState extends State<RunValveIsolationTrace>
           Column(
             children: [
               Expanded(
-               // Add a map view to the widget tree and set a controller.
+                // Add a map view to the widget tree and set a controller.
                 child: ArcGISMapView(
                   controllerProvider: () => _mapViewController,
                   onMapViewReady: _onMapViewReady,
@@ -501,10 +501,10 @@ class _RunValveIsolationTraceState extends State<RunValveIsolationTrace>
       if (traceResult != null && traceResult is UtilityElementTraceResult) {
         await _showTraceResult(traceResult);
       } else {
-          _statusMessage = 'Trace completed with no output.';
+        _statusMessage = 'Trace completed with no output.';
       }
     } on Exception catch (e) {
-        _statusMessage = 'Trace failed: $e.';
+      _statusMessage = 'Trace failed: $e.';
     }
     final statusMessage = _graphicsOverlayBarriers.graphics.isNotEmpty
         ? 'Trace with filter barriers completed.'
@@ -513,7 +513,9 @@ class _RunValveIsolationTraceState extends State<RunValveIsolationTrace>
     setState(() {
       _resetEnabled = true;
       _traceEnabled = true;
-      _statusMessage = _statusMessage!.isNotEmpty ? _statusMessage : statusMessage;
+      _statusMessage = _statusMessage!.isNotEmpty
+          ? _statusMessage
+          : statusMessage;
     });
   }
 
