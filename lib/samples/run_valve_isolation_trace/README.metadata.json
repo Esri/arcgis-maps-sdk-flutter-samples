@@ -34,7 +34,7 @@
     ],
     "redirect_from": [],
     "relevant_apis": [
-        "FractionAlong",
+        "GeometryEngine.fractionAlong",
         "ServiceGeodatabase",
         "UtilityCategory",
         "UtilityCategoryComparison",
