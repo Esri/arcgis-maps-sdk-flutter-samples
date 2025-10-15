@@ -61,12 +61,6 @@ class _ShowPopupState extends State<ShowPopup> with SampleStateSupport {
       ),
     );
 
-    // Set initial viewpoint to San Francisco.
-    map.initialViewpoint = Viewpoint.withLatLongScale(
-      latitude: 37.7759,
-      longitude: -122.45044,
-      scale: 100000,
-    );
     // Load the web map so that the operational layers can be accessed.
     await map.load();
     // Get the first feature layer from the web map.
