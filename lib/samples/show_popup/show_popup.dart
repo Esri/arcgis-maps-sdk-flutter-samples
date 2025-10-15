@@ -29,6 +29,8 @@ class ShowPopup extends StatefulWidget {
 class _ShowPopupState extends State<ShowPopup> with SampleStateSupport {
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
+  // A feature layer from a web map with popups defined.
+  late FeatureLayer _featureLayer;
   // A flag for when the map view is ready and controls can be used.
   var _ready = false;
 
@@ -50,8 +52,8 @@ class _ShowPopupState extends State<ShowPopup> with SampleStateSupport {
     );
   }
 
-  void onMapViewReady() {
-    // Create a map with San Francisco incidents web map.
+  Future<void> onMapViewReady() async {
+    // Create a map with the San Francisco incidents web map portal item.
     final map = ArcGISMap.withItem(
       PortalItem.withPortalAndItemId(
         portal: Portal.arcGISOnline(),
@@ -65,6 +67,10 @@ class _ShowPopupState extends State<ShowPopup> with SampleStateSupport {
       longitude: -122.45044,
       scale: 100000,
     );
+    // Load the web map so that the operational layers can be accessed.
+    await map.load();
+    // Get the first feature layer from the web map.
+    _featureLayer = map.operationalLayers.first as FeatureLayer;
 
     // Set the map on the map view controller.
     _mapViewController.arcGISMap = map;
@@ -74,31 +80,46 @@ class _ShowPopupState extends State<ShowPopup> with SampleStateSupport {
   }
 
   Future<void> onTap(Offset offset) async {
-    // Identify the tapped feature.
-    final identifyResult = await _mapViewController.identifyLayers(
+    // Clear any previous selection.
+    _featureLayer.clearSelection();
+
+    // Perform an identify operation on the feature layer at the tapped location.
+    final identifyResult = await _mapViewController.identifyLayer(
+      _featureLayer,
       screenPoint: offset,
       tolerance: 22,
     );
 
     // Ensure the identify layer result has a popup.
-    if (identifyResult.isNotEmpty && identifyResult.first.popups.isNotEmpty) {
-      final popup = identifyResult.first.popups.first;
-      _showPopup(popup);
+    if (identifyResult.popups.isNotEmpty &&
+        identifyResult.geoElements.isNotEmpty) {
+      // Select the identified feature.
+      final feature = identifyResult.geoElements.first as ArcGISFeature;
+      _featureLayer.selectFeature(feature);
+      // Get the popup from the identify result and display it in a PopupView.
+      final popup = identifyResult.popups.first;
+      showPopup(popup);
     }
   }
 
-  // Display the results in a Popup view in a bottom modal sheet.
-  void _showPopup(Popup popup) {
+  // Display the popup in a PopupView in a modal bottom sheet.
+  void showPopup(Popup popup) {
     if (!mounted) return;
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
       useSafeArea: true,
+      isDismissible: false,
       builder: (_) => SizedBox(
         height: MediaQuery.sizeOf(context).height * 0.7,
+        // Define a PopupView passing in the identified popup.
         child: PopupView(
           popup: popup,
-          onClose: () => Navigator.of(context).maybePop(),
+          // Dismiss the PopupView and clear the selected feature.
+          onClose: () {
+            Navigator.of(context).pop();
+            _featureLayer.clearSelection();
+          },
         ),
       ),
     );
