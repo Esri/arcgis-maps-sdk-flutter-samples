@@ -114,20 +114,34 @@ class _ShowUtilityAssociationsState extends State<ShowUtilityAssociations>
                   padding: const EdgeInsets.all(10),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    spacing: 5,
                     children: [
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          SwatchImage(symbol: _attachmentSymbol),
-                          const Text('Attachment'),
-                        ],
-                      ),
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          SwatchImage(symbol: _connectivitySymbol),
-                          const Text('Connectivity'),
-                        ],
+                      const Text('Utility association types'),
+                      Container(
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey),
+                        ),
+                        padding: const EdgeInsets.fromLTRB(5, 5, 50, 5),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                SwatchImage(symbol: _attachmentSymbol),
+                                const Text('Attachment'),
+                              ],
+                            ),
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                SwatchImage(symbol: _connectivitySymbol),
+                                const Text('Connectivity'),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),
