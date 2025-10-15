@@ -264,14 +264,14 @@ class _RunValveIsolationTraceState extends State<RunValveIsolationTrace>
     _utilityNetwork = map.utilityNetworks.first;
     await _utilityNetwork.load();
 
-    // Get a trace configuration from a tier.
+    // Get the domain network and tier.
     final domainNetwork = _utilityNetwork.definition?.getDomainNetwork(
       'Pipeline',
     );
     final tier = domainNetwork?.getTier('Pipe Distribution System');
-    // A tier must be selected
+    // Get a trace configuration from the tier.
     _configuration = tier!.getDefaultTraceConfiguration();
-    // Create a trace filter.
+    // Create a trace filter and set it on the configuration.
     _configuration!.filter = UtilityTraceFilter();
 
     // Get a default starting location.
