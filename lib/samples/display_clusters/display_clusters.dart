@@ -186,7 +186,7 @@ class _DisplayClustersState extends State<DisplayClusters>
               Expanded(
                 child: TabBarView(
                   children: [
-                    // Popup tab.
+                    // Display a PoopupView in the popup tab.
                     PopupView(
                       popup: popup,
                       onClose: () => Navigator.of(context).maybePop(),
