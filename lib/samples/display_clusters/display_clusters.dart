@@ -272,7 +272,6 @@ class GeoElementsTab extends StatelessWidget {
         ),
         const Divider(height: 1),
 
-        // Header: display the total number of GeoElements in this cluster.
         Padding(
           padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
           child: Text(
@@ -281,7 +280,6 @@ class GeoElementsTab extends StatelessWidget {
           ),
         ),
 
-        // If there are no GeoElements, show a friendly empty-state message.
         if (geoElements.isEmpty)
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
@@ -291,28 +289,13 @@ class GeoElementsTab extends StatelessWidget {
             ),
           )
         else
-          // When elements exist, fill the remaining space with a scrollable list.
           Expanded(
             child: ListView.separated(
               padding: const EdgeInsets.fromLTRB(8, 0, 8, 16),
               itemCount: geoElements.length,
-              // Thin divider between rows.
               separatorBuilder: (_, __) => const Divider(height: 0),
               itemBuilder: (context, index) {
-                final element = geoElements[index];
-
-                // Best-effort display name:
-                // Try to read the 'name' attribute (if present and non-empty),
-                // otherwise fall back to a generic label with the index.
-                final name = () {
-                  try {
-                    final raw = element.attributes['name'];
-                    if (raw is String && raw.trim().isNotEmpty) return raw;
-                  } on Object catch (_) {}
-                  return 'GeoElement #$index';
-                }();
-
-                // Each row shows a place icon and the resolved name.
+                final name = geoElements[index].getName(index);
                 return ListTile(
                   leading: const Icon(Icons.place_outlined),
                   title: Text(name),
@@ -322,5 +305,15 @@ class GeoElementsTab extends StatelessWidget {
           ),
       ],
     );
+  }
+}
+
+extension GeoElementNameX on GeoElement {
+  /// Returns a best-effort display name for the element.
+  String getName(int index) {
+    final raw = attributes['name'];
+    return (raw is String && raw.trim().isNotEmpty)
+        ? raw
+        : 'GeoElement #$index';
   }
 }
