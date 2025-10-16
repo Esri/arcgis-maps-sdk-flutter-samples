@@ -167,7 +167,7 @@ class _DisplayClustersState extends State<DisplayClusters>
           ),
           child: Column(
             children: [
-              // Headings tab bars.
+              // Create a tab bar with headings for the different data types.
               Material(
                 color: Colors.transparent,
                 child: TabBar(
