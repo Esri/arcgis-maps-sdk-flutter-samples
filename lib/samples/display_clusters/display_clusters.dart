@@ -1,5 +1,5 @@
 //
-// Copyright 2024 Esri
+// Copyright 2025 Esri
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -154,50 +154,71 @@ class _DisplayClustersState extends State<DisplayClusters>
 
   // Display the results in a Popup view in a modal bottom sheet.
   void showOutputs(Popup popup, List<GeoElement> geoElements) {
+    final theme = Theme.of(context);
+    final bottomSheetTheme = theme.copyWith(
+      tabBarTheme: theme.tabBarTheme.copyWith(
+        labelColor: theme.colorScheme.primary,
+        unselectedLabelColor: theme.colorScheme.onSurfaceVariant,
+        indicatorColor: theme.colorScheme.primary,
+      ),
+    );
     if (!mounted) return;
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
       useSafeArea: true,
-      builder: (_) => DefaultTabController(
-        length: 2,
-        child: ConstrainedBox(
-          constraints: BoxConstraints(
-            maxHeight: MediaQuery.sizeOf(context).height * 0.7,
-          ),
-          child: Column(
-            children: [
-              // Create a tab bar with headings for the different data types.
-              Material(
-                color: Colors.transparent,
-                child: TabBar(
-                  labelColor: Theme.of(context).colorScheme.primary,
-                  unselectedLabelColor: Theme.of(
-                    context,
-                  ).textTheme.bodyMedium?.color,
-                  tabs: const [
-                    Tab(text: 'Popup'),
-                    Tab(text: 'Geoelements'),
-                  ],
-                ),
-              ),
-              const Divider(height: 1),
-              // Configure the tab content.
-              Expanded(
-                child: TabBarView(
-                  children: [
-                    // Display a PoopupView in the popup tab.
-                    PopupView(
-                      popup: popup,
-                      onClose: () => Navigator.of(context).maybePop(),
-                    ),
+      backgroundColor: theme.colorScheme.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      clipBehavior: Clip.antiAlias,
+      builder: (_) => Theme(
+        data: bottomSheetTheme,
+        child: DefaultTabController(
+          length: 2,
+          child: SafeArea(
+            top: false,
+            left: false,
+            right: false,
 
-                    // Display data about the identified geoelements in the geoelements tab.
-                    GeoElementsTab(geoElements: geoElements),
-                  ],
-                ),
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                maxHeight: MediaQuery.sizeOf(context).height * 0.7,
               ),
-            ],
+              child: Column(
+                children: [
+                  // Main tab content.
+                  Expanded(
+                    child: TabBarView(
+                      children: [
+                        PopupView(
+                          popup: popup,
+                          onClose: () => Navigator.of(context).maybePop(),
+                        ),
+                        GeoElementsTab(
+                          geoElements: geoElements,
+                          onClose: () => Navigator.of(context).maybePop(),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  Material(
+                    elevation: 6,
+                    color: theme.colorScheme.surface,
+                    child: const TabBar(
+                      tabs: [
+                        Tab(icon: Icon(Icons.info_outline), text: 'Popup'),
+                        Tab(
+                          icon: Icon(Icons.layers_outlined),
+                          text: 'Geoelements',
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
         ),
       ),
@@ -218,16 +239,39 @@ class _DisplayClustersState extends State<DisplayClusters>
 /// aggregate cluster. It shows a header with the total count, an empty
 /// state when there are none, and a scrollable list when present.
 class GeoElementsTab extends StatelessWidget {
-  const GeoElementsTab({required this.geoElements, super.key});
+  const GeoElementsTab({required this.geoElements, this.onClose, super.key});
 
-  /// The individual GeoElements that belong to the tapped cluster.
+  // The individual GeoElements that belong to the tapped cluster.
   final List<GeoElement> geoElements;
+
+  // Optional close callback so this tab mirrors PopupView's "X".
+  final VoidCallback? onClose;
 
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(8, 8, 8, 4),
+          child: Row(
+            children: [
+              Expanded(
+                child: Text(
+                  'Geoelements',
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+              ),
+              IconButton(
+                tooltip: 'Close',
+                icon: const Icon(Icons.close),
+                onPressed: onClose ?? () => Navigator.of(context).maybePop(),
+              ),
+            ],
+          ),
+        ),
+        const Divider(height: 1),
+
         // Header: display the total number of GeoElements in this cluster.
         Padding(
           padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
@@ -264,7 +308,7 @@ class GeoElementsTab extends StatelessWidget {
                   try {
                     final raw = element.attributes['name'];
                     if (raw is String && raw.trim().isNotEmpty) return raw;
-                  } catch (_) {}
+                  } on Object catch (_) {}
                   return 'GeoElement #$index';
                 }();
 
