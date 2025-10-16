@@ -182,7 +182,7 @@ class _DisplayClustersState extends State<DisplayClusters>
                 ),
               ),
               const Divider(height: 1),
-              // Tab content.
+              // Configure the tab content.
               Expanded(
                 child: TabBarView(
                   children: [
