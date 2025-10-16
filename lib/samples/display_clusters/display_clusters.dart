@@ -192,7 +192,7 @@ class _DisplayClustersState extends State<DisplayClusters>
                       onClose: () => Navigator.of(context).maybePop(),
                     ),
 
-                    // GeoElements tab — new:
+                    // Display data about the identified geoelements in the geoelements tab.
                     GeoElementsTab(geoElements: geoElements),
                   ],
                 ),
