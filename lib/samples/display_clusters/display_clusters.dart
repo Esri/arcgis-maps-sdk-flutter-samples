@@ -1,5 +1,5 @@
 //
-// Copyright 2024 Esri
+// Copyright 2025 Esri
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
+import 'package:arcgis_maps_toolkit/arcgis_maps_toolkit.dart';
 import 'package:flutter/material.dart';
 
 class DisplayClusters extends StatefulWidget {
@@ -132,6 +133,11 @@ class _DisplayClustersState extends State<DisplayClusters>
       screenPoint: localPosition,
       tolerance: 12,
     );
+
+    // Ensure that there are popups if there are no popups then
+    if (identifyLayerResult.popups.isEmpty) return;
+
+    final popup = identifyLayerResult.popups.first;
     // Get the aggregate geoelements from the identify result.
     final aggregateGeoElements = identifyLayerResult.geoElements
         .whereType<AggregateGeoElement>();
@@ -143,45 +149,79 @@ class _DisplayClustersState extends State<DisplayClusters>
     // Get the list of geoelements associated with the aggregate geoelement.
     final geoElements = await aggregateGeoElement.getGeoElements();
     // Display a dialog with information about the geoelements.
-    showResultsDialog(geoElements);
+    showOutputs(popup, geoElements);
   }
 
-  void showResultsDialog(List<GeoElement> geoElements) {
-    // Create a dialog that lists the count and names of the provided list of geoelements.
-    showDialog<void>(
+  // Display the results in a Popup view in a modal bottom sheet.
+  void showOutputs(Popup popup, List<GeoElement> geoElements) {
+    final theme = Theme.of(context);
+    final bottomSheetTheme = theme.copyWith(
+      tabBarTheme: theme.tabBarTheme.copyWith(
+        labelColor: theme.colorScheme.primary,
+        unselectedLabelColor: theme.colorScheme.onSurfaceVariant,
+        indicatorColor: theme.colorScheme.primary,
+      ),
+    );
+    if (!mounted) return;
+    showModalBottomSheet<void>(
       context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text('Contained GeoElements'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            spacing: 10,
-            children: [
-              Text(
-                'Total GeoElements: ${geoElements.length}',
-                style: Theme.of(context).textTheme.titleMedium,
+      isScrollControlled: true,
+      useSafeArea: true,
+      backgroundColor: theme.colorScheme.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      clipBehavior: Clip.antiAlias,
+      builder: (_) => Theme(
+        data: bottomSheetTheme,
+        child: DefaultTabController(
+          length: 2,
+          child: SafeArea(
+            top: false,
+            left: false,
+            right: false,
+
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                maxHeight: MediaQuery.sizeOf(context).height * 0.7,
               ),
-              SizedBox(
-                height: 200,
-                child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: geoElements
-                        .map(
-                          (geoElement) => Text(
-                            geoElement.attributes['name'] as String? ??
-                                'Geoelement: ${geoElements.indexOf(geoElement)}}',
-                          ),
-                        )
-                        .toList(),
+              child: Column(
+                children: [
+                  // Main tab content.
+                  Expanded(
+                    child: TabBarView(
+                      children: [
+                        PopupView(
+                          popup: popup,
+                          onClose: () => Navigator.of(context).maybePop(),
+                        ),
+                        GeoElementsTab(
+                          geoElements: geoElements,
+                          onClose: () => Navigator.of(context).maybePop(),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
+
+                  Material(
+                    elevation: 6,
+                    color: theme.colorScheme.surface,
+                    child: const TabBar(
+                      tabs: [
+                        Tab(icon: Icon(Icons.info_outline), text: 'Popup'),
+                        Tab(
+                          icon: Icon(Icons.layers_outlined),
+                          text: 'Geoelements',
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
-        );
-      },
+        ),
+      ),
     );
   }
 
@@ -192,5 +232,88 @@ class _DisplayClustersState extends State<DisplayClusters>
       featureReduction.enabled = !featureReduction.enabled;
       setState(() => _featureReductionEnabled = featureReduction.enabled);
     }
+  }
+}
+
+/// A simple tab that lists the GeoElements contained in the selected
+/// aggregate cluster. It shows a header with the total count, an empty
+/// state when there are none, and a scrollable list when present.
+class GeoElementsTab extends StatelessWidget {
+  const GeoElementsTab({required this.geoElements, this.onClose, super.key});
+
+  // The individual GeoElements that belong to the tapped cluster.
+  final List<GeoElement> geoElements;
+
+  // Optional close callback so this tab mirrors PopupView's "X".
+  final VoidCallback? onClose;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(8, 8, 8, 4),
+          child: Row(
+            children: [
+              Expanded(
+                child: Text(
+                  'Geoelements',
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+              ),
+              IconButton(
+                tooltip: 'Close',
+                icon: const Icon(Icons.close),
+                onPressed: onClose ?? () => Navigator.of(context).maybePop(),
+              ),
+            ],
+          ),
+        ),
+        const Divider(height: 1),
+
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+          child: Text(
+            'Total GeoElements: ${geoElements.length}',
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
+        ),
+
+        if (geoElements.isEmpty)
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+            child: Text(
+              'No GeoElements found.',
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
+          )
+        else
+          Expanded(
+            child: ListView.separated(
+              padding: const EdgeInsets.fromLTRB(8, 0, 8, 16),
+              itemCount: geoElements.length,
+              separatorBuilder: (_, __) => const Divider(height: 0),
+              itemBuilder: (context, index) {
+                final name = geoElements[index].getName(index);
+                return ListTile(
+                  leading: const Icon(Icons.place_outlined),
+                  title: Text(name),
+                );
+              },
+            ),
+          ),
+      ],
+    );
+  }
+}
+
+extension GeoElementNameX on GeoElement {
+  /// Returns a best-effort display name for the element.
+  String getName(int index) {
+    final raw = attributes['name'];
+    return (raw is String && raw.trim().isNotEmpty)
+        ? raw
+        : 'GeoElement #$index';
   }
 }
