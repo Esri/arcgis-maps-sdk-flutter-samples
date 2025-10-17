@@ -64,7 +64,7 @@ class _ShowPopupState extends State<ShowPopup> with SampleStateSupport {
     // Load the web map so that the operational layers can be accessed.
     await map.load();
     // Get the first feature layer from the web map.
-    _featureLayer = map.operationalLayers.first as FeatureLayer;
+    _featureLayer = map.operationalLayers.whereType<FeatureLayer>().first;
 
     // Set the map on the map view controller.
     _mapViewController.arcGISMap = map;
@@ -88,7 +88,9 @@ class _ShowPopupState extends State<ShowPopup> with SampleStateSupport {
     if (identifyResult.popups.isNotEmpty &&
         identifyResult.geoElements.isNotEmpty) {
       // Select the identified feature.
-      final feature = identifyResult.geoElements.first as ArcGISFeature;
+      final feature = identifyResult.geoElements
+          .whereType<ArcGISFeature>()
+          .first;
       _featureLayer.selectFeature(feature);
       // Get the popup from the identify result and display it in a PopupView.
       final popup = identifyResult.popups.first;
