@@ -1,0 +1,24 @@
+{
+    "category": "Scenes",
+    "description": "Explore details of a building scene layer using filters.",
+    "ignore": false,
+    "images": [
+        "filter_building_scene_layer.png"
+    ],
+    "keywords": [
+        "3D",
+        "building scene layer",
+        "layers",
+        "ArcGISLocalSceneLayer",
+        "ArcGISScene"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+        "ArcGISLocalSceneLayer",
+        "ArcGISScene"
+    ],
+    "snippets": [
+        "filter_building_scene_layer.dart"
+    ],
+    "title": "Filter building scene layer"
+}
