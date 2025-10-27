@@ -33,22 +33,33 @@ class _ValidateUtilityNetworkTopologyState
     with SampleStateSupport {
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
-  // A utility network.
-  UtilityNetwork? _utilityNetwork;
-  // Parameters to be used for performing traces.
-  UtilityTraceParameters? _traceParameters;
-  // A graphics overlay used to display graphics on the map view.
-  final _graphicsOverlay = GraphicsOverlay();
-  // A flag for when the map view is ready and controls can be used.
-  var _ready = false;
+  // The web map used in the sample.
+  late ArcGISMap _map;
+  // The utility network used in the sample.
+  late UtilityNetwork _utilityNetwork;
+  // The trace parameters to be used for performing traces.
+  late UtilityTraceParameters _traceParameters;
 
-  // Variables used in the UI.
-  var _statusTitle = 'Loading webmap...';
-  var _statusText = '';
-  var _fieldName = '';
+  // Variables used for editing.
+  // The name of the 'Electric Distribution Line' feature table.
+  final _lineTableName = 'Electric Distribution Line';
+  // The name of the 'Electric Distribution Device' feature table.
+  final _deviceTableName = 'Electric Distribution Device';
+  // The name of the device status field in the 'Electric Distribution Device' feature table.
+  final _deviceStatusField = 'devicestatus';
+  // The name of the nominal voltage field in the "Electric Distribution Line" feature table.
+  final _nominalVoltageField = 'nominalvoltage';
+
+  // Capabilities of the utility network.
+  var _utilityNetworkCanTrace = false;
+  var _utilityNetworkCanGetState = false;
+  var _utilityNetworkCanValidate = false;
+
+  // The selected feature currently being edited.
+  ArcGISFeature? _selectedFeature;
 
   // The feature's field currently being edited.
-  Field? field;
+  Field? _currentField;
 
   // The coded values from the field's domain.
   List<CodedValue> _codedValues = [];
@@ -56,31 +67,14 @@ class _ValidateUtilityNetworkTopologyState
   // The selected field coded value.
   CodedValue? _selectedCodedValue;
 
-  // Variables used for tracing.
-  final assetGroupName = 'Circuit Breaker';
-  final assetTypeName = 'Three Phase';
-  final globalId = '{1CAF7740-0BF4-4113-8DB2-654E18800028}';
-  final domainNetworkName = 'ElectricDistribution';
-  final tierName = 'Medium Voltage Radial';
+  // Text describing the current status of the sample workflow.
+  var _statusTitle = 'Loading webmap...';
+  var _statusDetail = '';
 
-  // Variables used for editing.
-  // The name of the "Electric Distribution Line" feature table.
-  final lineTableName = 'Electric Distribution Line';
-  // The name of the "Electric Distribution Device" feature table.
-  final deviceTableName = 'Electric Distribution Device';
-
-  // The name of the device status field in the "Electric Distribution Device" feature table.
-  final deviceStatusField = 'devicestatus';
-
-  // The name of the nominal voltage field in the "Electric Distribution Line" feature table.
-  final nominalVoltageField = 'nominalvoltage';
-
-  ArcGISFeature? _featureToEdit;
-
-  bool _validateIsEnabled = true;
-  bool _traceIsEnabled = true;
-  bool _clearIsEnabled = false;
-  bool _attributePickerVisible = false;
+  // Flags to toggle when UI controls can be used.
+  var _clearEnabled = false;
+  var _attributePickerVisible = false;
+  var _ready = false;
 
   @override
   void initState() {
@@ -124,49 +118,80 @@ class _ValidateUtilityNetworkTopologyState
                     onTap: onTap,
                   ),
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  spacing: 5,
-                  children: [
-                    // A button to perform a task.
-                    ElevatedButton(
-                      onPressed: onGetState,
-                      child: const Text('Get State'),
-                    ),
-                    ElevatedButton(
-                      onPressed: _traceIsEnabled ? onTrace : null,
-                      child: const Text('Trace'),
-                    ),
-                    ElevatedButton(
-                      onPressed: _validateIsEnabled ? onValidate : null,
-                      child: const Text('Validate'),
-                    ),
-                    ElevatedButton(
-                      onPressed: _clearIsEnabled ? onClear : null,
-                      child: const Text('Clear'),
-                    ),
-                  ],
+                // Configure buttons to perform the actions of the sample.
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 5),
+                  child: Column(
+                    children: [
+                      Row(
+                        spacing: 10,
+                        children: [
+                          Expanded(
+                            // A button to get the state from the utility network.
+                            child: ElevatedButton(
+                              onPressed: _utilityNetworkCanGetState
+                                  ? getState
+                                  : null,
+                              child: const Text('Get State'),
+                            ),
+                          ),
+                          Expanded(
+                            // A button to validate the utility network.
+                            child: ElevatedButton(
+                              onPressed: _utilityNetworkCanValidate
+                                  ? validate
+                                  : null,
+                              child: const Text('Validate'),
+                            ),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        spacing: 10,
+                        children: [
+                          Expanded(
+                            // A button to perform a utility network trace.
+                            child: ElevatedButton(
+                              onPressed: _utilityNetworkCanTrace
+                                  ? performTrace
+                                  : null,
+                              child: const Text('Trace'),
+                            ),
+                          ),
+                          Expanded(
+                            // A button to clear selections from the map and reset the UI.
+                            child: ElevatedButton(
+                              onPressed: _clearEnabled ? clearAndReset : null,
+                              child: const Text('Clear'),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
-            IgnorePointer(
-              child: Container(
-                width: MediaQuery.sizeOf(context).width,
-                padding: const EdgeInsets.all(10),
-                color: Colors.white.withValues(alpha: 0.95),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      _statusTitle,
-                      style: Theme.of(context).textTheme.titleMedium,
-                    ),
-                    Text(
-                      _statusText,
-                      style: Theme.of(context).textTheme.labelLarge,
-                    ),
-                  ],
-                ),
+            // Display the status information from the sample actions in the UI.
+            Container(
+              width: MediaQuery.sizeOf(context).width,
+              padding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
+              color: Colors.white.withValues(alpha: 0.95),
+              child: Column(
+                spacing: 10,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    _statusTitle,
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                  Text(
+                    _statusDetail,
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.labelLarge,
+                  ),
+                ],
               ),
             ),
             // Display a progress indicator and prevent interaction until state is ready.
@@ -174,96 +199,125 @@ class _ValidateUtilityNetworkTopologyState
           ],
         ),
       ),
+      // Configure the bottom sheet the display an attribute picker when required.
       bottomSheet: _attributePickerVisible ? buildAttributePicker() : null,
     );
   }
 
   Future<void> onMapViewReady() async {
-    // Create a map using a webmap url.
-    final map = ArcGISMap.withUri(
-      Uri.parse(
-        'https://sampleserver7.arcgisonline.com/portal/home/item.html?id=6e3fc6db3d0b4e6589eb4097eb3e5b9b',
-      ),
-    )!;
+    // Create a map using the portal item of a web map containing a utility network.
+    final portal = Portal(
+      Uri.parse('https://sampleserver7.arcgisonline.com/portal/sharing/rest'),
+    );
+    final portalItem = PortalItem.withPortalAndItemId(
+      portal: portal,
+      itemId: '6e3fc6db3d0b4e6589eb4097eb3e5b9b',
+    );
+    _map = ArcGISMap.withItem(portalItem);
 
-    // Load in persistent session mode (workaround for server caching issue)
+    // Set an initial viewpoint on the map.
+    _map.initialViewpoint = Viewpoint.fromTargetExtent(
+      Envelope.fromXY(
+        xMin: -9815489.0660101417,
+        yMin: 5128463.4221229386,
+        xMax: -9814625.2768726498,
+        yMax: 5128968.4911854975,
+        spatialReference: SpatialReference.webMercator,
+      ),
+    );
+
+    // Load in persistent session mode (workaround for server caching issue):
     // https://support.esri.com/en-us/bug/asynchronous-validate-request-for-utility-network-servi-bug-000160443
-    map.loadSettings = LoadSettings()
+    _map.loadSettings = LoadSettings()
       ..featureServiceSessionType = FeatureServiceSessionType.persistent;
 
     // Load the map.
-    await map.load();
+    await _map.load();
 
-    // Load the utility network.
-    setState(() => _statusTitle = 'Loading utility network...');
-    _utilityNetwork = map.utilityNetworks.first;
-    await _utilityNetwork!.load();
+    // Define labels on the map for visualizing attribute editing.
+    defineLabelsForLayer(_deviceTableName, _deviceStatusField, Colors.indigo);
+    defineLabelsForLayer(_lineTableName, _nominalVoltageField, Colors.red);
 
-    // Get the service geodatabase.
-    final serviceGeodatabase = _utilityNetwork!.serviceGeodatabase;
-    // Restrict editing and tracing to a unique branch.
-    final parameters = ServiceVersionParameters();
-    parameters.name = 'ValidateNetworkTopology_${Guid()}';
-    parameters.access = VersionAccess.private;
-    parameters.description = 'Validate network topology with ArcGIS Maps SDK';
-    final serviceVersionInfo = await serviceGeodatabase!.createVersion(
-      newVersion: parameters,
-    );
-    await serviceGeodatabase.switchVersion(
-      versionName: serviceVersionInfo.name,
-    );
-
-    final deviceLabelDefinition = LabelDefinition(
-      labelExpression: SimpleLabelExpression(
-        simpleExpression: '[devicestatus]',
-      ),
-      textSymbol: TextSymbol(color: Colors.indigo, size: 12)
-        ..haloColor = Colors.white
-        ..haloWidth = 2,
-    )..useCodedValues = true;
-    final lineLabelDefinition = LabelDefinition(
-      labelExpression: SimpleLabelExpression(
-        simpleExpression: '[nominalvoltage]',
-      ),
-      textSymbol: TextSymbol(color: Colors.red, size: 12)
-        ..haloColor = Colors.white
-        ..haloWidth = 2,
-    )..useCodedValues = true;
-
-    // Visualize attribute editing using labels
-    for (final layer in map.operationalLayers.whereType<FeatureLayer>()) {
-      if (layer.name == deviceTableName) {
-        layer.labelDefinitions.add(deviceLabelDefinition);
-        layer.labelsEnabled = true;
-      } else if (layer.name == lineTableName) {
-        layer.labelDefinitions.add(lineLabelDefinition);
-        layer.labelsEnabled = true;
-      }
+    // Configure the utility network and trace parameters.
+    try {
+      await configureUtilityNetwork();
+    } on ArcGISException catch (e) {
+      setState(() {
+        _ready = true;
+        _statusTitle = 'Failed to configure utility network.';
+        _statusDetail = e.message;
+      });
+      return;
     }
 
-    // Add the dirty area table to the map to visualize it.
-    final dirtyAreaTable = _utilityNetwork!.dirtyAreaTable;
-    await dirtyAreaTable!.load();
-    final featureLayer = FeatureLayer.withFeatureTable(dirtyAreaTable);
-    map.operationalLayers.add(featureLayer);
+    // Add the map to the map view.
+    _mapViewController.arcGISMap = _map;
 
-    // Trace with a subnetwork controller as default starting location
-    final networkSource = _utilityNetwork!.definition!.getNetworkSource(
-      deviceTableName,
+    // Set the ready state variable to true to enable the sample UI.
+    setState(() {
+      _ready = true;
+      _statusTitle = 'Utility Network loaded';
+      _statusDetail =
+          "Tap on a feature to edit.\nTap 'Get State' to check if validating is necessary or if tracing is available.\nTap 'Trace' to run a trace.";
+    });
+  }
+
+  Future<void> configureUtilityNetwork() async {
+    setState(() => _statusTitle = 'Loading utility network...');
+
+    _utilityNetwork = _map.utilityNetworks.first;
+    await _utilityNetwork.load();
+
+    // Get the service geodatabase.
+    final serviceGeodatabase = _utilityNetwork.serviceGeodatabase;
+    // Restrict editing and tracing to a unique branch.
+    final parameters = ServiceVersionParameters()
+      ..name = 'ValidateNetworkTopology_${Guid()}'
+      ..access = VersionAccess.private
+      ..description = 'Validate network topology with ArcGIS Maps SDK';
+    final serviceVersionInfo = await serviceGeodatabase?.createVersion(
+      newVersion: parameters,
     );
-    final assetGroup = networkSource!.getAssetGroup(assetGroupName);
-    final assetType = assetGroup!.getAssetType(assetTypeName);
-    final startingLocation = _utilityNetwork!.createElementWithAssetType(
+    await serviceGeodatabase?.switchVersion(
+      versionName: serviceVersionInfo!.name,
+    );
+
+    // Add the dirty area table to the map to visualize it.
+    final dirtyAreaTable = _utilityNetwork.dirtyAreaTable;
+    if (dirtyAreaTable != null) {
+      final featureLayer = FeatureLayer.withFeatureTable(dirtyAreaTable);
+      _map.operationalLayers.add(featureLayer);
+    }
+
+    // Get the capabilities of the utility network.
+    setState(() {
+      _utilityNetworkCanTrace =
+          _utilityNetwork.definition!.capabilities.supportsTrace;
+      _utilityNetworkCanGetState =
+          _utilityNetwork.definition!.capabilities.supportsNetworkState;
+      _utilityNetworkCanValidate = _utilityNetwork
+          .definition!
+          .capabilities
+          .supportsValidateNetworkTopology;
+    });
+
+    // Trace with a subnetwork controller as default starting location.
+    final networkSource = _utilityNetwork.definition!.getNetworkSource(
+      _deviceTableName,
+    );
+    final assetGroup = networkSource!.getAssetGroup('Circuit Breaker');
+    final assetType = assetGroup!.getAssetType('Three Phase');
+    final startingLocation = _utilityNetwork.createElementWithAssetType(
       assetType!,
-      globalId: Guid.fromString(globalId)!,
+      globalId: Guid.fromString('{1CAF7740-0BF4-4113-8DB2-654E18800028}')!,
     );
-    // Set the terminal for the location, in our case, the "Load" terminal.
+    // Set the terminal for the location, in our case, the 'Load' terminal.
     final terminal = startingLocation.assetType.terminalConfiguration?.terminals
         .firstWhere((terminal) => terminal.name == 'Load');
     startingLocation.terminal = terminal;
 
-    // Add a graphic to indicate the location on the map.
-    final features = await _utilityNetwork!.getFeaturesForElements([
+    // Add a graphic to indicate the starting location on the map.
+    final features = await _utilityNetwork.getFeaturesForElements([
       startingLocation,
     ]);
     final feature = features.first;
@@ -272,56 +326,29 @@ class _ValidateUtilityNetworkTopologyState
       geometry: feature.geometry,
       symbol: SimpleMarkerSymbol(
         style: SimpleMarkerSymbolStyle.cross,
-        color: Colors.green,
+        color: Colors.lightGreen,
         size: 25,
       ),
     );
-    _graphicsOverlay.graphics.add(graphic);
-    _mapViewController.graphicsOverlays.add(_graphicsOverlay);
+    final graphicsOverlay = GraphicsOverlay()..graphics.add(graphic);
+    _mapViewController.graphicsOverlays.add(graphicsOverlay);
 
-    // Trace with a configuration that stops traversability on an open device.
-    final domainNetwork = _utilityNetwork!.definition!.getDomainNetwork(
-      domainNetworkName,
+    // Set the configuration to stop traversing on an open device.
+    final domainNetwork = _utilityNetwork.definition!.getDomainNetwork(
+      'ElectricDistribution',
     );
-    final sourceTier = domainNetwork!.getTier(tierName);
+    final sourceTier = domainNetwork?.getTier('Medium Voltage Radial');
     _traceParameters = UtilityTraceParameters(
       UtilityTraceType.downstream,
       startingLocations: [startingLocation],
-    )..traceConfiguration = sourceTier!.getDefaultTraceConfiguration();
-
-    // Add the map to the map view.
-    _mapViewController.arcGISMap = map;
-
-    // Set an initial viewpoint.
-    _mapViewController.setViewpoint(
-      Viewpoint.fromTargetExtent(
-        Envelope.fromXY(
-          xMin: -9815489.0660101417,
-          yMin: 5128463.4221229386,
-          xMax: -9814625.2768726498,
-          yMax: 5128968.4911854975,
-          spatialReference: SpatialReference.webMercator,
-        ),
-      ),
-    );
-
-    // Set the ready state variable to true to enable the sample UI.
-    setState(() {
-      _ready = true;
-      _statusTitle = 'Utility Network loaded';
-      _statusText = '''
-            Tap on a feature to edit.
-            Tap 'Get State' to check if validating is necessary or if tracing is available.
-            Tap 'Trace' to run a trace.
-            ''';
-    });
+    )..traceConfiguration = sourceTier?.getDefaultTraceConfiguration();
   }
 
   Future<void> onTap(Offset tappedLocation) async {
     setState(() {
       _ready = false;
       _statusTitle = 'Identifying feature to edit...';
-      _statusText = '';
+      _statusDetail = '';
     });
 
     // Clear previous selection.
@@ -332,125 +359,106 @@ class _ValidateUtilityNetworkTopologyState
       screenPoint: tappedLocation,
       tolerance: 5,
     );
-
     if (identifyResults.isNotEmpty) {
-      final result = identifyResults.firstWhere((result) {
-        return result.layerContent.name == deviceTableName ||
-            result.layerContent.name == lineTableName;
-      });
-      if (result.geoElements.isEmpty) {
-        setState(() {
-          _statusTitle = 'No feature identified. Tap on a feature to edit.';
-          _ready = true;
-        });
-      } else {
-        final feature = result.geoElements.first as ArcGISFeature;
-        final fieldName = feature.featureTable?.tableName == deviceTableName
-            ? deviceStatusField
-            : nominalVoltageField;
-        final field = feature.featureTable?.getField(fieldName: fieldName);
-        if (field == null || field.domain == null) {
-          return;
-        }
-        final codedValues = (field.domain! as CodedValueDomain).codedValues;
-        if (codedValues.isEmpty) {
-          return;
-        }
+      // Check for a result in the specified tables.
+      final identifyLayerResult = identifyResults
+          .where(
+            (result) =>
+                result.layerContent.name == _deviceTableName ||
+                result.layerContent.name == _lineTableName,
+          )
+          .firstOrNull;
 
-        // Set the coded values to the attribute picker.
-        _codedValues = codedValues;
-
-        if (feature.loadStatus != LoadStatus.loaded) {
-          await feature.load();
+      if (identifyLayerResult != null &&
+          identifyLayerResult.geoElements.isNotEmpty) {
+        // Get the first feature from the results.
+        final feature = identifyLayerResult.geoElements.first as ArcGISFeature;
+        await feature.load();
+        if (feature.featureTable == null) setNoFeatureIdentifiedStatus();
+        // Get the coded values from the feature's field.
+        final fieldName = feature.featureTable!.tableName == _deviceTableName
+            ? _deviceStatusField
+            : _nominalVoltageField;
+        final field = feature.featureTable!.getField(fieldName: fieldName);
+        final codedValues = (field?.domain as CodedValueDomain?)?.codedValues;
+        // If there are valid coded values, set them to the attribute picker.
+        if (codedValues == null || codedValues.isEmpty) {
+          setNoFeatureIdentifiedStatus();
         }
-
-        // Select the feature.
-        if (feature.featureTable?.layer is FeatureLayer) {
+        // Select the feature on the map.
+        if (feature.featureTable!.layer is FeatureLayer) {
           final featureLayer = feature.featureTable!.layer! as FeatureLayer;
           featureLayer.selectFeature(feature);
         }
+        // Get the current field value and convert to coded value.
+        final currentFieldValue = feature.attributes[field!.name];
+        final selectedCodedValue = codedValues!.firstWhere(
+          (value) => value.code == currentFieldValue,
+        );
+        // Configure the UI ready for feature editing.
         setState(() {
-          _fieldName = field.alias;
-          _featureToEdit = feature;
-        });
-
-        final actualValue = feature.attributes[field.name] as int;
-        print('actual: $actualValue');
-        // setState(
-        //   () => _selectedCodedValue = _codedValues.firstWhere(
-        //     (value) => value == actualValue,
-        //   ),
-        // );
-
-        //         var actualValue = Convert.ToInt32(_featureToEdit.Attributes[field.Name]);
-        //         Choices.SelectedItem = codedValues.Single(
-        //             c => Convert.ToInt32(c.Code).Equals(actualValue)
-        //         );
-
-        //         FieldName.Text = field.Name;
-        //         Status.Text = $"Select a new '{field.Alias ?? field.Name}'";
-
-        //         // Update the UI for the selection.
-        //         AttributePicker.Visibility = Visibility.Visible;
-        //         ClearBtn.IsEnabled = true;
-
-        setState(() {
-          _ready = true;
-          _clearIsEnabled = true;
+          _codedValues = codedValues;
+          _selectedCodedValue = selectedCodedValue;
+          _currentField = field;
+          _selectedFeature = feature;
+          _statusTitle = "Select a new '${field.alias}'.";
+          _statusDetail = '';
+          _clearEnabled = true;
           _attributePickerVisible = true;
+          _ready = true;
         });
+      } else {
+        setNoFeatureIdentifiedStatus();
       }
     } else {
-      setState(() {
-        _statusTitle = 'No feature identified. Tap on a feature to edit.';
-        _ready = true;
-      });
+      setNoFeatureIdentifiedStatus();
     }
   }
 
-  Future<void> onGetState() async {
-    if (_utilityNetwork!.definition!.capabilities.supportsNetworkState) {
-      setState(() {
-        _ready = false;
-        _statusTitle = 'Getting utility network state...';
-        _statusText = '';
-      });
-
-      final state = await _utilityNetwork!.getState();
-
-      setState(() {
-        _validateIsEnabled = state.hasDirtyAreas;
-        _traceIsEnabled = state.isNetworkTopologyEnabled;
-      });
-
-      var status =
-          '''
-              Has Dirty Areas: ${state.hasDirtyAreas}
-              Has Errors: ${state.hasErrors}
-              Is Network Topology Enabled: ${state.isNetworkTopologyEnabled}
-            ''';
-      if (state.hasDirtyAreas || state.hasErrors) {
-        status =
-            "$status\nTap 'Validate' before trace or expect a trace error.";
-      } else {
-        status =
-            "$status\nTap on a feature to edit or tap 'Trace' to run a trace.";
-      }
-
-      setState(() {
-        _statusTitle = 'Utility Network State:';
-        _statusText = status;
-        _ready = true;
-      });
-    }
+  void setNoFeatureIdentifiedStatus() {
+    setState(() {
+      _statusTitle = 'No feature identified. Tap on a feature to edit.';
+      _statusDetail = '';
+      _attributePickerVisible = false;
+      _clearEnabled = false;
+      _ready = true;
+    });
+    return;
   }
 
-  Future<void> onValidate() async {
-    if (_utilityNetwork == null) return;
+  Future<void> getState() async {
+    setState(() {
+      _ready = false;
+      _statusTitle = 'Getting utility network state...';
+      _statusDetail = '';
+    });
+
+    final state = await _utilityNetwork.getState();
+
+    var status =
+        'Has Dirty Areas: ${state.hasDirtyAreas}\nHas Errors: ${state.hasErrors}\nIs Network Topology Enabled: ${state.isNetworkTopologyEnabled}';
+    if (state.hasDirtyAreas || state.hasErrors) {
+      status = "$status\nTap 'Validate' before trace or expect a trace error.";
+    } else {
+      status =
+          "$status\nTap on a feature to edit or tap 'Trace' to run a trace.";
+    }
+
+    // Update the UI with the outcomes of the state check.
+    setState(() {
+      _utilityNetworkCanValidate = state.hasDirtyAreas || state.hasErrors;
+      _utilityNetworkCanTrace = state.isNetworkTopologyEnabled;
+      _statusTitle = 'Utility Network State:';
+      _statusDetail = status;
+      _ready = true;
+    });
+  }
+
+  Future<void> validate() async {
     setState(() {
       _ready = false;
       _statusTitle = 'Validating utility network topology...';
-      _statusText = '';
+      _statusDetail = '';
     });
     // Get the current extent.
     final extent = _mapViewController
@@ -459,73 +467,118 @@ class _ValidateUtilityNetworkTopologyState
         .extent;
 
     // Get the validation result.
-    final job = _utilityNetwork!.validateNetworkTopology(extent: extent);
+    final job = _utilityNetwork.validateNetworkTopology(extent: extent);
     final result = await job.run();
 
     setState(() {
       _statusTitle = 'Utility Validation Result:';
-      _statusText =
-          '''
-          Has Dirty Areas: ${result.hasDirtyAreas}
-          Has Errors: ${result.hasErrors}
-          Tap 'Get State' to check the updated network state.
-        ''';
-      _validateIsEnabled = result.hasDirtyAreas;
+      _statusDetail =
+          "Has Dirty Areas: ${result.hasDirtyAreas}\nHas Errors: ${result.hasErrors}\nTap 'Get State' to check the updated network state.";
+      _utilityNetworkCanValidate = result.hasDirtyAreas;
       _ready = true;
     });
   }
 
-  Future<void> onTrace() async {
+  Future<void> performTrace() async {
     setState(() {
       _ready = false;
       _statusTitle = 'Running a downstream trace...';
-      _statusText = '';
+      _statusDetail = '';
     });
 
     // Clear previous selection from the layers.
     clearSelectionsFromAllLayers();
 
     // Get the trace result from the utility network.
-    final traceResult = await _utilityNetwork!.trace(_traceParameters!);
-    final elementTraceResult = traceResult
-        .whereType<UtilityElementTraceResult>()
-        .first;
-    // Check if there are any elements in the result.
-    final elementCount = elementTraceResult.elements.length;
-    for (final layer
-        in _mapViewController.arcGISMap!.operationalLayers
-            .whereType<FeatureLayer>()) {
-      final elements = elementTraceResult.elements
-          .where(
-            (element) =>
-                element.networkSource.featureTable == layer.featureTable,
-          )
-          .toList();
-      if (elements.isNotEmpty) {
-        final features = await _utilityNetwork!.getFeaturesForElements(
-          elements,
-        );
-        layer.selectFeatures(features);
+    try {
+      final traceResult = await _utilityNetwork.trace(_traceParameters);
+      final elementTraceResult = traceResult
+          .whereType<UtilityElementTraceResult>()
+          .firstOrNull;
+      final elementsCount = elementTraceResult?.elements.length ?? 0;
+      setState(() {
+        _statusTitle = 'Trace completed:';
+        _statusDetail = '$elementsCount elements found';
+        _clearEnabled = true;
+        _ready = true;
+      });
+
+      // Select any identified elements in the map.
+      if (elementTraceResult != null) {
+        for (final layer
+            in _mapViewController.arcGISMap!.operationalLayers
+                .whereType<FeatureLayer>()) {
+          final elements = elementTraceResult.elements
+              .where(
+                (element) =>
+                    element.networkSource.featureTable == layer.featureTable,
+              )
+              .toList();
+          final features = await _utilityNetwork.getFeaturesForElements(
+            elements,
+          );
+          layer.selectFeatures(features);
+        }
       }
+    } on ArcGISException catch (e) {
+      showMessageDialog(e.additionalMessage, title: e.message, showOK: true);
+      setState(() {
+        _statusTitle = 'Trace failed:';
+        _statusDetail = "Tap 'Get State' to check the updated network state.";
+        _clearEnabled = false;
+        _ready = true;
+      });
     }
-    setState(() {
-      _statusTitle = 'Trace completed:';
-      _statusText = '$elementCount elements found';
-      _clearIsEnabled = true;
-      _ready = true;
-    });
   }
 
-  void onClear() {
-    // Clear the selection.
-    clearSelectionsFromAllLayers();
-    // Make relevant UI updates.
+  Future<void> applyEdits() async {
+    if (_selectedFeature == null) return;
+    // Get the service geodatabase and field name of the feature being edited.
+    final table = _selectedFeature!.featureTable as ServiceFeatureTable?;
+    if (table == null || table.serviceGeodatabase == null) return;
+    final serviceGeodatabase = table.serviceGeodatabase!;
+    final fieldName = _currentField?.name;
+    if (fieldName == null) return;
     setState(() {
+      _statusTitle = 'Updating feature...';
+      _statusDetail = '';
+      _ready = false;
+    });
+    // Set the selected value to the feature.
+    _selectedFeature!.attributes[fieldName] = _selectedCodedValue?.code;
+    await table.updateFeature(_selectedFeature!);
+    setState(() {
+      _statusTitle = 'Applying edits...';
+      _statusDetail = '';
+    });
+    // Apply the edits to the service geodatabase.
+    final editResult = await serviceGeodatabase.applyEdits();
+
+    // Determine if the attempt to edit resulted in any errors.
+    final hasErrors = editResult.any(
+      (result) => result.editResults.any(
+        (editResult) => editResult.completedWithErrors,
+      ),
+    );
+    // Update the status with the results.
+    var updatedStatusTitle = '';
+    var updatedStatusDetail = '';
+    if (!hasErrors) {
+      updatedStatusTitle = 'Edits applied successfully.';
+      updatedStatusDetail =
+          "Tap 'Get State' to check the updated network state";
+    } else {
+      updatedStatusTitle = 'Edits completed with error.';
+      updatedStatusDetail = '';
+    }
+    clearSelectionsFromAllLayers();
+    setState(() {
+      _utilityNetworkCanValidate = true;
+      _statusTitle = updatedStatusTitle;
+      _statusDetail = updatedStatusDetail;
       _attributePickerVisible = false;
-      _featureToEdit = null;
-      _statusTitle = 'Selection cleared';
-      _statusText = '';
-      _clearIsEnabled = false;
+      _clearEnabled = false;
+      _ready = true;
     });
   }
 
@@ -535,7 +588,42 @@ class _ValidateUtilityNetworkTopologyState
         .forEach((layer) => layer.clearSelection());
   }
 
-  // The build method for the Settings bottom sheet.
+  void clearAndReset() {
+    // Clear the selection.
+    clearSelectionsFromAllLayers();
+    // Make relevant UI updates.
+    setState(() {
+      _statusTitle = 'Selection cleared';
+      _statusDetail = '';
+      _attributePickerVisible = false;
+      _selectedFeature = null;
+      _clearEnabled = false;
+    });
+  }
+
+  void defineLabelsForLayer(
+    String layerName,
+    String fieldName,
+    MaterialColor color,
+  ) {
+    // Define a label definition based on the provided field name.
+    final labelDefinition = LabelDefinition(
+      labelExpression: SimpleLabelExpression(simpleExpression: '[$fieldName]'),
+      textSymbol: TextSymbol(color: color, size: 12)
+        ..haloColor = Colors.white
+        ..haloWidth = 2,
+    )..useCodedValues = true;
+
+    // Add the label definition to the provided layer.
+    final featureLayer = _map.operationalLayers
+        .whereType<FeatureLayer>()
+        .firstWhere((layer) => layer.name == layerName);
+    featureLayer.labelDefinitions.add(labelDefinition);
+    // Enable labels on the layer.
+    featureLayer.labelsEnabled = true;
+  }
+
+  // The build method for the attribute picker bottom sheet.
   Widget buildAttributePicker() {
     return Container(
       padding: EdgeInsets.fromLTRB(
@@ -549,26 +637,35 @@ class _ValidateUtilityNetworkTopologyState
         ),
       ),
       child: Column(
+        spacing: 10,
         mainAxisSize: MainAxisSize.min,
         children: [
           Row(
+            spacing: 10,
             children: [
               Text(
                 'Edit Feature',
                 style: Theme.of(context).textTheme.titleLarge,
               ),
               const Spacer(),
-              IconButton(icon: const Icon(Icons.check), onPressed: applyEdits),
-              IconButton(
-                icon: const Icon(Icons.close),
+              ElevatedButton(onPressed: applyEdits, child: const Text('Apply')),
+              TextButton(
+                child: const Text('Cancel'),
                 onPressed: () {
                   setState(() => _attributePickerVisible = false);
-                  onClear();
+                  clearAndReset();
                 },
               ),
             ],
           ),
-          Text(_fieldName),
+          Row(
+            children: [
+              Text(
+                _currentField?.alias ?? 'Unknown field',
+                style: Theme.of(context).textTheme.labelLarge,
+              ),
+            ],
+          ),
           SizedBox(
             height: 200,
             child: ListView.builder(
@@ -576,9 +673,10 @@ class _ValidateUtilityNetworkTopologyState
               itemBuilder: (context, index) {
                 final value = _codedValues[index];
                 return ListTile(
+                  onTap: () => setState(() => _selectedCodedValue = value),
                   title: Text(value.name),
                   trailing: value == _selectedCodedValue
-                      ? Icon(Icons.check)
+                      ? const Icon(Icons.check)
                       : null,
                 );
               },
@@ -587,12 +685,5 @@ class _ValidateUtilityNetworkTopologyState
         ],
       ),
     );
-  }
-
-  void applyEdits() {
-    // final table =
-    //     _featureToEdit!.featureTable! as ServiceFeatureTable;
-    // final serviceGeodatabase = table.serviceGeodatabase;
-    // setState(() => _fieldName = )
   }
 }
