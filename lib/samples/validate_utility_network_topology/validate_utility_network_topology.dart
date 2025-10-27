@@ -496,12 +496,6 @@ class _ValidateUtilityNetworkTopologyState
           .whereType<UtilityElementTraceResult>()
           .firstOrNull;
       final elementsCount = elementTraceResult?.elements.length ?? 0;
-      setState(() {
-        _statusTitle = 'Trace completed:';
-        _statusDetail = '$elementsCount elements found';
-        _clearEnabled = true;
-        _ready = true;
-      });
 
       // Select any identified elements in the map.
       if (elementTraceResult != null) {
@@ -520,7 +514,15 @@ class _ValidateUtilityNetworkTopologyState
           layer.selectFeatures(features);
         }
       }
+      // Update the state with the trace results.
+      setState(() {
+        _statusTitle = 'Trace completed:';
+        _statusDetail = '$elementsCount elements found';
+        _clearEnabled = true;
+        _ready = true;
+      });
     } on ArcGISException catch (e) {
+      // If the trace fails update the status.
       showMessageDialog(e.additionalMessage, title: e.message, showOK: true);
       setState(() {
         _statusTitle = 'Trace failed:';
