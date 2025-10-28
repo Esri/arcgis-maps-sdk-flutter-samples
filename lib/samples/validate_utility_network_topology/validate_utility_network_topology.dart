@@ -47,7 +47,7 @@ class _ValidateUtilityNetworkTopologyState
   final _deviceTableName = 'Electric Distribution Device';
   // The name of the device status field in the 'Electric Distribution Device' feature table.
   final _deviceStatusField = 'devicestatus';
-  // The name of the nominal voltage field in the "Electric Distribution Line" feature table.
+  // The name of the nominal voltage field in the 'Electric Distribution Line' feature table.
   final _nominalVoltageField = 'nominalvoltage';
 
   // Capabilities of the utility network.
@@ -64,10 +64,10 @@ class _ValidateUtilityNetworkTopologyState
   // The coded values from the field's domain.
   List<CodedValue> _codedValues = [];
 
-  // The selected field coded value.
+  // The selected field's coded value.
   CodedValue? _selectedCodedValue;
 
-  // Text describing the current status of the sample workflow.
+  // Text describing the current status of the utility network.
   var _statusTitle = 'Loading webmap...';
   var _statusDetail = '';
 
@@ -265,6 +265,7 @@ class _ValidateUtilityNetworkTopologyState
   Future<void> configureUtilityNetwork() async {
     setState(() => _statusTitle = 'Loading utility network...');
 
+    // Get the utility network from the map and load.
     _utilityNetwork = _map.utilityNetworks.first;
     await _utilityNetwork.load();
 
@@ -289,7 +290,7 @@ class _ValidateUtilityNetworkTopologyState
       _map.operationalLayers.add(featureLayer);
     }
 
-    // Get the capabilities of the utility network.
+    // Get the initial capabilities of the utility network.
     setState(() {
       _utilityNetworkCanTrace =
           _utilityNetwork.definition!.capabilities.supportsTrace;
@@ -301,7 +302,7 @@ class _ValidateUtilityNetworkTopologyState
           .supportsValidateNetworkTopology;
     });
 
-    // Trace with a subnetwork controller as default starting location.
+    // Trace with a subnetwork controller as the default starting location.
     final networkSource = _utilityNetwork.definition!.getNetworkSource(
       _deviceTableName,
     );
@@ -381,7 +382,7 @@ class _ValidateUtilityNetworkTopologyState
             : _nominalVoltageField;
         final field = feature.featureTable!.getField(fieldName: fieldName);
         final codedValues = (field?.domain as CodedValueDomain?)?.codedValues;
-        // If there are valid coded values, set them to the attribute picker.
+        // If there are valid coded values, set them to the attribute picker values.
         if (codedValues == null || codedValues.isEmpty) {
           setNoFeatureIdentifiedStatus();
         }
@@ -415,17 +416,6 @@ class _ValidateUtilityNetworkTopologyState
     }
   }
 
-  void setNoFeatureIdentifiedStatus() {
-    setState(() {
-      _statusTitle = 'No feature identified. Tap on a feature to edit.';
-      _statusDetail = '';
-      _attributePickerVisible = false;
-      _clearEnabled = false;
-      _ready = true;
-    });
-    return;
-  }
-
   Future<void> getState() async {
     setState(() {
       _ready = false;
@@ -433,8 +423,8 @@ class _ValidateUtilityNetworkTopologyState
       _statusDetail = '';
     });
 
+    // Get the current state from the utility network.
     final state = await _utilityNetwork.getState();
-
     var status =
         'Has Dirty Areas: ${state.hasDirtyAreas}\nHas Errors: ${state.hasErrors}\nIs Network Topology Enabled: ${state.isNetworkTopologyEnabled}';
     if (state.hasDirtyAreas || state.hasErrors) {
@@ -460,16 +450,17 @@ class _ValidateUtilityNetworkTopologyState
       _statusTitle = 'Validating utility network topology...';
       _statusDetail = '';
     });
-    // Get the current extent.
+    // Get the current extent of the map view.
     final extent = _mapViewController
         .getCurrentViewpoint(ViewpointType.boundingGeometry)!
         .targetGeometry
         .extent;
 
-    // Get the validation result.
+    // Validate the network topology at the current extent and get the result.
     final job = _utilityNetwork.validateNetworkTopology(extent: extent);
     final result = await job.run();
 
+    // Update the UI with the validatin result.
     setState(() {
       _statusTitle = 'Utility Validation Result:';
       _statusDetail =
@@ -603,6 +594,17 @@ class _ValidateUtilityNetworkTopologyState
     });
   }
 
+  void setNoFeatureIdentifiedStatus() {
+    setState(() {
+      _statusTitle = 'No feature identified. Tap on a feature to edit.';
+      _statusDetail = '';
+      _attributePickerVisible = false;
+      _clearEnabled = false;
+      _ready = true;
+    });
+    return;
+  }
+
   void defineLabelsForLayer(
     String layerName,
     String fieldName,
@@ -650,7 +652,9 @@ class _ValidateUtilityNetworkTopologyState
                 style: Theme.of(context).textTheme.titleLarge,
               ),
               const Spacer(),
+              // Add a button to apply the edits.
               ElevatedButton(onPressed: applyEdits, child: const Text('Apply')),
+              // Add a button to cancel edits.
               TextButton(
                 child: const Text('Cancel'),
                 onPressed: () {
@@ -662,6 +666,7 @@ class _ValidateUtilityNetworkTopologyState
           ),
           Row(
             children: [
+              // Display the current field alias.
               Text(
                 _currentField?.alias ?? 'Unknown field',
                 style: Theme.of(context).textTheme.labelLarge,
@@ -670,13 +675,17 @@ class _ValidateUtilityNetworkTopologyState
           ),
           SizedBox(
             height: 200,
+            // Display a list of coded values for the seleced feature.
             child: ListView.builder(
               itemCount: _codedValues.length,
               itemBuilder: (context, index) {
                 final value = _codedValues[index];
                 return ListTile(
+                  // Update the selected value when an item is selected.
                   onTap: () => setState(() => _selectedCodedValue = value),
+                  // Display the value's name.
                   title: Text(value.name),
+                  // Display a check if the item is the currently selected coded value.
                   trailing: value == _selectedCodedValue
                       ? const Icon(Icons.check)
                       : null,
