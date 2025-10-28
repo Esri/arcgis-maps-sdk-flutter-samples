@@ -129,6 +129,8 @@ class _FilterBuildingSceneLayerState extends State<FilterBuildingSceneLayer>
           return ExpansionTile(
             title: Row(
               children: [
+                Text(categorySublayer.name),
+                const Spacer(),
                 Checkbox(
                   value: categorySublayer.isVisible,
                   onChanged: (val) {
@@ -137,7 +139,6 @@ class _FilterBuildingSceneLayerState extends State<FilterBuildingSceneLayer>
                     });
                   },
                 ),
-                Text(categorySublayer.name),
               ],
             ),
             children: items.map((item) {
