@@ -33,14 +33,77 @@ class _FilterBuildingSceneLayerState extends State<FilterBuildingSceneLayer>
   // BuildingSceneLayer that will be filtered. Set after the WebScene is loaded.
   late final BuildingSceneLayer _buildingSceneLayer;
 
+  // A flag for when the map view is ready and controls can be used.
+  var _ready = false;
+
+  var _floorList = <String>[];
+  var _selectedFloor = 'All';
+  var _settingsVisible = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       // Add a local scene view to the widget tree and set a controller.
-      body: ArcGISLocalSceneView(
-        controllerProvider: () => _localSceneViewController,
-        onLocalSceneViewReady: onLocalSceneViewReady,
+      body: SafeArea(
+        top: false,
+        left: false,
+        right: false,
+        child: Stack(
+          children: [
+            Column(
+              children: [
+                Expanded(
+                  child: ArcGISLocalSceneView(
+                    controllerProvider: () => _localSceneViewController,
+                    onLocalSceneViewReady: onLocalSceneViewReady,
+                  ),
+                ),
+                Center(
+                  child: ElevatedButton(
+                    onPressed: () => setState(() => _settingsVisible = true),
+                    child: const Text('Filter Settings'),
+                  ),
+                ),
+              ],
+            ),
+            // Display a progress indicator and prevent interaction until state is ready.
+            LoadingIndicator(visible: !_ready),
+          ],
+        ),
       ),
+      bottomSheet: _settingsVisible ? buildSettings(context) : null,
+    );
+  }
+
+  // The build method for the Settings bottom sheet.
+  Widget buildSettings(BuildContext context) {
+    return BottomSheetSettings(
+      onCloseIconPressed: () => setState(() => _settingsVisible = false),
+      settingsWidgets: (context) => [buildFloorLevelSelector()],
+    );
+  }
+
+  Widget buildFloorLevelSelector() {
+    final options = ['All'];
+    options.addAll(_floorList);
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: [
+        const Text('Floor:'),
+        DropdownButton<String>(
+          value: _selectedFloor,
+          items: options
+              .map<DropdownMenuItem<String>>(
+                (value) => DropdownMenuItem(value: value, child: Text(value)),
+              )
+              .toList(),
+          onChanged: (value) {
+            setState(() => _selectedFloor = value ?? 'All');
+            updateFloorFilters();
+          },
+        ),
+      ],
     );
   }
 
@@ -59,7 +122,46 @@ class _FilterBuildingSceneLayerState extends State<FilterBuildingSceneLayer>
             )
             as BuildingSceneLayer;
 
+    final statistics = await _buildingSceneLayer.fetchStatistics();
+    if (statistics['BldgLevel'] != null) {
+      final floorList = <String>[];
+      floorList.addAll(statistics['BldgLevel']!.mostFrequentValues);
+      floorList.sort((a, b) => int.parse(a).compareTo(int.parse(b)));
+      setState(() {
+        _floorList = floorList;
+      });
+    }
+
     // Apply the scene to the local scene view controller.
     _localSceneViewController.arcGISScene = scene;
+
+    // Set the ready state variable to true to enable the sample UI.
+    setState(() => _ready = true);
+  }
+
+  void updateFloorFilters() {
+    if (_selectedFloor == 'All') {
+      _buildingSceneLayer.activeFilter = null;
+      return;
+    }
+
+    final buildingFilter = BuildingFilter(
+      name: 'Floor filter',
+      description: 'Show selected floor and x-ray filter for lower floors.',
+      blocks: [
+        BuildingFilterBlock(
+          title: 'solid block',
+          whereClause: 'BldgLevel = $_selectedFloor',
+          mode: BuildingSolidFilterMode(),
+        ),
+        BuildingFilterBlock(
+          title: 'xray block',
+          whereClause: 'BldgLevel < $_selectedFloor',
+          mode: BuildingXrayFilterMode(),
+        ),
+      ],
+    );
+
+    _buildingSceneLayer.activeFilter = buildingFilter;
   }
 }
