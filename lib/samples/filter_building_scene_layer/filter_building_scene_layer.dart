@@ -79,11 +79,16 @@ class _FilterBuildingSceneLayerState extends State<FilterBuildingSceneLayer>
   Widget buildSettings(BuildContext context) {
     return BottomSheetSettings(
       onCloseIconPressed: () => setState(() => _settingsVisible = false),
-      settingsWidgets: (context) => [buildFloorLevelSelector()],
+      settingsWidgets: (context) => [
+        buildFloorLevelSelector(context),
+        const Divider(),
+        const Text('Categories:'),
+        buildSublayerSelector(context),
+      ],
     );
   }
 
-  Widget buildFloorLevelSelector() {
+  Widget buildFloorLevelSelector(BuildContext context) {
     final options = ['All'];
     options.addAll(_floorList);
 
@@ -107,6 +112,51 @@ class _FilterBuildingSceneLayerState extends State<FilterBuildingSceneLayer>
     );
   }
 
+  Widget buildSublayerSelector(BuildContext context) {
+    final fullModelSublayer =
+        _buildingSceneLayer.sublayers.firstWhere(
+              (sublayer) => sublayer.name == 'Full Model',
+            )
+            as BuildingGroupSublayer;
+
+    final categorySublayers = fullModelSublayer.sublayers;
+
+    return SizedBox(
+      height: 200,
+      child: ListView(
+        children: categorySublayers.map((categorySublayer) {
+          final items = (categorySublayer as BuildingGroupSublayer).sublayers;
+          return ExpansionTile(
+            title: Row(
+              children: [
+                Checkbox(
+                  value: categorySublayer.isVisible,
+                  onChanged: (val) {
+                    setState(() {
+                      categorySublayer.isVisible = val ?? false;
+                    });
+                  },
+                ),
+                Text(categorySublayer.name),
+              ],
+            ),
+            children: items.map((item) {
+              return CheckboxListTile(
+                title: Text(item.name),
+                value: item.isVisible,
+                onChanged: (val) {
+                  setState(() {
+                    item.isVisible = val ?? false;
+                  });
+                },
+              );
+            }).toList(),
+          );
+        }).toList(),
+      ),
+    );
+  }
+
   Future<void> onLocalSceneViewReady() async {
     // Create the local scene from a ArcGISOnline web scene.
     final sceneUri = Uri.parse(
@@ -126,7 +176,7 @@ class _FilterBuildingSceneLayerState extends State<FilterBuildingSceneLayer>
     if (statistics['BldgLevel'] != null) {
       final floorList = <String>[];
       floorList.addAll(statistics['BldgLevel']!.mostFrequentValues);
-      floorList.sort((a, b) => int.parse(a).compareTo(int.parse(b)));
+      floorList.sort((a, b) => int.parse(b).compareTo(int.parse(a)));
       setState(() {
         _floorList = floorList;
       });
