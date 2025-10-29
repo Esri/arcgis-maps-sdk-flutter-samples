@@ -14,14 +14,20 @@ In the filter controls, select floor and category options to filter what parts o
 
 ## How it works
 
-1. Create a scene.
-2. Create an `ArcGISLocalSceneLayer` with the URL to a building scene layer service.
-3. Add the layer to the scene's operational layers collection.
+1. Create an `ArcGISScene` with the URL to a building scene layer service.
+2. Create an `ArcGISLocalSceneView` and add the scene.
+3. Extract the `BuildingSceneLayer` from the scene.
+4. Tap the "Scene Settings" button to view the filtering options.
+5. Select a floor from the "Floor" dropdown to view the internal details of each floor.
+6. Expand the categories to show or hide individual items in the building model. The entire category may be show or hidden as well.
 
 ## Relevant API
 
-* ArcGISLocalSceneLayer
+* ArcGISLocalSceneView
 * ArcGISScene
+* BuildingFilter
+* BuildingFilterBlock
+* BuildingSceneLayer
 
 ## About the data
 

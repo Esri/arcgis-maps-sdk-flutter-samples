@@ -61,7 +61,7 @@ class _FilterBuildingSceneLayerState extends State<FilterBuildingSceneLayer>
                 Center(
                   child: ElevatedButton(
                     onPressed: () => setState(() => _settingsVisible = true),
-                    child: const Text('Filter Settings'),
+                    child: const Text('Scene Settings'),
                   ),
                 ),
               ],
