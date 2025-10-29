@@ -62,7 +62,7 @@ class _ValidateUtilityNetworkTopologyState
   Field? _currentField;
 
   // The coded values from the field's domain.
-  List<CodedValue> _codedValues = [];
+  var _codedValues = <CodedValue>[];
 
   // The selected field's coded value.
   CodedValue? _selectedCodedValue;
