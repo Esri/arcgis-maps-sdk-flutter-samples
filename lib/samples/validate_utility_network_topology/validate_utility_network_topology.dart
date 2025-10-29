@@ -105,6 +105,9 @@ class _ValidateUtilityNetworkTopologyState
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
+        top: false,
+        left: false,
+        right: false,
         child: Stack(
           children: [
             Column(
@@ -173,22 +176,33 @@ class _ValidateUtilityNetworkTopologyState
             ),
             // Display the status information from the sample actions in the UI.
             Container(
-              width: MediaQuery.sizeOf(context).width,
               padding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
               color: Colors.white.withValues(alpha: 0.95),
               child: Column(
                 spacing: 10,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(
-                    _statusTitle,
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.titleMedium,
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          _statusTitle,
+                          textAlign: TextAlign.center,
+                          style: Theme.of(context).textTheme.titleMedium,
+                        ),
+                      ),
+                    ],
                   ),
-                  Text(
-                    _statusDetail,
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.labelLarge,
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          _statusDetail,
+                          textAlign: TextAlign.center,
+                          style: Theme.of(context).textTheme.labelLarge,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
