@@ -31,15 +31,22 @@ class _FilterBuildingSceneLayerState extends State<FilterBuildingSceneLayer>
   // Create a controller for the local scene view.
   final _localSceneViewController = ArcGISLocalSceneView.createController();
 
-  // BuildingSceneLayer that will be filtered. Set after the WebScene is loaded.
+  // Building scene layer that will be filtered. Set after the WebScene is loaded.
   late final BuildingSceneLayer _buildingSceneLayer;
 
   // A flag for when the map view is ready and controls can be used.
   var _ready = false;
 
+  // A listing of all floors in the building scene layer
   var _floorList = <String>[];
+
+  // The currently selected floor.
   var _selectedFloor = 'All';
+
+  // Flag to show or hide the settings pane.
   var _settingsVisible = false;
+
+  // Building scene layer sublayer that contains the currently selected feature.
   BuildingComponentSublayer? _selectedSublayer;
 
   @override
@@ -167,6 +174,8 @@ class _FilterBuildingSceneLayerState extends State<FilterBuildingSceneLayer>
       'https://arcgisruntime.maps.arcgis.com/home/item.html?id=b7c387d599a84a50aafaece5ca139d44',
     );
     final scene = ArcGISScene.withUri(sceneUri)!;
+
+    // Load the scene so the underlying layers can be accessed.
     await scene.load();
 
     // Get the BuildingSceneLayer from the webmap.
@@ -176,6 +185,7 @@ class _FilterBuildingSceneLayerState extends State<FilterBuildingSceneLayer>
             )
             as BuildingSceneLayer;
 
+    // Get the floor listing from the statistics.
     final statistics = await _buildingSceneLayer.fetchStatistics();
     if (statistics['BldgLevel'] != null) {
       final floorList = <String>[];
@@ -200,12 +210,14 @@ class _FilterBuildingSceneLayerState extends State<FilterBuildingSceneLayer>
       _selectedSublayer = null;
     }
 
+    // Identify on the building scene layer.
     final identifyResult = await _localSceneViewController.identifyLayer(
       _buildingSceneLayer,
       screenPoint: offset,
       tolerance: 5,
     );
 
+    // Select the first identified feature and show the feature details in a popup.
     if (identifyResult.sublayerResults.isNotEmpty) {
       final sublayerResult = identifyResult.sublayerResults.first;
       if (sublayerResult.geoElements.isNotEmpty) {
@@ -222,15 +234,19 @@ class _FilterBuildingSceneLayerState extends State<FilterBuildingSceneLayer>
     }
   }
 
+  // Utility function to update the building filters based on the selected floor.
   void updateFloorFilters() {
     if (_selectedFloor == 'All') {
+      // No filtering applied if 'All' floors are selected.
       _buildingSceneLayer.activeFilter = null;
       return;
     }
 
+    // Build a building filter to show the selected floor and an xray view of the floors below.
+    // Floors above the selected floor are not shown at all.
     final buildingFilter = BuildingFilter(
       name: 'Floor filter',
-      description: 'Show selected floor and x-ray filter for lower floors.',
+      description: 'Show selected floor and xray filter for lower floors.',
       blocks: [
         BuildingFilterBlock(
           title: 'solid block',
