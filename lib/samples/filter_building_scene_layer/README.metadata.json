@@ -9,13 +9,19 @@
         "3D",
         "building scene layer",
         "layers",
-        "ArcGISLocalSceneLayer",
-        "ArcGISScene"
+        "ArcGISLocalSceneView",
+        "ArcGISScene",
+        "BuildingFilter",
+        "BuildingFilterBlock",
+        "BuildingSceneLayer"
     ],
     "redirect_from": [],
     "relevant_apis": [
-        "ArcGISLocalSceneLayer",
-        "ArcGISScene"
+        "ArcGISLocalSceneView",
+        "ArcGISScene",
+        "BuildingFilter",
+        "BuildingFilterBlock",
+        "BuildingSceneLayer"
     ],
     "snippets": [
         "filter_building_scene_layer.dart"
