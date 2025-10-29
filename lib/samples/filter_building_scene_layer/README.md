@@ -31,11 +31,8 @@ In the filter controls, select floor and category options to filter what parts o
 
 ## About the data
 
-This dataset contains more than 40,000 points representing world airports. Points are retrieved on demand by the scene layer as the user navigates the scene.
-
-## Additional information
-
-Point scene layers can also be retrieved from scene layer packages (.slpk) and mobile scene packages (.mspk).
+This Building Scene Layer represents the new Building E on the Esri Campus in Redlands CA.
+The Revit BIM model was brought into ArcGIS using the BIM capabilities in ArcGIS Pro and published to the web as Building Scene Layer.
 
 ## Tags
 

@@ -15,6 +15,7 @@
 
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
+import 'package:arcgis_maps_toolkit/arcgis_maps_toolkit.dart';
 import 'package:flutter/material.dart';
 
 class FilterBuildingSceneLayer extends StatefulWidget {
@@ -39,6 +40,7 @@ class _FilterBuildingSceneLayerState extends State<FilterBuildingSceneLayer>
   var _floorList = <String>[];
   var _selectedFloor = 'All';
   var _settingsVisible = false;
+  BuildingComponentSublayer? _selectedSublayer;
 
   @override
   Widget build(BuildContext context) {
@@ -56,6 +58,7 @@ class _FilterBuildingSceneLayerState extends State<FilterBuildingSceneLayer>
                   child: ArcGISLocalSceneView(
                     controllerProvider: () => _localSceneViewController,
                     onLocalSceneViewReady: onLocalSceneViewReady,
+                    onTap: onTap,
                   ),
                 ),
                 Center(
@@ -190,6 +193,35 @@ class _FilterBuildingSceneLayerState extends State<FilterBuildingSceneLayer>
     setState(() => _ready = true);
   }
 
+  Future<void> onTap(Offset offset) async {
+    // Clear the current selection
+    if (_selectedSublayer != null) {
+      _selectedSublayer!.clearSelection();
+      _selectedSublayer = null;
+    }
+
+    final identifyResult = await _localSceneViewController.identifyLayer(
+      _buildingSceneLayer,
+      screenPoint: offset,
+      tolerance: 5,
+    );
+
+    if (identifyResult.sublayerResults.isNotEmpty) {
+      final sublayerResult = identifyResult.sublayerResults.first;
+      if (sublayerResult.geoElements.isNotEmpty) {
+        final identifiedFeature = sublayerResult.geoElements.first as Feature;
+        final sublayer =
+            sublayerResult.layerContent as BuildingComponentSublayer;
+        sublayer.selectFeature(identifiedFeature);
+        _selectedSublayer = sublayer;
+
+        if (mounted) {
+          showFeatureDetail(context: context, feature: identifiedFeature);
+        }
+      }
+    }
+  }
+
   void updateFloorFilters() {
     if (_selectedFloor == 'All') {
       _buildingSceneLayer.activeFilter = null;
@@ -214,5 +246,49 @@ class _FilterBuildingSceneLayerState extends State<FilterBuildingSceneLayer>
     );
 
     _buildingSceneLayer.activeFilter = buildingFilter;
+  }
+
+  // Display the feature details in a Popup view in a modal bottom sheet.
+  void showFeatureDetail({
+    required BuildContext context,
+    required Feature feature,
+  }) {
+    if (!mounted) return;
+
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
+      builder: (_) => SizedBox(
+        height: MediaQuery.sizeOf(context).height * 0.7,
+        child: FeaturePopupView(
+          feature: feature,
+          onClose: () => Navigator.of(context).maybePop(),
+        ),
+      ),
+    );
+  }
+}
+
+// Widget to display the details of a single Feature.
+class FeaturePopupView extends StatelessWidget {
+  const FeaturePopupView({required this.feature, this.onClose, super.key});
+
+  // The feature to display.
+  final Feature feature;
+
+  // Optional function to call when the popup is closed.
+  final void Function()? onClose;
+
+  @override
+  Widget build(BuildContext context) {
+    // Create a PopupDefinition with a title based on the feature name.
+    final popupDefinition = PopupDefinition.withGeoElement(feature);
+    popupDefinition.title = feature.attributes['name'] as String? ?? '';
+
+    return PopupView(
+      popup: Popup(geoElement: feature, popupDefinition: popupDefinition),
+      onClose: onClose,
+    );
   }
 }
