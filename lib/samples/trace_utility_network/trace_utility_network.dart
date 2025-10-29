@@ -94,8 +94,7 @@ class _TraceUtilityNetworkState extends State<TraceUtilityNetwork>
 
   @override
   void dispose() {
-    // Resets the URL session challenge handler to use default handling
-    // and removes all credentials.
+    // Remove the TokenChallengeHandler and erase any credentials that were generated.
     ArcGISEnvironment
             .authenticationManager
             .arcGISAuthenticationChallengeHandler =
