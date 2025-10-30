@@ -465,7 +465,7 @@ class _ValidateUtilityNetworkTopologyState
     final job = _utilityNetwork.validateNetworkTopology(extent: extent);
     final result = await job.run();
 
-    // Update the UI with the validatin result.
+    // Update the UI with the validation result.
     setState(() {
       _statusTitle = 'Utility Validation Result:';
       _statusDetail =
