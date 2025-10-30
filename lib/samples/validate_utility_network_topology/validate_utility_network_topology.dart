@@ -404,8 +404,8 @@ class _ValidateUtilityNetworkTopologyState
       featureLayer.selectFeature(feature);
     }
     // Get the current field value and convert to coded value.
-    final currentFieldValue = feature.attributes[field!.name];
-    final selectedCodedValue = codedValues!.firstWhere(
+    final currentFieldValue = feature.attributes[field.name];
+    final selectedCodedValue = codedValues.firstWhere(
       (value) => value.code == currentFieldValue,
     );
     // Configure the UI ready for feature editing.
