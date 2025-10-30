@@ -392,10 +392,11 @@ class _ValidateUtilityNetworkTopologyState
         ? _deviceStatusField
         : _nominalVoltageField;
     final field = feature.featureTable!.getField(fieldName: fieldName);
-    final codedValues = (field?.domain as CodedValueDomain?)?.codedValues;
+    final codedValues = (field!.domain! as CodedValueDomain).codedValues;
     // If there are valid coded values, set them to the attribute picker values.
-    if (codedValues == null || codedValues.isEmpty) {
+    if (codedValues.isEmpty) {
       setNoFeatureIdentifiedStatus();
+      return;
     }
     // Select the feature on the map.
     if (feature.featureTable!.layer is FeatureLayer) {
