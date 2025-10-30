@@ -531,7 +531,7 @@ class _ValidateUtilityNetworkTopologyState
   }
 
   Future<void> applyEdits() async {
-    if (_selectedFeature == null) return;
+    if (_selectedFeature == null || _selectedCodedValue == null) return;
     // Get the service geodatabase and field name of the feature being edited.
     final table = _selectedFeature!.featureTable as ServiceFeatureTable?;
     if (table == null || table.serviceGeodatabase == null) return;
@@ -544,7 +544,7 @@ class _ValidateUtilityNetworkTopologyState
       _ready = false;
     });
     // Set the selected value to the feature.
-    _selectedFeature!.attributes[fieldName] = _selectedCodedValue?.code;
+    _selectedFeature!.attributes[fieldName] = _selectedCodedValue!.code;
     await table.updateFeature(_selectedFeature!);
     setState(() {
       _statusTitle = 'Applying edits...';
