@@ -607,7 +607,6 @@ class _ValidateUtilityNetworkTopologyState
       _clearEnabled = false;
       _ready = true;
     });
-    return;
   }
 
   void defineLabelsForLayer(
