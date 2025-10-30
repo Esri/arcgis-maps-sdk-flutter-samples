@@ -274,17 +274,17 @@ class _ValidateUtilityNetworkTopologyState
     await _utilityNetwork.load();
 
     // Get the service geodatabase.
-    final serviceGeodatabase = _utilityNetwork.serviceGeodatabase;
+    final serviceGeodatabase = _utilityNetwork.serviceGeodatabase!;
     // Restrict editing and tracing to a unique branch.
     final parameters = ServiceVersionParameters()
       ..name = 'ValidateNetworkTopology_${Guid()}'
       ..access = VersionAccess.private
       ..description = 'Validate network topology with ArcGIS Maps SDK';
-    final serviceVersionInfo = await serviceGeodatabase?.createVersion(
+    final serviceVersionInfo = await serviceGeodatabase.createVersion(
       newVersion: parameters,
     );
-    await serviceGeodatabase?.switchVersion(
-      versionName: serviceVersionInfo!.name,
+    await serviceGeodatabase.switchVersion(
+      versionName: serviceVersionInfo.name,
     );
 
     // Add the dirty area table to the map to visualize it.
@@ -339,14 +339,13 @@ class _ValidateUtilityNetworkTopologyState
     _mapViewController.graphicsOverlays.add(graphicsOverlay);
 
     // Set the configuration to stop traversing on an open device.
-    final domainNetwork = _utilityNetwork.definition!.getDomainNetwork(
-      'ElectricDistribution',
-    );
-    final sourceTier = domainNetwork?.getTier('Medium Voltage Radial');
+    final sourceTier = _utilityNetwork.definition!
+        .getDomainNetwork('ElectricDistribution')!
+        .getTier('Medium Voltage Radial')!;
     _traceParameters = UtilityTraceParameters(
       UtilityTraceType.downstream,
       startingLocations: [startingLocation],
-    )..traceConfiguration = sourceTier?.getDefaultTraceConfiguration();
+    )..traceConfiguration = sourceTier.getDefaultTraceConfiguration();
   }
 
   Future<void> onTap(Offset tappedLocation) async {
@@ -364,60 +363,62 @@ class _ValidateUtilityNetworkTopologyState
       screenPoint: tappedLocation,
       tolerance: 5,
     );
-    if (identifyResults.isNotEmpty) {
-      // Check for a result in the specified tables.
-      final identifyLayerResult = identifyResults
-          .where(
-            (result) =>
-                result.layerContent.name == _deviceTableName ||
-                result.layerContent.name == _lineTableName,
-          )
-          .firstOrNull;
 
-      if (identifyLayerResult != null &&
-          identifyLayerResult.geoElements.isNotEmpty) {
-        // Get the first feature from the results.
-        final feature = identifyLayerResult.geoElements.first as ArcGISFeature;
-        await feature.load();
-        if (feature.featureTable == null) setNoFeatureIdentifiedStatus();
-        // Get the coded values from the feature's field.
-        final fieldName = feature.featureTable!.tableName == _deviceTableName
-            ? _deviceStatusField
-            : _nominalVoltageField;
-        final field = feature.featureTable!.getField(fieldName: fieldName);
-        final codedValues = (field?.domain as CodedValueDomain?)?.codedValues;
-        // If there are valid coded values, set them to the attribute picker values.
-        if (codedValues == null || codedValues.isEmpty) {
-          setNoFeatureIdentifiedStatus();
-        }
-        // Select the feature on the map.
-        if (feature.featureTable!.layer is FeatureLayer) {
-          final featureLayer = feature.featureTable!.layer! as FeatureLayer;
-          featureLayer.selectFeature(feature);
-        }
-        // Get the current field value and convert to coded value.
-        final currentFieldValue = feature.attributes[field!.name];
-        final selectedCodedValue = codedValues!.firstWhere(
-          (value) => value.code == currentFieldValue,
-        );
-        // Configure the UI ready for feature editing.
-        setState(() {
-          _codedValues = codedValues;
-          _selectedCodedValue = selectedCodedValue;
-          _currentField = field;
-          _selectedFeature = feature;
-          _statusTitle = "Select a new '${field.alias}'.";
-          _statusDetail = '';
-          _clearEnabled = true;
-          _attributePickerVisible = true;
-          _ready = true;
-        });
-      } else {
-        setNoFeatureIdentifiedStatus();
-      }
-    } else {
+    if (identifyResults.isEmpty) {
+      setNoFeatureIdentifiedStatus();
+      return;
+    }
+
+    // Check for a result in the specified tables.
+    final identifyLayerResult = identifyResults
+        .where(
+          (result) =>
+              result.layerContent.name == _deviceTableName ||
+              result.layerContent.name == _lineTableName,
+        )
+        .firstOrNull;
+
+    if (identifyLayerResult == null ||
+        identifyLayerResult.geoElements.isEmpty) {
+      setNoFeatureIdentifiedStatus();
+      return;
+    }
+
+    // Get the first feature from the results.
+    final feature = identifyLayerResult.geoElements.first as ArcGISFeature;
+    await feature.load();
+    // Get the coded values from the feature's field.
+    final fieldName = feature.featureTable!.tableName == _deviceTableName
+        ? _deviceStatusField
+        : _nominalVoltageField;
+    final field = feature.featureTable!.getField(fieldName: fieldName);
+    final codedValues = (field?.domain as CodedValueDomain?)?.codedValues;
+    // If there are valid coded values, set them to the attribute picker values.
+    if (codedValues == null || codedValues.isEmpty) {
       setNoFeatureIdentifiedStatus();
     }
+    // Select the feature on the map.
+    if (feature.featureTable!.layer is FeatureLayer) {
+      final featureLayer = feature.featureTable!.layer! as FeatureLayer;
+      featureLayer.selectFeature(feature);
+    }
+    // Get the current field value and convert to coded value.
+    final currentFieldValue = feature.attributes[field!.name];
+    final selectedCodedValue = codedValues!.firstWhere(
+      (value) => value.code == currentFieldValue,
+    );
+    // Configure the UI ready for feature editing.
+    setState(() {
+      _codedValues = codedValues;
+      _selectedCodedValue = selectedCodedValue;
+      _currentField = field;
+      _selectedFeature = feature;
+      _statusTitle = "Select a new '${field.alias}'.";
+      _statusDetail = '';
+      _clearEnabled = true;
+      _attributePickerVisible = true;
+      _ready = true;
+    });
   }
 
   Future<void> getState() async {
