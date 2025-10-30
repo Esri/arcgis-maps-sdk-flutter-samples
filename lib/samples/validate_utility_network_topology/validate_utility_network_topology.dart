@@ -123,51 +123,42 @@ class _ValidateUtilityNetworkTopologyState
                 // Configure buttons to perform the actions of the sample.
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 5),
-                  child: Column(
+                  child: Wrap(
+                    spacing: 10,
                     children: [
-                      Row(
-                        spacing: 10,
-                        children: [
-                          Expanded(
-                            // A button to get the state from the utility network.
-                            child: ElevatedButton(
-                              onPressed: _utilityNetworkCanGetState
-                                  ? getState
-                                  : null,
-                              child: const Text('Get State'),
-                            ),
-                          ),
-                          Expanded(
-                            // A button to validate the utility network.
-                            child: ElevatedButton(
-                              onPressed: _utilityNetworkCanValidate
-                                  ? validate
-                                  : null,
-                              child: const Text('Validate'),
-                            ),
-                          ),
-                        ],
+                      SizedBox(
+                        width: 200,
+                        child: ElevatedButton(
+                          onPressed: _utilityNetworkCanGetState
+                              ? getState
+                              : null,
+                          child: const Text('Get State'),
+                        ),
                       ),
-                      Row(
-                        spacing: 10,
-                        children: [
-                          Expanded(
-                            // A button to perform a utility network trace.
-                            child: ElevatedButton(
-                              onPressed: _utilityNetworkCanTrace
-                                  ? performTrace
-                                  : null,
-                              child: const Text('Trace'),
-                            ),
-                          ),
-                          Expanded(
-                            // A button to clear selections from the map and reset the UI.
-                            child: ElevatedButton(
-                              onPressed: _clearEnabled ? clearAndReset : null,
-                              child: const Text('Clear'),
-                            ),
-                          ),
-                        ],
+                      SizedBox(
+                        width: 200,
+                        child: ElevatedButton(
+                          onPressed: _utilityNetworkCanValidate
+                              ? validate
+                              : null,
+                          child: const Text('Validate'),
+                        ),
+                      ),
+                      SizedBox(
+                        width: 200,
+                        child: ElevatedButton(
+                          onPressed: _utilityNetworkCanTrace
+                              ? performTrace
+                              : null,
+                          child: const Text('Trace'),
+                        ),
+                      ),
+                      SizedBox(
+                        width: 200,
+                        child: ElevatedButton(
+                          onPressed: _clearEnabled ? clearAndReset : null,
+                          child: const Text('Clear'),
+                        ),
                       ),
                     ],
                   ),
