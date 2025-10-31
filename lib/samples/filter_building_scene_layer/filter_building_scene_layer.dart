@@ -98,6 +98,7 @@ class _FilterBuildingSceneLayerState extends State<FilterBuildingSceneLayer>
     );
   }
 
+  // The build method for the floor selection widget.
   Widget buildFloorLevelSelector(BuildContext context) {
     final options = ['All'];
     options.addAll(_floorList);
@@ -122,20 +123,25 @@ class _FilterBuildingSceneLayerState extends State<FilterBuildingSceneLayer>
     );
   }
 
+  // The build method for the expandable sublayer selection widget.
   Widget buildSublayerSelector(BuildContext context) {
+    // Get the sublayer group for the full building model
     final fullModelSublayer =
         _buildingSceneLayer.sublayers.firstWhere(
               (sublayer) => sublayer.name == 'Full Model',
             )
             as BuildingGroupSublayer;
 
+    // The top-level sublayer groups will be the categories.
     final categorySublayers = fullModelSublayer.sublayers;
 
+    // Build and return the expandable sublayer list.
     return SizedBox(
       height: 200,
       child: ListView(
         children: categorySublayers.map((categorySublayer) {
-          final items = (categorySublayer as BuildingGroupSublayer).sublayers;
+          final componentSublayers =
+              (categorySublayer as BuildingGroupSublayer).sublayers;
           return ExpansionTile(
             title: Row(
               children: [
@@ -151,13 +157,13 @@ class _FilterBuildingSceneLayerState extends State<FilterBuildingSceneLayer>
                 ),
               ],
             ),
-            children: items.map((item) {
+            children: componentSublayers.map((componentSublayer) {
               return CheckboxListTile(
-                title: Text(item.name),
-                value: item.isVisible,
+                title: Text(componentSublayer.name),
+                value: componentSublayer.isVisible,
                 onChanged: (val) {
                   setState(() {
-                    item.isVisible = val ?? false;
+                    componentSublayer.isVisible = val ?? false;
                   });
                 },
               );
@@ -261,6 +267,7 @@ class _FilterBuildingSceneLayerState extends State<FilterBuildingSceneLayer>
       ],
     );
 
+    // Apply the filter to the building scene layer.
     _buildingSceneLayer.activeFilter = buildingFilter;
   }
 
