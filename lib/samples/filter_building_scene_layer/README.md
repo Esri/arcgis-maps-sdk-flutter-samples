@@ -6,7 +6,9 @@ Explore details of a building scene by using filters and sublayer visiblity.
 
 ## Use case
 
-Buildings in a building scene layer are composed of sublayers containing internal and external details of the structure. Sublayers may include structural components like columns, architectural components like floors and windows, and electrical components. The features in the building scene layer can be filtered using building filters. These filters are built using filter blocks, which can be used to define a set of conditions to customize the filter. In addition, toggling the visibility of each sublayer can be helpful to show or hide parts of the entire sublayer. Individual features of the building can be selected to view the feature's attributes.
+Buildings in a building scene layer can be very complex models composed of sublayers containing internal and external features of the structure. Sublayers may include structural components like columns, architectural components like floors and windows, and electrical components. 
+
+Applying filters to the building scene layer can highlight features of interest in the model. Filters are made up of filter blocks, which contain several properties that allow control over the filter's function. Setting the filter mode to X-Ray for instance, will render features with a semi-transparent white color so other interior features can be seen. In addition, toggling the visibility of sublayers can show or hide all the features of a sublayer.
 
 ## How to use the sample
 
