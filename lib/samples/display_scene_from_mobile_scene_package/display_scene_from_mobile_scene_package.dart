@@ -39,11 +39,10 @@ class _DisplaySceneFromMobileScenePackageState
   Widget build(BuildContext context) {
     return Scaffold(
       // Add a scene view to the widget tree and set a controller.
-      body: 
-          ArcGISSceneView(
-            controllerProvider: () => _sceneViewController,
-            onSceneViewReady: onSceneViewReady,
-          ),
+      body: ArcGISSceneView(
+        controllerProvider: () => _sceneViewController,
+        onSceneViewReady: onSceneViewReady,
+      ),
     );
   }
 

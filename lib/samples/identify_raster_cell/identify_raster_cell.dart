@@ -118,9 +118,7 @@ class _IdentifyRasterCellState extends State<IdentifyRasterCell>
   Future<void> loadRasterLayer() async {
     final listPaths = GoRouter.of(context).state.extra! as List<String>;
     // Create a Raster from the local tif file.
-    final raster = Raster.withFileUri(
-      Uri.file(listPaths.first),
-    );
+    final raster = Raster.withFileUri(Uri.file(listPaths.first));
     // Create a Raster Layer.
     _rasterLayer = RasterLayer.withRaster(raster);
     // Load the Raster Layer.

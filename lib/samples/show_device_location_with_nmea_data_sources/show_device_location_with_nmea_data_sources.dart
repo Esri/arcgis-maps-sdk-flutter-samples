@@ -297,8 +297,6 @@ class NmeaLocationDetails extends StatelessWidget {
       ],
     );
   }
-
-  
 }
 
 // Extension on NmeaGnssSystem to provide a readable label.

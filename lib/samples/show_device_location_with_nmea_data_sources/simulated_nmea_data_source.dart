@@ -14,9 +14,12 @@
 //
 import 'dart:async';
 import 'package:async/async.dart';
+
 class SimulatedNmeaDataSource {
-  SimulatedNmeaDataSource(this.nmeaSentences, {Duration interval = const Duration(seconds: 1)})
-    : _interval = interval {
+  SimulatedNmeaDataSource(
+    this.nmeaSentences, {
+    Duration interval = const Duration(seconds: 1),
+  }) : _interval = interval {
     _nmeaMessagesController.onListen = _start;
     _nmeaMessagesController.onCancel = _shutdown;
 
@@ -97,6 +100,4 @@ class SimulatedNmeaDataSource {
     if (_timer.isActive) _timer.cancel();
     _running = false;
   }
-
- 
 }
