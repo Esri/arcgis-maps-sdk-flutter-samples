@@ -37,9 +37,9 @@ class _AddPointCloudLayerFromFileState extends State<AddPointCloudLayerFromFile>
   Widget build(BuildContext context) {
     return Scaffold(
       body: ArcGISSceneView(
-            controllerProvider: () => _sceneViewController,
-            onSceneViewReady: onSceneViewReady,
-          ),      
+        controllerProvider: () => _sceneViewController,
+        onSceneViewReady: onSceneViewReady,
+      ),
     );
   }
 

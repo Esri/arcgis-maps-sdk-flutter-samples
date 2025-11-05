@@ -57,7 +57,7 @@ class _DownloadableResourcesPageState extends State<DownloadableResourcesPage> {
   var _isCancelled = false;
   var _progress = 0.0;
   var _shouldShowUI = true;
-  
+
   // To manage cancellation of download
   CancelableOperation<List<ResponseInfo>>? _cancelableDownload;
 
@@ -73,7 +73,7 @@ class _DownloadableResourcesPageState extends State<DownloadableResourcesPage> {
     if (!_shouldShowUI) {
       return const Center(child: CircularProgressIndicator());
     }
-    
+
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.sampleTitle),
@@ -124,10 +124,10 @@ class _DownloadableResourcesPageState extends State<DownloadableResourcesPage> {
               Visibility(
                 visible: _isComplete,
                 child: Text(
-                      'The resources have been downloaded.',
-                      style: Theme.of(context).textTheme.bodySmall,
-                      textAlign: TextAlign.center,
-                    ),
+                  'The resources have been downloaded.',
+                  style: Theme.of(context).textTheme.bodySmall,
+                  textAlign: TextAlign.center,
+                ),
               ),
               // Button [Download|Cancel|Open]
               const SizedBox(height: 20),
@@ -137,9 +137,7 @@ class _DownloadableResourcesPageState extends State<DownloadableResourcesPage> {
                     : _isComplete
                     ? _openSample
                     : _startDownload,
-                child: Text(
-                  _isDownloading ? 'Cancel' : 'Download',
-                ),
+                child: Text(_isDownloading ? 'Cancel' : 'Download'),
               ),
             ],
           ),
@@ -167,7 +165,7 @@ class _DownloadableResourcesPageState extends State<DownloadableResourcesPage> {
         _progress = 1.0;
         _shouldShowUI = false;
       });
-      
+
       // if the data has been downloaded, directly open the sample.
       if (mounted) {
         unawaited(_openSample());

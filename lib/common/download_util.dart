@@ -50,7 +50,7 @@ Future<List<ResponseInfo>> downloadSampleDataWithProgress({
     if (shouldCancel?.call() ?? false) {
       break;
     }
-    
+
     final itemId = itemIds[i];
     final destinationFile = destinationFiles[i];
     onProgress?.call(0);
