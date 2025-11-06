@@ -18,6 +18,7 @@ import 'dart:typed_data';
 
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/common/token_challenger_handler.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 
@@ -69,7 +70,7 @@ class _ShowUtilityAssociationsState extends State<ShowUtilityAssociations>
     // This is done solely for the sake of the sample.
     ArcGISEnvironment
         .authenticationManager
-        .arcGISAuthenticationChallengeHandler = _TokenChallengeHandler(
+        .arcGISAuthenticationChallengeHandler = TokenChallengeHandler(
       'viewer01',
       'I68VGU^nMurF',
     );
@@ -77,8 +78,7 @@ class _ShowUtilityAssociationsState extends State<ShowUtilityAssociations>
 
   @override
   void dispose() {
-    // Resets the URL session challenge handler to use default handling
-    // and removes all credentials.
+    // Remove the TokenChallengeHandler and erase any credentials that were generated.
     ArcGISEnvironment
             .authenticationManager
             .arcGISAuthenticationChallengeHandler =
@@ -256,25 +256,6 @@ class _ShowUtilityAssociationsState extends State<ShowUtilityAssociations>
         ),
       ),
     );
-  }
-}
-
-// Handle the token authentication challenge callback.
-class _TokenChallengeHandler implements ArcGISAuthenticationChallengeHandler {
-  _TokenChallengeHandler(this.username, this.password);
-  final String username;
-  final String password;
-
-  @override
-  Future<void> handleArcGISAuthenticationChallenge(
-    ArcGISAuthenticationChallenge challenge,
-  ) async {
-    final credential = await TokenCredential.createWithChallenge(
-      challenge,
-      username: username,
-      password: password,
-    );
-    challenge.continueWithCredential(credential);
   }
 }
 

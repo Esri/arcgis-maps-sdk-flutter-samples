@@ -38,7 +38,6 @@ typedef SampleData = ({
 class _FindRouteInMobileMapPackageState
     extends State<FindRouteInMobileMapPackage>
     with SampleStateSupport {
-  
   late Future<List<MobileMapPackage>> _mobileMapPackage;
   @override
   void initState() {

@@ -15,6 +15,7 @@
 
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/common/token_challenger_handler.dart';
 import 'package:flutter/material.dart';
 
 class RunValveIsolationTrace extends StatefulWidget {
@@ -87,7 +88,7 @@ class _RunValveIsolationTraceState extends State<RunValveIsolationTrace>
     // This is done solely for the sake of the sample.
     ArcGISEnvironment
         .authenticationManager
-        .arcGISAuthenticationChallengeHandler = _TokenChallengeHandler(
+        .arcGISAuthenticationChallengeHandler = TokenChallengeHandler(
       'viewer01',
       'I68VGU^nMurF',
     );
@@ -557,24 +558,5 @@ class _RunValveIsolationTraceState extends State<RunValveIsolationTrace>
           'Tap on the map to add filter barriers, or run the trace directly without filter barriers.';
       _resetEnabled = false;
     });
-  }
-}
-
-// Handle the token authentication challenge callback.
-class _TokenChallengeHandler implements ArcGISAuthenticationChallengeHandler {
-  _TokenChallengeHandler(this.username, this.password);
-  final String username;
-  final String password;
-
-  @override
-  Future<void> handleArcGISAuthenticationChallenge(
-    ArcGISAuthenticationChallenge challenge,
-  ) async {
-    final credential = await TokenCredential.createWithChallenge(
-      challenge,
-      username: username,
-      password: password,
-    );
-    challenge.continueWithCredential(credential);
   }
 }
