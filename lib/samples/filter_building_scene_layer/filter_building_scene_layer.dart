@@ -81,96 +81,18 @@ class _FilterBuildingSceneLayerState extends State<FilterBuildingSceneLayer>
           ],
         ),
       ),
-      bottomSheet: _settingsVisible ? buildSettings(context) : null,
-    );
-  }
-
-  // The build method for the Settings bottom sheet.
-  Widget buildSettings(BuildContext context) {
-    return BottomSheetSettings(
-      onCloseIconPressed: () => setState(() => _settingsVisible = false),
-      settingsWidgets: (context) => [
-        buildFloorLevelSelector(context),
-        const Divider(),
-        const Text('Categories:'),
-        buildSublayerSelector(context),
-      ],
-    );
-  }
-
-  // The build method for the floor selection widget.
-  Widget buildFloorLevelSelector(BuildContext context) {
-    final options = ['All'];
-    options.addAll(_floorList);
-
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: [
-        const Text('Floor:'),
-        DropdownButton<String>(
-          value: _selectedFloor,
-          items: options
-              .map<DropdownMenuItem<String>>(
-                (value) => DropdownMenuItem(value: value, child: Text(value)),
-              )
-              .toList(),
-          onChanged: (value) {
-            setState(() => _selectedFloor = value ?? 'All');
-            updateFloorFilters();
-          },
-        ),
-      ],
-    );
-  }
-
-  // The build method for the expandable sublayer selection widget.
-  Widget buildSublayerSelector(BuildContext context) {
-    // Get the sublayer group for the full building model
-    final fullModelSublayer =
-        _buildingSceneLayer.sublayers.firstWhere(
-              (sublayer) => sublayer.name == 'Full Model',
+      bottomSheet: _settingsVisible
+          ? FilterSettingsSheet(
+              floorList: _floorList,
+              selectedFloor: _selectedFloor,
+              onFloorChanged: (floor) {
+                setState(() => _selectedFloor = floor);
+                updateFloorFilters();
+              },
+              onClose: () => setState(() => _settingsVisible = false),
+              buildingSceneLayer: _buildingSceneLayer,
             )
-            as BuildingGroupSublayer;
-
-    // The top-level sublayer groups will be the categories.
-    final categorySublayers = fullModelSublayer.sublayers;
-
-    // Build and return the expandable sublayer list.
-    return SizedBox(
-      height: 200,
-      child: ListView(
-        children: categorySublayers.map((categorySublayer) {
-          final componentSublayers =
-              (categorySublayer as BuildingGroupSublayer).sublayers;
-          return ExpansionTile(
-            title: Row(
-              children: [
-                Text(categorySublayer.name),
-                const Spacer(),
-                Checkbox(
-                  value: categorySublayer.isVisible,
-                  onChanged: (val) {
-                    setState(() {
-                      categorySublayer.isVisible = val ?? false;
-                    });
-                  },
-                ),
-              ],
-            ),
-            children: componentSublayers.map((componentSublayer) {
-              return CheckboxListTile(
-                title: Text(componentSublayer.name),
-                value: componentSublayer.isVisible,
-                onChanged: (val) {
-                  setState(() {
-                    componentSublayer.isVisible = val ?? false;
-                  });
-                },
-              );
-            }).toList(),
-          );
-        }).toList(),
-      ),
+          : null,
     );
   }
 
@@ -288,6 +210,134 @@ class _FilterBuildingSceneLayerState extends State<FilterBuildingSceneLayer>
           feature: feature,
           onClose: () => Navigator.of(context).maybePop(),
         ),
+      ),
+    );
+  }
+}
+
+// The filter setting bottom sheet that allows the user to select the building
+// floor feature sublayers.
+class FilterSettingsSheet extends StatelessWidget {
+  const FilterSettingsSheet({
+    required this.floorList,
+    required this.selectedFloor,
+    required this.onFloorChanged,
+    required this.onClose,
+    required this.buildingSceneLayer,
+    super.key,
+  });
+
+  final List<String> floorList;
+  final String selectedFloor;
+  final ValueChanged<String> onFloorChanged;
+  final VoidCallback onClose;
+  final BuildingSceneLayer buildingSceneLayer;
+
+  @override
+  Widget build(BuildContext context) {
+    return BottomSheetSettings(
+      onCloseIconPressed: onClose,
+      settingsWidgets: (context) => [
+        _FloorLevelSelector(
+          floorList: floorList,
+          selectedFloor: selectedFloor,
+          onChanged: onFloorChanged,
+        ),
+        const Divider(),
+        const Text('Categories:'),
+        _SublayerSelector(buildingSceneLayer: buildingSceneLayer),
+      ],
+    );
+  }
+}
+
+// Widget to list and select building floor.
+class _FloorLevelSelector extends StatelessWidget {
+  const _FloorLevelSelector({
+    required this.floorList,
+    required this.selectedFloor,
+    required this.onChanged,
+  });
+
+  final List<String> floorList;
+  final String selectedFloor;
+  final ValueChanged<String> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final options = ['All', ...floorList];
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: [
+        const Text('Floor:'),
+        DropdownButton<String>(
+          value: selectedFloor,
+          items: options
+              .map(
+                (value) => DropdownMenuItem(value: value, child: Text(value)),
+              )
+              .toList(),
+          onChanged: (value) {
+            if (value != null) onChanged(value);
+          },
+        ),
+      ],
+    );
+  }
+}
+
+// Widget to show and select building sublayers.
+class _SublayerSelector extends StatefulWidget {
+  const _SublayerSelector({required this.buildingSceneLayer});
+  final BuildingSceneLayer buildingSceneLayer;
+
+  @override
+  State<_SublayerSelector> createState() => _SublayerSelectorState();
+}
+
+class _SublayerSelectorState extends State<_SublayerSelector> {
+  @override
+  Widget build(BuildContext context) {
+    final fullModelSublayer =
+        widget.buildingSceneLayer.sublayers.firstWhere(
+              (sublayer) => sublayer.name == 'Full Model',
+            )
+            as BuildingGroupSublayer;
+    final categorySublayers = fullModelSublayer.sublayers;
+    return SizedBox(
+      height: 200,
+      child: ListView(
+        children: categorySublayers.map((categorySublayer) {
+          final componentSublayers =
+              (categorySublayer as BuildingGroupSublayer).sublayers;
+          return ExpansionTile(
+            title: Row(
+              children: [
+                Text(categorySublayer.name),
+                const Spacer(),
+                Checkbox(
+                  value: categorySublayer.isVisible,
+                  onChanged: (val) {
+                    setState(() {
+                      categorySublayer.isVisible = val ?? false;
+                    });
+                  },
+                ),
+              ],
+            ),
+            children: componentSublayers.map((componentSublayer) {
+              return CheckboxListTile(
+                title: Text(componentSublayer.name),
+                value: componentSublayer.isVisible,
+                onChanged: (val) {
+                  setState(() {
+                    componentSublayer.isVisible = val ?? false;
+                  });
+                },
+              );
+            }).toList(),
+          );
+        }).toList(),
       ),
     );
   }
