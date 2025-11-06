@@ -17,9 +17,9 @@ In the filter controls, select floor and category options to filter what parts o
 1. Create a `ArcGISScene` with the URL to a Building Scene Layer service.
 2. Create a `ArcGISLocalSceneView` and add the scene.
 3. Retrieve the `BuildingSceneLayer` from the scene's operational layers.
-4. When a floor is selected, a `BuildingFilter` is created with two `BuildingFilterBlocks`. One hightlighs the selcted floor and hides the floors above, the second applies an x-ray view style to the floors below the selected floor.
+4. When a floor is selected, a `BuildingFilter` is created with two `BuildingFilterBlocks`. One highlights the selected floor and hides the floors above, the second applies an x-ray view style to the floors below the selected floor.
 5. Apply the filter to the `activeFilter` of the `BuildingSceneLayer` to view the changes to the model.
-6. Select or deselect categories or sublayers to toggle the visibilty of the features in those sublayers.
+6. Select or deselect categories or sublayers to toggle the visibility of the features in those sublayers.
 7. Tap on the building features to perform an identify operation on the `BuildingSceneLayer`. If a feature is identified, a popup with the feature's attribute will be displayed.
 
 ## Relevant API
