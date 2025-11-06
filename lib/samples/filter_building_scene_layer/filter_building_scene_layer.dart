@@ -36,7 +36,7 @@ class _FilterBuildingSceneLayerState extends State<FilterBuildingSceneLayer>
   // A flag for when the map view is ready and controls can be used.
   var _ready = false;
 
-  // A listing of all floors in the building scene layer
+  // A listing of all floors in the building scene layer.
   var _floorList = <String>[];
 
   // The currently selected floor.
@@ -51,7 +51,6 @@ class _FilterBuildingSceneLayerState extends State<FilterBuildingSceneLayer>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // Add a local scene view to the widget tree and set a controller.
       body: SafeArea(
         top: false,
         left: false,
@@ -61,6 +60,7 @@ class _FilterBuildingSceneLayerState extends State<FilterBuildingSceneLayer>
             Column(
               children: [
                 Expanded(
+                  // Add a local scene view to the widget tree and set a controller.
                   child: ArcGISLocalSceneView(
                     controllerProvider: () => _localSceneViewController,
                     onLocalSceneViewReady: onLocalSceneViewReady,
@@ -68,6 +68,7 @@ class _FilterBuildingSceneLayerState extends State<FilterBuildingSceneLayer>
                   ),
                 ),
                 Center(
+                  // Button to show the building filter settings sheet.
                   child: ElevatedButton(
                     onPressed: () => setState(() => _settingsVisible = true),
                     child: const Text('Building Filter Settings'),
@@ -80,6 +81,7 @@ class _FilterBuildingSceneLayerState extends State<FilterBuildingSceneLayer>
           ],
         ),
       ),
+      // Bottom sheet that displays the building filter settings.
       bottomSheet: _settingsVisible
           ? FilterSettingsSheet(
               floorList: _floorList,
@@ -106,11 +108,9 @@ class _FilterBuildingSceneLayerState extends State<FilterBuildingSceneLayer>
     await scene.load();
 
     // Get the BuildingSceneLayer from the webmap.
-    _buildingSceneLayer =
-        scene.operationalLayers.firstWhere(
-              (layer) => layer is BuildingSceneLayer,
-            )
-            as BuildingSceneLayer;
+    _buildingSceneLayer = scene.operationalLayers
+        .whereType<BuildingSceneLayer>()
+        .first;
 
     // Get the floor listing from the statistics.
     final statistics = await _buildingSceneLayer.fetchStatistics();
@@ -131,7 +131,7 @@ class _FilterBuildingSceneLayerState extends State<FilterBuildingSceneLayer>
   }
 
   Future<void> onTap(Offset offset) async {
-    // Clear the current selection
+    // Clear the current selection.
     if (_selectedSublayer != null) {
       _selectedSublayer!.clearSelection();
       _selectedSublayer = null;
@@ -141,7 +141,7 @@ class _FilterBuildingSceneLayerState extends State<FilterBuildingSceneLayer>
     final identifyResult = await _localSceneViewController.identifyLayer(
       _buildingSceneLayer,
       screenPoint: offset,
-      tolerance: 5,
+      tolerance: 12,
     );
 
     // Select the first identified feature and show the feature details in a popup.
@@ -197,8 +197,6 @@ class _FilterBuildingSceneLayerState extends State<FilterBuildingSceneLayer>
     required BuildContext context,
     required Feature feature,
   }) {
-    if (!mounted) return;
-
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
