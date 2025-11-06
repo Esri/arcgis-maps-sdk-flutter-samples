@@ -1,6 +1,6 @@
 {
     "category": "Layers",
-    "description": "Explore details of a building scene layer using filters.",
+    "description": "Explore details of a building scene by using filters and sublayer visibility.",
     "ignore": false,
     "images": [
         "filter_building_scene_layer.png"
@@ -11,6 +11,7 @@
         "layers",
         "ArcGISLocalSceneView",
         "ArcGISScene",
+        "BuildingComponentSublayer",
         "BuildingFilter",
         "BuildingFilterBlock",
         "BuildingSceneLayer"
@@ -19,6 +20,7 @@
     "relevant_apis": [
         "ArcGISLocalSceneView",
         "ArcGISScene",
+        "BuildingComponentSublayer",
         "BuildingFilter",
         "BuildingFilterBlock",
         "BuildingSceneLayer"
