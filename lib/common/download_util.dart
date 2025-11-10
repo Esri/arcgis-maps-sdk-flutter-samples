@@ -25,14 +25,15 @@ const portal = 'https://arcgis.com';
 /// Parameters:
 /// - [itemIds]: A list of Portal Item IDs to be downloaded.
 /// - [destinationFiles]: A list of files where the downloaded data will be written.
-/// - [onProgress] is called with a value from 0.0 to 1.0 as the download progresses.
-/// - [shouldCancel]: Optional callback that returns true if the operation should be cancelled.
+/// - [requestCancelToken]: downloads can be cancelled via this token.
+/// - [onProgress] is called with a value from 0 to 100 as the download progresses.
 Future<List<ResponseInfo>> downloadSampleDataWithProgress({
   required List<String> itemIds,
   required List<File> destinationFiles,
-  void Function(double progress)? onProgress,
-  bool Function()? shouldCancel,
+  required RequestCancelToken requestCancelToken,
+  void Function(int progress)? onProgress,
 }) async {
+  var currentProgress = 0;
   final responses = <ResponseInfo>[];
   final totalItems = itemIds.length;
   if (totalItems != destinationFiles.length) {
@@ -41,19 +42,16 @@ Future<List<ResponseInfo>> downloadSampleDataWithProgress({
       '${itemIds.length} != ${destinationFiles.length}',
     );
   } else if (totalItems == 0) {
-    onProgress?.call(1);
+    onProgress?.call(100);
     return <ResponseInfo>[];
   }
 
-  for (var i = 0; i < itemIds.length; i++) {
-    // Check for cancellation before processing each item
-    if (shouldCancel?.call() ?? false) {
-      break;
-    }
+  onProgress?.call(currentProgress);
 
+  final zipFiles = <File>[];
+  for (var i = 0; i < itemIds.length; i++) {
     final itemId = itemIds[i];
     final destinationFile = destinationFiles[i];
-    onProgress?.call(0);
 
     final requestUri = Uri.parse(
       '$portal/sharing/rest/content/items/$itemId/data',
@@ -62,44 +60,36 @@ Future<List<ResponseInfo>> downloadSampleDataWithProgress({
       requestUri,
       destinationFile.uri,
       requestInfo: RequestInfo(
+        requestCancelToken: requestCancelToken,
         onReceiveProgress: (bytesReceived, totalBytes) {
-          // Check for cancellation during progress updates
-          if (shouldCancel?.call() ?? false) {
-            onProgress = null;
-            return;
-          }
           if (onProgress != null) {
             // Calculate progress: completed items + current item progress
             final completedItems = i;
-            final currentItemProgress = truncateTo2Decimals(
-              bytesReceived / (totalBytes ?? 1),
-            );
+            final currentItemProgress = bytesReceived / (totalBytes ?? 1);
             final overallProgress =
                 (completedItems + currentItemProgress) / totalItems;
-            onProgress!(truncateTo2Decimals(overallProgress));
+
+            final nextProgress = (overallProgress * 100).round();
+            if (nextProgress != currentProgress) {
+              currentProgress = nextProgress;
+              onProgress(nextProgress);
+            }
           }
         },
       ),
     );
 
-    // Check for cancellation before extracting zip
-    if (shouldCancel?.call() ?? false) {
-      break;
-    }
-
     if (destinationFile.path.contains('.zip')) {
-      // If the data is a zip we need to extract it.
-      await extractZipArchive(destinationFile);
+      zipFiles.add(destinationFile);
     }
     responses.add(response);
   }
 
-  return responses;
-}
+  // Decompress any zip files received.
+  await Future.wait(zipFiles.map(extractZipArchive));
 
-/// Truncate a double to two decimal digits (does not round).
-double truncateTo2Decimals(double value) {
-  return (value * 100).truncate() / 100;
+  onProgress?.call(100);
+  return responses;
 }
 
 /// Extract the contents of a zip archive to a directory

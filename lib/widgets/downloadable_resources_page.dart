@@ -19,7 +19,6 @@ import 'dart:io';
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/download_util.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/models/downloadable_resource.dart';
-import 'package:async/async.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:path/path.dart' as path;
@@ -54,12 +53,11 @@ class DownloadableResourcesPage extends StatefulWidget {
 class _DownloadableResourcesPageState extends State<DownloadableResourcesPage> {
   var _isDownloading = false;
   var _isComplete = false;
-  var _isCancelled = false;
-  var _progress = 0.0;
+  var _progress = 0;
   var _shouldShowUI = true;
 
   // To manage cancellation of download
-  CancelableOperation<List<ResponseInfo>>? _cancelableDownload;
+  final _requestCancelToken = RequestCancelToken();
 
   @override
   void initState() {
@@ -81,7 +79,7 @@ class _DownloadableResourcesPageState extends State<DownloadableResourcesPage> {
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
             if (_isDownloading) {
-              unawaited(_cancelDownload());
+              _cancelDownload();
             }
             context.pop();
           },
@@ -108,13 +106,13 @@ class _DownloadableResourcesPageState extends State<DownloadableResourcesPage> {
                       width: 60,
                       height: 60,
                       child: CircularProgressIndicator(
-                        value: _progress,
+                        value: _progress / 100.0,
                         backgroundColor: Colors.grey[300],
                       ),
                     ),
                     const SizedBox(height: 20),
                     Text(
-                      '${(_progress * 100).toInt()}% download complete',
+                      '$_progress% download complete',
                       style: Theme.of(context).textTheme.bodyMedium,
                       textAlign: TextAlign.center,
                     ),
@@ -162,7 +160,7 @@ class _DownloadableResourcesPageState extends State<DownloadableResourcesPage> {
     if (allResourcesExist) {
       setState(() {
         _isComplete = true;
-        _progress = 1.0;
+        _progress = 100;
         _shouldShowUI = false;
       });
 
@@ -178,7 +176,6 @@ class _DownloadableResourcesPageState extends State<DownloadableResourcesPage> {
     setState(() {
       _isDownloading = true;
       _progress = 0;
-      _isCancelled = false;
     });
 
     try {
@@ -188,63 +185,46 @@ class _DownloadableResourcesPageState extends State<DownloadableResourcesPage> {
         return File(path.join(appDir.absolute.path, r.downloadable));
       }).toList();
 
-      _cancelableDownload = CancelableOperation.fromFuture(
-        // Start the download process
-        downloadSampleDataWithProgress(
-          itemIds: itemIds,
-          destinationFiles: destinationFiles,
-          shouldCancel: () => _isCancelled,
-          onProgress: (progress) {
-            if (!_isCancelled) {
-              setState(() {
-                if (_isDownloading) {
-                  _progress = progress >= 1.0 ? 1.0 : progress;
-                }
-              });
-            }
-          },
-        ),
-        // Handle cancellation
-        onCancel: () async {
-          await _cleanupFiles();
-
-          setState(() {
-            _isCancelled = true;
-            _isDownloading = false;
-            _isComplete = false;
-            _progress = 0;
-          });
+      await downloadSampleDataWithProgress(
+        itemIds: itemIds,
+        destinationFiles: destinationFiles,
+        requestCancelToken: _requestCancelToken,
+        onProgress: (progress) {
+          setState(() => _progress = progress);
         },
       );
 
-      // Await the download result.
-      final result = await _cancelableDownload!.value;
-      if (result.isNotEmpty && !_isCancelled) {
-        setState(() {
-          _isComplete = true;
-          _isDownloading = false;
-          _progress = 1.0;
-        });
+      setState(() {
+        _isComplete = true;
+        _isDownloading = false;
+      });
 
-        // directly open the sample after downloading
-        unawaited(_openSample());
+      // directly open the sample after downloading
+      unawaited(_openSample());
+    } on Exception catch (e) {
+      // show a snackbar with error message
+      if (mounted) {
+        var message = 'Error downloading resources. Please try again.';
+        if (e is ArcGISException &&
+            e.errorType == ArcGISExceptionType.commonUserDefinedFailure &&
+            (e.wrappedException is ArcGISException?) &&
+            (e.wrappedException as ArcGISException?)?.errorType ==
+                ArcGISExceptionType.commonUserCanceled) {
+          message = 'Cancelled';
+        }
+
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(message)));
       }
-    } on Exception catch (_) {
-      // Handle download error
+
+      await _cleanupFiles();
+
       setState(() {
         _isDownloading = false;
         _isComplete = false;
         _progress = 0;
       });
-
-      // show a snackbar with error message
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Error downloading resources. Please try again.'),
-          ),
-        );
-      }
     }
   }
 
@@ -281,9 +261,8 @@ class _DownloadableResourcesPageState extends State<DownloadableResourcesPage> {
   }
 
   // Cancel the ongoing download.
-  Future<void> _cancelDownload() async {
-    await _cancelableDownload?.cancel();
-    _cancelableDownload = null;
+  void _cancelDownload() {
+    _requestCancelToken.cancel();
   }
 
   // Call back to onComplete.
