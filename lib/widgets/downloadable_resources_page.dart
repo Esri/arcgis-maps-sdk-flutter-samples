@@ -74,11 +74,12 @@ class _DownloadableResourcesPageState extends State<DownloadableResourcesPage> {
 
     return PopScope(
       canPop: !_isDownloading,
-      onPopInvokedWithResult: (didPop, result) {
+      onPopInvokedWithResult: (didPop, result) async {
         // didPop will be true if we are not downloading.
         if (didPop) return;
 
-        confirmCancelDownload();
+        // Show a dialog that will either cancel the download and pop, or just stay on the page.
+        await confirmCancelDownload();
       },
       child: Scaffold(
         appBar: AppBar(title: Text(widget.sampleTitle)),
