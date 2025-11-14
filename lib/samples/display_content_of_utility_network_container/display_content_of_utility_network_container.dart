@@ -31,8 +31,16 @@ class _DisplayContentOfUtilityNetworkContainerState
     with SampleStateSupport {
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
+  // The utility network used in the sample.
+  late UtilityNetwork _utilityNetwork;
+  // The graphics overlay to display the container contents.
+  final _graphicsOverlay = GraphicsOverlay();
   // A flag for when the map view is ready and controls can be used.
   var _ready = false;
+  // The message to display in the banner.
+  var _message = '';
+  // To store the previous viewpoint before entering container view.
+  Viewpoint? _previousViewpoint;
 
   @override
   void initState() {
@@ -82,14 +90,39 @@ class _DisplayContentOfUtilityNetworkContainerState
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    // A button to perform a task.
+                    // A button to exit container view.
                     ElevatedButton(
-                      onPressed: performTask,
-                      child: const Text('Perform Task'),
+                      onPressed: _previousViewpoint != null ? reset : null,
+                      child: const Text('Exit Container View'),
                     ),
                   ],
                 ),
               ],
+            ),
+            // Add a banner to show the results of the identify operation.
+            SafeArea(
+              child: IgnorePointer(
+                child: Visibility(
+                  visible: _message.isNotEmpty,
+                  child: Container(
+                    padding: const EdgeInsets.all(5),
+                    color: Colors.white.withValues(alpha: 0.7),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Text(
+                            _message,
+                            textAlign: TextAlign.center,
+                            style: Theme.of(context).textTheme.labelMedium,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
             ),
             // Display a progress indicator and prevent interaction until state is ready.
             LoadingIndicator(visible: !_ready),
@@ -110,6 +143,12 @@ class _DisplayContentOfUtilityNetworkContainerState
     );
     final map = ArcGISMap.withItem(portalItem);
 
+    // Load the map and the utility network.
+    setState(() => _message = 'Loading utility network ...');
+    await map.load();
+    _utilityNetwork = map.utilityNetworks.first;
+    await _utilityNetwork.load();
+
     // Set an initial viewpoint on the map.
     map.initialViewpoint = Viewpoint.withLatLongScale(
       latitude: 41.8,
@@ -120,24 +159,127 @@ class _DisplayContentOfUtilityNetworkContainerState
     // Add the map to the map view.
     _mapViewController.arcGISMap = map;
 
+    // Add the graphics overlay to the map view.
+    _mapViewController.graphicsOverlays.add(_graphicsOverlay);
+
+    // Set the state to be ready for a selection.
+    reset();
+
     // Set the ready state variable to true to enable the sample UI.
     setState(() => _ready = true);
   }
 
-  void onTap(Offset offset) {
-    // Do something with a tap.
-    // ignore: avoid_print
-    print('Tapped at $offset');
+  Future<void> onTap(Offset localPosition) async {
+    // Perform an identify to determine if a user tapped on a feature.
+    final identifyResults = await _mapViewController.identifyLayers(
+      screenPoint: localPosition,
+      tolerance: 10,
+    );
+
+    // Find the first result that is from a subtype feature layer.
+    final result = identifyResults
+        .where((result) => result.layerContent is SubtypeFeatureLayer)
+        .firstOrNull;
+    if (result == null) {
+      return;
+    }
+
+    // Find the first feature. This will be the selected container feature.
+    final containerFeature = result.sublayerResults
+        .expand((result) => result.geoElements)
+        .whereType<ArcGISFeature>()
+        .firstOrNull;
+    if (containerFeature == null) {
+      return;
+    }
+
+    // Create a utility network element from the container feature.
+    final containerElement = _utilityNetwork.createElement(
+      arcGISFeature: containerFeature,
+    );
+
+    // Get the associations for the container element to find contained elements.
+    final associations = await _utilityNetwork.getAssociations(
+      element: containerElement,
+      type: UtilityAssociationType.containment,
+    );
+    final containedElements = associations
+        .map(
+          (association) =>
+              association.fromElement.objectId == containerElement.objectId
+              ? association.toElement
+              : association.fromElement,
+        )
+        .toList();
+
+    // Get the features for the contained elements.
+    final containedFeatures = await _utilityNetwork.getFeaturesForElements(
+      containedElements,
+    );
+
+    // Add a graphic for each of the contained features.
+    for (final feature in containedFeatures) {
+      final featureTable = feature.featureTable;
+      if (featureTable == null || featureTable is! ServiceFeatureTable) {
+        continue;
+      }
+      final symbol = featureTable.layerInfo?.drawingInfo?.renderer
+          ?.symbolForFeature(feature: feature);
+      if (symbol == null) {
+        continue;
+      }
+      _graphicsOverlay.graphics.add(
+        Graphic(geometry: feature.geometry, symbol: symbol),
+      );
+    }
+
+    // Determine the extent of all the contained features.
+    final extent = _graphicsOverlay.extent;
+    if (extent == null) {
+      return;
+    }
+
+    // Create a graphic to highlight the container boundary.
+    final containerGraphic = Graphic(
+      geometry: GeometryEngine.buffer(geometry: extent, distance: 0.05),
+      symbol: SimpleLineSymbol(
+        style: SimpleLineSymbolStyle.dash,
+        color: Colors.yellow,
+        width: 3,
+      ),
+    );
+    _graphicsOverlay.graphics.add(containerGraphic);
+
+    //fixme associationsGraphics
+    //fixme hide operational layers
+    //fixme disable interaction
+
+    // Get the current viewpoint before animating.
+    final viewpoint = _mapViewController.getCurrentViewpoint(
+      ViewpointType.centerAndScale,
+    );
+
+    // Animate to the container.
+    _mapViewController
+        .setViewpointGeometry(containerGraphic.geometry!, paddingInDiPs: 20)
+        .ignore();
+
+    // Remember the previous viewpoint and update the message banner.
+    setState(() {
+      _previousViewpoint = viewpoint;
+      _message = 'Contained associations are shown.';
+    });
   }
 
-  Future<void> performTask() async {
-    setState(() => _ready = false);
-
-    // Perform some task.
-    // ignore: avoid_print
-    print('Perform task');
-    await Future<void>.delayed(const Duration(seconds: 5));
-
-    setState(() => _ready = true);
+  void reset() {
+    // Clear any displayed graphics and reset the viewpoint.
+    _graphicsOverlay.graphics.clear();
+    if (_previousViewpoint != null) {
+      _mapViewController.setViewpointAnimated(_previousViewpoint!);
+    }
+    setState(() {
+      _previousViewpoint = null;
+      _message = 'Tap on a container to see its content.';
+    });
   }
 }
