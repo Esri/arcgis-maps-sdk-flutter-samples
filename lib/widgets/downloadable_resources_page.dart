@@ -72,76 +72,108 @@ class _DownloadableResourcesPageState extends State<DownloadableResourcesPage> {
       return const Center(child: CircularProgressIndicator());
     }
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.sampleTitle),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            if (_isDownloading) {
-              _cancelDownload();
-            }
-            context.pop();
-          },
-        ),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(40),
-        child: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                'This sample requires downloadable resources',
-                style: Theme.of(context).textTheme.titleMedium,
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 20),
-              // Download progress indicator
-              Visibility(
-                visible: _isDownloading,
-                child: Column(
-                  children: [
-                    SizedBox(
-                      width: 60,
-                      height: 60,
-                      child: CircularProgressIndicator(
-                        value: _progress / 100.0,
-                        backgroundColor: Colors.grey[300],
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    Text(
-                      '$_progress% download complete',
-                      style: Theme.of(context).textTheme.bodyMedium,
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
-                ),
-              ),
-              Visibility(
-                visible: _isComplete,
-                child: Text(
-                  'The resources have been downloaded.',
-                  style: Theme.of(context).textTheme.bodySmall,
+    return PopScope(
+      canPop: !_isDownloading,
+      onPopInvokedWithResult: (didPop, result) {
+        // didPop will be true if we are not downloading.
+        if (didPop) return;
+
+        confirmCancelDownload();
+      },
+      child: Scaffold(
+        appBar: AppBar(title: Text(widget.sampleTitle)),
+        body: Padding(
+          padding: const EdgeInsets.all(40),
+          child: Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'This sample requires downloadable resources',
+                  style: Theme.of(context).textTheme.titleMedium,
                   textAlign: TextAlign.center,
                 ),
-              ),
-              // Button [Download|Cancel|Open]
-              const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: _isDownloading
-                    ? _cancelDownload
-                    : _isComplete
-                    ? _openSample
-                    : _startDownload,
-                child: Text(_isDownloading ? 'Cancel' : 'Download'),
-              ),
-            ],
+                const SizedBox(height: 20),
+                // Download progress indicator
+                Visibility(
+                  visible: _isDownloading,
+                  child: Column(
+                    children: [
+                      SizedBox(
+                        width: 60,
+                        height: 60,
+                        child: CircularProgressIndicator(
+                          value: _progress / 100.0,
+                          backgroundColor: Colors.grey[300],
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      Text(
+                        '$_progress% download complete',
+                        style: Theme.of(context).textTheme.bodyMedium,
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ),
+                ),
+                Visibility(
+                  visible: _isComplete,
+                  child: Text(
+                    'The resources have been downloaded.',
+                    style: Theme.of(context).textTheme.bodySmall,
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                // Button [Download|Cancel|Open]
+                const SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: _isDownloading
+                      ? _cancelDownload
+                      : _isComplete
+                      ? _openSample
+                      : _startDownload,
+                  child: Text(_isDownloading ? 'Cancel' : 'Download'),
+                ),
+              ],
+            ),
           ),
         ),
       ),
     );
+  }
+
+  Future<void> confirmCancelDownload() async {
+    final shouldCancel =
+        await showDialog<bool>(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Cancel Download'),
+            content: const Text(
+              'Leaving this page will stop the ongoing download. Do you want to continue?',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: const Text('No'),
+              ),
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(true),
+                child: const Text('Yes'),
+              ),
+            ],
+          ),
+        ) ??
+        false;
+
+    if (!shouldCancel) return;
+
+    if (_isDownloading) {
+      _cancelDownload();
+    }
+
+    if (mounted) {
+      Navigator.of(context).pop();
+    }
   }
 
   // Check if all resources already exist.
