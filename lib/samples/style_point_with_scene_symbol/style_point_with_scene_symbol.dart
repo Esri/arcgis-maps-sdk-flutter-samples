@@ -50,8 +50,8 @@ class _StylePointWithSceneSymbolState extends State<StylePointWithSceneSymbol>
   }
 
   Future<void> onSceneViewReady() async {
-    // Create a scene with a topographic basemap style.
-    final scene = ArcGISScene.withBasemapStyle(BasemapStyle.arcGISTopographic);
+    // Create a scene with an imagery basemap style.
+    final scene = ArcGISScene.withBasemapStyle(BasemapStyle.arcGISImagery);
     _sceneViewController.arcGISScene = scene;
 
     // Create an ArcGIS tiled elevation.
