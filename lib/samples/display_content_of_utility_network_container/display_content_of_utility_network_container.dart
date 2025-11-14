@@ -35,6 +35,24 @@ class _DisplayContentOfUtilityNetworkContainerState
   late UtilityNetwork _utilityNetwork;
   // The graphics overlay to display the container contents.
   final _graphicsOverlay = GraphicsOverlay();
+  // The symbol used to highlight the container boundary.
+  final _boundarySymbol = SimpleLineSymbol(
+    style: SimpleLineSymbolStyle.dash,
+    color: Colors.yellow,
+    width: 3,
+  );
+  // The symbol used to show an attachment association.
+  final _attachmentSymbol = SimpleLineSymbol(
+    style: SimpleLineSymbolStyle.dot,
+    color: Colors.green,
+    width: 3,
+  );
+  // The symbol used to show a connectivity association.
+  final _connectivitySymbol = SimpleLineSymbol(
+    style: SimpleLineSymbolStyle.dot,
+    color: Colors.red,
+    width: 3,
+  );
   // A flag for when the map view is ready and controls can be used.
   var _ready = false;
   // The message to display in the banner.
@@ -95,6 +113,7 @@ class _DisplayContentOfUtilityNetworkContainerState
                       onPressed: _previousViewpoint != null ? reset : null,
                       child: const Text('Exit Container View'),
                     ),
+                    //fixme Show Legend
                   ],
                 ),
               ],
@@ -232,6 +251,7 @@ class _DisplayContentOfUtilityNetworkContainerState
         Graphic(geometry: feature.geometry, symbol: symbol),
       );
     }
+    //fixme warning "An object of unsupported type is being treated as ArcGISSymbol"
 
     // Determine the extent of all the contained features.
     final extent = _graphicsOverlay.extent;
@@ -239,20 +259,33 @@ class _DisplayContentOfUtilityNetworkContainerState
       return;
     }
 
-    // Create a graphic to highlight the container boundary.
+    // Add a graphic to highlight the container boundary.
     final containerGraphic = Graphic(
       geometry: GeometryEngine.buffer(geometry: extent, distance: 0.05),
-      symbol: SimpleLineSymbol(
-        style: SimpleLineSymbolStyle.dash,
-        color: Colors.yellow,
-        width: 3,
-      ),
+      symbol: _boundarySymbol,
     );
     _graphicsOverlay.graphics.add(containerGraphic);
 
-    //fixme associationsGraphics
-    //fixme hide operational layers
-    //fixme disable interaction
+    // Add an association graphic for each of the contained elements.
+    final containedAssociations = await _utilityNetwork
+        .getAssociationsWithEnvelope(extent);
+    for (final association in containedAssociations) {
+      final symbol =
+          association.associationType == UtilityAssociationType.attachment
+          ? _attachmentSymbol
+          : _connectivitySymbol;
+      _graphicsOverlay.graphics.add(
+        Graphic(geometry: association.geometry, symbol: symbol),
+      );
+    }
+
+    // Hide operational layers.
+    for (final layer in _mapViewController.arcGISMap!.operationalLayers) {
+      layer.isVisible = false;
+    }
+
+    // Disable interaction.
+    _mapViewController.interactionOptions.enabled = false;
 
     // Get the current viewpoint before animating.
     final viewpoint = _mapViewController.getCurrentViewpoint(
@@ -272,8 +305,12 @@ class _DisplayContentOfUtilityNetworkContainerState
   }
 
   void reset() {
-    // Clear any displayed graphics and reset the viewpoint.
+    // Clear any state that gets set when entering container view.
     _graphicsOverlay.graphics.clear();
+    for (final layer in _mapViewController.arcGISMap!.operationalLayers) {
+      layer.isVisible = true;
+    }
+    _mapViewController.interactionOptions.enabled = true;
     if (_previousViewpoint != null) {
       _mapViewController.setViewpointAnimated(_previousViewpoint!);
     }
