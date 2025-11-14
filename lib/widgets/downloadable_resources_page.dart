@@ -172,7 +172,7 @@ class _DownloadableResourcesPageState extends State<DownloadableResourcesPage> {
     }
 
     if (mounted) {
-      Navigator.of(context).pop();
+      context.pop();
     }
   }
 
