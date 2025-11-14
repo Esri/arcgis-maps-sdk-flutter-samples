@@ -149,7 +149,7 @@ class _DownloadableResourcesPageState extends State<DownloadableResourcesPage> {
           builder: (context) => AlertDialog(
             title: const Text('Cancel Download'),
             content: const Text(
-              'Leaving this page will stop the ongoing download. Do you want to continue?',
+              'Leaving this page will stop the ongoing download. Do you want to leave this page?',
             ),
             actions: [
               TextButton(
