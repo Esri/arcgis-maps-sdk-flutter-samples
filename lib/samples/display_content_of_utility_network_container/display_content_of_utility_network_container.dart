@@ -154,6 +154,7 @@ class _DisplayContentOfUtilityNetworkContainerState
           ],
         ),
       ),
+      // Show the legend bottom sheet if the flag is set.
       bottomSheet: _showLegend ? buildLegend(context) : null,
     );
   }
