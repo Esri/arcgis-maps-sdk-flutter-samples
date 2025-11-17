@@ -61,6 +61,8 @@ class _DisplayContentOfUtilityNetworkContainerState
   var _message = '';
   // To store the previous viewpoint before entering container view.
   Viewpoint? _previousViewpoint;
+  // A flag to prevent multiple taps while an operation is in progress.
+  var _tapInProgress = false;
 
   @override
   void initState() {
@@ -249,8 +251,6 @@ class _DisplayContentOfUtilityNetworkContainerState
     // Set the ready state variable to true to enable the sample UI.
     setState(() => _ready = true);
   }
-
-  var _tapInProgress = false;
 
   Future<void> onTap(Offset localPosition) async {
     // Ensure only one tap is processed at a time.
