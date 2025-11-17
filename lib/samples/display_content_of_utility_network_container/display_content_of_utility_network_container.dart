@@ -188,13 +188,25 @@ class _DisplayContentOfUtilityNetworkContainerState
     setState(() => _ready = true);
   }
 
+  var _tapInProgress = false;
+
   Future<void> onTap(Offset localPosition) async {
+    // Ensure only one tap is processed at a time.
+    if (_tapInProgress) return;
+    _tapInProgress = true;
+
     // Perform an identify to determine if a user tapped on a feature.
     final identifyResults = await _mapViewController.identifyLayers(
       screenPoint: localPosition,
       tolerance: 10,
     );
+    await displayContainerContent(identifyResults);
+    _tapInProgress = false;
+  }
 
+  Future<void> displayContainerContent(
+    List<IdentifyLayerResult> identifyResults,
+  ) async {
     // Find the first result that is from a subtype feature layer.
     final result = identifyResults
         .where((result) => result.layerContent is SubtypeFeatureLayer)
