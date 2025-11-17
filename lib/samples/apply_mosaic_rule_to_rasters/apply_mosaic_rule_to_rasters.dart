@@ -14,6 +14,7 @@
 //
 
 import 'dart:async';
+import 'dart:math';
 
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
@@ -159,35 +160,45 @@ class _ApplyMosaicRuleToRastersState extends State<ApplyMosaicRuleToRasters>
 
   // Build a bottom sheet to display mosaic method options.
   Widget _buildBottomSheet() {
-    return BottomSheet(
-      onClosing: () {},
-      builder: (context) {
-        return Container(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text('Choose a mosaic rule for image service.'),
-              const Divider(),
-              if (!_showMosaicOptions)
-                ElevatedButton(
-                  onPressed: () {
-                    setState(() {
-                      _showMosaicOptions = !_showMosaicOptions;
-                    });
-                  },
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Icon(Icons.check, color: Colors.blue),
-                      const SizedBox(width: 8),
-                      Text(_selectedMosaicMethod.value),
-                    ],
-                  ),
-                ),
-              if (_showMosaicOptions)
-                ListView(
-                  shrinkWrap: true,
+    return Container(
+      padding: EdgeInsets.fromLTRB(
+        20,
+        20,
+        20,
+        max(
+          20,
+          View.of(context).viewPadding.bottom /
+              View.of(context).devicePixelRatio,
+        ),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Text('Choose a mosaic rule for image service.'),
+          const Divider(),
+          if (!_showMosaicOptions)
+            ElevatedButton(
+              onPressed: () {
+                setState(() {
+                  _showMosaicOptions = !_showMosaicOptions;
+                });
+              },
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.check, color: Colors.blue),
+                  const SizedBox(width: 8),
+                  Text(_selectedMosaicMethod.value),
+                ],
+              ),
+            ),
+          if (_showMosaicOptions)
+            Container(
+              constraints: BoxConstraints(
+                maxHeight: MediaQuery.sizeOf(context).height * 0.5,
+              ),
+              child: SingleChildScrollView(
+                child: Column(
                   children: MosaicMethodEnum.values.map((method) {
                     return ListTile(
                       leading: (method == _selectedMosaicMethod)
@@ -206,10 +217,10 @@ class _ApplyMosaicRuleToRastersState extends State<ApplyMosaicRuleToRasters>
                     );
                   }).toList(),
                 ),
-            ],
-          ),
-        );
-      },
+              ),
+            ),
+        ],
+      ),
     );
   }
 }
