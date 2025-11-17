@@ -318,9 +318,6 @@ class _DisplayContentOfUtilityNetworkContainerState
       }
       final symbol = featureTable.layerInfo?.drawingInfo?.renderer
           ?.symbolForFeature(feature: feature);
-      if (symbol == null) {
-        continue;
-      }
       _graphicsOverlay.graphics.add(
         Graphic(geometry: feature.geometry, symbol: symbol),
       );
