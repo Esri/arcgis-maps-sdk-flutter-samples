@@ -159,6 +159,7 @@ class _DisplayContentOfUtilityNetworkContainerState
   }
 
   Widget buildLegend(BuildContext context) {
+    // Build a non-modal bottom sheet to show the symbol legend.
     return BottomSheetSettings(
       title: 'Utility Association Types',
       onCloseIconPressed: () => setState(() => _showLegend = false),
@@ -166,6 +167,7 @@ class _DisplayContentOfUtilityNetworkContainerState
         Column(
           spacing: 5,
           children: [
+            // Attachment symbol.
             Row(
               spacing: 10,
               children: [
@@ -178,6 +180,7 @@ class _DisplayContentOfUtilityNetworkContainerState
                 const Text('Attachment'),
               ],
             ),
+            // Connectivity symbol.
             Row(
               spacing: 10,
               children: [
@@ -190,6 +193,7 @@ class _DisplayContentOfUtilityNetworkContainerState
                 const Text('Connectivity'),
               ],
             ),
+            // Containment symbol.
             Row(
               spacing: 10,
               children: [
