@@ -14,6 +14,8 @@
 // limitations under the License.
 //
 
+import 'dart:io';
+
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
@@ -99,6 +101,11 @@ class _ApplyScheduledUpdatesToPreplannedMapAreaState
   Future<void> onMapViewReady() async {
     final listPaths = GoRouter.of(context).state.extra! as List<String>;
     _dataUri = Uri.parse(listPaths.first);
+
+    // Extract the archive to overwrite the (potentially already updated) map package.
+    final archivePath = '${_dataUri.toFilePath()}.zip';
+    await extractZipArchive(File(archivePath));
+
     await _loadMapPackageMap();
 
     // Check if there is an update for the map package.
