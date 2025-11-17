@@ -111,37 +111,30 @@ class _ResponsiveCategoryGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          final cardSize = switch (orientation) {
-            // Two columns in portrait.
-            Orientation.portrait => (constraints.maxWidth - cardSpacing) / 2,
-            // Four columns in landscape.
-            Orientation.landscape =>
-              (constraints.maxWidth - cardSpacing * 3) / 4,
-          };
-
-          return Wrap(
-            spacing: cardSpacing,
-            runSpacing: cardSpacing,
-            children: List.generate(
-              SampleCategory.values.length,
-              (i) => SizedBox(
-                height: cardSize,
-                width: cardSize,
-                child: CategoryCard(
-                  category: SampleCategory.values[i],
-                  onClick: () => context.push(
-                    '/category/${SampleCategory.values[i].name}',
-                  ),
-                  index: i,
-                ),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        var cardSize = (constraints.maxWidth - cardSpacing) / 2;
+        if (orientation == Orientation.landscape) {
+          cardSize = (constraints.maxHeight - cardSpacing) / 2;
+        }
+        return Wrap(
+          spacing: cardSpacing,
+          runSpacing: cardSpacing,
+          children: List.generate(
+            SampleCategory.values.length,
+            (i) => SizedBox(
+              height: cardSize,
+              width: cardSize,
+              child: CategoryCard(
+                category: SampleCategory.values[i],
+                onClick: () =>
+                    context.push('/category/${SampleCategory.values[i].name}'),
+                index: i,
               ),
             ),
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 }
