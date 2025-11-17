@@ -27,12 +27,14 @@ class SwatchImage extends StatefulWidget {
     required this.symbol,
     this.width = 10,
     this.height = 10,
+    this.backgroundColor = Colors.transparent,
     super.key,
   });
 
   final ArcGISSymbol symbol;
   final double width;
   final double height;
+  final Color backgroundColor;
 
   @override
   State<SwatchImage> createState() => _SwatchImageState();
@@ -56,6 +58,7 @@ class _SwatchImageState extends State<SwatchImage> {
             screenScale: devicePixelRatio,
             width: widget.width,
             height: widget.height,
+            backgroundColor: widget.backgroundColor,
           )
           .then((image) {
             // Signal that the swatch image is ready.

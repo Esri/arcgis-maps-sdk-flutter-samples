@@ -44,7 +44,7 @@ class _DisplayContentOfUtilityNetworkContainerState
   // The symbol used to show an attachment association.
   final _attachmentSymbol = SimpleLineSymbol(
     style: SimpleLineSymbolStyle.dot,
-    color: Colors.green,
+    color: Colors.lightBlue,
     width: 3,
   );
   // The symbol used to show a connectivity association.
@@ -55,6 +55,8 @@ class _DisplayContentOfUtilityNetworkContainerState
   );
   // A flag for when the map view is ready and controls can be used.
   var _ready = false;
+  // A flag to show the symbol legend.
+  var _showLegend = false;
   // The message to display in the banner.
   var _message = '';
   // To store the previous viewpoint before entering container view.
@@ -108,12 +110,16 @@ class _DisplayContentOfUtilityNetworkContainerState
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
+                    // A button to show the symbol legend.
+                    ElevatedButton(
+                      onPressed: () => setState(() => _showLegend = true),
+                      child: const Text('Show Legend'),
+                    ),
                     // A button to exit container view.
                     ElevatedButton(
                       onPressed: _previousViewpoint != null ? reset : null,
                       child: const Text('Exit Container View'),
                     ),
-                    //fixme Show Legend
                   ],
                 ),
               ],
@@ -148,6 +154,57 @@ class _DisplayContentOfUtilityNetworkContainerState
           ],
         ),
       ),
+      bottomSheet: _showLegend ? buildLegend(context) : null,
+    );
+  }
+
+  Widget buildLegend(BuildContext context) {
+    return BottomSheetSettings(
+      title: 'Utility Association Types',
+      onCloseIconPressed: () => setState(() => _showLegend = false),
+      settingsWidgets: (context) => [
+        Column(
+          spacing: 5,
+          children: [
+            Row(
+              spacing: 10,
+              children: [
+                SwatchImage(
+                  symbol: _attachmentSymbol,
+                  backgroundColor: Colors.grey,
+                  width: 15,
+                  height: 15,
+                ),
+                const Text('Attachment'),
+              ],
+            ),
+            Row(
+              spacing: 10,
+              children: [
+                SwatchImage(
+                  symbol: _connectivitySymbol,
+                  backgroundColor: Colors.grey,
+                  width: 15,
+                  height: 15,
+                ),
+                const Text('Connectivity'),
+              ],
+            ),
+            Row(
+              spacing: 10,
+              children: [
+                SwatchImage(
+                  symbol: _boundarySymbol,
+                  backgroundColor: Colors.grey,
+                  width: 15,
+                  height: 15,
+                ),
+                const Text('Containment'),
+              ],
+            ),
+          ],
+        ),
+      ],
     );
   }
 
@@ -263,7 +320,6 @@ class _DisplayContentOfUtilityNetworkContainerState
         Graphic(geometry: feature.geometry, symbol: symbol),
       );
     }
-    //fixme warning "An object of unsupported type is being treated as ArcGISSymbol"
 
     // Determine the extent of all the contained features.
     final extent = _graphicsOverlay.extent;

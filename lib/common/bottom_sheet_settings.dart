@@ -28,10 +28,12 @@ class BottomSheetSettings extends StatelessWidget {
   const BottomSheetSettings({
     required this.onCloseIconPressed,
     required this.settingsWidgets,
+    this.title,
     super.key,
   });
   final VoidCallback onCloseIconPressed;
   final List<Widget> Function(BuildContext) settingsWidgets;
+  final String? title;
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +53,10 @@ class BottomSheetSettings extends StatelessWidget {
         children: [
           Row(
             children: [
-              Text('Settings', style: Theme.of(context).textTheme.titleLarge),
+              Text(
+                title ?? 'Settings',
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
               const Spacer(),
               IconButton(
                 icon: const Icon(Icons.close),
