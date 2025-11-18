@@ -19,6 +19,7 @@ import 'dart:io';
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_archive/flutter_archive.dart';
 import 'package:go_router/go_router.dart';
 
 class ApplyScheduledUpdatesToPreplannedMapArea extends StatefulWidget {
@@ -100,11 +101,18 @@ class _ApplyScheduledUpdatesToPreplannedMapAreaState
 
   Future<void> onMapViewReady() async {
     final listPaths = GoRouter.of(context).state.extra! as List<String>;
-    _dataUri = Uri.parse(listPaths.first);
+    final originalPath = listPaths.first;
 
-    // Extract the archive to overwrite the (potentially already updated) map package.
-    final archivePath = '${_dataUri.toFilePath()}.zip';
-    await extractZipArchive(File(archivePath));
+    // Create a copy of the map package so that updating it does not modify the original.
+    final toUpdatePath = '${originalPath}_toUpdate';
+    final toUpdateDir = Directory(toUpdatePath);
+    if (toUpdateDir.existsSync()) toUpdateDir.deleteSync(recursive: true);
+    final zipFile = File('$originalPath.zip');
+    await ZipFile.extractToDirectory(
+      zipFile: zipFile,
+      destinationDir: toUpdateDir,
+    );
+    _dataUri = Uri.parse(toUpdatePath);
 
     await _loadMapPackageMap();
 
