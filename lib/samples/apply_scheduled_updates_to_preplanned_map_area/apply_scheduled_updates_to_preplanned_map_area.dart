@@ -104,8 +104,7 @@ class _ApplyScheduledUpdatesToPreplannedMapAreaState
     final originalPath = listPaths.first;
 
     // Create a copy of the map package so that updating it does not modify the original.
-    final toUpdatePath = '${originalPath}_toUpdate';
-    final toUpdateDir = Directory(toUpdatePath);
+    final toUpdateDir = Directory('${originalPath}_toUpdate');
     if (toUpdateDir.existsSync()) toUpdateDir.deleteSync(recursive: true);
     Directory(originalPath).copySync(toUpdateDir);
     _dataUri = toUpdateDir.uri;
