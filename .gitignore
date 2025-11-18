@@ -57,3 +57,5 @@ arcgis_maps_core
 /assets/generated_samples_list.json
 /lib/models/samples_widget_list.dart
 devtools_options.yaml
+
+/release_builds
