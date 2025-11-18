@@ -58,4 +58,4 @@ arcgis_maps_core
 /lib/models/samples_widget_list.dart
 devtools_options.yaml
 
-/release_builds
+release_builds
