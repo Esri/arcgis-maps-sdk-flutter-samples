@@ -14,13 +14,11 @@
 //
 
 import 'dart:async';
-import 'dart:typed_data';
 
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/token_challenger_handler.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 
 class ShowUtilityAssociations extends StatefulWidget {
   const ShowUtilityAssociations({super.key});
@@ -255,66 +253,6 @@ class _ShowUtilityAssociationsState extends State<ShowUtilityAssociations>
           },
         ),
       ),
-    );
-  }
-}
-
-// A widget that creates and displays a swatch image for a symbol.
-class SwatchImage extends StatefulWidget {
-  const SwatchImage({
-    required this.symbol,
-    this.width = 10,
-    this.height = 10,
-    super.key,
-  });
-
-  final ArcGISSymbol symbol;
-  final double width;
-  final double height;
-
-  @override
-  State<SwatchImage> createState() => _SwatchImageState();
-}
-
-class _SwatchImageState extends State<SwatchImage> {
-  // A Completer that completes when the swatch image is ready.
-  final _swatchCompleter = Completer<Uint8List>();
-
-  @override
-  void initState() {
-    super.initState();
-
-    SchedulerBinding.instance.addPostFrameCallback((_) {
-      // Get the device pixel ratio after the first frame to ensure it is accurate.
-      final devicePixelRatio = MediaQuery.devicePixelRatioOf(context);
-
-      // Create a swatch image from the symbol.
-      widget.symbol
-          .createSwatch(
-            screenScale: devicePixelRatio,
-            width: widget.width,
-            height: widget.height,
-          )
-          .then((image) {
-            // Signal that the swatch image is ready.
-            _swatchCompleter.complete(image.getEncodedBuffer());
-          });
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: _swatchCompleter.future,
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          // The swatch image is ready -- display it.
-          return Image.memory(snapshot.data!);
-        }
-
-        // Until the image is ready, reserve space to avoid layout changes.
-        return SizedBox(width: widget.width, height: widget.height);
-      },
     );
   }
 }
