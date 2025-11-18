@@ -19,8 +19,8 @@ import 'dart:io';
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_archive/flutter_archive.dart';
 import 'package:go_router/go_router.dart';
+import 'package:path/path.dart' as path;
 
 class ApplyScheduledUpdatesToPreplannedMapArea extends StatefulWidget {
   const ApplyScheduledUpdatesToPreplannedMapArea({super.key});
@@ -107,12 +107,8 @@ class _ApplyScheduledUpdatesToPreplannedMapAreaState
     final toUpdatePath = '${originalPath}_toUpdate';
     final toUpdateDir = Directory(toUpdatePath);
     if (toUpdateDir.existsSync()) toUpdateDir.deleteSync(recursive: true);
-    final zipFile = File('$originalPath.zip');
-    await ZipFile.extractToDirectory(
-      zipFile: zipFile,
-      destinationDir: toUpdateDir,
-    );
-    _dataUri = Uri.parse(toUpdatePath);
+    Directory(originalPath).copySync(toUpdateDir);
+    _dataUri = toUpdateDir.uri;
 
     await _loadMapPackageMap();
 
@@ -198,5 +194,24 @@ class _ApplyScheduledUpdatesToPreplannedMapAreaState
           ..rollbackOnFailure = true;
 
     return true;
+  }
+}
+
+extension on Directory {
+  // Recursively copy this directory to [destination].
+  void copySync(Directory destination) {
+    if (!destination.existsSync()) {
+      destination.createSync(recursive: true);
+    }
+    for (final entity in listSync()) {
+      final newPath = path.join(destination.path, path.basename(entity.path));
+      if (entity is File) {
+        entity.copySync(newPath);
+      } else if (entity is Directory) {
+        final newDirectory = Directory(newPath);
+        newDirectory.createSync(recursive: true);
+        entity.copySync(newDirectory);
+      }
+    }
   }
 }
