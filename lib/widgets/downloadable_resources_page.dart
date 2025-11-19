@@ -280,15 +280,24 @@ class _DownloadableResourcesPageState extends State<DownloadableResourcesPage> {
   Future<void> _cleanupFiles() async {
     final appDir = await getApplicationDocumentsDirectory();
     for (final resource in widget.resources) {
-      final file = File(path.join(appDir.absolute.path, resource.downloadable));
-      if (file.existsSync()) {
-        file.deleteSync();
-      }
-      final dir = Directory(
-        path.join(appDir.absolute.path, resource.downloadable.split('.').first),
-      );
-      if (dir.existsSync()) {
-        dir.deleteSync(recursive: true);
+      try {
+        final file = File(
+          path.join(appDir.absolute.path, resource.downloadable),
+        );
+        if (file.existsSync()) {
+          file.deleteSync();
+        }
+        final dir = Directory(
+          path.join(
+            appDir.absolute.path,
+            resource.downloadable.split('.').first,
+          ),
+        );
+        if (dir.existsSync()) {
+          dir.deleteSync(recursive: true);
+        }
+      } on FileSystemException {
+        // Ignore errors during cleanup.
       }
     }
   }
