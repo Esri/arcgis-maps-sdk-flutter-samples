@@ -82,7 +82,6 @@ class _ApplyRasterRenderingRuleState extends State<ApplyRasterRenderingRule>
       padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
       child: Row(
         spacing: 10,
-        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           const Text('Rule:'),
           Flexible(
