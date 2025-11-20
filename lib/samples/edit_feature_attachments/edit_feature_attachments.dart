@@ -138,7 +138,7 @@ class _AttachmentsOptionsState extends State<AttachmentsOptions>
     with SampleStateSupport {
   late final String _damageType;
   var _attachments = <Attachment>[];
-  var _isLoading = false;
+  var _isLoading = true;
 
   @override
   void initState() {
@@ -149,91 +149,62 @@ class _AttachmentsOptionsState extends State<AttachmentsOptions>
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        Column(
-          children: [
-            // Display the damage type and a close button.
-            Container(
-              color: Colors.purple,
-              padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Damage Type: $_damageType',
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
+    return BottomSheetSettings(
+      onCloseIconPressed: () => Navigator.pop(context),
+      title: 'Damage Type: $_damageType',
+      settingsWidgets: (context) => [
+        Container(
+          constraints: BoxConstraints(
+            maxHeight: MediaQuery.sizeOf(context).height * 0.4,
+          ),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
+                  children: [
+                    // Display the number of attachments.
+                    const Text('Number of Attachments: '),
+                    if (_isLoading)
+                      const SizedBox(
+                        height: 18,
+                        width: 18,
+                        child: CircularProgressIndicator(),
+                      )
+                    else
+                      Text('${_attachments.length}'),
+                    const Spacer(),
+                    // A button to add an attachment.
+                    ElevatedButton(
+                      onPressed: addAttachment,
+                      child: const Text('Add Attachment'),
+                    ),
+                  ],
+                ),
+                const Divider(),
+                // Display each attachment with view and delete buttons.
+                ..._attachments.map(
+                  (attachment) => ListTile(
+                    title: Text(attachment.name),
+                    subtitle: Text(attachment.contentType),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.remove_red_eye),
+                          onPressed: () => viewAttachment(attachment),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.delete),
+                          onPressed: () => deleteAttachment(attachment),
+                        ),
+                      ],
                     ),
                   ),
-                  if (_isLoading)
-                    const SizedBox(
-                      height: 18,
-                      width: 18,
-                      child: CircularProgressIndicator(color: Colors.white),
-                    )
-                  else
-                    const SizedBox.shrink(),
-                  IconButton(
-                    icon: const Icon(Icons.close),
-                    onPressed: () => Navigator.pop(context),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
-
-            // Display the number of attachments.
-            Padding(
-              padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text('Number of Attachments: ${_attachments.length}'),
-                  ElevatedButton(
-                    onPressed: addAttachment,
-                    child: const Text('Add Attachment'),
-                  ),
-                ],
-              ),
-            ),
-            const Divider(color: Colors.purple),
-
-            // Display each attachment with view and delete buttons.
-            SingleChildScrollView(
-              child: Column(
-                children: [
-                  ListView.builder(
-                    itemCount: _attachments.length,
-                    shrinkWrap: true,
-                    padding: const EdgeInsets.all(2),
-                    itemBuilder: (context, index) {
-                      return ListTile(
-                        title: Text(_attachments[index].name),
-                        subtitle: Text(_attachments[index].contentType),
-                        trailing: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            IconButton(
-                              icon: const Icon(Icons.remove_red_eye),
-                              onPressed: () =>
-                                  viewAttachment(_attachments[index]),
-                            ),
-                            IconButton(
-                              icon: const Icon(Icons.delete),
-                              onPressed: () =>
-                                  deleteAttachment(_attachments[index]),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                  ),
-                ],
-              ),
-            ),
-          ],
+          ),
         ),
       ],
     );
