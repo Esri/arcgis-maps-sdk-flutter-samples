@@ -163,7 +163,6 @@ class _AttachmentsOptionsState extends State<AttachmentsOptions>
           ),
           child: SingleChildScrollView(
             child: Column(
-              mainAxisSize: MainAxisSize.min,
               children: [
                 Row(
                   children: [
