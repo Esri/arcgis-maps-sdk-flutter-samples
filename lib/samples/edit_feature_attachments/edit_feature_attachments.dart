@@ -138,15 +138,29 @@ class AttachmentsOptions extends StatefulWidget {
 // State class for the AttachmentsOptions.
 class _AttachmentsOptionsState extends State<AttachmentsOptions>
     with SampleStateSupport {
-  late final String _damageType;
+  String? _damageType;
   var _attachments = <Attachment>[];
   var _isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    _damageType = widget.arcGISFeature.attributes['typdamage'] as String? ?? '';
+    _damageType = widget.arcGISFeature.attributes['typdamage'] as String?;
     _loadAttachments();
+  }
+
+  @override
+  void didUpdateWidget(covariant AttachmentsOptions oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    // If the selected feature has changed, reload the attachments.
+    if (oldWidget.arcGISFeature.attributes['objectId'] !=
+        widget.arcGISFeature.attributes['objectId']) {
+      _attachments = [];
+      _isLoading = true;
+      _damageType = widget.arcGISFeature.attributes['typdamage'] as String?;
+      _loadAttachments();
+    }
   }
 
   @override
