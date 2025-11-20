@@ -274,7 +274,6 @@ class _CreateLoadReportState extends State<CreateLoadReport>
       setState(() {
         _phaseDataList = getPhaseDataList();
         _ready = true;
-        _readyRun = true;
       });
     } on Exception catch (e) {
       if (!mounted) return;
