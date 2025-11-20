@@ -82,7 +82,6 @@ class _EditFeatureAttachmentsState extends State<EditFeatureAttachments>
   Future<void> onTap(Offset localPosition) async {
     // Clear the selection on the feature layer.
     _featureLayer.clearSelection();
-    setState(() => _selectedFeature = null);
 
     // Do an identify on the feature layer and select a feature.
     final identifyLayerResult = await _mapViewController.identifyLayer(
@@ -96,9 +95,9 @@ class _EditFeatureAttachmentsState extends State<EditFeatureAttachments>
     final feature = identifyLayerResult.geoElements
         .whereType<ArcGISFeature>()
         .firstOrNull;
+    setState(() => _selectedFeature = feature);
     if (feature != null) {
       _featureLayer.selectFeatures([feature]);
-      setState(() => _selectedFeature = feature);
     }
   }
 
