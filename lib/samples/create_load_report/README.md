@@ -2,7 +2,7 @@
 
 Create a simple electric distribution report that displays the count of customers and total load per phase by tracing downstream from a given point.
 
-![](create_load_report.png)
+![Image of create utility network load report](create_load_report.png)
 
 ## Use case
 
