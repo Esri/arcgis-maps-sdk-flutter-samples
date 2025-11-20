@@ -289,10 +289,10 @@ class _CreateLoadReportState extends State<CreateLoadReport>
   UtilityTraceConfiguration _createTraceConfiguration() {
     final traceConfig = _utilityTier?.getDefaultTraceConfiguration();
 
-    //Service Category for counting total customers
+    // Service Category for counting total customers
     final servicePointCategory = _getServiceCategoryByName('ServicePoint');
 
-    //The load attribute for counting total load.
+    // The load attribute for counting total load.
     _loadAttribute = _utilityNetwork.definition?.networkAttributes.firstWhere(
       (attr) => attr.name == 'Service Load',
     );
