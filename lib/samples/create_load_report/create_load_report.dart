@@ -353,6 +353,7 @@ class _CreateLoadReportState extends State<CreateLoadReport>
         .toList();
 
     if (activeValues.isEmpty) {
+      setErrorMessage('No phases selected for the report.');
       return;
     }
 
