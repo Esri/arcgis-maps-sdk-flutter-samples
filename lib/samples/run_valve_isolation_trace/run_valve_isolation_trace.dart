@@ -158,75 +158,77 @@ class _RunValveIsolationTraceState extends State<RunValveIsolationTrace>
 
   // Configurations for utility network tracing.
   Widget _settingWidget(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(24, 8, 24, 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        spacing: 4,
-        children: [
-          const Text('Choose Category for Filter Barriers:'),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            spacing: 4,
-            children: [
-              // The dropdown for categories.
-              Expanded(
-                child: DropdownButton(
-                  isExpanded: true,
-                  value: _selectedCategory,
-                  hint: const Text('Select category'),
-                  items: _categories.map((category) {
-                    return DropdownMenuItem(
-                      value: category,
-                      child: Text(
-                        category.name,
-                        style: Theme.of(context).textTheme.bodyMedium,
-                      ),
-                    );
-                  }).toList(),
-                  onChanged: (value) {
-                    setState(() {
-                      _selectedCategory = value;
-                    });
-                  },
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          spacing: 4,
+          children: [
+            const Text('Choose Category for Filter Barriers:'),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              spacing: 4,
+              children: [
+                // The dropdown for categories.
+                Expanded(
+                  child: DropdownButton(
+                    isExpanded: true,
+                    value: _selectedCategory,
+                    hint: const Text('Select category'),
+                    items: _categories.map((category) {
+                      return DropdownMenuItem(
+                        value: category,
+                        child: Text(
+                          category.name,
+                          style: Theme.of(context).textTheme.bodyMedium,
+                        ),
+                      );
+                    }).toList(),
+                    onChanged: (value) {
+                      setState(() {
+                        _selectedCategory = value;
+                      });
+                    },
+                  ),
                 ),
-              ),
-              // The button to start tracing.
-              ElevatedButton(
-                onPressed: _traceEnabled ? _onTrace : null,
-                child: const Text('Trace'),
-              ),
-              // The button to reset the trace.
-              ElevatedButton(
-                onPressed: _resetEnabled ? _clear : null,
-                child: const Text('Reset'),
-              ),
-            ],
-          ),
-          // The Switch for including isolated features.
-          Row(
-            spacing: 4,
-            children: [
-              Text(
-                'Include isolated features',
-                style: TextStyle(
-                  color: (_selectedCategory == null)
-                      ? Colors.grey
-                      : Theme.of(context).textTheme.bodyMedium?.color,
+                // The button to start tracing.
+                ElevatedButton(
+                  onPressed: _traceEnabled ? _onTrace : null,
+                  child: const Text('Trace'),
                 ),
-              ),
-              Switch(
-                value: _isIncludeIsolatedFeatures,
-                onChanged: (v) =>
-                    setState(() => _isIncludeIsolatedFeatures = v),
-              ),
-              if (_isIncludeIsolatedFeatures)
-                const Text('On')
-              else
-                const Text('Off'),
-            ],
-          ),
-        ],
+                // The button to reset the trace.
+                ElevatedButton(
+                  onPressed: _resetEnabled ? _clear : null,
+                  child: const Text('Reset'),
+                ),
+              ],
+            ),
+            // The Switch for including isolated features.
+            Row(
+              spacing: 4,
+              children: [
+                Text(
+                  'Include isolated features',
+                  style: TextStyle(
+                    color: (_selectedCategory == null)
+                        ? Colors.grey
+                        : Theme.of(context).textTheme.bodyMedium?.color,
+                  ),
+                ),
+                Switch(
+                  value: _isIncludeIsolatedFeatures,
+                  onChanged: (v) =>
+                      setState(() => _isIncludeIsolatedFeatures = v),
+                ),
+                if (_isIncludeIsolatedFeatures)
+                  const Text('On')
+                else
+                  const Text('Off'),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
