@@ -30,16 +30,13 @@ class _AnalyzeNetworkWithSubnetworkTraceState
     extends State<AnalyzeNetworkWithSubnetworkTrace>
     with SampleStateSupport {
   // The utility network used for tracing.
-  late UtilityNetwork? _utilityNetwork;
+  late UtilityNetwork _utilityNetwork;
 
   // The trace configuration.
-  late UtilityTraceConfiguration? _configuration;
+  late UtilityTraceConfiguration _configuration;
 
   // The starting location for the trace.
-  late UtilityElement? _startingLocation;
-
-  // The initial barrier expression.
-  late UtilityTraceCondition? _initialBarrierExpression;
+  late UtilityElement _startingLocation;
 
   // The default condition that's always present.
   late UtilityTraceConditionalExpression? _defaultCondition;
@@ -48,7 +45,7 @@ class _AnalyzeNetworkWithSubnetworkTraceState
   final _traceConditionalExpressions = <UtilityTraceConditionalExpression>[];
 
   // The selected attribute for adding a condition.
-  late UtilityNetworkAttribute? _selectedAttribute;
+  UtilityNetworkAttribute? _selectedAttribute;
 
   // An array of possible network attributes.
   var _attributes = <UtilityNetworkAttribute>[];
@@ -108,6 +105,7 @@ class _AnalyzeNetworkWithSubnetworkTraceState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // Main scaffold for the sample
       body: SafeArea(
         child: Stack(
           children: [
@@ -119,21 +117,24 @@ class _AnalyzeNetworkWithSubnetworkTraceState
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        // Switch to include barriers in the trace
                         SwitchListTile(
                           title: const Text('Include Barriers'),
                           value: _includeBarriers,
                           contentPadding: EdgeInsets.zero,
-                          onChanged: (v) =>
-                              setState(() => _includeBarriers = v),
+                          onChanged: (value) =>
+                              setState(() => _includeBarriers = value),
                         ),
+                        // Switch to include containers in the trace
                         SwitchListTile(
                           title: const Text('Include Containers'),
                           value: _includeContainers,
                           contentPadding: EdgeInsets.zero,
-                          onChanged: (v) =>
-                              setState(() => _includeContainers = v),
+                          onChanged: (value) =>
+                              setState(() => _includeContainers = value),
                         ),
                         const SizedBox(height: 14),
+                        // Display conditions if any exist
                         if (_traceConditionalExpressions.isNotEmpty) ...[
                           Text(
                             'Conditions (${_traceConditionalExpressions.length}):',
@@ -180,11 +181,13 @@ class _AnalyzeNetworkWithSubnetworkTraceState
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
+                    spacing: 8,
                     children: [
+                      // Dropdown for selecting attributes
                       Row(
+                        spacing: 10,
                         children: [
                           const Text('Attributes:'),
-                          const SizedBox(width: 10),
                           DropdownButton(
                             hint: Text(
                               'Select',
@@ -193,11 +196,11 @@ class _AnalyzeNetworkWithSubnetworkTraceState
                             value: _selectedAttribute,
                             items: _attributes
                                 .map(
-                                  (a) =>
+                                  (attribute) =>
                                       DropdownMenuItem<UtilityNetworkAttribute>(
-                                        value: a,
+                                        value: attribute,
                                         child: Text(
-                                          a.name,
+                                          attribute.name,
                                           style: Theme.of(
                                             context,
                                           ).textTheme.bodyMedium,
@@ -214,10 +217,11 @@ class _AnalyzeNetworkWithSubnetworkTraceState
                           ),
                         ],
                       ),
+                      // Dropdown for selecting comparison operators
                       Row(
+                        spacing: 10,
                         children: [
                           const Text('Comparison:'),
-                          const SizedBox(width: 10),
                           DropdownButton(
                             hint: Text(
                               'Operator',
@@ -245,7 +249,7 @@ class _AnalyzeNetworkWithSubnetworkTraceState
                           ),
                         ],
                       ),
-                      const SizedBox(height: 8),
+                      // Dropdown or TextField for inputting values based on attribute type
                       if (_selectedAttribute?.domain is CodedValueDomain)
                         DropdownButton(
                           isExpanded: true,
@@ -280,19 +284,17 @@ class _AnalyzeNetworkWithSubnetworkTraceState
                           onChanged: (_) =>
                               setState(() => _selectedValue = null),
                         ),
-                      const SizedBox(height: 8),
+                      // Buttons for resetting, adding conditions, and running the trace
                       Row(
+                        spacing: 8,
                         children: [
                           Expanded(
                             flex: 2,
                             child: ElevatedButton(
-                              onPressed: _configuration != null
-                                  ? _onReset
-                                  : null,
+                              onPressed: _onReset,
                               child: const Text('Reset'),
                             ),
                           ),
-                          const SizedBox(width: 8),
                           Expanded(
                             flex: 3,
                             child: ElevatedButton(
@@ -302,13 +304,10 @@ class _AnalyzeNetworkWithSubnetworkTraceState
                               child: const Text('Add Condition'),
                             ),
                           ),
-                          const SizedBox(width: 8),
                           Expanded(
                             flex: 2,
                             child: ElevatedButton(
-                              onPressed: _startingLocation != null
-                                  ? _onRunTrace
-                                  : null,
+                              onPressed: _onRunTrace,
                               child: const Text('Trace'),
                             ),
                           ),
@@ -358,14 +357,13 @@ class _AnalyzeNetworkWithSubnetworkTraceState
 
     // Load the utility network.
     _utilityNetwork = UtilityNetwork(serviceGeodatabase);
-    await _utilityNetwork!.load();
+    await _utilityNetwork.load();
 
-    final definition = _utilityNetwork!.definition;
-    if (definition == null) return;
+    final definition = _utilityNetwork.definition;
 
     // Create a default starting location.
-    _startingLocation = await _makeStartingLocation(
-      definition,
+    _startingLocation = _makeStartingLocation(
+      definition!,
       deviceTableName,
       assetGroupName,
       assetTypeName,
@@ -374,22 +372,16 @@ class _AnalyzeNetworkWithSubnetworkTraceState
 
     // Get the default trace configuration for the specified domain network and tier.
     final domainNetwork = definition.getDomainNetwork(domainNetworkName);
-    if (domainNetwork == null) return;
 
-    final utilityTierConfiguration = domainNetwork
+    final utilityTierConfiguration = domainNetwork!
         .getTier(tierName)
         ?.getDefaultTraceConfiguration();
-    if (utilityTierConfiguration == null) return;
 
     // Set the traversability.
-    utilityTierConfiguration.traversability ??= UtilityTraversability();
-
-    // Store the initial expression.
-    _initialBarrierExpression =
-        utilityTierConfiguration.traversability?.barriers;
+    utilityTierConfiguration!.traversability ??= UtilityTraversability();
 
     // Initialize default condition: "operational device status" Equal "Open".
-    _defaultCondition = await _createDefaultCondition(definition);
+    _defaultCondition = _createDefaultCondition(definition);
     if (_defaultCondition != null) {
       // Set the default condition as the barrier.
       utilityTierConfiguration.traversability?.barriers = _defaultCondition;
@@ -399,46 +391,34 @@ class _AnalyzeNetworkWithSubnetworkTraceState
 
     // Get network attributes.
     final attributes = definition.networkAttributes
-        .where((a) => !a.isSystemDefined)
+        .where((attribute) => !attribute.isSystemDefined)
         .toList();
     _attributes = attributes;
     _configuration = utilityTierConfiguration;
   }
 
   // Creates a `UtilityElement` from the asset type to use as the starting location.
-  Future<UtilityElement> _makeStartingLocation(
+  UtilityElement _makeStartingLocation(
     UtilityNetworkDefinition definition,
     String deviceTableName,
     String assetGroupName,
     String assetTypeName,
     String globalIdString,
-  ) async {
+  ) {
     // Get the asset type from the definition.
     final networkSource = definition.getNetworkSource(deviceTableName);
-    if (networkSource == null) {
-      showMessageDialog('Network source not found: $deviceTableName');
-    }
 
     // Get the asset group.
     final assetGroup = networkSource!.getAssetGroup(assetGroupName);
-    if (assetGroup == null) {
-      showMessageDialog('Asset group not found: $assetGroupName');
-    }
 
     // Get the asset type.
     final assetType = assetGroup!.getAssetType(assetTypeName);
-    if (assetType == null) {
-      showMessageDialog('Asset type not found: $assetTypeName');
-    }
 
     // Create the global ID.
     final globalId = Guid.fromString(globalIdString);
-    if (globalId == null) {
-      showMessageDialog('Invalid global ID: $globalIdString');
-    }
 
     // Create the starting location element.
-    final startingLocation = _utilityNetwork!.createElementWithAssetType(
+    final startingLocation = _utilityNetwork.createElementWithAssetType(
       assetType!,
       globalId: globalId!,
     );
@@ -455,9 +435,9 @@ class _AnalyzeNetworkWithSubnetworkTraceState
   }
 
   // Creates the default condition: "operational device status" Equal "Open".
-  Future<UtilityTraceConditionalExpression?> _createDefaultCondition(
+  UtilityTraceConditionalExpression? _createDefaultCondition(
     UtilityNetworkDefinition definition,
-  ) async {
+  ) {
     // Get attributes from definition since _attributes might not be populated yet.
     final attributes = definition.networkAttributes
         .where((a) => !a.isSystemDefined)
@@ -556,15 +536,13 @@ class _AnalyzeNetworkWithSubnetworkTraceState
 
   // Runs a trace with the pending trace configuration.
   Future<void> _onRunTrace() async {
-    if (_startingLocation == null || _configuration == null) return;
-
     // Create utility trace parameters for the starting location.
     final parameters = UtilityTraceParameters(
       UtilityTraceType.subnetwork,
-      startingLocations: [_startingLocation!],
+      startingLocations: [_startingLocation],
     );
 
-    final configuration = _configuration!;
+    final configuration = _configuration;
     configuration.includeBarriers = _includeBarriers;
     configuration.includeContainers = _includeContainers;
 
@@ -580,14 +558,10 @@ class _AnalyzeNetworkWithSubnetworkTraceState
     parameters.traceConfiguration = configuration;
 
     // Trace the utility network.
-    final traceResults = await _utilityNetwork!.trace(parameters);
-    UtilityElementTraceResult? elementResult;
-    for (final result in traceResults) {
-      if (result is UtilityElementTraceResult) {
-        elementResult = result;
-        break;
-      }
-    }
+    final traceResults = await _utilityNetwork.trace(parameters);
+    final elementResult = traceResults
+        .whereType<UtilityElementTraceResult>()
+        .firstOrNull;
 
     // Display the number of elements found by the trace.
     setState(() => _elementsCount = elementResult?.elements.length ?? 0);
@@ -599,16 +573,12 @@ class _AnalyzeNetworkWithSubnetworkTraceState
 
   // Resets the trace barrier conditions.
   void _onReset() {
-    if (_configuration == null) return;
-
     // Reset the conditional expressions.
     _traceConditionalExpressions.clear();
     if (_defaultCondition != null) {
       _traceConditionalExpressions.add(_defaultCondition!);
       // Cast to UtilityTraceCondition since barriers expects that type.
-      _configuration!.traversability?.barriers = _defaultCondition;
-    } else if (_initialBarrierExpression != null) {
-      _configuration!.traversability?.barriers = _initialBarrierExpression;
+      _configuration.traversability?.barriers = _defaultCondition;
     }
 
     // Clear the condition form.
@@ -625,11 +595,11 @@ class _AnalyzeNetworkWithSubnetworkTraceState
       case UtilityAttributeComparisonOperator.greaterThan:
         return 'Greater Than';
       case UtilityAttributeComparisonOperator.greaterThanEqual:
-        return 'Greater Than Equal';
+        return 'Greater Than Or Equal';
       case UtilityAttributeComparisonOperator.lessThan:
         return 'Less Than';
       case UtilityAttributeComparisonOperator.lessThanEqual:
-        return 'Less Than Equal';
+        return 'Less Than Or Equal';
       case UtilityAttributeComparisonOperator.includesTheValues:
         return 'Includes The Values';
       case UtilityAttributeComparisonOperator.doesNotIncludeTheValues:
@@ -680,12 +650,11 @@ class _AnalyzeNetworkWithSubnetworkTraceState
 
   // Clears the condition form inputs.
   void _clearForm() {
-    _selectedAttribute = null;
-    _selectedValue = null;
     _valueController.clear();
-    _codedValues = [];
-
-    // Refresh the UI.
-    setState(() {});
+    setState(() {
+      _selectedAttribute = null;
+      _selectedValue = null;
+      _codedValues = [];
+    });
   }
 }
