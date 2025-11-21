@@ -34,13 +34,13 @@ class _CreateLoadReportState extends State<CreateLoadReport>
   // The starting location for the trace.
   late UtilityElement _startingLocation;
   // The utility tier.
-  UtilityTier? _utilityTier;
+  late UtilityTier _utilityTier;
   // The phases current attribute.
-  UtilityNetworkAttribute? _phasesNetworkAttribute;
+  late UtilityNetworkAttribute _phasesNetworkAttribute;
   // The load attribute.
-  UtilityNetworkAttribute? _loadAttribute;
+  late UtilityNetworkAttribute _loadAttribute;
   // The base condition for the trace.
-  UtilityTraceConditionalExpression? _baseCondition;
+  late UtilityTraceConditionalExpression _baseCondition;
   // The trace parameters.
   late UtilityTraceParameters _traceParameters;
   // The phase data list.
@@ -51,9 +51,9 @@ class _CreateLoadReportState extends State<CreateLoadReport>
   // A flag when the utility network is loaded and other properties are initialized.
   var _ready = false;
   // A flag to indicate if the report is ready to run.
-  bool _readyRun = false;
+  var _readyRun = false;
   // An error message to display.
-  String _errorMessage = '';
+  var _errorMessage = '';
 
   @override
   void initState() {
@@ -145,7 +145,7 @@ class _CreateLoadReportState extends State<CreateLoadReport>
       scrollDirection: Axis.horizontal,
       child: SingleChildScrollView(
         child: DataTable(
-          columnSpacing: 12, // spacing between constrained columns
+          columnSpacing: 12,
           columns: const [
             DataColumn(
               label: SizedBox(
@@ -241,14 +241,14 @@ class _CreateLoadReportState extends State<CreateLoadReport>
       );
 
       // Get the utility tier.
-      _utilityTier = _utilityNetwork.definition?.domainNetworks
+      _utilityTier = _utilityNetwork.definition!.domainNetworks
           .firstWhere((definition) => definition.name == 'ElectricDistribution')
           .tiers
           .firstWhere((tier) => tier.name == 'Medium Voltage Radial');
 
       // Get the default trace configuration as the base condition.
       _baseCondition =
-          _utilityTier!
+          _utilityTier
                   .getDefaultTraceConfiguration()!
                   .traversability!
                   .barriers!
@@ -276,7 +276,6 @@ class _CreateLoadReportState extends State<CreateLoadReport>
         _ready = true;
       });
     } on Exception catch (e) {
-      if (!mounted) return;
       setState(() {
         _ready = true;
         _errorMessage = 'Initialization failed: $e';
@@ -286,54 +285,53 @@ class _CreateLoadReportState extends State<CreateLoadReport>
 
   /// Returns a default TraceConfiguration for the utility network.
   UtilityTraceConfiguration _createTraceConfiguration() {
-    final traceConfig = _utilityTier?.getDefaultTraceConfiguration();
+    final traceConfig = _utilityTier.getDefaultTraceConfiguration()!;
 
-    // Service Category for counting total customers
+    // Service Category for counting total customers.
     final servicePointCategory = _getServiceCategoryByName('ServicePoint');
 
     // The load attribute for counting total load.
-    _loadAttribute = _utilityNetwork.definition?.networkAttributes.firstWhere(
+    _loadAttribute = _utilityNetwork.definition!.networkAttributes.firstWhere(
       (attr) => attr.name == 'Service Load',
     );
 
     // Create a comparison to check the existence of service points.
     final serviceCategoryComparison = UtilityCategoryComparison.withCategory(
-      servicePointCategory,
+      servicePointCategory!,
       comparisonOperator: UtilityCategoryComparisonOperator.exists,
     );
     final addLoadAttributeFunction = UtilityTraceFunction(
       UtilityTraceFunctionType.add,
-      networkAttribute: _loadAttribute!,
+      networkAttribute: _loadAttribute,
       condition: serviceCategoryComparison,
     );
-    traceConfig?.functions.clear();
+    traceConfig.functions.clear();
 
     // Create function input and output condition.
-    traceConfig?.functions.add(addLoadAttributeFunction);
-    traceConfig?.outputCondition = serviceCategoryComparison;
-
+    traceConfig.functions.add(addLoadAttributeFunction);
+    traceConfig.outputCondition = serviceCategoryComparison;
     // Set to false to ensure that service points with incorrect phasing
     // (which therefore act as barriers) are not counted with results.
-    traceConfig?.includeBarriers = false;
+    traceConfig.includeBarriers = false;
 
-    return traceConfig!;
+    return traceConfig;
   }
 
   /// Returns the utility category with the given name.
-  UtilityCategory _getServiceCategoryByName(String name) {
-    final categories = _utilityNetwork.definition?.categories.where(
+  UtilityCategory? _getServiceCategoryByName(String name) {
+    final category = _utilityNetwork.definition?.categories.firstWhere(
       (category) => category.name == name,
     );
-    return categories!.first;
+    return category;
   }
 
   /// Returns the list of coded phase values for the phases current attribute.
   /// If the attribute domain is not a coded value domain, returns an empty list.
   List<CodedValue> _createPhaseList() {
-    _phasesNetworkAttribute = _utilityNetwork.definition?.networkAttributes
+    _phasesNetworkAttribute = _utilityNetwork.definition!.networkAttributes
         .firstWhere((attr) => attr.name == 'Phases Current');
 
-    final domain = _phasesNetworkAttribute?.domain;
+    final domain = _phasesNetworkAttribute.domain;
     return domain is CodedValueDomain ? domain.codedValues : const [];
   }
 
@@ -365,13 +363,13 @@ class _CreateLoadReportState extends State<CreateLoadReport>
       final results = await _utilityNetwork.trace(_traceParameters);
       for (final elementTraceResult in results) {
         if (elementTraceResult is UtilityElementTraceResult) {
-          // Get the total customers from the UtilityElementTraceResult
+          // Get the total customers from the UtilityElementTraceResult.
           final distinctIds = elementTraceResult.elements
               .map((e) => e.objectId)
               .toSet();
           phaseData.customers = distinctIds.length;
         } else if (elementTraceResult is UtilityFunctionTraceResult) {
-          // Get the total load from the UtilityFunctionTraceResult
+          // Get the total load from the UtilityFunctionTraceResult.
           final functionResult =
               elementTraceResult.functionOutputs.first.result as double;
           phaseData.load = functionResult;
@@ -383,25 +381,19 @@ class _CreateLoadReportState extends State<CreateLoadReport>
 
   /// Prepares trace parameters for a single phase.
   void setUtilityTraceOrConditionWithCodedValue(CodedValue codedValue) {
-    if (_phasesNetworkAttribute == null || _baseCondition == null) {
-      setErrorMessage(
-        'Trace cannot be run: network attribute or base condition is null.',
-      );
-      return;
-    }
-    // Create a conditional expression with the CodedValue
+    // Create a conditional expression with the CodedValue.
     final phaseAttributeComparison =
         UtilityNetworkAttributeComparison.withValue(
-          networkAttribute: _phasesNetworkAttribute!,
+          networkAttribute: _phasesNetworkAttribute,
           comparisonOperator:
               UtilityAttributeComparisonOperator.doesNotIncludeAny,
           value: codedValue.code,
-        );
+        )!;
 
     // Chain it with the base condition using an OR operator.
     final orCondition = UtilityTraceOrCondition(
-      leftExpression: _baseCondition!,
-      rightExpression: phaseAttributeComparison!,
+      leftExpression: _baseCondition,
+      rightExpression: phaseAttributeComparison,
     );
     _traceParameters.traceConfiguration?.traversability?.barriers = orCondition;
   }
