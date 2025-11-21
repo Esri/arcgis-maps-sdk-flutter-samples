@@ -79,7 +79,7 @@ class _RunValveIsolationTraceState extends State<RunValveIsolationTrace>
 
   // Set to include/exclude isolated features in the trace.
   var _isIncludeIsolatedFeatures = true;
-  
+
   // The Message to display on the banner.
   final String _message =
       'Tap on the map to add filter barriers, or run the trace directly without filter barriers.';
