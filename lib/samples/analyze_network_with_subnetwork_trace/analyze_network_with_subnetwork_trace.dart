@@ -66,16 +66,16 @@ class _AnalyzeNetworkWithSubnetworkTraceState
   final _valueController = TextEditingController();
 
   // A flag indicating whether to include barriers.
-  bool _includeBarriers = true;
+  var _includeBarriers = true;
 
   // A flag indicating whether to include containers.
-  bool _includeContainers = true;
+  var _includeContainers = true;
 
   // The number of trace result.
-  int _elementsCount = 0;
+  var _elementsCount = 0;
 
   // A flag for when the utility network and trace configuration are ready to be used.
-  bool _ready = false;
+  var _ready = false;
 
   @override
   void initState() {
