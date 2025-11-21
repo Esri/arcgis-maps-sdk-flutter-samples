@@ -78,21 +78,30 @@ class _ApplyRasterRenderingRuleState extends State<ApplyRasterRenderingRule>
   }
 
   Widget buildBottomMenu() {
-    return Center(
-      // A dropdown menu for selecting a rendering rule.
-      child: DropdownMenu(
-        hintText: 'Rendering Rule',
-        trailingIcon: const Icon(Icons.arrow_drop_down),
-        textStyle: Theme.of(context).textTheme.labelMedium,
-        width: 250,
-        initialSelection: _selectedRasterLayer,
-        onSelected: (rasterLayer) {
-          setState(() => _selectedRasterLayer = rasterLayer);
-          setLayer(rasterLayer!);
-        },
-        dropdownMenuEntries: _rasterLayers.map((rasterLayer) {
-          return DropdownMenuEntry(value: rasterLayer, label: rasterLayer.name);
-        }).toList(),
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
+      child: Row(
+        spacing: 10,
+        children: [
+          const Text('Rule:'),
+          Flexible(
+            child: DropdownMenu(
+              expandedInsets: EdgeInsets.zero,
+              textStyle: Theme.of(context).textTheme.labelMedium,
+              initialSelection: _selectedRasterLayer,
+              onSelected: (rasterLayer) {
+                setState(() => _selectedRasterLayer = rasterLayer);
+                setLayer(rasterLayer!);
+              },
+              dropdownMenuEntries: _rasterLayers.map((rasterLayer) {
+                return DropdownMenuEntry(
+                  value: rasterLayer,
+                  label: rasterLayer.name,
+                );
+              }).toList(),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -106,6 +115,7 @@ class _ApplyRasterRenderingRuleState extends State<ApplyRasterRenderingRule>
     if (_rasterLayers.isNotEmpty) {
       // Load the first raster layer.
       await _rasterLayers.first.load();
+      _selectedRasterLayer = _rasterLayers.first;
       setLayer(_rasterLayers.first);
     }
 

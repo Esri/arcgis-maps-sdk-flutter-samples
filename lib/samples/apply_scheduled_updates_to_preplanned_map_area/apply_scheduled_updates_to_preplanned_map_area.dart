@@ -14,10 +14,13 @@
 // limitations under the License.
 //
 
+import 'dart:io';
+
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:path/path.dart' as path;
 
 class ApplyScheduledUpdatesToPreplannedMapArea extends StatefulWidget {
   const ApplyScheduledUpdatesToPreplannedMapArea({super.key});
@@ -98,7 +101,14 @@ class _ApplyScheduledUpdatesToPreplannedMapAreaState
 
   Future<void> onMapViewReady() async {
     final listPaths = GoRouter.of(context).state.extra! as List<String>;
-    _dataUri = Uri.parse(listPaths.first);
+    final originalPath = listPaths.first;
+
+    // Create a copy of the map package so that updating it does not modify the original.
+    final toUpdateDir = Directory('${originalPath}_toUpdate');
+    if (toUpdateDir.existsSync()) toUpdateDir.deleteSync(recursive: true);
+    Directory(originalPath).copySync(toUpdateDir);
+    _dataUri = toUpdateDir.uri;
+
     await _loadMapPackageMap();
 
     // Check if there is an update for the map package.
@@ -183,5 +193,24 @@ class _ApplyScheduledUpdatesToPreplannedMapAreaState
           ..rollbackOnFailure = true;
 
     return true;
+  }
+}
+
+extension on Directory {
+  // Recursively copy this directory to [destination].
+  void copySync(Directory destination) {
+    if (!destination.existsSync()) {
+      destination.createSync(recursive: true);
+    }
+    for (final entity in listSync()) {
+      final newPath = path.join(destination.path, path.basename(entity.path));
+      if (entity is File) {
+        entity.copySync(newPath);
+      } else if (entity is Directory) {
+        final newDirectory = Directory(newPath);
+        newDirectory.createSync(recursive: true);
+        entity.copySync(newDirectory);
+      }
+    }
   }
 }

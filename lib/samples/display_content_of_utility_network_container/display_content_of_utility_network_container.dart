@@ -370,7 +370,9 @@ class _DisplayContentOfUtilityNetworkContainerState
     // Remember the previous viewpoint and update the message banner.
     setState(() {
       _previousViewpoint = viewpoint;
-      _message = 'Contained associations are shown.';
+      _message = containedAssociations.isEmpty
+          ? 'This feature contains no associations.'
+          : 'Contained associations are shown.';
     });
   }
 
