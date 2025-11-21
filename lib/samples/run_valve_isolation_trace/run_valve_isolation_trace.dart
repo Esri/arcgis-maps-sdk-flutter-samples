@@ -77,8 +77,12 @@ class _RunValveIsolationTraceState extends State<RunValveIsolationTrace>
   // The selected category for filter barriers.
   UtilityCategory? _selectedCategory;
 
-  /// Set to include/exclude isolated features in the trace.
+  // Set to include/exclude isolated features in the trace.
   var _isIncludeIsolatedFeatures = true;
+
+  // The Message to display on the banner.
+  final String _message =
+      'Tap on the map to add filter barriers, or run the trace directly without filter barriers.';
 
   @override
   void initState() {
@@ -106,32 +110,32 @@ class _RunValveIsolationTraceState extends State<RunValveIsolationTrace>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: [
-          Column(
-            children: [
-              Expanded(
-                // Add a map view to the widget tree and set a controller.
-                child: ArcGISMapView(
-                  controllerProvider: () => _mapViewController,
-                  onMapViewReady: _onMapViewReady,
-                  onTap: _onTap,
+      body: SafeArea(
+        left: false,
+        right: false,
+        child: Stack(
+          children: [
+            Column(
+              children: [
+                Expanded(
+                  // Add a map view to the widget tree and set a controller.
+                  child: ArcGISMapView(
+                    controllerProvider: () => _mapViewController,
+                    onMapViewReady: _onMapViewReady,
+                    onTap: _onTap,
+                  ),
                 ),
-              ),
-              // Add the settings widget below the map view.
-              _settingWidget(context),
-            ],
-          ),
-          // Add a loading indicator while the map and utility network are loading.
-          LoadingIndicator(
-            visible: _loading,
-            text: _loading ? _statusMessage : '',
-          ),
-          // Display a banner with instructions at the top.
-          SafeArea(
-            left: false,
-            right: false,
-            child: IgnorePointer(
+                // Add the settings widget below the map view.
+                _settingWidget(context),
+              ],
+            ),
+            // Add a loading indicator while the map and utility network are loading.
+            LoadingIndicator(
+              visible: _loading,
+              text: _loading ? _statusMessage : '',
+            ),
+            // Display a banner with instructions at the top.
+            IgnorePointer(
               child: Container(
                 padding: const EdgeInsets.all(5),
                 color: Colors.white.withValues(alpha: 0.7),
@@ -150,85 +154,83 @@ class _RunValveIsolationTraceState extends State<RunValveIsolationTrace>
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
   // Configurations for utility network tracing.
   Widget _settingWidget(BuildContext context) {
-    return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          spacing: 4,
-          children: [
-            const Text('Choose Category for Filter Barriers:'),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              spacing: 4,
-              children: [
-                // The dropdown for categories.
-                Expanded(
-                  child: DropdownButton(
-                    isExpanded: true,
-                    value: _selectedCategory,
-                    hint: const Text('Select category'),
-                    items: _categories.map((category) {
-                      return DropdownMenuItem(
-                        value: category,
-                        child: Text(
-                          category.name,
-                          style: Theme.of(context).textTheme.bodyMedium,
-                        ),
-                      );
-                    }).toList(),
-                    onChanged: (value) {
-                      setState(() {
-                        _selectedCategory = value;
-                      });
-                    },
-                  ),
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        spacing: 4,
+        children: [
+          const Text('Choose Category for Filter Barriers:'),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            spacing: 4,
+            children: [
+              // The dropdown for categories.
+              Expanded(
+                child: DropdownButton(
+                  isExpanded: true,
+                  value: _selectedCategory,
+                  hint: const Text('Select category'),
+                  items: _categories.map((category) {
+                    return DropdownMenuItem(
+                      value: category,
+                      child: Text(
+                        category.name,
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                    );
+                  }).toList(),
+                  onChanged: (value) {
+                    setState(() {
+                      _selectedCategory = value;
+                    });
+                  },
                 ),
-                // The button to start tracing.
-                ElevatedButton(
-                  onPressed: _traceEnabled ? _onTrace : null,
-                  child: const Text('Trace'),
+              ),
+              // The button to start tracing.
+              ElevatedButton(
+                onPressed: _traceEnabled ? _onTrace : null,
+                child: const Text('Trace'),
+              ),
+              // The button to reset the trace.
+              ElevatedButton(
+                onPressed: _resetEnabled ? _clear : null,
+                child: const Text('Reset'),
+              ),
+            ],
+          ),
+          // The Switch for including isolated features.
+          Row(
+            spacing: 4,
+            children: [
+              Text(
+                'Include isolated features',
+                style: TextStyle(
+                  color: (_selectedCategory == null)
+                      ? Colors.grey
+                      : Theme.of(context).textTheme.bodyMedium?.color,
                 ),
-                // The button to reset the trace.
-                ElevatedButton(
-                  onPressed: _resetEnabled ? _clear : null,
-                  child: const Text('Reset'),
-                ),
-              ],
-            ),
-            // The Switch for including isolated features.
-            Row(
-              spacing: 4,
-              children: [
-                Text(
-                  'Include isolated features',
-                  style: TextStyle(
-                    color: (_selectedCategory == null)
-                        ? Colors.grey
-                        : Theme.of(context).textTheme.bodyMedium?.color,
-                  ),
-                ),
-                Switch(
-                  value: _isIncludeIsolatedFeatures,
-                  onChanged: (v) =>
-                      setState(() => _isIncludeIsolatedFeatures = v),
-                ),
-                if (_isIncludeIsolatedFeatures)
-                  const Text('On')
-                else
-                  const Text('Off'),
-              ],
-            ),
-          ],
-        ),
+              ),
+              Switch(
+                value: _isIncludeIsolatedFeatures,
+                onChanged: (v) =>
+                    setState(() => _isIncludeIsolatedFeatures = v),
+              ),
+              if (_isIncludeIsolatedFeatures)
+                const Text('On')
+              else
+                const Text('Off'),
+            ],
+          ),
+        ],
       ),
     );
   }
@@ -309,8 +311,7 @@ class _RunValveIsolationTraceState extends State<RunValveIsolationTrace>
     _loadCategories();
 
     setState(() {
-      _statusMessage =
-          'Tap on the map to add filter barriers, or run the trace directly without filter barriers.';
+      _statusMessage = _message;
       _traceEnabled = true;
     });
   }
@@ -427,6 +428,7 @@ class _RunValveIsolationTraceState extends State<RunValveIsolationTrace>
     );
 
     setState(() {
+      _statusMessage = _message;
       _resetEnabled = true;
     });
   }
