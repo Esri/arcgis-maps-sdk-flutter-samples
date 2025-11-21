@@ -176,8 +176,9 @@ class _CreateLoadReportState extends State<CreateLoadReport>
                     phaseData.customers = 0;
                     phaseData.load = 0;
                   }
-                  _readyRun = _phaseDataList
-                      .any((phaseData) => phaseData.selected);
+                  _readyRun = _phaseDataList.any(
+                    (phaseData) => phaseData.selected,
+                  );
                 }),
                 selected: phaseData.selected,
                 cells: [
@@ -231,12 +232,12 @@ class _CreateLoadReportState extends State<CreateLoadReport>
       );
       final globalId = Guid.fromString(
         '{1CAF7740-0BF4-4113-8DB2-654E18800028}',
-      );
+      )!;
 
       // Create the default starting location.
       _startingLocation = _utilityNetwork.createElementWithAssetType(
         assetType!,
-        globalId: globalId!,
+        globalId: globalId,
         terminal: terminal,
       );
 
@@ -248,10 +249,7 @@ class _CreateLoadReportState extends State<CreateLoadReport>
 
       // Get the default trace configuration as the base condition.
       _baseCondition =
-          _utilityTier
-                  .getDefaultTraceConfiguration()!
-                  .traversability!
-                  .barriers!
+          _utilityTier.getDefaultTraceConfiguration()!.traversability!.barriers!
               as UtilityTraceConditionalExpression;
 
       // Create downstream trace parameters with function outputs.
