@@ -105,7 +105,6 @@ class _AnalyzeNetworkWithSubnetworkTraceState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // Main scaffold for the sample
       body: SafeArea(
         child: Stack(
           children: [
@@ -117,7 +116,7 @@ class _AnalyzeNetworkWithSubnetworkTraceState
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Switch to include barriers in the trace
+                        // Switch to include barriers in the trace.
                         SwitchListTile(
                           title: const Text('Include Barriers'),
                           value: _includeBarriers,
@@ -125,7 +124,7 @@ class _AnalyzeNetworkWithSubnetworkTraceState
                           onChanged: (value) =>
                               setState(() => _includeBarriers = value),
                         ),
-                        // Switch to include containers in the trace
+                        // Switch to include containers in the trace.
                         SwitchListTile(
                           title: const Text('Include Containers'),
                           value: _includeContainers,
@@ -134,7 +133,7 @@ class _AnalyzeNetworkWithSubnetworkTraceState
                               setState(() => _includeContainers = value),
                         ),
                         const SizedBox(height: 14),
-                        // Display conditions if any exist
+                        // Display conditions if any exist.
                         if (_traceConditionalExpressions.isNotEmpty) ...[
                           Text(
                             'Conditions (${_traceConditionalExpressions.length}):',
@@ -183,7 +182,7 @@ class _AnalyzeNetworkWithSubnetworkTraceState
                     crossAxisAlignment: CrossAxisAlignment.start,
                     spacing: 8,
                     children: [
-                      // Dropdown for selecting attributes
+                      // Dropdown for selecting attributes.
                       Row(
                         spacing: 10,
                         children: [
@@ -217,7 +216,7 @@ class _AnalyzeNetworkWithSubnetworkTraceState
                           ),
                         ],
                       ),
-                      // Dropdown for selecting comparison operators
+                      // Dropdown for selecting comparison operators.
                       Row(
                         spacing: 10,
                         children: [
@@ -249,7 +248,7 @@ class _AnalyzeNetworkWithSubnetworkTraceState
                           ),
                         ],
                       ),
-                      // Dropdown or TextField for inputting values based on attribute type
+                      // Dropdown or TextField for inputting values based on attribute type.
                       if (_selectedAttribute?.domain is CodedValueDomain)
                         DropdownButton(
                           isExpanded: true,
@@ -284,7 +283,7 @@ class _AnalyzeNetworkWithSubnetworkTraceState
                           onChanged: (_) =>
                               setState(() => _selectedValue = null),
                         ),
-                      // Buttons for resetting, adding conditions, and running the trace
+                      // Buttons for resetting, adding conditions, and running the trace.
                       Row(
                         spacing: 8,
                         children: [
