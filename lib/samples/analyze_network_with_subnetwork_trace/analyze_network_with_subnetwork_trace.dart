@@ -33,22 +33,22 @@ class _AnalyzeNetworkWithSubnetworkTraceState
   late UtilityNetwork? _utilityNetwork;
 
   // The trace configuration.
-  UtilityTraceConfiguration? _configuration;
+  late UtilityTraceConfiguration? _configuration;
 
   // The starting location for the trace.
-  UtilityElement? _startingLocation;
+  late UtilityElement? _startingLocation;
 
   // The initial barrier expression.
-  UtilityTraceCondition? _initialBarrierExpression;
+  late UtilityTraceCondition? _initialBarrierExpression;
 
   // The default condition that's always present.
-  UtilityTraceConditionalExpression? _defaultCondition;
+  late UtilityTraceConditionalExpression? _defaultCondition;
 
   // An array of conditional expressions.
   final _traceConditionalExpressions = <UtilityTraceConditionalExpression>[];
 
   // The selected attribute for adding a condition.
-  UtilityNetworkAttribute? _selectedAttribute;
+  late UtilityNetworkAttribute? _selectedAttribute;
 
   // An array of possible network attributes.
   var _attributes = <UtilityNetworkAttribute>[];
@@ -74,7 +74,7 @@ class _AnalyzeNetworkWithSubnetworkTraceState
   // The number of trace result.
   int _elementsCount = 0;
 
-  // A flag for when the utility network and trace configuration are ready be used.
+  // A flag for when the utility network and trace configuration are ready to be used.
   bool _ready = false;
 
   @override
