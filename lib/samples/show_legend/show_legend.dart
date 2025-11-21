@@ -90,6 +90,8 @@ class _ShowLegendState extends State<ShowLegend> with SampleStateSupport {
     // Load the image and feature layers.
     await featureLayer.load();
     await imageLayer.load();
+    if (!mounted) return;
+
     // Create a list to store operational layers and populate it with image and feature layers.
     final operationalLayersList = <LayerContent>[
       ...imageLayer.subLayerContents,
@@ -98,6 +100,8 @@ class _ShowLegendState extends State<ShowLegend> with SampleStateSupport {
 
     // Create a list to store dropdown items.
     final legendsDropDown = <DropdownMenuEntry<LegendInfo>>[];
+    // To use a DropdownMenu to present the legend, we disable each entry but use the enabled text style.
+    final textTheme = Theme.of(context).textTheme;
     // Get the legend info for each layer and add it to the legends dropdown list.
     for (final layer in operationalLayersList) {
       // Get the legend info for the current layer.
@@ -107,10 +111,8 @@ class _ShowLegendState extends State<ShowLegend> with SampleStateSupport {
         DropdownMenuEntry(
           value: layerLegends.first,
           label: layer.name,
-          labelWidget: Text(
-            layer.name,
-            style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-          ),
+          enabled: false,
+          labelWidget: Text(layer.name, style: textTheme.titleMedium),
         ),
       );
 
@@ -131,6 +133,7 @@ class _ShowLegendState extends State<ShowLegend> with SampleStateSupport {
           DropdownMenuEntry(
             value: legend,
             label: legend.name,
+            enabled: false,
             labelWidget: Row(
               spacing: 8,
               children: [
@@ -140,7 +143,7 @@ class _ShowLegendState extends State<ShowLegend> with SampleStateSupport {
                 else
                   const SizedBox.shrink(),
                 // Add the legend name to the dropdown list.
-                Text(legend.name, style: const TextStyle(fontSize: 12)),
+                Text(legend.name, style: textTheme.bodyMedium),
               ],
             ),
           ),
