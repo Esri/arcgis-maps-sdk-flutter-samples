@@ -91,47 +91,47 @@ class _CreateLoadReportState extends State<CreateLoadReport>
           padding: const EdgeInsets.fromLTRB(10, 20, 10, 10),
           child: Stack(
             children: [
-              if (_phaseDataList.isNotEmpty)
-                Column(
-                  spacing: 20,
-                  children: [
-                    // The data table displaying the load report.
-                    dataTableWidget(),
-                    // A row of buttons: reset and run report.
-                    Row(
-                      spacing: 20,
-                      children: [
-                        ElevatedButton(
-                          onPressed: _ready ? reset : null,
-                          child: const Text('Reset'),
-                        ),
-                        ElevatedButton(
-                          onPressed: _readyRun ? runReport : null,
-                          child: const Text('Run Report'),
-                        ),
-                      ],
-                    ),
-                    // Instructions text.
-                    Text(
-                      'Select the phase(s) and click the "Run Report" button \nto create the load report',
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    ),
-                    // An error message display.
-                    Visibility(
-                      visible: _errorMessage.isNotEmpty,
+              Column(
+                spacing: 20,
+                children: [
+                  // The data table displaying the load report.
+                  dataTableWidget(),
+                  // A row of buttons: reset and run report.
+                  Row(
+                    spacing: 20,
+                    children: [
+                      ElevatedButton(
+                        onPressed: _ready ? reset : null,
+                        child: const Text('Reset'),
+                      ),
+                      ElevatedButton(
+                        onPressed: _readyRun ? runReport : null,
+                        child: const Text('Run Report'),
+                      ),
+                    ],
+                  ),
+                  // Instructions text.
+                  Text(
+                    'Select the phase(s) and click the "Run Report" button \nto create the load report',
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                  // An error message display.
+                  Visibility(
+                    visible: _errorMessage.isNotEmpty,
+                    child: Expanded(
                       child: Text(
                         _errorMessage,
-                        overflow: TextOverflow.ellipsis,
                         style: Theme.of(context).textTheme.customErrorStyle,
                       ),
                     ),
-                  ],
-                )
-              else
-                LoadingIndicator(
-                  visible: !_ready,
-                  text: 'Initializing utility network...',
-                ),
+                  ),
+                ],
+              ),
+              // a loading indicator while the utility network is initializing.
+              LoadingIndicator(
+                visible: !_ready,
+                text: 'Initializing utility network...',
+              ),
             ],
           ),
         ),
@@ -213,7 +213,6 @@ class _CreateLoadReportState extends State<CreateLoadReport>
           'https://sampleserver7.arcgisonline.com/server/rest/services/UtilityNetwork/NapervilleElectric/FeatureServer',
         ),
       );
-      await serviceGeodatabase.load();
       // Initialize the utility network with the service geodatabase.
       _utilityNetwork = UtilityNetwork(serviceGeodatabase);
       await _utilityNetwork.load();
@@ -276,7 +275,7 @@ class _CreateLoadReportState extends State<CreateLoadReport>
     } on Exception catch (e) {
       setState(() {
         _ready = true;
-        _errorMessage = 'Initialization failed: $e';
+        _errorMessage = 'Initialization failed: \n$e';
       });
     }
   }
