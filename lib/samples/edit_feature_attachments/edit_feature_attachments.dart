@@ -41,6 +41,8 @@ class _EditFeatureAttachmentsState extends State<EditFeatureAttachments>
       ),
     ),
   );
+  // The currently selected feature.
+  ArcGISFeature? _selectedFeature;
 
   @override
   Widget build(BuildContext context) {
@@ -50,6 +52,16 @@ class _EditFeatureAttachmentsState extends State<EditFeatureAttachments>
         onMapViewReady: onMapViewReady,
         onTap: onTap,
       ),
+      // If a feature is selected, show the bottom sheet to manage its attachments.
+      bottomSheet: _selectedFeature == null
+          ? null
+          : AttachmentsOptions(
+              arcGISFeature: _selectedFeature!,
+              applyEdits: _applyEdits,
+              onCloseIconPressed: () {
+                setState(() => _selectedFeature = null);
+              },
+            ),
     );
   }
 
@@ -80,25 +92,13 @@ class _EditFeatureAttachmentsState extends State<EditFeatureAttachments>
 
     // If there are features identified, show the bottom sheet to display the
     // attachment information for the selected feature.
-    final features = identifyLayerResult.geoElements
-        .whereType<Feature>()
-        .toList();
-    if (features.isNotEmpty) {
-      _featureLayer.selectFeatures(features);
-      final selectedFeature = features.first as ArcGISFeature;
-      if (mounted) _showBottomSheet(selectedFeature);
+    final feature = identifyLayerResult.geoElements
+        .whereType<ArcGISFeature>()
+        .firstOrNull;
+    setState(() => _selectedFeature = feature);
+    if (feature != null) {
+      _featureLayer.selectFeatures([feature]);
     }
-  }
-
-  // Show the bottom sheet to display the attachment information.
-  void _showBottomSheet(ArcGISFeature selectedFeature) {
-    showModalBottomSheet<void>(
-      context: context,
-      builder: (context) => AttachmentsOptions(
-        arcGISFeature: selectedFeature,
-        applyEdits: _applyEdits,
-      ),
-    );
   }
 
   // Apply the changes to the feature table.
@@ -124,10 +124,12 @@ class AttachmentsOptions extends StatefulWidget {
   const AttachmentsOptions({
     required this.arcGISFeature,
     required this.applyEdits,
+    required this.onCloseIconPressed,
     super.key,
   });
   final ArcGISFeature arcGISFeature;
   final FutureOr<void> Function(ArcGISFeature) applyEdits;
+  final void Function() onCloseIconPressed;
 
   @override
   State<AttachmentsOptions> createState() => _AttachmentsOptionsState();
@@ -136,104 +138,88 @@ class AttachmentsOptions extends StatefulWidget {
 // State class for the AttachmentsOptions.
 class _AttachmentsOptionsState extends State<AttachmentsOptions>
     with SampleStateSupport {
-  late final String _damageType;
+  String? _damageType;
   var _attachments = <Attachment>[];
-  var _isLoading = false;
+  var _isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    _damageType = widget.arcGISFeature.attributes['typdamage'] as String? ?? '';
+    _damageType = widget.arcGISFeature.attributes['typdamage'] as String?;
     _loadAttachments();
   }
 
   @override
+  void didUpdateWidget(covariant AttachmentsOptions oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    // If the selected feature has changed, reload the attachments.
+    if (oldWidget.arcGISFeature.attributes['objectId'] !=
+        widget.arcGISFeature.attributes['objectId']) {
+      _attachments = [];
+      _isLoading = true;
+      _damageType = widget.arcGISFeature.attributes['typdamage'] as String?;
+      _loadAttachments();
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        Column(
-          children: [
-            // Display the damage type and a close button.
-            Container(
-              color: Colors.purple,
-              padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Damage Type: $_damageType',
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
+    // Present a bottom sheet with attachment options.
+    return BottomSheetSettings(
+      onCloseIconPressed: widget.onCloseIconPressed,
+      title: 'Damage Type: $_damageType',
+      settingsWidgets: (context) => [
+        Container(
+          constraints: BoxConstraints(
+            maxHeight: MediaQuery.sizeOf(context).height * 0.5,
+          ),
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    // Display the number of attachments.
+                    const Text('Number of Attachments: '),
+                    if (_isLoading)
+                      const SizedBox(
+                        height: 18,
+                        width: 18,
+                        child: CircularProgressIndicator(),
+                      )
+                    else
+                      Text('${_attachments.length}'),
+                    const Spacer(),
+                    // A button to add an attachment.
+                    ElevatedButton(
+                      onPressed: addAttachment,
+                      child: const Text('Add Attachment'),
+                    ),
+                  ],
+                ),
+                // Display each attachment with view and delete buttons.
+                ..._attachments.map(
+                  (attachment) => ListTile(
+                    title: Text(attachment.name),
+                    subtitle: Text(attachment.contentType),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.remove_red_eye),
+                          onPressed: () => viewAttachment(attachment),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.delete),
+                          onPressed: () => deleteAttachment(attachment),
+                        ),
+                      ],
                     ),
                   ),
-                  if (_isLoading)
-                    const SizedBox(
-                      height: 18,
-                      width: 18,
-                      child: CircularProgressIndicator(color: Colors.white),
-                    )
-                  else
-                    const SizedBox.shrink(),
-                  IconButton(
-                    icon: const Icon(Icons.close),
-                    onPressed: () => Navigator.pop(context),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
-
-            // Display the number of attachments.
-            Padding(
-              padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text('Number of Attachments: ${_attachments.length}'),
-                  ElevatedButton(
-                    onPressed: addAttachment,
-                    child: const Text('Add Attachment'),
-                  ),
-                ],
-              ),
-            ),
-            const Divider(color: Colors.purple),
-
-            // Display each attachment with view and delete buttons.
-            SingleChildScrollView(
-              child: Column(
-                children: [
-                  ListView.builder(
-                    itemCount: _attachments.length,
-                    shrinkWrap: true,
-                    padding: const EdgeInsets.all(2),
-                    itemBuilder: (context, index) {
-                      return ListTile(
-                        title: Text(_attachments[index].name),
-                        subtitle: Text(_attachments[index].contentType),
-                        trailing: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            IconButton(
-                              icon: const Icon(Icons.remove_red_eye),
-                              onPressed: () =>
-                                  viewAttachment(_attachments[index]),
-                            ),
-                            IconButton(
-                              icon: const Icon(Icons.delete),
-                              onPressed: () =>
-                                  deleteAttachment(_attachments[index]),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                  ),
-                ],
-              ),
-            ),
-          ],
+          ),
         ),
       ],
     );
