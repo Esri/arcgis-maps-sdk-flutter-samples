@@ -69,7 +69,7 @@ class _CreateLoadReportState extends State<CreateLoadReport>
       'I68VGU^nMurF',
     );
 
-    unawaited(_initUtilityNetwork());
+    _initUtilityNetwork();
   }
 
   @override
