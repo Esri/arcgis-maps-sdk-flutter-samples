@@ -44,7 +44,7 @@ class _CreateLoadReportState extends State<CreateLoadReport>
   // The trace parameters.
   late UtilityTraceParameters _traceParameters;
   // The phase data list.
-  List<_PhaseData> _phaseDataList = [];
+  var _phaseDataList = <_PhaseData>[];
   // The phase coded values.
   late List<CodedValue> _phaseCodedValues;
 
