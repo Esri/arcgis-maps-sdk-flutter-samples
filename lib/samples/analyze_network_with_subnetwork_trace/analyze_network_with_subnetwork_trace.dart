@@ -39,7 +39,7 @@ class _AnalyzeNetworkWithSubnetworkTraceState
   late UtilityElement _startingLocation;
 
   // The default condition that's always present.
-  late UtilityTraceConditionalExpression? _defaultCondition;
+  late UtilityTraceConditionalExpression _defaultCondition;
 
   // An array of conditional expressions.
   final _traceConditionalExpressions = <UtilityTraceConditionalExpression>[];
@@ -380,12 +380,10 @@ class _AnalyzeNetworkWithSubnetworkTraceState
 
     // Initialize default condition: "operational device status" Equal "Open".
     _defaultCondition = _createDefaultCondition(definition);
-    if (_defaultCondition != null) {
-      // Set the default condition as the barrier.
-      utilityTierConfiguration.traversability?.barriers = _defaultCondition;
-      // Add it to the expressions list.
-      _traceConditionalExpressions.add(_defaultCondition!);
-    }
+    // Set the default condition as the barrier.
+    utilityTierConfiguration.traversability?.barriers = _defaultCondition;
+    // Add it to the expressions list.
+    _traceConditionalExpressions.add(_defaultCondition);
 
     // Get network attributes.
     final attributes = definition.networkAttributes
@@ -422,18 +420,15 @@ class _AnalyzeNetworkWithSubnetworkTraceState
     );
 
     // Set the 'Load' terminal for the location.
-    final terminalConfig = assetType.terminalConfiguration;
-    if (terminalConfig != null) {
-      startingLocation.terminal = terminalConfig.terminals.firstWhere(
-        (t) => t.name == 'Load',
-      );
-    }
+    startingLocation.terminal = assetType.terminalConfiguration!.terminals.firstWhere(
+          (t) => t.name == 'Load',
+    );
 
     return startingLocation;
   }
 
   // Creates the default condition: "operational device status" Equal "Open".
-  UtilityTraceConditionalExpression? _createDefaultCondition(
+  UtilityTraceConditionalExpression _createDefaultCondition(
     UtilityNetworkDefinition definition,
   ) {
     // Get attributes from definition since _attributes might not be populated yet.
@@ -447,8 +442,7 @@ class _AnalyzeNetworkWithSubnetworkTraceState
     );
 
     // Check if the attribute has a coded value domain.
-    final domain = operationalStatusAttr.domain;
-    if (domain is! CodedValueDomain) return null;
+    final domain = operationalStatusAttr.domain! as CodedValueDomain;
 
     final openValue = domain.codedValues.firstWhere(
       (cv) => cv.name.toLowerCase() == 'open',
@@ -459,7 +453,7 @@ class _AnalyzeNetworkWithSubnetworkTraceState
       networkAttribute: operationalStatusAttr,
       comparisonOperator: UtilityAttributeComparisonOperator.equal,
       value: openValue.code,
-    );
+    )!;
   }
 
   // Determines if a condition can be added.
@@ -573,11 +567,9 @@ class _AnalyzeNetworkWithSubnetworkTraceState
   void _onReset() {
     // Reset the conditional expressions.
     _traceConditionalExpressions.clear();
-    if (_defaultCondition != null) {
-      _traceConditionalExpressions.add(_defaultCondition!);
-      // Cast to UtilityTraceCondition since barriers expects that type.
-      _configuration.traversability?.barriers = _defaultCondition;
-    }
+    _traceConditionalExpressions.add(_defaultCondition);
+    // Cast to UtilityTraceCondition since barriers expects that type.
+    _configuration.traversability?.barriers = _defaultCondition;
 
     // Clear the condition form.
     _clearForm();
