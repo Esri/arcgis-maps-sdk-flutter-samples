@@ -116,11 +116,20 @@ class _AnalyzeNetworkWithSubnetworkTraceState
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        const SizedBox(height: 14),
+                        Text(
+                          'TRACE OPTIONS',
+                          style: TextStyle(
+                            fontSize: 15,
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                        ),
                         // Switch to include barriers in the trace.
                         SwitchListTile(
                           title: const Text('Include Barriers'),
                           value: _includeBarriers,
                           contentPadding: EdgeInsets.zero,
+                          dense: true,
                           onChanged: (value) =>
                               setState(() => _includeBarriers = value),
                         ),
@@ -128,6 +137,7 @@ class _AnalyzeNetworkWithSubnetworkTraceState
                         SwitchListTile(
                           title: const Text('Include Containers'),
                           value: _includeContainers,
+                          dense: true,
                           contentPadding: EdgeInsets.zero,
                           onChanged: (value) =>
                               setState(() => _includeContainers = value),
@@ -136,10 +146,9 @@ class _AnalyzeNetworkWithSubnetworkTraceState
                         // Display conditions if any exist.
                         if (_traceConditionalExpressions.isNotEmpty) ...[
                           Text(
-                            'Conditions (${_traceConditionalExpressions.length}):',
+                            'LIST OF CONDITIONS (${_traceConditionalExpressions.length})',
                             style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
+                              fontSize: 15,
                               color: Theme.of(context).colorScheme.primary,
                             ),
                           ),
@@ -150,18 +159,8 @@ class _AnalyzeNetworkWithSubnetworkTraceState
                             itemBuilder: (context, index) {
                               final condition =
                                   _traceConditionalExpressions[index];
-                              final isDefault = condition == _defaultCondition;
                               return ListTile(
                                 title: Text(_conditionString(condition)),
-                                trailing: isDefault
-                                    ? Text(
-                                        'Default',
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          color: Theme.of(context).primaryColor,
-                                        ),
-                                      )
-                                    : null,
                                 dense: true,
                                 minTileHeight: 0,
                                 contentPadding: EdgeInsets.zero,
