@@ -339,12 +339,6 @@ class _AnalyzeNetworkWithSubnetworkTraceState
     const domainNetworkName = 'ElectricDistribution';
     const tierName = 'Medium Voltage Radial';
 
-    // Constants for creating the default starting location.
-    const deviceTableName = 'Electric Distribution Device';
-    const assetGroupName = 'Circuit Breaker';
-    const assetTypeName = 'Three Phase';
-    const globalIdString = '1CAF7740-0BF4-4113-8DB2-654E18800028';
-
     // Load the service geodatabase.
     final serviceGeodatabase = ServiceGeodatabase.withUri(
       Uri.parse(
@@ -360,13 +354,7 @@ class _AnalyzeNetworkWithSubnetworkTraceState
     final definition = _utilityNetwork.definition;
 
     // Create a default starting location.
-    _startingLocation = _makeStartingLocation(
-      definition!,
-      deviceTableName,
-      assetGroupName,
-      assetTypeName,
-      globalIdString,
-    );
+    _startingLocation = _makeStartingLocation(definition!);
 
     // Get the default trace configuration for the specified domain network and tier.
     final domainNetwork = definition.getDomainNetwork(domainNetworkName);
@@ -394,13 +382,13 @@ class _AnalyzeNetworkWithSubnetworkTraceState
   }
 
   // Creates a `UtilityElement` from the asset type to use as the starting location.
-  UtilityElement _makeStartingLocation(
-    UtilityNetworkDefinition definition,
-    String deviceTableName,
-    String assetGroupName,
-    String assetTypeName,
-    String globalIdString,
-  ) {
+  UtilityElement _makeStartingLocation(UtilityNetworkDefinition definition) {
+    // Constants for creating the default starting location.
+    const deviceTableName = 'Electric Distribution Device';
+    const assetGroupName = 'Circuit Breaker';
+    const assetTypeName = 'Three Phase';
+    const globalIdString = '1CAF7740-0BF4-4113-8DB2-654E18800028';
+
     // Get the asset type from the definition.
     final networkSource = definition.getNetworkSource(deviceTableName);
 
@@ -420,9 +408,8 @@ class _AnalyzeNetworkWithSubnetworkTraceState
     );
 
     // Set the 'Load' terminal for the location.
-    startingLocation.terminal = assetType.terminalConfiguration!.terminals.firstWhere(
-          (t) => t.name == 'Load',
-    );
+    startingLocation.terminal = assetType.terminalConfiguration!.terminals
+        .firstWhere((t) => t.name == 'Load');
 
     return startingLocation;
   }
