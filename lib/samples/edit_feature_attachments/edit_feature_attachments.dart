@@ -180,7 +180,7 @@ class _AttachmentsOptionsState extends State<AttachmentsOptions>
                 Row(
                   children: [
                     // Display the number of attachments.
-                    const Text('Number of Attachments: '),
+                    const Text('Attachments: '),
                     if (_isLoading)
                       const SizedBox(
                         height: 18,
