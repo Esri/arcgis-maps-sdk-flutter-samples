@@ -13,18 +13,18 @@
         "scene",
         "surface",
         "ArcGISLocalSceneView",
+        "ArcGISScene",
         "ArcGISTiledElevationSource",
         "BuildingSceneLayer",
-        "BuildingSublayer",
-        "Scene"
+        "BuildingSublayer"
     ],
     "redirect_from": [],
     "relevant_apis": [
         "ArcGISLocalSceneView",
+        "ArcGISScene",
         "ArcGISTiledElevationSource",
         "BuildingSceneLayer",
-        "BuildingSublayer",
-        "Scene"
+        "BuildingSublayer"
     ],
     "snippets": [
         "add_building_scene_layer.dart"
