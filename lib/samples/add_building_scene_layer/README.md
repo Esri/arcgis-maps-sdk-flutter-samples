@@ -17,8 +17,7 @@ When loaded, the sample displays a scene with a Building Scene Layer. By default
 1. Create a local scene object with the `ArcGISScene.withBasemapStyle(BasemapStyle, SceneViewingMode)` constructor.
 2. Create an `ArcGISTiledElevationSource` object and add it to the local scene's base surface.
 3. Create a `BuildingSceneLayer` and add it to the local scene's operational layers.
-4. Create a `ArcGISLocalSceneView` object to display the scene.
-5. Set the local scene to the `ArcGISLocalSceneView`.
+4. Create an `ArcGISLocalSceneView` object and add the scene.
 
 ## Relevant API
 
