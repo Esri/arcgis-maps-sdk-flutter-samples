@@ -7,7 +7,7 @@ plugins {
 android {
     namespace = "com.esri.arcgis_maps_sdk_flutter_samples"
     compileSdk = 36
-    ndkVersion = "27.0.12077973"
+    ndkVersion = "28.2.13676358"
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
