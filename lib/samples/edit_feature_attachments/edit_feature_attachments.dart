@@ -254,7 +254,7 @@ class _AttachmentsOptionsState extends State<AttachmentsOptions>
                 icon: const Icon(Icons.save),
                 onPressed: () {
                   // Save the attachment to the device.
-                  FilePicker.saveFile(
+                  FilePicker.platform.saveFile(
                     dialogTitle: 'Save Attachment',
                     fileName: attachment.name,
                     bytes: data,
@@ -277,7 +277,7 @@ class _AttachmentsOptionsState extends State<AttachmentsOptions>
 
   // Add an attachment to the selected feature by FilePicker.
   Future<void> addAttachment() async {
-    final result = await FilePicker.pickFiles(
+    final result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
       allowedExtensions: ['png', 'jpg', 'jpeg', 'pdf', 'txt'],
     );
