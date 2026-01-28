@@ -50,6 +50,12 @@ class _QueryDynamicEntitiesState extends State<QueryDynamicEntities>
   var _ready = false;
 
   @override
+  void dispose() {
+    unawaited(_dataSource.disconnect());
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
@@ -371,12 +377,6 @@ class _QueryDynamicEntitiesState extends State<QueryDynamicEntities>
     // Clear selection and hide buffer when the results sheet is closed.
     _dynamicEntityLayer.clearSelection();
     _bufferGraphicsOverlay.isVisible = false;
-  }
-
-  @override
-  void dispose() {
-    unawaited(_dataSource.disconnect());
-    super.dispose();
   }
 }
 
