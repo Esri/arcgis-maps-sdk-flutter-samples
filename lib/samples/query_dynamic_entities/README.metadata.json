@@ -20,7 +20,6 @@
         "DynamicEntityDataSource",
         "DynamicEntityLayer",
         "DynamicEntityObservation",
-        "DynamicEntityObservationInfo",
         "DynamicEntityQueryParameters",
         "DynamicEntityQueryResult"
     ],
@@ -36,7 +35,6 @@
         "DynamicEntityDataSource",
         "DynamicEntityLayer",
         "DynamicEntityObservation",
-        "DynamicEntityObservationInfo",
         "DynamicEntityQueryParameters",
         "DynamicEntityQueryResult"
     ],
