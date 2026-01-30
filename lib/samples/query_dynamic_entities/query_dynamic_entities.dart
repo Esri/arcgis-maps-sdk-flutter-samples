@@ -41,7 +41,7 @@ class _QueryDynamicEntitiesState extends State<QueryDynamicEntities>
   late final DynamicEntityLayer _dynamicEntityLayer;
 
   // The custom data source streaming mock air traffic observations.
-  late final CustomDynamicEntityDataSource _dataSource;
+  CustomDynamicEntityDataSource? _dataSource;
 
   // A geometry representing a 15 mile buffer around Phoenix Sky Harbor (PHX).
   late final Polygon _phoenixAirportBuffer;
@@ -49,9 +49,14 @@ class _QueryDynamicEntitiesState extends State<QueryDynamicEntities>
   // A flag for when the map view is ready and controls can be used.
   var _ready = false;
 
+  // State for the non-modal query results sheet.
+  var _isResultsSheetVisible = false;
+  QuerySelection? _currentSelection;
+  List<DynamicEntity> _currentEntities = const [];
+
   @override
   void dispose() {
-    unawaited(_dataSource.disconnect());
+    unawaited(_dataSource?.disconnect());
     super.dispose();
   }
 
@@ -90,6 +95,13 @@ class _QueryDynamicEntitiesState extends State<QueryDynamicEntities>
           ],
         ),
       ),
+      bottomSheet: _isResultsSheetVisible
+          ? _QueryResultsSheet(
+              selection: _currentSelection!,
+              entities: _currentEntities,
+              onClose: _closeResultsSheet,
+            )
+          : null,
     );
   }
 
@@ -154,9 +166,10 @@ class _QueryDynamicEntitiesState extends State<QueryDynamicEntities>
 
     // Create a custom data source that streams PHX air traffic observations.
     final provider = _PhxAirTrafficProvider(localJsonPath: listPaths.first);
-    _dataSource = CustomDynamicEntityDataSource(provider);
+    final dataSource = CustomDynamicEntityDataSource(provider);
+    _dataSource = dataSource;
 
-    _dynamicEntityLayer = DynamicEntityLayer(_dataSource);
+    _dynamicEntityLayer = DynamicEntityLayer(dataSource);
   }
 
   // Configure the dynamic entity layer to show track lines and labels.
@@ -261,26 +274,30 @@ class _QueryDynamicEntitiesState extends State<QueryDynamicEntities>
 
   // Run the selected query and display the results in a bottom sheet.
   Future<void> _runQuery(QuerySelection selection) async {
+    final dataSource = _dataSource;
+    if (dataSource == null) return;
     // Show the buffer graphic only for geometry queries.
     _bufferGraphicsOverlay.isVisible = selection.type == QueryType.geometry;
 
-    // Execute the query and handle any errors.
+    // A list to collect the query results.
     var entities = const <DynamicEntity>[];
 
+    // The result of the dynamic entity query.
     DynamicEntityQueryResult queryResult;
 
+    // Execute the appropriate query based on the selection.
     switch (selection.type) {
       case QueryType.geometry:
         final params = DynamicEntityQueryParameters()
           ..geometry = _phoenixAirportBuffer
           ..spatialRelationship = SpatialRelationship.intersects;
-        queryResult = await _dataSource.queryDynamicEntities(params);
+        queryResult = await dataSource.queryDynamicEntities(params);
       case QueryType.attributes:
         final params = DynamicEntityQueryParameters()
           ..whereClause = "status = 'In flight' AND arrival_airport = 'PHX'";
-        queryResult = await _dataSource.queryDynamicEntities(params);
+        queryResult = await dataSource.queryDynamicEntities(params);
       case QueryType.trackId:
-        queryResult = await _dataSource.queryDynamicEntitiesByTrackIds([
+        queryResult = await dataSource.queryDynamicEntitiesByTrackIds([
           selection.trackId!,
         ]);
     }
@@ -293,77 +310,26 @@ class _QueryDynamicEntitiesState extends State<QueryDynamicEntities>
     }
 
     // Show the query results in a bottom sheet.
-    await _showQueryResultsSheet(selection, entities: entities);
+    _showQueryResultsSheet(selection, entities: entities);
   }
 
-  Future<void> _showQueryResultsSheet(
+  void _showQueryResultsSheet(
     QuerySelection selection, {
     required List<DynamicEntity> entities,
-  }) async {
-    await showModalBottomSheet<void>(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      barrierColor: Colors.transparent,
-      showDragHandle: false,
-      builder: (context) {
-        return SafeArea(
-          top: false,
-          child: DraggableScrollableSheet(
-            expand: false,
-            maxChildSize: 0.8,
-            builder: (context, scrollController) {
-              return Material(
-                clipBehavior: Clip.antiAlias,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Column(
-                  children: [
-                    ListTile(
-                      title: const Text('Query Results'),
-                      subtitle: Text(_resultLabel(selection)),
-                      trailing: IconButton(
-                        icon: const Icon(Icons.close),
-                        onPressed: () => Navigator.pop(context),
-                      ),
-                    ),
-                    const Divider(height: 1),
-                    Expanded(
-                      child: Builder(
-                        builder: (context) {
-                          if (entities.isEmpty) {
-                            return const Center(
-                              child: Padding(
-                                padding: EdgeInsets.all(16),
-                                child: Text(
-                                  'There are no flights to display for this query.',
-                                  textAlign: TextAlign.center,
-                                ),
-                              ),
-                            );
-                          }
+  }) {
+    setState(() {
+      _currentSelection = selection;
+      _currentEntities = entities;
+      _isResultsSheetVisible = true;
+    });
+  }
 
-                          return ListView.builder(
-                            controller: scrollController,
-                            itemCount: entities.length,
-                            itemBuilder: (context, index) {
-                              return _DynamicEntityObservationTile(
-                                entity: entities[index],
-                              );
-                            },
-                          );
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            },
-          ),
-        );
-      },
-    );
+  void _closeResultsSheet() {
+    setState(() {
+      _isResultsSheetVisible = false;
+      _currentSelection = null;
+      _currentEntities = const [];
+    });
 
     // Clear selection and hide buffer when the results sheet is closed.
     _dynamicEntityLayer.clearSelection();
@@ -371,10 +337,12 @@ class _QueryDynamicEntitiesState extends State<QueryDynamicEntities>
   }
 }
 
+// Enum representing the types of queries available.
 enum QueryType { geometry, attributes, trackId }
 
 typedef QuerySelection = ({QueryType type, String? trackId});
 
+// Create a result label based on the query selection.
 String _resultLabel(QuerySelection selection) {
   return switch (selection.type) {
     QueryType.geometry => 'Flights within 15 miles of PHX',
@@ -386,6 +354,7 @@ String _resultLabel(QuerySelection selection) {
 class _DynamicEntityObservationTile extends StatefulWidget {
   const _DynamicEntityObservationTile({required this.entity});
 
+  // The dynamic entity to observe.
   final DynamicEntity entity;
 
   @override
@@ -395,30 +364,39 @@ class _DynamicEntityObservationTile extends StatefulWidget {
 
 class _DynamicEntityObservationTileState
     extends State<_DynamicEntityObservationTile> {
+  // Subscription to the ArcGIS dynamic entity change stream.
   StreamSubscription<DynamicEntityChangedInfo>? _subscription;
-  Map<String, dynamic> _attributes = const {};
+  // Latest observation attributes pulled from the ArcGIS entity.
+  Map<CaseInsensitiveString, dynamic> _attributes = const {};
+  // Tracks whether the tile is expanded to show attributes.
   bool _isExpanded = false;
 
   @override
   void initState() {
     super.initState();
-    _attributes = _toDisplayMap(
-      widget.entity.getLatestObservation()?.attributes,
-    );
+    // Seed the attributes with the latest observation, if any.
+    // Uses the ArcGIS API to read the entity's most recent observation.
+    _attributes = widget.entity.getLatestObservation()?.attributes ?? const {};
+
+    // Listen for dynamic entity changes to keep the UI in sync.
+    // Uses the ArcGIS API stream to receive live observation updates.
     _subscription = widget.entity.onDynamicEntityChanged.listen((changedInfo) {
       if (changedInfo.dynamicEntityPurged) {
+        // Clear attributes when the entity is purged from the stream.
         setState(() => _attributes = const {});
         return;
       }
       final attrs = changedInfo.receivedObservation?.attributes;
       if (attrs != null) {
-        setState(() => _attributes = _toDisplayMap(attrs));
+        // Update attributes when a new observation arrives.
+        setState(() => _attributes = attrs);
       }
     });
   }
 
   @override
   void dispose() {
+    // Cancel the subscription to avoid memory leaks.
     _subscription?.cancel();
     _subscription = null;
     super.dispose();
@@ -426,7 +404,9 @@ class _DynamicEntityObservationTileState
 
   @override
   Widget build(BuildContext context) {
+    // The flight number as the tile title when available.
     final flightNumber = _attributes['flight_number'] as String?;
+    // Sort attributes to keep the list stable and readable.
     final sortedEntries = _attributes.entries.toList()
       ..sort((a, b) => a.key.compareTo(b.key));
 
@@ -435,6 +415,7 @@ class _DynamicEntityObservationTileState
       initiallyExpanded: _isExpanded,
       onExpansionChanged: (expanded) => setState(() => _isExpanded = expanded),
       children: sortedEntries
+          // Filter out null values and render the remaining attributes.
           .where((e) => e.value != null)
           .map(
             (e) => ListTile(
@@ -447,15 +428,7 @@ class _DynamicEntityObservationTileState
     );
   }
 
-  static Map<String, dynamic> _toDisplayMap(
-    Map<CaseInsensitiveString, dynamic>? source,
-  ) {
-    if (source == null) return const {};
-    return Map<String, dynamic>.fromEntries(
-      source.entries.map((e) => MapEntry(e.key, e.value)),
-    );
-  }
-
+  // Map attribute keys to labels.
   static String _planeAttributeLabel(String key) {
     switch (key) {
       case 'aircraft':
@@ -477,11 +450,88 @@ class _DynamicEntityObservationTileState
     }
   }
 
+  // Format attribute values for display.
   static String _formatAttributeValue(Object? value) {
     if (value == null) return '';
     if (value is String) return value;
     if (value is num) return value.toStringAsFixed(2);
     return value.toString();
+  }
+}
+
+class _QueryResultsSheet extends StatelessWidget {
+  const _QueryResultsSheet({
+    required this.selection,
+    required this.entities,
+    required this.onClose,
+  });
+
+  // The query selection that produced the results.
+  final QuerySelection selection;
+  // The list of dynamic entities returned by the query.
+  final List<DynamicEntity> entities;
+  // Callback to close the results sheet.
+  final VoidCallback onClose;
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      top: false,
+      child: DraggableScrollableSheet(
+        expand: false,
+        initialChildSize: 0.4,
+        builder: (context, scrollController) {
+          return Material(
+            clipBehavior: Clip.antiAlias,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Column(
+              children: [
+                ListTile(
+                  title: const Text('Query Results'),
+                  subtitle: Text(_resultLabel(selection)),
+                  trailing: IconButton(
+                    icon: const Icon(Icons.close),
+                    onPressed: onClose,
+                  ),
+                ),
+                const Divider(height: 1),
+                Expanded(
+                  child: Builder(
+                    builder: (context) {
+                      // Empty state when no entities matched the query.
+                      if (entities.isEmpty) {
+                        return const Center(
+                          child: Padding(
+                            padding: EdgeInsets.all(16),
+                            child: Text(
+                              'There are no flights to display for this query.',
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        );
+                      }
+
+                      // A scrollable list of dynamic entity observations.
+                      return ListView.builder(
+                        controller: scrollController,
+                        itemCount: entities.length,
+                        itemBuilder: (context, index) {
+                          return _DynamicEntityObservationTile(
+                            entity: entities[index],
+                          );
+                        },
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
   }
 }
 
@@ -493,11 +543,9 @@ enum _PlaneAttributeKey {
   flightNumber,
   heading,
   speed,
-  status,
-}
+  status;
 
-// Extension to provide field names and types for plane attributes.
-extension on _PlaneAttributeKey {
+  // Provide the field name associated with the attribute key.
   String get fieldName {
     return switch (this) {
       _PlaneAttributeKey.aircraft => 'aircraft',
@@ -523,16 +571,18 @@ extension on _PlaneAttributeKey {
 
 // A custom dynamic entity data provider that streams mock air traffic data for PHX.
 final class _PhxAirTrafficProvider extends CustomDynamicEntityDataProvider {
-  _PhxAirTrafficProvider({this.localJsonPath});
+  // Constructor accepting the local JSON file path.
+  _PhxAirTrafficProvider({required this.localJsonPath});
 
   // The local path to the JSON file containing mock air traffic observations.
-  final String? localJsonPath;
+  final String localJsonPath;
 
   // A flag indicating whether the provider is currently connected.
   bool _isConnected = false;
 
   @override
   Future<DynamicEntityDataSourceInfo> onLoad() async {
+    // Define the fields for the dynamic entity data source.
     final fields = _PlaneAttributeKey.values
         .map(
           (k) => Field(
@@ -560,6 +610,7 @@ final class _PhxAirTrafficProvider extends CustomDynamicEntityDataProvider {
     if (_isConnected) return;
     _isConnected = true;
 
+    // Start streaming mock air traffic observations.
     unawaited(_startStreaming());
   }
 
@@ -571,7 +622,7 @@ final class _PhxAirTrafficProvider extends CustomDynamicEntityDataProvider {
 
   // Start streaming mock air traffic observations from the local JSON file.
   Future<void> _startStreaming() async {
-    final file = File(localJsonPath!);
+    final file = File(localJsonPath);
 
     // Decodes the plane from the line and uses it to create a new observation.
     final lines = file
@@ -579,6 +630,7 @@ final class _PhxAirTrafficProvider extends CustomDynamicEntityDataProvider {
         .transform(utf8.decoder)
         .transform(const LineSplitter());
 
+    // Stream each line as a new observation until disconnected.
     await for (final line in lines) {
       if (!_isConnected) return;
 
