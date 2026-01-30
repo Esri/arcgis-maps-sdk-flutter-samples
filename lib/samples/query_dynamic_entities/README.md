@@ -24,6 +24,7 @@ Tap the "Query Flights" button and select a query to perform from the menu. Once
 2. Create `DynamicEntityQueryParameters` and set its properties:
    * To spatially filter results, set `geometry` and `spatialRelationship`.
    * To query entities with certain attribute values, set `whereClause`.
+   * To get entities with specific track IDs, modify the trackIDs collection.
 3. To perform a dynamic entities query, call `DynamicEntityDataSource.queryDynamicEntities` to query with spatial and/or attribute filters, or call `DynamicEntityDataSource.queryDynamicEntitiesByTrackIds` if you want to query *only* by track IDs.
 4. When complete, get the dynamic entities from the result using `DynamicEntityQueryResult.iterator()`.
 5. Use `DynamicEntity.onDynamicEntityChanged` to receive change notifications.
