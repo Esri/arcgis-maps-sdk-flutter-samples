@@ -210,7 +210,6 @@ class _QueryDynamicEntitiesState extends State<QueryDynamicEntities>
                 final navigator = Navigator.of(context);
                 final flightNumber = await _promptForFlightNumber();
                 if (flightNumber == null || flightNumber.trim().isEmpty) {
-                  navigator.pop();
                   return;
                 }
                 navigator.pop((
