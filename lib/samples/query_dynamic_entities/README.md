@@ -39,11 +39,6 @@ Tap the "Query Flights" button and select a query to perform from the menu. Once
 * DynamicEntityQueryParameters
 * DynamicEntityQueryResult
 
-## Offline data
-
-This sample uses [PHX Air Traffic JSON](https://www.arcgis.com/home/item.html?id=c78e297e99ad4572a48cdcd0b54bed30).
-It is downloaded from ArcGIS Online as part of the sample.
-
 ## About the data
 
 This sample uses the [PHX Air Traffic JSON](https://www.arcgis.com/home/item.html?id=c78e297e99ad4572a48cdcd0b54bed30)
