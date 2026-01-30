@@ -16,7 +16,7 @@ number.
 
 ## How to use the sample
 
-Tap **Query Flights** button and choose one of the query options. After the query completes, a list of matching flights is shown. Expand a flight to see its latest attributes update in real-time.
+Tap the "Query Flights" button and select a query to perform from the menu. Once the query is complete, a list of the resulting flights will be displayed. Tap on a flight to see its latest attributes in real-time.
 
 ## How it works
 
