@@ -280,9 +280,6 @@ class _QueryDynamicEntitiesState extends State<QueryDynamicEntities>
     // Show the buffer graphic only for geometry queries.
     _bufferGraphicsOverlay.isVisible = selection.type == QueryType.geometry;
 
-    // A list to collect the query results.
-    var entities = const <DynamicEntity>[];
-
     // The result of the dynamic entity query.
     DynamicEntityQueryResult queryResult;
 
@@ -304,7 +301,7 @@ class _QueryDynamicEntitiesState extends State<QueryDynamicEntities>
     }
 
     // Collect the query results into a list.
-    entities = queryResult.iterator().toList(growable: false);
+    final entities = queryResult.iterator().toList(growable: false);
     _dynamicEntityLayer.clearSelection();
     if (entities.isNotEmpty) {
       _dynamicEntityLayer.selectDynamicEntities(entities);
