@@ -141,6 +141,7 @@ class _QueryDynamicEntitiesState extends State<QueryDynamicEntities>
     // Set the map to the map view.
     _mapViewController.arcGISMap = map;
 
+    // Set the ready state variable to true to enable the sample UI.
     setState(() => _ready = true);
   }
 
