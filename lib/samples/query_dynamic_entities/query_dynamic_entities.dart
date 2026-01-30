@@ -364,7 +364,7 @@ class _DynamicEntityObservationTile extends StatefulWidget {
 
 class _DynamicEntityObservationTileState
     extends State<_DynamicEntityObservationTile> {
-  // Subscription to the ArcGIS dynamic entity change stream.
+  // Subscribe to the ArcGIS dynamic entity change stream.
   StreamSubscription<DynamicEntityChangedInfo>? _subscription;
   // Latest observation attributes pulled from the ArcGIS entity.
   Map<CaseInsensitiveString, dynamic> _attributes = const {};
@@ -379,7 +379,6 @@ class _DynamicEntityObservationTileState
     _attributes = widget.entity.getLatestObservation()?.attributes ?? const {};
 
     // Listen for dynamic entity changes to keep the UI in sync.
-    // Uses the ArcGIS API stream to receive live observation updates.
     _subscription = widget.entity.onDynamicEntityChanged.listen((changedInfo) {
       if (changedInfo.dynamicEntityPurged) {
         // Clear attributes when the entity is purged from the stream.
