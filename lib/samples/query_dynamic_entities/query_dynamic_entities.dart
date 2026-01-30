@@ -131,16 +131,6 @@ class _QueryDynamicEntitiesState extends State<QueryDynamicEntities>
     setState(() => _ready = true);
   }
 
-  void _loadDynamicEntityLayer() {
-    final listPaths = GoRouter.of(context).state.extra! as List<String>;
-
-    // Create a custom data source that streams PHX air traffic observations.
-    final provider = _PhxAirTrafficProvider(localJsonPath: listPaths.first);
-    _dataSource = CustomDynamicEntityDataSource(provider);
-
-    _dynamicEntityLayer = DynamicEntityLayer(_dataSource);
-  }
-
   // Configure the graphics overlay to display the PHX airport buffer.
   void _configureBufferOverlay() {
     final blackLineSymbol = SimpleLineSymbol(color: Colors.black);
@@ -156,6 +146,16 @@ class _QueryDynamicEntitiesState extends State<QueryDynamicEntities>
     _bufferGraphicsOverlay.graphics.clear();
     _bufferGraphicsOverlay.graphics.add(bufferGraphic);
     _bufferGraphicsOverlay.isVisible = false;
+  }
+
+  void _loadDynamicEntityLayer() {
+    final listPaths = GoRouter.of(context).state.extra! as List<String>;
+
+    // Create a custom data source that streams PHX air traffic observations.
+    final provider = _PhxAirTrafficProvider(localJsonPath: listPaths.first);
+    _dataSource = CustomDynamicEntityDataSource(provider);
+
+    _dynamicEntityLayer = DynamicEntityLayer(_dataSource);
   }
 
   // Configure the dynamic entity layer to show track lines and labels.
