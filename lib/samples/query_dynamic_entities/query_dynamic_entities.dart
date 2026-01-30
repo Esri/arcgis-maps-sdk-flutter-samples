@@ -138,7 +138,6 @@ class _QueryDynamicEntitiesState extends State<QueryDynamicEntities>
     final provider = _PhxAirTrafficProvider(localJsonPath: listPaths.first);
     _dataSource = CustomDynamicEntityDataSource(provider);
 
-    // Create the dynamic entity layer and configure track display and labels.
     _dynamicEntityLayer = DynamicEntityLayer(_dataSource);
   }
 
