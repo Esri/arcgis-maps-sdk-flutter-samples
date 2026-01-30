@@ -73,22 +73,15 @@ class _QueryDynamicEntitiesState extends State<QueryDynamicEntities>
                     onMapViewReady: onMapViewReady,
                   ),
                 ),
-                SafeArea(
-                  top: false,
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(12, 10, 12, 12),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: FilledButton.icon(
-                            onPressed: _ready ? _showQueryMenu : null,
-                            icon: const Icon(Icons.search),
-                            label: const Text('Query Flights'),
-                          ),
-                        ),
-                      ],
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    // Button to toggle overview or full model sublayers.
+                    ElevatedButton(
+                      onPressed: _showQueryMenu,
+                      child: const Text('Query Flights'),
                     ),
-                  ),
+                  ],
                 ),
               ],
             ),
@@ -189,7 +182,6 @@ class _QueryDynamicEntitiesState extends State<QueryDynamicEntities>
   Future<void> _showQueryMenu() async {
     final selected = await showModalBottomSheet<QuerySelection>(
       context: context,
-      showDragHandle: true,
       builder: (context) => SafeArea(
         top: false,
         child: Column(
