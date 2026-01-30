@@ -239,7 +239,7 @@ class _QueryDynamicEntitiesState extends State<QueryDynamicEntities>
           content: TextField(
             controller: controller,
             decoration: const InputDecoration(
-              hintText: 'Flight_396',
+              hintText: '',
               labelText: 'Flight Number',
             ),
             autofocus: true,
