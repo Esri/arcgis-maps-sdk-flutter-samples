@@ -148,6 +148,7 @@ class _QueryDynamicEntitiesState extends State<QueryDynamicEntities>
     _bufferGraphicsOverlay.isVisible = false;
   }
 
+  // Load the dynamic entity layer with a custom data source.
   void _loadDynamicEntityLayer() {
     final listPaths = GoRouter.of(context).state.extra! as List<String>;
 
