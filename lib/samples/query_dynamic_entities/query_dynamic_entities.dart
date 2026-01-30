@@ -166,10 +166,10 @@ class _QueryDynamicEntitiesState extends State<QueryDynamicEntities>
 
     // Create a custom data source that streams PHX air traffic observations.
     final provider = _PhxAirTrafficProvider(localJsonPath: listPaths.first);
-    final dataSource = CustomDynamicEntityDataSource(provider);
-    _dataSource = dataSource;
+    _dataSource = CustomDynamicEntityDataSource(provider);
 
-    _dynamicEntityLayer = DynamicEntityLayer(dataSource);
+    // Create a dynamic entity later from the custom data source.
+    _dynamicEntityLayer = DynamicEntityLayer(_dataSource!);
   }
 
   // Configure the dynamic entity layer to show track lines and labels.
