@@ -203,7 +203,7 @@ class _ModifyLocalSceneEnvironmentSettingsState
                           Slider(
                             value: _lightingHour.toDouble(),
                             max: 23,
-                            divisions: 24,
+                            divisions: 23,
                             label: '$_lightingHour:00',
                             onChanged: _isSunLighting
                                 ? updateLightingHour
