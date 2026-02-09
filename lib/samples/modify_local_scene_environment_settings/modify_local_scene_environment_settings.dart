@@ -88,21 +88,16 @@ class _ModifyLocalSceneEnvironmentSettingsState
                       Row(
                         children: [
                           const Spacer(),
-                          const Text('Background:'),
+                          const Text('Sky:'),
                           const Spacer(),
                           ToggleButtons(
                             borderRadius: const BorderRadius.all(
                               Radius.circular(8),
                             ),
-                            isSelected: [_isStarsEnabled, _isAtmosphereEnabled],
-                            onPressed: (index) {
-                              switch (index) {
-                                case 0:
-                                  changeEnableStars(!_isStarsEnabled);
-                                case 1:
-                                  changeEnableAtmosphere(!_isAtmosphereEnabled);
-                              }
-                            },
+                            isSelected: [_isStarsEnabled],
+                            onPressed: _isSunLighting
+                                ? (_) => changeEnableStars(!_isStarsEnabled)
+                                : null,
                             children: const [
                               Padding(
                                 padding: EdgeInsetsGeometry.fromLTRB(
@@ -113,6 +108,19 @@ class _ModifyLocalSceneEnvironmentSettingsState
                                 ),
                                 child: Text('Stars'),
                               ),
+                            ],
+                          ),
+                          // Space between buttons.
+                          const SizedBox(width: 8),
+                          ToggleButtons(
+                            borderRadius: const BorderRadius.all(
+                              Radius.circular(8),
+                            ),
+                            isSelected: [_isAtmosphereEnabled],
+                            onPressed: (_) {
+                              changeEnableAtmosphere(!_isAtmosphereEnabled);
+                            },
+                            children: const [
                               Padding(
                                 padding: EdgeInsetsGeometry.fromLTRB(
                                   10,
@@ -124,6 +132,14 @@ class _ModifyLocalSceneEnvironmentSettingsState
                               ),
                             ],
                           ),
+                          const Spacer(),
+                        ],
+                      ),
+                      const Divider(),
+                      Row(
+                        children: [
+                          const Spacer(),
+                          const Text('Background color:'),
                           const Spacer(),
                           DropdownButton(
                             value: _backgroundColor,
@@ -270,6 +286,8 @@ class _ModifyLocalSceneEnvironmentSettingsState
 
   /// Function that handles a change in the stars flag.
   void changeEnableStars(bool enabled) {
+    if (enabled == _isStarsEnabled) return;
+
     _localSceneViewController.arcGISScene!.environment.areStarsEnabled =
         enabled;
     setState(() => _isStarsEnabled = enabled);
@@ -277,6 +295,8 @@ class _ModifyLocalSceneEnvironmentSettingsState
 
   /// Function that handles a change in the atmoshpere flag.
   void changeEnableAtmosphere(bool enabled) {
+    if (enabled == _isAtmosphereEnabled) return;
+
     _localSceneViewController.arcGISScene!.environment.isAtmosphereEnabled =
         enabled;
     setState(() => _isAtmosphereEnabled = enabled);
@@ -290,10 +310,16 @@ class _ModifyLocalSceneEnvironmentSettingsState
     setState(() {
       _backgroundColor = newColor;
     });
+
+    // Disable atmosphere and stars to see new color.
+    changeEnableAtmosphere(false);
+    changeEnableStars(false);
   }
 
   /// Function that handles a change in the direct shadows flag.
   void changeEnableShadows(bool enabled) {
+    if (enabled == _isDirectShadowsEnabled) return;
+
     _localSceneViewController
             .arcGISScene!
             .environment
