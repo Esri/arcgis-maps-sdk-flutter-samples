@@ -17,22 +17,23 @@ import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
 
-class ModifyLocalSceneEnvironmentSettings extends StatefulWidget {
-  const ModifyLocalSceneEnvironmentSettings({super.key});
+class ModifyLocalSceneEnvironment extends StatefulWidget {
+  const ModifyLocalSceneEnvironment({super.key});
 
   @override
-  State<ModifyLocalSceneEnvironmentSettings> createState() =>
-      _ModifyLocalSceneEnvironmentSettingsState();
+  State<ModifyLocalSceneEnvironment> createState() =>
+      _ModifyLocalSceneEnvironmentState();
 }
 
-class _ModifyLocalSceneEnvironmentSettingsState
-    extends State<ModifyLocalSceneEnvironmentSettings>
+class _ModifyLocalSceneEnvironmentState
+    extends State<ModifyLocalSceneEnvironment>
     with SampleStateSupport {
   // Get a controller for the ArcGISLocalSceneView
   final _localSceneViewController = ArcGISLocalSceneView.createController();
 
   // Listing used for background color drop down.
   final _backgroundColorOptions = [
+    (name: 'None', color: const Color.fromARGB(0, 0, 0, 0)),
     (name: 'Black', color: Colors.black),
     (name: 'Red', color: Colors.red),
     (name: 'Orange', color: Colors.orange),
@@ -304,7 +305,7 @@ class _ModifyLocalSceneEnvironmentSettingsState
 
   /// Function that handles a change in the background color.
   void changeBackgroundColor(Color? backgroundColor) {
-    final newColor = backgroundColor ?? Colors.black;
+    final newColor = backgroundColor ?? _backgroundColorOptions.first.color;
     _localSceneViewController.arcGISScene!.environment.backgroundColor =
         newColor;
     setState(() {

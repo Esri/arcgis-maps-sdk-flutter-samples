@@ -1,8 +1,8 @@
-# Modify local scene environment settings
+# Modify local scene environment
 
 Modify the environment settings in a local scene to change the lighting conditions and background appearance.
 
-![Image of Modify Local Scene Environment Settings](ModifyLocalSceneEnvironmentSettings.png)
+![Image of Modify Local Scene Environment](modify_local_scene_environment.png)
 
 ## Use case
 
