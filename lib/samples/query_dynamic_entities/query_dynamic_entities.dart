@@ -301,7 +301,7 @@ class _QueryDynamicEntitiesState extends State<QueryDynamicEntities>
     }
 
     // Collect the query results into a list.
-    final entities = queryResult.iterator().toList(growable: false);
+    final entities = queryResult.dynamicEntities().toList(growable: false);
     _dynamicEntityLayer.clearSelection();
     if (entities.isNotEmpty) {
       _dynamicEntityLayer.selectDynamicEntities(entities);
