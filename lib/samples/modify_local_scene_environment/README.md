@@ -6,19 +6,23 @@ Modify the environment settings in a local scene to change the lighting conditio
 
 ## Use case
 
-Environment settings for a LocalSceneView define how the background or sky appears, if objects in the scene cast shadows, and if virtual lighting or simulated sunlight is used to light the scene.
+Environment settings for a ArcGISLocalSceneView define how the sky appears, background color, if objects in the scene cast shadows, and if virtual lighting or simulated sunlight is used to light the scene.
 
-By activating sun lighting, a user can visualize how shadows are cast throughout the day. If the atmosphere and stars are active, the blue sky will show during daylight hours, and a realistic star field will show at night.
+For an exploration scenario, like a city planning app, a developer might decide to enable sun lighting and direct shadows so the user can see how buildings and trees cast shadows at a given date and time. 
 
-Alternatively, a scene may be rendered using a virtual light source, with shadows disabled, and with a simple solid background color in place of the sky. The virtual light source is slightly offset from the camera instead of a time-based location.
+For an analytic scenario, like examining a building scene layer, the developer may choose to use a virtual light source with shadows disabled and a solid background color instead of the atmosphere.
 
 ## How to use the sample
 
-At start-up, you will see a local scene with a set of scene environment controls at the bottom. Adjusting the controls will change how the scene is rendered in real time.
+At start-up, you will see a local scene with a set of scene environment controls at the bottom. Adjusting the controls will change the scene's environment altering the presentation of the scene.
 
-### Background settings
+* Selecting a new background color will disable the stars and atmosphere so you can see the new color.
+* Switching to virtual lighting disables the “Stars” button since stars do not exist in a virtually lit scene.
 
-Toggling the “Stars” and “Atmosphere” buttons will enable or disable those features. Selecting a color from the dropdown will set a solid color for the background color.
+### Sky and Background color settings
+Toggling the “Stars” and “Atmosphere” buttons will enable or disable those features. 
+
+Selecting a color from the dropdown will set a solid color for the background color. Selecting a new background color will disable the stars and atmosphere. Selecting a new background color will disable the stars and atmosphere so you can see the new color.
 
 Some notes about the behavior of the sky and background:
 
@@ -29,11 +33,13 @@ Some notes about the behavior of the sky and background:
 
 ### Lighting settings
 
-The lighting buttons switch between sun lighting and virtual lighting. The “Direct Shadows” button will enable or disable the rendering of shadows for 3d objects in the scene. Shadows are not rendered for surface terrain. If sun lighting is active, the slider under the buttons will set the hour of the day ranging from midnight to 11pm (23:00). Dragging the bar will change the position of the simulated Sun causing changes to shading and direct shadows.
+The lighting buttons switch between sun lighting and virtual lighting. Switching to virtual lighting disables the “Stars” button since stars do not exist in a virtually lit scene. The time slider is also disabled under virtual lighting since time does not have an effect on the virtual light.
+
+The “Direct Shadows” button will enable or disable the rendering of shadows for 3d objects in the scene. Shadows are not rendered for surface terrain. If sun lighting is active, the slider under the buttons will set the hour of the day ranging from midnight to 11pm (23:00). Dragging the bar will change the position of the simulated Sun causing changes to shading and direct shadows.
 
 ## How it works
 
-When the sample is started, a `ArcGISScene` is loaded from an online resource and applied to the `ArcGISLocalSceneViewController.arcGISScene` property. The sample’s controls are updated to reflect the current state of the scene’s environment property.
+When the sample is started, an `ArcGISScene` is loaded from an online resource and applied to the `ArcGISLocalSceneView.arcGISScene` property. The sample’s controls are updated to reflect the current state of the scene’s environment property.
 
 Changes to the settings in the background controls set values directly on the `SceneEnvironment` object.
 
@@ -43,7 +49,9 @@ Changes to the settings in the background controls set values directly on the `S
 Changes to the settings in the lighting controls manipulate the `SceneLighting` object in the `SceneEnvironment.lighting` property.
 
 * Switching between “Sun” and “Virtual” lighting assigns a new `SunLighting` or `VirtualLighting` object to the lighting property.
-* The “Direct Shadows” button sets the `areDirectShadowsEnabled` boolean property on the lightning object. This toggles the shadows cast by object in the scene.
+    *  Sun lighting simulates the position of the sun based on a given date and time. This includes lighting conditions for day, twilight, and night.
+    * For virtual lighting, the light source is always on and is slightly offset from the camera. As the scene rotated or panned, the light source stays in the same position relative to the camera.
+*  “Direct Shadows” button sets the `areDirectShadowsEnabled` boolean property on the lightning object. This toggles the shadows cast by object in the scene.
 * If `SunLighting` is active, manipulating the slider changes the hour of the `simulatedDate` property on the lighting object. `VirtualLighting` does not have a date time property so the slider is disabled.
 
 ## Relevant API
@@ -62,3 +70,5 @@ The [web scene](https://maps.arcgis.com/home/item.html?id=fcebd77958634ac3874bbc
 ## Tags
 
 3D, environment, lighting, scene
+
+
