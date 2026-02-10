@@ -114,9 +114,9 @@ class _AddBuildingSceneLayerState extends State<AddBuildingSceneLayer>
 
   ArcGISScene _initializeScene() {
     // Create a Scene with a topographic basemap style.
-    final scene = ArcGISScene.withBasemapStyle(
-      BasemapStyle.arcGISTopographic,
+    final scene = ArcGISScene.withViewingModeAndBasemapStyle(
       viewingMode: SceneViewingMode.local,
+      basemapStyle: BasemapStyle.arcGISTopographic,
     );
 
     // Add an ElevationSource to the Scene.
