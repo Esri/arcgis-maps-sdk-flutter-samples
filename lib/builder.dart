@@ -74,6 +74,13 @@ Builder sampleWidgetsBuilder(BuilderOptions options) => SampleWidgetsBuilder();
 // Generates lib/models/samples_widget_list.dart by enumerating the samples directories
 // and creating a map of sample names to their corresponding Widgets.
 class SampleWidgetsBuilder implements Builder {
+  static const excludedSamples = {
+    //TODO(4710): re-enable Analysis samples
+    'show_line_of_sight_between_points',
+    'show_viewshed_from_geoelement_in_scene',
+    'show_viewshed_from_point_in_scene',
+  };
+
   @override
   final buildExtensions = const {
     r'$package$': ['lib/models/samples_widget_list.dart'],
@@ -102,6 +109,8 @@ class SampleWidgetsBuilder implements Builder {
             .map((filepath) => File(filepath).parent.path.split('/').last)
             .toList()
           ..sort();
+
+    sortedSampleNames.removeWhere(excludedSamples.contains);
 
     for (final sampleName in sortedSampleNames) {
       buffer.writeln(
