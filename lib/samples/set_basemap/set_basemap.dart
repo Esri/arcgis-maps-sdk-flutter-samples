@@ -69,23 +69,23 @@ class _SetBasemapState extends State<SetBasemap> with SampleStateSupport {
                       .map(
                         // Create a list tile for each basemap.
                         (basemap) => ListTile(
-                          title: Column(
-                            children: [
-                              Container(
-                                // Add a border to the selected basemap.
-                                decoration: _selectedBasemap == basemap
-                                    ? BoxDecoration(
-                                        border: Border.all(
-                                          color: Colors.blue,
-                                          width: 4,
-                                        ),
-                                      )
-                                    : null,
-                                // Display the basemap image.
-                                child: _basemaps[basemap] ?? _defaultImage,
-                              ),
-                              Text(basemap.name, textAlign: TextAlign.center),
-                            ],
+                          title: Container(
+                            // Add a border to the selected basemap.
+                            decoration: _selectedBasemap == basemap
+                                ? BoxDecoration(
+                                    border: Border.all(
+                                      color: Colors.blue,
+                                      width: 4,
+                                    ),
+                                  )
+                                : null,
+                            // Display the basemap image.
+                            child: _basemaps[basemap] ?? _defaultImage,
+                          ),
+                          // Display the basemap name.
+                          subtitle: Text(
+                            basemap.name,
+                            textAlign: TextAlign.center,
                           ),
                           // Update the map with the selected basemap.
                           onTap: () {
