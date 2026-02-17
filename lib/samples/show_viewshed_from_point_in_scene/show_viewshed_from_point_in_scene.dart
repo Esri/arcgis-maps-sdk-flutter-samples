@@ -55,7 +55,7 @@ class _ShowViewshedFromPointInSceneState
 
     // Initialize the viewshed.
     _viewshed = LocationViewshed.withLocation(
-      location: ArcGISPoint(
+      ArcGISPoint(
         x: -4.50,
         y: 48.4,
         z: _height,
