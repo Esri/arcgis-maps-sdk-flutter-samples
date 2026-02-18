@@ -197,7 +197,6 @@ class _SceneEnvironmentSettingsState extends State<SceneEnvironmentSettings> {
         const Divider(),
         Row(
           children: [
-            const Spacer(),
             const Text('Sky:'),
             const Spacer(),
             ToggleButtons(
@@ -228,13 +227,11 @@ class _SceneEnvironmentSettingsState extends State<SceneEnvironmentSettings> {
                 ),
               ],
             ),
-            const Spacer(),
           ],
         ),
         const Divider(),
         Row(
           children: [
-            const Spacer(),
             const Text('Background color:'),
             const Spacer(),
             DropdownButton(
@@ -249,7 +246,6 @@ class _SceneEnvironmentSettingsState extends State<SceneEnvironmentSettings> {
                   .toList(),
               onChanged: changeBackgroundColor,
             ),
-            const Spacer(),
           ],
         ),
         const Divider(),
@@ -257,7 +253,6 @@ class _SceneEnvironmentSettingsState extends State<SceneEnvironmentSettings> {
           children: [
             Row(
               children: [
-                const Spacer(),
                 const Text('Lighting:'),
                 const Spacer(),
                 ToggleButtons(
@@ -288,16 +283,11 @@ class _SceneEnvironmentSettingsState extends State<SceneEnvironmentSettings> {
                     ),
                   ],
                 ),
-                const Spacer(),
               ],
             ),
             Row(
-              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Padding(
-                  padding: EdgeInsets.fromLTRB(20, 0, 0, 0),
-                  child: Text('Hour:'),
-                ),
+                const Text('Hour:'),
                 Expanded(
                   child: Slider(
                     value: _lightingHour.toDouble(),
