@@ -97,6 +97,7 @@ class _ConfigureSceneEnvironmentState extends State<ConfigureSceneEnvironment>
   }
 }
 
+// Bottom sheet for the scene environment controls widget.
 class SceneEnvironmentBottomSheet extends StatelessWidget {
   const SceneEnvironmentBottomSheet({
     required this.localSceneViewController,
@@ -121,6 +122,7 @@ class SceneEnvironmentBottomSheet extends StatelessWidget {
   }
 }
 
+// Widget containing all of the controls for configuring the scene environment settings.
 class SceneEnvironmentSettings extends StatefulWidget {
   const SceneEnvironmentSettings({
     required this.localSceneViewController,
@@ -157,21 +159,23 @@ class _SceneEnvironmentSettingsState extends State<SceneEnvironmentSettings> {
   var _lightingTimeZoneOffset = Duration.zero;
   var _lightingHour = 12;
 
+  // Convenience variable to get the ArcGISScene from the controller.
+  ArcGISScene get _scene => widget.localSceneViewController.arcGISScene!;
+
   @override
   void initState() {
     super.initState();
-    final scene = widget.localSceneViewController.arcGISScene!;
 
     // Set the state variables based on the actual scene environment.
-    _isAtmosphereEnabled = scene.environment.isAtmosphereEnabled;
-    _isStarsEnabled = scene.environment.areStarsEnabled;
+    _isAtmosphereEnabled = _scene.environment.isAtmosphereEnabled;
+    _isStarsEnabled = _scene.environment.areStarsEnabled;
     _isDirectShadowsEnabled =
-        scene.environment.lighting.areDirectShadowsEnabled;
-    _backgroundColor = scene.environment.backgroundColor;
+        _scene.environment.lighting.areDirectShadowsEnabled;
+    _backgroundColor = _scene.environment.backgroundColor;
 
-    if (scene.environment.lighting is SunLighting) {
+    if (_scene.environment.lighting is SunLighting) {
       // Record the simulated time from the web scene.
-      final sunLighting = scene.environment.lighting as SunLighting;
+      final sunLighting = _scene.environment.lighting as SunLighting;
       _isSunLighting = true;
 
       _lightingDateTime = sunLighting.simulatedDate;
@@ -195,6 +199,7 @@ class _SceneEnvironmentSettingsState extends State<SceneEnvironmentSettings> {
     return Column(
       children: [
         const Divider(),
+        // Section for the Sky setting controls.
         Row(
           children: [
             const Text('Sky:'),
@@ -230,6 +235,7 @@ class _SceneEnvironmentSettingsState extends State<SceneEnvironmentSettings> {
           ],
         ),
         const Divider(),
+        // Section for the background color setting controls.
         Row(
           children: [
             const Text('Background color:'),
@@ -249,6 +255,7 @@ class _SceneEnvironmentSettingsState extends State<SceneEnvironmentSettings> {
           ],
         ),
         const Divider(),
+        // Section for the lighting controls.
         Column(
           children: [
             Row(
@@ -305,33 +312,26 @@ class _SceneEnvironmentSettingsState extends State<SceneEnvironmentSettings> {
     );
   }
 
-  /// Function that handles a change in the stars flag.
+  // Function that handles a change in the stars flag.
   void changeEnableStars(bool enabled) {
     if (enabled == _isStarsEnabled) return;
 
-    widget.localSceneViewController.arcGISScene!.environment.areStarsEnabled =
-        enabled;
+    _scene.environment.areStarsEnabled = enabled;
     setState(() => _isStarsEnabled = enabled);
   }
 
-  /// Function that handles a change in the atmoshpere flag.
+  // Function that handles a change in the atmoshpere flag.
   void changeEnableAtmosphere(bool enabled) {
     if (enabled == _isAtmosphereEnabled) return;
 
-    widget
-            .localSceneViewController
-            .arcGISScene!
-            .environment
-            .isAtmosphereEnabled =
-        enabled;
+    _scene.environment.isAtmosphereEnabled = enabled;
     setState(() => _isAtmosphereEnabled = enabled);
   }
 
-  /// Function that handles a change in the background color.
+  // Function that handles a change in the background color.
   void changeBackgroundColor(Color? backgroundColor) {
     final newColor = backgroundColor ?? _backgroundColorOptions.first.color;
-    widget.localSceneViewController.arcGISScene!.environment.backgroundColor =
-        newColor;
+    _scene.environment.backgroundColor = newColor;
     setState(() {
       _backgroundColor = newColor;
     });
@@ -341,21 +341,15 @@ class _SceneEnvironmentSettingsState extends State<SceneEnvironmentSettings> {
     changeEnableStars(false);
   }
 
-  /// Function that handles a change in the direct shadows flag.
+  // Function that handles a change in the direct shadows flag.
   void changeEnableShadows(bool enabled) {
     if (enabled == _isDirectShadowsEnabled) return;
 
-    widget
-            .localSceneViewController
-            .arcGISScene!
-            .environment
-            .lighting
-            .areDirectShadowsEnabled =
-        enabled;
+    _scene.environment.lighting.areDirectShadowsEnabled = enabled;
     setState(() => _isDirectShadowsEnabled = enabled);
   }
 
-  /// Function to change the scene lighting type.
+  // Function to change the scene lighting type.
   void changeLightingType(bool isSunLighting) {
     // Build the new scene lighting object.
     final SceneLighting newSceneLighting;
@@ -385,21 +379,18 @@ class _SceneEnvironmentSettingsState extends State<SceneEnvironmentSettings> {
     });
   }
 
-  /// Function to handle the change in the lighting hour.
+  // Function to handle the change in the lighting hour.
   void updateLightingHour(double newHourValue) {
-    if (!_isSunLighting) return;
-
     final newHourInt = newHourValue.round();
-
     final hourDif = newHourInt - _lightingHour;
+
+    // Update the slider control.
     setState(() => _lightingHour = newHourInt);
 
+    // Update the time on the lightning object.
     final hourChangeDuration = Duration(hours: hourDif);
     _lightingDateTime = _lightingDateTime.add(hourChangeDuration);
-
-    (widget.localSceneViewController.arcGISScene!.environment.lighting
-                as SunLighting)
-            .simulatedDate =
+    (_scene.environment.lighting as SunLighting).simulatedDate =
         _lightingDateTime;
   }
 }
