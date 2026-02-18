@@ -42,9 +42,9 @@ class _DisplayLocalSceneState extends State<DisplayLocalScene>
 
   Future<void> onLocalSceneViewReady() async {
     // Create a scene with a topographic basemap and a local scene viewing mode.
-    final scene = ArcGISScene.withBasemapStyle(
-      BasemapStyle.arcGISTopographic,
+    final scene = ArcGISScene.withViewingModeAndBasemapStyle(
       viewingMode: SceneViewingMode.local,
+      basemapStyle: BasemapStyle.arcGISTopographic,
     );
 
     // Create the 3d scene layer.
