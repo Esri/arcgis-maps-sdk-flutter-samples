@@ -30,6 +30,110 @@ class _ConfigureSceneEnvironmentState extends State<ConfigureSceneEnvironment>
   // Get a controller for the ArcGISLocalSceneView
   final _localSceneViewController = ArcGISLocalSceneView.createController();
 
+  // Flag to activate the settings bottom sheet.
+  bool _showBottomSheet = false;
+
+  // A flag for when the map view is ready and controls can be used.
+  var _ready = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: SafeArea(
+        top: false,
+        left: false,
+        right: false,
+        child: Stack(
+          children: [
+            Column(
+              children: [
+                Expanded(
+                  // Add a local scene view to the widget tree and set a controller.
+                  child: ArcGISLocalSceneView(
+                    controllerProvider: () => _localSceneViewController,
+                    onLocalSceneViewReady: onLocalSceneReady,
+                  ),
+                ),
+                Center(
+                  // Button to summon the scene environment settings.
+                  child: ElevatedButton(
+                    onPressed: () =>
+                        setState(() => _showBottomSheet = !_showBottomSheet),
+                    child: const Text('Show scene environment settings'),
+                  ),
+                ),
+              ],
+            ),
+            // Display a progress indicator and prevent interaction until state is ready.
+            LoadingIndicator(visible: !_ready),
+          ],
+        ),
+      ),
+      // Bottom sheet to show the scene environment settings controls.
+      bottomSheet: _showBottomSheet
+          ? SceneEnvironmentBottomSheet(
+              localSceneViewController: _localSceneViewController,
+              onClose: () => setState(() => _showBottomSheet = false),
+            )
+          : null,
+    );
+  }
+
+  Future<void> onLocalSceneReady() async {
+    // Create and load the local scene from a ArcGISOnline web scene.
+    final websceneUri = Uri.parse(
+      'https://maps.arcgis.com/home/item.html?id=fcebd77958634ac3874bbc0e6b0677a4',
+    ); // Local scene with 3D trees and buildings
+    final scene = ArcGISScene.withUri(websceneUri)!;
+    await scene.load();
+
+    // Set the scene on the local scene view.
+    _localSceneViewController.arcGISScene = scene;
+
+    setState(() {
+      // The view is ready for interaction.
+      _ready = true;
+    });
+  }
+}
+
+class SceneEnvironmentBottomSheet extends StatelessWidget {
+  const SceneEnvironmentBottomSheet({
+    required this.localSceneViewController,
+    required this.onClose,
+    super.key,
+  });
+
+  final ArcGISLocalSceneViewController localSceneViewController;
+  final VoidCallback onClose;
+
+  @override
+  Widget build(BuildContext context) {
+    return BottomSheetSettings(
+      title: 'Scene Environment Settings',
+      onCloseIconPressed: onClose,
+      settingsWidgets: (context) => [
+        SceneEnvironmentSettings(
+          localSceneViewController: localSceneViewController,
+        ),
+      ],
+    );
+  }
+}
+
+class SceneEnvironmentSettings extends StatefulWidget {
+  const SceneEnvironmentSettings({
+    required this.localSceneViewController,
+    super.key,
+  });
+
+  final ArcGISLocalSceneViewController localSceneViewController;
+
+  @override
+  State<StatefulWidget> createState() => _SceneEnvironmentSettingsState();
+}
+
+class _SceneEnvironmentSettingsState extends State<SceneEnvironmentSettings> {
   // Listing used for background color drop down.
   final _backgroundColorOptions = [
     (name: 'None', color: const Color.fromARGB(0, 0, 0, 0)),
@@ -53,253 +157,169 @@ class _ConfigureSceneEnvironmentState extends State<ConfigureSceneEnvironment>
   var _lightingTimeZoneOffset = Duration.zero;
   var _lightingHour = 12;
 
-  // A flag for when the map view is ready and controls can be used.
-  var _ready = false;
+  @override
+  void initState() {
+    super.initState();
+    final scene = widget.localSceneViewController.arcGISScene!;
+
+    // Set the state variables based on the actual scene environment.
+    _isAtmosphereEnabled = scene.environment.isAtmosphereEnabled;
+    _isStarsEnabled = scene.environment.areStarsEnabled;
+    _isDirectShadowsEnabled =
+        scene.environment.lighting.areDirectShadowsEnabled;
+    _backgroundColor = scene.environment.backgroundColor;
+
+    if (scene.environment.lighting is SunLighting) {
+      // Record the simulated time from the web scene.
+      final sunLighting = scene.environment.lighting as SunLighting;
+      _isSunLighting = true;
+
+      _lightingDateTime = sunLighting.simulatedDate;
+
+      // Record the time zone offset if one was set on the web scene.
+      if (sunLighting.displayTimeZone != null) {
+        _lightingTimeZoneOffset = Duration(
+          hours: sunLighting.displayTimeZone!.hours,
+          minutes: sunLighting.displayTimeZone!.minutes,
+        );
+      }
+
+      _lightingHour = sunLighting.simulatedDate
+          .add(_lightingTimeZoneOffset)
+          .hour;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        top: false,
-        left: false,
-        right: false,
-        child: Stack(
+    return Column(
+      children: [
+        const Divider(),
+        Row(
           children: [
-            Column(
-              children: [
-                Expanded(
-                  child: ArcGISLocalSceneView(
-                    controllerProvider: () => _localSceneViewController,
-                    onLocalSceneViewReady: onLocalSceneReady,
-                  ),
-                ),
+            const Spacer(),
+            const Text('Sky:'),
+            const Spacer(),
+            ToggleButtons(
+              borderRadius: const BorderRadius.all(Radius.circular(8)),
+              isSelected: [_isStarsEnabled],
+              onPressed: _isSunLighting
+                  ? (_) => changeEnableStars(!_isStarsEnabled)
+                  : null,
+              children: const [
                 Padding(
-                  padding: const EdgeInsets.all(8),
-                  child: Column(
-                    children: [
-                      const Text(
-                        'Scene Environment Settings:',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20,
-                        ),
-                      ),
-                      const Divider(),
-                      Row(
-                        children: [
-                          const Spacer(),
-                          const Text('Sky:'),
-                          const Spacer(),
-                          ToggleButtons(
-                            borderRadius: const BorderRadius.all(
-                              Radius.circular(8),
-                            ),
-                            isSelected: [_isStarsEnabled],
-                            onPressed: _isSunLighting
-                                ? (_) => changeEnableStars(!_isStarsEnabled)
-                                : null,
-                            children: const [
-                              Padding(
-                                padding: EdgeInsetsGeometry.fromLTRB(
-                                  10,
-                                  0,
-                                  10,
-                                  0,
-                                ),
-                                child: Text('Stars'),
-                              ),
-                            ],
-                          ),
-                          // Space between buttons.
-                          const SizedBox(width: 8),
-                          ToggleButtons(
-                            borderRadius: const BorderRadius.all(
-                              Radius.circular(8),
-                            ),
-                            isSelected: [_isAtmosphereEnabled],
-                            onPressed: (_) {
-                              changeEnableAtmosphere(!_isAtmosphereEnabled);
-                            },
-                            children: const [
-                              Padding(
-                                padding: EdgeInsetsGeometry.fromLTRB(
-                                  10,
-                                  0,
-                                  10,
-                                  0,
-                                ),
-                                child: Text('Atmosphere'),
-                              ),
-                            ],
-                          ),
-                          const Spacer(),
-                        ],
-                      ),
-                      const Divider(),
-                      Row(
-                        children: [
-                          const Spacer(),
-                          const Text('Background color:'),
-                          const Spacer(),
-                          DropdownButton(
-                            value: _backgroundColor,
-                            items: _backgroundColorOptions
-                                .map<DropdownMenuItem<Color>>(
-                                  (colorOption) => DropdownMenuItem(
-                                    value: colorOption.color,
-                                    child: Text(colorOption.name),
-                                  ),
-                                )
-                                .toList(),
-                            onChanged: changeBackgroundColor,
-                          ),
-                          const Spacer(),
-                        ],
-                      ),
-                      const Divider(),
-                      Column(
-                        children: [
-                          Row(
-                            children: [
-                              const Spacer(),
-                              const Text('Lighting:'),
-                              const Spacer(),
-                              ToggleButtons(
-                                borderRadius: const BorderRadius.all(
-                                  Radius.circular(8),
-                                ),
-                                isSelected: [_isSunLighting, !_isSunLighting],
-                                onPressed: (index) =>
-                                    changeLightingType(index == 0),
-                                children: const [
-                                  Padding(
-                                    padding: EdgeInsetsGeometry.fromLTRB(
-                                      10,
-                                      0,
-                                      10,
-                                      0,
-                                    ),
-                                    child: Text('Sun'),
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsetsGeometry.fromLTRB(
-                                      10,
-                                      0,
-                                      10,
-                                      0,
-                                    ),
-                                    child: Text('Virtual'),
-                                  ),
-                                ],
-                              ),
-                              const Spacer(),
-                              ToggleButtons(
-                                isSelected: [_isDirectShadowsEnabled],
-                                borderRadius: const BorderRadius.all(
-                                  Radius.circular(8),
-                                ),
-                                onPressed: (_) => changeEnableShadows(
-                                  !_isDirectShadowsEnabled,
-                                ),
-                                children: const [
-                                  Padding(
-                                    padding: EdgeInsetsGeometry.fromLTRB(
-                                      10,
-                                      0,
-                                      10,
-                                      0,
-                                    ),
-                                    child: Text('Direct Shadows'),
-                                  ),
-                                ],
-                              ),
-                              const Spacer(),
-                            ],
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const Padding(
-                                padding: EdgeInsets.fromLTRB(20, 0, 0, 0),
-                                child: Text('Hour:'),
-                              ),
-                              Expanded(
-                                child: Slider(
-                                  value: _lightingHour.toDouble(),
-                                  max: 23,
-                                  divisions: 23,
-                                  label: '$_lightingHour:00',
-                                  onChanged: _isSunLighting
-                                      ? updateLightingHour
-                                      : null,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ],
+                  padding: EdgeInsetsGeometry.fromLTRB(10, 0, 10, 0),
+                  child: Text('Stars'),
+                ),
+              ],
+            ),
+            // Space between buttons.
+            const SizedBox(width: 8),
+            ToggleButtons(
+              borderRadius: const BorderRadius.all(Radius.circular(8)),
+              isSelected: [_isAtmosphereEnabled],
+              onPressed: (_) {
+                changeEnableAtmosphere(!_isAtmosphereEnabled);
+              },
+              children: const [
+                Padding(
+                  padding: EdgeInsetsGeometry.fromLTRB(10, 0, 10, 0),
+                  child: Text('Atmosphere'),
+                ),
+              ],
+            ),
+            const Spacer(),
+          ],
+        ),
+        const Divider(),
+        Row(
+          children: [
+            const Spacer(),
+            const Text('Background color:'),
+            const Spacer(),
+            DropdownButton(
+              value: _backgroundColor,
+              items: _backgroundColorOptions
+                  .map<DropdownMenuItem<Color>>(
+                    (colorOption) => DropdownMenuItem(
+                      value: colorOption.color,
+                      child: Text(colorOption.name),
+                    ),
+                  )
+                  .toList(),
+              onChanged: changeBackgroundColor,
+            ),
+            const Spacer(),
+          ],
+        ),
+        const Divider(),
+        Column(
+          children: [
+            Row(
+              children: [
+                const Spacer(),
+                const Text('Lighting:'),
+                const Spacer(),
+                ToggleButtons(
+                  borderRadius: const BorderRadius.all(Radius.circular(8)),
+                  isSelected: [_isSunLighting, !_isSunLighting],
+                  onPressed: (index) => changeLightingType(index == 0),
+                  children: const [
+                    Padding(
+                      padding: EdgeInsetsGeometry.fromLTRB(10, 0, 10, 0),
+                      child: Text('Sun'),
+                    ),
+                    Padding(
+                      padding: EdgeInsetsGeometry.fromLTRB(10, 0, 10, 0),
+                      child: Text('Virtual'),
+                    ),
+                  ],
+                ),
+                const Spacer(),
+                ToggleButtons(
+                  isSelected: [_isDirectShadowsEnabled],
+                  borderRadius: const BorderRadius.all(Radius.circular(8)),
+                  onPressed: (_) =>
+                      changeEnableShadows(!_isDirectShadowsEnabled),
+                  children: const [
+                    Padding(
+                      padding: EdgeInsetsGeometry.fromLTRB(10, 0, 10, 0),
+                      child: Text('Direct Shadows'),
+                    ),
+                  ],
+                ),
+                const Spacer(),
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Padding(
+                  padding: EdgeInsets.fromLTRB(20, 0, 0, 0),
+                  child: Text('Hour:'),
+                ),
+                Expanded(
+                  child: Slider(
+                    value: _lightingHour.toDouble(),
+                    max: 23,
+                    divisions: 23,
+                    label: '$_lightingHour:00',
+                    onChanged: _isSunLighting ? updateLightingHour : null,
                   ),
                 ),
               ],
             ),
-            // Display a progress indicator and prevent interaction until state is ready.
-            LoadingIndicator(visible: !_ready),
           ],
         ),
-      ),
+      ],
     );
-  }
-
-  Future<void> onLocalSceneReady() async {
-    // Create and load the web scene
-    final websceneUri = Uri.parse(
-      'https://maps.arcgis.com/home/item.html?id=fcebd77958634ac3874bbc0e6b0677a4',
-    ); // Local scene with 3D trees and buildings
-    final scene = ArcGISScene.withUri(websceneUri)!;
-    await scene.load();
-
-    // Set the scene on the local scene view.
-    _localSceneViewController.arcGISScene = scene;
-
-    // Set the state variables based on the actual scene environment.
-    setState(() {
-      _isAtmosphereEnabled = scene.environment.isAtmosphereEnabled;
-      _isStarsEnabled = scene.environment.areStarsEnabled;
-      _isDirectShadowsEnabled =
-          scene.environment.lighting.areDirectShadowsEnabled;
-      _backgroundColor = scene.environment.backgroundColor;
-
-      if (scene.environment.lighting is SunLighting) {
-        // Record the simulated time from the web scene.
-        final sunLighting = scene.environment.lighting as SunLighting;
-        _isSunLighting = true;
-
-        _lightingDateTime = sunLighting.simulatedDate;
-
-        // Record the time zone offset if one was set on the web scene.
-        if (sunLighting.displayTimeZone != null) {
-          _lightingTimeZoneOffset = Duration(
-            hours: sunLighting.displayTimeZone!.hours,
-            minutes: sunLighting.displayTimeZone!.minutes,
-          );
-        }
-
-        _lightingHour = sunLighting.simulatedDate
-            .add(_lightingTimeZoneOffset)
-            .hour;
-      }
-
-      // The view is ready for interaction.
-      _ready = true;
-    });
   }
 
   /// Function that handles a change in the stars flag.
   void changeEnableStars(bool enabled) {
     if (enabled == _isStarsEnabled) return;
 
-    _localSceneViewController.arcGISScene!.environment.areStarsEnabled =
+    widget.localSceneViewController.arcGISScene!.environment.areStarsEnabled =
         enabled;
     setState(() => _isStarsEnabled = enabled);
   }
@@ -308,7 +328,11 @@ class _ConfigureSceneEnvironmentState extends State<ConfigureSceneEnvironment>
   void changeEnableAtmosphere(bool enabled) {
     if (enabled == _isAtmosphereEnabled) return;
 
-    _localSceneViewController.arcGISScene!.environment.isAtmosphereEnabled =
+    widget
+            .localSceneViewController
+            .arcGISScene!
+            .environment
+            .isAtmosphereEnabled =
         enabled;
     setState(() => _isAtmosphereEnabled = enabled);
   }
@@ -316,7 +340,7 @@ class _ConfigureSceneEnvironmentState extends State<ConfigureSceneEnvironment>
   /// Function that handles a change in the background color.
   void changeBackgroundColor(Color? backgroundColor) {
     final newColor = backgroundColor ?? _backgroundColorOptions.first.color;
-    _localSceneViewController.arcGISScene!.environment.backgroundColor =
+    widget.localSceneViewController.arcGISScene!.environment.backgroundColor =
         newColor;
     setState(() {
       _backgroundColor = newColor;
@@ -331,7 +355,8 @@ class _ConfigureSceneEnvironmentState extends State<ConfigureSceneEnvironment>
   void changeEnableShadows(bool enabled) {
     if (enabled == _isDirectShadowsEnabled) return;
 
-    _localSceneViewController
+    widget
+            .localSceneViewController
             .arcGISScene!
             .environment
             .lighting
@@ -356,7 +381,7 @@ class _ConfigureSceneEnvironmentState extends State<ConfigureSceneEnvironment>
     }
 
     // Set the new lighting object to the scene.
-    _localSceneViewController.arcGISScene?.environment.lighting =
+    widget.localSceneViewController.arcGISScene?.environment.lighting =
         newSceneLighting;
 
     setState(() {
@@ -382,7 +407,8 @@ class _ConfigureSceneEnvironmentState extends State<ConfigureSceneEnvironment>
     final hourChangeDuration = Duration(hours: hourDif);
     _lightingDateTime = _lightingDateTime.add(hourChangeDuration);
 
-    (_localSceneViewController.arcGISScene!.environment.lighting as SunLighting)
+    (widget.localSceneViewController.arcGISScene!.environment.lighting
+                as SunLighting)
             .simulatedDate =
         _lightingDateTime;
   }
