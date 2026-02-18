@@ -1,9 +1,9 @@
 {
     "category": "Scenes",
-    "description": "Modify the environment settings in a local scene to change the lighting conditions and background appearance.",
+    "description": "Configure the environment settings in a local scene to change the lighting conditions and background appearance.",
     "ignore": false,
     "images": [
-        "ModifyLocalSceneEnvironment.png"
+        "configure_scene_environment.png"
     ],
     "keywords": [
         "3D",
@@ -27,7 +27,7 @@
         "VirtualLighting"
     ],
     "snippets": [
-        "modify_local_scene_environment.dart"
+        "configure_scene_environment.dart"
     ],
-    "title": "Modify local scene environment"
+    "title": "Configure scene environment"
 }

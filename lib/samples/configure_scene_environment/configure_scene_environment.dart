@@ -17,16 +17,15 @@ import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
 
-class ModifyLocalSceneEnvironment extends StatefulWidget {
-  const ModifyLocalSceneEnvironment({super.key});
+class ConfigureSceneEnvironment extends StatefulWidget {
+  const ConfigureSceneEnvironment({super.key});
 
   @override
-  State<ModifyLocalSceneEnvironment> createState() =>
-      _ModifyLocalSceneEnvironmentState();
+  State<ConfigureSceneEnvironment> createState() =>
+      _ConfigureSceneEnvironmentState();
 }
 
-class _ModifyLocalSceneEnvironmentState
-    extends State<ModifyLocalSceneEnvironment>
+class _ConfigureSceneEnvironmentState extends State<ConfigureSceneEnvironment>
     with SampleStateSupport {
   // Get a controller for the ArcGISLocalSceneView
   final _localSceneViewController = ArcGISLocalSceneView.createController();
@@ -217,14 +216,25 @@ class _ModifyLocalSceneEnvironmentState
                               const Spacer(),
                             ],
                           ),
-                          Slider(
-                            value: _lightingHour.toDouble(),
-                            max: 23,
-                            divisions: 23,
-                            label: '$_lightingHour:00',
-                            onChanged: _isSunLighting
-                                ? updateLightingHour
-                                : null,
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Padding(
+                                padding: EdgeInsets.fromLTRB(20, 0, 0, 0),
+                                child: Text('Hour:'),
+                              ),
+                              Expanded(
+                                child: Slider(
+                                  value: _lightingHour.toDouble(),
+                                  max: 23,
+                                  divisions: 23,
+                                  label: '$_lightingHour:00',
+                                  onChanged: _isSunLighting
+                                      ? updateLightingHour
+                                      : null,
+                                ),
+                              ),
+                            ],
                           ),
                         ],
                       ),
