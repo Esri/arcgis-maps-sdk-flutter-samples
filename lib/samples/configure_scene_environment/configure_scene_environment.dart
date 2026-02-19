@@ -114,9 +114,7 @@ class SceneEnvironmentBottomSheet extends StatelessWidget {
       title: 'Scene Environment Settings',
       onCloseIconPressed: onClose,
       settingsWidgets: (context) => [
-        SceneEnvironmentSettings(
-          localSceneViewController: localSceneViewController,
-        ),
+        SceneEnvironmentSettings(scene: localSceneViewController.arcGISScene!),
       ],
     );
   }
@@ -124,12 +122,9 @@ class SceneEnvironmentBottomSheet extends StatelessWidget {
 
 // Widget containing all of the controls for configuring the scene environment settings.
 class SceneEnvironmentSettings extends StatefulWidget {
-  const SceneEnvironmentSettings({
-    required this.localSceneViewController,
-    super.key,
-  });
+  const SceneEnvironmentSettings({required this.scene, super.key});
 
-  final ArcGISLocalSceneViewController localSceneViewController;
+  final ArcGISScene scene;
 
   @override
   State<StatefulWidget> createState() => _SceneEnvironmentSettingsState();
@@ -159,8 +154,8 @@ class _SceneEnvironmentSettingsState extends State<SceneEnvironmentSettings> {
   var _lightingTimeZoneOffset = Duration.zero;
   var _lightingHour = 12;
 
-  // Convenience variable to get the ArcGISScene from the controller.
-  ArcGISScene get _scene => widget.localSceneViewController.arcGISScene!;
+  // Convenience variable to get the ArcGISScene from the widget.
+  ArcGISScene get _scene => widget.scene;
 
   @override
   void initState() {
@@ -365,8 +360,7 @@ class _SceneEnvironmentSettingsState extends State<SceneEnvironmentSettings> {
     }
 
     // Set the new lighting object to the scene.
-    widget.localSceneViewController.arcGISScene?.environment.lighting =
-        newSceneLighting;
+    _scene.environment.lighting = newSceneLighting;
 
     setState(() {
       // Set the lighting type button state.
