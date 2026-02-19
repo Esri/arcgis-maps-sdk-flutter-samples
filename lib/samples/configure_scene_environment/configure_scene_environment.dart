@@ -27,13 +27,13 @@ class ConfigureSceneEnvironment extends StatefulWidget {
 
 class _ConfigureSceneEnvironmentState extends State<ConfigureSceneEnvironment>
     with SampleStateSupport {
-  // Get a controller for the ArcGISLocalSceneView
+  // Get a controller for the ArcGISLocalSceneView.
   final _localSceneViewController = ArcGISLocalSceneView.createController();
 
   // Flag to activate the settings bottom sheet.
-  bool _showBottomSheet = false;
+  var _showBottomSheet = false;
 
-  // A flag for when the map view is ready and controls can be used.
+  // A flag for when the local scene view is ready and controls can be used.
   var _ready = false;
 
   @override
@@ -55,7 +55,7 @@ class _ConfigureSceneEnvironmentState extends State<ConfigureSceneEnvironment>
                   ),
                 ),
                 Center(
-                  // Button to summon the scene environment settings.
+                  // Button to show the scene environment settings.
                   child: ElevatedButton(
                     onPressed: () =>
                         setState(() => _showBottomSheet = !_showBottomSheet),
@@ -83,17 +83,15 @@ class _ConfigureSceneEnvironmentState extends State<ConfigureSceneEnvironment>
     // Create and load the local scene from a ArcGISOnline web scene.
     final websceneUri = Uri.parse(
       'https://maps.arcgis.com/home/item.html?id=fcebd77958634ac3874bbc0e6b0677a4',
-    ); // Local scene with 3D trees and buildings
+    );
     final scene = ArcGISScene.withUri(websceneUri)!;
     await scene.load();
 
     // Set the scene on the local scene view.
     _localSceneViewController.arcGISScene = scene;
 
-    setState(() {
-      // The view is ready for interaction.
-      _ready = true;
-    });
+    // The view is ready for interaction.
+    setState(() => _ready = true);
   }
 }
 
@@ -133,7 +131,7 @@ class SceneEnvironmentSettings extends StatefulWidget {
 class _SceneEnvironmentSettingsState extends State<SceneEnvironmentSettings> {
   // Listing used for background color drop down.
   final _backgroundColorOptions = [
-    (name: 'None', color: const Color.fromARGB(0, 0, 0, 0)),
+    (name: 'None', color: Colors.transparent),
     (name: 'Black', color: Colors.black),
     (name: 'Red', color: Colors.red),
     (name: 'Orange', color: Colors.orange),
@@ -183,6 +181,7 @@ class _SceneEnvironmentSettingsState extends State<SceneEnvironmentSettings> {
         );
       }
 
+      // Record the localized hour from the web scene lighting.
       _lightingHour = sunLighting.simulatedDate
           .add(_lightingTimeZoneOffset)
           .hour;
@@ -238,7 +237,7 @@ class _SceneEnvironmentSettingsState extends State<SceneEnvironmentSettings> {
             DropdownButton(
               value: _backgroundColor,
               items: _backgroundColorOptions
-                  .map<DropdownMenuItem<Color>>(
+                  .map(
                     (colorOption) => DropdownMenuItem(
                       value: colorOption.color,
                       child: Text(colorOption.name),
