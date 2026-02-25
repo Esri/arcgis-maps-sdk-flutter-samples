@@ -14,7 +14,7 @@ Once the scene is loaded, tap the "Building Filter Settings" button to view the 
 
 * Select a floor from the "Floor" menu to view the internal details of each floor or "All" to view the entire model. Selecting a floor applies a filter that hides all floors above the selected floor and gives the floors below a transparent, X-ray renderer.
 * Expand the categories under the top-level disciplines to show or hide individual categories in the building model. The entire discipline may be shown or hidden as well.
-* Click on any features in the building to view the attributes of the feature.
+* Tap on any features in the building to view the attributes of the feature.
 
 ## How it works
 
