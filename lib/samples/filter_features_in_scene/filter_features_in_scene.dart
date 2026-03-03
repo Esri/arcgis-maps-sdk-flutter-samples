@@ -49,7 +49,7 @@ class _FilterFeaturesInSceneState extends State<FilterFeaturesInScene>
   // A filter that limits the visible features of the scene layer.
   late SceneLayerPolygonFilter _sceneLayerPolygonFilter;
   // A state for filtering features in a scene.
-  var _sceneFilterAction = SceneFilterAction.show;
+  var _sceneFilterAction = SceneFilterAction.filter;
 
   @override
   Widget build(BuildContext context) {
@@ -238,12 +238,12 @@ enum SceneFilterAction {
   // The next action to apply to the scene.
   SceneFilterAction next() {
     switch (this) {
-      case SceneFilterAction.show:
-        return SceneFilterAction.filter;
       case SceneFilterAction.filter:
+        return SceneFilterAction.show;
+      case SceneFilterAction.show:
         return SceneFilterAction.reset;
       case SceneFilterAction.reset:
-        return SceneFilterAction.show;
+        return SceneFilterAction.filter;
     }
   }
 }
