@@ -20,12 +20,7 @@ import 'dart:io';
 import 'package:build/build.dart';
 import 'package:glob/glob.dart';
 
-const excludedSamples = <String>{
-  //TODO(4855): re-enable Analysis samples
-  'show_line_of_sight_between_points',
-  'show_viewshed_from_geoelement_in_scene',
-  'show_viewshed_from_point_in_scene',
-};
+const excludedSamples = <String>{};
 
 // Returns a list of metadata files, excluding the ones in the excludedSamples list.
 Future<List<String>> getMetadataFiles(BuildStep buildStep) async {
