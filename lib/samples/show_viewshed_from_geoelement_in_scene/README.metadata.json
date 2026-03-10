@@ -14,7 +14,7 @@
         "viewshed",
         "visibility analysis",
         "AnalysisOverlay",
-        "GeoElementViewshed",
+        "ExploratoryGeoElementViewshed",
         "GeodeticDistanceResult",
         "GeometryEngine.distanceGeodetic",
         "GeometryEngine.moveGeodetic",
@@ -29,7 +29,7 @@
     "redirect_from": [],
     "relevant_apis": [
         "AnalysisOverlay",
-        "GeoElementViewshed",
+        "ExploratoryGeoElementViewshed",
         "GeodeticDistanceResult",
         "GeometryEngine.distanceGeodetic",
         "GeometryEngine.moveGeodetic",

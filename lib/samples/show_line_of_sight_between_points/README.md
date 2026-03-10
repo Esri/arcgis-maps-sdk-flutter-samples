@@ -17,15 +17,15 @@ Tap the scene to set the location of the observer. Long press to set the line-of
 ## How it works
 
 1. Create an `AnalysisOverlay` and add it to the scene view.
-2. Create a `LocationLineOfSight` with initial observer and target locations and add it to the analysis overlay.
-3. Set `onTap` and `onLongPress` handler functions when creating the `ArcGISSceneView`. Use the `ArcGISSceneViewController.screenToBaseSurface(Offset screenOffset)` function to convert the screen offset to an `ArcGISPoint` on the scene. In the `onTap` function, set the `LocationLineOfSight.observerLocation` property. In the `onLongPress` function, set the `LocationLineOfSight.targetLocation` property.
+2. Create a `ExploratoryLocationLineOfSight` with initial observer and target locations and add it to the analysis overlay.
+3. Set `onTap` and `onLongPress` handler functions when creating the `ArcGISSceneView`. Use the `ArcGISSceneViewController.screenToBaseSurface(Offset screenOffset)` function to convert the screen offset to an `ArcGISPoint` on the scene. In the `onTap` function, set the `ExploratoryLocationLineOfSight.observerLocation` property. In the `onLongPress` function, set the `ExploratoryLocationLineOfSight.targetLocation` property.
 4. The `AnalysisOverlay` will automatically update when either of the locations are updated.
 
 ## Relevant API
 
 * AnalysisOverlay
 * ArcGISSceneView
-* LocationLineOfSight
+* ExploratoryLocationLineOfSight
 
 ## Tags
 

@@ -44,7 +44,7 @@ class _ShowViewshedFromPointInSceneState
   double _maxDistance = 1000;
   bool _showFrustum = false;
   bool _showAnalysis = true;
-  late final LocationViewshed _viewshed;
+  late final ExploratoryLocationViewshed _viewshed;
 
   // A flag for when the scene view is ready and controls can be used.
   var _ready = false;
@@ -54,7 +54,7 @@ class _ShowViewshedFromPointInSceneState
     super.initState();
 
     // Initialize the viewshed.
-    _viewshed = LocationViewshed.withLocation(
+    _viewshed = ExploratoryLocationViewshed.withLocation(
       location: ArcGISPoint(
         x: -4.50,
         y: 48.4,

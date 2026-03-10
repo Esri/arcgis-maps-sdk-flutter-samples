@@ -33,7 +33,7 @@ class _ShowLineOfSightBetweenPointsState
 
   // The LocationLineOfSight object that will provide line-of-sight analysis for this sample.
   // The object is initialized with the starting observer and target locations.
-  final _locationLineOfSight = LocationLineOfSight(
+  final _locationLineOfSight = ExploratoryLocationLineOfSight(
     observerLocation: ArcGISPoint(
       x: -73.095827750063904,
       y: -49.319214695380957,

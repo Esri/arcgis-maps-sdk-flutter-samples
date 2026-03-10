@@ -16,7 +16,7 @@ Tap the "Settings" button at the bottom of the screen to show the controls to ch
 
 ## How it works
 
-1. Create a `LocationViewshed` passing in the observer location, heading, pitch, horizontal/vertical angles, and min/max distances.
+1. Create a `ExploratoryLocationViewshed` passing in the observer location, heading, pitch, horizontal/vertical angles, and min/max distances.
 2. Set the property values on the viewshed instance for location, direction, range, and visibility properties.
 
 ## Relevant API
@@ -24,8 +24,8 @@ Tap the "Settings" button at the bottom of the screen to show the controls to ch
 * AnalysisOverlay
 * ArcGISSceneLayer
 * ArcGISTiledElevationSource
-* LocationViewshed
-* Viewshed
+* ExploratoryLocationViewshed
+* ExploratoryViewshed
 
 ## About the data
 
