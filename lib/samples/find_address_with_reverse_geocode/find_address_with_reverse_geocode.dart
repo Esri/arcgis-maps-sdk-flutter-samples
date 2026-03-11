@@ -130,6 +130,10 @@ class _FindAddressWithReverseGeocodeState
         .where((str) => str.isNotEmpty)
         .join(', ');
 
-    showMessageDialog(combinedString);
+    _mapViewController.callout.showAt(
+      normalizedTapPoint,
+      detail: combinedString,
+      leaderPosition: .top,
+    );
   }
 }
