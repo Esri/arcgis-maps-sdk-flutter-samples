@@ -101,7 +101,7 @@ class _FindAddressWithReverseGeocodeState
     );
     if (mapTapPoint == null) return;
 
-    // Normalize the point incase the tapped location crosses the international date line.
+    // Normalize the point in case the tapped location crosses the international date line.
     final normalizedTapPoint = GeometryEngine.normalizeCentralMeridian(
       mapTapPoint,
     );
@@ -133,7 +133,10 @@ class _FindAddressWithReverseGeocodeState
     _mapViewController.callout.showAt(
       normalizedTapPoint,
       detail: combinedString,
-      leaderPosition: .top,
+      style: CalloutStyle(
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        offset: const Offset(0, -35),
+      ),
     );
   }
 }
