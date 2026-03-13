@@ -1,13 +1,13 @@
 {
     "category": "Analysis",
-    "description": "Perform a line of sight analysis between two points in real time.",
+    "description": "Perform an exploratory line of sight analysis between two points in real time.",
     "ignore": false,
     "images": [
-        "show_line_of_sight_between_points.png"
+        "show_exploratory_line_of_sight_between_points.png"
     ],
     "keywords": [
         "3D",
-        "line of sight",
+        "exploratory line of sight",
         "visibility",
         "visibility analysis",
         "AnalysisOverlay",
@@ -21,7 +21,7 @@
         "ExploratoryLocationLineOfSight"
     ],
     "snippets": [
-        "show_line_of_sight_between_points.dart"
+        "show_exploratory_line_of_sight_between_points.dart"
     ],
-    "title": "Show line of sight between points"
+    "title": "Show exploratory line of sight between points"
 }

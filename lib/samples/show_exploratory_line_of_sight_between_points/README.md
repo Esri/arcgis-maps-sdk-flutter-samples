@@ -1,12 +1,14 @@
-# Show line of sight between points
+# Show exploratory line of sight between points
 
-Perform a line of sight analysis between two points in real time.
+Perform an exploratory line of sight analysis between two points in real time.
 
-![Image of show line of sight between points](show_line_of_sight_between_points.png)
+![Image of show exploratory line of sight between points](show_exploratory_line_of_sight_between_points.png)
 
 ## Use case
 
-A line of sight analysis can be used to assess whether a view is obstructed between an observer and a target. Obstructing features could either be natural, like topography, or man-made, like buildings. Consider an events planning company wanting to commemorate a national event by lighting sequential beacons across hill summits or roof tops. To guarantee a successful event, ensuring an unobstructed line of sight between neighboring beacons would allow each beacon to be activated as intended.
+A exploratory line of sight analysis can be used to assess whether a view is obstructed between an observer and a target. Obstructing features could either be natural, like topography, or man-made, like buildings. Consider an events planning company wanting to commemorate a national event by lighting sequential beacons across hill summits or roof tops. To guarantee a successful event, ensuring an unobstructed line of sight between neighboring beacons would allow each beacon to be activated as intended.
+
+Note: This analysis is a form of "exploratory analysis", which means the results are calculated on the current scale of the data, and the results are generated very quickly but not persisted. If persisted analysis performed at the full resolution of the data is required, consider using a `LineOfSightFunction` to perform a line of sight calculation instead.
 
 ## How to use the sample
 
@@ -29,4 +31,4 @@ Tap the scene to set the location of the observer. Long press to set the line-of
 
 ## Tags
 
-3D, line of sight, visibility, visibility analysis
+3D, exploratory line of sight, visibility, visibility analysis
