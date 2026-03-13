@@ -17,16 +17,16 @@ import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
 
-class ShowViewshedFromPointInScene extends StatefulWidget {
-  const ShowViewshedFromPointInScene({super.key});
+class ShowExploratoryViewshedFromPointInScene extends StatefulWidget {
+  const ShowExploratoryViewshedFromPointInScene({super.key});
 
   @override
-  State<ShowViewshedFromPointInScene> createState() =>
-      _ShowViewshedFromPointInSceneState();
+  State<ShowExploratoryViewshedFromPointInScene> createState() =>
+      _ShowExploratoryViewshedFromPointInSceneState();
 }
 
-class _ShowViewshedFromPointInSceneState
-    extends State<ShowViewshedFromPointInScene>
+class _ShowExploratoryViewshedFromPointInSceneState
+    extends State<ShowExploratoryViewshedFromPointInScene>
     with SampleStateSupport {
   // Create a controller for the scene view.
   final _sceneViewController = ArcGISSceneView.createController();
@@ -44,7 +44,7 @@ class _ShowViewshedFromPointInSceneState
   double _maxDistance = 1000;
   bool _showFrustum = false;
   bool _showAnalysis = true;
-  late final ExploratoryLocationViewshed _viewshed;
+  late final ExploratoryLocationViewshed _exploratoryViewshed;
 
   // A flag for when the scene view is ready and controls can be used.
   var _ready = false;
@@ -53,8 +53,8 @@ class _ShowViewshedFromPointInSceneState
   void initState() {
     super.initState();
 
-    // Initialize the viewshed.
-    _viewshed = ExploratoryLocationViewshed.withLocation(
+    // Initialize the exploratory location viewshed.
+    _exploratoryViewshed = ExploratoryLocationViewshed.withLocation(
       location: ArcGISPoint(
         x: -4.50,
         y: 48.4,
@@ -92,7 +92,7 @@ class _ShowViewshedFromPointInSceneState
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    // Button to show the viewshed options.
+                    // Button to show the exploratory viewshed options.
                     ElevatedButton(
                       onPressed: () => setState(() => _settingsVisible = true),
                       child: const Text('Settings'),
@@ -111,7 +111,7 @@ class _ShowViewshedFromPointInSceneState
   }
 
   Widget buildSettings(BuildContext context) {
-    // Create the BottomSheet containing the viewshed adjustment controls.
+    // Create the BottomSheet containing the exploratory viewshed adjustment controls.
     return BottomSheetSettings(
       onCloseIconPressed: () => setState(() => _settingsVisible = false),
       settingsWidgets: (context) => [
@@ -136,7 +136,7 @@ class _ShowViewshedFromPointInSceneState
                           max: 360,
                           label: _heading.round().toString(),
                           onChanged: (value) {
-                            _viewshed.heading = value;
+                            _exploratoryViewshed.heading = value;
                             setState(() => _heading = value);
                           },
                         ),
@@ -154,7 +154,7 @@ class _ShowViewshedFromPointInSceneState
                           max: 180,
                           label: _pitch.round().toString(),
                           onChanged: (value) {
-                            _viewshed.pitch = value;
+                            _exploratoryViewshed.pitch = value;
                             setState(() => _pitch = value);
                           },
                         ),
@@ -171,7 +171,7 @@ class _ShowViewshedFromPointInSceneState
                           value: _horizontalAngle,
                           max: 360,
                           onChanged: (value) {
-                            _viewshed.horizontalAngle = value;
+                            _exploratoryViewshed.horizontalAngle = value;
                             setState(() => _horizontalAngle = value);
                           },
                         ),
@@ -188,7 +188,7 @@ class _ShowViewshedFromPointInSceneState
                           value: _verticalAngle,
                           max: 360,
                           onChanged: (value) {
-                            _viewshed.verticalAngle = value;
+                            _exploratoryViewshed.verticalAngle = value;
                             setState(() => _verticalAngle = value);
                           },
                         ),
@@ -206,9 +206,9 @@ class _ShowViewshedFromPointInSceneState
                           min: 10,
                           max: 300,
                           onChanged: (value) {
-                            _viewshed.location = ArcGISPoint(
-                              x: _viewshed.location.x,
-                              y: _viewshed.location.y,
+                            _exploratoryViewshed.location = ArcGISPoint(
+                              x: _exploratoryViewshed.location.x,
+                              y: _exploratoryViewshed.location.y,
                               z: value,
                               spatialReference: SpatialReference.wgs84,
                             );
@@ -228,7 +228,7 @@ class _ShowViewshedFromPointInSceneState
                           value: _minDistance,
                           max: 50,
                           onChanged: (value) {
-                            _viewshed.minDistance = value;
+                            _exploratoryViewshed.minDistance = value;
                             setState(() => _minDistance = value);
                           },
                         ),
@@ -246,7 +246,7 @@ class _ShowViewshedFromPointInSceneState
                           min: 100,
                           max: 5000,
                           onChanged: (value) {
-                            _viewshed.maxDistance = value;
+                            _exploratoryViewshed.maxDistance = value;
                             setState(() => _maxDistance = value);
                           },
                         ),
@@ -265,7 +265,7 @@ class _ShowViewshedFromPointInSceneState
                     Switch(
                       value: _showFrustum,
                       onChanged: (value) {
-                        _viewshed.frustumOutlineVisible = value;
+                        _exploratoryViewshed.frustumOutlineVisible = value;
                         setState(() => _showFrustum = value);
                       },
                     ),
@@ -278,7 +278,7 @@ class _ShowViewshedFromPointInSceneState
                     Switch(
                       value: _showAnalysis,
                       onChanged: (value) {
-                        _viewshed.isVisible = value;
+                        _exploratoryViewshed.isVisible = value;
                         setState(() => _showAnalysis = value);
                       },
                     ),
@@ -308,7 +308,7 @@ class _ShowViewshedFromPointInSceneState
 
     // Create an AnalysisOverlay and add the viewshed.
     final analysisOverlay = AnalysisOverlay();
-    analysisOverlay.analyses.add(_viewshed);
+    analysisOverlay.analyses.add(_exploratoryViewshed);
 
     // Add the AnalysisOverlay to the view controller.
     _sceneViewController.analysisOverlays.add(analysisOverlay);
@@ -323,9 +323,9 @@ class _ShowViewshedFromPointInSceneState
     );
     if (tapLocation == null) return;
 
-    // Set the new viewshed location using the x and y values from the tap point
+    // Set the new exploratory viewshed location using the x and y values from the tap point
     // and the current viewshed height.
-    _viewshed.location = ArcGISPoint(
+    _exploratoryViewshed.location = ArcGISPoint(
       x: tapLocation.x,
       y: tapLocation.y,
       z: _height,
