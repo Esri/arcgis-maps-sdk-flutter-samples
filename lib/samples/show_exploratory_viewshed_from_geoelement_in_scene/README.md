@@ -1,16 +1,18 @@
-# Show viewshed from geoelement in scene
+# Show exploratory viewshed from geoelement in scene
 
-Analyze the viewshed for an object (GeoElement) in a scene.
+Analyze the exploratory viewshed for an object (GeoElement) in a scene.
 
-![Image of show viewshed from geoelement in scene](show_viewshed_from_geoelement_in_scene.png)
+![Image of show exploratory viewshed from geoelement in scene](show_exploratory_viewshed_from_geoelement_in_scene.png)
 
 ## Use case
 
-A viewshed analysis is a type of visual analysis you can perform on a scene. The viewshed aims to answer the question 'What can I see from a given location?'. The output is an overlay with two different colors - one representing the visible areas (green) and the other representing the obstructed areas (red).
+An exploratory viewshed analysis is a type of visual analysis you can perform on a scene. The exploratory viewshed aims to answer the question 'What can I see from a given location?'. The output is an overlay with two different colors - one representing the visible areas (green) and the other representing the obstructed areas (red).
+
+Note: This analysis is a form of "exploratory analysis", which means the results are calculated on the current scale of the data, and the results are generated very quickly but not persisted. If persisted analysis performed at the full resolution of the data is required, consider using a `ViewshedFunction` to perform a viewshed calculation instead.
 
 ## How to use the sample
 
-Tap to set a destination for the vehicle (a GeoElement). The vehicle will 'drive' towards the tapped location. The viewshed analysis will update as the vehicle moves.
+Tap to set a destination for the vehicle (a GeoElement). The vehicle will 'drive' towards the tapped location. The exploratory viewshed analysis will update as the vehicle moves.
 
 ## How it works
 
@@ -41,4 +43,4 @@ This sample shows a [Buildings in Brest, France Scene](https://www.arcgis.com/ho
 
 ## Tags
 
-3D, analysis, buildings, model, scene, viewshed, visibility analysis
+3D, analysis, buildings, exploratory viewshed, model, scene, visibility analysis
