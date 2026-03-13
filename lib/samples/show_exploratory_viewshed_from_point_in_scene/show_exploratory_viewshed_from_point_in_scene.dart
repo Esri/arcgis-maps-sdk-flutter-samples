@@ -122,22 +122,29 @@ class _ShowExploratoryViewshedFromPointInSceneState
               children: [
                 Table(
                   columnWidths: const <int, TableColumnWidth>{
-                    0: FractionColumnWidth(0.25),
+                    0: IntrinsicColumnWidth(),
                     1: FlexColumnWidth(),
-                    2: FixedColumnWidth(35),
+                    2: IntrinsicColumnWidth(),
                   },
                   defaultVerticalAlignment: TableCellVerticalAlignment.middle,
                   children: [
                     TableRow(
                       children: [
                         const Text('Heading:'),
-                        Slider(
-                          value: _heading,
-                          max: 360,
-                          label: _heading.round().toString(),
-                          onChanged: (value) {
-                            _exploratoryViewshed.heading = value;
-                            setState(() => _heading = value);
+                        LayoutBuilder(
+                          builder: (context, constraints) {
+                            return SizedBox(
+                              width: constraints.maxWidth * 0.6,
+                              child: Slider(
+                                value: _heading,
+                                max: 360,
+                                label: _heading.round().toString(),
+                                onChanged: (value) {
+                                  _exploratoryViewshed.heading = value;
+                                  setState(() => _heading = value);
+                                },
+                              ),
+                            );
                           },
                         ),
                         Text(
@@ -149,13 +156,20 @@ class _ShowExploratoryViewshedFromPointInSceneState
                     TableRow(
                       children: [
                         const Text('Pitch:'),
-                        Slider(
-                          value: _pitch,
-                          max: 180,
-                          label: _pitch.round().toString(),
-                          onChanged: (value) {
-                            _exploratoryViewshed.pitch = value;
-                            setState(() => _pitch = value);
+                        LayoutBuilder(
+                          builder: (context, constraints) {
+                            return SizedBox(
+                              width: constraints.maxWidth * 0.6,
+                              child: Slider(
+                                value: _pitch,
+                                max: 180,
+                                label: _pitch.round().toString(),
+                                onChanged: (value) {
+                                  _exploratoryViewshed.pitch = value;
+                                  setState(() => _pitch = value);
+                                },
+                              ),
+                            );
                           },
                         ),
                         Text(
@@ -167,12 +181,19 @@ class _ShowExploratoryViewshedFromPointInSceneState
                     TableRow(
                       children: [
                         const Text('Horizontal angle:'),
-                        Slider(
-                          value: _horizontalAngle,
-                          max: 360,
-                          onChanged: (value) {
-                            _exploratoryViewshed.horizontalAngle = value;
-                            setState(() => _horizontalAngle = value);
+                        LayoutBuilder(
+                          builder: (context, constraints) {
+                            return SizedBox(
+                              width: constraints.maxWidth * 0.6,
+                              child: Slider(
+                                value: _horizontalAngle,
+                                max: 360,
+                                onChanged: (value) {
+                                  _exploratoryViewshed.horizontalAngle = value;
+                                  setState(() => _horizontalAngle = value);
+                                },
+                              ),
+                            );
                           },
                         ),
                         Text(
@@ -184,12 +205,19 @@ class _ShowExploratoryViewshedFromPointInSceneState
                     TableRow(
                       children: [
                         const Text('Vertical angle:'),
-                        Slider(
-                          value: _verticalAngle,
-                          max: 360,
-                          onChanged: (value) {
-                            _exploratoryViewshed.verticalAngle = value;
-                            setState(() => _verticalAngle = value);
+                        LayoutBuilder(
+                          builder: (context, constraints) {
+                            return SizedBox(
+                              width: constraints.maxWidth * 0.6,
+                              child: Slider(
+                                value: _verticalAngle,
+                                max: 360,
+                                onChanged: (value) {
+                                  _exploratoryViewshed.verticalAngle = value;
+                                  setState(() => _verticalAngle = value);
+                                },
+                              ),
+                            );
                           },
                         ),
                         Text(
@@ -201,18 +229,25 @@ class _ShowExploratoryViewshedFromPointInSceneState
                     TableRow(
                       children: [
                         const Text('Height:'),
-                        Slider(
-                          value: _height,
-                          min: 10,
-                          max: 300,
-                          onChanged: (value) {
-                            _exploratoryViewshed.location = ArcGISPoint(
-                              x: _exploratoryViewshed.location.x,
-                              y: _exploratoryViewshed.location.y,
-                              z: value,
-                              spatialReference: SpatialReference.wgs84,
+                        LayoutBuilder(
+                          builder: (context, constraints) {
+                            return SizedBox(
+                              width: constraints.maxWidth * 0.6,
+                              child: Slider(
+                                value: _height,
+                                min: 10,
+                                max: 300,
+                                onChanged: (value) {
+                                  _exploratoryViewshed.location = ArcGISPoint(
+                                    x: _exploratoryViewshed.location.x,
+                                    y: _exploratoryViewshed.location.y,
+                                    z: value,
+                                    spatialReference: SpatialReference.wgs84,
+                                  );
+                                  setState(() => _height = value);
+                                },
+                              ),
                             );
-                            setState(() => _height = value);
                           },
                         ),
                         Text(
@@ -224,12 +259,19 @@ class _ShowExploratoryViewshedFromPointInSceneState
                     TableRow(
                       children: [
                         const Text('Min distance:'),
-                        Slider(
-                          value: _minDistance,
-                          max: 50,
-                          onChanged: (value) {
-                            _exploratoryViewshed.minDistance = value;
-                            setState(() => _minDistance = value);
+                        LayoutBuilder(
+                          builder: (context, constraints) {
+                            return SizedBox(
+                              width: constraints.maxWidth * 0.6,
+                              child: Slider(
+                                value: _minDistance,
+                                max: 50,
+                                onChanged: (value) {
+                                  _exploratoryViewshed.minDistance = value;
+                                  setState(() => _minDistance = value);
+                                },
+                              ),
+                            );
                           },
                         ),
                         Text(
@@ -241,13 +283,20 @@ class _ShowExploratoryViewshedFromPointInSceneState
                     TableRow(
                       children: [
                         const Text('Max distance:'),
-                        Slider(
-                          value: _maxDistance,
-                          min: 100,
-                          max: 5000,
-                          onChanged: (value) {
-                            _exploratoryViewshed.maxDistance = value;
-                            setState(() => _maxDistance = value);
+                        LayoutBuilder(
+                          builder: (context, constraints) {
+                            return SizedBox(
+                              width: constraints.maxWidth * 0.6,
+                              child: Slider(
+                                value: _maxDistance,
+                                min: 100,
+                                max: 5000,
+                                onChanged: (value) {
+                                  _exploratoryViewshed.maxDistance = value;
+                                  setState(() => _maxDistance = value);
+                                },
+                              ),
+                            );
                           },
                         ),
                         Text(
