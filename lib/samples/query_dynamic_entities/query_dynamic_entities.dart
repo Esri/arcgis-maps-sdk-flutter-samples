@@ -253,9 +253,7 @@ class _QueryDynamicEntitiesState extends State<QueryDynamicEntities>
           title: const Text('Enter a Flight Number to Query'),
           content: TextField(
             controller: controller,
-            decoration: const InputDecoration(
-              labelText: 'Flight Number',
-            ),
+            decoration: const InputDecoration(labelText: 'Flight Number'),
             autofocus: true,
           ),
           actions: [
