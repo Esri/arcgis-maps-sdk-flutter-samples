@@ -245,11 +245,12 @@ class _ApplyMapAlgebraState extends State<ApplyMapAlgebra>
 
     // Assign values to the geomorphic categories and evaluate.
     // Raised shoreline=1, ice covered=2, ice-free high ground=3.
-    final geomorphicCategoryField = tenMeterBinField
+    final geomorphicCategoryFieldFunction = tenMeterBinField
         .replaceWithValueIf(selection: isRaisedShoreline, value: 1)
         .replaceWithValueIf(selection: isIceCovered, value: 2)
         .replaceWithValueIf(selection: isIceFreeHighGround, value: 3);
-    await geomorphicCategoryField.evaluate();
+    final geomorphicCategoryField = await geomorphicCategoryFieldFunction
+        .evaluate();
 
     try {
       // Export the disrete field to files in geoTIFF format.
