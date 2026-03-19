@@ -103,7 +103,7 @@ class _ApplyMapAlgebraState extends State<ApplyMapAlgebra>
                                           _originalElevationRasterLayer
                                       ? Icons.radio_button_checked
                                       : Icons.radio_button_unchecked,
-                                  color: _ready ? null : Colors.grey,
+                                  color: Colors.grey,
                                 ),
                                 title: const Text('Original elevation raster'),
                                 dense: true,
@@ -119,7 +119,7 @@ class _ApplyMapAlgebraState extends State<ApplyMapAlgebra>
                                   _selectedRasterLayer == _resultsRasterLayer
                                       ? Icons.radio_button_checked
                                       : Icons.radio_button_unchecked,
-                                  color: _ready ? null : Colors.grey,
+                                  color: Colors.grey,
                                 ),
                                 title: const Text('Map algebra results raster'),
                                 dense: true,
