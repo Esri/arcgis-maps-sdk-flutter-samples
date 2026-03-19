@@ -281,7 +281,7 @@ class _ApplyMapAlgebraState extends State<ApplyMapAlgebra>
       );
 
       // Define a renderer for the different geomorphic categories.
-      final colors = <int, Color>{
+      final colors = {
         1: Colors.blue.shade600, // raised shoreline
         2: Colors.teal.shade200, // ice covered
         3: Colors.brown, // ice-free high ground
