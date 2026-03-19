@@ -17,23 +17,23 @@ import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
 
-class ShowLineOfSightBetweenPoints extends StatefulWidget {
-  const ShowLineOfSightBetweenPoints({super.key});
+class ShowExploratoryLineOfSightBetweenPoints extends StatefulWidget {
+  const ShowExploratoryLineOfSightBetweenPoints({super.key});
 
   @override
-  State<ShowLineOfSightBetweenPoints> createState() =>
-      _ShowLineOfSightBetweenPointsState();
+  State<ShowExploratoryLineOfSightBetweenPoints> createState() =>
+      _ShowExploratoryLineOfSightBetweenPointsState();
 }
 
-class _ShowLineOfSightBetweenPointsState
-    extends State<ShowLineOfSightBetweenPoints>
+class _ShowExploratoryLineOfSightBetweenPointsState
+    extends State<ShowExploratoryLineOfSightBetweenPoints>
     with SampleStateSupport {
   // Create a controller for the scene view.
   final _sceneViewController = ArcGISSceneView.createController();
 
-  // The LocationLineOfSight object that will provide line-of-sight analysis for this sample.
+  // The exploratory line of sight object that will provide the analysis for this sample.
   // The object is initialized with the starting observer and target locations.
-  final _locationLineOfSight = LocationLineOfSight(
+  final _exploratoryLocationLineOfSight = ExploratoryLocationLineOfSight(
     observerLocation: ArcGISPoint(
       x: -73.095827750063904,
       y: -49.319214695380957,
@@ -97,9 +97,9 @@ class _ShowLineOfSightBetweenPointsState
     final scene = _setupScene();
     _sceneViewController.arcGISScene = scene;
 
-    // Create an AnalysisOverlay and add the LocationLineOfSight object to it.
+    // Create an AnalysisOverlay and add the exploratory location line of sight object to it.
     final analysisOverlay = AnalysisOverlay();
-    analysisOverlay.analyses.add(_locationLineOfSight);
+    analysisOverlay.analyses.add(_exploratoryLocationLineOfSight);
 
     // Add the AnalysisOverlay to the view controller.
     _sceneViewController.analysisOverlays.add(analysisOverlay);
@@ -117,7 +117,7 @@ class _ShowLineOfSightBetweenPointsState
     if (newObserverPoint == null) return;
 
     // Set the new origin point on the analysis object.
-    _locationLineOfSight.observerLocation = newObserverPoint;
+    _exploratoryLocationLineOfSight.observerLocation = newObserverPoint;
   }
 
   void onLongPressEnd(Offset offset) {
@@ -129,7 +129,7 @@ class _ShowLineOfSightBetweenPointsState
     if (newTargetPoint == null) return;
 
     // Set the new origin point on the analysis object.
-    _locationLineOfSight.targetLocation = newTargetPoint;
+    _exploratoryLocationLineOfSight.targetLocation = newTargetPoint;
   }
 
   ArcGISScene _setupScene() {

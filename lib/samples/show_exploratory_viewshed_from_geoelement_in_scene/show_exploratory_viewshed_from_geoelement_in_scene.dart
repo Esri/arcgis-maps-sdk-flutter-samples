@@ -20,16 +20,16 @@ import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-class ShowViewshedFromGeoelementInScene extends StatefulWidget {
-  const ShowViewshedFromGeoelementInScene({super.key});
+class ShowExploratoryViewshedFromGeoelementInScene extends StatefulWidget {
+  const ShowExploratoryViewshedFromGeoelementInScene({super.key});
 
   @override
-  State<ShowViewshedFromGeoelementInScene> createState() =>
-      _ShowViewshedFromGeoelementInSceneState();
+  State<ShowExploratoryViewshedFromGeoelementInScene> createState() =>
+      _ShowExploratoryViewshedFromGeoelementInSceneState();
 }
 
-class _ShowViewshedFromGeoelementInSceneState
-    extends State<ShowViewshedFromGeoelementInScene>
+class _ShowExploratoryViewshedFromGeoelementInSceneState
+    extends State<ShowExploratoryViewshedFromGeoelementInScene>
     with SampleStateSupport {
   // Create a controller for the scene view.
   final _sceneViewController = ArcGISSceneView.createController();
@@ -100,8 +100,8 @@ class _ShowViewshedFromGeoelementInSceneState
     // Set up the orbit camera controller to follow the tank.
     _setupCameraController(_tankGraphic!);
 
-    // Add the viewshed to the scene.
-    _addViewshedToScene(_tankGraphic!);
+    // Add the exploratory viewshed to the scene.
+    _addExploratoryViewshedToScene(_tankGraphic!);
 
     setState(() => _ready = true);
   }
@@ -253,11 +253,11 @@ class _ShowViewshedFromGeoelementInSceneState
     _sceneViewController.graphicsOverlays.add(graphicsOverlay);
   }
 
-  // Add viewshed to the scene.
-  void _addViewshedToScene(Graphic tankGraphic) {
-    // Create a GeoElementViewshed attached to the scene.
-    final geoElementViewshed =
-        GeoElementViewshed(
+  // Add exploratory viewshed to the scene.
+  void _addExploratoryViewshedToScene(Graphic tankGraphic) {
+    // Create an exploratory geoelement viewshed attached to the scene.
+    final exploratoryGeoElementViewshed =
+        ExploratoryGeoElementViewshed(
             geoElement: tankGraphic,
             horizontalAngle: 90,
             verticalAngle: 40,
@@ -270,8 +270,9 @@ class _ShowViewshedFromGeoelementInSceneState
           ..offsetZ = 0.5
           ..offsetY = 4;
 
-    // Create an Analysis Overlay and add the viewshed to it.
-    final analysisOverlay = AnalysisOverlay()..analyses.add(geoElementViewshed);
+    // Create an Analysis Overlay and add the exploratory viewshed to it.
+    final analysisOverlay = AnalysisOverlay()
+      ..analyses.add(exploratoryGeoElementViewshed);
 
     // Add the analysis overlay to the scene view.
     _sceneViewController.analysisOverlays.add(analysisOverlay);
