@@ -166,6 +166,7 @@ class _ApplyMapAlgebraState extends State<ApplyMapAlgebra>
     _originalElevationRasterLayer = RasterLayer.withRaster(raster);
 
     // Create a stretch renderer to visualize the elevation raster layer using the surface preset color ramp.
+
     // Set up stretch parameters with min and max values of elevation data.
     final stretchParams = MinMaxStretchParameters(
       minValues: [0, 0],
