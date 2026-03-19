@@ -44,8 +44,8 @@ class _ApplyMapAlgebraState extends State<ApplyMapAlgebra>
   RasterLayer? _selectedRasterLayer;
 
   // Variables to manage the UI.
-  bool _isPerformingAnalysis = false;
-  bool _hasAnalysisResults = false;
+  var _isPerformingAnalysis = false;
+  var _hasAnalysisResults = false;
 
   // A flag for when the map view is ready and controls can be used.
   var _ready = false;
