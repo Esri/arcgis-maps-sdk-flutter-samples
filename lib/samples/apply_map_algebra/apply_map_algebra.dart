@@ -275,7 +275,7 @@ class _ApplyMapAlgebraState extends State<ApplyMapAlgebra>
       final geomorphicCategorizationRaster = Raster.withFileUri(
         exportedFiles.first,
       );
-      // Use the raster to create a raster layer for the displaying the results on the map.
+      // Use the raster to create a raster layer for displaying the results on the map.
       _resultsRasterLayer = RasterLayer.withRaster(
         geomorphicCategorizationRaster,
       );
