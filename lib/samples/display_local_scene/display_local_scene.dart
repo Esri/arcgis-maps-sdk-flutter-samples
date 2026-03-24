@@ -50,7 +50,7 @@ class _DisplayLocalSceneState extends State<DisplayLocalScene>
     // Create the 3d scene layer.
     final sceneLayer = ArcGISSceneLayer.withUri(
       Uri.parse(
-        'https://www.arcgis.com/home/item.html?id=61da8dc1a7bc4eea901c20ffb3f8b7af',
+        'https://www.arcgis.com/home/item.html?id=7a63e9808a054d39964a8b4712c85657',
       ),
     );
 
