@@ -35,8 +35,6 @@ class _AddDynamicEntityLayerState extends State<AddDynamicEntityLayer>
   // ValueNotifier for status text.
   final _statusTextNotifier = ValueNotifier('Status: Not Connected');
 
-  // Connection Status Notifier
-
   // Dynamic entity settings state
   bool _showsTrackLine = true;
   bool _showsPreviousObservations = true;
@@ -44,19 +42,16 @@ class _AddDynamicEntityLayerState extends State<AddDynamicEntityLayer>
   // Maximum observations.
   double _maximumObservations = 5;
 
+  // Connection Status track.
+  bool _isTogglingConnection = false;
+
   // Dynamic Entity objects.
   ArcGISStreamService? _streamService;
   DynamicEntityLayer? _dynamicEntityLayer;
 
-  // Connection status (for button label and banner).
-  final _connectionStatusNotifier = ValueNotifier<ConnectionStatus>(
-    ConnectionStatus.disconnected,
-  );
-
   @override
   void dispose() {
     _statusTextNotifier.dispose();
-    _connectionStatusNotifier.dispose();
     super.dispose();
   }
 
@@ -82,23 +77,34 @@ class _AddDynamicEntityLayerState extends State<AddDynamicEntityLayer>
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    // Connect/Disconnect Elevated Button.
-                    ValueListenableBuilder<ConnectionStatus>(
-                      valueListenable: _connectionStatusNotifier,
-                      builder: (context, status, _) {
+                    // Connect/Disconnect button.
+                    StreamBuilder<ConnectionStatus>(
+                      stream: _streamService?.onConnectionStatusChanged,
+                      initialData:
+                          _streamService?.connectionStatus ??
+                          ConnectionStatus.disconnected,
+                      builder: (context, snapshot) {
+                        final status =
+                            snapshot.data ?? ConnectionStatus.disconnected;
+
                         final isConnected =
                             status == ConnectionStatus.connected;
                         final isConnecting =
                             status == ConnectionStatus.connecting;
 
                         return ElevatedButton(
-                          onPressed: (_ready && !isConnecting)
+                          // Disable while connecting or while a toggle is already in progress.
+                          onPressed:
+                              (_ready &&
+                                  !isConnecting &&
+                                  !_isTogglingConnection)
                               ? _toggleConnection
                               : null,
                           child: Text(isConnected ? 'Disconnect' : 'Connect'),
                         );
                       },
                     ),
+
                     ElevatedButton(
                       onPressed: _ready ? _showDynamicEntitySettings : null,
                       child: const Text('Dynamic Entity Settings'),
@@ -110,32 +116,37 @@ class _AddDynamicEntityLayerState extends State<AddDynamicEntityLayer>
             // Display a progress indicator and prevent interaction until state is ready.
             LoadingIndicator(visible: !_ready),
             // Display a banner with the current status at the top.
-            SafeArea(
-              child: IgnorePointer(
-                child: Container(
-                  padding: const EdgeInsets.all(10),
-                  color: Colors.white.withValues(alpha: 0.7),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Expanded(
-                        child: ValueListenableBuilder(
-                          valueListenable: _statusTextNotifier,
-                          builder: (context, statusText, child) {
-                            return Text(
-                              statusText,
-                              softWrap: true,
-                              textAlign: TextAlign.center,
-                              style: Theme.of(context).textTheme.labelMedium,
-                            );
-                          },
+            if (_streamService != null)
+              SafeArea(
+                child: IgnorePointer(
+                  child: Container(
+                    padding: const EdgeInsets.all(10),
+                    color: Colors.white.withValues(alpha: 0.7),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Expanded(
+                          child: StreamBuilder<ConnectionStatus>(
+                            stream: _streamService!.onConnectionStatusChanged,
+                            initialData: _streamService!.connectionStatus,
+                            builder: (context, snapshot) {
+                              final status =
+                                  snapshot.data ??
+                                  _streamService!.connectionStatus;
+                              return Text(
+                                'Status: ${status.label}',
+                                softWrap: true,
+                                textAlign: TextAlign.center,
+                                style: Theme.of(context).textTheme.labelMedium,
+                              );
+                            },
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
           ],
         ),
       ),
@@ -186,31 +197,15 @@ class _AddDynamicEntityLayerState extends State<AddDynamicEntityLayer>
     _maximumObservations = layer.trackDisplayProperties.maximumObservations
         .toDouble();
 
-    // Sync status banner + button label.
-    _syncStatusFromService();
-
     // Set the ready state variable to true to enable the sample UI.
     setState(() => _ready = true);
   }
 
   void onTap(Offset offset) {
-    //TODO(1): Add Callout Tap.
+    //TODO(4775): Add Callout Tap after implementing Callout placement for GeoElement.
     // Do something with a tap.
     // ignore: avoid_print
     print('Tapped at $offset');
-  }
-
-  void _syncStatusFromService() {
-    final service = _streamService;
-    if (service == null) {
-      _connectionStatusNotifier.value = ConnectionStatus.disconnected;
-      _statusTextNotifier.value = 'Status: Not Connected';
-      return;
-    }
-
-    final status = service.connectionStatus;
-    _connectionStatusNotifier.value = status;
-    _statusTextNotifier.value = 'Status: ${status.name}';
   }
 
   Future<void> _toggleConnection() async {
@@ -220,22 +215,29 @@ class _AddDynamicEntityLayerState extends State<AddDynamicEntityLayer>
       return;
     }
 
-    try {
-      _connectionStatusNotifier.value = ConnectionStatus.connecting;
-      _statusTextNotifier.value = 'Status: Connecting';
+    // Guard: avoid starting another toggle while one is already running.
+    if (_isTogglingConnection) return;
+    setState(() => _isTogglingConnection = true);
 
+    try {
+      // Decide action based on the current status at tap time.
       if (service.connectionStatus == ConnectionStatus.connected) {
         await service.disconnect();
       } else {
         await service.connect();
       }
     } catch (_) {
-      _connectionStatusNotifier.value = ConnectionStatus.failed;
-      _statusTextNotifier.value = 'Status: Failed';
-      return;
+      // Snackbar to display the connection status.
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Failed to change connection status.')),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isTogglingConnection = false);
+      }
     }
-
-    _syncStatusFromService();
   }
 
   // Dynamic Entity settings modal sheet.
@@ -363,5 +365,20 @@ class _AddDynamicEntityLayerState extends State<AddDynamicEntityLayer>
         ),
       ],
     );
+  }
+}
+
+extension ConnectionStatusUi on ConnectionStatus {
+  String get label {
+    switch (this) {
+      case ConnectionStatus.connecting:
+        return 'Connecting';
+      case ConnectionStatus.connected:
+        return 'Connected';
+      case ConnectionStatus.disconnected:
+        return 'Disconnected';
+      case ConnectionStatus.failed:
+        return 'Failed';
+    }
   }
 }
