@@ -7,7 +7,7 @@ import 'dart:io';
 /// Run from arcgis-maps-sdk-flutter-samples root directory.
 ///
 /// Example:
-/// dart run tool/generate_new_sample.dart AddDynamicEntityLayer "Maps"
+/// dart run tool/generate_new_sample.dart [optional SampleClassName] [optional Category]
 Future<void> main(List<String> arguments) async {
   var sampleCamelName = 'MyNewSample';
   var category = 'Maps';
