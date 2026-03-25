@@ -21,7 +21,7 @@ Future<void> main(List<String> arguments) async {
 
   final sampleSnakeName = camelToSnake(sampleCamelName);
 
-  // 1) Create sample folder + template files (existing behavior)
+  // 1) Create sample folder + template files
   final sampleDirectory = createNewSample(sampleCamelName);
 
   // 2) Create a 1px placeholder png with snake_case name
@@ -41,9 +41,14 @@ Future<void> main(List<String> arguments) async {
   print('  --dart-define=SAMPLE=$sampleSnakeName');
 }
 
-/// Create a new sample directory and a sample template.
-///
-/// Returns the created sample directory.
+// Create a new sample directory and a sample template.
+//
+// The sample directory will be created in the lib/samples directory.
+// The [sampleCamelName] is expected to be in the camel case format:
+// e.g. MyNewSample
+//
+// The sample directory will be created in the format:
+// e.g. my_new_sample
 Directory createNewSample(String sampleCamelName) {
   final ps = Platform.pathSeparator;
   final currentDirectory = Directory.current;
@@ -76,7 +81,7 @@ Directory createNewSample(String sampleCamelName) {
   return sampleDirectory;
 }
 
-/// Convert a camel case string to snake case.
+// Convert a camel case string to snake case.
 String camelToSnake(String input) {
   final snakeCase = input.replaceAllMapped(
     RegExp('([a-z])([0-9A-Z])'),
@@ -85,13 +90,13 @@ String camelToSnake(String input) {
   return snakeCase.toLowerCase();
 }
 
-/// Create a new sample README.md file,
-/// or copy the template README.md file
-/// from the common-samples/designs directory if it exists.
-///
-/// Expected sibling layout:
-/// - /common-samples
-/// - /arcgis-maps-sdk-flutter-samples
+// Create a new sample README.md file,
+// or copy the template README.md file
+// from the common-samples/designs directory if it exists.
+// The common-samples directory is expected to be at the same level
+// as the samples directory.
+// - /common-samples
+// - /arcgis-maps-sdk-flutter-samples
 void createEmptyReadMeOrCopy(
   Directory sampleDirectory,
   String sampleCamelName,
@@ -111,7 +116,7 @@ void createEmptyReadMeOrCopy(
   }
 }
 
-/// Create a new sample file.
+// Create a new sample file.
 void createNewSampleFile(
   Directory sampleDirectory,
   String sampleSnakeName,
@@ -142,7 +147,7 @@ void createNewSampleFile(
   print('> A sample file $sampleSnakeName.dart created');
 }
 
-/// Creates a 1x1 transparent PNG named "<sampleSnakeName>.png" next to README.md.
+// Creates a 1x1 transparent PNG named "sampleSnakeName.png" next to README.md.
 void create1pxPng(Directory sampleDirectory, String sampleSnakeName) {
   final ps = Platform.pathSeparator;
   final pngFile = File('${sampleDirectory.path}${ps}$sampleSnakeName.png');
@@ -159,7 +164,7 @@ void create1pxPng(Directory sampleDirectory, String sampleSnakeName) {
   print('> Placeholder PNG created: ${pngFile.path}');
 }
 
-/// Replaces occurrences of "<SampleCamelName>.png" with "<sampleSnakeName>.png" in README.md.
+// Replaces occurrences of "SampleCamelName.jpg" with "sampleSnakeName.png" in README.md.
 void updateHeroImageTarget(Directory sampleDirectory, String sampleSnakeName) {
   final ps = Platform.pathSeparator;
   final readmeFile = File('${sampleDirectory.path}${ps}README.md');
@@ -187,6 +192,7 @@ void updateHeroImageTarget(Directory sampleDirectory, String sampleSnakeName) {
   readmeFile.writeAsStringSync(updated);
 }
 
+// Run Readme scripts to generate metadata.json
 Future<void> runReadmeScriptsBestEffort(
   String sampleSnakeName,
   String category,
@@ -217,6 +223,7 @@ Future<void> runReadmeScriptsBestEffort(
   }
 }
 
+// Deletes stale cache before running build_runner.
 Future<void> runBuildRunner() async {
   final args = <String>[
     'run',
@@ -229,6 +236,7 @@ Future<void> runBuildRunner() async {
   await runCommand('dart', args);
 }
 
+// Run Command with stdout/stderr streaming and `ProcessException` on non-zero exit code for clearer failures.
 Future<void> runCommand(String executable, List<String> args) async {
   final result = await Process.run(
     executable,
@@ -262,7 +270,7 @@ final copyright =
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-// https://www.apache.org/licenses/LICENSE-2.0
+//   https://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
