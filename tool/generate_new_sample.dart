@@ -150,7 +150,7 @@ void createNewSampleFile(
 // Creates a 1x1 transparent PNG named "sampleSnakeName.png" next to README.md.
 void create1pxPng(Directory sampleDirectory, String sampleSnakeName) {
   final ps = Platform.pathSeparator;
-  final pngFile = File('${sampleDirectory.path}${ps}$sampleSnakeName.png');
+  final pngFile = File('${sampleDirectory.path}$ps$sampleSnakeName.png');
 
   if (pngFile.existsSync()) {
     print('> PNG already exists: ${pngFile.path}');
@@ -202,21 +202,12 @@ Future<void> runReadmeScriptsBestEffort(
 
   print('> Running README scripts (best effort): dart ${args.join(' ')}');
 
-  final result = await Process.run(
-    'dart',
-    args,
-    workingDirectory: Directory.current.path,
-    runInShell: true,
-  );
+  final exitCode = await runCommand('dart', args, allowFailure: true);
 
-  if (result.stdout.toString().trim().isNotEmpty) stdout.write(result.stdout);
-  if (result.stderr.toString().trim().isNotEmpty) stderr.write(result.stderr);
-
-  if (result.exitCode != 0) {
+  if (exitCode != 0) {
     print(
-      '⚠️ README scripts reported issues (exit ${result.exitCode}). Continuing so the sample is runnable.',
+      '⚠️ README scripts reported issues (exit $exitCode). Continuing so the sample is runnable.',
     );
-
     print(
       '   Fix README/metadata style issues before PR; CI will still catch these.',
     );
@@ -225,19 +216,27 @@ Future<void> runReadmeScriptsBestEffort(
 
 // Deletes stale cache before running build_runner.
 Future<void> runBuildRunner() async {
-  final args = <String>[
+  final buildArgs = [
     'run',
     'build_runner',
     'build',
     '--delete-conflicting-outputs',
   ];
-  print('> Running build_runner: dart ${args.join(' ')}');
-  await runCommand('dart', ['run', 'build_runner', 'clean']);
-  await runCommand('dart', args);
+  final cleanArgs = ['run', 'build_runner', 'clean'];
+
+  print('> Running build_runner: dart ${cleanArgs.join(' ')}');
+  await runCommand('dart', cleanArgs);
+
+  print('> Running build_runner: dart ${buildArgs.join(' ')}');
+  await runCommand('dart', buildArgs);
 }
 
 // Run Command with stdout/stderr streaming and `ProcessException` on non-zero exit code for clearer failures.
-Future<void> runCommand(String executable, List<String> args) async {
+Future<int> runCommand(
+  String executable,
+  List<String> args, {
+  bool allowFailure = false,
+}) async {
   final result = await Process.run(
     executable,
     args,
@@ -245,14 +244,10 @@ Future<void> runCommand(String executable, List<String> args) async {
     runInShell: true,
   );
 
-  if (result.stdout != null && result.stdout.toString().trim().isNotEmpty) {
-    stdout.write(result.stdout);
-  }
-  if (result.stderr != null && result.stderr.toString().trim().isNotEmpty) {
-    stderr.write(result.stderr);
-  }
+  if (result.stdout.toString().trim().isNotEmpty) stdout.write(result.stdout);
+  if (result.stderr.toString().trim().isNotEmpty) stderr.write(result.stderr);
 
-  if (result.exitCode != 0) {
+  if (!allowFailure && result.exitCode != 0) {
     throw ProcessException(
       executable,
       args,
@@ -260,6 +255,8 @@ Future<void> runCommand(String executable, List<String> args) async {
       result.exitCode,
     );
   }
+
+  return result.exitCode;
 }
 
 final copyright =
