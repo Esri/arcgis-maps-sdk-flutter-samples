@@ -28,7 +28,7 @@ Future<void> main(List<String> arguments) async {
   create1pxPng(sampleDirectory, sampleSnakeName);
 
   // 3) Fix README image reference (CamelCase.png -> snake_case.png)
-  updateReadmeImageReference(sampleDirectory, sampleCamelName, sampleSnakeName);
+  updateHeroImageTarget(sampleDirectory, sampleSnakeName);
 
   // 4) Run README scripts (generate metadata, validate)
   await runReadmeScriptsBestEffort(sampleSnakeName, category);
@@ -160,33 +160,31 @@ void create1pxPng(Directory sampleDirectory, String sampleSnakeName) {
 }
 
 /// Replaces occurrences of "<SampleCamelName>.png" with "<sampleSnakeName>.png" in README.md.
-void updateReadmeImageReference(
-  Directory sampleDirectory,
-  String sampleCamelName,
-  String sampleSnakeName,
-) {
+void updateHeroImageTarget(Directory sampleDirectory, String sampleSnakeName) {
   final ps = Platform.pathSeparator;
   final readmeFile = File('${sampleDirectory.path}${ps}README.md');
 
-  if (!readmeFile.existsSync()) {
-    print('> README.md not found, skipping image reference update');
-    return;
-  }
+  if (!readmeFile.existsSync()) return;
 
   final content = readmeFile.readAsStringSync();
 
-  // Common template case: "AddDynamicEntityLayer.png"
-  final camelJpg = '$sampleCamelName.jpg';
-  final snakePng = '$sampleSnakeName.png';
+  // Capture:
+  // 1) alt text ("Image of ...")
+  // 2) target inside (...) (e.g., display-map.png)
+  // 3) optional title part (rare, but harmless):  "some title"
+  final re = RegExp(
+    r'!\[(Image of[^\]]*)\]\(([^)"\s]+)(\s+"[^"]*")?\)',
+    caseSensitive: false,
+  );
 
-  if (!content.contains(camelJpg)) {
-    print('> README does not reference $camelJpg (nothing to replace)');
-    return;
-  }
+  final updated = content.replaceFirstMapped(re, (m) {
+    final alt = m.group(1)!; // keep
+    final title = m.group(3) ?? ''; // keep if present
+    final newTarget = '$sampleSnakeName.png';
+    return '![$alt]($newTarget$title)';
+  });
 
-  final updated = content.replaceAll(camelJpg, snakePng);
   readmeFile.writeAsStringSync(updated);
-  print('> README image reference updated: $camelJpg -> $snakePng');
 }
 
 Future<void> runReadmeScriptsBestEffort(
@@ -220,9 +218,14 @@ Future<void> runReadmeScriptsBestEffort(
 }
 
 Future<void> runBuildRunner() async {
-  final args = <String>['run', 'build_runner', 'build'];
-
+  final args = <String>[
+    'run',
+    'build_runner',
+    'build',
+    '--delete-conflicting-outputs',
+  ];
   print('> Running build_runner: dart ${args.join(' ')}');
+  await runCommand('dart', ['run', 'build_runner', 'clean']);
   await runCommand('dart', args);
 }
 
