@@ -69,7 +69,7 @@ Directory createNewSample(String sampleCamelName) {
   }
 
   // Create the sample directory
-  sampleDirectory.createSync(recursive: true);
+  sampleDirectory.createSync();
   print('> Sample directory created at ${sampleDirectory.path}');
 
   // Create the README.md file
