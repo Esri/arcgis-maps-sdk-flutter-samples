@@ -29,10 +29,7 @@ class SampleDetailPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: FittedBox(fit: BoxFit.scaleDown, child: Text(sample.title)),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => _handleBackNavigation(context),
-        ),
+        leading: BackButton(onPressed: () => _handleBackNavigation(context)),
         actions: [SampleInfoPopupMenu(sample: sample)],
       ),
       body: sample.getSampleWidget(),
