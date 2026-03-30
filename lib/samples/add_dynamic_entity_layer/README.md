@@ -2,7 +2,7 @@
 
 Display data from an ArcGIS stream service using a dynamic entity layer.
 
-![Image of display dynamic entity layer](add_dynamic_entity.png)
+![Image of display dynamic entity layer](add_dynamic_entity_layer.png)
 
 ## Use case
 
@@ -22,7 +22,7 @@ Use the controls to connect to or disconnect from the stream service, modify dis
 4. Create a `DynamicEntityLayer` using the stream service.
 5. Update values in the layer's `TrackDisplayProperties` to customize the layer's appearance.
 6. Add the `DynamicEntityLayer` to the map.
-7. Configure a `GeoViewTapped` event handler on the `MapView` to select a dynamic entity and display the entity's attributes in a callout.
+7. Configure a `onTap` event handler on the `MapView` to select a dynamic entity and display the entity's attributes in a callout.
 
 ## Relevant API
 

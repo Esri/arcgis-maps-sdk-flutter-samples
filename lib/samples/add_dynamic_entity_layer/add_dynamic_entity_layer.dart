@@ -279,7 +279,7 @@ class _AddDynamicEntityLayerState extends State<AddDynamicEntityLayer>
   // Show the vehicle dynamic entity callout.
   void _showVehicleCallout(DynamicEntity entity) {
     // Arcade expressions use fields from the SandyVehicles StreamServer schema:
-    // vehiclename, speed, heading, vehicletype, agency, point_x, point_y
+    // vehicle name, speed, heading, vehicle type, agency, point_x, point_y
     final shown = _mapViewController.callout.showCalloutForGeoElement(
       entity,
       animated: false,
