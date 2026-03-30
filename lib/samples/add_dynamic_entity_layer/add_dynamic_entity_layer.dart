@@ -49,6 +49,9 @@ class _AddDynamicEntityLayerState extends State<AddDynamicEntityLayer>
   ArcGISStreamService? _streamService;
   DynamicEntityLayer? _dynamicEntityLayer;
 
+  // Tolerance for onTap identification.
+  static const _identifyTolerance = 22.0;
+
   @override
   void dispose() {
     _statusTextNotifier.dispose();
@@ -201,11 +204,44 @@ class _AddDynamicEntityLayerState extends State<AddDynamicEntityLayer>
     setState(() => _ready = true);
   }
 
-  void onTap(Offset offset) {
-    //TODO(4775): Add Callout Tap after implementing Callout placement for GeoElement.
-    // Do something with a tap.
-    // ignore: avoid_print
-    print('Tapped at $offset');
+  Future<void> onTap(Offset screenPoint) async {
+    final layer = _dynamicEntityLayer;
+    if (!_ready || layer == null) return;
+
+    // Dismiss any existing callout so taps always show fresh results.
+    _dismissDynamicEntityCallout();
+
+    // Identify the first geo-element at the tap location in the dynamic entity layer.
+    final identifyResult = await _mapViewController.identifyLayer(
+      layer,
+      screenPoint: screenPoint,
+      tolerance: _identifyTolerance,
+    );
+
+    if (!mounted) return;
+
+    final geoElements = identifyResult.geoElements;
+
+    // If identify failed or hit nothing, keep the callout dismissed.
+    if (identifyResult.error != null || geoElements.isEmpty) {
+      return;
+    }
+
+    final geoElement = geoElements.first;
+
+    // Prefer showing a callout for the DynamicEntity so it follows the moving vehicle.
+    final dynamicEntity = switch (geoElement) {
+      final DynamicEntity entity => entity,
+      final DynamicEntityObservation observation =>
+        observation.getDynamicEntity(),
+      _ => null,
+    };
+
+    if (dynamicEntity == null) {
+      return;
+    }
+
+    _showVehicleCallout(dynamicEntity);
   }
 
   Future<void> _toggleConnection() async {
@@ -237,6 +273,31 @@ class _AddDynamicEntityLayerState extends State<AddDynamicEntityLayer>
       if (mounted) {
         setState(() => _isTogglingConnection = false);
       }
+    }
+  }
+
+  // Show the vehicle dynamic entity callout.
+  void _showVehicleCallout(DynamicEntity entity) {
+    // Arcade expressions use fields from the SandyVehicles StreamServer schema:
+    // vehiclename, speed, heading, vehicletype, agency, point_x, point_y
+    final shown = _mapViewController.callout.showCalloutForGeoElement(
+      entity,
+      animated: false,
+      title: 'Vehicle',
+      detail: '',
+      titleExpression: r'$feature.vehiclename',
+      detailExpression:
+          r'concatenate('
+          r'"Speed: ", $feature.speed, " mph", '
+          r'"  Heading: ", $feature.heading, "°", '
+          r'"  Type: ", $feature.vehicletype, '
+          r'"  Agency: ", $feature.agency, '
+          r'"  (", Round($feature.point_x, 6), ", ", Round($feature.point_y, 6), ")"'
+          r')',
+    );
+
+    if (!shown) {
+      _mapViewController.callout.dismiss(animated: false);
     }
   }
 
@@ -325,7 +386,11 @@ class _AddDynamicEntityLayerState extends State<AddDynamicEntityLayer>
                           try {
                             await service.purgeAll();
                           } catch (_) {
-                            //TODO(2): Add Snackbar to show all observations purged
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('All observations purged.'),
+                              ),
+                            );
                           }
                         }
 
@@ -340,6 +405,11 @@ class _AddDynamicEntityLayerState extends State<AddDynamicEntityLayer>
         );
       },
     );
+  }
+
+  // Dismiss the dynamic entity callout
+  void _dismissDynamicEntityCallout() {
+    _mapViewController.callout.dismiss(animated: false);
   }
 
   // Builds a labeled slider widget.
