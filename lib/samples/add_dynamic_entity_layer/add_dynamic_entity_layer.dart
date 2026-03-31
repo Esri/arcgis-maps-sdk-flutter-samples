@@ -32,18 +32,18 @@ class _AddDynamicEntityLayerState extends State<AddDynamicEntityLayer>
   // A flag for when the map view is ready and controls can be used.
   var _ready = false;
 
-  // ValueNotifier for status text.
-  final _statusTextNotifier = ValueNotifier('Status: Not Connected');
+  // A flag for when the settings bottom sheet is visible.
+  var _settingsVisible = false;
 
   // Dynamic entity settings state
-  bool _showsTrackLine = true;
-  bool _showsPreviousObservations = true;
+  var _showsTrackLine = true;
+  var _showsPreviousObservations = true;
 
   // Maximum observations.
-  double _maximumObservations = 5;
+  var _maximumObservations = 5;
 
   // Connection Status track.
-  bool _isTogglingConnection = false;
+  var _isTogglingConnection = false;
 
   // Dynamic Entity objects.
   ArcGISStreamService? _streamService;
@@ -54,7 +54,6 @@ class _AddDynamicEntityLayerState extends State<AddDynamicEntityLayer>
 
   @override
   void dispose() {
-    _statusTextNotifier.dispose();
     super.dispose();
   }
 
@@ -124,7 +123,7 @@ class _AddDynamicEntityLayerState extends State<AddDynamicEntityLayer>
                 child: IgnorePointer(
                   child: Container(
                     padding: const EdgeInsets.all(10),
-                    color: Colors.white.withValues(alpha: 0.7),
+                    color: Colors.black.withValues(alpha: 0.7),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -135,12 +134,14 @@ class _AddDynamicEntityLayerState extends State<AddDynamicEntityLayer>
                             builder: (context, snapshot) {
                               final status =
                                   snapshot.data ??
-                                  _streamService!.connectionStatus;
+                                  ConnectionStatus.disconnected;
                               return Text(
                                 'Status: ${status.label}',
                                 softWrap: true,
                                 textAlign: TextAlign.center,
-                                style: Theme.of(context).textTheme.labelMedium,
+                                style: Theme.of(
+                                  context,
+                                ).textTheme.customWhiteStyle,
                               );
                             },
                           ),
@@ -153,11 +154,15 @@ class _AddDynamicEntityLayerState extends State<AddDynamicEntityLayer>
           ],
         ),
       ),
+
+      bottomSheet: _settingsVisible
+          ? _buildDynamicEntitySettings(context)
+          : null,
     );
   }
 
   Future<void> onMapViewReady() async {
-    // Create a map with a topographic basemap style.
+    // Create a map with the streets basemap style.
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISStreets);
     _mapViewController.arcGISMap = map;
 
@@ -192,16 +197,16 @@ class _AddDynamicEntityLayerState extends State<AddDynamicEntityLayer>
     _streamService = service;
     _dynamicEntityLayer = layer;
 
-    // Initialize UI state from layer defaults.
-    // This is so that settings reflects actual layer state.
-    _showsTrackLine = layer.trackDisplayProperties.showTrackLine;
-    _showsPreviousObservations =
-        layer.trackDisplayProperties.showPreviousObservations;
-    _maximumObservations = layer.trackDisplayProperties.maximumObservations
-        .toDouble();
-
-    // Set the ready state variable to true to enable the sample UI.
-    setState(() => _ready = true);
+    setState(() {
+      // Initialize UI state from layer defaults.
+      // This is so that settings reflects actual layer state.
+      _showsTrackLine = layer.trackDisplayProperties.showTrackLine;
+      _showsPreviousObservations =
+          layer.trackDisplayProperties.showPreviousObservations;
+      _maximumObservations = layer.trackDisplayProperties.maximumObservations;
+      // Set the ready state variable to true to enable the sample UI.
+      _ready = true;
+    });
   }
 
   Future<void> onTap(Offset screenPoint) async {
@@ -229,7 +234,7 @@ class _AddDynamicEntityLayerState extends State<AddDynamicEntityLayer>
 
     final geoElement = geoElements.first;
 
-    // Prefer showing a callout for the DynamicEntity so it follows the moving vehicle.
+    // Show a callout for the DynamicEntity so it follows the moving vehicle.
     final dynamicEntity = switch (geoElement) {
       final DynamicEntity entity => entity,
       final DynamicEntityObservation observation =>
@@ -247,7 +252,6 @@ class _AddDynamicEntityLayerState extends State<AddDynamicEntityLayer>
   Future<void> _toggleConnection() async {
     final service = _streamService;
     if (service == null) {
-      _statusTextNotifier.value = 'Status: Stream service not initialized';
       return;
     }
 
@@ -262,17 +266,15 @@ class _AddDynamicEntityLayerState extends State<AddDynamicEntityLayer>
       } else {
         await service.connect();
       }
-    } catch (_) {
-      // Snackbar to display the connection status.
+    } on Exception catch (_) {
+      // Snack bar to display the connection status.
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Failed to change connection status.')),
         );
       }
     } finally {
-      if (mounted) {
-        setState(() => _isTogglingConnection = false);
-      }
+      setState(() => _isTogglingConnection = false);
     }
   }
 
@@ -286,124 +288,109 @@ class _AddDynamicEntityLayerState extends State<AddDynamicEntityLayer>
       title: 'Vehicle',
       detail: '',
       titleExpression: r'$feature.vehiclename',
-      detailExpression:
-          r'concatenate('
-          r'"Speed: ", $feature.speed, " mph", '
-          r'"  Heading: ", $feature.heading, "°", '
-          r'"  Type: ", $feature.vehicletype, '
-          r'"  Agency: ", $feature.agency, '
-          r'"  (", Round($feature.point_x, 6), ", ", Round($feature.point_y, 6), ")"'
-          r')',
+      detailExpression: r'''
+            concatenate(
+              "Speed: ", $feature.speed, " mph",
+              "\nHeading: ", $feature.heading, "°",
+              "\nType: ", $feature.vehicletype,
+              "\nAgency: ", $feature.agency,
+              "\n(", Round($feature.point_x, 6), ", ", Round($feature.point_y, 6), ")"
+            )
+            ''',
     );
 
     if (!shown) {
-      _mapViewController.callout.dismiss(animated: false);
+      _dismissDynamicEntityCallout();
     }
   }
 
   // Dynamic Entity settings modal sheet.
   void _showDynamicEntitySettings() {
-    showModalBottomSheet<void>(
-      context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-      ),
-      builder: (context) {
-        return StatefulBuilder(
-          builder: (context, setModalState) {
-            return Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    'Dynamic Entity Settings',
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
-                  const SizedBox(height: 16),
+    setState(() => _settingsVisible = true);
+  }
 
-                  // Toggle: Track Lines
-                  SwitchListTile(
-                    title: const Text('Track Lines'),
-                    value: _showsTrackLine,
-                    onChanged: (value) {
-                      setModalState(() => _showsTrackLine = value);
+  Widget _buildDynamicEntitySettings(BuildContext context) {
+    return BottomSheetSettings(
+      onCloseIconPressed: () => setState(() => _settingsVisible = false),
+      settingsWidgets: (context) => [
+        Text(
+          'Dynamic Entity Settings',
+          style: Theme.of(context).textTheme.titleLarge,
+        ),
+        const SizedBox(height: 12),
 
-                      // Apply to layer if available
-                      final layer = _dynamicEntityLayer;
-                      if (layer != null) {
-                        layer.trackDisplayProperties.showTrackLine = value;
-                      }
-                    },
-                  ),
-
-                  // Toggle: Previous Observations
-                  SwitchListTile(
-                    title: const Text('Previous Observations'),
-                    value: _showsPreviousObservations,
-                    onChanged: (value) {
-                      setModalState(() => _showsPreviousObservations = value);
-
-                      final layer = _dynamicEntityLayer;
-                      if (layer != null) {
-                        layer.trackDisplayProperties.showPreviousObservations =
-                            value;
-                      }
-                    },
-                  ),
-
-                  const SizedBox(height: 8),
-
-                  // Slider: Observations per track (1-16)
-                  _buildLabeledSlider(
-                    label: 'Observations per track',
-                    value: _maximumObservations,
-                    min: 1,
-                    max: 16,
-                    divisions: 15,
-                    onChanged: (value) {
-                      setModalState(() => _maximumObservations = value);
-
-                      final layer = _dynamicEntityLayer;
-                      if (layer != null) {
-                        layer.trackDisplayProperties.maximumObservations = value
-                            .toInt();
-                      }
-                    },
-                  ),
-
-                  const SizedBox(height: 8),
-
-                  // Purge button
-                  SizedBox(
-                    width: double.infinity,
-                    child: OutlinedButton.icon(
-                      icon: const Icon(Icons.delete_outline),
-                      label: const Text('Purge All Observations'),
-                      onPressed: () async {
-                        final service = _streamService;
-                        if (service != null) {
-                          try {
-                            await service.purgeAll();
-                          } catch (_) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('All observations purged.'),
-                              ),
-                            );
-                          }
-                        }
-
-                        if (mounted) Navigator.of(context).pop();
-                      },
-                    ),
-                  ),
-                ],
-              ),
-            );
+        // Track Lines
+        SwitchListTile(
+          title: const Text('Track Lines'),
+          value: _showsTrackLine,
+          onChanged: (value) {
+            setState(() => _showsTrackLine = value);
+            final layer = _dynamicEntityLayer;
+            if (layer != null) {
+              layer.trackDisplayProperties.showTrackLine = value;
+            }
           },
-        );
-      },
+        ),
+
+        // Previous Observations
+        SwitchListTile(
+          title: const Text('Previous Observations'),
+          value: _showsPreviousObservations,
+          onChanged: (value) {
+            setState(() => _showsPreviousObservations = value);
+            final layer = _dynamicEntityLayer;
+            if (layer != null) {
+              layer.trackDisplayProperties.showPreviousObservations = value;
+            }
+          },
+        ),
+
+        const SizedBox(height: 8),
+
+        // Observations per track
+        _buildLabeledSlider(
+          label: 'Observations per track',
+          value: _maximumObservations.toDouble(),
+          min: 1,
+          max: 16,
+          divisions: 15,
+          onChanged: (value) {
+            setState(() => _maximumObservations = value.toInt());
+            final layer = _dynamicEntityLayer;
+            if (layer != null) {
+              layer.trackDisplayProperties.maximumObservations = value.toInt();
+            }
+          },
+        ),
+
+        const SizedBox(height: 8),
+
+        // Purge button
+        SizedBox(
+          width: double.infinity,
+          child: OutlinedButton.icon(
+            icon: const Icon(Icons.delete_outline),
+            label: const Text('Purge All Observations'),
+            onPressed: () async {
+              final service = _streamService;
+              if (service != null) {
+                try {
+                  await service.purgeAll();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('All observations purged.')),
+                  );
+                } on Exception catch (_) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Failed to purge observations.'),
+                    ),
+                  );
+                }
+              }
+            },
+          ),
+        ),
+      ],
     );
   }
 
@@ -438,7 +425,7 @@ class _AddDynamicEntityLayerState extends State<AddDynamicEntityLayer>
   }
 }
 
-extension ConnectionStatusUi on ConnectionStatus {
+extension on ConnectionStatus {
   String get label {
     switch (this) {
       case ConnectionStatus.connecting:

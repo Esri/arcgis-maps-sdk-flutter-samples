@@ -2,11 +2,11 @@
 
 Display data from an ArcGIS stream service using a dynamic entity layer.
 
-![Image of display dynamic entity layer](add_dynamic_entity_layer.png)
+![Image of add dynamic entity layer](add_dynamic_entity_layer.png)
 
 ## Use case
 
-A stream service is a type of service provided by ArcGIS Velocity and GeoEvent Server that allows clients to receive a stream of data observations via a web socket. ArcGIS Maps SDK for .NET allows you to connect to a stream service and manage the information as dynamic entities and display them in a dynamic entity layer. Displaying information from feeds such as a stream service is important in applications like dashboards where users need to visualize and track updates of real-world objects in real-time.
+A stream service is a type of service provided by ArcGIS Velocity and GeoEvent Server that allows clients to receive a stream of data observations via a web socket. ArcGIS Maps SDK for Flutter allows you to connect to a stream service and manage the information as dynamic entities and display them in a dynamic entity layer. Displaying information from feeds such as a stream service is important in applications like dashboards where users need to visualize and track updates of real-world objects in real-time.
 
 Use `ArcGISStreamService` to manage the connection to the stream service and purge options to manage how much data is stored and maintained by the application. The dynamic entity layer will display the latest received observation, and you can set track display properties to determine how to display historical information for each dynamic entity. This includes the number of previous observations to show, whether to display track lines in-between previous observations, and setting renderers.
 
@@ -17,21 +17,21 @@ Use the controls to connect to or disconnect from the stream service, modify dis
 ## How it works
 
 1. Create an `ArcGIStreamService` using a `Uri`.
-2. Set a `DynamicEntityFilter` on the stream service to limit the amount of data coming from the server.
-3. Set the `MaximumDuration` property of the stream service `PurgeOptions` to limit the amount of data managed by the application.
+2. Set a `ArcGISStreamServiceFilter` on the stream service to limit the amount of data coming from the server.
+3. Set the `maximumDuration` property of the stream service `purgeOptions` to limit the amount of data managed by the application.
 4. Create a `DynamicEntityLayer` using the stream service.
 5. Update values in the layer's `TrackDisplayProperties` to customize the layer's appearance.
 6. Add the `DynamicEntityLayer` to the map.
-7. Configure a `onTap` event handler on the `MapView` to select a dynamic entity and display the entity's attributes in a callout.
+7. Configure an `onTap` event handler on the `ArcGISMapView` to select a dynamic entity and display the entity's attributes in a callout.
 
 ## Relevant API
 
 * ArcGISStreamService
+* ArcGISStreamServiceFilter
 * ConnectionStatus
 * DynamicEntity
-* DynamicEntityFilter
+* DynamicEntityDataSourcePurgeOptions
 * DynamicEntityLayer
-* DynamicEntityPurgeOptions
 * TrackDisplayProperties
 
 ## About the data
@@ -40,7 +40,7 @@ This sample uses a [stream service](https://realtimegis2016.esri.com:6443/arcgis
 
 ## Additional information
 
-More information about dynamic entities can be found in the [guide documentation](https://developers.arcgis.com/net/real-time/work-with-dynamic-entities/).
+More information about dynamic entities can be found in the [guide documentation](https://developers.arcgis.com/flutter/real-time/work-with-dynamic-entities/).
 
 ## Tags
 

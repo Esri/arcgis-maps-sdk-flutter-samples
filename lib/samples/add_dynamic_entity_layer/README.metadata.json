@@ -16,21 +16,21 @@
         "stream",
         "track",
         "ArcGISStreamService",
+        "ArcGISStreamServiceFilter",
         "ConnectionStatus",
         "DynamicEntity",
-        "DynamicEntityFilter",
+        "DynamicEntityDataSourcePurgeOptions",
         "DynamicEntityLayer",
-        "DynamicEntityPurgeOptions",
         "TrackDisplayProperties"
     ],
     "redirect_from": [],
     "relevant_apis": [
         "ArcGISStreamService",
+        "ArcGISStreamServiceFilter",
         "ConnectionStatus",
         "DynamicEntity",
-        "DynamicEntityFilter",
+        "DynamicEntityDataSourcePurgeOptions",
         "DynamicEntityLayer",
-        "DynamicEntityPurgeOptions",
         "TrackDisplayProperties"
     ],
     "snippets": [
