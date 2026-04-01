@@ -53,11 +53,6 @@ class _AddDynamicEntityLayerState extends State<AddDynamicEntityLayer>
   static const _identifyTolerance = 22.0;
 
   @override
-  void dispose() {
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
