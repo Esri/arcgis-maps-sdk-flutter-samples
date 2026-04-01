@@ -40,7 +40,7 @@ class BottomSheetSettings extends StatelessWidget {
     return Container(
       padding: EdgeInsets.fromLTRB(
         20,
-        5,
+        20,
         20,
         max(
           20,
