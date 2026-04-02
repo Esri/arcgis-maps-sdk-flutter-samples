@@ -137,7 +137,7 @@ class _CreateMobileGeodatabaseState extends State<CreateMobileGeodatabase>
   Future<void> _setupGeodatabase() async {
     final directory = await getApplicationDocumentsDirectory();
     final geodatabaseFile = File(
-      '${directory.path}${Platform.pathSeparator}localHistory.geodatabase',
+      '${directory.path}${Platform.pathSeparator}LocationHistory.geodatabase',
     );
     if (geodatabaseFile.existsSync()) geodatabaseFile.deleteSync();
 
@@ -260,9 +260,8 @@ class _CreateMobileGeodatabaseState extends State<CreateMobileGeodatabase>
     _geodatabase?.close();
 
     // Open the platform share sheet and share the mobile geodatabase file URI.
-    await Share.share(
-      subject: 'Sharing the geodatabase',
-      _geodatabase!.fileUri.path,
+    await SharePlus.instance.share(
+      ShareParams(files: [XFile(_geodatabase!.fileUri.path)]),
     );
 
     // Create a new mobile geodatabase and feature table to start again.
