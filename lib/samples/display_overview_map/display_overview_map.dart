@@ -40,9 +40,11 @@ class _DisplayOverviewMapState extends State<DisplayOverviewMap>
             controllerProvider: () => _mapViewController,
             onMapViewReady: onMapViewReady,
           ),
-          // Create an overview map and display on top of the map view in a stack.
-          // Pass the overview map the corresponding map view controller.
-          OverviewMap(controllerProvider: () => _mapViewController),
+          SafeArea(
+            // Create an overview map and display on top of the map view in a stack.
+            // Pass the overview map the corresponding map view controller.
+            child: OverviewMap(controllerProvider: () => _mapViewController),
+          ),
         ],
       ),
     );
