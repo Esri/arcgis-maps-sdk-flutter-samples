@@ -1,0 +1,30 @@
+{
+    "category": "Maps",
+    "description": "Include an overview or inset map as an additional map view to show the wider context of the primary view.",
+    "ignore": false,
+    "images": [
+        "display_overview_map.png"
+    ],
+    "keywords": [
+        "context",
+        "inset",
+        "map",
+        "minimap",
+        "overview",
+        "preview",
+        "small scale",
+        "toolkit",
+        "view",
+        "ArcGISMapView",
+        "OverviewMap"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+        "ArcGISMapView",
+        "OverviewMap"
+    ],
+    "snippets": [
+        "display_overview_map.dart"
+    ],
+    "title": "Display overview map"
+}
