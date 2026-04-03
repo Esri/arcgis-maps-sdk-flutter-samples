@@ -141,10 +141,10 @@ class _AddBuildingSceneLayerState extends State<AddBuildingSceneLayer>
 
     // Extract the overview and full model sublayers.
     _overviewSublayer = buildingSceneLayer.sublayers.firstWhere(
-      (sublayer) => sublayer.name == 'Overview',
+      (sublayer) => sublayer.modelName == 'Overview',
     );
     _fullModelSublayer = buildingSceneLayer.sublayers.firstWhere(
-      (sublayer) => sublayer.name == 'Full Model',
+      (sublayer) => sublayer.modelName == 'FullModel',
     );
 
     return buildingSceneLayer;
