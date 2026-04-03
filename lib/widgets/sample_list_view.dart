@@ -28,29 +28,38 @@ class SampleListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      padding: const EdgeInsets.all(8),
-      itemCount: samples.length,
-      itemBuilder: (context, index) {
-        final sample = samples[index];
-        return Card(
-          child: ListTile(
-            title: Text(sample.title),
-            subtitle: Text(sample.description),
-            onTap: () async {
-              if (context.mounted) {
-                if (sample.hasDownloadableResources) {
-                  unawaited(context.push('/sample/${sample.key}/resources'));
-                } else {
-                  unawaited(context.push('/sample/${sample.key}/live'));
+    final padding = MediaQuery.of(context).padding.add(const EdgeInsets.all(8));
+
+    return MediaQuery.removePadding(
+      context: context,
+      removeBottom: true,
+      removeTop: true,
+      removeLeft: true,
+      removeRight: true,
+      child: ListView.builder(
+        padding: padding,
+        itemCount: samples.length,
+        itemBuilder: (context, index) {
+          final sample = samples[index];
+          return Card(
+            child: ListTile(
+              title: Text(sample.title),
+              subtitle: Text(sample.description),
+              onTap: () async {
+                if (context.mounted) {
+                  if (sample.hasDownloadableResources) {
+                    unawaited(context.push('/sample/${sample.key}/resources'));
+                  } else {
+                    unawaited(context.push('/sample/${sample.key}/live'));
+                  }
                 }
-              }
-            },
-            contentPadding: const EdgeInsets.only(left: 20),
-            trailing: SampleInfoPopupMenu(sample: sample),
-          ),
-        );
-      },
+              },
+              contentPadding: const EdgeInsets.only(left: 20),
+              trailing: SampleInfoPopupMenu(sample: sample),
+            ),
+          );
+        },
+      ),
     );
   }
 }
