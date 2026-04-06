@@ -306,6 +306,7 @@ class _GridOptionsState extends State<GridOptions> with SampleStateSupport {
         children: [
           _buildGridColorDropdown(),
           _buildGridDropdown(),
+          const SizedBox(height: 20),
           if (isLabelFormatVisible)
             _buildLatLongLabelFormatDropdown()
           else
