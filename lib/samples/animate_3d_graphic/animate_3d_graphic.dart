@@ -499,7 +499,7 @@ class _Animate3dGraphicState extends State<Animate3dGraphic>
       ),
       builder: (context) {
         return Padding(
-          padding: const EdgeInsets.all(16),
+          padding: bottomSheetPadding(context),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -602,7 +602,7 @@ class _Animate3dGraphicState extends State<Animate3dGraphic>
         return StatefulBuilder(
           builder: (context, setModalState) {
             return Padding(
-              padding: const EdgeInsets.all(16),
+              padding: bottomSheetPadding(context),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -694,7 +694,7 @@ class _Animate3dGraphicState extends State<Animate3dGraphic>
           label: value.toStringAsFixed(0),
           onChanged: onChanged,
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 4),
       ],
     );
   }
