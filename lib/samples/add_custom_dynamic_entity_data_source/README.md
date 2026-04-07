@@ -19,7 +19,7 @@ Configure the custom data source:
 1. Create a custom data source implementation of a `DynamicEntityDataSource`.
 2. Override `onnLoad()` to specify the `DynamicEntityDataSourceInfo` for a given unique entity ID field and a list of `Field` objects matching the fields in the data source.
 3. Override `onConnect()` to begin processing observations from the custom data source.
-4. Loop through the observations and deserialize each observation into an ArcGISPoint and a `Map<String, Object>` containing the attributes.
+4. Loop through the observations and deserialize each observation into an `ArcGISPoint` and a `Map<String, Object>` containing the attributes.
 5. Use `NewObservation(geometry, attributes)` to add each observation to the custom data source.
 
 Configure the map view:
@@ -27,7 +27,7 @@ Configure the map view:
 1. Create a `DynamicEntityLayer` using the custom data source implementation.
 2. Update values in the layer's `TrackDisplayProperties` to customize the layer's appearance.
 3. Set up the layer's `LabelDefinitions` to display labels for each dynamic entity.
-4. Configure a `GeoViewTapped` event handler on the `ArcGISMapView` to select a dynamic entity and display the entity's attributes in a callout.
+4. Configure the `ArcGISMapView(onTap: ...)` handler to select a dynamic entity and display the entity's attributes in a callout.
 
 ## Relevant API
 
@@ -41,7 +41,7 @@ Configure the map view:
 
 ## About the data
 
-This sample uses a [JSON Lines file containing observations of marine vessels in the Pacific North West](https://www.arcgis.com/home/item.html?id=a8a942c228af4fac96baa78ad60f511f) hosted on ArcGIS Online .
+This sample uses a [JSON Lines file containing observations of marine vessels in the Pacific Northwest](https://www.arcgis.com/home/item.html?id=a8a942c228af4fac96baa78ad60f511f) hosted on ArcGIS Online .
 
 ## Additional information
 

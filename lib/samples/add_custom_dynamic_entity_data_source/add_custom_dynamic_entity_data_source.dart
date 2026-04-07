@@ -221,6 +221,9 @@ class VesselDynamicEntityDataProvider extends CustomDynamicEntityDataProvider {
   // Starts emitting observations sequentially.
   @override
   Future<void> onConnect() async {
+    if (_timer != null) {
+      return; // Already connected
+    }
     _timer = Timer.periodic(delay, (_) => _emitNextObservation());
   }
 
@@ -235,6 +238,8 @@ class VesselDynamicEntityDataProvider extends CustomDynamicEntityDataProvider {
   void _emitNextObservation() {
     if (_currentIndex >= _jsonLines.length) {
       _timer?.cancel();
+      _timer = null; // Allow reconnect to restart cleanly.
+      _currentIndex = 0;
       return;
     }
 
@@ -264,8 +269,10 @@ class VesselDynamicEntityDataProvider extends CustomDynamicEntityDataProvider {
       spatialReference: SpatialReference.wgs84,
     );
 
+    late final schema = _buildSchema();
+
     final attributes = <String, Object?>{};
-    for (final field in _buildSchema()) {
+    for (final field in schema) {
       attributes[field.name] = attributesJson[field.name];
     }
 
