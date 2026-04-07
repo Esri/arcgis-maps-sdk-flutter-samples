@@ -114,6 +114,8 @@ class _ShowInteractiveViewshedWithAnalysisOverlayState
             ),
             // Display a banner with a copyright notice.
             SafeArea(
+              left: false,
+              right: false,
               child: IgnorePointer(
                 child: Container(
                   padding: const EdgeInsets.all(10),
@@ -124,7 +126,7 @@ class _ShowInteractiveViewshedWithAnalysisOverlayState
                       Text(
                         'Raster data Copyright Scottish Government and SEPA (2014)',
                         textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.labelMedium,
+                        style: Theme.of(context).textTheme.labelSmall,
                       ),
                     ],
                   ),
@@ -280,7 +282,7 @@ class _ShowInteractiveViewshedWithAnalysisOverlayState
       onCloseIconPressed: () => setState(() => _settingsVisible = false),
       settingsWidgets: (context) => [
         SizedBox(
-          height: MediaQuery.sizeOf(context).height * 0.45,
+          height: MediaQuery.sizeOf(context).height * 0.5,
           child: ListView(
             children: [
               // Display and edit the observer elevation with a slider.
