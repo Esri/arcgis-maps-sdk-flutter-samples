@@ -17,8 +17,8 @@ Run the sample to view the map and the dynamic entity layer displaying the lates
 Configure the custom data source:
 
 1. Create a custom data source implementation of a `DynamicEntityDataSource`.
-2. Override `OnLoadAsync()` to specify the `DynamicEntityDataSourceInfo` for a given unique entity ID field and a list of `Field` objects matching the fields in the data source.
-3. Override `OnConnectAsync()` to begin processing observations from the custom data source.
+2. Override `onnLoad()` to specify the `DynamicEntityDataSourceInfo` for a given unique entity ID field and a list of `Field` objects matching the fields in the data source.
+3. Override `onConnect()` to begin processing observations from the custom data source.
 4. Loop through the observations and deserialize each observation into an ArcGISPoint and a `Map<String, Object>` containing the attributes.
 5. Use `NewObservation(geometry, attributes)` to add each observation to the custom data source.
 
