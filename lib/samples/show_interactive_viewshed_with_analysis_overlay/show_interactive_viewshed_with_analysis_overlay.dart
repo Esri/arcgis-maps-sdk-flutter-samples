@@ -86,8 +86,8 @@ class _ShowInteractiveViewshedWithAnalysisOverlayState
                       ArcGISMapView(
                         controllerProvider: () => _mapViewController,
                         onMapViewReady: onMapViewReady,
+                        onTap: onTap,
                       ),
-                      //fixme update README with long-press instructions
                       // Add a detector to handle long-press gestures for moving the observer position.
                       GestureDetector(
                         onLongPressStart: onLongPressStart,
@@ -109,7 +109,25 @@ class _ShowInteractiveViewshedWithAnalysisOverlayState
                 ),
               ],
             ),
-            //fixme copyright message
+            // Display a banner with a copyright notice.
+            SafeArea(
+              child: IgnorePointer(
+                child: Container(
+                  padding: const EdgeInsets.all(10),
+                  color: Colors.white.withValues(alpha: 0.7),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'Raster data Copyright Scottish Government and SEPA (2014)',
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context).textTheme.labelMedium,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
             // Display a progress indicator and prevent interaction until state is ready.
             LoadingIndicator(visible: !_ready),
           ],
@@ -140,7 +158,7 @@ class _ShowInteractiveViewshedWithAnalysisOverlayState
       band: 0,
     );
 
-    //fixme comment
+    // Create the continuous field function for the viewshed analysis from the continuous field.
     final continuousFieldFunction = ContinuousFieldFunction.create(
       continuousField,
     );
@@ -152,13 +170,13 @@ class _ShowInteractiveViewshedWithAnalysisOverlayState
       ..fieldOfView = 150
       ..heading = 10;
 
-    //fixme comment
+    // Create the viewshed function with the continuous field function and parameters.
     final viewshedFunction = ViewshedFunction.withContinuousFieldFunction(
       elevation: continuousFieldFunction,
       parameters: _viewshedParameters,
     );
 
-    //fixme comment
+    // Convert the viewshed function to a discrete field function.
     final discreteViewshed = viewshedFunction.toDiscreteFieldFunction();
 
     // Create colormap renderer for displaying the viewshed result.
@@ -194,7 +212,18 @@ class _ShowInteractiveViewshedWithAnalysisOverlayState
     _viewshedParameters.observerPosition = _observerPosition;
   }
 
-  // Handle the start of a long-press gesture.
+  void onTap(Offset screenPoint) {
+    // Find the map position corresponding to the tapped screen point.
+    final mapPosition = _mapViewController.screenToLocation(
+      screen: screenPoint,
+    );
+    if (mapPosition == null) return;
+
+    // Update the observer position to the tapped location.
+    _observerPosition = mapPosition;
+    syncObserverPosition();
+  }
+
   void onLongPressStart(LongPressStartDetails details) {
     // Store the screen point of the observer when the long-press gesture starts.
     _moveStartScreenPoint = _mapViewController.locationToScreen(
@@ -205,7 +234,6 @@ class _ShowInteractiveViewshedWithAnalysisOverlayState
     (_observerGraphic.symbol as SimpleMarkerSymbol?)?.color = Colors.yellow;
   }
 
-  // Handle an update to a long-press gesture.
   void onLongPressMoveUpdate(LongPressMoveUpdateDetails details) {
     if (_moveStartScreenPoint == null) return;
 
@@ -224,7 +252,6 @@ class _ShowInteractiveViewshedWithAnalysisOverlayState
     syncObserverPosition();
   }
 
-  // Handle the end of a long-press gesture.
   void onLongPressEnd(LongPressEndDetails details) {
     // Change the observer graphic color back to indicate it is no longer being moved.
     (_observerGraphic.symbol as SimpleMarkerSymbol?)?.color = Colors.blue;
