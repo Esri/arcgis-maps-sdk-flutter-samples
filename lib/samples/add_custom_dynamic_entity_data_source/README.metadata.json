@@ -1,0 +1,40 @@
+{
+    "category": "Layers",
+    "description": "Create a custom dynamic entity data source and display it using a dynamic entity layer.",
+    "ignore": false,
+    "images": [
+        "add_custom_dynamic_entity_data_source.png"
+    ],
+    "keywords": [
+        "data",
+        "dynamic",
+        "entity",
+        "label",
+        "labeling",
+        "live",
+        "real-time",
+        "stream",
+        "track",
+        "CustomDynamicEntityDataProvider",
+        "CustomDynamicEntityDataSource",
+        "DynamicEntity",
+        "DynamicEntityDataSource",
+        "DynamicEntityLayer",
+        "LabelDefinition",
+        "TrackDisplayProperties"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+        "CustomDynamicEntityDataProvider",
+        "CustomDynamicEntityDataSource",
+        "DynamicEntity",
+        "DynamicEntityDataSource",
+        "DynamicEntityLayer",
+        "LabelDefinition",
+        "TrackDisplayProperties"
+    ],
+    "snippets": [
+        "add_custom_dynamic_entity_data_source.dart"
+    ],
+    "title": "Add custom dynamic entity data source"
+}
