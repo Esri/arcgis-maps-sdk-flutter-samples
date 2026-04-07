@@ -56,6 +56,9 @@ class _ShowInteractiveViewshedWithAnalysisOverlayState
   // The screen point of the observer when a long-press gesture starts (null when not moving).
   Offset? _moveStartScreenPoint;
 
+  // A flag for when the settings bottom sheet is visible.
+  var _settingsVisible = false;
+
   // A flag for when the map view is ready and controls can be used.
   var _ready = false;
 
@@ -100,10 +103,10 @@ class _ShowInteractiveViewshedWithAnalysisOverlayState
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    // A button to perform a task.
+                    // A button to show the Settings bottom sheet.
                     ElevatedButton(
-                      onPressed: () {},
-                      child: const Text('Perform Task'),
+                      onPressed: () => setState(() => _settingsVisible = true),
+                      child: const Text('Settings'),
                     ),
                   ],
                 ),
@@ -133,6 +136,7 @@ class _ShowInteractiveViewshedWithAnalysisOverlayState
           ],
         ),
       ),
+      bottomSheet: _settingsVisible ? buildSettings(context) : null,
     );
   }
 
@@ -220,7 +224,12 @@ class _ShowInteractiveViewshedWithAnalysisOverlayState
     if (mapPosition == null) return;
 
     // Update the observer position to the tapped location.
-    _observerPosition = mapPosition;
+    _observerPosition = ArcGISPoint(
+      x: mapPosition.x,
+      y: mapPosition.y,
+      z: _observerPosition.z,
+      spatialReference: _observerPosition.spatialReference,
+    );
     syncObserverPosition();
   }
 
@@ -248,7 +257,12 @@ class _ShowInteractiveViewshedWithAnalysisOverlayState
     if (newObserverPosition == null) return;
 
     // Update to the new observer position.
-    _observerPosition = newObserverPosition;
+    _observerPosition = ArcGISPoint(
+      x: newObserverPosition.x,
+      y: newObserverPosition.y,
+      z: _observerPosition.z,
+      spatialReference: _observerPosition.spatialReference,
+    );
     syncObserverPosition();
   }
 
@@ -258,5 +272,86 @@ class _ShowInteractiveViewshedWithAnalysisOverlayState
 
     // Clear the stored screen point when the long-press gesture ends.
     _moveStartScreenPoint = null;
+  }
+
+  // The build method for the Settings bottom sheet.
+  Widget buildSettings(BuildContext context) {
+    return BottomSheetSettings(
+      onCloseIconPressed: () => setState(() => _settingsVisible = false),
+      settingsWidgets: (context) => [
+        SizedBox(
+          height: MediaQuery.sizeOf(context).height * 0.4,
+          child: ListView(
+            children: [
+              //fixme comments
+              Text(
+                'Observer elevation: ${_observerPosition.z?.toStringAsFixed(0)} m',
+              ),
+              Slider(
+                value: _observerPosition.z ?? 2,
+                min: 2,
+                max: 200,
+                onChanged: (value) {
+                  setState(
+                    () => _observerPosition = ArcGISPoint(
+                      x: _observerPosition.x,
+                      y: _observerPosition.y,
+                      z: value,
+                      spatialReference: _observerPosition.spatialReference,
+                    ),
+                  );
+                  syncObserverPosition();
+                },
+              ),
+              Text(
+                'Target height: ${_viewshedParameters.targetHeight.toStringAsFixed(0)} m',
+              ),
+              Slider(
+                value: _viewshedParameters.targetHeight,
+                min: 2,
+                max: 1000,
+                onChanged: (value) {
+                  setState(() => _viewshedParameters.targetHeight = value);
+                },
+              ),
+              Text(
+                'Maximum radius: ${_viewshedParameters.maxRadius.toStringAsFixed(0)} m',
+              ),
+              Slider(
+                value: _viewshedParameters.maxRadius,
+                min: 250,
+                max: 20000,
+                onChanged: (value) {
+                  setState(() => _viewshedParameters.maxRadius = value);
+                },
+              ),
+              Text(
+                'Field of view: ${_viewshedParameters.fieldOfView.toStringAsFixed(0)}°',
+              ),
+              Slider(
+                value: _viewshedParameters.fieldOfView,
+                min: 5,
+                max: 360,
+                onChanged: (value) {
+                  setState(() => _viewshedParameters.fieldOfView = value);
+                },
+              ),
+              Text(
+                'Heading: ${_viewshedParameters.heading.toStringAsFixed(0)}°',
+              ),
+              Slider(
+                value: _viewshedParameters.heading,
+                max: 360,
+                onChanged: (value) {
+                  setState(() => _viewshedParameters.heading = value);
+                },
+              ),
+              const Text('Elevation sampling interval (m):'),
+              //fixme
+            ],
+          ),
+        ),
+      ],
+    );
   }
 }
