@@ -1,0 +1,48 @@
+{
+    "category": "Analysis",
+    "description": "Perform an interactive viewshed analysis to determine visible and non-visible areas from a given observer position.",
+    "ignore": false,
+    "images": [
+        "show_interactive_viewshed_with_analysis_overlay.png"
+    ],
+    "keywords": [
+        "analysis overlay",
+        "elevation",
+        "field analysis",
+        "interactive",
+        "raster",
+        "spatial analysis",
+        "terrain",
+        "viewshed",
+        "visibility",
+        "AnalysisOverlay",
+        "Colormap",
+        "ColormapRenderer",
+        "ContinuousField",
+        "ContinuousFieldFunction",
+        "FieldAnalysis",
+        "ViewshedFunction",
+        "ViewshedParameters"
+    ],
+    "offline_data": [
+        {
+            "itemId": "aa97788593e34a32bcaae33947fdc271",
+            "downloadable": "arran.tif"
+        }
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+        "AnalysisOverlay",
+        "Colormap",
+        "ColormapRenderer",
+        "ContinuousField",
+        "ContinuousFieldFunction",
+        "FieldAnalysis",
+        "ViewshedFunction",
+        "ViewshedParameters"
+    ],
+    "snippets": [
+        "show_interactive_viewshed_with_analysis_overlay.dart"
+    ],
+    "title": "Show interactive viewshed with analysis overlay"
+}
