@@ -37,17 +37,8 @@ class BottomSheetSettings extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.fromLTRB(
-        20,
-        20,
-        20,
-        max(
-          20,
-          View.of(context).viewPadding.bottom /
-              View.of(context).devicePixelRatio,
-        ),
-      ),
+    return Padding(
+      padding: bottomSheetPadding(context),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -70,4 +61,18 @@ class BottomSheetSettings extends StatelessWidget {
       ),
     );
   }
+}
+
+EdgeInsets bottomSheetPadding(BuildContext context) {
+  return EdgeInsets.fromLTRB(
+    20,
+    20,
+    20,
+    max(
+      20,
+      5 +
+          View.of(context).viewPadding.bottom /
+              View.of(context).devicePixelRatio,
+    ),
+  );
 }

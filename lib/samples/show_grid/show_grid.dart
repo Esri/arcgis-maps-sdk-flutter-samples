@@ -304,12 +304,13 @@ class _GridOptionsState extends State<GridOptions> with SampleStateSupport {
     return SingleChildScrollView(
       child: ListBody(
         children: [
+          _buildGridColorDropdown(),
           _buildGridDropdown(),
+          const SizedBox(height: 20),
           if (isLabelFormatVisible)
             _buildLatLongLabelFormatDropdown()
           else
             Container(),
-          _buildGridColorDropdown(),
           _buildLabelColorDropdown(),
           _buildLabelPositionDropdown(),
           _buildLabelVisibilityCheckbox(),
