@@ -124,18 +124,22 @@ class _SampleViewerPageState extends State<SampleViewerPage> {
         children: [
           Visibility(
             visible: widget.isSearchable,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8),
-              child: TextField(
-                focusNode: _searchFocusNode,
-                controller: _textEditingController,
-                onChanged: onSearchChanged,
-                autocorrect: false,
-                decoration: InputDecoration(
-                  hintText: 'Search...',
-                  suffixIcon: IconButton(
-                    icon: Icon(_searchHasFocus ? Icons.cancel : Icons.search),
-                    onPressed: onSearchSuffixPressed,
+            child: SafeArea(
+              bottom: false,
+              top: false,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: TextField(
+                  focusNode: _searchFocusNode,
+                  controller: _textEditingController,
+                  onChanged: onSearchChanged,
+                  autocorrect: false,
+                  decoration: InputDecoration(
+                    hintText: 'Search...',
+                    suffixIcon: IconButton(
+                      icon: Icon(_searchHasFocus ? Icons.cancel : Icons.search),
+                      onPressed: onSearchSuffixPressed,
+                    ),
                   ),
                 ),
               ),
