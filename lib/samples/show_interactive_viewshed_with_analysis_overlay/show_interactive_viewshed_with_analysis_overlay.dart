@@ -31,11 +31,11 @@ class ShowInteractiveViewshedWithAnalysisOverlay extends StatefulWidget {
 class _ShowInteractiveViewshedWithAnalysisOverlayState
     extends State<ShowInteractiveViewshedWithAnalysisOverlay>
     with SampleStateSupport {
-  // Create a controller for the map view.
-  final _mapViewController = ArcGISMapView.createController();
-
   // The elevation file used in the analysis.
   late File _elevationFile;
+
+  // Create a controller for the map view.
+  final _mapViewController = ArcGISMapView.createController();
 
   // Set the initial observer position on the Isle of Arran, Scotland.
   var _observerPosition = ArcGISPoint(
@@ -212,7 +212,7 @@ class _ShowInteractiveViewshedWithAnalysisOverlayState
     // Update the observer graphic geometry to the current observer position.
     _observerGraphic.geometry = _observerPosition;
 
-    // Update the viewshed parameters to the current observer position (triggers analysis).
+    // Update the viewshed parameters to the current observer position, which triggers analysis.
     _viewshedParameters.observerPosition = _observerPosition;
   }
 
@@ -280,15 +280,15 @@ class _ShowInteractiveViewshedWithAnalysisOverlayState
       onCloseIconPressed: () => setState(() => _settingsVisible = false),
       settingsWidgets: (context) => [
         SizedBox(
-          height: MediaQuery.sizeOf(context).height * 0.4,
+          height: MediaQuery.sizeOf(context).height * 0.45,
           child: ListView(
             children: [
-              //fixme comments
+              // Display and edit the observer elevation with a slider.
               Text(
                 'Observer elevation: ${_observerPosition.z?.toStringAsFixed(0)} m',
               ),
               Slider(
-                value: _observerPosition.z ?? 2,
+                value: _observerPosition.z ?? 20,
                 min: 2,
                 max: 200,
                 onChanged: (value) {
@@ -303,6 +303,7 @@ class _ShowInteractiveViewshedWithAnalysisOverlayState
                   syncObserverPosition();
                 },
               ),
+              // Display and edit the viewshed target height with a slider.
               Text(
                 'Target height: ${_viewshedParameters.targetHeight.toStringAsFixed(0)} m',
               ),
@@ -314,6 +315,7 @@ class _ShowInteractiveViewshedWithAnalysisOverlayState
                   setState(() => _viewshedParameters.targetHeight = value);
                 },
               ),
+              // Display and edit the viewshed maximum radius with a slider.
               Text(
                 'Maximum radius: ${_viewshedParameters.maxRadius.toStringAsFixed(0)} m',
               ),
@@ -325,6 +327,7 @@ class _ShowInteractiveViewshedWithAnalysisOverlayState
                   setState(() => _viewshedParameters.maxRadius = value);
                 },
               ),
+              // Display and edit the viewshed field of view with a slider.
               Text(
                 'Field of view: ${_viewshedParameters.fieldOfView.toStringAsFixed(0)}°',
               ),
@@ -336,6 +339,7 @@ class _ShowInteractiveViewshedWithAnalysisOverlayState
                   setState(() => _viewshedParameters.fieldOfView = value);
                 },
               ),
+              // Display and edit the viewshed heading with a slider.
               Text(
                 'Heading: ${_viewshedParameters.heading.toStringAsFixed(0)}°',
               ),
@@ -346,8 +350,29 @@ class _ShowInteractiveViewshedWithAnalysisOverlayState
                   setState(() => _viewshedParameters.heading = value);
                 },
               ),
-              const Text('Elevation sampling interval (m):'),
-              //fixme
+              // Display and edit the viewshed elevation sampling interval with radio buttons.
+              const Text('Elevation sampling interval:'),
+              RadioGroup(
+                groupValue: _viewshedParameters.elevationSamplingInterval,
+                onChanged: (value) {
+                  setState(
+                    () =>
+                        _viewshedParameters.elevationSamplingInterval = value!,
+                  );
+                },
+                child: const Row(
+                  children: [
+                    Radio<double>(value: 0),
+                    Text('0 m'),
+                    SizedBox(width: 10),
+                    Radio<double>(value: 10),
+                    Text('10 m'),
+                    SizedBox(width: 10),
+                    Radio<double>(value: 20),
+                    Text('20 m'),
+                  ],
+                ),
+              ),
             ],
           ),
         ),
