@@ -45,16 +45,16 @@ class _ShowInteractiveViewshedWithAnalysisOverlayState
     spatialReference: SpatialReference.webMercator,
   );
 
-  //fixme
+  // A graphic to represent the observer position on the map.
   final _observerGraphic = Graphic(
-    symbol: SimpleMarkerSymbol(
-      color: const Color.fromARGB(255, 0, 94, 255),
-      size: 10,
-    ),
+    symbol: SimpleMarkerSymbol(color: Colors.blue, size: 10),
   );
 
-  //fixme comments
+  // The parameters for the viewshed analysis.
   late final ViewshedParameters _viewshedParameters;
+
+  // The screen point of the observer when a long-press gesture starts (null when not moving).
+  Offset? _moveStartScreenPoint;
 
   // A flag for when the map view is ready and controls can be used.
   var _ready = false;
@@ -80,10 +80,21 @@ class _ShowInteractiveViewshedWithAnalysisOverlayState
             Column(
               children: [
                 Expanded(
-                  // Add a map view to the widget tree and set a controller.
-                  child: ArcGISMapView(
-                    controllerProvider: () => _mapViewController,
-                    onMapViewReady: onMapViewReady,
+                  child: Stack(
+                    children: [
+                      // Add a map view to the widget tree and set a controller.
+                      ArcGISMapView(
+                        controllerProvider: () => _mapViewController,
+                        onMapViewReady: onMapViewReady,
+                      ),
+                      //fixme update README with long-press instructions
+                      // Add a detector to handle long-press gestures for moving the observer position.
+                      GestureDetector(
+                        onLongPressStart: onLongPressStart,
+                        onLongPressMoveUpdate: onLongPressMoveUpdate,
+                        onLongPressEnd: onLongPressEnd,
+                      ),
+                    ],
                   ),
                 ),
                 Row(
@@ -91,7 +102,7 @@ class _ShowInteractiveViewshedWithAnalysisOverlayState
                   children: [
                     // A button to perform a task.
                     ElevatedButton(
-                      onPressed: performTask,
+                      onPressed: () {},
                       child: const Text('Perform Task'),
                     ),
                   ],
@@ -122,10 +133,6 @@ class _ShowInteractiveViewshedWithAnalysisOverlayState
     final graphicsOverlay = GraphicsOverlay();
     graphicsOverlay.graphics.add(_observerGraphic);
     _mapViewController.graphicsOverlays.add(graphicsOverlay);
-
-    // Disable map pan to allow for tap and drag interactions.
-    _mapViewController.interactionOptions.panEnabled = false;
-    //fixme necessary?
 
     // Create the continuous field from the elevation file.
     final continuousField = await ContinuousField.createFromFiles(
@@ -172,14 +179,57 @@ class _ShowInteractiveViewshedWithAnalysisOverlayState
     analysisOverlay.analyses.add(analysis);
     _mapViewController.analysisOverlays.add(analysisOverlay);
 
-    // Set the initial geometry of the observer graphic to the observer position.
-    _observerGraphic.geometry = _observerPosition;
-    // Set the initial observer position in the viewshed parameters.
-    _viewshedParameters.observerPosition = _observerPosition;
+    // Synchronize the viewshed parameters and graphic to the initial observer position.
+    syncObserverPosition();
 
     // Set the ready state variable to true to enable the sample UI.
     setState(() => _ready = true);
   }
 
-  void performTask() {}
+  void syncObserverPosition() {
+    // Update the observer graphic geometry to the current observer position.
+    _observerGraphic.geometry = _observerPosition;
+
+    // Update the viewshed parameters to the current observer position (triggers analysis).
+    _viewshedParameters.observerPosition = _observerPosition;
+  }
+
+  // Handle the start of a long-press gesture.
+  void onLongPressStart(LongPressStartDetails details) {
+    // Store the screen point of the observer when the long-press gesture starts.
+    _moveStartScreenPoint = _mapViewController.locationToScreen(
+      mapPoint: _observerPosition,
+    );
+
+    // Change the observer graphic color to indicate it is being moved.
+    (_observerGraphic.symbol as SimpleMarkerSymbol?)?.color = Colors.yellow;
+  }
+
+  // Handle an update to a long-press gesture.
+  void onLongPressMoveUpdate(LongPressMoveUpdateDetails details) {
+    if (_moveStartScreenPoint == null) return;
+
+    // Calculate the new screen point by adding the gesture movement to the stored screen point.
+    final newScreenPoint =
+        _moveStartScreenPoint! + details.localOffsetFromOrigin;
+
+    // Convert the screen point to a map point for the new observer position.
+    final newObserverPosition = _mapViewController.screenToLocation(
+      screen: newScreenPoint,
+    );
+    if (newObserverPosition == null) return;
+
+    // Update to the new observer position.
+    _observerPosition = newObserverPosition;
+    syncObserverPosition();
+  }
+
+  // Handle the end of a long-press gesture.
+  void onLongPressEnd(LongPressEndDetails details) {
+    // Change the observer graphic color back to indicate it is no longer being moved.
+    (_observerGraphic.symbol as SimpleMarkerSymbol?)?.color = Colors.blue;
+
+    // Clear the stored screen point when the long-press gesture ends.
+    _moveStartScreenPoint = null;
+  }
 }
