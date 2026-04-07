@@ -51,19 +51,21 @@ class _ShowExtrudedFeaturesState extends State<ShowExtrudedFeatures>
                     onSceneViewReady: onSceneViewReady,
                   ),
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  // Create a set of evenly spaced buttons for each FilterType value, and when a button is pressed,
-                  // it triggers the changeExtrusionExpression function with the selected filter.
-                  children: FilterType.values
-                      .map(
-                        (filterType) => ElevatedButton(
-                          onPressed: () =>
-                              changeExtrusionExpression(filterType),
-                          child: Text(filterType.name),
-                        ),
-                      )
-                      .toList(),
+                Padding(
+                  padding: const EdgeInsets.all(12),
+                  child: SegmentedButton<FilterType>(
+                    segments: FilterType.values
+                        .map(
+                          (filterType) => ButtonSegment<FilterType>(
+                            value: filterType,
+                            label: Text(filterType.name),
+                          ),
+                        )
+                        .toList(),
+                    selected: {_filterType},
+                    onSelectionChanged: (selection) =>
+                        changeExtrusionExpression(selection.first),
+                  ),
                 ),
               ],
             ),
