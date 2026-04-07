@@ -33,10 +33,6 @@ class _IdentifyRasterCellState extends State<IdentifyRasterCell>
   var _ready = false;
   // Raster layer to display raster data on the map.
   late RasterLayer _rasterLayer;
-  // Graphic to get the raster cell information.
-  final Graphic _textGraphic = Graphic();
-  // Graphics overlay to display the text graphic.
-  final _textGraphicsOverlay = GraphicsOverlay();
 
   @override
   Widget build(BuildContext context) {
@@ -67,10 +63,6 @@ class _IdentifyRasterCellState extends State<IdentifyRasterCell>
     if (_rasterLayer.fullExtent != null) {
       await _mapViewController.setViewpointGeometry(_rasterLayer.fullExtent!);
     }
-    // Add the text graphic to the text graphics overlay.
-    _textGraphicsOverlay.graphics.add(_textGraphic);
-    // Add the text graphics overlay to the map view.
-    _mapViewController.graphicsOverlays.add(_textGraphicsOverlay);
     // Set the ready state variable to true to enable the sample UI.
     setState(() => _ready = true);
   }
@@ -96,22 +88,21 @@ class _IdentifyRasterCellState extends State<IdentifyRasterCell>
         final x = cell.geometry!.extent.xMin;
         final y = cell.geometry!.extent.yMin;
         // Add the x & y coordinates where the user clicked raster cell to the string buffer.
-        stringBuffer.writeln();
-        stringBuffer.writeln('X: ${x.toStringAsFixed(4)}');
-        stringBuffer.write('Y: ${y.toStringAsFixed(4)}');
-
-        final textSymbol = TextSymbol(
-          color: Colors.white,
-          size: 12,
-          text: stringBuffer.toString(),
-          horizontalAlignment: HorizontalAlignment.left,
+        stringBuffer.write(
+          'X: ${x.toStringAsFixed(4)} Y: ${y.toStringAsFixed(4)}',
         );
-        textSymbol.backgroundColor = Colors.black.withValues(alpha: 0.8);
-        _textGraphic.geometry = cell.geometry;
-        _textGraphicsOverlay.renderer = SimpleRenderer(symbol: textSymbol);
+
+        _mapViewController.callout.showCalloutForGeoElement(
+          cell,
+          contentBuilder: (context, geoElement) => IntrinsicWidth(
+            child: Container(
+              padding: const EdgeInsets.all(6),
+              color: Colors.white,
+              child: Text(stringBuffer.toString(), softWrap: false),
+            ),
+          ),
+        );
       }
-    } else {
-      _textGraphicsOverlay.renderer = null;
     }
   }
 
