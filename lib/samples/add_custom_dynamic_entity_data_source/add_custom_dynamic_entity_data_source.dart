@@ -287,7 +287,7 @@ class VesselDynamicEntityDataProvider extends CustomDynamicEntityDataProvider {
       spatialReference: SpatialReference.wgs84,
     );
 
-    final attributes = <String, Object?>{};
+    final attributes = <String, dynamic>{};
     for (final field in _schema) {
       attributes[field.name] = attributesJson[field.name];
     }

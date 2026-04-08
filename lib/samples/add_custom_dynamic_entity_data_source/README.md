@@ -45,7 +45,7 @@ This sample uses a [JSON Lines file containing observations of marine vessels in
 
 ## Additional information
 
-In this sample, we iterate through features in a GeoJSON file to mimic messages coming from a real-time feed. You can create a custom dyamic entity data source to process any data that contains observations which can be translated into `ArcGISPoint` objects with associated `Map<String, Object?>` attributes.
+In this sample, we iterate through features in a GeoJSON file to mimic messages coming from a real-time feed. You can create a custom dyamic entity data source to process any data that contains observations which can be translated into `ArcGISPoint` objects with associated `Map<String, dynamic>` attributes.
 
 ## Tags
 
