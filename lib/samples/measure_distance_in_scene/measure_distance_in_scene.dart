@@ -29,7 +29,7 @@ class _MeasureDistanceInSceneState extends State<MeasureDistanceInScene>
   // Create a controller for the scene view.
   final _sceneViewController = ArcGISSceneView.createController();
 
-  //fixme comment
+  // Create the distance measurement analysis with initial locations in Brest, France.
   final _locationDistanceMeasurement = ExploratoryLocationDistanceMeasurement(
     startLocation: ArcGISPoint(
       x: -4.494677,
@@ -45,6 +45,9 @@ class _MeasureDistanceInSceneState extends State<MeasureDistanceInScene>
     ),
   );
 
+  // A variable to track the current state of the measurement process.
+  var _measurementState = MeasurementState.setStartLocation;
+
   // A flag for when the scene view is ready and controls can be used.
   var _ready = false;
 
@@ -53,9 +56,38 @@ class _MeasureDistanceInSceneState extends State<MeasureDistanceInScene>
     return Scaffold(
       body: Stack(
         children: [
-          ArcGISSceneView(
-            controllerProvider: () => _sceneViewController,
-            onSceneViewReady: onSceneViewReady,
+          Stack(
+            children: [
+              ArcGISSceneView(
+                controllerProvider: () => _sceneViewController,
+                onSceneViewReady: onSceneViewReady,
+              ),
+              // Add a detector to handle long-press gestures for changing the measurement.
+              GestureDetector(
+                onLongPressStart: onLongPressStart,
+                onLongPressMoveUpdate: onLongPressMoveUpdate,
+                onLongPressEnd: onLongPressEnd,
+              ),
+            ],
+          ),
+          // Display a banner with instructions at the top.
+          SafeArea(
+            child: IgnorePointer(
+              child: Container(
+                padding: const EdgeInsets.all(10),
+                color: Colors.white.withValues(alpha: 0.7),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      _measurementState.instructions,
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context).textTheme.labelMedium,
+                    ),
+                  ],
+                ),
+              ),
+            ),
           ),
           // Display a progress indicator and prevent interaction until state is ready.
           LoadingIndicator(visible: !_ready),
@@ -69,7 +101,7 @@ class _MeasureDistanceInSceneState extends State<MeasureDistanceInScene>
     final scene = ArcGISScene.withBasemapStyle(.arcGISTopographic);
     _sceneViewController.arcGISScene = scene;
 
-    //fixme comment
+    // Set the initial camera position to look at the distance measurement locations.
     final lookAtPoint = Envelope.fromPoints(
       _locationDistanceMeasurement.startLocation,
       _locationDistanceMeasurement.endLocation,
@@ -95,17 +127,61 @@ class _MeasureDistanceInSceneState extends State<MeasureDistanceInScene>
     );
     scene.baseSurface.elevationSources.add(elevationSource);
 
-    //fixme brest layer
+    // Add a scene layer of 3D buildings in Brest, France.
+    final buildingsLayer = ArcGISSceneLayer.withUri(
+      Uri.parse(
+        'https://tiles.arcgis.com/tiles/P3ePLMYs2RVChkJx/arcgis/rest/services/Buildings_Brest/SceneServer/layers/0',
+      ),
+    );
+    scene.operationalLayers.add(buildingsLayer);
 
-    //fixme analysis overlay
+    // Create an AnalysisOverlay and add the exploratory analysis to it.
+    final analysisOverlay = AnalysisOverlay();
+    analysisOverlay.analyses.add(_locationDistanceMeasurement);
+
+    // Add the AnalysisOverlay to the view controller.
+    _sceneViewController.analysisOverlays.add(analysisOverlay);
 
     // Set the ready state variable to true to enable the sample UI.
     setState(() => _ready = true);
   }
 
-  //fixme longpress-and-drag
-  //fixme unit system
+  Future<void> onLongPressStart(LongPressStartDetails details) async {
+    // Convert the screen point to a map point and set it as the start location of the measurement.
+    final mapPoint = await _sceneViewController.screenToLocation(
+      screen: details.localPosition,
+    );
+    _locationDistanceMeasurement.startLocation = mapPoint;
+
+    // Update the measurement state to be setting the end location.
+    setState(() => _measurementState = MeasurementState.setEndLocation);
+  }
+
+  Future<void> onLongPressMoveUpdate(LongPressMoveUpdateDetails details) async {
+    // Convert the screen point to a map point and set it as the end location of the measurement.
+    final mapPoint = await _sceneViewController.screenToLocation(
+      screen: details.localPosition,
+    );
+    _locationDistanceMeasurement.endLocation = mapPoint;
+  }
+
+  void onLongPressEnd(LongPressEndDetails details) {
+    // Return the measurement state back to setting the start location.
+    setState(() => _measurementState = MeasurementState.setStartLocation);
+  }
+
   //fixme distance text
+  //fixme unit system
   //fixme review README
   //fixme screen shot
+}
+
+// An enum to track the state of the long-press-and-drag measurement sequence.
+enum MeasurementState {
+  setStartLocation(instructions: 'Tap and hold to set the start location.'),
+  setEndLocation(instructions: 'While holding, drag to set the end location.');
+
+  const MeasurementState({required this.instructions});
+
+  final String instructions;
 }
