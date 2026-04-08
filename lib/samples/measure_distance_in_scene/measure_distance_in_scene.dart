@@ -102,4 +102,10 @@ class _MeasureDistanceInSceneState extends State<MeasureDistanceInScene>
     // Set the ready state variable to true to enable the sample UI.
     setState(() => _ready = true);
   }
+
+  //fixme longpress-and-drag
+  //fixme unit system
+  //fixme distance text
+  //fixme review README
+  //fixme screen shot
 }
