@@ -47,6 +47,8 @@ class _QueryTableStatisticsState extends State<QueryTableStatistics>
   final _statisticDefinitions = <StatisticDefinition>[];
   // A flag to display the query settings.
   var _settingsVisible = false;
+  // A flag for when a statistics query is in progress.
+  var _queryInProgress = false;
 
   @override
   Widget build(BuildContext context) {
@@ -71,12 +73,16 @@ class _QueryTableStatisticsState extends State<QueryTableStatistics>
                   children: [
                     // A button to show the Settings bottom sheet.
                     ElevatedButton(
-                      onPressed: () => setState(() => _settingsVisible = true),
+                      onPressed: _ready && !_queryInProgress
+                          ? () => setState(() => _settingsVisible = true)
+                          : null,
                       child: const Text('Settings'),
                     ),
                     // A button to calculate the statistics.
                     ElevatedButton(
-                      onPressed: queryStatistics,
+                      onPressed: _ready && !_queryInProgress
+                          ? queryStatistics
+                          : null,
                       child: const Text('Get statistics'),
                     ),
                   ],
@@ -84,7 +90,10 @@ class _QueryTableStatisticsState extends State<QueryTableStatistics>
               ],
             ),
             // Display a progress indicator and prevent interaction until state is ready.
-            LoadingIndicator(visible: !_ready),
+            LoadingIndicator(
+              visible: !_ready || _queryInProgress,
+              text: _queryInProgress ? 'Calculating statistics...' : null,
+            ),
           ],
         ),
       ),
@@ -117,7 +126,9 @@ class _QueryTableStatisticsState extends State<QueryTableStatistics>
               const Spacer(),
               IconButton(
                 icon: const Icon(Icons.close),
-                onPressed: () => setState(() => _settingsVisible = false),
+                onPressed: _queryInProgress
+                    ? null
+                    : () => setState(() => _settingsVisible = false),
               ),
             ],
           ),
@@ -125,8 +136,10 @@ class _QueryTableStatisticsState extends State<QueryTableStatistics>
             children: [
               Checkbox(
                 value: _onlyCitiesInCurrentExtent,
-                onChanged: (value) =>
-                    setState(() => _onlyCitiesInCurrentExtent = value!),
+                onChanged: _queryInProgress
+                    ? null
+                    : (value) =>
+                          setState(() => _onlyCitiesInCurrentExtent = value!),
               ),
               const Text('Only cities in current extent'),
             ],
@@ -135,8 +148,10 @@ class _QueryTableStatisticsState extends State<QueryTableStatistics>
             children: [
               Checkbox(
                 value: _onlyCitiesGreaterThan5M,
-                onChanged: (value) =>
-                    setState(() => _onlyCitiesGreaterThan5M = value!),
+                onChanged: _queryInProgress
+                    ? null
+                    : (value) =>
+                          setState(() => _onlyCitiesGreaterThan5M = value!),
               ),
               const Text('Only cities greater than 5M'),
             ],
@@ -169,45 +184,53 @@ class _QueryTableStatisticsState extends State<QueryTableStatistics>
 
   // Query statistics from the service feature table.
   Future<void> queryStatistics() async {
-    // Create a statistics query parameters object.
-    final statisticsQueryParameters = StatisticsQueryParameters(
-      statisticDefinitions: _statisticDefinitions,
-    );
+    if (!_ready || _queryInProgress) return;
 
-    // Set the geometry and spatial relationship if the flag is true.
-    if (_onlyCitiesInCurrentExtent) {
-      statisticsQueryParameters.geometry = _mapViewController.visibleArea;
-      statisticsQueryParameters.spatialRelationship =
-          SpatialRelationship.intersects;
-    }
-    // Set the where clause if the flag is true.
-    if (_onlyCitiesGreaterThan5M) {
-      statisticsQueryParameters.whereClause = 'POP_RANK = 1';
-    }
-    // Query the statistics.
-    final statisticsQueryResult = await _serviceFeatureTable.queryStatistics(
-      statisticsQueryParameters,
-    );
+    setState(() => _queryInProgress = true);
 
-    // Prepare the statistics results for display.
-    final statistics = <String>[];
-    final records = statisticsQueryResult.statisticRecords();
-    for (final record in records) {
-      record.statistics.forEach((key, value) {
-        final displayName = key.toLowerCase() == 'count_pop'
-            ? 'CITY_COUNT'
-            : key;
-        final n = value as num?;
-        final displayValue = key.toLowerCase() == 'count_pop'
-            ? n?.toStringAsFixed(0)
-            : n?.toStringAsFixed(2);
-        statistics.add('[$displayName]  $displayValue');
-      });
+    try {
+      // Create a statistics query parameters object.
+      final statisticsQueryParameters = StatisticsQueryParameters(
+        statisticDefinitions: _statisticDefinitions,
+      );
+
+      // Set the geometry and spatial relationship if the flag is true.
+      if (_onlyCitiesInCurrentExtent) {
+        statisticsQueryParameters.geometry = _mapViewController.visibleArea;
+        statisticsQueryParameters.spatialRelationship =
+            SpatialRelationship.intersects;
+      }
+      // Set the where clause if the flag is true.
+      if (_onlyCitiesGreaterThan5M) {
+        statisticsQueryParameters.whereClause = 'POP_RANK = 1';
+      }
+      // Query the statistics.
+      final statisticsQueryResult = await _serviceFeatureTable.queryStatistics(
+        statisticsQueryParameters,
+      );
+
+      // Prepare the statistics results for display.
+      final statistics = <String>[];
+      final records = statisticsQueryResult.statisticRecords();
+      for (final record in records) {
+        record.statistics.forEach((key, value) {
+          final displayName = key.toLowerCase() == 'count_pop'
+              ? 'CITY_COUNT'
+              : key;
+          final n = value as num?;
+          final displayValue = key.toLowerCase() == 'count_pop'
+              ? n?.toStringAsFixed(0)
+              : n?.toStringAsFixed(2);
+          statistics.add('[$displayName]  $displayValue');
+        });
+      }
+      // Display the statistics in a dialog.
+      showMessageDialog(
+        statistics.join('\n'),
+        title: 'Statistical Query Results',
+      );
+    } finally {
+      setState(() => _queryInProgress = false);
     }
-    // Display the statistics in a dialog.
-    showMessageDialog(
-      statistics.join('\n'),
-      title: 'Statistical Query Results',
-    );
   }
 }
