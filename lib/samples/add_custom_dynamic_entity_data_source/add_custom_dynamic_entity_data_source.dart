@@ -201,11 +201,11 @@ void _configureLabeling(DynamicEntityLayer layer) {
 /// or any other real-time data source by modifying the data loading and emission logic.
 ///
 /// See also:
-/// * [CustomDynamicEntityDataProvider], the base class for creating custom data providers
-/// * [DynamicEntityLayer], which visualizes dynamic entities from this data source
+/// * [CustomDynamicEntityDataProvider], the base class for creating custom data providers.
+/// * [DynamicEntityLayer], which visualizes dynamic entities from this data source.
 
 class VesselDynamicEntityDataProvider extends CustomDynamicEntityDataProvider {
-  // Field name that uniquely identifies each vessel entity
+  // Field name that uniquely identifies each vessel entity.
   static const String _entityIdFieldName = 'MMSI';
 
   // Delay between emitted observations to simulate live streaming data
@@ -296,7 +296,7 @@ class VesselDynamicEntityDataProvider extends CustomDynamicEntityDataProvider {
     handleEntityDataEvent(NewObservation(point, attributes));
   }
 
-  // Schema defining all fields for vessel observations
+  // Schema defining all fields for vessel observations.
   static final List<Field> _schema = [
     Field.text(name: 'MMSI', alias: 'MMSI', length: 256),
     Field.double(name: 'BaseDateTime', alias: 'BaseDateTime'),
