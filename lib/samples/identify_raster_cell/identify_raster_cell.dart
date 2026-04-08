@@ -92,6 +92,7 @@ class _IdentifyRasterCellState extends State<IdentifyRasterCell>
           'X: ${x.toStringAsFixed(4)} Y: ${y.toStringAsFixed(4)}',
         );
 
+        // Display a callout for the raster cell attributes.
         _mapViewController.callout.showCalloutForGeoElement(
           cell,
           contentBuilder: (context, geoElement) => IntrinsicWidth(
