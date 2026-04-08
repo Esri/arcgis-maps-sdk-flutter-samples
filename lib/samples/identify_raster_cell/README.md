@@ -20,13 +20,13 @@ Tap an area of the raster to identify it and see the raw raster cell information
 
 * Call `ArcGISMapViewController.identifyLayer(...)` passing in the screen point, tolerance, and maximum number of results per layer.
 * Await the result of the identify and then get the `GeoElement` from the layer result.
-* Create a callout at the calculated map point and populate the callout content with text from the `RasterCell.attributes`.
+* Create a callout at the calculated map point and populate the callout content with text from the `GeoElement.attributes`.
 
 ## Relevant API
 
 * ArcGISMapViewController.identifyLayer
 * GeoElement
-* RasterCell.attributes
+* GeoElement.attributes
 * Raster
 * RasterLayer
 
