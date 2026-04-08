@@ -54,44 +54,82 @@ class _MeasureDistanceInSceneState extends State<MeasureDistanceInScene>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: [
-          Stack(
-            children: [
-              ArcGISSceneView(
-                controllerProvider: () => _sceneViewController,
-                onSceneViewReady: onSceneViewReady,
-              ),
-              // Add a detector to handle long-press gestures for changing the measurement.
-              GestureDetector(
-                onLongPressStart: onLongPressStart,
-                onLongPressMoveUpdate: onLongPressMoveUpdate,
-                onLongPressEnd: onLongPressEnd,
-              ),
-            ],
-          ),
-          // Display a banner with instructions at the top.
-          SafeArea(
-            child: IgnorePointer(
-              child: Container(
-                padding: const EdgeInsets.all(10),
-                color: Colors.white.withValues(alpha: 0.7),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      _measurementState.instructions,
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.labelMedium,
-                    ),
-                  ],
+      body: SafeArea(
+        top: false,
+        left: false,
+        right: false,
+        child: Stack(
+          children: [
+            Column(
+              children: [
+                Expanded(
+                  child: Stack(
+                    children: [
+                      // Add a scene view to the widget tree and set a controller.
+                      ArcGISSceneView(
+                        controllerProvider: () => _sceneViewController,
+                        onSceneViewReady: onSceneViewReady,
+                      ),
+                      // Add a detector to handle long-press gestures for changing the measurement.
+                      GestureDetector(
+                        onLongPressStart: onLongPressStart,
+                        onLongPressMoveUpdate: onLongPressMoveUpdate,
+                        onLongPressEnd: onLongPressEnd,
+                      ),
+                    ],
+                  ),
+                ),
+                // Add a StreamBuilder to listen to changes in the measurement and display the distance values.
+                StreamBuilder(
+                  stream: _locationDistanceMeasurement.onMeasurementChanged,
+                  builder: (context, snapshot) {
+                    final measurement = snapshot.data;
+                    if (measurement == null) {
+                      return const SizedBox.shrink();
+                    }
+
+                    return Column(
+                      children: [
+                        Text(
+                          'Direct: ${measurement.directDistance.value.toStringAsFixed(2)} m',
+                        ),
+                        Text(
+                          'Horizontal: ${measurement.horizontalDistance.value.toStringAsFixed(2)} m',
+                        ),
+                        Text(
+                          'Vertical: ${measurement.verticalDistance.value.toStringAsFixed(2)} m',
+                        ),
+                      ],
+                    );
+                  },
+                ),
+              ],
+            ),
+            // Display a banner with instructions at the top.
+            SafeArea(
+              left: false,
+              right: false,
+              child: IgnorePointer(
+                child: Container(
+                  padding: const EdgeInsets.all(10),
+                  color: Colors.white.withValues(alpha: 0.7),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        _measurementState.instructions,
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context).textTheme.labelMedium,
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
-          // Display a progress indicator and prevent interaction until state is ready.
-          LoadingIndicator(visible: !_ready),
-        ],
+            // Display a progress indicator and prevent interaction until state is ready.
+            LoadingIndicator(visible: !_ready),
+          ],
+        ),
       ),
     );
   }
@@ -170,7 +208,6 @@ class _MeasureDistanceInSceneState extends State<MeasureDistanceInScene>
     setState(() => _measurementState = MeasurementState.setStartLocation);
   }
 
-  //fixme distance text
   //fixme unit system
   //fixme review README
   //fixme screen shot
