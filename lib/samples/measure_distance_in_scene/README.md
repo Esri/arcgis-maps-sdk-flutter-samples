@@ -17,7 +17,7 @@ Choose a unit system for the measurement. Tap and hold on a location in the scen
 1. Specify the start location and end location to create an `ExploratoryLocationDistanceMeasurement` object.
 2. Create an `AnalysisOverlay` and add it to the analysis overlay collection of the `ArcGISSceneViewController`.
 3. Add the location distance measurement analysis to the analysis overlay.
-4. The `onMeasurementChanged` callback will trigger if the distances change. You can get the new values for the `directDistance`, `horizontalDistance`, and `verticalDistance` from the record returned by the callback.
+4. The `onMeasurementChanged` callback will trigger if the distances change. You can get the new values for the `directDistance`, `horizontalDistance`, and `verticalDistance` from the stream data passed through the callback.
 
 ## Relevant API
 

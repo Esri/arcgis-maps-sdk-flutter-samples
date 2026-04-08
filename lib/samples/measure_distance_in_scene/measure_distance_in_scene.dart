@@ -202,18 +202,19 @@ class _MeasureDistanceInSceneState extends State<MeasureDistanceInScene>
   }
 
   Future<void> onLongPressStart(LongPressStartDetails details) async {
-    // Convert the screen point to a map point and set it as the start location of the measurement.
+    // Convert the screen point to a map point and set it as the start and end locations of the measurement.
     final mapPoint = await _sceneViewController.screenToLocation(
       screen: details.localPosition,
     );
     _locationDistanceMeasurement.startLocation = mapPoint;
+    _locationDistanceMeasurement.endLocation = mapPoint;
 
     // Update the measurement state to be setting the end location.
     setState(() => _measurementState = MeasurementState.setEndLocation);
   }
 
   Future<void> onLongPressMoveUpdate(LongPressMoveUpdateDetails details) async {
-    // Convert the screen point to a map point and set it as the end location of the measurement.
+    // Convert the screen point to a map point and update the end location of the measurement.
     final mapPoint = await _sceneViewController.screenToLocation(
       screen: details.localPosition,
     );
