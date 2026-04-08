@@ -174,7 +174,7 @@ class _MeasureDistanceInSceneState extends State<MeasureDistanceInScene>
       camera: camera,
     );
 
-    // Add world elevation source to the scene's surface.
+    // Add the world elevation source to the scene's surface.
     final elevationSource = ArcGISTiledElevationSource.withUri(
       Uri.parse(
         'https://elevation3d.arcgis.com/arcgis/rest/services/WorldElevation3D/Terrain3D/ImageServer',
@@ -190,7 +190,7 @@ class _MeasureDistanceInSceneState extends State<MeasureDistanceInScene>
     );
     scene.operationalLayers.add(buildingsLayer);
 
-    // Create an AnalysisOverlay and add the exploratory analysis to it.
+    // Create an AnalysisOverlay and add the measurement analysis to it.
     final analysisOverlay = AnalysisOverlay();
     analysisOverlay.analyses.add(_locationDistanceMeasurement);
 
