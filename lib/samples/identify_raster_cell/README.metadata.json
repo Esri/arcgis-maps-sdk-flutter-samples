@@ -18,8 +18,8 @@
         "raster",
         "ArcGISMapViewController.identifyLayer",
         "GeoElement",
-        "GeoElement.attributes",
         "Raster",
+        "RasterCell.attributes",
         "RasterLayer"
     ],
     "offline_data": [{
@@ -31,8 +31,8 @@
     "relevant_apis": [
         "ArcGISMapViewController.identifyLayer",
         "GeoElement",
-        "GeoElement.attributes",
         "Raster",
+        "RasterCell.attributes",
         "RasterLayer"
     ],
     "snippets": [
