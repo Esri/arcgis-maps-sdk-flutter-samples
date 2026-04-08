@@ -16,17 +16,17 @@ Run the sample to view the map and the dynamic entity layer displaying the lates
 
 Configure the custom data source:
 
-1. Create a custom data source implementation of a `DynamicEntityDataSource`.
+1. Create a custom data source implementation of a `CustomDynamicEntityDataProvider `.
 2. Override `onnLoad()` to specify the `DynamicEntityDataSourceInfo` for a given unique entity ID field and a list of `Field` objects matching the fields in the data source.
 3. Override `onConnect()` to begin processing observations from the custom data source.
-4. Loop through the observations and deserialize each observation into an `ArcGISPoint` and a `Map<String, Object>` containing the attributes.
+4. Loop through the observations and deserialize each observation into an `ArcGISPoint` and a `Map<String, dynamic>` containing the attributes.
 5. Use `NewObservation(geometry, attributes)` to add each observation to the custom data source.
 
 Configure the map view:
 
 1. Create a `DynamicEntityLayer` using the custom data source implementation.
-2. Update values in the layer's `TrackDisplayProperties` to customize the layer's appearance.
-3. Set up the layer's `LabelDefinitions` to display labels for each dynamic entity.
+2. Update values in the layer's `trackDisplayProperties` to customize the layer's appearance.
+3. Set up the layer's `labelDefinitions` to display labels for each dynamic entity.
 4. Configure the `ArcGISMapView(onTap: ...)` handler to select a dynamic entity and display the entity's attributes in a callout.
 
 ## Relevant API
