@@ -90,14 +90,31 @@ class _MeasureDistanceInSceneState extends State<MeasureDistanceInScene>
 
                     return Column(
                       children: [
+                        // Display the formatted distance values.
+                        Text('Direct: ${measurement.directDistance.formatted}'),
                         Text(
-                          'Direct: ${measurement.directDistance.value.toStringAsFixed(2)} m',
+                          'Horizontal: ${measurement.horizontalDistance.formatted}',
                         ),
                         Text(
-                          'Horizontal: ${measurement.horizontalDistance.value.toStringAsFixed(2)} m',
+                          'Vertical: ${measurement.verticalDistance.formatted}',
                         ),
-                        Text(
-                          'Vertical: ${measurement.verticalDistance.value.toStringAsFixed(2)} m',
+                        // Add a segmented button to switch between unit systems.
+                        SegmentedButton(
+                          segments: [
+                            ...UnitSystem.values.map(
+                              (unitSystem) => ButtonSegment(
+                                value: unitSystem,
+                                label: Text(unitSystem.name.capitalized),
+                              ),
+                            ),
+                          ],
+                          selected: {_locationDistanceMeasurement.unitSystem},
+                          onSelectionChanged: (newSelection) {
+                            setState(
+                              () => _locationDistanceMeasurement.unitSystem =
+                                  newSelection.first,
+                            );
+                          },
                         ),
                       ],
                     );
@@ -208,7 +225,6 @@ class _MeasureDistanceInSceneState extends State<MeasureDistanceInScene>
     setState(() => _measurementState = MeasurementState.setStartLocation);
   }
 
-  //fixme unit system
   //fixme review README
   //fixme screen shot
 }
@@ -221,4 +237,15 @@ enum MeasurementState {
   const MeasurementState({required this.instructions});
 
   final String instructions;
+}
+
+extension on Distance {
+  // A helper method to format the distance value with its unit for display.
+  String get formatted => '${value.toStringAsFixed(2)} ${unit.abbreviation}';
+}
+
+extension on String {
+  // A helper method to capitalize the first letter of a string.
+  String get capitalized =>
+      isEmpty ? this : '${this[0].toUpperCase()}${substring(1)}';
 }
