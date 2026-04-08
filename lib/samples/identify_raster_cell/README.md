@@ -15,10 +15,12 @@ Tap an area of the raster to identify it and see the raw raster cell information
 ## How it works
 
 1. Get the screen point on the map where a user tapped or long pressed and dragged from the `ArcGISMapView`.
+
 2. On tap:
-  * Call `ArcGISMapViewController.identifyLayer(...)` passing in the screen point, tolerance, and maximum number of results per layer.
-  * Await the result of the identify and then get the `GeoElement` from the layer result.
-  * Create a callout at the calculated map point and populate the callout content with text from the `RasterCell.attributes`.
+
+* Call `ArcGISMapViewController.identifyLayer(...)` passing in the screen point, tolerance, and maximum number of results per layer.
+* Await the result of the identify and then get the `GeoElement` from the layer result.
+* Create a callout at the calculated map point and populate the callout content with text from the `RasterCell.attributes`.
 
 ## Relevant API
 
