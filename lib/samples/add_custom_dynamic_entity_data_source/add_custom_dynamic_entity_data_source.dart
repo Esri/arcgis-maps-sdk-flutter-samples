@@ -271,7 +271,7 @@ class VesselDynamicEntityDataProvider extends CustomDynamicEntityDataProvider {
 
     late final schema = _buildSchema();
 
-    final attributes = <String, Object?>{};
+    final attributes = <String, dynamic>{};
     for (final field in schema) {
       attributes[field.name] = attributesJson[field.name];
     }
