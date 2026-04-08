@@ -90,7 +90,7 @@ class _AddCustomDynamicEntityDataSourceState
     );
 
     // Create the custom data provider.
-    final provider = VesselDynamicEntityDataProvider(entityIdFieldName: 'MMSI');
+    final provider = VesselDynamicEntityDataProvider();
 
     // Create the data source driven by the provider.
     final dataSource = CustomDynamicEntityDataSource(provider);
@@ -176,32 +176,52 @@ void _configureLabeling(DynamicEntityLayer layer) {
   layer.labelsEnabled = true;
 }
 
-// A CustomDynamicEntityDataProvider that emits vessel observations
+/// A custom implementation of [CustomDynamicEntityDataProvider] that demonstrates
+/// how to create a dynamic entity data source for streaming real-time geospatial data.
+///
+/// This sample provider reads vessel tracking data from a JSON Lines (.jsonl) asset
+/// file and emits observations sequentially to simulate a live data stream. Each
+/// observation includes vessel position (latitude/longitude), movement data
+/// (speed over ground, course over ground), and identifying information (MMSI, name, etc.).
+///
+/// ## Key Implementation Points:
+///
+/// * **onLoad()**: Initializes the data source by loading the asset file and defining
+///   the observation schema with field definitions for all vessel attributes.
+///
+/// * **onConnect()**: Starts emitting observations by creating a periodic timer that
+///   calls [_emitNextObservation] at regular intervals.
+///
+/// * **onDisconnect()**: Stops the observation stream by canceling the timer.
+///
+/// * **_emitNextObservation()**: Parses each JSON line, constructs an observation
+///   with geometry (point) and attributes, and emits it using [handleEntityDataEvent].
+///
+/// This pattern can be adapted to work with web sockets, REST APIs, IoT sensors,
+/// or any other real-time data source by modifying the data loading and emission logic.
+///
+/// See also:
+/// * [CustomDynamicEntityDataProvider], the base class for creating custom data providers
+/// * [DynamicEntityLayer], which visualizes dynamic entities from this data source
+
 class VesselDynamicEntityDataProvider extends CustomDynamicEntityDataProvider {
-  VesselDynamicEntityDataProvider({
-    required this.entityIdFieldName,
-    this.delay = const Duration(milliseconds: 10),
-  });
+  // Field name that uniquely identifies each vessel entity
+  static const String _entityIdFieldName = 'MMSI';
 
-  // Field name that uniquely identifies each dynamic entity.
-  final String entityIdFieldName;
-
-  // Delay between emitted observations to simulate live data.
-  final Duration delay;
+  // Delay between emitted observations to simulate live streaming data
+  static const Duration _emissionDelay = Duration(milliseconds: 10);
 
   Timer? _timer;
   late final List<String> _jsonLines;
   int _currentIndex = 0;
 
-  // Path to the JSON Lines asset.
-  static const _dataAsset =
+  // Path to the JSON Lines asset containing vessel observation data
+  static const String _dataAsset =
       'assets/AIS_MarineCadastre_SelectedVessels_CustomDataSource.jsonl';
 
   @override
   Future<DynamicEntityDataSourceInfo> onLoad() async {
     final rawText = await rootBundle.loadString(_dataAsset);
-
-    // Split the JSON Lines file into individual JSON objects.
     _jsonLines = rawText
         .split('\n')
         .map((line) => line.trim())
@@ -209,12 +229,10 @@ class VesselDynamicEntityDataProvider extends CustomDynamicEntityDataProvider {
         .toList();
 
     final info = DynamicEntityDataSourceInfo(
-      entityIdFieldName: entityIdFieldName,
-      fields: _buildSchema(),
+      entityIdFieldName: _entityIdFieldName,
+      fields: _schema,
     );
-
     info.spatialReference = SpatialReference.wgs84;
-
     return info;
   }
 
@@ -224,7 +242,7 @@ class VesselDynamicEntityDataProvider extends CustomDynamicEntityDataProvider {
     if (_timer != null) {
       return; // Already connected
     }
-    _timer = Timer.periodic(delay, (_) => _emitNextObservation());
+    _timer = Timer.periodic(_emissionDelay, (_) => _emitNextObservation());
   }
 
   // Stops emitting observations and cleans up resources.
@@ -269,10 +287,8 @@ class VesselDynamicEntityDataProvider extends CustomDynamicEntityDataProvider {
       spatialReference: SpatialReference.wgs84,
     );
 
-    late final schema = _buildSchema();
-
-    final attributes = <String, dynamic>{};
-    for (final field in schema) {
+    final attributes = <String, Object?>{};
+    for (final field in _schema) {
       attributes[field.name] = attributesJson[field.name];
     }
 
@@ -280,25 +296,23 @@ class VesselDynamicEntityDataProvider extends CustomDynamicEntityDataProvider {
     handleEntityDataEvent(NewObservation(point, attributes));
   }
 
-  /// Defines the schema for all emitted observations.
-  List<Field> _buildSchema() {
-    return [
-      Field.text(name: 'MMSI', alias: 'MMSI', length: 256),
-      Field.double(name: 'BaseDateTime', alias: 'BaseDateTime'),
-      Field.double(name: 'LAT', alias: 'LAT'),
-      Field.double(name: 'LONG', alias: 'LONG'),
-      Field.double(name: 'SOG', alias: 'SOG'),
-      Field.double(name: 'COG', alias: 'COG'),
-      Field.double(name: 'Heading', alias: 'Heading'),
-      Field.text(name: 'VesselName', alias: 'VesselName', length: 256),
-      Field.text(name: 'IMO', alias: 'IMO', length: 256),
-      Field.text(name: 'CallSign', alias: 'CallSign', length: 256),
-      Field.text(name: 'VesselType', alias: 'VesselType', length: 256),
-      Field.text(name: 'Status', alias: 'Status', length: 256),
-      Field.double(name: 'Length', alias: 'Length'),
-      Field.double(name: 'Width', alias: 'Width'),
-      Field.text(name: 'Cargo', alias: 'Cargo', length: 256),
-      Field.text(name: 'globalid', alias: 'globalid', length: 256),
-    ];
-  }
+  // Schema defining all fields for vessel observations
+  static final List<Field> _schema = [
+    Field.text(name: 'MMSI', alias: 'MMSI', length: 256),
+    Field.double(name: 'BaseDateTime', alias: 'BaseDateTime'),
+    Field.double(name: 'LAT', alias: 'LAT'),
+    Field.double(name: 'LONG', alias: 'LONG'),
+    Field.double(name: 'SOG', alias: 'SOG'),
+    Field.double(name: 'COG', alias: 'COG'),
+    Field.double(name: 'Heading', alias: 'Heading'),
+    Field.text(name: 'VesselName', alias: 'VesselName', length: 256),
+    Field.text(name: 'IMO', alias: 'IMO', length: 256),
+    Field.text(name: 'CallSign', alias: 'CallSign', length: 256),
+    Field.text(name: 'VesselType', alias: 'VesselType', length: 256),
+    Field.text(name: 'Status', alias: 'Status', length: 256),
+    Field.double(name: 'Length', alias: 'Length'),
+    Field.double(name: 'Width', alias: 'Width'),
+    Field.text(name: 'Cargo', alias: 'Cargo', length: 256),
+    Field.text(name: 'globalid', alias: 'globalid', length: 256),
+  ];
 }

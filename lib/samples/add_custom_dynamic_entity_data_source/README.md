@@ -16,7 +16,7 @@ Run the sample to view the map and the dynamic entity layer displaying the lates
 
 Configure the custom data source:
 
-1. Create a custom data source implementation of a `CustomDynamicEntityDataProvider `.
+1. Create a custom data source implementation of a `CustomDynamicEntityDataProvider`.
 2. Override `onnLoad()` to specify the `DynamicEntityDataSourceInfo` for a given unique entity ID field and a list of `Field` objects matching the fields in the data source.
 3. Override `onConnect()` to begin processing observations from the custom data source.
 4. Loop through the observations and deserialize each observation into an `ArcGISPoint` and a `Map<String, dynamic>` containing the attributes.
@@ -45,7 +45,7 @@ This sample uses a [JSON Lines file containing observations of marine vessels in
 
 ## Additional information
 
-In this sample, we iterate through features in a GeoJSON file to mimic messages coming from a real-time feed. You can create a custom dyamic entity data source to process any data that contains observations which can be translated into `ArcGISPoint` objects with associated `Map<String, dynamic>` attributes.
+In this sample, we iterate through features in a GeoJSON file to mimic messages coming from a real-time feed. You can create a custom dyamic entity data source to process any data that contains observations which can be translated into `ArcGISPoint` objects with associated `Map<String, Object?>` attributes.
 
 ## Tags
 
