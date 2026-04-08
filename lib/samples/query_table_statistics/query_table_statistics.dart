@@ -89,7 +89,7 @@ class _QueryTableStatisticsState extends State<QueryTableStatistics>
                 ),
               ],
             ),
-            // Display a progress indicator and prevent interaction until state is ready.
+            // Display a progress indicator and prevent interaction until the state is ready or a query is in progress.
             LoadingIndicator(
               visible: !_ready || _queryInProgress,
               text: _queryInProgress ? 'Calculating statistics...' : null,
