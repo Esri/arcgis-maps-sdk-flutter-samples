@@ -53,6 +53,7 @@ class _ShowExtrudedFeaturesState extends State<ShowExtrudedFeatures>
                 ),
                 Padding(
                   padding: const EdgeInsets.all(12),
+                  // Create buttons for each filter type and update the extrusion expression with the selected filter when pressed.
                   child: SegmentedButton<FilterType>(
                     segments: FilterType.values
                         .map(
