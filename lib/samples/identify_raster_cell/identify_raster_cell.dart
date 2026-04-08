@@ -87,7 +87,7 @@ class _IdentifyRasterCellState extends State<IdentifyRasterCell>
       if (cell.geometry != null) {
         final x = cell.geometry!.extent.xMin;
         final y = cell.geometry!.extent.yMin;
-        // Add the x & y coordinates where the user clicked raster cell to the string buffer.
+        // Add the x & y coordinates where the user tapped the raster cell to the string buffer.
         stringBuffer.write(
           'X: ${x.toStringAsFixed(4)} Y: ${y.toStringAsFixed(4)}',
         );
