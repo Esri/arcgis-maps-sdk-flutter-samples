@@ -224,9 +224,6 @@ class _MeasureDistanceInSceneState extends State<MeasureDistanceInScene>
     // Return the measurement state back to setting the start location.
     setState(() => _measurementState = MeasurementState.setStartLocation);
   }
-
-  //fixme review README
-  //fixme screen shot
 }
 
 // An enum to track the state of the long-press-and-drag measurement sequence.

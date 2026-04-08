@@ -11,14 +11,12 @@
         "distance",
         "measure",
         "AnalysisOverlay",
-        "ExploratoryLocationDistanceMeasurement",
-        "MeasurementChangedEvent"
+        "ExploratoryLocationDistanceMeasurement"
     ],
     "redirect_from": [],
     "relevant_apis": [
         "AnalysisOverlay",
-        "ExploratoryLocationDistanceMeasurement",
-        "MeasurementChangedEvent"
+        "ExploratoryLocationDistanceMeasurement"
     ],
     "snippets": [
         "measure_distance_in_scene.dart"
