@@ -110,28 +110,14 @@ class _ShowInteractiveViewshedWithAnalysisOverlayState
                     ),
                   ],
                 ),
-              ],
-            ),
-            // Display a banner with a copyright notice.
-            SafeArea(
-              left: false,
-              right: false,
-              child: IgnorePointer(
-                child: Container(
-                  padding: const EdgeInsets.all(10),
-                  color: Colors.white.withValues(alpha: 0.7),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        'Raster data Copyright Scottish Government and SEPA (2014)',
-                        textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.labelSmall,
-                      ),
-                    ],
-                  ),
+                const SizedBox(height: 10),
+                Text(
+                  'Raster data Copyright Scottish Government and SEPA (2014)',
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodySmall?.copyWith(color: Colors.grey),
                 ),
-              ),
+              ],
             ),
             // Display a progress indicator and prevent interaction until state is ready.
             LoadingIndicator(visible: !_ready),
