@@ -14,19 +14,16 @@ Pan and zoom to explore the scene.
 
 ## How it works
 
-1. Create an `ArcGISSceneLayer` passing in the URL to a scene layer service.
-2. Create a `Scene` and add the scene layer to its operational layers.
-3. Create a `Surface` object and add an `ArcGISTiledElevationSource` to it.
-4. Set the surface to the scene's base surface.
-5. Create a `SceneView` with the scene.
+1. Create an `ArcGISScene`.
+2. Create an `ArcGISTiledElevationSource` object and add it to the local scene's base surface.
+3. Create an `ArcGISSceneLayer` passing in the URL to a scene layer service.
+4. Add the scene layer to the scene's operational layers.
 
 ## Relevant API
 
+* ArcGISScene
 * ArcGISSceneLayer
 * ArcGISTiledElevationSource
-* Scene
-* SceneView
-* Surface
 
 ## About the data
 

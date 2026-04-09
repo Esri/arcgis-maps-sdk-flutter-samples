@@ -13,19 +13,15 @@
         "model",
         "scene",
         "service",
+        "ArcGISScene",
         "ArcGISSceneLayer",
-        "ArcGISTiledElevationSource",
-        "Scene",
-        "SceneView",
-        "Surface"
+        "ArcGISTiledElevationSource"
     ],
     "redirect_from": [],
     "relevant_apis": [
+        "ArcGISScene",
         "ArcGISSceneLayer",
-        "ArcGISTiledElevationSource",
-        "Scene",
-        "SceneView",
-        "Surface"
+        "ArcGISTiledElevationSource"
     ],
     "snippets": [
         "add_scene_layer_from_service.dart"
