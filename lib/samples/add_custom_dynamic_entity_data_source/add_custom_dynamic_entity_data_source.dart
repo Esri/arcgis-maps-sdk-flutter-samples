@@ -41,7 +41,6 @@ class _AddCustomDynamicEntityDataSourceState
   // Dynamic entity layer for identify.
   DynamicEntityLayer? _dynamicEntityLayer;
 
-  static const _identifyTolerance = 22.0;
 
   @override
   Widget build(BuildContext context) {
@@ -124,7 +123,7 @@ class _AddCustomDynamicEntityDataSourceState
     final identifyResult = await _mapViewController.identifyLayer(
       _dynamicEntityLayer!,
       screenPoint: screenPoint,
-      tolerance: _identifyTolerance,
+      tolerance: 22,
     );
 
     if (!mounted ||
