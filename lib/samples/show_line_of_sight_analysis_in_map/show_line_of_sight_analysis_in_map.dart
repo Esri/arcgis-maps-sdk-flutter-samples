@@ -37,6 +37,12 @@ class _ShowLineOfSightAnalysisInMapState
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
 
+  // Create a graphics overlay for the line of sight results.
+  final _resultsGraphicsOverlay = GraphicsOverlay();
+
+  // Whether to show only observers with line of sight to the target.
+  var _visibilityFilter = false;
+
   // A flag for when the map view is ready and controls can be used.
   var _ready = false;
 
@@ -48,7 +54,6 @@ class _ShowLineOfSightAnalysisInMapState
 
     super.initState();
   }
-  //fixme visibility filter
   //fixme data display
   //fixme review README
   //fixme screenshot
@@ -78,6 +83,17 @@ class _ShowLineOfSightAnalysisInMapState
                     context,
                   ).textTheme.bodySmall?.copyWith(color: Colors.grey),
                 ),
+                Row(
+                  mainAxisAlignment: .center,
+                  spacing: 10,
+                  children: [
+                    const Text('Only observers with line of sight'),
+                    Switch(
+                      value: _visibilityFilter,
+                      onChanged: setVisibilityFilter,
+                    ),
+                  ],
+                ),
               ],
             ),
             // Display a progress indicator and prevent interaction until state is ready.
@@ -90,8 +106,11 @@ class _ShowLineOfSightAnalysisInMapState
 
   Future<void> onMapViewReady() async {
     // Create a map with the hillshade dark style.
-    final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISHillshadeDark);
+    final map = ArcGISMap.withBasemapStyle(.arcGISHillshadeDark);
     _mapViewController.arcGISMap = map;
+
+    // Add the results graphics overlay to the map view.
+    _mapViewController.graphicsOverlays.add(_resultsGraphicsOverlay);
 
     // Create a graphics overlay to display the target and observers.
     final positionsGraphicsOverlay = GraphicsOverlay();
@@ -159,10 +178,6 @@ class _ShowLineOfSightAnalysisInMapState
       parameters: parameters,
     );
 
-    // Create a graphics overlay for the line of sight results and add it to the map view.
-    final resultsGraphicsOverlay = GraphicsOverlay();
-    _mapViewController.graphicsOverlays.insert(0, resultsGraphicsOverlay);
-
     // Evaluate the line of sight function.
     final results = await lineOfSightFunction.evaluate();
 
@@ -176,19 +191,23 @@ class _ShowLineOfSightAnalysisInMapState
 
     // Add the line of sight results to the graphics overlay.
     for (final result in results) {
+      // Get the target visibility for the observer-target pair to mark the graphics.
+      final targetVisibility = result.targetVisibility;
+
       // Add the visible line segment if it exists.
       if (result.visibleLine != null) {
-        resultsGraphicsOverlay.graphics.add(
-          Graphic(geometry: result.visibleLine, symbol: visibleLineSymbol),
+        _resultsGraphicsOverlay.graphics.add(
+          Graphic(geometry: result.visibleLine, symbol: visibleLineSymbol)
+            ..attributes['targetVisibility'] = targetVisibility,
         );
 
         // Add the not visible line segment if it exists.
         if (result.notVisibleLine != null) {
-          resultsGraphicsOverlay.graphics.add(
+          _resultsGraphicsOverlay.graphics.add(
             Graphic(
               geometry: result.notVisibleLine,
               symbol: notVisibleLineSymbol,
-            ),
+            )..attributes['targetVisibility'] = targetVisibility,
           );
         }
       }
@@ -196,6 +215,15 @@ class _ShowLineOfSightAnalysisInMapState
 
     // Set the ready state variable to true to enable the sample UI.
     setState(() => _ready = true);
+  }
+
+  void setVisibilityFilter(bool value) {
+    setState(() => _visibilityFilter = value);
+
+    for (final graphic in _resultsGraphicsOverlay.graphics) {
+      final targetVisibility = graphic.attributes['targetVisibility'] as double;
+      graphic.isVisible = !_visibilityFilter || targetVisibility == 1;
+    }
   }
 
   void onTap(Offset offset) {
@@ -229,9 +257,6 @@ enum Observer {
       ArcGISPoint(x: x, y: y, z: 5, spatialReference: .webMercator);
 
   // The symbol that represents the observer.
-  ArcGISSymbol get symbol => SimpleMarkerSymbol(
-    style: SimpleMarkerSymbolStyle.triangle,
-    color: color,
-    size: 15,
-  );
+  ArcGISSymbol get symbol =>
+      SimpleMarkerSymbol(style: .triangle, color: color, size: 15);
 }
