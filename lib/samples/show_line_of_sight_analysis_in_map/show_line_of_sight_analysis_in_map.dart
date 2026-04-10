@@ -48,6 +48,8 @@ class _ShowLineOfSightAnalysisInMapState
 
     super.initState();
   }
+  //fixme visibility filter
+  //fixme data display
   //fixme review README
   //fixme screenshot
 
@@ -114,14 +116,83 @@ class _ShowLineOfSightAnalysisInMapState
     );
     positionsGraphicsOverlay.graphics.add(targetGraphic);
 
+    // Create a graphic for each observer and add them to the graphics overlay.
+    positionsGraphicsOverlay.graphics.addAll(
+      Observer.values.map(
+        (observer) =>
+            Graphic(geometry: observer.position, symbol: observer.symbol),
+      ),
+    );
+
+    // Set an initial viewpoint centered on the target position.
+    map.initialViewpoint = Viewpoint.fromCenter(targetPosition, scale: 150000);
+
     // Create the continuous field from the elevation file.
     final continuousField = await ContinuousField.createFromFiles(
       filePaths: [_elevationFile.uri],
       band: 0,
     );
 
-    // Set an initial viewpoint centered on the target position.
-    map.initialViewpoint = Viewpoint.fromCenter(targetPosition, scale: 90000);
+    // Create line of sight positions for targets and observers.
+    final targetPositions = [
+      LineOfSightPosition(position: targetPosition, heightOrigin: .relative),
+    ];
+    final observerPositions = Observer.values
+        .map(
+          (observer) => LineOfSightPosition(
+            position: observer.position,
+            heightOrigin: .relative,
+          ),
+        )
+        .toList();
+
+    // Create the line of sight parameters with the observer and target positions.
+    final parameters = LineOfSightParameters();
+    parameters.observerTargetPairs = ObserverTargetPairs.withManyToMany(
+      observerPositions: observerPositions,
+      targetPositions: targetPositions,
+    );
+
+    // Create the line of sight function with the continuous field and parameters.
+    final lineOfSightFunction = LineOfSightFunction.withContinuousField(
+      elevation: continuousField,
+      parameters: parameters,
+    );
+
+    // Create a graphics overlay for the line of sight results and add it to the map view.
+    final resultsGraphicsOverlay = GraphicsOverlay();
+    _mapViewController.graphicsOverlays.insert(0, resultsGraphicsOverlay);
+
+    // Evaluate the line of sight function.
+    final results = await lineOfSightFunction.evaluate();
+
+    // Create symbols for the visible and not visible line segments.
+    final visibleLineSymbol = SimpleLineSymbol(color: Colors.green, width: 4);
+    final notVisibleLineSymbol = SimpleLineSymbol(
+      color: Colors.grey,
+      width: 2,
+      style: .longDash,
+    );
+
+    // Add the line of sight results to the graphics overlay.
+    for (final result in results) {
+      // Add the visible line segment if it exists.
+      if (result.visibleLine != null) {
+        resultsGraphicsOverlay.graphics.add(
+          Graphic(geometry: result.visibleLine, symbol: visibleLineSymbol),
+        );
+
+        // Add the not visible line segment if it exists.
+        if (result.notVisibleLine != null) {
+          resultsGraphicsOverlay.graphics.add(
+            Graphic(
+              geometry: result.notVisibleLine,
+              symbol: notVisibleLineSymbol,
+            ),
+          );
+        }
+      }
+    }
 
     // Set the ready state variable to true to enable the sample UI.
     setState(() => _ready = true);
@@ -132,4 +203,35 @@ class _ShowLineOfSightAnalysisInMapState
     // ignore: avoid_print
     print('Tapped at $offset');
   }
+}
+
+// An enum capturing the different observers.
+enum Observer {
+  greenObserver(color: Colors.green, x: -580893.546, y: 7489102.890),
+  whiteObserver(color: Colors.white, x: -583446.004, y: 7483567.462),
+  orangeObserver(color: Colors.orange, x: -577665.236, y: 7490792.908),
+  yellowObserver(color: Colors.yellow, x: -576452.981, y: 7487071.388),
+  purpleObserver(
+    color: Color.fromARGB(255, 228, 168, 239),
+    x: -576650.067,
+    y: 7481479.772,
+  ),
+  blueObserver(color: Colors.blue, x: -571683.896, y: 7492017.864);
+
+  const Observer({required this.color, required this.x, required this.y});
+
+  final Color color;
+  final double x;
+  final double y;
+
+  // The position of the observer.
+  ArcGISPoint get position =>
+      ArcGISPoint(x: x, y: y, z: 5, spatialReference: .webMercator);
+
+  // The symbol that represents the observer.
+  ArcGISSymbol get symbol => SimpleMarkerSymbol(
+    style: SimpleMarkerSymbolStyle.triangle,
+    color: color,
+    size: 15,
+  );
 }
