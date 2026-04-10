@@ -214,16 +214,14 @@ class _ShowLineOfSightAnalysisInMapState
           Graphic(geometry: result.visibleLine, symbol: visibleLineSymbol)
             ..attributes['targetVisibility'] = targetVisibility,
         );
+      }
 
-        // Add the not visible line segment if it exists.
-        if (result.notVisibleLine != null) {
-          _resultsGraphicsOverlay.graphics.add(
-            Graphic(
-              geometry: result.notVisibleLine,
-              symbol: notVisibleLineSymbol,
-            )..attributes['targetVisibility'] = targetVisibility,
-          );
-        }
+      // Add the not visible line segment if it exists.
+      if (result.notVisibleLine != null) {
+        _resultsGraphicsOverlay.graphics.add(
+          Graphic(geometry: result.notVisibleLine, symbol: notVisibleLineSymbol)
+            ..attributes['targetVisibility'] = targetVisibility,
+        );
       }
     }
 
