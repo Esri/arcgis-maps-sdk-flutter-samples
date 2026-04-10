@@ -63,8 +63,6 @@ class _ShowLineOfSightAnalysisInMapState
 
     super.initState();
   }
-  //fixme review README
-  //fixme screenshot
 
   @override
   Widget build(BuildContext context) {
@@ -346,22 +344,21 @@ extension on LineOfSight {
     // If neither line is present, return an empty string (though this should not happen in a valid result).
     if (notVisibleLine == null && visibleLine == null) return '';
 
+    // Calculate the length of the visible line, which is the unobstructed distance from the observer to the target.
+    final visibleLength = visibleLine == null
+        ? 0
+        : GeometryEngine.lengthGeodetic(
+            geometry: visibleLine!,
+            curveType: .geodesic,
+          );
+
     // If there is no not-visible line, the target is fully visible from the observer.
     // Return a message with the length of the visible line.
     if (notVisibleLine == null) {
-      final visibleLength = GeometryEngine.lengthGeodetic(
-        geometry: visibleLine!,
-        curveType: .geodesic,
-      );
       return 'Target visible from observer over ${visibleLength.toStringAsFixed(1)} meters.';
     }
 
-    // Otherwise, the target is not fully visible.
-    // Return a message with the length of the not-visible line.
-    final notVisibleLength = GeometryEngine.lengthGeodetic(
-      geometry: notVisibleLine!,
-      curveType: .geodesic,
-    );
-    return 'Target not visible from observer. Obstructed after ${notVisibleLength.toStringAsFixed(1)} meters.';
+    // Otherwise, the target is not fully visible. Return a message with the unobstructed length.
+    return 'Target not visible from observer. Obstructed after ${visibleLength.toStringAsFixed(1)} meters.';
   }
 }
