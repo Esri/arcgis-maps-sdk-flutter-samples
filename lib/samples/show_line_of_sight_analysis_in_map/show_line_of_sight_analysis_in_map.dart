@@ -37,8 +37,17 @@ class _ShowLineOfSightAnalysisInMapState
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
 
+  // Create a graphics overlay for the target position.
+  final _targetGraphicsOverlay = GraphicsOverlay();
+
+  // Create a graphics overlay for the observer positions.
+  final _observersGraphicsOverlay = GraphicsOverlay();
+
   // Create a graphics overlay for the line of sight results.
   final _resultsGraphicsOverlay = GraphicsOverlay();
+
+  // Line of sight results by observer (for access when tapping on the observer graphics).
+  final _lineOfSightResults = <Observer, LineOfSight>{};
 
   // Whether to show only observers with line of sight to the target.
   var _visibilityFilter = false;
@@ -54,7 +63,6 @@ class _ShowLineOfSightAnalysisInMapState
 
     super.initState();
   }
-  //fixme data display
   //fixme review README
   //fixme screenshot
 
@@ -77,12 +85,6 @@ class _ShowLineOfSightAnalysisInMapState
                     onTap: onTap,
                   ),
                 ),
-                Text(
-                  'Raster data Copyright Scottish Government and SEPA (2014)',
-                  style: Theme.of(
-                    context,
-                  ).textTheme.bodySmall?.copyWith(color: Colors.grey),
-                ),
                 Row(
                   mainAxisAlignment: .center,
                   spacing: 10,
@@ -93,6 +95,12 @@ class _ShowLineOfSightAnalysisInMapState
                       onChanged: setVisibilityFilter,
                     ),
                   ],
+                ),
+                Text(
+                  'Raster data Copyright Scottish Government and SEPA (2014)',
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodySmall?.copyWith(color: Colors.grey),
                 ),
               ],
             ),
@@ -109,12 +117,12 @@ class _ShowLineOfSightAnalysisInMapState
     final map = ArcGISMap.withBasemapStyle(.arcGISHillshadeDark);
     _mapViewController.arcGISMap = map;
 
-    // Add the results graphics overlay to the map view.
-    _mapViewController.graphicsOverlays.add(_resultsGraphicsOverlay);
-
-    // Create a graphics overlay to display the target and observers.
-    final positionsGraphicsOverlay = GraphicsOverlay();
-    _mapViewController.graphicsOverlays.add(positionsGraphicsOverlay);
+    // Add the graphics overlays to the map view.
+    _mapViewController.graphicsOverlays.addAll([
+      _resultsGraphicsOverlay,
+      _observersGraphicsOverlay,
+      _targetGraphicsOverlay,
+    ]);
 
     // Load an image that represents the target (e.g., a radio mast or receiver).
     final beaconImage = await ArcGISImage.fromAsset('assets/beacon.png');
@@ -133,13 +141,14 @@ class _ShowLineOfSightAnalysisInMapState
       geometry: targetPosition,
       symbol: beaconSymbol,
     );
-    positionsGraphicsOverlay.graphics.add(targetGraphic);
+    _targetGraphicsOverlay.graphics.add(targetGraphic);
 
     // Create a graphic for each observer and add them to the graphics overlay.
-    positionsGraphicsOverlay.graphics.addAll(
+    _observersGraphicsOverlay.graphics.addAll(
       Observer.values.map(
         (observer) =>
-            Graphic(geometry: observer.position, symbol: observer.symbol),
+            Graphic(geometry: observer.position, symbol: observer.symbol)
+              ..attributes['observer'] = observer,
       ),
     );
 
@@ -181,6 +190,13 @@ class _ShowLineOfSightAnalysisInMapState
     // Evaluate the line of sight function.
     final results = await lineOfSightFunction.evaluate();
 
+    // Store the results by observer.
+    for (var i = 0; i < results.length; i++) {
+      final result = results[i];
+      final observer = Observer.values[i];
+      _lineOfSightResults[observer] = result;
+    }
+
     // Create symbols for the visible and not visible line segments.
     final visibleLineSymbol = SimpleLineSymbol(color: Colors.green, width: 4);
     final notVisibleLineSymbol = SimpleLineSymbol(
@@ -220,34 +236,92 @@ class _ShowLineOfSightAnalysisInMapState
   void setVisibilityFilter(bool value) {
     setState(() => _visibilityFilter = value);
 
+    // Show the graphic if the visibility filter is off, or if the target is visible from the observer.
     for (final graphic in _resultsGraphicsOverlay.graphics) {
       final targetVisibility = graphic.attributes['targetVisibility'] as double;
       graphic.isVisible = !_visibilityFilter || targetVisibility == 1;
     }
   }
 
-  void onTap(Offset offset) {
-    // Do something with a tap.
-    // ignore: avoid_print
-    print('Tapped at $offset');
+  Future<void> onTap(Offset offset) async {
+    // Dismiss any existing callout.
+    _mapViewController.callout.dismiss();
+
+    // Identify the tapped graphic from the observers graphics overlay.
+    final identifyResult = await _mapViewController.identifyGraphicsOverlay(
+      _observersGraphicsOverlay,
+      screenPoint: offset,
+      tolerance: 10,
+    );
+    if (!mounted) return;
+
+    final graphics = identifyResult.graphics;
+    if (graphics.isEmpty) return;
+
+    final observerGraphic = graphics.first;
+
+    // Get the observer from the graphic attributes.
+    final observer = observerGraphic.attributes['observer'] as Observer;
+
+    // Look up the line of sight result for the observer.
+    final lineOfSightResult = _lineOfSightResults[observer]!;
+
+    // Present a callout with the result details.
+    _mapViewController.callout.showCalloutForGeoElement(
+      observerGraphic,
+      title: observer.name,
+      detail: lineOfSightResult.detail,
+    );
   }
 }
 
 // An enum capturing the different observers.
 enum Observer {
-  greenObserver(color: Colors.green, x: -580893.546, y: 7489102.890),
-  whiteObserver(color: Colors.white, x: -583446.004, y: 7483567.462),
-  orangeObserver(color: Colors.orange, x: -577665.236, y: 7490792.908),
-  yellowObserver(color: Colors.yellow, x: -576452.981, y: 7487071.388),
+  greenObserver(
+    name: 'Green Observer',
+    color: Colors.green,
+    x: -580893.546,
+    y: 7489102.890,
+  ),
+  whiteObserver(
+    name: 'White Observer',
+    color: Colors.white,
+    x: -583446.004,
+    y: 7483567.462,
+  ),
+  orangeObserver(
+    name: 'Orange Observer',
+    color: Colors.orange,
+    x: -577665.236,
+    y: 7490792.908,
+  ),
+  yellowObserver(
+    name: 'Yellow Observer',
+    color: Colors.yellow,
+    x: -576452.981,
+    y: 7487071.388,
+  ),
   purpleObserver(
+    name: 'Purple Observer',
     color: Color.fromARGB(255, 228, 168, 239),
     x: -576650.067,
     y: 7481479.772,
   ),
-  blueObserver(color: Colors.blue, x: -571683.896, y: 7492017.864);
+  blueObserver(
+    name: 'Blue Observer',
+    color: Colors.blue,
+    x: -571683.896,
+    y: 7492017.864,
+  );
 
-  const Observer({required this.color, required this.x, required this.y});
+  const Observer({
+    required this.name,
+    required this.color,
+    required this.x,
+    required this.y,
+  });
 
+  final String name;
   final Color color;
   final double x;
   final double y;
@@ -259,4 +333,35 @@ enum Observer {
   // The symbol that represents the observer.
   ArcGISSymbol get symbol =>
       SimpleMarkerSymbol(style: .triangle, color: color, size: 15);
+}
+
+extension on LineOfSight {
+  // Helper method to get a user-friendly detail string for the line of sight result.
+  String get detail {
+    // If there was an error during the analysis, return the error message.
+    if (error != null) {
+      return error!.additionalMessage;
+    }
+
+    // If neither line is present, return an empty string (though this should not happen in a valid result).
+    if (notVisibleLine == null && visibleLine == null) return '';
+
+    // If there is no not-visible line, the target is fully visible from the observer.
+    // Return a message with the length of the visible line.
+    if (notVisibleLine == null) {
+      final visibleLength = GeometryEngine.lengthGeodetic(
+        geometry: visibleLine!,
+        curveType: .geodesic,
+      );
+      return 'Target visible from observer over ${visibleLength.toStringAsFixed(1)} meters.';
+    }
+
+    // Otherwise, the target is not fully visible.
+    // Return a message with the length of the not-visible line.
+    final notVisibleLength = GeometryEngine.lengthGeodetic(
+      geometry: notVisibleLine!,
+      curveType: .geodesic,
+    );
+    return 'Target not visible from observer. Obstructed after ${notVisibleLength.toStringAsFixed(1)} meters.';
+  }
 }
