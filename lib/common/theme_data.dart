@@ -1,5 +1,5 @@
 //
-// Copyright 2024 Esri
+// Copyright 2026 Esri
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,30 +16,46 @@
 
 import 'package:flutter/material.dart';
 
-final colorScheme = ColorScheme.fromSeed(seedColor: Colors.deepPurple);
+// Light Theme Color Scheme
+final lightColorScheme = ColorScheme.fromSeed(
+  seedColor: Colors.deepPurple,
+);
 
-final sampleViewerTheme = ThemeData(
-  // color scheme
-  primaryColor: colorScheme.primary,
-  primaryColorLight: Colors.deepPurple[200],
-  disabledColor: Colors.grey,
-  colorScheme: colorScheme,
+// Dark Theme Color Scheme
+final darkColorScheme = ColorScheme.fromSeed(
+  seedColor: Colors.deepPurple,
+  brightness: Brightness.dark,
+);
 
-  // application bar theme
-  appBarTheme: AppBarTheme(backgroundColor: colorScheme.inversePrimary),
 
-  // text theme
-  textTheme: const TextTheme(labelMedium: TextStyle(color: Colors.deepPurple)),
+// Light Theme
+final sampleViewerLightTheme = ThemeData(
+  useMaterial3: true,
+  brightness: Brightness.light,
+  colorScheme: lightColorScheme,
+  primaryColor: lightColorScheme.primary,
 
-  // button theme
+  // Application bar theme
+  appBarTheme: AppBarTheme(
+    backgroundColor: lightColorScheme.inversePrimary,
+  ),
+
+  // Text theme
+  textTheme: const TextTheme(
+    labelMedium: TextStyle(color: Colors.deepPurple),
+  ),
+
+  // Button themes
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ElevatedButton.styleFrom(
       disabledBackgroundColor: Colors.white.withValues(alpha: 0.6),
     ),
   ),
+
   floatingActionButtonTheme: FloatingActionButtonThemeData(
-    backgroundColor: colorScheme.primaryContainer,
+    backgroundColor: lightColorScheme.primaryContainer,
   ),
+
   dropdownMenuTheme: DropdownMenuThemeData(
     inputDecorationTheme: const InputDecorationTheme(
       outlineBorder: BorderSide(width: 0),
@@ -48,8 +64,48 @@ final sampleViewerTheme = ThemeData(
     menuStyle: MenuStyle(elevation: WidgetStateProperty.all(6)),
   ),
 
-  // icon theme
-  iconTheme: IconThemeData(color: colorScheme.primary),
+  // Icon theme
+  iconTheme: IconThemeData(color: lightColorScheme.primary),
+);
+
+// Dark Theme
+final sampleViewerDarkTheme = ThemeData(
+  useMaterial3: true,
+  brightness: Brightness.dark,
+  colorScheme: darkColorScheme,
+  primaryColor: darkColorScheme.primary,
+
+  // Application bar theme
+  appBarTheme: AppBarTheme(
+    backgroundColor: darkColorScheme.inversePrimary,
+  ),
+
+  // Text theme - adjusted for dark mode
+  textTheme: TextTheme(
+    labelMedium: TextStyle(color: darkColorScheme.primary),
+  ),
+
+  // Button themes
+  elevatedButtonTheme: ElevatedButtonThemeData(
+    style: ElevatedButton.styleFrom(
+      disabledBackgroundColor: Colors.black.withValues(alpha: 0.3),
+    ),
+  ),
+
+  floatingActionButtonTheme: FloatingActionButtonThemeData(
+    backgroundColor: darkColorScheme.primaryContainer,
+  ),
+
+  dropdownMenuTheme: DropdownMenuThemeData(
+    inputDecorationTheme: const InputDecorationTheme(
+      outlineBorder: BorderSide(width: 0),
+      border: InputBorder.none,
+    ),
+    menuStyle: MenuStyle(elevation: WidgetStateProperty.all(6)),
+  ),
+
+  // Icon theme
+  iconTheme: IconThemeData(color: darkColorScheme.primary),
 );
 
 extension CustomTextTheme on TextTheme {
