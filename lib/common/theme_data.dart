@@ -17,9 +17,7 @@
 import 'package:flutter/material.dart';
 
 // Light Theme Color Scheme
-final lightColorScheme = ColorScheme.fromSeed(
-  seedColor: Colors.deepPurple,
-);
+final lightColorScheme = ColorScheme.fromSeed(seedColor: Colors.deepPurple);
 
 // Dark Theme Color Scheme
 final darkColorScheme = ColorScheme.fromSeed(
@@ -27,23 +25,17 @@ final darkColorScheme = ColorScheme.fromSeed(
   brightness: Brightness.dark,
 );
 
-
 // Light Theme
 final sampleViewerLightTheme = ThemeData(
-  useMaterial3: true,
   brightness: Brightness.light,
   colorScheme: lightColorScheme,
   primaryColor: lightColorScheme.primary,
 
   // Application bar theme
-  appBarTheme: AppBarTheme(
-    backgroundColor: lightColorScheme.inversePrimary,
-  ),
+  appBarTheme: AppBarTheme(backgroundColor: lightColorScheme.inversePrimary),
 
   // Text theme
-  textTheme: const TextTheme(
-    labelMedium: TextStyle(color: Colors.deepPurple),
-  ),
+  textTheme: const TextTheme(labelMedium: TextStyle(color: Colors.deepPurple)),
 
   // Button themes
   elevatedButtonTheme: ElevatedButtonThemeData(
@@ -70,20 +62,15 @@ final sampleViewerLightTheme = ThemeData(
 
 // Dark Theme
 final sampleViewerDarkTheme = ThemeData(
-  useMaterial3: true,
   brightness: Brightness.dark,
   colorScheme: darkColorScheme,
   primaryColor: darkColorScheme.primary,
 
   // Application bar theme
-  appBarTheme: AppBarTheme(
-    backgroundColor: darkColorScheme.inversePrimary,
-  ),
+  appBarTheme: AppBarTheme(backgroundColor: darkColorScheme.inversePrimary),
 
   // Text theme - adjusted for dark mode
-  textTheme: TextTheme(
-    labelMedium: TextStyle(color: darkColorScheme.primary),
-  ),
+  textTheme: TextTheme(labelMedium: TextStyle(color: darkColorScheme.primary)),
 
   // Button themes
   elevatedButtonTheme: ElevatedButtonThemeData(
