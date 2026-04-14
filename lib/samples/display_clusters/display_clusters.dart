@@ -293,7 +293,7 @@ class GeoElementsTab extends StatelessWidget {
             child: ListView.separated(
               padding: const EdgeInsets.fromLTRB(8, 0, 8, 16),
               itemCount: geoElements.length,
-              separatorBuilder: (_, __) => const Divider(height: 0),
+              separatorBuilder: (_, _) => const Divider(height: 0),
               itemBuilder: (context, index) {
                 final name = geoElements[index].getName(index);
                 return ListTile(
