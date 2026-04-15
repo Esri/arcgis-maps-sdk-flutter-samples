@@ -58,12 +58,14 @@ class _ApplySimpleRendererToFeatureLayerState
                 ),
                 Center(
                   child: ElevatedButton(
-                    onPressed: _usingDefaultRenderer
-                        ? overrideRenderer
-                        : resetRenderer,
-                    child: _usingDefaultRenderer
-                        ? const Text('Blue Renderer')
-                        : const Text('Orange Renderer'),
+                    onPressed:
+                        _usingDefaultRenderer
+                            ? overrideRenderer
+                            : resetRenderer,
+                    child:
+                        _usingDefaultRenderer
+                            ? const Text('Blue Renderer')
+                            : const Text('Orange Renderer'),
                   ),
                 ),
               ],
@@ -85,16 +87,17 @@ class _ApplySimpleRendererToFeatureLayerState
     _featureLayer = FeatureLayer.withFeatureTable(serviceFeatureTable);
 
     // Initialize the ArcGISMap.
-    final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic)
-      ..operationalLayers.add(_featureLayer)
-      ..initialViewpoint = Viewpoint.fromCenter(
-        ArcGISPoint(
-          x: -9177343,
-          y: 4247283,
-          spatialReference: SpatialReference.webMercator,
-        ),
-        scale: 4750,
-      );
+    final map =
+        ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic)
+          ..operationalLayers.add(_featureLayer)
+          ..initialViewpoint = Viewpoint.fromCenter(
+            ArcGISPoint(
+              x: -9177343,
+              y: 4247283,
+              spatialReference: SpatialReference.webMercator,
+            ),
+            scale: 4750,
+          );
 
     // Add the map to the MapViewController.
     _mapViewController.arcGISMap = map;

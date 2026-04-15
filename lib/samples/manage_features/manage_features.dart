@@ -104,8 +104,10 @@ class _ManageFeaturesState extends State<ManageFeatures>
                             elevation: 16,
                             style: Theme.of(context).textTheme.labelMedium,
                             // Set the onChanged callback to update the selected operation.
-                            onChanged: (operation) =>
-                                setState(() => _selectedOperation = operation),
+                            onChanged:
+                                (operation) => setState(
+                                  () => _selectedOperation = operation,
+                                ),
                             items: _featureManagementOptions,
                           ),
                           // Display additional UI depending on the selected operation.
@@ -345,9 +347,10 @@ class _ManageFeaturesState extends State<ManageFeatures>
       case FeatureManagementOperation.delete:
         // Create a button to delete the selected feature.
         return ElevatedButton(
-          onPressed: _selectedFeature != null
-              ? () => deleteFeature(_selectedFeature!)
-              : null,
+          onPressed:
+              _selectedFeature != null
+                  ? () => deleteFeature(_selectedFeature!)
+                  : null,
           child: const Text('Delete Selected Feature'),
         );
       case FeatureManagementOperation.attribute:
@@ -367,14 +370,15 @@ class _ManageFeaturesState extends State<ManageFeatures>
           style: Theme.of(context).textTheme.labelMedium,
           iconEnabledColor: Theme.of(context).colorScheme.primary,
           iconDisabledColor: Theme.of(context).disabledColor,
-          onChanged: _selectedFeature != null
-              ? (String? damageType) {
-                  if (damageType != null) {
-                    setState(() => _selectedDamageType = damageType);
-                    updateAttribute(_selectedFeature!, damageType);
+          onChanged:
+              _selectedFeature != null
+                  ? (String? damageType) {
+                    if (damageType != null) {
+                      setState(() => _selectedDamageType = damageType);
+                      updateAttribute(_selectedFeature!, damageType);
+                    }
                   }
-                }
-              : null,
+                  : null,
           items: _damageTypeAttributeOptions,
         );
       case FeatureManagementOperation.geometry:

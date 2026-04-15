@@ -115,14 +115,18 @@ class _ManageBookmarksState extends State<ManageBookmarks> {
             child: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: _bookmarks.map((bookmark) {
-                  // When a bookmark is tapped, set the bookmark on the map view.
-                  return TextButton(
-                    onPressed: () => _mapViewController.setBookmark(bookmark),
-                    style: const ButtonStyle(alignment: Alignment.centerLeft),
-                    child: Text(bookmark.name),
-                  );
-                }).toList(),
+                children:
+                    _bookmarks.map((bookmark) {
+                      // When a bookmark is tapped, set the bookmark on the map view.
+                      return TextButton(
+                        onPressed:
+                            () => _mapViewController.setBookmark(bookmark),
+                        style: const ButtonStyle(
+                          alignment: Alignment.centerLeft,
+                        ),
+                        child: Text(bookmark.name),
+                      );
+                    }).toList(),
               ),
             ),
           ),
