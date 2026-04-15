@@ -35,7 +35,7 @@ ThemeData _buildTheme(ColorScheme colorScheme) {
 
     // Application bar theme.
     appBarTheme: AppBarTheme(
-      backgroundColor: colorScheme.inversePrimary,
+      backgroundColor: colorScheme.surface,
       foregroundColor: colorScheme.onSurface,
       elevation: 0,
       centerTitle: false,
