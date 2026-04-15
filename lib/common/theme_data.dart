@@ -54,17 +54,6 @@ ThemeData _buildTheme(ColorScheme colorScheme) {
       ),
     ),
 
-    textButtonTheme: TextButtonThemeData(
-      style: TextButton.styleFrom(foregroundColor: colorScheme.primary),
-    ),
-
-    outlinedButtonTheme: OutlinedButtonThemeData(
-      style: OutlinedButton.styleFrom(
-        foregroundColor: colorScheme.primary,
-        side: BorderSide(color: colorScheme.outline),
-      ),
-    ),
-
     // Floating Action Button theme.
     floatingActionButtonTheme: FloatingActionButtonThemeData(
       backgroundColor: colorScheme.primaryContainer,
@@ -80,53 +69,6 @@ ThemeData _buildTheme(ColorScheme colorScheme) {
       menuStyle: MenuStyle(
         elevation: WidgetStateProperty.all(6),
         backgroundColor: WidgetStateProperty.all(colorScheme.surfaceContainer),
-      ),
-    ),
-
-    // Icon theme.
-    iconTheme: IconThemeData(color: colorScheme.primary),
-
-    // Card theme.
-    cardTheme: CardThemeData(
-      color: colorScheme.surfaceContainerLow,
-      elevation: 1,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-    ),
-
-    // Input Field theme.
-    inputDecorationTheme: InputDecorationTheme(
-      filled: true,
-      fillColor: colorScheme.surfaceContainerHighest,
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide(color: colorScheme.outline),
-      ),
-      enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide(color: colorScheme.outline),
-      ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide(color: colorScheme.primary, width: 2),
-      ),
-      errorBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide(color: colorScheme.error),
-      ),
-    ),
-
-    // Divider theme.
-    dividerTheme: DividerThemeData(
-      color: colorScheme.outlineVariant,
-      thickness: 1,
-    ),
-
-    // Bottom Sheet theme.
-    bottomSheetTheme: BottomSheetThemeData(
-      backgroundColor: colorScheme.surface,
-      surfaceTintColor: colorScheme.surfaceTint,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
     ),
   );
