@@ -25,9 +25,7 @@ final darkColorScheme = ColorScheme.fromSeed(
   brightness: Brightness.dark,
 );
 
-// This shared builder ensures light and dark themes stay in sync,
-// differing only by their ColorScheme. Any component theme changes
-// automatically apply to both modes.
+// This shared builder ensures light and dark themes stay in sync.
 ThemeData _buildTheme(ColorScheme colorScheme) {
   return ThemeData(
     brightness: colorScheme.brightness,
