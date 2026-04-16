@@ -176,7 +176,7 @@ class _ManageBookmarksState extends State<ManageBookmarks> {
 
     // Set the map on the controller and navigate to the first bookmark.
     _mapViewController.arcGISMap = map;
-    _mapViewController.setBookmark(_bookmarks.first);
+    _mapViewController.setBookmark(_bookmarks.first).ignore();
 
     // Set the ready state variable to true to enable the sample UI.
     setState(() => _ready = true);

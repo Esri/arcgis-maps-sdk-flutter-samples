@@ -63,7 +63,8 @@ class _SwatchImageState extends State<SwatchImage> {
           .then((image) {
             // Signal that the swatch image is ready.
             _swatchCompleter.complete(image.getEncodedBuffer());
-          });
+          })
+          .ignore();
     });
   }
 

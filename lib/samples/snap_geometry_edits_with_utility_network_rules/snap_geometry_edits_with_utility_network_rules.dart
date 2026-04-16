@@ -59,7 +59,7 @@ class _SnapGeometryEditsWithUtilityNetworkRulesState
   @override
   void dispose() {
     // Release resources.
-    _canUndoSubscription?.cancel();
+    _canUndoSubscription?.cancel().ignore();
     _geodatabase?.close();
 
     super.dispose();
@@ -436,7 +436,7 @@ class _SnapGeometryEditsWithUtilityNetworkRulesState
 
     final geometry = _mapViewController.geometryEditor!.stop()!;
     _selectedFeature!.geometry = geometry;
-    _selectedFeature!.featureTable!.updateFeature(_selectedFeature!);
+    _selectedFeature!.featureTable!.updateFeature(_selectedFeature!).ignore();
 
     clearSelection();
   }
@@ -572,7 +572,8 @@ class _SnapSourceSwatchState extends State<SnapSourceSwatch> {
           .then((image) {
             // Signal that the swatch image is ready.
             _swatchCompleter.complete(image.getEncodedBuffer());
-          });
+          })
+          .ignore();
     });
   }
 

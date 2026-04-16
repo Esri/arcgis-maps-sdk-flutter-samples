@@ -83,7 +83,7 @@ class _ShowUtilityAssociationsState extends State<ShowUtilityAssociations>
         null;
     ArcGISEnvironment.authenticationManager.arcGISCredentialStore.removeAll();
 
-    _viewpointChangedSubscription?.cancel();
+    _viewpointChangedSubscription?.cancel().ignore();
 
     super.dispose();
   }

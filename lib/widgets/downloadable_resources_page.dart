@@ -62,7 +62,7 @@ class _DownloadableResourcesPageState extends State<DownloadableResourcesPage> {
   @override
   void initState() {
     super.initState();
-    _checkIfResourcesExist();
+    _checkIfResourcesExist().ignore();
   }
 
   @override

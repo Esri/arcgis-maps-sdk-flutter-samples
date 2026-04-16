@@ -53,8 +53,8 @@ class _ShowDeviceLocationHistoryState extends State<ShowDeviceLocationHistory>
   @override
   void dispose() {
     // When exiting, stop the location data source and cancel subscriptions.
-    _locationDataSource.stop();
-    _locationSubscription?.cancel();
+    _locationDataSource.stop().ignore();
+    _locationSubscription?.cancel().ignore();
     _locationHistoryLineOverlay.graphics.clear();
     _locationHistoryPointOverlay.graphics.clear();
 

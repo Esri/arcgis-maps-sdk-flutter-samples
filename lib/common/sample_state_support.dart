@@ -32,7 +32,7 @@ mixin SampleStateSupport<T extends StatefulWidget> on State<T> {
     bool showOK = false,
   }) {
     if (mounted) {
-      showAlertDialog(context, message, title: title, showOK: showOK);
+      showAlertDialog(context, message, title: title, showOK: showOK).ignore();
     }
   }
 }

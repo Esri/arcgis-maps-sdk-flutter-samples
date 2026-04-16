@@ -62,10 +62,10 @@ class _ShowDeviceLocationWithNmeaDataSourcesState
   @override
   void dispose() {
     // Cancel all the subscriptions.
-    _nmeaDataSubscription?.cancel();
-    _autopanSubscription?.cancel();
-    _locationSubscription?.cancel();
-    _satelliteSubscription?.cancel();
+    _nmeaDataSubscription?.cancel().ignore();
+    _autopanSubscription?.cancel().ignore();
+    _locationSubscription?.cancel().ignore();
+    _satelliteSubscription?.cancel().ignore();
 
     super.dispose();
   }

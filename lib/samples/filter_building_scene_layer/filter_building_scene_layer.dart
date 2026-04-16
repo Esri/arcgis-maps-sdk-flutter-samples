@@ -208,7 +208,7 @@ class _FilterBuildingSceneLayerState extends State<FilterBuildingSceneLayer>
           onClose: () => Navigator.of(context).maybePop(),
         ),
       ),
-    );
+    ).ignore();
   }
 }
 
