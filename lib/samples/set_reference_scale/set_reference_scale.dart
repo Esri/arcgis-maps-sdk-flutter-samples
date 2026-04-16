@@ -255,5 +255,5 @@ class _SetReferenceScaleState extends State<SetReferenceScale>
   }
 
   // Create a helpder function to be applied on the regular expression.
-  String Function(Match) matchFormatter = (Match match) => '${match[1]},';
+  String Function(Match) matchFormatter = (match) => '${match[1]},';
 }

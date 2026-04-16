@@ -135,7 +135,7 @@ class SampleWidgetsBuilder implements Builder {
   String snakeToCamel(String input) {
     final camelCase = input.replaceAllMapped(
       RegExp('(_[a-z0-9])'),
-      (Match match) => match.group(0)!.toUpperCase().substring(1),
+      (match) => match.group(0)!.toUpperCase().substring(1),
     );
     var newName = camelCase[0].toUpperCase() + camelCase.substring(1);
     if (newName.contains('Oauth')) {

@@ -122,14 +122,12 @@ class _DisplayOGCAPICollectionState extends State<DisplayOGCAPICollection>
     // Zoom to a small area within the dataset by default.
     final datasetExtent = ogcFeatureCollectionTable.extent;
     if (datasetExtent != null) {
-      unawaited(
-        _mapViewController.setViewpointAnimated(
-          Viewpoint.fromTargetExtent(
-            Envelope.fromCenter(
-              datasetExtent.center,
-              width: datasetExtent.width / 3,
-              height: datasetExtent.height / 3,
-            ),
+      _mapViewController.setViewpointAnimated(
+        Viewpoint.fromTargetExtent(
+          Envelope.fromCenter(
+            datasetExtent.center,
+            width: datasetExtent.width / 3,
+            height: datasetExtent.height / 3,
           ),
         ),
       );
