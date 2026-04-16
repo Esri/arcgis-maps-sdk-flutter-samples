@@ -254,6 +254,6 @@ class _SetReferenceScaleState extends State<SetReferenceScale>
     return '1:${value.toInt().toString().replaceAllMapped(_digitGroupRegex, matchFormatter)}';
   }
 
-  // Create a helpder function to be applied on the regular expression.
+  // Create a helper function to be applied on the regular expression.
   String Function(Match) matchFormatter = (match) => '${match[1]},';
 }
