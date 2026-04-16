@@ -150,7 +150,7 @@ linter:
     sort_constructors_first: true
     sort_pub_dependencies: true
     sort_unnamed_constructors_first: true
-    specify_nonobvious_property_types: false # because the definiton of "non-obvious" is too broad
+    specify_nonobvious_property_types: false # because the definition of "non-obvious" is too broad
     strict_top_level_inference: true
     switch_on_type: true
     test_types_in_equals: true
