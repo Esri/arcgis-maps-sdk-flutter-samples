@@ -242,7 +242,7 @@ class _EditWithBranchVersioningState extends State<EditWithBranchVersioning>
               Navigator.of(context).pop();
               setState(() {
                 feature.geometry = mapPoint;
-                _model.updateFeature();
+                _model.updateFeature().ignore();
                 setState(() => _featureBottomSheetVisible = false);
               });
             },
@@ -250,7 +250,7 @@ class _EditWithBranchVersioningState extends State<EditWithBranchVersioning>
           ),
         ],
       ),
-    );
+    ).ignore();
   }
 
   void _editDamageType(Feature feature) {

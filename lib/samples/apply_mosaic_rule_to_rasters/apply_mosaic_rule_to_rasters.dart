@@ -132,7 +132,7 @@ class _ApplyMosaicRuleToRastersState extends State<ApplyMosaicRuleToRasters>
 
   @override
   void dispose() {
-    _drawStatusSubscription?.cancel();
+    _drawStatusSubscription?.cancel().ignore();
     super.dispose();
   }
 

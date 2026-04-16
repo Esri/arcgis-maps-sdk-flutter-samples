@@ -79,6 +79,6 @@ class _AddPointSceneLayerState extends State<AddPointSceneLayer>
     // Disable the loading indicator when the layer is loaded.
     pointSceneLayer.load().then((_) {
       setState(() => _ready = true);
-    });
+    }).ignore();
   }
 }

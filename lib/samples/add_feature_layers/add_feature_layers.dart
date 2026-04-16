@@ -127,13 +127,13 @@ class _AddFeatureLayersState extends State<AddFeatureLayers>
       case Source.url:
         loadFeatureServiceFromUri();
       case Source.portalItem:
-        loadPortalItem();
+        loadPortalItem().ignore();
       case Source.geodatabase:
-        loadGeodatabase();
+        loadGeodatabase().ignore();
       case Source.geopackage:
-        loadGeopackage();
+        loadGeopackage().ignore();
       case Source.shapefile:
-        loadShapefile();
+        loadShapefile().ignore();
     }
   }
 

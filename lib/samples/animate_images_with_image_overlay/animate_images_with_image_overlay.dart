@@ -199,7 +199,7 @@ class _AnimateImagesWithImageOverlayState
     _lastFrameTime = 0;
     // create a ticker to control the image frame animation.
     _ticker = _ticker ?? createTicker(_onTicker);
-    _ticker!.start();
+    _ticker!.start().ignore();
     setState(() => _started = true);
   }
 
@@ -278,6 +278,9 @@ class _AnimateImagesWithImageOverlayState
     );
 
     // Once the image frame is loaded, set it to the image overlay.
-    imageFrame.load().then((_) => _imageOverlay.imageFrame = imageFrame);
+    imageFrame
+        .load()
+        .then((_) => _imageOverlay.imageFrame = imageFrame)
+        .ignore();
   }
 }
