@@ -34,6 +34,8 @@ class ReadmePage extends StatefulWidget {
 class _ReadmePageState extends State<ReadmePage> {
   var _isLoading = true;
   var _htmlData = '';
+  var _markdownHtml = '';
+  Brightness? _lastBrightness;
 
   final _controller = WebViewController();
 
@@ -61,6 +63,25 @@ class _ReadmePageState extends State<ReadmePage> {
     _fetchMarkDown();
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    // When the theme brightness changes, reload the HTML with the new theme colors.
+    final brightness = Theme.of(context).brightness;
+    if (_lastBrightness == brightness) {
+      return;
+    }
+
+    _lastBrightness = brightness;
+    if (_markdownHtml.isNotEmpty) {
+      Future.delayed(
+        const Duration(milliseconds: 100),
+        _loadStyledHtml,
+      ).ignore();
+    }
+  }
+
   Future<void> _fetchMarkDown() async {
     final readmeUrl =
         'https://raw.githubusercontent.com/Esri/arcgis-maps-sdk-flutter-samples/main/lib/samples/${widget.sample.key}/README.md';
@@ -78,28 +99,56 @@ class _ReadmePageState extends State<ReadmePage> {
       );
 
       // Convert the markdown to html.
-      final html = md.markdownToHtml(markdownData);
+      _markdownHtml = md.markdownToHtml(markdownData);
 
-      // Inject custom CSS for styling.
-      final styledHtml =
-          '''
+      setState(() {
+        _isLoading = false;
+      });
+
+      _loadStyledHtml();
+    } else {
+      setState(() {
+        _markdownHtml = '<p>Failed to load README.md</p>';
+        _isLoading = false;
+      });
+
+      _loadStyledHtml();
+    }
+  }
+
+  void _loadStyledHtml() {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
+    final styledHtml =
+        '''
       <html>
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
         <style>
+          :root {
+            color-scheme: ${theme.brightness == Brightness.dark ? 'dark' : 'light'};
+          }
           body {
+            background-color: ${_toCssColor(colorScheme.surface)};
+            color: ${_toCssColor(colorScheme.onSurface)};
             font-family: Arial, sans-serif;
             line-height: 1.6;
             padding: 16px;
             word-wrap: break-word;
             overflow-wrap: break-word;
           }
+          a {
+            color: ${_toCssColor(colorScheme.primary)};
+          }
           h1, h2, h3, h4, h5, h6 {
+            color: ${_toCssColor(colorScheme.onSurface)};
             font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
           }
           code {
-            background-color: #f5f5f5;
+            background-color: ${_toCssColor(colorScheme.surfaceContainer)};
             padding: 2px 4px;
+            color: ${_toCssColor(colorScheme.onSurface)};
             border-radius: 4px;
             font-family: 'Courier New', Courier, monospace;
           }
@@ -110,27 +159,24 @@ class _ReadmePageState extends State<ReadmePage> {
         </style>
       </head>
       <body>
-        $html
+        $_markdownHtml
       </body>
       </html>
     ''';
 
-      setState(() {
-        _htmlData = styledHtml;
-        _controller.loadHtmlString(_htmlData);
-        _isLoading = false;
-      });
-    } else {
-      setState(() {
-        _htmlData = 'Failed to load README.md';
-        _controller.loadHtmlString(_htmlData);
-        _isLoading = false;
-      });
-    }
+    _htmlData = styledHtml;
+    _controller.loadHtmlString(_htmlData);
+  }
+
+  String _toCssColor(Color color) {
+    final hex = color.toARGB32().toRadixString(16).padLeft(8, '0');
+    return '#${hex.substring(2)}';
   }
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Scaffold(
       appBar: AppBar(
         title: FittedBox(
@@ -143,12 +189,16 @@ class _ReadmePageState extends State<ReadmePage> {
         children: [
           Container(
             width: double.infinity,
-            color: Colors.grey[300],
-            child: const ListTile(
-              leading: Icon(Icons.description),
+            color: colorScheme.surfaceContainer,
+            child: ListTile(
+              leading: Icon(Icons.description, color: colorScheme.onSurface),
               title: Text(
                 'Readme',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: colorScheme.onSurface,
+                ),
               ),
             ),
           ),
