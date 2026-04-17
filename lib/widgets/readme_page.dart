@@ -164,7 +164,8 @@ class _ReadmePageState extends State<ReadmePage> {
 
   String _toCssColor(Color color) {
     final hex = color.toARGB32().toRadixString(16).padLeft(8, '0');
-    return '#${hex.substring(2)}';
+    // Convert ARGB to RGBA for CSS.
+    return '#${hex.substring(2)}${hex.substring(0, 2)}';
   }
 
   @override
