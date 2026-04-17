@@ -68,9 +68,9 @@ class _SampleInfoPopupMenuState extends State<SampleInfoPopupMenu>
           case 'Website':
             _launchSampleUrl();
           case 'ToggleFavorite':
-            setState(() {
-              widget.sample.isFavorite = !widget.sample.isFavorite;
-            });
+            setState(
+              () => widget.sample.isFavorite = !widget.sample.isFavorite,
+            );
           default:
             _navigateTo(context, result);
         }
