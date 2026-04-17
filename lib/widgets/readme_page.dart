@@ -33,7 +33,6 @@ class ReadmePage extends StatefulWidget {
 
 class _ReadmePageState extends State<ReadmePage> {
   var _isLoading = true;
-  var _htmlData = '';
   var _markdownHtml = '';
   Brightness? _lastBrightness;
 
@@ -166,8 +165,7 @@ class _ReadmePageState extends State<ReadmePage> {
       </html>
     ''';
 
-    _htmlData = styledHtml;
-    _controller.loadHtmlString(_htmlData);
+    _controller.loadHtmlString(styledHtml);
   }
 
   String _toCssColor(Color color) {
