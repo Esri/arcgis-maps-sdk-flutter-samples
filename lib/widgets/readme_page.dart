@@ -42,24 +42,26 @@ class _ReadmePageState extends State<ReadmePage> {
   void initState() {
     super.initState();
 
-    _controller.setNavigationDelegate(
-      NavigationDelegate(
-        onNavigationRequest: (request) {
-          final uri = Uri.parse(request.url);
+    _controller
+        .setNavigationDelegate(
+          NavigationDelegate(
+            onNavigationRequest: (request) {
+              final uri = Uri.parse(request.url);
 
-          // Allow the view to load the initial 'about:blank' page.
-          if (uri.scheme == 'about') {
-            return NavigationDecision.navigate;
-          }
+              // Allow the view to load the initial 'about:blank' page.
+              if (uri.scheme == 'about') {
+                return NavigationDecision.navigate;
+              }
 
-          // Launch any other URL in the system browser (instead of this WebViewController).
-          launchUrl(uri, mode: LaunchMode.externalApplication);
-          return NavigationDecision.prevent;
-        },
-      ),
-    );
+              // Launch any other URL in the system browser (instead of this WebViewController).
+              launchUrl(uri, mode: LaunchMode.externalApplication).ignore();
+              return NavigationDecision.prevent;
+            },
+          ),
+        )
+        .ignore();
 
-    _fetchMarkDown();
+    _fetchMarkDown().ignore();
   }
 
   @override

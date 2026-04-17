@@ -49,7 +49,8 @@ class _AuthenticateWithOAuthState extends State<AuthenticateWithOAuth>
           // ignore: avoid_print
           print('Error revoking tokens: $error');
         })
-        .whenComplete(Authenticator.clearCredentials);
+        .whenComplete(Authenticator.clearCredentials)
+        .ignore();
 
     super.dispose();
   }

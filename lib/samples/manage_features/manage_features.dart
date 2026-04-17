@@ -371,7 +371,7 @@ class _ManageFeaturesState extends State<ManageFeatures>
               ? (damageType) {
                   if (damageType != null) {
                     setState(() => _selectedDamageType = damageType);
-                    updateAttribute(_selectedFeature!, damageType);
+                    updateAttribute(_selectedFeature!, damageType).ignore();
                   }
                 }
               : null,

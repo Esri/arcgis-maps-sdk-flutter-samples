@@ -96,7 +96,7 @@ class SimulatedNmeaDataSource {
   void _shutdown() {
     if (!_running) return;
 
-    _nmeaMessagesController.close();
+    _nmeaMessagesController.close().ignore();
     if (_timer.isActive) _timer.cancel();
     _running = false;
   }

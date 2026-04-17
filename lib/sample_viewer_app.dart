@@ -94,7 +94,7 @@ class _SampleViewerAppState extends State<SampleViewerApp>
               final box = context.findRenderObject()! as RenderBox;
               final position = box.localToGlobal(box.size.center(Offset.zero));
 
-              context.push('/search', extra: position);
+              context.push('/search', extra: position).ignore();
             },
             child: const Icon(Icons.search),
           );

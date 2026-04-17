@@ -71,11 +71,11 @@ class _SetUpLocationDrivenGeotriggersState
   @override
   void dispose() {
     // Stop the location data source.
-    _locationDataSource.stop();
+    _locationDataSource.stop().ignore();
 
     // Cancel the geotrigger event subscriptions.
     for (final subscription in _streamSubscriptions) {
-      subscription.cancel();
+      subscription.cancel().ignore();
     }
     _streamSubscriptions.clear();
 
@@ -308,7 +308,7 @@ class _SetUpLocationDrivenGeotriggersState
           onClose: () => Navigator.of(context).maybePop(),
         ),
       ),
-    );
+    ).ignore();
   }
 
   // Creates the path used for the SimulatedLocationDataSource.

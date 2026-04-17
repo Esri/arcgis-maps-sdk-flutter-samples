@@ -34,7 +34,7 @@ class _AuthenticateWithTokenState extends State<AuthenticateWithToken>
   @override
   void dispose() {
     // Log out by removing all credentials.
-    Authenticator.clearCredentials();
+    Authenticator.clearCredentials().ignore();
 
     super.dispose();
   }

@@ -45,8 +45,8 @@ class _MatchViewpointOfGeoViewsState extends State<MatchViewpointOfGeoViews>
 
   @override
   void dispose() {
-    _mapViewViewpointChangedSubscription?.cancel();
-    _sceneViewViewpointChangedSubscription?.cancel();
+    _mapViewViewpointChangedSubscription?.cancel().ignore();
+    _sceneViewViewpointChangedSubscription?.cancel().ignore();
     super.dispose();
   }
 

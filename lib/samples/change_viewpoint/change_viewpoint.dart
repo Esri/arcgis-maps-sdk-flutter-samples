@@ -122,7 +122,7 @@ class _ChangeViewpointState extends State<ChangeViewpoint>
         }).toList(),
         onSelected: (viewpoint) {
           if (viewpoint != null) {
-            changeViewpoint(viewpoint);
+            changeViewpoint(viewpoint).ignore();
           }
         },
       ),

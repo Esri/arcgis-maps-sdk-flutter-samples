@@ -81,7 +81,7 @@ class _AddWfsLayerState extends State<AddWfsLayer> with SampleStateSupport {
     // Add a listener for map navigation events.
     _mapViewController.onNavigationChanged.listen((isNavigating) {
       if (!isNavigating) {
-        loadFeatures();
+        loadFeatures().ignore();
       }
     });
 
