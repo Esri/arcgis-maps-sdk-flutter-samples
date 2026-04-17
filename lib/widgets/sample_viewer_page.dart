@@ -75,7 +75,8 @@ class _SampleViewerPageState extends State<SampleViewerPage> {
   late Timer _hintTimer;
 
   // Subscription to listen for changes in favorites if the current category is favorites.
-  StreamSubscription<dynamic>? _favoriteChangeSubscription;
+  StreamSubscription<({String sampleKey, bool value})>?
+      _favoriteChangeSubscription;
 
   @override
   void initState() {
