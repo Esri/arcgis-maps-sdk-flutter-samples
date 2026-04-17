@@ -76,9 +76,9 @@ class _ReadmePageState extends State<ReadmePage> {
 
     _lastBrightness = brightness;
     if (_markdownHtml.isNotEmpty) {
-      Future.delayed(const Duration(milliseconds: 100), () {
+      Future.delayed(const Duration(milliseconds: 100), () async {
         if (!mounted) return;
-        _loadStyledHtml();
+        await _loadStyledHtml();
       }).ignore();
     }
   }
@@ -103,23 +103,15 @@ class _ReadmePageState extends State<ReadmePage> {
 
       // Convert the markdown to html.
       _markdownHtml = md.markdownToHtml(markdownData);
-
-      setState(() {
-        _isLoading = false;
-      });
-
-      _loadStyledHtml();
     } else {
-      setState(() {
-        _markdownHtml = '<p>Failed to load README.md</p>';
-        _isLoading = false;
-      });
-
-      _loadStyledHtml();
+      _markdownHtml = '<p>Failed to load README.md</p>';
     }
+
+    await _loadStyledHtml();
+    setState(() => _isLoading = false);
   }
 
-  void _loadStyledHtml() {
+  Future<void> _loadStyledHtml() async {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
@@ -167,7 +159,7 @@ class _ReadmePageState extends State<ReadmePage> {
       </html>
     ''';
 
-    _controller.loadHtmlString(styledHtml).ignore();
+    await _controller.loadHtmlString(styledHtml);
   }
 
   String _toCssColor(Color color) {
