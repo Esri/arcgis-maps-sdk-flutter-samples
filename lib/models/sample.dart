@@ -117,9 +117,11 @@ class FavoriteRepository {
       return;
     }
 
-    _sharedPreferences.setStringList(
-      'favorite_sample_keys',
-      _favoriteSampleKeys.toList(),
+    unawaited(
+      _sharedPreferences.setStringList(
+        'favorite_sample_keys',
+        _favoriteSampleKeys.toList(),
+      ),
     );
 
     _favoriteChangedController.add((sampleKey: sampleKey, value: value));
