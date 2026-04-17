@@ -89,6 +89,8 @@ class _ReadmePageState extends State<ReadmePage> {
         'https://github.com/Esri/arcgis-maps-sdk-flutter-samples/raw/main/lib/samples/${widget.sample.key}/${widget.sample.key}.png';
 
     final response = await http.get(Uri.parse(readmeUrl));
+    if (!mounted) return;
+
     if (response.statusCode == 200) {
       var markdownData = response.body;
 
