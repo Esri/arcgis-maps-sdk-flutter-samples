@@ -89,8 +89,8 @@ class _SampleViewerPageState extends State<SampleViewerPage> {
             .instance
             .favoriteChanged
             .listen((_) {
-              final refreshedSamples = getSamplesByCategory(.favorites);
-              setState(() => _filteredSamples = refreshedSamples);
+              // Refresh the list of samples when a favorite is added or removed.
+              onSearchChanged(_textEditingController.text);
             });
       }
     }
