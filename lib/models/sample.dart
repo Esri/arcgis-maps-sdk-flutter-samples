@@ -18,6 +18,7 @@
 import 'package:arcgis_maps_sdk_flutter_samples/models/downloadable_resource.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/models/samples_widget_list.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 /// Class that contains information about each of the samples.
 /// The metadata is taken from the sample's README.metadata.json data via generated_samples_list.json.
@@ -64,6 +65,11 @@ class Sample {
 
   String get key => _key;
 
+  bool get isFavorite => FavoriteRepository.instance.isFavorite(_key);
+
+  set isFavorite(bool value) =>
+      FavoriteRepository.instance.setFavorite(_key, value);
+
   List<DownloadableResource> get downloadableResources =>
       _downloadableResources;
 
@@ -71,4 +77,36 @@ class Sample {
   bool get hasDownloadableResources => _downloadableResources.isNotEmpty;
 
   Widget getSampleWidget() => _sampleWidget;
+}
+
+// Repository for managing favorite state of samples, persisted using SharedPreferences.
+// `instance` must be initialized with SharedPreferences before use by calling `initialize()`.
+class FavoriteRepository {
+  static final instance = FavoriteRepository();
+
+  late SharedPreferences _sharedPreferences;
+  late Set<String> _favoriteSampleKeys;
+
+  void initialize(SharedPreferences sharedPreferences) {
+    _sharedPreferences = sharedPreferences;
+    _favoriteSampleKeys =
+        (_sharedPreferences.getStringList('favorite_sample_keys') ??
+                const <String>[])
+            .toSet();
+  }
+
+  bool isFavorite(String sampleKey) => _favoriteSampleKeys.contains(sampleKey);
+
+  void setFavorite(String sampleKey, bool value) {
+    if (value) {
+      _favoriteSampleKeys.add(sampleKey);
+    } else {
+      _favoriteSampleKeys.remove(sampleKey);
+    }
+
+    _sharedPreferences.setStringList(
+      'favorite_sample_keys',
+      _favoriteSampleKeys.toList(),
+    );
+  }
 }
