@@ -128,7 +128,7 @@ class _AnimateImagesWithImageOverlayState
                           });
                         }
                       },
-                      items: _animatedSpeeds.map((String speed) {
+                      items: _animatedSpeeds.map((speed) {
                         return DropdownMenuItem<String>(
                           value: speed,
                           child: Text(

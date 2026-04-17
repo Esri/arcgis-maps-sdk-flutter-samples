@@ -352,7 +352,7 @@ class _ManageFeaturesState extends State<ManageFeatures>
         );
       case FeatureManagementOperation.attribute:
         // Create a dropdown button for updating the attribute value of the selected feature.
-        return DropdownButton(
+        return DropdownButton<String>(
           alignment: Alignment.center,
           hint: Text(
             'Select attribute value',
@@ -368,7 +368,7 @@ class _ManageFeaturesState extends State<ManageFeatures>
           iconEnabledColor: Theme.of(context).colorScheme.primary,
           iconDisabledColor: Theme.of(context).disabledColor,
           onChanged: _selectedFeature != null
-              ? (String? damageType) {
+              ? (damageType) {
                   if (damageType != null) {
                     setState(() => _selectedDamageType = damageType);
                     updateAttribute(_selectedFeature!, damageType);

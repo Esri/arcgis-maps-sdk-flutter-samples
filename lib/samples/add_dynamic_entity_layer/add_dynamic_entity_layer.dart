@@ -371,10 +371,13 @@ class _AddDynamicEntityLayerState extends State<AddDynamicEntityLayer>
               if (service != null) {
                 try {
                   await service.purgeAll();
+
+                  if (!context.mounted) return;
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text('All observations purged.')),
                   );
                 } on Exception catch (_) {
+                  if (!context.mounted) return;
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
                       content: Text('Failed to purge observations.'),

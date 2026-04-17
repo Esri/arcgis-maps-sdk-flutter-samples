@@ -334,9 +334,7 @@ class _DensifyAndGeneralizeGeometryState
       spatialReference: polyline.spatialReference,
     );
     for (final part in polyline.parts) {
-      for (final point in part.getPoints()) {
-        mutablePointCollection.addPoint(point);
-      }
+      part.getPoints().forEach(mutablePointCollection.addPoint);
     }
 
     // Use a MultipointBuilder to create a Multipoint geometry from the points.

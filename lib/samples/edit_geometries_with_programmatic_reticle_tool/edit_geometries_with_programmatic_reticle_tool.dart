@@ -551,10 +551,8 @@ class _EditGeometriesWithProgrammaticReticleToolState
 
   // Zooms to the provided point using the current map scale.
   void zoomToPoint(ArcGISPoint point) {
-    unawaited(
-      _mapViewController.setViewpointAnimated(
-        Viewpoint.fromCenter(point, scale: _mapViewController.scale),
-      ),
+    _mapViewController.setViewpointAnimated(
+      Viewpoint.fromCenter(point, scale: _mapViewController.scale),
     );
   }
 }

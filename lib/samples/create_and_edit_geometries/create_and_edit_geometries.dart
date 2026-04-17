@@ -327,7 +327,7 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         // A drop down button for selecting geometry type.
-        DropdownButton(
+        DropdownButton<GeometryType>(
           alignment: Alignment.center,
           hint: Text(
             'Geometry Type',
@@ -341,7 +341,7 @@ class _CreateAndEditGeometriesState extends State<CreateAndEditGeometries>
           items: configureGeometryTypeMenuItems(),
           // If the geometry editor is already started then we fully disable the DropDownButton and prevent editing with another geometry type.
           onChanged: !_geometryEditorIsStarted
-              ? (GeometryType? geometryType) {
+              ? (geometryType) {
                   if (geometryType != null) {
                     startEditingWithGeometryType(geometryType);
                   }
