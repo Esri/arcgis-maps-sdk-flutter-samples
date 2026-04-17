@@ -74,12 +74,25 @@ class _SampleViewerPageState extends State<SampleViewerPage> {
   int _currentHintIndex = 0;
   late Timer _hintTimer;
 
+  // Subscription to listen for changes in favorites if the current category is favorites.
+  StreamSubscription<dynamic>? _favoriteChangeSubscription;
+
   @override
   void initState() {
     super.initState();
 
     if (widget.category != null) {
       _filteredSamples = getSamplesByCategory(widget.category);
+
+      if (widget.category == .favorites) {
+        _favoriteChangeSubscription = FavoriteRepository
+            .instance
+            .favoriteChanged
+            .listen((_) {
+              final refreshedSamples = getSamplesByCategory(.favorites);
+              setState(() => _filteredSamples = refreshedSamples);
+            });
+      }
     }
 
     generateSearchHints();
@@ -108,6 +121,7 @@ class _SampleViewerPageState extends State<SampleViewerPage> {
     _hintTimer.cancel();
     _textEditingController.dispose();
     _searchFocusNode.dispose();
+    _favoriteChangeSubscription?.cancel();
     super.dispose();
   }
 
@@ -237,6 +251,11 @@ class _SampleViewerPageState extends State<SampleViewerPage> {
   }
 
   void generateSearchHints() {
+    if (widget.category == .favorites) {
+      _hintMessages = ['Your favorite samples will appear here.'];
+      return;
+    }
+
     final uniqueHints = <String>{};
     final random = Random();
 

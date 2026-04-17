@@ -14,6 +14,8 @@
 // limitations under the License.
 //
 
+import 'dart:async';
+
 // run `dart run build_runner build` to generate samples_widget_list.dart
 import 'package:arcgis_maps_sdk_flutter_samples/models/downloadable_resource.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/models/samples_widget_list.dart';
@@ -79,14 +81,21 @@ class Sample {
   Widget getSampleWidget() => _sampleWidget;
 }
 
-// Repository for managing favorite state of samples, persisted using SharedPreferences.
-// `instance` must be initialized with SharedPreferences before use by calling `initialize()`.
+/// Repository for managing favorite state of samples, persisted using SharedPreferences.
+/// `instance` must be initialized with SharedPreferences before use by calling `initialize()`.
 class FavoriteRepository {
   static final instance = FavoriteRepository();
 
   late SharedPreferences _sharedPreferences;
   late Set<String> _favoriteSampleKeys;
+  final _favoriteChangedController =
+      StreamController<({String sampleKey, bool value})>.broadcast();
 
+  /// Stream that emits events when a favorite sample is added or removed.
+  Stream<({String sampleKey, bool value})> get favoriteChanged =>
+      _favoriteChangedController.stream;
+
+  /// Loads the favorite samples from SharedPreferences.
   void initialize(SharedPreferences sharedPreferences) {
     _sharedPreferences = sharedPreferences;
     _favoriteSampleKeys =
@@ -95,18 +104,24 @@ class FavoriteRepository {
             .toSet();
   }
 
+  /// Whether the sample with the given key is marked as a favorite.
   bool isFavorite(String sampleKey) => _favoriteSampleKeys.contains(sampleKey);
 
+  /// Sets the favorite status of the sample, persists the change, and emits an event.
   void setFavorite(String sampleKey, bool value) {
-    if (value) {
-      _favoriteSampleKeys.add(sampleKey);
-    } else {
-      _favoriteSampleKeys.remove(sampleKey);
+    final hasChanged = value
+        ? _favoriteSampleKeys.add(sampleKey)
+        : _favoriteSampleKeys.remove(sampleKey);
+
+    if (!hasChanged) {
+      return;
     }
 
     _sharedPreferences.setStringList(
       'favorite_sample_keys',
       _favoriteSampleKeys.toList(),
     );
+
+    _favoriteChangedController.add((sampleKey: sampleKey, value: value));
   }
 }
