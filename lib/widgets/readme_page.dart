@@ -75,10 +75,10 @@ class _ReadmePageState extends State<ReadmePage> {
 
     _lastBrightness = brightness;
     if (_markdownHtml.isNotEmpty) {
-      Future.delayed(
-        const Duration(milliseconds: 100),
-        _loadStyledHtml,
-      ).ignore();
+      Future.delayed(const Duration(milliseconds: 100), () {
+        if (!mounted) return;
+        _loadStyledHtml();
+      }).ignore();
     }
   }
 
