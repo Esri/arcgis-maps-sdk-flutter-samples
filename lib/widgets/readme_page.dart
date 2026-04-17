@@ -167,7 +167,7 @@ class _ReadmePageState extends State<ReadmePage> {
       </html>
     ''';
 
-    _controller.loadHtmlString(styledHtml);
+    _controller.loadHtmlString(styledHtml).ignore();
   }
 
   String _toCssColor(Color color) {
