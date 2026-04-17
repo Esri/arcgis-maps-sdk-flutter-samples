@@ -108,6 +108,8 @@ class _ReadmePageState extends State<ReadmePage> {
     }
 
     await _loadStyledHtml();
+    if (!mounted) return;
+
     setState(() => _isLoading = false);
   }
 
