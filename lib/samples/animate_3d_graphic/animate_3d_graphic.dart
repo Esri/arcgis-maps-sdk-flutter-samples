@@ -485,7 +485,7 @@ class _Animate3dGraphicState extends State<Animate3dGraphic>
     if (_ticker.isActive) {
       _ticker.stop();
     } else {
-      _ticker.start();
+      _ticker.start().ignore();
     }
     setState(() => _isPlaying = _ticker.isActive);
   }
@@ -556,7 +556,7 @@ class _Animate3dGraphicState extends State<Animate3dGraphic>
                     // Update the modal to show progress reset to 0
                     _modalStateSetter?.call(() {});
 
-                    _loadMissionFrames(mission);
+                    _loadMissionFrames(mission).ignore();
                   }
                 },
                 dropdownMenuEntries: Mission.values.map((mission) {
@@ -588,7 +588,7 @@ class _Animate3dGraphicState extends State<Animate3dGraphic>
       },
     ).whenComplete(() {
       _modalStateSetter = null;
-    });
+    }).ignore();
   }
 
   // Shows the camera settings in a bottom sheet.
@@ -671,7 +671,7 @@ class _Animate3dGraphicState extends State<Animate3dGraphic>
           },
         );
       },
-    );
+    ).ignore();
   }
 
   // Builds a labeled slider widget.

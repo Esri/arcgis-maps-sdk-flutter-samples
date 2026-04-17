@@ -67,7 +67,7 @@ class _CategoryCardState extends State<CategoryCard>
     );
 
     Future.delayed(Duration(milliseconds: widget.index * 120), () {
-      if (mounted) _controller.forward();
+      if (mounted) _controller.forward().ignore();
     });
   }
 
@@ -177,7 +177,7 @@ class _AnimatedIconState extends State<_AnimatedIcon>
     );
 
     Future.delayed(Duration(milliseconds: widget.index * 120), () {
-      if (mounted) _entryController.forward();
+      if (mounted) _entryController.forward().ignore();
     });
   }
 

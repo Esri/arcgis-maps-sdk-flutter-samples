@@ -113,12 +113,14 @@ class _FindRouteInMobileMapPackageState
                           : null,
                       // When the card is tapped, navigate to a FindRouteInMap page.
                       onTap: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute<void>(
-                            builder: (context) =>
-                                FindRouteInMap(sampleData: data),
-                          ),
-                        );
+                        Navigator.of(context)
+                            .push(
+                              MaterialPageRoute<void>(
+                                builder: (context) =>
+                                    FindRouteInMap(sampleData: data),
+                              ),
+                            )
+                            .ignore();
                       },
                     ),
                   ),

@@ -43,8 +43,8 @@ class _AddRasterFromServiceState extends State<AddRasterFromService>
 
   @override
   void dispose() {
-    _drawStatusChangedSubscription?.cancel();
-    _layerViewChangedSubscription?.cancel();
+    _drawStatusChangedSubscription?.cancel().ignore();
+    _layerViewChangedSubscription?.cancel().ignore();
     super.dispose();
   }
 

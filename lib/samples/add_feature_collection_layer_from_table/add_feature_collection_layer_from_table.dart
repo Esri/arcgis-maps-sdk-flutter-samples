@@ -106,7 +106,7 @@ class _AddFeatureCollectionLayerFromTableState
       attributes: {'Place': 'Current location'},
       geometry: point,
     );
-    pointTable.addFeature(feature);
+    pointTable.addFeature(feature).ignore();
 
     return pointTable;
   }
@@ -156,7 +156,7 @@ class _AddFeatureCollectionLayerFromTableState
       attributes: {'Boundary': 'AManAPlanACanalPanama'},
       geometry: polyline,
     );
-    polylineTable.addFeature(feature);
+    polylineTable.addFeature(feature).ignore();
 
     return polylineTable;
   }
@@ -211,7 +211,7 @@ class _AddFeatureCollectionLayerFromTableState
       attributes: {'Area': 'Restricted area'},
       geometry: polygon,
     );
-    polygonTable.addFeature(feature);
+    polygonTable.addFeature(feature).ignore();
 
     return polygonTable;
   }

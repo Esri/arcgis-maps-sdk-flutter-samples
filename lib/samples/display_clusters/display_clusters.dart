@@ -222,7 +222,7 @@ class _DisplayClustersState extends State<DisplayClusters>
           ),
         ),
       ),
-    );
+    ).ignore();
   }
 
   void toggleFeatureClustering() {

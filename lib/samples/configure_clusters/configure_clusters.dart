@@ -262,7 +262,7 @@ class _ConfigureClustersState extends State<ConfigureClusters>
           onClose: () => Navigator.of(context).maybePop(),
         ),
       ),
-    );
+    ).ignore();
   }
 
   Widget buildSettings(BuildContext context) {

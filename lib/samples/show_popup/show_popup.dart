@@ -118,6 +118,6 @@ class _ShowPopupState extends State<ShowPopup> with SampleStateSupport {
           },
         ),
       ),
-    );
+    ).ignore();
   }
 }
