@@ -31,6 +31,8 @@ void main() async {
   // const apiKey = ''; // Your API Key here.
   ArcGISEnvironment.apiKey = apiKey;
 
+  WidgetsFlutterBinding.ensureInitialized();
+
   final prefs = await SharedPreferences.getInstance();
   FavoriteRepository.instance.initialize(prefs);
 

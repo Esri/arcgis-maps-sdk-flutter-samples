@@ -76,7 +76,7 @@ class _SampleViewerPageState extends State<SampleViewerPage> {
 
   // Subscription to listen for changes in favorites if the current category is favorites.
   StreamSubscription<({String sampleKey, bool value})>?
-      _favoriteChangeSubscription;
+  _favoriteChangeSubscription;
 
   @override
   void initState() {
@@ -120,7 +120,7 @@ class _SampleViewerPageState extends State<SampleViewerPage> {
     _hintTimer.cancel();
     _textEditingController.dispose();
     _searchFocusNode.dispose();
-    _favoriteChangeSubscription?.cancel();
+    _favoriteChangeSubscription?.cancel().ignore();
     super.dispose();
   }
 

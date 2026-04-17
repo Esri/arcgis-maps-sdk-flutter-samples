@@ -124,6 +124,8 @@ class FavoriteRepository {
       ),
     );
 
-    _favoriteChangedController.add((sampleKey: sampleKey, value: value));
+    if (_favoriteChangedController.hasListener) {
+      _favoriteChangedController.add((sampleKey: sampleKey, value: value));
+    }
   }
 }
