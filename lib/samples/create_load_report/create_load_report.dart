@@ -69,7 +69,7 @@ class _CreateLoadReportState extends State<CreateLoadReport>
       'I68VGU^nMurF',
     );
 
-    _initUtilityNetwork();
+    _initUtilityNetwork().ignore();
   }
 
   @override

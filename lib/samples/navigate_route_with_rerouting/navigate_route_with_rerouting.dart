@@ -263,15 +263,15 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
 
   @override
   void dispose() {
-    _flutterTts.stop();
-    _simulatedLocationDataSource?.stop();
-    _voiceGuidanceSubscription?.cancel();
-    _trackingStatusSubscription?.cancel();
-    _rerouteStartedSubscription?.cancel();
-    _rerouteCompletedSubscription?.cancel();
+    _flutterTts.stop().ignore();
+    _simulatedLocationDataSource?.stop().ignore();
+    _voiceGuidanceSubscription?.cancel().ignore();
+    _trackingStatusSubscription?.cancel().ignore();
+    _rerouteStartedSubscription?.cancel().ignore();
+    _rerouteCompletedSubscription?.cancel().ignore();
 
-    _autoPanModeChangedSubscription?.cancel();
-    _mapLoadingSubscription?.cancel();
+    _autoPanModeChangedSubscription?.cancel().ignore();
+    _mapLoadingSubscription?.cancel().ignore();
     super.dispose();
   }
 
@@ -421,7 +421,7 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
       updateProgress,
     );
     _rerouteStartedSubscription = _routeTracker.onRerouteStarted.listen((_) {
-      _flutterTts.speak('Rerouting');
+      _flutterTts.speak('Rerouting').ignore();
       setState(() => _routeStatus = 'Rerouting');
     });
     _rerouteCompletedSubscription = _routeTracker.onRerouteCompleted.listen((
@@ -438,7 +438,7 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
     _routeTracker.setSpeechEngineReady(() => false);
     _flutterTts.speak(nextDirection).then((value) {
       _routeTracker.setSpeechEngineReady(() => true);
-    });
+    }).ignore();
   }
 
   // Listen for tracking status changes and update the route status.

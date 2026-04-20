@@ -146,7 +146,7 @@ class _AttachmentsOptionsState extends State<AttachmentsOptions>
   void initState() {
     super.initState();
     _damageType = widget.arcGISFeature.attributes['typdamage'] as String?;
-    _loadAttachments();
+    _loadAttachments().ignore();
   }
 
   @override
@@ -159,7 +159,7 @@ class _AttachmentsOptionsState extends State<AttachmentsOptions>
       _attachments = [];
       _isLoading = true;
       _damageType = widget.arcGISFeature.attributes['typdamage'] as String?;
-      _loadAttachments();
+      _loadAttachments().ignore();
     }
   }
 
@@ -254,12 +254,14 @@ class _AttachmentsOptionsState extends State<AttachmentsOptions>
                 icon: const Icon(Icons.save),
                 onPressed: () {
                   // Save the attachment to the device.
-                  FilePicker.platform.saveFile(
-                    dialogTitle: 'Save Attachment',
-                    fileName: attachment.name,
-                    bytes: data,
-                    lockParentWindow: true,
-                  );
+                  FilePicker.platform
+                      .saveFile(
+                        dialogTitle: 'Save Attachment',
+                        fileName: attachment.name,
+                        bytes: data,
+                        lockParentWindow: true,
+                      )
+                      .ignore();
                 },
               ),
               IconButton(

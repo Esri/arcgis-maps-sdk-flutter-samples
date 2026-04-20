@@ -166,7 +166,7 @@ class _IdentifyFeaturesInWmsLayerState extends State<IdentifyFeaturesInWmsLayer>
           child: WebViewWidget(controller: _webViewController),
         ),
       ),
-    );
+    ).ignore();
   }
 
   // A helper method to update the initial scale of the provided HTML content to improve readability.

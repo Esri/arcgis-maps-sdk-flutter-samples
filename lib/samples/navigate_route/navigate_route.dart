@@ -121,10 +121,10 @@ class _NavigateRouteState extends State<NavigateRoute> with SampleStateSupport {
 
   @override
   void dispose() {
-    _simulatedLocationDataSource.stop();
-    _startedSubscription?.cancel();
-    _autoPanModeSubscription?.cancel();
-    _flutterTts.stop();
+    _simulatedLocationDataSource.stop().ignore();
+    _startedSubscription?.cancel().ignore();
+    _autoPanModeSubscription?.cancel().ignore();
+    _flutterTts.stop().ignore();
     super.dispose();
   }
 

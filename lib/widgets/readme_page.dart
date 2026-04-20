@@ -33,7 +33,6 @@ class ReadmePage extends StatefulWidget {
 
 class _ReadmePageState extends State<ReadmePage> {
   var _isLoading = true;
-  var _htmlData = '';
 
   final _controller = WebViewController();
 
@@ -41,24 +40,26 @@ class _ReadmePageState extends State<ReadmePage> {
   void initState() {
     super.initState();
 
-    _controller.setNavigationDelegate(
-      NavigationDelegate(
-        onNavigationRequest: (request) {
-          final uri = Uri.parse(request.url);
+    _controller
+        .setNavigationDelegate(
+          NavigationDelegate(
+            onNavigationRequest: (request) {
+              final uri = Uri.parse(request.url);
 
-          // Allow the view to load the initial 'about:blank' page.
-          if (uri.scheme == 'about') {
-            return NavigationDecision.navigate;
-          }
+              // Allow the view to load the initial 'about:blank' page.
+              if (uri.scheme == 'about') {
+                return NavigationDecision.navigate;
+              }
 
-          // Launch any other URL in the system browser (instead of this WebViewController).
-          launchUrl(uri, mode: LaunchMode.externalApplication);
-          return NavigationDecision.prevent;
-        },
-      ),
-    );
+              // Launch any other URL in the system browser (instead of this WebViewController).
+              launchUrl(uri, mode: LaunchMode.externalApplication).ignore();
+              return NavigationDecision.prevent;
+            },
+          ),
+        )
+        .ignore();
 
-    _fetchMarkDown();
+    _fetchMarkDown().ignore();
   }
 
   Future<void> _fetchMarkDown() async {
@@ -115,17 +116,11 @@ class _ReadmePageState extends State<ReadmePage> {
       </html>
     ''';
 
-      setState(() {
-        _htmlData = styledHtml;
-        _controller.loadHtmlString(_htmlData);
-        _isLoading = false;
-      });
+      await _controller.loadHtmlString(styledHtml);
+      setState(() => _isLoading = false);
     } else {
-      setState(() {
-        _htmlData = 'Failed to load README.md';
-        _controller.loadHtmlString(_htmlData);
-        _isLoading = false;
-      });
+      await _controller.loadHtmlString('Failed to load README.md');
+      setState(() => _isLoading = false);
     }
   }
 

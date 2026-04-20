@@ -66,7 +66,7 @@ class _SampleInfoPopupMenuState extends State<SampleInfoPopupMenu>
       onSelected: (result) {
         switch (result) {
           case 'Website':
-            _launchSampleUrl();
+            _launchSampleUrl().ignore();
           case 'ToggleFavorite':
             setState(
               () => widget.sample.isFavorite = !widget.sample.isFavorite,
@@ -109,7 +109,7 @@ class _SampleInfoPopupMenuState extends State<SampleInfoPopupMenu>
     if (stack.isEmpty || stack.last.endsWith('/live')) {
       // If there is nothing on the stack from this sample, or if we're on the live
       // running sample, push the location onto the stack.
-      context.push(toLocation);
+      context.push(toLocation).ignore();
     } else {
       if (stack.last != toLocation) {
         if (stack.contains(toLocation)) {
@@ -117,7 +117,7 @@ class _SampleInfoPopupMenuState extends State<SampleInfoPopupMenu>
           context.pop();
         } else {
           // Otherwise push the new location onto the navigation stack.
-          context.push(toLocation);
+          context.push(toLocation).ignore();
         }
       }
     }

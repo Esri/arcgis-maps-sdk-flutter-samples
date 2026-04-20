@@ -67,7 +67,8 @@ class _ShowPortalUserInfoState extends State<ShowPortalUserInfo>
           // ignore: avoid_print
           print('Error revoking tokens: $error');
         })
-        .whenComplete(Authenticator.clearCredentials);
+        .whenComplete(Authenticator.clearCredentials)
+        .ignore();
 
     super.dispose();
   }
@@ -173,9 +174,9 @@ class _ShowPortalUserInfoState extends State<ShowPortalUserInfo>
   void loadThumbnails() {
     _portal.user?.thumbnail?.loadBytes().then((bytes) {
       setState(() => _userThumbnail = bytes);
-    });
+    }).ignore();
     _portal.portalInfo?.thumbnail?.loadBytes().then((bytes) {
       setState(() => _organizationThumbnail = bytes);
-    });
+    }).ignore();
   }
 }

@@ -392,7 +392,7 @@ class _DynamicEntityObservationTileState
   @override
   void dispose() {
     // Cancel the subscription to avoid memory leaks.
-    _subscription?.cancel();
+    _subscription?.cancel().ignore();
     _subscription = null;
     super.dispose();
   }

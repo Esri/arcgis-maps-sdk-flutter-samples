@@ -58,6 +58,7 @@ linter:
     deprecated_consistency: true
     deprecated_member_use_from_same_package: true
     directives_ordering: true
+    discarded_futures: true
     document_ignores: true
     empty_catches: true
     empty_constructor_bodies: true
