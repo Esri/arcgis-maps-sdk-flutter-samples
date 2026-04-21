@@ -1,0 +1,32 @@
+{
+    "category": "Layers",
+    "description": "Explore details of a building scene by using filters and sublayer visibility.",
+    "ignore": false,
+    "images": [
+        "filter_building_scene_layer.png"
+    ],
+    "keywords": [
+        "3D",
+        "building scene layer",
+        "layers",
+        "ArcGISLocalSceneView",
+        "ArcGISScene",
+        "BuildingComponentSublayer",
+        "BuildingFilter",
+        "BuildingFilterBlock",
+        "BuildingSceneLayer"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+        "ArcGISLocalSceneView",
+        "ArcGISScene",
+        "BuildingComponentSublayer",
+        "BuildingFilter",
+        "BuildingFilterBlock",
+        "BuildingSceneLayer"
+    ],
+    "snippets": [
+        "filter_building_scene_layer.dart"
+    ],
+    "title": "Filter building scene layer"
+}

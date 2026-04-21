@@ -1,0 +1,33 @@
+{
+    "category": "Layers",
+    "description": "Add a layer to a local scene to visualize and interact with 3D building models developed using Building Information Modeling (BIM) tools.",
+    "ignore": false,
+    "images": [
+        "add_building_scene_layer.png"
+    ],
+    "keywords": [
+        "3D",
+        "buildings",
+        "elevation",
+        "layers",
+        "scene",
+        "surface",
+        "ArcGISLocalSceneView",
+        "ArcGISScene",
+        "ArcGISTiledElevationSource",
+        "BuildingSceneLayer",
+        "BuildingSublayer"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+        "ArcGISLocalSceneView",
+        "ArcGISScene",
+        "ArcGISTiledElevationSource",
+        "BuildingSceneLayer",
+        "BuildingSublayer"
+    ],
+    "snippets": [
+        "add_building_scene_layer.dart"
+    ],
+    "title": "Add building scene layer"
+}

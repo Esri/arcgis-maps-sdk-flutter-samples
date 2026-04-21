@@ -21,7 +21,7 @@ import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:go_router/go_router.dart';
 
 class NavigateRouteWithRerouting extends StatefulWidget {
   const NavigateRouteWithRerouting({super.key});
@@ -54,7 +54,10 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
   // Rerouting parameters to enable rerouting.
   late ReroutingParameters _reroutingParameters;
 
-  // A SimulatedLocationDataSource to simulate the location data source.
+  // The path to the downloaded geodatabase.
+  late String _geodatabasePath;
+
+  // A SimulatedLocationDataSource to simulate the sequence of location updates.
   SimulatedLocationDataSource? _simulatedLocationDataSource;
 
   // Graphics to show progress on the route.
@@ -92,13 +95,7 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
   var _remainingTime = '';
   var _nextDirection = '';
 
-  // Future to download the geodatabase.
-  late Future<String> _geodatabasePathFuture;
-
-  // Future to download the simulated location data source.
-  late Future<SimulatedLocationDataSource> _simulatedLocationDataSourceFuture;
-
-  // Stream subscriptions
+  // Stream subscriptions tracking various events.
   StreamSubscription<VoiceGuidance>? _voiceGuidanceSubscription;
   StreamSubscription<TrackingStatus>? _trackingStatusSubscription;
   StreamSubscription<void>? _rerouteStartedSubscription;
@@ -109,10 +106,12 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
 
   @override
   void initState() {
-    // Downloads the San Diego geodatabase required for offline routing in San Diego.
-    _geodatabasePathFuture = downloadSanDiegoGeodatabase();
-    // Downloads the data source's locations using a local JSON file.
-    _simulatedLocationDataSourceFuture = getLocationDataSource();
+    final listPaths = GoRouter.of(context).state.extra! as List<String>;
+    // Store the path of the downloaded geodatabase.
+    _geodatabasePath = listPaths[0];
+    // Create a simulated location data source using the downloaded JSON file.
+    _simulatedLocationDataSource = getLocationDataSource(listPaths[1]);
+
     super.initState();
   }
 
@@ -253,7 +252,7 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       LinearProgressIndicator(),
-                      Text('Downloading data...'),
+                      Text('Initializing navigation...'),
                     ],
                   ),
                 ),
@@ -284,6 +283,8 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
     // Create a map with a navigation basemap style.
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISNavigation);
     _mapViewController.arcGISMap = map;
+
+    // Once the map finishes loading, initialize navigation.
     _mapLoadingSubscription = map.onLoadStatusChanged.listen((
       loadStatus,
     ) async {
@@ -313,9 +314,8 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
     await _flutterTts.setVolume(1);
     await _flutterTts.setPitch(1.3);
 
-    // Check if platform is iOS.
+    // Perform iOS-specific initialization.
     final isIOS = !kIsWeb && Platform.isIOS;
-
     if (isIOS) {
       await _flutterTts.setIosAudioCategory(
         IosTextToSpeechAudioCategory.playback,
@@ -331,11 +331,9 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
 
   // Initialize the route task, route parameters, and route result.
   Future<void> initRouteTask() async {
-    // Get the path to the geodatabase.
-    final geodatabasePath = await _geodatabasePathFuture;
     // Create a route task.
     _routeTask = RouteTask.withGeodatabase(
-      pathToDatabase: Uri.file(geodatabasePath),
+      pathToDatabase: Uri.file(_geodatabasePath),
       networkName: 'Streets_ND',
     );
 
@@ -390,8 +388,6 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
       showMessageDialog('Rerouting is not supported.');
     }
 
-    // Get the simulated location data source.
-    _simulatedLocationDataSource = await _simulatedLocationDataSourceFuture;
     // Create a route tracker location data source to snap the location display to the route.
     final routeTrackerLocationDataSource = RouteTrackerLocationDataSource(
       routeTracker: _routeTracker,
@@ -573,10 +569,9 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
   }
 
   // Create a simulated location data source.
-  Future<SimulatedLocationDataSource> getLocationDataSource() async {
+  SimulatedLocationDataSource getLocationDataSource(String jsonPath) {
     // Load the route point JSON file.
-    final tourJsonPath = await downloadSanDiegoTourPath();
-    final jsonString = await File(tourJsonPath).readAsString();
+    final jsonString = File(jsonPath).readAsStringSync();
     final routeLine = Geometry.fromJsonString(jsonString) as Polyline;
 
     final simulatedLocationDataSource =
@@ -638,50 +633,6 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
         ..zIndex = 100,
       Graphic(geometry: _endPoint, symbol: routeEndNumberSymbol)..zIndex = 100,
     ]);
-  }
-
-  // Download the San Diego geodatabase.
-  Future<String> downloadSanDiegoGeodatabase() async {
-    // Get the application documents directory.
-    final appDir = await getApplicationDocumentsDirectory();
-    const downloadFileName = 'san_diego_offline_routing';
-    final zipFile = File('${appDir.absolute.path}/$downloadFileName.zip');
-
-    // Download the sample data if it does not exist.
-    if (!zipFile.existsSync()) {
-      await downloadSampleDataWithProgress(
-        itemIds: ['df193653ed39449195af0c9725701dca'],
-        destinationFiles: [zipFile],
-      );
-    }
-    // Create a file to the geodatabase.
-    final geodatabaseFile = File(
-      '${appDir.absolute.path}/$downloadFileName/sandiego.geodatabase',
-    );
-    // Return the path to the geodatabase.
-    return geodatabaseFile.path;
-  }
-
-  // Download San Diego tour path.
-  Future<String> downloadSanDiegoTourPath() async {
-    // Get the application documents directory.
-    final appDir = await getApplicationDocumentsDirectory();
-    const downloadFileName = 'SanDiegoTourPath';
-    final zipFile = File('${appDir.absolute.path}/$downloadFileName.zip');
-
-    // Download the sample data if it does not exist.
-    if (!zipFile.existsSync()) {
-      await downloadSampleDataWithProgress(
-        itemIds: ['4caec8c55ea2463982f1af7d9611b8d5'],
-        destinationFiles: [zipFile],
-      );
-    }
-    // Create the SanDiegoTourPath.json file.
-    final tourPathFile = File(
-      '${appDir.absolute.path}/$downloadFileName/$downloadFileName.json',
-    );
-    // Return the path of the JSON file.
-    return tourPathFile.path;
   }
 }
 

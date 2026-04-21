@@ -18,7 +18,7 @@ import 'dart:io';
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:go_router/go_router.dart';
 
 class ControlAnnotationSublayerVisibility extends StatefulWidget {
   const ControlAnnotationSublayerVisibility({super.key});
@@ -126,16 +126,10 @@ class _ControlAnnotationSublayerVisibilityState
 
   Future<void> onMapViewReady() async {
     try {
-      final appDir = await getApplicationDocumentsDirectory();
+      final listPaths = GoRouter.of(context).state.extra! as List<String>;
 
       // Load the mobile map package.
-      final mmpkFile = File('${appDir.absolute.path}/GasDeviceAnno.mmpk');
-      if (!mmpkFile.existsSync()) {
-        await downloadSampleDataWithProgress(
-          itemIds: ['b87307dcfb26411eb2e92e1627cb615b'],
-          destinationFiles: [mmpkFile],
-        );
-      }
+      final mmpkFile = File(listPaths.first);
       // Mobile map package that contains annotation layers.
       final mmpk = MobileMapPackage.withFileUri(mmpkFile.uri);
       await mmpk.load();

@@ -38,7 +38,7 @@ class _SetBasemapState extends State<SetBasemap> with SampleStateSupport {
   // Create a default image.
   final _defaultImage = Image.asset('assets/basemap_default.png');
   // Create a future to load basemaps.
-  late Future _loadBasemapsFuture;
+  late Future<void> _loadBasemapsFuture;
   // Create a variable to store the selected basemap.
   Basemap? _selectedBasemap;
 
@@ -65,43 +65,37 @@ class _SetBasemapState extends State<SetBasemap> with SampleStateSupport {
                 // Create a grid view to display basemaps.
                 return GridView.count(
                   crossAxisCount: 2,
-                  children:
-                      _basemaps.keys
-                          .map(
-                            // Create a list tile for each basemap.
-                            (basemap) => ListTile(
-                              title: Column(
-                                children: [
-                                  Container(
-                                    // Add a border to the selected basemap.
-                                    decoration:
-                                        _selectedBasemap == basemap
-                                            ? BoxDecoration(
-                                              border: Border.all(
-                                                color: Colors.blue,
-                                                width: 4,
-                                              ),
-                                            )
-                                            : null,
-                                    // Display the basemap image.
-                                    child: _basemaps[basemap] ?? _defaultImage,
-                                  ),
-                                  Text(
-                                    basemap.name,
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ],
-                              ),
-                              // Update the map with the selected basemap.
-                              onTap: () {
-                                _selectedBasemap = basemap;
-                                _arcGISMap.basemap = basemap;
-                                _scaffoldStateKey.currentState!
-                                    .closeEndDrawer();
-                              },
-                            ),
-                          )
-                          .toList(),
+                  children: _basemaps.keys
+                      .map(
+                        // Create a list tile for each basemap.
+                        (basemap) => ListTile(
+                          title: Container(
+                            // Add a border to the selected basemap.
+                            decoration: _selectedBasemap == basemap
+                                ? BoxDecoration(
+                                    border: Border.all(
+                                      color: Colors.blue,
+                                      width: 4,
+                                    ),
+                                  )
+                                : null,
+                            // Display the basemap image.
+                            child: _basemaps[basemap] ?? _defaultImage,
+                          ),
+                          // Display the basemap name.
+                          subtitle: Text(
+                            basemap.name,
+                            textAlign: TextAlign.center,
+                          ),
+                          // Update the map with the selected basemap.
+                          onTap: () {
+                            _selectedBasemap = basemap;
+                            _arcGISMap.basemap = basemap;
+                            _scaffoldStateKey.currentState!.closeEndDrawer();
+                          },
+                        ),
+                      )
+                      .toList(),
                 );
               } else {
                 // Display a loading message while loading basemaps.
@@ -138,7 +132,7 @@ class _SetBasemapState extends State<SetBasemap> with SampleStateSupport {
     _mapViewController.arcGISMap = _arcGISMap;
   }
 
-  Future loadBasemaps() async {
+  Future<void> loadBasemaps() async {
     // Create a portal to access online items.
     final portal = Portal.arcGISOnline();
     // Load basemaps from portal.

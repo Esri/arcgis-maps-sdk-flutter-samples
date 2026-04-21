@@ -19,7 +19,8 @@ import 'dart:io';
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:go_router/go_router.dart';
+import 'package:path/path.dart' as path;
 
 class ApplyScheduledUpdatesToPreplannedMapArea extends StatefulWidget {
   const ApplyScheduledUpdatesToPreplannedMapArea({super.key});
@@ -99,12 +100,16 @@ class _ApplyScheduledUpdatesToPreplannedMapAreaState
   }
 
   Future<void> onMapViewReady() async {
-    // Set the path to the map package data.
-    final appDir = await getApplicationDocumentsDirectory();
-    _dataUri = Uri.parse('${appDir.absolute.path}/canyonlands');
+    final listPaths = GoRouter.of(context).state.extra! as List<String>;
+    final originalPath = listPaths.first;
 
-    // Prepare (download and extract) the map package data.
-    await _prepareData();
+    // Create a copy of the map package so that updating it does not modify the original.
+    final toUpdateDir = Directory('${originalPath}_toUpdate');
+    if (toUpdateDir.existsSync()) toUpdateDir.deleteSync(recursive: true);
+    Directory(originalPath).copySync(toUpdateDir);
+    _dataUri = toUpdateDir.uri;
+
+    await _loadMapPackageMap();
 
     // Check if there is an update for the map package.
     await _checkForUpdates();
@@ -189,19 +194,23 @@ class _ApplyScheduledUpdatesToPreplannedMapAreaState
 
     return true;
   }
+}
 
-  // Function that extracts the map package archive to restore the original map data.
-  // Downloads and extracts the map package archive if the file is not currently on the device.
-  Future<void> _prepareData() async {
-    final archiveFile = File('${_dataUri.path}.zip');
-    if (!archiveFile.existsSync()) {
-      await downloadSampleDataWithProgress(
-        itemIds: ['740b663bff5e4198b9b6674af93f638a'],
-        destinationFiles: [archiveFile],
-      );
+extension on Directory {
+  // Recursively copy this directory to [destination].
+  void copySync(Directory destination) {
+    if (!destination.existsSync()) {
+      destination.createSync(recursive: true);
     }
-
-    // Load the map package from the extracted map package.
-    await _loadMapPackageMap();
+    for (final entity in listSync()) {
+      final newPath = path.join(destination.path, path.basename(entity.path));
+      if (entity is File) {
+        entity.copySync(newPath);
+      } else if (entity is Directory) {
+        final newDirectory = Directory(newPath);
+        newDirectory.createSync(recursive: true);
+        entity.copySync(newDirectory);
+      }
+    }
   }
 }

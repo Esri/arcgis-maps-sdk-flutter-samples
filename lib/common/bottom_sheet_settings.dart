@@ -28,30 +28,26 @@ class BottomSheetSettings extends StatelessWidget {
   const BottomSheetSettings({
     required this.onCloseIconPressed,
     required this.settingsWidgets,
+    this.title,
     super.key,
   });
   final VoidCallback onCloseIconPressed;
   final List<Widget> Function(BuildContext) settingsWidgets;
+  final String? title;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.fromLTRB(
-        20,
-        20,
-        20,
-        max(
-          20,
-          View.of(context).viewPadding.bottom /
-              View.of(context).devicePixelRatio,
-        ),
-      ),
+    return Padding(
+      padding: bottomSheetPadding(context),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           Row(
             children: [
-              Text('Settings', style: Theme.of(context).textTheme.titleLarge),
+              Text(
+                title ?? 'Settings',
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
               const Spacer(),
               IconButton(
                 icon: const Icon(Icons.close),
@@ -65,4 +61,18 @@ class BottomSheetSettings extends StatelessWidget {
       ),
     );
   }
+}
+
+EdgeInsets bottomSheetPadding(BuildContext context) {
+  return EdgeInsets.fromLTRB(
+    20,
+    20,
+    20,
+    max(
+      20,
+      5 +
+          View.of(context).viewPadding.bottom /
+              View.of(context).devicePixelRatio,
+    ),
+  );
 }

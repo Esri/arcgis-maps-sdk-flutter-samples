@@ -15,6 +15,10 @@
         "Basemap",
         "TileCache"
     ],
+    "offline_data": [{
+        "itemId": "e4a398afe9a945f3b0f4dca1e4faccb5",
+        "downloadable": "SanFrancisco.tpkx"
+    }],
     "redirect_from": [],
     "relevant_apis": [
         "ArcGISMap",

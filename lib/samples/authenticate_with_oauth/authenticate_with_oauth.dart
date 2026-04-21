@@ -44,7 +44,7 @@ class _AuthenticateWithOAuthState extends State<AuthenticateWithOAuth>
   void dispose() {
     // Revoke OAuth tokens and remove all credentials to log out.
     Authenticator.revokeOAuthTokens()
-        .catchError((error) {
+        .catchError((Object error) {
           // This sample has been disposed, so we can only report errors to the console.
           // ignore: avoid_print
           print('Error revoking tokens: $error');

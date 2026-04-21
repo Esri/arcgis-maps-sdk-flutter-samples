@@ -15,6 +15,10 @@
     "AnnotationSublayer",
     "LayerContent"
   ],
+  "offline_data": [{
+      "itemId": "b87307dcfb26411eb2e92e1627cb615b",
+      "downloadable": "GasDeviceAnno.mmpk"
+  }],
   "redirect_from": [],
   "relevant_apis": [
     "AnnotationLayer",

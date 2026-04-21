@@ -1,0 +1,43 @@
+{
+    "category": "Analysis",
+    "description": "Analyze the exploratory viewshed for an object (GeoElement) in a scene.",
+    "ignore": false,
+    "images": [
+        "show_exploratory_viewshed_from_geoelement_in_scene.png"
+    ],
+    "keywords": [
+        "3D",
+        "analysis",
+        "buildings",
+        "exploratory viewshed",
+        "model",
+        "scene",
+        "visibility analysis",
+        "AnalysisOverlay",
+        "ExploratoryGeoElementViewshed",
+        "GeodeticDistanceResult",
+        "GeometryEngine.distanceGeodetic",
+        "GeometryEngine.moveGeodetic",
+        "ModelSceneSymbol",
+        "OrbitGeoElementCameraController"
+    ],
+    "offline_data": [{
+        "itemId": "07d62a792ab6496d9b772a24efea45d0",
+        "downloadable": "bradley_low_3ds.zip",
+        "resource": "bradle.3ds"
+    }],
+    "redirect_from": [],
+    "relevant_apis": [
+        "AnalysisOverlay",
+        "ExploratoryGeoElementViewshed",
+        "GeodeticDistanceResult",
+        "GeometryEngine.distanceGeodetic",
+        "GeometryEngine.moveGeodetic",
+        "ModelSceneSymbol",
+        "OrbitGeoElementCameraController"
+    ],
+    "snippets": [
+        "show_exploratory_viewshed_from_geoelement_in_scene.dart"
+    ],
+    "title": "Show exploratory viewshed from geoelement in scene"
+}

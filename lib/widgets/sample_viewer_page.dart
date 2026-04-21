@@ -15,20 +15,24 @@
 //
 
 import 'dart:async';
-import 'dart:convert';
 import 'dart:math';
 import 'package:arcgis_maps_sdk_flutter_samples/models/category.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/models/sample.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/widgets/sample_list_view.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 const applicationTitle = 'ArcGIS Maps SDK for Flutter Samples';
 
 /// A page that displays a list of sample categories.
 class SampleViewerPage extends StatefulWidget {
-  const SampleViewerPage({super.key, this.category, this.isSearchable = true});
+  const SampleViewerPage({
+    required this.allSamples,
+    this.category,
+    this.isSearchable = true,
+    super.key,
+  });
 
+  final List<Sample> allSamples;
   final SampleCategory? category;
   final bool isSearchable;
 
@@ -37,11 +41,9 @@ class SampleViewerPage extends StatefulWidget {
 }
 
 class _SampleViewerPageState extends State<SampleViewerPage> {
-  final _allSamples = <Sample>[];
   final _searchFocusNode = FocusNode();
   final _textEditingController = TextEditingController();
   var _filteredSamples = <Sample>[];
-  var _ready = false;
   var _searchHasFocus = false;
 
   final _searchPrefixes = [
@@ -75,27 +77,27 @@ class _SampleViewerPageState extends State<SampleViewerPage> {
   @override
   void initState() {
     super.initState();
-    // Delay search after first frame.
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      if (mounted) {
-        await loadSamples();
-        _searchFocusNode.addListener(() {
-          if (_searchFocusNode.hasFocus != _searchHasFocus) {
-            setState(() => _searchHasFocus = _searchFocusNode.hasFocus);
-          }
-        });
 
-        _hintTimer = Timer.periodic(const Duration(seconds: 3), (_) {
-          if (!mounted) return;
+    if (widget.category != null) {
+      _filteredSamples = getSamplesByCategory(widget.category);
+    }
 
-          if (_hintMessages.isNotEmpty &&
-              !_searchHasFocus &&
-              _textEditingController.text.isEmpty) {
-            setState(() {
-              _currentHintIndex =
-                  (_currentHintIndex + 1) % _hintMessages.length;
-            });
-          }
+    generateSearchHints();
+
+    _searchFocusNode.addListener(() {
+      if (_searchFocusNode.hasFocus != _searchHasFocus) {
+        setState(() => _searchHasFocus = _searchFocusNode.hasFocus);
+      }
+    });
+
+    _hintTimer = Timer.periodic(const Duration(seconds: 3), (_) {
+      if (!mounted) return;
+
+      if (_hintMessages.isNotEmpty &&
+          !_searchHasFocus &&
+          _textEditingController.text.isEmpty) {
+        setState(() {
+          _currentHintIndex = (_currentHintIndex + 1) % _hintMessages.length;
         });
       }
     });
@@ -122,49 +124,50 @@ class _SampleViewerPageState extends State<SampleViewerPage> {
         children: [
           Visibility(
             visible: widget.isSearchable,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8),
-              child: TextField(
-                focusNode: _searchFocusNode,
-                controller: _textEditingController,
-                onChanged: onSearchChanged,
-                autocorrect: false,
-                decoration: InputDecoration(
-                  hintText: 'Search...',
-                  suffixIcon: IconButton(
-                    icon: Icon(_searchHasFocus ? Icons.cancel : Icons.search),
-                    onPressed: onSearchSuffixPressed,
+            child: SafeArea(
+              bottom: false,
+              top: false,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: TextField(
+                  focusNode: _searchFocusNode,
+                  controller: _textEditingController,
+                  onChanged: onSearchChanged,
+                  autocorrect: false,
+                  decoration: InputDecoration(
+                    hintText: 'Search...',
+                    suffixIcon: IconButton(
+                      icon: Icon(_searchHasFocus ? Icons.cancel : Icons.search),
+                      onPressed: onSearchSuffixPressed,
+                    ),
                   ),
                 ),
               ),
             ),
           ),
-          if (_ready)
-            Expanded(
-              child: Listener(
-                onPointerDown: (_) =>
-                    FocusManager.instance.primaryFocus?.unfocus(),
-                child:
-                    _filteredSamples.isEmpty &&
-                        _textEditingController.text.isEmpty &&
-                        widget.isSearchable &&
-                        _hintMessages.isNotEmpty
-                    ? Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 12),
-                        child: AnimatedSwitcher(
-                          duration: const Duration(milliseconds: 400),
-                          child: Text(
-                            _hintMessages[_currentHintIndex],
-                            key: ValueKey(_currentHintIndex),
-                            textAlign: TextAlign.center,
-                          ),
+          Expanded(
+            child: Listener(
+              onPointerDown: (_) =>
+                  FocusManager.instance.primaryFocus?.unfocus(),
+              child:
+                  _filteredSamples.isEmpty &&
+                      _textEditingController.text.isEmpty &&
+                      widget.isSearchable &&
+                      _hintMessages.isNotEmpty
+                  ? Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      child: AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 400),
+                        child: Text(
+                          _hintMessages[_currentHintIndex],
+                          key: ValueKey(_currentHintIndex),
+                          textAlign: TextAlign.center,
                         ),
-                      )
-                    : SampleListView(samples: _filteredSamples),
-              ),
-            )
-          else
-            const Center(child: Text('Loading samples...')),
+                      ),
+                    )
+                  : SampleListView(samples: _filteredSamples),
+            ),
+          ),
         ],
       ),
     );
@@ -180,24 +183,6 @@ class _SampleViewerPageState extends State<SampleViewerPage> {
     }
   }
 
-  Future<void> loadSamples() async {
-    final jsonString = await rootBundle.loadString(
-      'assets/generated_samples_list.json',
-    );
-    final sampleData = jsonDecode(jsonString) as Map<String, dynamic>;
-    for (final s in sampleData.entries) {
-      _allSamples.add(Sample.fromJson(s.value));
-    }
-
-    if (widget.category != null) {
-      _filteredSamples = getSamplesByCategory(widget.category);
-    }
-
-    generateSearchHints();
-
-    setState(() => _ready = true);
-  }
-
   void onSearchChanged(String searchText) {
     var results = <Sample>[];
     // Restore the initial list of samples if the search text is empty.
@@ -205,13 +190,13 @@ class _SampleViewerPageState extends State<SampleViewerPage> {
       if (widget.category == null) {
         results = [];
       } else if (widget.category == SampleCategory.all) {
-        results = _allSamples;
+        results = widget.allSamples;
       } else {
         results = getSamplesByCategory(widget.category);
       }
     } else {
       if (widget.category == null || widget.category == SampleCategory.all) {
-        results = _allSamples.where((sample) {
+        results = widget.allSamples.where((sample) {
           final lowerSearchText = searchText.toLowerCase();
           return sample.title.toLowerCase().contains(lowerSearchText) ||
               sample.category.toLowerCase().contains(lowerSearchText) ||
@@ -238,10 +223,10 @@ class _SampleViewerPageState extends State<SampleViewerPage> {
       return [];
     }
     if (category.title == SampleCategory.all.title) {
-      return _allSamples;
+      return widget.allSamples;
     }
 
-    return _allSamples.where((sample) {
+    return widget.allSamples.where((sample) {
       return sample.category.toLowerCase() == category.title.toLowerCase();
     }).toList();
   }
@@ -250,7 +235,7 @@ class _SampleViewerPageState extends State<SampleViewerPage> {
     final uniqueHints = <String>{};
     final random = Random();
 
-    for (final sample in _allSamples) {
+    for (final sample in widget.allSamples) {
       final title = sample.title;
 
       // Generate a hint from title (if short).

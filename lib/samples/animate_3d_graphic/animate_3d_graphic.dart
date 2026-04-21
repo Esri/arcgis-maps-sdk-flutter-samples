@@ -14,12 +14,11 @@
 //
 
 import 'dart:convert';
-import 'dart:io';
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:go_router/go_router.dart';
 
 class Animate3dGraphic extends StatefulWidget {
   const Animate3dGraphic({super.key});
@@ -29,9 +28,24 @@ class Animate3dGraphic extends StatefulWidget {
 }
 
 class _Animate3dGraphicState extends State<Animate3dGraphic>
-    with TickerProviderStateMixin, SampleStateSupport {
+    with SingleTickerProviderStateMixin, SampleStateSupport {
   // Create a controller for the scene view.
   final _sceneViewController = ArcGISSceneView.createController();
+
+  // Create a controller for the inset map view.
+  final _mapViewController = ArcGISMapView.createController();
+
+  // The graphic for the route in the inset map.
+  final _routeGraphic = Graphic(symbol: SimpleLineSymbol(color: Colors.red));
+
+  // The graphic for the triangle representing the plane on the inset map.
+  final _triangleGraphic = Graphic(
+    symbol: SimpleMarkerSymbol(
+      style: SimpleMarkerSymbolStyle.triangle,
+      color: Colors.blue,
+      size: 10,
+    ),
+  );
 
   // A flag for when the scene view is ready and controls can be used.
   var _ready = false;
@@ -57,6 +71,9 @@ class _Animate3dGraphicState extends State<Animate3dGraphic>
   // The ticker that drives the animation.
   late final Ticker _ticker;
 
+  // The interval between animation frames in milliseconds.
+  var _frameIntervalMs = 0;
+
   // The currently selected mission.
   var _currentMission = Mission.grandCanyon;
 
@@ -71,11 +88,8 @@ class _Animate3dGraphicState extends State<Animate3dGraphic>
   var _autoPitch = false;
   var _autoRoll = false;
 
-  // State variables for real-time telemetry tracking.
-  double _altitude = 0;
-  double _heading = 0;
-  double _pitch = 0;
-  double _roll = 0;
+  // Data for real-time telemetry tracking.
+  final _telemetryData = TelemetryData();
 
   // The current progress of the animation.
   double get _progress {
@@ -86,14 +100,16 @@ class _Animate3dGraphicState extends State<Animate3dGraphic>
   @override
   void initState() {
     super.initState();
-    // Start the animation ticker.
-    _ticker = createTicker(_onTick)..start();
+    // Create the animation ticker.
+    _ticker = createTicker(_onTick);
+    _updateFrameInterval();
   }
 
   @override
   void dispose() {
     // Cleanup the ticker.
     _ticker.dispose();
+    _telemetryData.dispose();
     super.dispose();
   }
 
@@ -109,10 +125,30 @@ class _Animate3dGraphicState extends State<Animate3dGraphic>
             Column(
               children: [
                 Expanded(
-                  // Add a scene view to the widget tree and set a controller.
-                  child: ArcGISSceneView(
-                    controllerProvider: () => _sceneViewController,
-                    onSceneViewReady: onSceneViewReady,
+                  child: Stack(
+                    children: [
+                      // Add a scene view to the widget tree and set a controller.
+                      ArcGISSceneView(
+                        controllerProvider: () => _sceneViewController,
+                        onSceneViewReady: onSceneViewReady,
+                      ),
+                      // Add an inset map showing the route.
+                      Align(
+                        alignment: Alignment.bottomLeft,
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(10, 10, 10, 40),
+                          child: Container(
+                            width: 150,
+                            height: 100,
+                            decoration: BoxDecoration(border: Border.all()),
+                            child: ArcGISMapView(
+                              controllerProvider: () => _mapViewController,
+                              onMapViewReady: onMapViewReady,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 Row(
@@ -123,10 +159,10 @@ class _Animate3dGraphicState extends State<Animate3dGraphic>
                       onPressed: _showMissionSettings,
                       child: const Text('Mission'),
                     ),
-                    // Play/pause button.
+                    // Play/stop button.
                     IconButton(
                       onPressed: _toggleAnimation,
-                      icon: Icon(_isPlaying ? Icons.pause : Icons.play_arrow),
+                      icon: Icon(_isPlaying ? Icons.stop : Icons.play_arrow),
                     ),
                     // Button to open camera settings.
                     ElevatedButton(
@@ -146,19 +182,19 @@ class _Animate3dGraphicState extends State<Animate3dGraphic>
                   child: Container(
                     margin: const EdgeInsets.all(16),
                     width: 170,
-                    height: 120,
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
                       color: Colors.black.withValues(alpha: 0.3),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Column(
+                      mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        _buildTelemetryRow('Altitude', _altitude),
-                        _buildTelemetryRow('Heading', _heading),
-                        _buildTelemetryRow('Pitch', _pitch),
-                        _buildTelemetryRow('Roll', _roll),
+                        _buildTelemetryRow('Altitude', _telemetryData.altitude),
+                        _buildTelemetryRow('Heading', _telemetryData.heading),
+                        _buildTelemetryRow('Pitch', _telemetryData.pitch),
+                        _buildTelemetryRow('Roll', _telemetryData.roll),
                       ],
                     ),
                   ),
@@ -211,27 +247,24 @@ class _Animate3dGraphicState extends State<Animate3dGraphic>
     return scene;
   }
 
+  // Create the inset map and graphics.
+  void onMapViewReady() {
+    // Create a map with the streets basemap.
+    final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISStreets);
+    _mapViewController.arcGISMap = map;
+
+    // Turn off attribution and gestures for the inset map.
+    _mapViewController.isAttributionTextVisible = false;
+    _mapViewController.interactionOptions.enabled = false;
+
+    // Create a graphics overlay with the graphics.
+    final graphicsOverlay = GraphicsOverlay();
+    graphicsOverlay.graphics.addAll([_routeGraphic, _triangleGraphic]);
+    _mapViewController.graphicsOverlays.add(graphicsOverlay);
+  }
+
   // Loads the 3D plane model from local sample data and returns it as a Graphic.
   Future<Graphic> _loadPlaneGraphic() async {
-    const downloadFileName = 'Bristol';
-    final appDir = await getApplicationDocumentsDirectory();
-    final zipFile = File('${appDir.absolute.path}/$downloadFileName.zip');
-    // Download the plane model files.
-    if (!zipFile.existsSync()) {
-      await downloadSampleDataWithProgress(
-        itemIds: ['681d6f7694644709a7c830ec57a2d72b'],
-        destinationFiles: [zipFile],
-      );
-    }
-    final planeModelPath =
-        '${appDir.absolute.path}/$downloadFileName/$downloadFileName.dae';
-
-    // Define the plane symbol.
-    final planeSymbol = ModelSceneSymbol.withUri(
-      uri: Uri.parse(planeModelPath),
-      scale: 20,
-    )..anchorPosition = SceneSymbolAnchorPosition.center;
-
     // Define the initial position of the plane in the scene.
     final planePosition = ArcGISPoint(
       x: -109.937516,
@@ -239,6 +272,15 @@ class _Animate3dGraphicState extends State<Animate3dGraphic>
       z: 5000,
       spatialReference: SpatialReference.wgs84,
     );
+
+    final listPaths = GoRouterState.of(context).extra! as List<String>;
+    final planeModelPath = listPaths.first;
+
+    // Define the plane symbol.
+    final planeSymbol = ModelSceneSymbol.withUri(
+      uri: Uri.parse(planeModelPath),
+      scale: 20,
+    )..anchorPosition = SceneSymbolAnchorPosition.center;
 
     // Return the graphic that combines geometry and symbol.
     return Graphic(geometry: planePosition, symbol: planeSymbol);
@@ -334,88 +376,130 @@ class _Animate3dGraphicState extends State<Animate3dGraphic>
       }
     }
 
+    if (_ticker.isActive) {
+      _ticker.stop();
+      setState(() => _isPlaying = false);
+    }
     setState(() {
       _frames = frames;
       _currentFrameIndex = 0;
-      _isPlaying = false;
     });
 
     if (_frames.isNotEmpty) {
+      // Create the route graphic for the inset map.
+      final builder = PolylineBuilder(
+        spatialReference: frames.first.position.spatialReference,
+      );
+      for (final frame in frames) {
+        builder.addPoint(frame.position);
+      }
+      _routeGraphic.geometry = builder.toGeometry();
+
+      // Update the frame to the first frame.
       _updateFrame(_frames.first);
     }
   }
 
-  // Updates the plane graphic with the current frame data.
+  // Updates the interface with the current frame data.
   void _updateFrame(Frame frame) {
     if (_planeGraphic == null) return;
 
+    // Update the plane graphic.
     _planeGraphic!.geometry = frame.position;
     _planeGraphic!.attributes['HEADING'] = frame.heading;
     _planeGraphic!.attributes['PITCH'] = frame.pitch;
     _planeGraphic!.attributes['ROLL'] = frame.roll;
 
-    setState(() {
-      _altitude = frame.position.z ?? 0;
-      _heading = frame.heading;
-      _pitch = frame.pitch;
-      _roll = frame.roll;
-    });
+    // Update the telemetry overlay.
+    _telemetryData.altitude.value = frame.position.z ?? 0;
+    _telemetryData.heading.value = frame.heading;
+    _telemetryData.pitch.value = frame.pitch;
+    _telemetryData.roll.value = frame.roll;
+
+    // Update the triangle graphic on the inset map.
+    _triangleGraphic.geometry = frame.position;
+
+    // Keep the inset map centered on the plane.
+    _mapViewController.setViewpoint(
+      Viewpoint.fromCenter(
+        frame.position,
+        scale: 100000,
+        rotation: frame.heading,
+      ),
+    );
   }
 
   // Telemetry Row Widget.
-  Widget _buildTelemetryRow(String label, double value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 2),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(label, style: const TextStyle(color: Colors.white)),
-          Text(
-            label == 'Altitude'
-                ? '${value.toStringAsFixed(0)} m'
-                : '${value.toStringAsFixed(0)}°',
-            style: const TextStyle(color: Colors.white),
+  Widget _buildTelemetryRow(String label, ValueNotifier<double> valueNotifier) {
+    return ValueListenableBuilder(
+      valueListenable: valueNotifier,
+      builder: (context, value, child) {
+        return Padding(
+          padding: const EdgeInsets.symmetric(vertical: 2),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(label, style: const TextStyle(color: Colors.white)),
+              Text(
+                label == 'Altitude'
+                    ? '${value.toStringAsFixed(0)} m'
+                    : '${value.toStringAsFixed(0)}°',
+                style: const TextStyle(color: Colors.white),
+              ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 
   // Called on each tick to advance the animation.
   void _onTick(Duration elapsed) {
-    if (!_isPlaying || _frames.isEmpty || _planeGraphic == null) return;
+    // Calculate which frame should be shown at this elapsed time.
+    var nextFrame = elapsed.inMilliseconds ~/ _frameIntervalMs;
+    if (nextFrame >= _frames.length) {
+      nextFrame = 0;
+      _ticker.stop();
+      setState(() => _isPlaying = false);
+    }
+    if (nextFrame == _currentFrameIndex) return;
 
-    setState(() {
-      _currentFrameIndex += _animationSpeed.frameStep;
-      if (_currentFrameIndex >= _frames.length) {
-        _currentFrameIndex = 0;
-        _isPlaying = false;
-      }
-    });
+    // Advance to the specified frame.
+    setState(() => _currentFrameIndex = nextFrame);
+    _updateFrame(_frames[_currentFrameIndex]);
 
     // Update modal sheet if it's open.
     _modalStateSetter?.call(() {});
-
-    _updateFrame(_frames[_currentFrameIndex]);
   }
 
-  // Toggles the animation play/pause state.
+  // Updates the frame interval based on the current animation speed.
+  void _updateFrameInterval() {
+    final framesPerSecond = 60 * _animationSpeed.frameStep;
+    _frameIntervalMs = (1000 / framesPerSecond).round();
+  }
+
+  // Toggles the animation play/stop state.
   void _toggleAnimation() {
     if (_planeGraphic == null || _frames.isEmpty) return;
 
-    setState(() => _isPlaying = !_isPlaying);
+    if (_ticker.isActive) {
+      _ticker.stop();
+    } else {
+      _ticker.start();
+    }
+    setState(() => _isPlaying = _ticker.isActive);
   }
 
   // Shows the mission settings in a bottom sheet.
   void _showMissionSettings() {
-    showModalBottomSheet(
+    showModalBottomSheet<void>(
       context: context,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
       builder: (context) {
         return Padding(
-          padding: const EdgeInsets.all(16),
+          padding: bottomSheetPadding(context),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -461,10 +545,13 @@ class _Animate3dGraphicState extends State<Animate3dGraphic>
                 initialSelection: _currentMission,
                 onSelected: (mission) {
                   if (mission != null) {
+                    if (_ticker.isActive) {
+                      _ticker.stop();
+                      setState(() => _isPlaying = false);
+                    }
                     setState(() {
                       _currentMission = mission;
                       _currentFrameIndex = 0;
-                      _isPlaying = false;
                     });
                     // Update the modal to show progress reset to 0
                     _modalStateSetter?.call(() {});
@@ -485,6 +572,7 @@ class _Animate3dGraphicState extends State<Animate3dGraphic>
                 onSelected: (speed) {
                   if (speed != null) {
                     setState(() => _animationSpeed = speed);
+                    _updateFrameInterval();
                   }
                 },
                 dropdownMenuEntries: AnimationSpeed.values.map((speed) {
@@ -505,7 +593,7 @@ class _Animate3dGraphicState extends State<Animate3dGraphic>
 
   // Shows the camera settings in a bottom sheet.
   void _showCameraSettings() {
-    showModalBottomSheet(
+    showModalBottomSheet<void>(
       context: context,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
@@ -514,7 +602,7 @@ class _Animate3dGraphicState extends State<Animate3dGraphic>
         return StatefulBuilder(
           builder: (context, setModalState) {
             return Padding(
-              padding: const EdgeInsets.all(16),
+              padding: bottomSheetPadding(context),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -606,9 +694,24 @@ class _Animate3dGraphicState extends State<Animate3dGraphic>
           label: value.toStringAsFixed(0),
           onChanged: onChanged,
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 4),
       ],
     );
+  }
+}
+
+// A class to hold telemetry data in ValueNotifiers.
+class TelemetryData {
+  final altitude = ValueNotifier<double>(0);
+  final heading = ValueNotifier<double>(0);
+  final pitch = ValueNotifier<double>(0);
+  final roll = ValueNotifier<double>(0);
+
+  void dispose() {
+    altitude.dispose();
+    heading.dispose();
+    pitch.dispose();
+    roll.dispose();
   }
 }
 

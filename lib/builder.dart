@@ -20,6 +20,27 @@ import 'dart:io';
 import 'package:build/build.dart';
 import 'package:glob/glob.dart';
 
+const excludedSamples = <String>{};
+
+// Returns a list of metadata files, excluding the ones in the excludedSamples list.
+Future<List<String>> getMetadataFiles(BuildStep buildStep) async {
+  final assets = buildStep.findAssets(
+    Glob('lib/samples/*/README.metadata.json'),
+  );
+
+  final metadataFiles = <String>[];
+  await for (final sample in assets) {
+    final directoryName = sample.path.split('/')[2];
+    if (excludedSamples.contains(directoryName)) {
+      continue;
+    }
+
+    metadataFiles.add(sample.path);
+  }
+
+  return metadataFiles;
+}
+
 Builder sampleCatalogBuilder(BuilderOptions options) => SampleCatalogBuilder();
 
 // Generates assets/generated_samples_list.json by combining all the README.metadata.json files.
@@ -30,14 +51,8 @@ class SampleCatalogBuilder implements Builder {
   };
 
   @override
-  Future build(BuildStep buildStep) async {
-    final assets = buildStep.findAssets(
-      Glob('lib/samples/*/README.metadata.json'),
-    );
-    final metadataFiles = <String>[];
-    await for (final input in assets) {
-      metadataFiles.add(input.path);
-    }
+  Future<void> build(BuildStep buildStep) async {
+    final metadataFiles = await getMetadataFiles(buildStep);
     final output = AssetId(
       buildStep.inputId.package,
       'assets/generated_samples_list.json',
@@ -80,14 +95,8 @@ class SampleWidgetsBuilder implements Builder {
   };
 
   @override
-  Future build(BuildStep buildStep) async {
-    final assets = buildStep.findAssets(
-      Glob('lib/samples/*/README.metadata.json'),
-    );
-    final samples = <String>[];
-    await for (final sample in assets) {
-      samples.add(sample.path);
-    }
+  Future<void> build(BuildStep buildStep) async {
+    final samples = await getMetadataFiles(buildStep);
     final output = AssetId(
       buildStep.inputId.package,
       'lib/models/samples_widget_list.dart',

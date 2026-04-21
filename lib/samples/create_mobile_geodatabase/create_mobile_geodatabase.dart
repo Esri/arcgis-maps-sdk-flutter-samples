@@ -137,7 +137,7 @@ class _CreateMobileGeodatabaseState extends State<CreateMobileGeodatabase>
   Future<void> _setupGeodatabase() async {
     final directory = await getApplicationDocumentsDirectory();
     final geodatabaseFile = File(
-      '${directory.path}${Platform.pathSeparator}localHistory.geodatabase',
+      '${directory.path}${Platform.pathSeparator}LocationHistory.geodatabase',
     );
     if (geodatabaseFile.existsSync()) geodatabaseFile.deleteSync();
 
@@ -211,38 +211,43 @@ class _CreateMobileGeodatabaseState extends State<CreateMobileGeodatabase>
       );
     }
     if (mounted) {
-      await showDialog(
+      await showDialog<void>(
         context: context,
-        barrierColor: Colors.transparent,
         builder: (context) {
-          return SimpleDialog(
-            shape: const RoundedRectangleBorder(),
-            children: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(15, 5, 15, 10),
-                child: SingleChildScrollView(
-                  child: DataTable(
-                    border: TableBorder.all(),
+          return AlertDialog(
+            title: Text(
+              'Feature Table',
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+            insetPadding: const EdgeInsets.all(24),
+            content: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  DataTable(
+                    horizontalMargin: 10,
+                    columnSpacing: 20,
+                    border: TableBorder.all(color: Colors.grey),
                     columns: const [
                       DataColumn(label: Text('OID')),
-                      DataColumn(
-                        label: Text(
-                          'Collection Timestamp',
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
+                      DataColumn(label: Text('Collection Timestamp')),
                     ],
                     rows: dataRows,
                   ),
-                ),
+                  const Padding(
+                    padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
+                    child: Text(
+                      'Attribute table loaded from the mobile geodatabase '
+                      'file. File can be loaded on ArcGIS Pro or ArcGIS Maps SDK.',
+                    ),
+                  ),
+                ],
               ),
-              const Padding(
-                padding: EdgeInsets.fromLTRB(15, 0, 15, 10),
-                child: Text(
-                  'Attribute table loaded from the mobile geodatabase '
-                  'file. File can be loaded on ArcGIS Pro or ArcGIS Maps SDK.',
-                  style: TextStyle(fontSize: 12),
-                ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('Close'),
               ),
             ],
           );
@@ -256,9 +261,8 @@ class _CreateMobileGeodatabaseState extends State<CreateMobileGeodatabase>
     _geodatabase?.close();
 
     // Open the platform share sheet and share the mobile geodatabase file URI.
-    await Share.share(
-      subject: 'Sharing the geodatabase',
-      _geodatabase!.fileUri.path,
+    await SharePlus.instance.share(
+      ShareParams(files: [XFile(_geodatabase!.fileUri.path)]),
     );
 
     // Create a new mobile geodatabase and feature table to start again.

@@ -20,7 +20,7 @@ import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:go_router/go_router.dart';
 
 class AnimateImagesWithImageOverlay extends StatefulWidget {
   const AnimateImagesWithImageOverlay({super.key});
@@ -37,8 +37,12 @@ class _AnimateImagesWithImageOverlayState
   final _sceneViewController = ArcGISSceneView.createController();
   // A flag to toggle the start/stop of the image animation.
   var _started = false;
+  // Define the animated speeds available in the dropdown button.
+  final _animatedSpeeds = ['Fast', 'Medium', 'Slow'];
+  // The initial selected animated speed.
+  var _selectedAnimatedSpeed = 'Slow';
   // The speed of the image frame animation in milliseconds.
-  final _imageFrameSpeed = 68;
+  var _imageFrameSpeed = 0;
   // The last frame time in milliseconds to control the animation speed.
   var _lastFrameTime = 0;
   // The initial opacity of the image overlay.
@@ -47,8 +51,6 @@ class _AnimateImagesWithImageOverlayState
   final _imageOverlay = ImageOverlay();
   // A list to hold the ArcGIS image files for the animation.
   List<File> _imageFileList = [];
-  // A string to display the download progress.
-  var _downloadProgress = '';
   // An integer to track the current ArcGIS image index.
   var _imageFrameIndex = 0;
   // A timer to control and change the ArcGIS image periodically.
@@ -65,6 +67,12 @@ class _AnimateImagesWithImageOverlayState
     width: 15.09589635986124,
     height: -14.3770441522488,
   );
+
+  @override
+  void initState() {
+    _imageFrameSpeed = getAnimatedSpeed(_selectedAnimatedSpeed);
+    super.initState();
+  }
 
   @override
   void dispose() {
@@ -109,6 +117,29 @@ class _AnimateImagesWithImageOverlayState
                           ? const Text('Stop')
                           : const Text('Start'),
                     ),
+                    // A dropdown button to select the animated speed.
+                    DropdownButton<String>(
+                      value: _selectedAnimatedSpeed,
+                      onChanged: (value) {
+                        if (value != null) {
+                          setState(() {
+                            _selectedAnimatedSpeed = value;
+                            _imageFrameSpeed = getAnimatedSpeed(value);
+                          });
+                        }
+                      },
+                      items: _animatedSpeeds.map((String speed) {
+                        return DropdownMenuItem<String>(
+                          value: speed,
+                          child: Text(
+                            speed,
+                            style: TextStyle(
+                              color: Theme.of(context).primaryColor,
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                    ),
                   ],
                 ),
                 // A Slider to control opacity of the image overlay.
@@ -139,11 +170,22 @@ class _AnimateImagesWithImageOverlayState
               ],
             ),
             // Display a progress indicator and prevent interaction until state is ready.
-            LoadingIndicator(visible: !_ready, text: _downloadProgress),
+            LoadingIndicator(visible: !_ready),
           ],
         ),
       ),
     );
+  }
+
+  int getAnimatedSpeed(String selectedSpeed) {
+    // Returns the speed of the animation based on the selected speed.
+    // Usually a frame changes every 16 milliseconds.
+    return switch (selectedSpeed) {
+      'Fast' => 17,
+      'Medium' => 34,
+      'Slow' => 68,
+      _ => 68,
+    };
   }
 
   // Stop the image animation ticker.
@@ -210,27 +252,10 @@ class _AnimateImagesWithImageOverlayState
   }
 
   Future<void> initImageFrames() async {
-    final appDir = await getApplicationDocumentsDirectory();
-    // Define the path for the sample data zip file and the directory to extract it.
+    final listPaths = GoRouterState.of(context).extra! as List<String>;
     // The sample data contains images of the Pacific South West region.
-    final imageFile = File('${appDir.absolute.path}/PacificSouthWest.zip');
-    final directory = Directory.fromUri(
-      Uri.parse('${appDir.absolute.path}/PacificSouthWest/PacificSouthWest'),
-    );
+    final directory = Directory.fromUri(Uri.parse(listPaths.first));
 
-    // Download the sample data if it does not exist.
-    if (!imageFile.existsSync()) {
-      await downloadSampleDataWithProgress(
-        itemIds: ['9465e8c02b294c69bdb42de056a23ab1'],
-        destinationFiles: [imageFile],
-        onProgress: (progress) {
-          setState(
-            () => _downloadProgress =
-                'Downloading images: ${(progress * 100).toStringAsFixed(0)}%',
-          );
-        },
-      );
-    }
     // Get a list of all PNG image files in the extracted directory.
     _imageFileList = directory
         .listSync()
@@ -239,18 +264,20 @@ class _AnimateImagesWithImageOverlayState
         .toList();
     // Sort the list by file path name.
     _imageFileList.sort((file1, file2) => file1.path.compareTo(file2.path));
-    
+
     // show the first image frame in the image overlay.
     setImageFrame(0);
   }
 
   /// Sets the image frame to the image overlay based on the index.
   void setImageFrame(int index) {
-    // Quickly release the previous image frame to avoid memory issues.
-    _imageOverlay.imageFrame = null;
-    _imageOverlay.imageFrame = ImageFrame.withImageEnvelope(
-      image: ArcGISImage.fromFile(_imageFileList[index].uri)!,
+    // Create the image frame at the specified index.
+    final imageFrame = ImageFrame.withUriEnvelope(
+      uri: _imageFileList[index].uri,
       extent: imageEnvelope,
     );
+
+    // Once the image frame is loaded, set it to the image overlay.
+    imageFrame.load().then((_) => _imageOverlay.imageFrame = imageFrame);
   }
 }

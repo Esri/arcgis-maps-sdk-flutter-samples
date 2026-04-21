@@ -19,7 +19,7 @@ import 'dart:io';
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:go_router/go_router.dart';
 
 class AddTiledLayerAsBasemap extends StatefulWidget {
   const AddTiledLayerAsBasemap({super.key});
@@ -53,15 +53,8 @@ class AddTiledLayerAsBasemapState extends State<AddTiledLayerAsBasemap>
   }
 
   Future<void> onMapViewReady() async {
-    final appDir = await getApplicationDocumentsDirectory();
-    final tpkxFile = File('${appDir.absolute.path}/SanFrancisco.tpkx');
-    // Download the sample data if it does not exist.
-    if (!tpkxFile.existsSync()) {
-      await downloadSampleDataWithProgress(
-        itemIds: ['e4a398afe9a945f3b0f4dca1e4faccb5'],
-        destinationFiles: [tpkxFile],
-      );
-    }
+    final listPaths = GoRouter.of(context).state.extra! as List<String>;
+    final tpkxFile = File(listPaths.first);
     final tileCache = TileCache.withFileUri(tpkxFile.uri);
 
     // Create a tiled layer with the tile cache.

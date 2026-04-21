@@ -38,22 +38,22 @@ class _MatchViewpointOfGeoViewsState extends State<MatchViewpointOfGeoViews>
   // A flag to indicate if the scene view is currently interacting.
   bool _isSceneViewInteraction = false;
   // Stream subscriptions for viewpoint changes.
-  late StreamSubscription _mapViewViewpointChangedSubscription;
-  late StreamSubscription _sceneViewViewpointChangedSubscription;
+  StreamSubscription<void>? _mapViewViewpointChangedSubscription;
+  StreamSubscription<void>? _sceneViewViewpointChangedSubscription;
   // A flag for when the map view is ready and controls can be used.
   var _ready = false;
 
   @override
   void dispose() {
-    _mapViewViewpointChangedSubscription.cancel();
-    _sceneViewViewpointChangedSubscription.cancel();
+    _mapViewViewpointChangedSubscription?.cancel();
+    _sceneViewViewpointChangedSubscription?.cancel();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final isPortrait =
-        MediaQuery.of(context).orientation == Orientation.portrait;
+        MediaQuery.orientationOf(context) == Orientation.portrait;
 
     return Scaffold(
       body: SafeArea(
@@ -91,7 +91,7 @@ class _MatchViewpointOfGeoViewsState extends State<MatchViewpointOfGeoViews>
           onTapDown: (_) => updateViewInteraction(true),
           onDoubleTapDown: (_) => updateViewInteraction(true),
           onLongPressDown: (_) => updateViewInteraction(true),
-          onScaleStart:(_) => updateViewInteraction(true),
+          onScaleStart: (_) => updateViewInteraction(true),
           child: ArcGISMapView(
             controllerProvider: () => _mapViewController,
             onMapViewReady: onMapViewReady,
@@ -105,7 +105,7 @@ class _MatchViewpointOfGeoViewsState extends State<MatchViewpointOfGeoViews>
           onTapDown: (_) => updateViewInteraction(false),
           onDoubleTapDown: (_) => updateViewInteraction(false),
           onLongPressDown: (_) => updateViewInteraction(false),
-          onScaleStart:(_) => updateViewInteraction(false),
+          onScaleStart: (_) => updateViewInteraction(false),
           child: ArcGISSceneView(
             controllerProvider: () => _sceneViewController,
             onSceneViewReady: onSceneViewReady,

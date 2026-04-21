@@ -14,10 +14,12 @@
 // limitations under the License.
 //
 
+import 'dart:async';
+
 import 'package:arcgis_maps_sdk_flutter_samples/models/sample.dart';
-import 'package:arcgis_maps_sdk_flutter_samples/widgets/sample_detail_page.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/widgets/sample_info_popup_menu.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class SampleListView extends StatelessWidget {
   const SampleListView({required this.samples, super.key});
@@ -26,28 +28,38 @@ class SampleListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      padding: const EdgeInsets.all(8),
-      itemCount: samples.length,
-      itemBuilder: (context, index) {
-        final sample = samples[index];
-        return Card(
-          child: ListTile(
-            title: Text(sample.title),
-            subtitle: Text(sample.description),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => SampleDetailPage(sample: sample),
-                ),
-              );
-            },
-            contentPadding: const EdgeInsets.only(left: 20),
-            trailing: SampleInfoPopupMenu(sample: sample),
-          ),
-        );
-      },
+    final padding = MediaQuery.of(context).padding.add(const EdgeInsets.all(8));
+
+    return MediaQuery.removePadding(
+      context: context,
+      removeBottom: true,
+      removeTop: true,
+      removeLeft: true,
+      removeRight: true,
+      child: ListView.builder(
+        padding: padding,
+        itemCount: samples.length,
+        itemBuilder: (context, index) {
+          final sample = samples[index];
+          return Card(
+            child: ListTile(
+              title: Text(sample.title),
+              subtitle: Text(sample.description),
+              onTap: () async {
+                if (context.mounted) {
+                  if (sample.hasDownloadableResources) {
+                    unawaited(context.push('/sample/${sample.key}/resources'));
+                  } else {
+                    unawaited(context.push('/sample/${sample.key}/live'));
+                  }
+                }
+              },
+              contentPadding: const EdgeInsets.only(left: 20),
+              trailing: SampleInfoPopupMenu(sample: sample),
+            ),
+          );
+        },
+      ),
     );
   }
 }

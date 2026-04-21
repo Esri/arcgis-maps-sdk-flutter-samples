@@ -264,12 +264,12 @@ class GridOptions extends StatefulWidget {
     super.key,
   });
 
-  final Function(GridType) onGridChanged;
-  final Function(GridColorType) onGridColorChanged;
-  final Function(GridColorType) onLabelColorChanged;
-  final Function(GridLabelPositionType) onLabelPositionChanged;
-  final Function(LatLongLabelFormatType) onLabelFormatChanged;
-  final Function(bool) onLabelVisibilityChanged;
+  final void Function(GridType) onGridChanged;
+  final void Function(GridColorType) onGridColorChanged;
+  final void Function(GridColorType) onLabelColorChanged;
+  final void Function(GridLabelPositionType) onLabelPositionChanged;
+  final void Function(LatLongLabelFormatType) onLabelFormatChanged;
+  final void Function(bool) onLabelVisibilityChanged;
   final MapViewGrids grids;
   final bool isSceneView;
 
@@ -305,12 +305,13 @@ class _GridOptionsState extends State<GridOptions> with SampleStateSupport {
     return SingleChildScrollView(
       child: ListBody(
         children: [
+          _buildGridColorDropdown(),
           _buildGridDropdown(),
+          const SizedBox(height: 20),
           if (isLabelFormatVisible)
             _buildLatLongLabelFormatDropdown()
           else
             Container(),
-          _buildGridColorDropdown(),
           _buildLabelColorDropdown(),
           _buildLabelPositionDropdown(),
           _buildLabelVisibilityCheckbox(),
@@ -320,17 +321,17 @@ class _GridOptionsState extends State<GridOptions> with SampleStateSupport {
   }
 
   // Create a DropdownMenu widget.
-  static DropdownMenu _createDropdownMenu<T>({
+  static DropdownMenu<T> _createDropdownMenu<T>({
     required T value,
     required String labelText,
     required List<T> items,
-    required Function(T) onChanged,
+    required void Function(T) onChanged,
   }) {
-    return DropdownMenu(
+    return DropdownMenu<T>(
       width: double.infinity,
       initialSelection: value,
       onSelected: (newValue) {
-        onChanged(newValue!);
+        onChanged(newValue as T);
       },
       label: Text(labelText),
       dropdownMenuEntries:
@@ -340,7 +341,7 @@ class _GridOptionsState extends State<GridOptions> with SampleStateSupport {
     );
   }
 
-  DropdownMenu _buildGridDropdown() {
+  DropdownMenu<GridType> _buildGridDropdown() {
     return _createDropdownMenu(
       value: gridType,
       labelText: 'Grid Type',
@@ -355,7 +356,7 @@ class _GridOptionsState extends State<GridOptions> with SampleStateSupport {
     );
   }
 
-  DropdownMenu _buildLatLongLabelFormatDropdown() {
+  DropdownMenu<LatLongLabelFormatType> _buildLatLongLabelFormatDropdown() {
     final formField = _createDropdownMenu(
       value: labelFormatType,
       labelText: 'Label Format',
@@ -368,7 +369,7 @@ class _GridOptionsState extends State<GridOptions> with SampleStateSupport {
     return formField;
   }
 
-  DropdownMenu _buildGridColorDropdown() {
+  DropdownMenu<GridColorType> _buildGridColorDropdown() {
     return _createDropdownMenu(
       value: gridColorType,
       labelText: 'Grid Color',
@@ -380,7 +381,7 @@ class _GridOptionsState extends State<GridOptions> with SampleStateSupport {
     );
   }
 
-  DropdownMenu _buildLabelColorDropdown() {
+  DropdownMenu<GridColorType> _buildLabelColorDropdown() {
     return _createDropdownMenu(
       value: gridLabelColorType,
       labelText: 'Label Color',
@@ -392,7 +393,7 @@ class _GridOptionsState extends State<GridOptions> with SampleStateSupport {
     );
   }
 
-  DropdownMenu _buildLabelPositionDropdown() {
+  DropdownMenu<GridLabelPositionType> _buildLabelPositionDropdown() {
     final unsupportedInSceneView = {
       GridLabelPositionType.bottomLeft,
       GridLabelPositionType.bottomRight,

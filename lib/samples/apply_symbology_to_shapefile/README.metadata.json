@@ -1,6 +1,11 @@
 {
     "category": "Visualization",
     "description": "Display a shapefile with custom symbology.",
+     "offline_data": [{
+        "itemId": "d98b3e5293834c5f852f13c569930caa",
+        "downloadable": "Aurora_CO_shp.zip",
+        "resource": "Subdivisions.shp"
+    }],
     "ignore": false,
     "images": [
         "apply_symbology_to_shapefile.png"

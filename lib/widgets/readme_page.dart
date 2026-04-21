@@ -15,9 +15,11 @@
 //
 
 import 'package:arcgis_maps_sdk_flutter_samples/models/sample.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/widgets/sample_info_popup_menu.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:markdown/markdown.dart' as md;
+import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class ReadmePage extends StatefulWidget {
@@ -38,6 +40,24 @@ class _ReadmePageState extends State<ReadmePage> {
   @override
   void initState() {
     super.initState();
+
+    _controller.setNavigationDelegate(
+      NavigationDelegate(
+        onNavigationRequest: (request) {
+          final uri = Uri.parse(request.url);
+
+          // Allow the view to load the initial 'about:blank' page.
+          if (uri.scheme == 'about') {
+            return NavigationDecision.navigate;
+          }
+
+          // Launch any other URL in the system browser (instead of this WebViewController).
+          launchUrl(uri, mode: LaunchMode.externalApplication);
+          return NavigationDecision.prevent;
+        },
+      ),
+    );
+
     _fetchMarkDown();
   }
 
@@ -112,7 +132,13 @@ class _ReadmePageState extends State<ReadmePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(widget.sample.title)),
+      appBar: AppBar(
+        title: FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Text(widget.sample.title),
+        ),
+        actions: [SampleInfoPopupMenu(sample: widget.sample)],
+      ),
       body: Column(
         children: [
           Container(

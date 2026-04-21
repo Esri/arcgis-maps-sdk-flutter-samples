@@ -40,11 +40,11 @@ class _ShowDeviceLocationState extends State<ShowDeviceLocation>
   final _locationDataSource = SystemLocationDataSource();
 
   // A subscription to receive status changes of the location data source.
-  StreamSubscription? _statusSubscription;
+  StreamSubscription<LocationDataSourceStatus>? _statusSubscription;
   var _status = LocationDataSourceStatus.stopped;
 
   // A subscription to receive changes to the auto-pan mode.
-  StreamSubscription? _autoPanModeSubscription;
+  StreamSubscription<LocationDisplayAutoPanMode>? _autoPanModeSubscription;
   var _autoPanMode = LocationDisplayAutoPanMode.recenter;
 
   // A flag for when the map view is ready and controls can be used.

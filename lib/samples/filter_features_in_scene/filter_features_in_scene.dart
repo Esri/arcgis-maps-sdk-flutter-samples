@@ -31,29 +31,25 @@ class _FilterFeaturesInSceneState extends State<FilterFeaturesInScene>
   // A flag for when the scene view is ready.
   var _ready = false;
 
-  // ArcGIS Online services.
-  final _osmTopographic =
-      'https://www.arcgis.com/home/item.html?id=1e7d1784d1ef4b79ba6764d0bd6c3150';
-  final _elevationSource =
+  // URLs to the services used in the sample.
+  final _basemapUrl =
+      'https://arcgisruntime.maps.arcgis.com/home/item.html?id=00a5f468dda941d7bf0b51c144aae3f0';
+  final _elevationServiceUrl =
       'https://elevation3d.arcgis.com/arcgis/rest/services/WorldElevation3D/Terrain3D/ImageServer';
-  final _sanFranciscoBuildings =
+  final _detailedBuildingsLayerUrl =
       'https://tiles.arcgis.com/tiles/z2tnIkrLQ2BRzr6P/arcgis/rest/services/SanFrancisco_Bldgs/SceneServer';
 
-  // San Francisco buildings scene layer for the sample.
-  late ArcGISSceneLayer _sfBuildingsSceneLayer;
-  // Open Street Map buildings scene layer for the sample.
-  late ArcGISSceneLayer _osmBuildingsSceneLayer;
+  // The scene layer containing detailed buildings in San Francisco, CA, USA.
+  late ArcGISSceneLayer _detailedBuildingsLayer;
+  // The "Buildings" scene layer from the scene's basemap.
+  late ArcGISSceneLayer _buildingsLayer;
 
-  // A Graphic to get San Francisco's information.
-  Graphic _sfGraphic = Graphic();
-  // A Graphics overlay to present the graphic for the sample.
-  final _sfGraphicsOverlay = GraphicsOverlay();
-  // A Polygon geometry that represents the San Francisco buildings scene layer full extent.
-  late Geometry _sceneLayerExtentPolygon;
+  // A graphic of the extent of the detailed San Francisco buildings scene layer.
+  var _sfExtentGraphic = Graphic();
   // A filter that limits the visible features of the scene layer.
   late SceneLayerPolygonFilter _sceneLayerPolygonFilter;
   // A state for filtering features in a scene.
-  SceneFilterAction _sceneFilterAction = SceneFilterAction.load;
+  var _sceneFilterAction = SceneFilterAction.filter;
 
   @override
   Widget build(BuildContext context) {
@@ -74,6 +70,7 @@ class _FilterFeaturesInSceneState extends State<FilterFeaturesInScene>
                   ),
                 ),
                 Center(
+                  // A button to control the state of the filter.
                   child: ElevatedButton(
                     onPressed: onSceneActionPressed,
                     child: Text(_sceneFilterAction.label),
@@ -90,84 +87,80 @@ class _FilterFeaturesInSceneState extends State<FilterFeaturesInScene>
   }
 
   Future<void> onSceneViewReady() async {
-    final scene = _setupScene();
+    // Configure the scene and add to the scene view controller.
+    final scene = await _setupScene();
     _sceneViewController.arcGISScene = scene;
 
     // Create a scene layer for the San Francisco buildings.
-    _sfBuildingsSceneLayer = ArcGISSceneLayer.withUri(
-      Uri.parse(_sanFranciscoBuildings),
+    _detailedBuildingsLayer = ArcGISSceneLayer.withUri(
+      Uri.parse(_detailedBuildingsLayerUrl),
     );
-    await _sfBuildingsSceneLayer.load();
+    // Load so that the extent can be accessed.
+    await _detailedBuildingsLayer.load();
 
-    // Add the graphics overlay to the scene view controller.
-    _sceneViewController.graphicsOverlays.add(_sfGraphicsOverlay);
-
-    _createAndFilterPolygon();
-
-    setState(() => _ready = true);
-  }
-
-  ArcGISScene _setupScene() {
-    // Create a scene.
-    final scene = ArcGISScene();
-
-    // Create on ArcGIS Online portal instance.
-    final arcGISOnlinePortal = Portal.arcGISOnline();
-
-    // Create the Open Street Map scene layer from the portal item.
-    _osmBuildingsSceneLayer = ArcGISSceneLayer.withItem(
-      PortalItem.withPortalAndItemId(
-        portal: arcGISOnlinePortal,
-        itemId: 'ca0470dbbddb4db28bad74ed39949e25',
-      ),
+    // Add the detailed buildings layer to the scene.
+    // The layer is initially hidden so that it doesn't
+    // clip into the buildings layer while it is unfiltered.
+    _detailedBuildingsLayer.isVisible = false;
+    _sceneViewController.arcGISScene!.operationalLayers.add(
+      _detailedBuildingsLayer,
     );
 
-    // Add base layers to the basemap in the scene.
-    scene.basemap?.baseLayers.addAll([
-      ArcGISVectorTiledLayer.withUri(Uri.parse(_osmTopographic)),
-      _osmBuildingsSceneLayer,
-    ]);
+    // Prepare the scene layer filter.
+    _configureSceneLayerFilter();
 
-    // Add surface elevation to the scene.
-    final worldElevationService = Uri.parse(_elevationSource);
-    final elevationSource = ArcGISTiledElevationSource.withUri(
-      worldElevationService,
-    );
-    scene.baseSurface.elevationSources.add(elevationSource);
-
-    // Create camera with an initial camera position.
+    // Set the viewpoint over San Francisco.
     final camera = Camera.withLocation(
       location: ArcGISPoint(x: -122.421, y: 37.7041, z: 207),
       heading: 60,
       pitch: 70,
       roll: 0,
     );
+    _sceneViewController.setViewpointCamera(camera);
 
-    // Set the scene's initial viewpoint.
-    scene.initialViewpoint = Viewpoint.withPointScaleCamera(
-      center: ArcGISPoint(x: 0, y: 0),
-      scale: 1,
-      camera: camera,
+    // Set the ready state variable to true to enable the sample UI.
+    setState(() => _ready = true);
+  }
+
+  Future<ArcGISScene> _setupScene() async {
+    // Create a basemap with the ArcGIS Navigation 3D Basemap.
+    final basemap = Basemap.withUri(Uri.parse(_basemapUrl))!;
+
+    // Load the basemap to access the base layers.
+    await basemap.load();
+
+    // Get the "Buildings" layer from the base layers.
+    _buildingsLayer =
+        basemap.baseLayers.where((layer) => layer.name == 'Buildings').first
+            as ArcGISSceneLayer;
+
+    // Create a scene with the basemap.
+    final scene = ArcGISScene.withBasemap(basemap);
+
+    // Construct and set the scene topography.
+    final worldElevationService = Uri.parse(_elevationServiceUrl);
+    final elevationSource = ArcGISTiledElevationSource.withUri(
+      worldElevationService,
     );
+    scene.baseSurface.elevationSources.add(elevationSource);
 
     return scene;
   }
 
   // Builds a polygon from the San Francisco buildings extent,
-  // adds a red outline graphic, and sets up a filter for OSM buildings.
-  void _createAndFilterPolygon() {
-    // Build a polygon from the full extent of the San Francisco buildings layer.
+  // adds a red outline graphic, and sets up a filter.
+  void _configureSceneLayerFilter() {
+    // Build a polygon from the full extent of the San Francisco detailed buildings layer.
     final polygonBuilder = PolygonBuilder(
       spatialReference: _sceneViewController.spatialReference,
     );
-    final extent = _sfBuildingsSceneLayer.fullExtent!;
+    final extent = _detailedBuildingsLayer.fullExtent!;
     polygonBuilder.addPointXY(x: extent.xMin, y: extent.yMin);
     polygonBuilder.addPointXY(x: extent.xMax, y: extent.yMin);
     polygonBuilder.addPointXY(x: extent.xMax, y: extent.yMax);
     polygonBuilder.addPointXY(x: extent.xMin, y: extent.yMax);
-
-    // Convert the polygon builder to a geometry.
-    _sceneLayerExtentPolygon = polygonBuilder.toGeometry();
+    // Convert the polygon builder to a polygon geometry.
+    final polygon = polygonBuilder.toGeometry() as Polygon;
 
     // Create a red outline symbol with transparent fill.
     final outlineSymbol = SimpleFillSymbol(
@@ -176,14 +169,21 @@ class _FilterFeaturesInSceneState extends State<FilterFeaturesInScene>
     );
 
     // Create a graphic using the polygon geometry and symbol.
-    _sfGraphic = Graphic(
-      geometry: polygonBuilder.toGeometry(),
-      symbol: outlineSymbol,
-    );
+    _sfExtentGraphic = Graphic(geometry: polygon, symbol: outlineSymbol);
 
-    // Create the SceneLayerPolygonFilter to later apply to the OSM buildings layer.
+    // Create a graphics overlay and add to the scene view.
+    final graphicsOverlay = GraphicsOverlay();
+    // Add the graphics overlay to the scene view controller.
+    _sceneViewController.graphicsOverlays.add(graphicsOverlay);
+
+    // Initially hide the graphic, since the filter has not been applied yet.
+    _sfExtentGraphic.isVisible = false;
+    // Add the graphic to the graphics overlay.
+    graphicsOverlay.graphics.add(_sfExtentGraphic);
+
+    // Create the SceneLayerPolygonFilter to later apply to the buildings base layer.
     _sceneLayerPolygonFilter = SceneLayerPolygonFilter(
-      polygons: [polygonBuilder.toGeometry() as Polygon],
+      polygons: [polygon],
       spatialRelationship: SceneLayerPolygonFilterSpatialRelationship.disjoint,
     );
   }
@@ -191,8 +191,8 @@ class _FilterFeaturesInSceneState extends State<FilterFeaturesInScene>
   // Filter scene based on the current filter action.
   void onSceneActionPressed() {
     switch (_sceneFilterAction) {
-      case SceneFilterAction.load:
-        _addBuildings();
+      case SceneFilterAction.show:
+        _showDetailedBuildings();
       case SceneFilterAction.filter:
         _filterScene();
       case SceneFilterAction.reset:
@@ -201,55 +201,49 @@ class _FilterFeaturesInSceneState extends State<FilterFeaturesInScene>
     setState(() => _sceneFilterAction = _sceneFilterAction.next());
   }
 
-  // Add the San Francisco buildings scene layer and its extent graphic to the scene.
-  void _addBuildings() {
-    _sceneViewController.arcGISScene?.operationalLayers.add(
-      _sfBuildingsSceneLayer,
-    );
-    _sfGraphicsOverlay.graphics.add(_sfGraphic);
+  // Show the detailed buildings layer.
+  void _showDetailedBuildings() {
+    _detailedBuildingsLayer.isVisible = true;
   }
 
-  // Apply a polygon filter to hide OSM buildings within the San Francisco extent.
+  // Apply a polygon filter to hide the 3D buildings in the base layer within the San Francisco detailed buildings layer extent.
   void _filterScene() {
-    // If no filter is set, assign the polygon filter.
-    if (_osmBuildingsSceneLayer.polygonFilter == null) {
-      _osmBuildingsSceneLayer.polygonFilter = _sceneLayerPolygonFilter;
-    }
-    // If the filter exists but has no polygons, add the extent polygon.
-    else {
-      _sceneLayerPolygonFilter.polygons.add(
-        _sceneLayerExtentPolygon as Polygon,
-      );
-    }
+    // Set the polygon filter to the buildings layer.
+    _buildingsLayer.polygonFilter = _sceneLayerPolygonFilter;
+    // Show the graphic to indicate the filtered extent.
+    _sfExtentGraphic.isVisible = true;
   }
 
-  // Reset the scene by removing layers, filters, and graphics.
+  // Reset the scene.
   void _resetScene() {
-    _sceneViewController.arcGISScene!.operationalLayers.clear();
-    _osmBuildingsSceneLayer.polygonFilter?.polygons.clear();
-    _sfGraphicsOverlay.graphics.clear();
+    // Hide the detailed buildings layer.
+    _detailedBuildingsLayer.isVisible = false;
+    // Remove the polygon filter from the buildings layer.
+    _buildingsLayer.polygonFilter = null;
+    // Hide the red extent boundary graphic.
+    _sfExtentGraphic.isVisible = false;
   }
 }
 
-// The different states for filtering features in a scene.
+// The different states for filtering features in the sample workflow.
 enum SceneFilterAction {
-  load('Load detailed buildings'),
-  filter('Filter OSM buildings'),
+  show('Show detailed buildings'),
+  filter('Filter'),
   reset('Reset scene');
 
   const SceneFilterAction(this.label);
 
   final String label;
 
-  // The next action to apply to a scene.
+  // The next action to apply to the scene.
   SceneFilterAction next() {
     switch (this) {
-      case SceneFilterAction.load:
-        return SceneFilterAction.filter;
       case SceneFilterAction.filter:
+        return SceneFilterAction.show;
+      case SceneFilterAction.show:
         return SceneFilterAction.reset;
       case SceneFilterAction.reset:
-        return SceneFilterAction.load;
+        return SceneFilterAction.filter;
     }
   }
 }

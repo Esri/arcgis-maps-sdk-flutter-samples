@@ -1,0 +1,46 @@
+{
+    "category": "Analysis",
+    "description": "Perform a line of sight analysis in a map view between fixed observer and target positions.",
+    "ignore": false,
+    "images": [
+        "show_line_of_sight_analysis_in_map.png"
+    ],
+    "keywords": [
+        "analysis",
+        "elevation",
+        "line of sight",
+        "map view",
+        "spatial analysis",
+        "terrain",
+        "visibility",
+        "ContinuousField",
+        "GeometryEngine",
+        "GraphicsOverlay",
+        "LineOfSight",
+        "LineOfSightFunction",
+        "LineOfSightParameters",
+        "LineOfSightPosition",
+        "ObserverTargetPairs"
+    ],
+    "offline_data": [
+        {
+            "itemId": "aa97788593e34a32bcaae33947fdc271",
+            "downloadable": "arran.tif"
+        }
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+        "ContinuousField",
+        "GeometryEngine",
+        "GraphicsOverlay",
+        "LineOfSight",
+        "LineOfSightFunction",
+        "LineOfSightParameters",
+        "LineOfSightPosition",
+        "ObserverTargetPairs"
+    ],
+    "snippets": [
+        "show_line_of_sight_analysis_in_map.dart"
+    ],
+    "title": "Show line of sight analysis in map"
+}

@@ -13,12 +13,10 @@
 // limitations under the License.
 //
 
-import 'dart:io';
-
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:go_router/go_router.dart';
 
 class IdentifyRasterCell extends StatefulWidget {
   const IdentifyRasterCell({super.key});
@@ -35,10 +33,6 @@ class _IdentifyRasterCellState extends State<IdentifyRasterCell>
   var _ready = false;
   // Raster layer to display raster data on the map.
   late RasterLayer _rasterLayer;
-  // Graphic to get the raster cell information.
-  final Graphic _textGraphic = Graphic();
-  // Graphics overlay to display the text graphic.
-  final _textGraphicsOverlay = GraphicsOverlay();
 
   @override
   Widget build(BuildContext context) {
@@ -69,10 +63,6 @@ class _IdentifyRasterCellState extends State<IdentifyRasterCell>
     if (_rasterLayer.fullExtent != null) {
       await _mapViewController.setViewpointGeometry(_rasterLayer.fullExtent!);
     }
-    // Add the text graphic to the text graphics overlay.
-    _textGraphicsOverlay.graphics.add(_textGraphic);
-    // Add the text graphics overlay to the map view.
-    _mapViewController.graphicsOverlays.add(_textGraphicsOverlay);
     // Set the ready state variable to true to enable the sample UI.
     setState(() => _ready = true);
   }
@@ -97,44 +87,30 @@ class _IdentifyRasterCellState extends State<IdentifyRasterCell>
       if (cell.geometry != null) {
         final x = cell.geometry!.extent.xMin;
         final y = cell.geometry!.extent.yMin;
-        // Add the x & y coordinates where the user clicked raster cell to the string buffer.
-        stringBuffer.writeln();
-        stringBuffer.writeln('X: ${x.toStringAsFixed(4)}');
-        stringBuffer.write('Y: ${y.toStringAsFixed(4)}');
-
-        final textSymbol = TextSymbol(
-          color: Colors.white,
-          size: 12,
-          text: stringBuffer.toString(),
-          horizontalAlignment: HorizontalAlignment.left,
+        // Add the x & y coordinates where the user tapped the raster cell to the string buffer.
+        stringBuffer.write(
+          'X: ${x.toStringAsFixed(4)} Y: ${y.toStringAsFixed(4)}',
         );
-        textSymbol.backgroundColor = Colors.black.withValues(alpha: 0.8);
-        _textGraphic.geometry = cell.geometry;
-        _textGraphicsOverlay.renderer = SimpleRenderer(symbol: textSymbol);
+
+        // Display a callout for the raster cell attributes.
+        _mapViewController.callout.showCalloutForGeoElement(
+          cell,
+          contentBuilder: (context, geoElement) => IntrinsicWidth(
+            child: Container(
+              padding: const EdgeInsets.all(6),
+              color: Colors.white,
+              child: Text(stringBuffer.toString(), softWrap: false),
+            ),
+          ),
+        );
       }
-    } else {
-      _textGraphicsOverlay.renderer = null;
     }
   }
 
   Future<void> loadRasterLayer() async {
-    // Get the application documents directory.
-    final appDir = await getApplicationDocumentsDirectory();
-    const downloadFileName = 'SA_EVI_8Day_03May20';
-    final zipFile = File('${appDir.absolute.path}/$downloadFileName.zip');
-    // Download the raster file if it does not exist.
-    if (!zipFile.existsSync()) {
-      await downloadSampleDataWithProgress(
-        itemIds: ['b5f977c78ec74b3a8857ca86d1d9b318'],
-        destinationFiles: [zipFile],
-      );
-    }
+    final listPaths = GoRouter.of(context).state.extra! as List<String>;
     // Create a Raster from the local tif file.
-    final raster = Raster.withFileUri(
-      Uri.file(
-        '${appDir.absolute.path}/$downloadFileName/$downloadFileName.tif',
-      ),
-    );
+    final raster = Raster.withFileUri(Uri.file(listPaths.first));
     // Create a Raster Layer.
     _rasterLayer = RasterLayer.withRaster(raster);
     // Load the Raster Layer.

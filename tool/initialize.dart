@@ -21,7 +21,6 @@ import 'dart:io';
 
 void main(List<String> arguments) async {
   await runDart(['pub', 'upgrade']);
-  await runDart(['run', 'arcgis_maps', 'install']);
   await runDart([
     'run',
     'build_runner',

@@ -92,25 +92,37 @@ class _NavigateRouteState extends State<NavigateRoute> with SampleStateSupport {
     'https://sampleserver7.arcgisonline.com/server/rest/services/NetworkAnalysis/SanDiego/NAServer/Route',
   );
 
+  // Listener to track changes to the LocationDisplay's start/stop status.
+  StreamSubscription<bool>? _startedSubscription;
+  var _started = false;
+
   // Listener to track changes in autoPanMode.
   StreamSubscription<LocationDisplayAutoPanMode>? _autoPanModeSubscription;
+  var _autoPanMode = LocationDisplayAutoPanMode.off;
 
   @override
   void initState() {
     super.initState();
+
+    // Listen to the onStatusChanged stream.
+    _startedSubscription = _mapViewController.locationDisplay.onStatusChanged
+        .listen((started) {
+          setState(() => _started = started);
+        });
 
     // Listen to the onAutoPanModeChanged stream.
     _autoPanModeSubscription = _mapViewController
         .locationDisplay
         .onAutoPanModeChanged
         .listen((autoPanMode) {
-          setState(() {});
+          setState(() => _autoPanMode = autoPanMode);
         });
   }
 
   @override
   void dispose() {
     _simulatedLocationDataSource.stop();
+    _startedSubscription?.cancel();
     _autoPanModeSubscription?.cancel();
     _flutterTts.stop();
     super.dispose();
@@ -140,20 +152,15 @@ class _NavigateRouteState extends State<NavigateRoute> with SampleStateSupport {
                     // A button to start navigation.
                     ElevatedButton(
                       onPressed: _destinationReached ? null : toggleRouting,
-                      child: Text(
-                        _mapViewController.locationDisplay.started
-                            ? 'Stop Routing'
-                            : 'Start Routing',
-                      ),
+                      child: Text(_started ? 'Stop Routing' : 'Start Routing'),
                     ),
                     // A button to recenter the map.
                     ElevatedButton(
                       // Gets activated only when the focus changes from navigation.
                       onPressed:
-                          _mapViewController.locationDisplay.autoPanMode ==
-                                  LocationDisplayAutoPanMode.navigation
-                              ? null
-                              : recenter,
+                          _autoPanMode == LocationDisplayAutoPanMode.navigation
+                          ? null
+                          : recenter,
                       child: const Text('Recenter'),
                     ),
                     // A button to reset navigation.
@@ -341,12 +348,11 @@ class _NavigateRouteState extends State<NavigateRoute> with SampleStateSupport {
 
   Future<void> _createAndConfigureRouteTracker() async {
     // Create a route tracker with the route result.
-    _routeTracker =
-        RouteTracker.create(
-          routeResult: _routeResult,
-          routeIndex: 0,
-          skipCoincidentStops: true,
-        )!;
+    _routeTracker = RouteTracker.create(
+      routeResult: _routeResult,
+      routeIndex: 0,
+      skipCoincidentStops: true,
+    )!;
     _routeTracker.voiceGuidanceUnitSystem = UnitSystem.imperial;
 
     // Set the speech engine ready callback.
@@ -423,7 +429,8 @@ class _NavigateRouteState extends State<NavigateRoute> with SampleStateSupport {
     final formattedTime = formatDuration(
       Duration(seconds: remainingTimeInSeconds.toInt()),
     );
-    _statusTextNotifier.value = '''
+    _statusTextNotifier.value =
+        '''
   Distance remaining: ${status.routeProgress.remainingDistance.displayText} ${status.routeProgress.remainingDistance.displayTextUnits.abbreviation}
   Time remaining: $formattedTime
   Next direction: ${_directionsList[status.currentManeuverIndex + 1].directionText}

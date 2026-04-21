@@ -14,11 +14,13 @@
 //
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/samples/show_device_location_with_nmea_data_sources/simulated_nmea_data_source.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class ShowDeviceLocationWithNmeaDataSources extends StatefulWidget {
   const ShowDeviceLocationWithNmeaDataSources({super.key});
@@ -38,18 +40,18 @@ class _ShowDeviceLocationWithNmeaDataSourcesState
   final _locationDataSource = NmeaLocationDataSource();
 
   // Subscriptions to location data source events and members to keep current data.
-  StreamSubscription? _locationSubscription;
+  StreamSubscription<ArcGISLocation>? _locationSubscription;
   ArcGISLocation? _currentNmeaLocation;
-  StreamSubscription? _satelliteSubscription;
+  StreamSubscription<List<NmeaSatelliteInfo>>? _satelliteSubscription;
   var _currentSatelliteInfos = <NmeaSatelliteInfo>[];
 
   // Simulated NMEA data provider members.
   SimulatedNmeaDataSource? _nmeaDataSimulator;
-  StreamSubscription? _nmeaDataSubscription;
+  StreamSubscription<String>? _nmeaDataSubscription;
 
   // Enable or disable the Recenter button.
   var _enableRecenter = false;
-  StreamSubscription? _autopanSubscription;
+  StreamSubscription<LocationDisplayAutoPanMode>? _autopanSubscription;
 
   // A flag for when the NmeaLocationDataSource is running.
   var _locationDataSourceRunning = false;
@@ -174,8 +176,10 @@ class _ShowDeviceLocationWithNmeaDataSourcesState
   }
 
   Future<void> _startDataSource() async {
+    final nmeaSentences = await _loadNmeaFile();
+
     // Create new instance of the NmeaSourceSimulator.
-    _nmeaDataSimulator ??= SimulatedNmeaDataSource();
+    _nmeaDataSimulator ??= SimulatedNmeaDataSource(nmeaSentences);
 
     // Subscribe to the simulator data.
     _nmeaDataSubscription ??= _nmeaDataSimulator!.nmeaMessages.listen((
@@ -208,6 +212,17 @@ class _ShowDeviceLocationWithNmeaDataSourcesState
       _currentSatelliteInfos = <NmeaSatelliteInfo>[];
       _locationDataSourceRunning = false;
     });
+  }
+
+  // Loads the sample NMEA data file and returns the NMEA sentences as a
+  // list of Strings.
+  Future<List<String>> _loadNmeaFile() async {
+    final listPaths = GoRouter.of(context).state.extra! as List<String>;
+
+    final nmeaFile = File(listPaths.first);
+
+    // Read and return the file as a list of String lines.
+    return nmeaFile.readAsLines();
   }
 }
 

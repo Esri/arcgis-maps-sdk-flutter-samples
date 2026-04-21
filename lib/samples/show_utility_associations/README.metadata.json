@@ -1,0 +1,31 @@
+{
+    "category": "Utility Networks",
+    "description": "Create graphics for utility associations in a utility network.",
+    "ignore": false,
+    "images": [
+        "show_utility_associations.png"
+    ],
+    "keywords": [
+        "associating",
+        "association",
+        "attachment",
+        "connectivity",
+        "containment",
+        "relationships",
+        "GraphicsOverlay",
+        "UtilityAssociation",
+        "UtilityAssociationType",
+        "UtilityNetwork"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+        "GraphicsOverlay",
+        "UtilityAssociation",
+        "UtilityAssociationType",
+        "UtilityNetwork"
+    ],
+    "snippets": [
+        "show_utility_associations.dart"
+    ],
+    "title": "Show utility associations"
+}

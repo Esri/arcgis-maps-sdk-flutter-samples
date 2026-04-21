@@ -19,7 +19,6 @@ import 'dart:collection';
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
-import 'package:webview_flutter/webview_flutter.dart';
 
 class SetUpLocationDrivenGeotriggers extends StatefulWidget {
   const SetUpLocationDrivenGeotriggers({super.key});
@@ -44,7 +43,8 @@ class _SetUpLocationDrivenGeotriggersState
   final _sectionGeotriggerName = 'Section Geotrigger';
 
   // Stream subscriptions for the geotrigger event changes.
-  final _streamSubscriptions = <StreamSubscription>[];
+  final _streamSubscriptions =
+      <StreamSubscription<GeotriggerNotificationInfo>>[];
 
   // Maps to contain current section and POI features. Keys are the feature
   // name, values are the full Feature. Using LinkedHashMaps to maintain insertion order.
@@ -105,35 +105,23 @@ class _SetUpLocationDrivenGeotriggersState
                   children: [
                     // Button to show the details of the current Section.
                     ElevatedButton(
-                      onPressed:
-                          _currentSections.isEmpty
-                              ? null
-                              : () => showDialog(
-                                context: context,
-                                builder:
-                                    (context) => showFeatureDetails(
-                                      context: context,
-                                      title: 'Section Details:',
-                                      features: [_currentSections.values.last],
-                                    ),
-                              ),
+                      onPressed: _currentSections.isEmpty
+                          ? null
+                          : () => showFeatureDetail(
+                              context: context,
+                              feature: _currentSections.values.last,
+                            ),
                       child: const Text('Section detail'),
                     ),
-                    // Button to show the details of the nearby POIs.
+                    // Button to show the details of the nearby POI.
                     ElevatedButton(
-                      onPressed:
-                          _currentPois.isEmpty
-                              ? null
-                              : () => showDialog(
-                                context: context,
-                                builder:
-                                    (context) => showFeatureDetails(
-                                      context: context,
-                                      title: 'POI Details:',
-                                      features: _currentPois.values.toList(),
-                                    ),
-                              ),
-                      child: const Text('POIs detail'),
+                      onPressed: _currentPois.isEmpty
+                          ? null
+                          : () => showFeatureDetail(
+                              context: context,
+                              feature: _currentPois.values.last,
+                            ),
+                      child: const Text('POI detail'),
                     ),
                   ],
                 ),
@@ -188,8 +176,7 @@ class _SetUpLocationDrivenGeotriggersState
     setState(() => _ready = true);
   }
 
-  // Sets up the Geotriggers, GeotriggerMonitors, and listens for Geotrigger
-  // events.
+  // Sets up the Geotriggers, GeotriggerMonitors, and listens for Geotrigger events.
   Future<void> _setupGeotriggers() async {
     // Setup the points of interest Geotrigger monitor.
     await createGeotriggerMonitor(
@@ -247,8 +234,8 @@ class _SetUpLocationDrivenGeotriggersState
     // Set which feature list to update based on which monitor triggered this event.
     final featureMap =
         fenceInfo.geotriggerMonitor.geotrigger.name == _poiGeotriggerName
-            ? _currentPois
-            : _currentSections;
+        ? _currentPois
+        : _currentSections;
 
     // Add or remove the feature name from the list based on event type.
     setState(() {
@@ -293,39 +280,32 @@ class _SetUpLocationDrivenGeotriggersState
         ),
         Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children:
-              _currentPois.isEmpty
-                  ? [const Text('No Points of Interest nearby')]
-                  : _currentPois.keys.map((featureName) {
-                    return Text(featureName);
-                  }).toList(),
+          children: _currentPois.isEmpty
+              ? [const Text('No Points of Interest nearby')]
+              : _currentPois.keys.map((featureName) {
+                  return Text(featureName);
+                }).toList(),
         ),
       ],
     );
   }
 
-  Dialog showFeatureDetails({
+  // Display the feature details in a Popup view in a modal bottom sheet.
+  void showFeatureDetail({
     required BuildContext context,
-    required String title,
-    required List<Feature> features,
+    required Feature feature,
   }) {
-    return Dialog(
-      child: Padding(
-        padding: const EdgeInsets.all(8),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(title, style: Theme.of(context).textTheme.headlineMedium),
-            const Divider(),
-            Expanded(child: MultiFeatureDetails(features: features)),
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: const Text('Close'),
-            ),
-          ],
+    if (!mounted) return;
+
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
+      builder: (_) => SizedBox(
+        height: MediaQuery.sizeOf(context).height * 0.7,
+        child: FeaturePopupView(
+          feature: feature,
+          onClose: () => Navigator.of(context).maybePop(),
         ),
       ),
     );
@@ -541,179 +521,5 @@ class _SetUpLocationDrivenGeotriggersState
     }
 
     return polylineBuilder.toGeometry() as Polyline;
-  }
-}
-
-// Widget to show the details of a list of Features. If showing more
-// than one feature, the user can tap through the list of features.
-class MultiFeatureDetails extends StatefulWidget {
-  const MultiFeatureDetails({required this.features, super.key});
-  final List<Feature> features;
-
-  @override
-  State<MultiFeatureDetails> createState() => MultiFeatureDetailsState();
-}
-
-class MultiFeatureDetailsState extends State<MultiFeatureDetails> {
-  var _featureIndex = 0;
-
-  @override
-  Widget build(BuildContext context) {
-    final features = widget.features;
-
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Expanded(
-          // Build the details of the selected Feature.
-          child:
-              features.isEmpty
-                  ? const Text('No features to display.')
-                  : FeatureDetails(feature: features[_featureIndex]),
-        ),
-        if (features.length > 1)
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              // Go to previous feature.
-              ElevatedButton(
-                onPressed:
-                    _featureIndex == 0
-                        ? null
-                        : () => setState(() => _featureIndex -= 1),
-                child: const Text('Prev'),
-              ),
-              // Show current feature of total features.
-              Text('${_featureIndex + 1}/${features.length}'),
-              // Go to next feature.
-              ElevatedButton(
-                onPressed:
-                    _featureIndex == features.length - 1
-                        ? null
-                        : () => setState(() => _featureIndex += 1),
-                child: const Text('Next'),
-              ),
-            ],
-          ),
-      ],
-    );
-  }
-}
-
-// Widget to display the details of a single Feature.
-class FeatureDetails extends StatefulWidget {
-  const FeatureDetails({required this.feature, super.key});
-  final Feature feature;
-
-  @override
-  State<StatefulWidget> createState() => FeatureDetailsState();
-}
-
-class FeatureDetailsState extends State<FeatureDetails> {
-  final _webViewController = WebViewController();
-  Future<void> _htmlFormatter = Future<void>.value();
-  Feature? _previousFeature;
-
-  Feature get _feature {
-    final feature = widget.feature;
-    if (feature != _previousFeature) {
-      // Record new feature for next run.
-      _previousFeature = feature;
-
-      setState(() {
-        // Update the HTML for the WebViewController.
-        _htmlFormatter = _formatFeatureDescriptionHtml();
-      });
-    }
-    return feature;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Text(
-          _feature.attributes['name'],
-          style: Theme.of(context).textTheme.headlineMedium,
-        ),
-        Flexible(
-          child: FutureBuilder(
-            future: _htmlFormatter,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState != ConnectionState.done) {
-                return const Center(child: Text('Loading...'));
-              }
-              return SizedBox(
-                height: MediaQuery.of(context).size.height,
-                width: MediaQuery.of(context).size.width * 0.75,
-                child: WebViewWidget(controller: _webViewController),
-              );
-            },
-          ),
-        ),
-      ],
-    );
-  }
-
-  Future<void> _formatFeatureDescriptionHtml() async {
-    await _webViewController.setBackgroundColor(
-      const Color.fromARGB(0, 255, 255, 255),
-    );
-
-    final description = _feature.attributes['description'];
-    final attachmentUrls = await _fetchAttachmentsForFeature();
-    final htmlDescription = _wrapDescriptionInHtml(description, attachmentUrls);
-    await _webViewController.loadHtmlString(htmlDescription);
-  }
-
-  // Creates a list of URL strings to attachment images for a given feature.
-  Future<List<String>> _fetchAttachmentsForFeature() async {
-    final featureObjectId = _feature.attributes['OBJECTID'];
-    final table = _feature.featureTable! as ServiceFeatureTable;
-    final tableUriString = table.uri.toString();
-    final attachments = await (_feature as ArcGISFeature).fetchAttachments();
-    final attachmentUrls = <String>[];
-    for (final attachment in attachments) {
-      if (attachment.contentType.contains('image')) {
-        attachmentUrls.add(
-          '$tableUriString/$featureObjectId/attachments/${attachment.id}',
-        );
-      }
-    }
-
-    return attachmentUrls;
-  }
-
-  // Wraps the feature description HTML in complete HTML tags and scales the font
-  // size to make the text easier to read.
-  String _wrapDescriptionInHtml(
-    String description,
-    List<String> attachmentUrls,
-  ) {
-    // Add HTML openning.
-    final htmlDescription = StringBuffer('<html><head>');
-    // Add some style.
-    htmlDescription.write(
-      '<style>body{font-size:30px;} img{display: block; margin-left: auto; margin-right: auto; width: 90%;}</style>',
-    );
-
-    // Add the body and description.
-    htmlDescription.write('</head><body>');
-    htmlDescription.write(description);
-
-    // Add <img> tags for the attachment images.
-    if (attachmentUrls.isNotEmpty) {
-      for (final attachmentUrl in attachmentUrls) {
-        htmlDescription.write('<br><br>');
-        htmlDescription.write('<img src=$attachmentUrl >');
-      }
-    }
-
-    // Add HTML closing.
-    htmlDescription.write('</body></html>');
-    return htmlDescription.toString();
   }
 }
