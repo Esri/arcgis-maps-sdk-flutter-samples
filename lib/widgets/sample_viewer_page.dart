@@ -74,12 +74,24 @@ class _SampleViewerPageState extends State<SampleViewerPage> {
   int _currentHintIndex = 0;
   late Timer _hintTimer;
 
+  // Subscription to listen for changes in favorites if the current category is favorites.
+  StreamSubscription<({String sampleKey, bool value})>?
+  _favoriteChangeSubscription;
+
   @override
   void initState() {
     super.initState();
 
     if (widget.category != null) {
       _filteredSamples = getSamplesByCategory(widget.category);
+
+      if (widget.category == .favorites) {
+        // Refresh the list of samples when a favorite is added or removed.
+        _favoriteChangeSubscription = FavoriteRepository
+            .instance
+            .favoriteChanged
+            .listen((_) => onSearchChanged(_textEditingController.text));
+      }
     }
 
     generateSearchHints();
@@ -108,6 +120,7 @@ class _SampleViewerPageState extends State<SampleViewerPage> {
     _hintTimer.cancel();
     _textEditingController.dispose();
     _searchFocusNode.dispose();
+    _favoriteChangeSubscription?.cancel().ignore();
     super.dispose();
   }
 
@@ -219,19 +232,29 @@ class _SampleViewerPageState extends State<SampleViewerPage> {
   }
 
   List<Sample> getSamplesByCategory(SampleCategory? category) {
-    if (category == null) {
-      return [];
+    switch (category) {
+      case null:
+        return [];
+      case .all:
+        return widget.allSamples;
+      case .favorites:
+        return widget.allSamples.where((sample) => sample.isFavorite).toList();
+      default:
+        return widget.allSamples
+            .where(
+              (sample) =>
+                  sample.category.toLowerCase() == category.title.toLowerCase(),
+            )
+            .toList();
     }
-    if (category.title == SampleCategory.all.title) {
-      return widget.allSamples;
-    }
-
-    return widget.allSamples.where((sample) {
-      return sample.category.toLowerCase() == category.title.toLowerCase();
-    }).toList();
   }
 
   void generateSearchHints() {
+    if (widget.category == .favorites) {
+      _hintMessages = ['Your favorite samples will appear here.'];
+      return;
+    }
+
     final uniqueHints = <String>{};
     final random = Random();
 

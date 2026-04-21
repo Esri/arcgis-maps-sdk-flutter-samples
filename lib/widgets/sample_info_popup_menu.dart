@@ -34,23 +34,32 @@ class _SampleInfoPopupMenuState extends State<SampleInfoPopupMenu>
   Widget build(BuildContext context) {
     return PopupMenuButton(
       icon: const Icon(Icons.more_vert),
-      itemBuilder: (context) => const [
-        PopupMenuItem(
+      itemBuilder: (context) => [
+        const PopupMenuItem(
           value: 'README',
           child: ListTile(
             leading: Icon(Icons.description),
             title: Text('README'),
           ),
         ),
-        PopupMenuItem(
+        const PopupMenuItem(
           value: 'Code',
           child: ListTile(leading: Icon(Icons.source), title: Text('Code')),
         ),
-        PopupMenuItem(
+        const PopupMenuItem(
           value: 'Website',
           child: ListTile(
             leading: Icon(Icons.link_rounded),
             title: Text('Website'),
+          ),
+        ),
+        PopupMenuItem(
+          value: 'ToggleFavorite',
+          child: ListTile(
+            leading: Icon(
+              widget.sample.isFavorite ? Icons.favorite : Icons.favorite_border,
+            ),
+            title: Text(widget.sample.isFavorite ? 'Unfavorite' : 'Favorite'),
           ),
         ),
       ],
@@ -58,6 +67,10 @@ class _SampleInfoPopupMenuState extends State<SampleInfoPopupMenu>
         switch (result) {
           case 'Website':
             _launchSampleUrl().ignore();
+          case 'ToggleFavorite':
+            setState(
+              () => widget.sample.isFavorite = !widget.sample.isFavorite,
+            );
           default:
             _navigateTo(context, result);
         }

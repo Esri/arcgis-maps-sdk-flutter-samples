@@ -14,10 +14,13 @@
 // limitations under the License.
 //
 
+import 'dart:async';
+
 // run `dart run build_runner build` to generate samples_widget_list.dart
 import 'package:arcgis_maps_sdk_flutter_samples/models/downloadable_resource.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/models/samples_widget_list.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 /// Class that contains information about each of the samples.
 /// The metadata is taken from the sample's README.metadata.json data via generated_samples_list.json.
@@ -64,6 +67,11 @@ class Sample {
 
   String get key => _key;
 
+  bool get isFavorite => FavoriteRepository.instance.isFavorite(_key);
+
+  set isFavorite(bool value) =>
+      FavoriteRepository.instance.setFavorite(_key, value);
+
   List<DownloadableResource> get downloadableResources =>
       _downloadableResources;
 
@@ -71,4 +79,53 @@ class Sample {
   bool get hasDownloadableResources => _downloadableResources.isNotEmpty;
 
   Widget getSampleWidget() => _sampleWidget;
+}
+
+/// Repository for managing favorite state of samples, persisted using SharedPreferences.
+/// `instance` must be initialized with SharedPreferences before use by calling `initialize()`.
+class FavoriteRepository {
+  static final instance = FavoriteRepository();
+
+  late SharedPreferences _sharedPreferences;
+  late Set<String> _favoriteSampleKeys;
+  final _favoriteChangedController =
+      StreamController<({String sampleKey, bool value})>.broadcast();
+
+  /// Stream that emits events when a favorite sample is added or removed.
+  Stream<({String sampleKey, bool value})> get favoriteChanged =>
+      _favoriteChangedController.stream;
+
+  /// Loads the favorite samples from SharedPreferences.
+  void initialize(SharedPreferences sharedPreferences) {
+    _sharedPreferences = sharedPreferences;
+    _favoriteSampleKeys =
+        (_sharedPreferences.getStringList('favorite_sample_keys') ??
+                const <String>[])
+            .toSet();
+  }
+
+  /// Whether the sample with the given key is marked as a favorite.
+  bool isFavorite(String sampleKey) => _favoriteSampleKeys.contains(sampleKey);
+
+  /// Sets the favorite status of the sample, persists the change, and emits an event.
+  void setFavorite(String sampleKey, bool value) {
+    final hasChanged = value
+        ? _favoriteSampleKeys.add(sampleKey)
+        : _favoriteSampleKeys.remove(sampleKey);
+
+    if (!hasChanged) {
+      return;
+    }
+
+    unawaited(
+      _sharedPreferences.setStringList(
+        'favorite_sample_keys',
+        _favoriteSampleKeys.toList(),
+      ),
+    );
+
+    if (_favoriteChangedController.hasListener) {
+      _favoriteChangedController.add((sampleKey: sampleKey, value: value));
+    }
+  }
 }

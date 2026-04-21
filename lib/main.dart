@@ -22,6 +22,7 @@ import 'package:arcgis_maps_sdk_flutter_samples/router_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
   // Supply your apiKey using the --dart-define-from-file command line argument.
@@ -29,6 +30,11 @@ void main() async {
   // Alternatively, replace the above line with the following and hard-code your apiKey here:
   // const apiKey = ''; // Your API Key here.
   ArcGISEnvironment.apiKey = apiKey;
+
+  WidgetsFlutterBinding.ensureInitialized();
+
+  final prefs = await SharedPreferences.getInstance();
+  FavoriteRepository.instance.initialize(prefs);
 
   final jsonString = await rootBundle.loadString(
     'assets/generated_samples_list.json',
