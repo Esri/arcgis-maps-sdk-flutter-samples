@@ -66,7 +66,7 @@ class _SampleInfoPopupMenuState extends State<SampleInfoPopupMenu>
   }
 
   Future<void> _launchSampleUrl() async {
-    if (!await launchUrl(webPageUrl(), mode: LaunchMode.externalApplication)) {
+    if (!await launchUrl(webPageUrl(), mode: .externalApplication)) {
       showMessageDialog('Could not launch ${webPageUrl()}');
     }
   }

@@ -48,12 +48,12 @@ class _ReadmePageState extends State<ReadmePage> {
 
               // Allow the view to load the initial 'about:blank' page.
               if (uri.scheme == 'about') {
-                return NavigationDecision.navigate;
+                return .navigate;
               }
 
               // Launch any other URL in the system browser (instead of this WebViewController).
-              launchUrl(uri, mode: LaunchMode.externalApplication).ignore();
-              return NavigationDecision.prevent;
+              launchUrl(uri, mode: .externalApplication).ignore();
+              return .prevent;
             },
           ),
         )
@@ -128,10 +128,7 @@ class _ReadmePageState extends State<ReadmePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: FittedBox(
-          fit: BoxFit.scaleDown,
-          child: Text(widget.sample.title),
-        ),
+        title: FittedBox(fit: .scaleDown, child: Text(widget.sample.title)),
         actions: [SampleInfoPopupMenu(sample: widget.sample)],
       ),
       body: Column(

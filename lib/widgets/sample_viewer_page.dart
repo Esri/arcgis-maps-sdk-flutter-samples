@@ -115,8 +115,7 @@ class _SampleViewerPageState extends State<SampleViewerPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title:
-            (widget.category != null && widget.category != SampleCategory.all)
+        title: (widget.category != null && widget.category != .all)
             ? Text(widget.category!.title)
             : const Text(applicationTitle),
       ),
@@ -161,7 +160,7 @@ class _SampleViewerPageState extends State<SampleViewerPage> {
                         child: Text(
                           _hintMessages[_currentHintIndex],
                           key: ValueKey(_currentHintIndex),
-                          textAlign: TextAlign.center,
+                          textAlign: .center,
                         ),
                       ),
                     )
@@ -189,13 +188,13 @@ class _SampleViewerPageState extends State<SampleViewerPage> {
     if (searchText.isEmpty) {
       if (widget.category == null) {
         results = [];
-      } else if (widget.category == SampleCategory.all) {
+      } else if (widget.category == .all) {
         results = widget.allSamples;
       } else {
         results = getSamplesByCategory(widget.category);
       }
     } else {
-      if (widget.category == null || widget.category == SampleCategory.all) {
+      if (widget.category == null || widget.category == .all) {
         results = widget.allSamples.where((sample) {
           final lowerSearchText = searchText.toLowerCase();
           return sample.title.toLowerCase().contains(lowerSearchText) ||
@@ -222,7 +221,7 @@ class _SampleViewerPageState extends State<SampleViewerPage> {
     if (category == null) {
       return [];
     }
-    if (category.title == SampleCategory.all.title) {
+    if (category == .all) {
       return widget.allSamples;
     }
 

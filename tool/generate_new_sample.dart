@@ -138,7 +138,7 @@ void createNewSampleFile(
         final newLine = line.replaceAll('SampleWidget', sampleCamelName);
         sampleFile.writeAsStringSync(
           '$newLine${Platform.lineTerminator}',
-          mode: FileMode.append,
+          mode: .append,
         );
       }
     }

@@ -36,7 +36,7 @@ class _AboutInfoState extends State<AboutInfo> {
       children: [
         Text(widget.title, style: const TextStyle(fontWeight: FontWeight.bold)),
         Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          mainAxisAlignment: .spaceEvenly,
           children: [
             Text(
               'Version',
@@ -48,7 +48,7 @@ class _AboutInfoState extends State<AboutInfo> {
             FutureBuilder(
               future: _packageInfoFuture,
               builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.done) {
+                if (snapshot.connectionState == .done) {
                   return Text(
                     '${snapshot.data?.version}.${snapshot.data?.buildNumber}',
                   );

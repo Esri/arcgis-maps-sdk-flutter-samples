@@ -22,7 +22,7 @@ final lightColorScheme = ColorScheme.fromSeed(seedColor: Colors.deepPurple);
 // Dark Theme Color Scheme
 final darkColorScheme = ColorScheme.fromSeed(
   seedColor: Colors.deepPurple,
-  brightness: Brightness.dark,
+  brightness: .dark,
 );
 
 // This shared builder ensures light and dark themes stay in sync.

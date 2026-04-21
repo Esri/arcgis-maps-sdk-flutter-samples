@@ -40,7 +40,7 @@ class BottomSheetSettings extends StatelessWidget {
     return Padding(
       padding: bottomSheetPadding(context),
       child: Column(
-        mainAxisSize: MainAxisSize.min,
+        mainAxisSize: .min,
         children: [
           Row(
             children: [

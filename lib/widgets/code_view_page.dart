@@ -39,10 +39,7 @@ class _CodeViewPageState extends State<CodeViewPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: FittedBox(
-          fit: BoxFit.scaleDown,
-          child: Text(widget.sample.title),
-        ),
+        title: FittedBox(fit: .scaleDown, child: Text(widget.sample.title)),
         actions: [SampleInfoPopupMenu(sample: widget.sample)],
       ),
       body: SafeArea(
@@ -60,7 +57,7 @@ class _CodeViewPageState extends State<CodeViewPage> {
                     final codeString = snapshot.data!;
                     return SyntaxView(
                       code: codeString,
-                      syntax: Syntax.DART,
+                      syntax: .DART,
                       syntaxTheme: SyntaxTheme.vscodeLight(),
                     );
                   } else if (snapshot.hasError) {
@@ -79,7 +76,7 @@ class _CodeViewPageState extends State<CodeViewPage> {
             Visibility(
               visible: codeMap.length > 1,
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                mainAxisAlignment: .spaceEvenly,
                 children: [
                   ElevatedButton(
                     onPressed: _selectedFileIndex > 0

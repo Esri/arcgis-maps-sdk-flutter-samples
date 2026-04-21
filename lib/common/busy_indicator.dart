@@ -27,7 +27,7 @@ class BusyIndicator extends StatelessWidget {
           width: 110,
           height: 90,
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: .center,
             children: [
               const SizedBox(
                 width: 30,
