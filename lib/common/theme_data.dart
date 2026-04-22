@@ -32,12 +32,7 @@ ThemeData _buildTheme(ColorScheme colorScheme) {
     colorScheme: colorScheme,
 
     // Application bar theme.
-    appBarTheme: AppBarTheme(
-      backgroundColor: colorScheme.surface,
-      foregroundColor: colorScheme.onSurface,
-      elevation: 0,
-      centerTitle: false,
-    ),
+    appBarTheme: AppBarTheme(backgroundColor: colorScheme.inversePrimary),
 
     // Button themes
     elevatedButtonTheme: ElevatedButtonThemeData(
