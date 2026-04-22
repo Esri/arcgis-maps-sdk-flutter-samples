@@ -34,7 +34,7 @@ class _AboutInfoState extends State<AboutInfo> {
     return Column(
       spacing: 20,
       children: [
-        Text(widget.title, style: const TextStyle(fontWeight: FontWeight.bold)),
+        Text(widget.title, style: const TextStyle(fontWeight: .bold)),
         Row(
           mainAxisAlignment: .spaceEvenly,
           children: [
@@ -42,7 +42,7 @@ class _AboutInfoState extends State<AboutInfo> {
               'Version',
               style: TextStyle(
                 color: Theme.of(context).primaryColor,
-                fontWeight: FontWeight.bold,
+                fontWeight: .bold,
               ),
             ),
             FutureBuilder(

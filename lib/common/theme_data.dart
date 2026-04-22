@@ -74,17 +74,11 @@ final sampleViewerLightTheme = _buildTheme(lightColorScheme);
 final sampleViewerDarkTheme = _buildTheme(darkColorScheme);
 
 extension CustomTextTheme on TextTheme {
-  TextStyle get customLabelStyle => const TextStyle(
-    fontSize: 18,
-    fontWeight: FontWeight.bold,
-    color: Colors.white,
-  );
+  TextStyle get customLabelStyle =>
+      const TextStyle(fontSize: 18, fontWeight: .bold, color: Colors.white);
 
-  TextStyle get categoryCardLabelStyle => const TextStyle(
-    fontSize: 16,
-    fontWeight: FontWeight.bold,
-    color: Colors.white,
-  );
+  TextStyle get categoryCardLabelStyle =>
+      const TextStyle(fontSize: 16, fontWeight: .bold, color: Colors.white);
 
   TextStyle get customErrorStyle => const TextStyle(color: Colors.red);
 

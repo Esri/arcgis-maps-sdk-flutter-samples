@@ -38,7 +38,7 @@ class _CodeViewPageState extends State<CodeViewPage> {
     final fileName = filePath.split('/').last;
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final syntaxTheme = theme.brightness == Brightness.dark
+    final syntaxTheme = theme.brightness == .dark
         ? SyntaxTheme.vscodeDark()
         : SyntaxTheme.vscodeLight();
 
@@ -62,7 +62,7 @@ class _CodeViewPageState extends State<CodeViewPage> {
                   fileName,
                   style: TextStyle(
                     fontSize: 16,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: .bold,
                     color: colorScheme.onSurface,
                   ),
                 ),

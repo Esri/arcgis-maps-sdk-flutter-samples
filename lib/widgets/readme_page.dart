@@ -124,7 +124,7 @@ class _ReadmePageState extends State<ReadmePage> {
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
         <style>
           :root {
-            color-scheme: ${theme.brightness == Brightness.dark ? 'dark' : 'light'};
+            color-scheme: ${theme.brightness == .dark ? 'dark' : 'light'};
           }
           body {
             background-color: ${_toCssColor(colorScheme.surface)};
@@ -190,7 +190,7 @@ class _ReadmePageState extends State<ReadmePage> {
                 'Readme',
                 style: TextStyle(
                   fontSize: 16,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: .bold,
                   color: colorScheme.onSurface,
                 ),
               ),
