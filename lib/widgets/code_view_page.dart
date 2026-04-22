@@ -36,6 +36,11 @@ class _CodeViewPageState extends State<CodeViewPage> {
   Widget build(BuildContext context) {
     final filePath = codeMap.keys.elementAt(_selectedFileIndex);
     final fileName = filePath.split('/').last;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final syntaxTheme = theme.brightness == Brightness.dark
+        ? SyntaxTheme.vscodeDark()
+        : SyntaxTheme.vscodeLight();
 
     return Scaffold(
       appBar: AppBar(
@@ -48,7 +53,21 @@ class _CodeViewPageState extends State<CodeViewPage> {
         right: false,
         child: Column(
           children: [
-            Text(fileName, style: const TextStyle(fontWeight: FontWeight.bold)),
+            Container(
+              width: double.infinity,
+              color: colorScheme.surfaceContainer,
+              child: ListTile(
+                leading: Icon(Icons.source, color: colorScheme.onSurface),
+                title: Text(
+                  fileName,
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: colorScheme.onSurface,
+                  ),
+                ),
+              ),
+            ),
             Expanded(
               child: FutureBuilder(
                 future: codeMap[filePath],
@@ -58,7 +77,7 @@ class _CodeViewPageState extends State<CodeViewPage> {
                     return SyntaxView(
                       code: codeString,
                       syntax: .DART,
-                      syntaxTheme: SyntaxTheme.vscodeLight(),
+                      syntaxTheme: syntaxTheme,
                     );
                   } else if (snapshot.hasError) {
                     final exception = snapshot.error! as CodeViewException;
