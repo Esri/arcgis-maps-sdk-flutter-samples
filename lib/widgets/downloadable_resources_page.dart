@@ -87,12 +87,12 @@ class _DownloadableResourcesPageState extends State<DownloadableResourcesPage> {
           padding: const EdgeInsets.all(40),
           child: Center(
             child: Column(
-              mainAxisSize: MainAxisSize.min,
+              mainAxisSize: .min,
               children: [
                 Text(
                   'This sample requires downloadable resources',
                   style: Theme.of(context).textTheme.titleMedium,
-                  textAlign: TextAlign.center,
+                  textAlign: .center,
                 ),
                 const SizedBox(height: 20),
                 // Download progress indicator
@@ -112,7 +112,7 @@ class _DownloadableResourcesPageState extends State<DownloadableResourcesPage> {
                       Text(
                         '$_progress% download complete',
                         style: Theme.of(context).textTheme.bodyMedium,
-                        textAlign: TextAlign.center,
+                        textAlign: .center,
                       ),
                     ],
                   ),
@@ -122,7 +122,7 @@ class _DownloadableResourcesPageState extends State<DownloadableResourcesPage> {
                   child: Text(
                     'The resources have been downloaded.',
                     style: Theme.of(context).textTheme.bodySmall,
-                    textAlign: TextAlign.center,
+                    textAlign: .center,
                   ),
                 ),
                 // Button [Download|Cancel|Open]
@@ -239,10 +239,10 @@ class _DownloadableResourcesPageState extends State<DownloadableResourcesPage> {
       if (mounted) {
         var message = 'Error downloading resources. Please try again.';
         if (e is ArcGISException &&
-            e.errorType == ArcGISExceptionType.commonUserDefinedFailure &&
+            e.errorType == .commonUserDefinedFailure &&
             (e.wrappedException is ArcGISException?) &&
             (e.wrappedException as ArcGISException?)?.errorType ==
-                ArcGISExceptionType.commonUserCanceled) {
+                .commonUserCanceled) {
           message = 'Cancelled';
         }
 

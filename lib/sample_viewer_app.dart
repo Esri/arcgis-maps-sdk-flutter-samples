@@ -116,10 +116,9 @@ class _ResponsiveCategoryGrid extends StatelessWidget {
         builder: (context, constraints) {
           final cardSize = switch (orientation) {
             // Two columns in portrait.
-            Orientation.portrait => (constraints.maxWidth - cardSpacing) / 2,
+            .portrait => (constraints.maxWidth - cardSpacing) / 2,
             // Four columns in landscape.
-            Orientation.landscape =>
-              (constraints.maxWidth - cardSpacing * 3) / 4,
+            .landscape => (constraints.maxWidth - cardSpacing * 3) / 4,
           };
 
           return Wrap(

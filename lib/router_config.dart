@@ -56,7 +56,7 @@ GoRouter routerConfig(List<Sample> allSamples) {
               final categoryName = state.pathParameters['category'];
               final category = SampleCategory.values.firstWhere(
                 (c) => c.name == categoryName,
-                orElse: () => SampleCategory.all,
+                orElse: () => .all,
               );
               return CategoryTransitionPage(
                 child: SampleViewerPage(

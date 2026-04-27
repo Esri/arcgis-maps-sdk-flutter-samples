@@ -113,7 +113,7 @@ class _CategoryCardState extends State<CategoryCard>
               children: [
                 _AnimatedCategoryBackground(category: widget.category),
                 Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisAlignment: .center,
                   children: [
                     _AnimatedIcon(
                       category: widget.category,
@@ -129,7 +129,7 @@ class _CategoryCardState extends State<CategoryCard>
                           widget.category.title,
                           style: Theme.of(context).textTheme.titleMedium
                               ?.copyWith(color: Colors.white),
-                          textAlign: TextAlign.center,
+                          textAlign: .center,
                         ),
                       ),
                     ),
@@ -207,7 +207,7 @@ class _AnimatedIconState extends State<_AnimatedIcon>
               padding: const EdgeInsets.all(8),
               decoration: const BoxDecoration(
                 color: Colors.black87,
-                shape: BoxShape.circle,
+                shape: .circle,
               ),
               child: Icon(widget.category.icon, size: 30, color: Colors.white),
             ),
@@ -235,7 +235,7 @@ class _AnimatedCategoryBackground extends StatelessWidget {
         children: [
           Image.asset(
             category.backgroundImage,
-            fit: BoxFit.cover,
+            fit: .cover,
             width: double.infinity,
             height: double.infinity,
           ),

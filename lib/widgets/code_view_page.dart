@@ -38,16 +38,13 @@ class _CodeViewPageState extends State<CodeViewPage> {
     final fileName = filePath.split('/').last;
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final syntaxTheme = theme.brightness == Brightness.dark
+    final syntaxTheme = theme.brightness == .dark
         ? SyntaxTheme.vscodeDark()
         : SyntaxTheme.vscodeLight();
 
     return Scaffold(
       appBar: AppBar(
-        title: FittedBox(
-          fit: BoxFit.scaleDown,
-          child: Text(widget.sample.title),
-        ),
+        title: FittedBox(fit: .scaleDown, child: Text(widget.sample.title)),
         actions: [SampleInfoPopupMenu(sample: widget.sample)],
       ),
       body: SafeArea(
@@ -65,7 +62,7 @@ class _CodeViewPageState extends State<CodeViewPage> {
                   fileName,
                   style: TextStyle(
                     fontSize: 16,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: .bold,
                     color: colorScheme.onSurface,
                   ),
                 ),
@@ -79,7 +76,7 @@ class _CodeViewPageState extends State<CodeViewPage> {
                     final codeString = snapshot.data!;
                     return SyntaxView(
                       code: codeString,
-                      syntax: Syntax.DART,
+                      syntax: .DART,
                       syntaxTheme: syntaxTheme,
                     );
                   } else if (snapshot.hasError) {
@@ -98,7 +95,7 @@ class _CodeViewPageState extends State<CodeViewPage> {
             Visibility(
               visible: codeMap.length > 1,
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                mainAxisAlignment: .spaceEvenly,
                 children: [
                   ElevatedButton(
                     onPressed: _selectedFileIndex > 0

@@ -28,7 +28,7 @@ class SampleDetailPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: FittedBox(fit: BoxFit.scaleDown, child: Text(sample.title)),
+        title: FittedBox(fit: .scaleDown, child: Text(sample.title)),
         leading: BackButton(onPressed: () => _handleBackNavigation(context)),
         actions: [SampleInfoPopupMenu(sample: sample)],
       ),

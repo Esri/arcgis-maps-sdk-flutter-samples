@@ -40,7 +40,7 @@ class _LoadingIndicatorState extends State<LoadingIndicator> {
           color: Colors.white30,
           child: Center(
             child: Column(
-              mainAxisSize: MainAxisSize.min,
+              mainAxisSize: .min,
               children: [
                 const CircularProgressIndicator(),
                 if (widget.text != null) ...[

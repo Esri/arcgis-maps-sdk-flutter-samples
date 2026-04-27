@@ -50,12 +50,12 @@ class _ReadmePageState extends State<ReadmePage> {
 
               // Allow the view to load the initial 'about:blank' page.
               if (uri.scheme == 'about') {
-                return NavigationDecision.navigate;
+                return .navigate;
               }
 
               // Launch any other URL in the system browser (instead of this WebViewController).
-              launchUrl(uri, mode: LaunchMode.externalApplication).ignore();
-              return NavigationDecision.prevent;
+              launchUrl(uri, mode: .externalApplication).ignore();
+              return .prevent;
             },
           ),
         )
@@ -124,7 +124,7 @@ class _ReadmePageState extends State<ReadmePage> {
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
         <style>
           :root {
-            color-scheme: ${theme.brightness == Brightness.dark ? 'dark' : 'light'};
+            color-scheme: ${theme.brightness == .dark ? 'dark' : 'light'};
           }
           body {
             background-color: ${_toCssColor(colorScheme.surface)};
@@ -176,10 +176,7 @@ class _ReadmePageState extends State<ReadmePage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: FittedBox(
-          fit: BoxFit.scaleDown,
-          child: Text(widget.sample.title),
-        ),
+        title: FittedBox(fit: .scaleDown, child: Text(widget.sample.title)),
         actions: [SampleInfoPopupMenu(sample: widget.sample)],
       ),
       body: Column(
@@ -193,7 +190,7 @@ class _ReadmePageState extends State<ReadmePage> {
                 'Readme',
                 style: TextStyle(
                   fontSize: 16,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: .bold,
                   color: colorScheme.onSurface,
                 ),
               ),

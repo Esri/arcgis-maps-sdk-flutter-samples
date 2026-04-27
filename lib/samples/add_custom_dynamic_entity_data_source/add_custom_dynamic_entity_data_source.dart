@@ -41,7 +41,6 @@ class _AddCustomDynamicEntityDataSourceState
   // Dynamic entity layer for identify.
   DynamicEntityLayer? _dynamicEntityLayer;
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(

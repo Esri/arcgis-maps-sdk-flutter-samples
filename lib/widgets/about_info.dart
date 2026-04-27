@@ -34,21 +34,21 @@ class _AboutInfoState extends State<AboutInfo> {
     return Column(
       spacing: 20,
       children: [
-        Text(widget.title, style: const TextStyle(fontWeight: FontWeight.bold)),
+        Text(widget.title, style: const TextStyle(fontWeight: .bold)),
         Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          mainAxisAlignment: .spaceEvenly,
           children: [
             Text(
               'Version',
               style: TextStyle(
                 color: Theme.of(context).primaryColor,
-                fontWeight: FontWeight.bold,
+                fontWeight: .bold,
               ),
             ),
             FutureBuilder(
               future: _packageInfoFuture,
               builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.done) {
+                if (snapshot.connectionState == .done) {
                   return Text(
                     '${snapshot.data?.version}.${snapshot.data?.buildNumber}',
                   );
