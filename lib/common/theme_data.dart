@@ -19,10 +19,17 @@ import 'package:flutter/material.dart';
 // Light Theme Color Scheme
 final lightColorScheme = ColorScheme.fromSeed(seedColor: Colors.deepPurple);
 
-// Dark Theme Color Scheme
+// Dark Theme Color Scheme with softer surfaces.
 final darkColorScheme = ColorScheme.fromSeed(
   seedColor: Colors.deepPurple,
   brightness: .dark,
+  // Surfaces for Material-style soft dark tones.
+  surface: const Color(0xFF2C2C2E),
+  surfaceContainerLowest: const Color(0xFF1C1C1E),
+  surfaceContainerLow: const Color(0xFF232326),
+  surfaceContainer: const Color(0xFF2C2C2E),
+  surfaceContainerHigh: const Color(0xFF36363A),
+  surfaceContainerHighest: const Color(0xFF42424A),
 );
 
 // This shared builder ensures light and dark themes stay in sync.
@@ -30,6 +37,8 @@ ThemeData _buildTheme(ColorScheme colorScheme) {
   return ThemeData(
     brightness: colorScheme.brightness,
     colorScheme: colorScheme,
+
+    scaffoldBackgroundColor: colorScheme.surface,
 
     // Application bar theme.
     appBarTheme: AppBarTheme(backgroundColor: colorScheme.inversePrimary),
@@ -63,6 +72,27 @@ ThemeData _buildTheme(ColorScheme colorScheme) {
         elevation: WidgetStateProperty.all(6),
         backgroundColor: WidgetStateProperty.all(colorScheme.surfaceContainer),
       ),
+    ),
+
+    // Progress Indicator theme.
+    progressIndicatorTheme: ProgressIndicatorThemeData(
+      color: colorScheme.primary,
+      linearTrackColor: colorScheme.surfaceContainerHighest,
+      circularTrackColor: colorScheme.surfaceContainerHighest,
+      linearMinHeight: 6,
+    ),
+
+    // Dialog theme with surface background color.
+    dialogTheme: DialogThemeData(
+      backgroundColor: colorScheme.surface,
+      elevation: 6,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+    ),
+
+    cardTheme: CardThemeData(
+      color: colorScheme.surfaceContainerHigh,
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
     ),
   );
 }
