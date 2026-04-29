@@ -62,6 +62,8 @@ extension ThemedCalloutStyle on CalloutStyle {
           contentPadding ??
           const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       maxWidth: maxWidth ?? 300,
+      //CalloutStyle default Offset value.
+      offset: offset ?? const Offset(0, -8),
       minWidth: 100,
     );
   }
