@@ -62,6 +62,12 @@ ThemeData _buildTheme(ColorScheme colorScheme) {
       foregroundColor: colorScheme.onPrimaryContainer,
     ),
 
+    // Icon theme for dropdown arrows and other icons.
+    iconTheme: IconThemeData(
+      color: colorScheme.onSurface,  // Light: dark grey, Dark: light grey
+      size: 24,
+    ),
+
     // Dropdown menu theme.
     dropdownMenuTheme: DropdownMenuThemeData(
       inputDecorationTheme: const InputDecorationTheme(
@@ -72,6 +78,27 @@ ThemeData _buildTheme(ColorScheme colorScheme) {
         elevation: WidgetStateProperty.all(6),
         backgroundColor: WidgetStateProperty.all(colorScheme.surfaceContainer),
       ),
+      textStyle: TextStyle(color: colorScheme.onSurface),
+    ),
+
+    // Controls DropdownButton menu appearance.
+    popupMenuTheme: PopupMenuThemeData(
+      color: colorScheme.surfaceContainerHigh,
+      elevation: 6,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      textStyle: TextStyle(
+        color: colorScheme.onSurface,
+        fontSize: 14,
+      ),
+    ),
+
+    // Text selection theme (affects dropdown selected items).
+    textSelectionTheme: TextSelectionThemeData(
+      cursorColor: colorScheme.primary,
+      selectionColor: colorScheme.primaryContainer,
+      selectionHandleColor: colorScheme.primary,
     ),
 
     // Progress Indicator theme.
@@ -114,3 +141,4 @@ extension CustomTextTheme on TextTheme {
 
   TextStyle get customWhiteStyle => const TextStyle(color: Colors.white);
 }
+
