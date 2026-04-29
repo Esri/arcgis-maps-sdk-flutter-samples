@@ -59,12 +59,10 @@ extension ThemedCalloutStyle on CalloutStyle {
 
       // Layout properties.
       contentPadding:
-      contentPadding ??
+          contentPadding ??
           const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      offset: offset ?? const Offset(0, -35),
       maxWidth: maxWidth ?? 300,
       minWidth: 100,
     );
   }
-
 }
