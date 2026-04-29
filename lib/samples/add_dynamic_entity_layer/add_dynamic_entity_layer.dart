@@ -292,6 +292,7 @@ class _AddDynamicEntityLayerState extends State<AddDynamicEntityLayer>
               "\n(", Round($feature.point_x, 6), ", ", Round($feature.point_y, 6), ")"
             )
             ''',
+      style: ThemedCalloutStyle.themed(context),
     );
 
     if (!shown) {

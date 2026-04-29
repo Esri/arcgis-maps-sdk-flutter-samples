@@ -18,6 +18,7 @@ import 'dart:io';
 
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/widgets/download_progress_card.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -107,33 +108,12 @@ class _GenerateOfflineMapState extends State<GenerateOfflineMap>
             // Display a progress indicator and a cancel button during the offline map generation.
             Visibility(
               visible: _progress != null,
-              child: Center(
-                child: Container(
-                  width: MediaQuery.sizeOf(context).width / 2,
-                  padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    spacing: 20,
-                    children: [
-                      // Add a progress indicator.
-                      Text('$_progress%'),
-                      LinearProgressIndicator(
-                        value: _progress != null ? _progress! / 100.0 : 0.0,
-                      ),
-                      // Add a button to cancel the job.
-                      ElevatedButton(
-                        onPressed: () => _generateOfflineMapJob?.cancel(),
-                        child: const Text('Cancel'),
-                      ),
-                    ],
-                  ),
-                ),
+              child: DownloadProgressCard(
+                title: 'Generating Offline Map',
+                progress: _progress != null ? _progress! / 100.0 : 0.0,
+                onCancel: () => _generateOfflineMapJob?.cancel(),
               ),
-            ),
+            )
           ],
         ),
       ),
