@@ -267,6 +267,7 @@ class _ShowLineOfSightAnalysisInMapState
       observerGraphic,
       title: observer.name,
       detail: lineOfSightResult.detail,
+      style: ThemedCalloutStyle.themed(context),
     );
   }
 }

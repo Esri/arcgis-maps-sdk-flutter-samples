@@ -158,6 +158,7 @@ concatenate(
 )
 ''',
       animated: false,
+      style: ThemedCalloutStyle.themed(context),
     );
   }
 }

@@ -35,6 +35,7 @@ class _FindAddressWithReverseGeocodeState
       'https://geocode-api.arcgis.com/arcgis/rest/services/World/GeocodeServer',
     ),
   );
+
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
   final _initialViewpoint = Viewpoint.fromCenter(
@@ -45,6 +46,7 @@ class _FindAddressWithReverseGeocodeState
     ),
     scale: 50000,
   );
+
   // A flag for when the map view is ready and controls can be used.
   var _ready = false;
 
@@ -133,10 +135,7 @@ class _FindAddressWithReverseGeocodeState
     _mapViewController.callout.showAt(
       normalizedTapPoint,
       detail: combinedString,
-      style: CalloutStyle(
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        offset: const Offset(0, -35),
-      ),
+      style: ThemedCalloutStyle.themed(context),
     );
   }
 }

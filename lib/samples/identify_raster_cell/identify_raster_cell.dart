@@ -29,8 +29,10 @@ class _IdentifyRasterCellState extends State<IdentifyRasterCell>
     with SampleStateSupport {
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
+
   // A flag for when the map view is ready and controls can be used.
   var _ready = false;
+
   // Raster layer to display raster data on the map.
   late RasterLayer _rasterLayer;
 
@@ -95,13 +97,8 @@ class _IdentifyRasterCellState extends State<IdentifyRasterCell>
         // Display a callout for the raster cell attributes.
         _mapViewController.callout.showCalloutForGeoElement(
           cell,
-          contentBuilder: (context, geoElement) => IntrinsicWidth(
-            child: Container(
-              padding: const EdgeInsets.all(6),
-              color: Colors.white,
-              child: Text(stringBuffer.toString(), softWrap: false),
-            ),
-          ),
+          detail: stringBuffer.toString(),
+          style: ThemedCalloutStyle.themed(context),
         );
       }
     }
