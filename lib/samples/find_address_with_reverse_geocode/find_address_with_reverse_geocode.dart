@@ -135,7 +135,7 @@ class _FindAddressWithReverseGeocodeState
     _mapViewController.callout.showAt(
       normalizedTapPoint,
       detail: combinedString,
-      style: ThemedCalloutStyle.themed(context),
+      style: ThemedCalloutStyle.themed(context, offset: const Offset(0, -35)),
     );
   }
 }

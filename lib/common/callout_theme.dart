@@ -40,7 +40,6 @@ extension ThemedCalloutStyle on CalloutStyle {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final textTheme = theme.textTheme;
-
     return CalloutStyle(
       // Use elevated surface color for better visual hierarchy
       backgroundColor: colorScheme.surfaceContainerHigh,
@@ -58,13 +57,14 @@ extension ThemedCalloutStyle on CalloutStyle {
         color: colorScheme.onSurfaceVariant,
       ),
 
-      // Layout properties (use provided values or sensible defaults)
+      // Layout properties.
       contentPadding:
-          contentPadding ??
+      contentPadding ??
           const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       offset: offset ?? const Offset(0, -35),
       maxWidth: maxWidth ?? 300,
       minWidth: 100,
     );
   }
+
 }
