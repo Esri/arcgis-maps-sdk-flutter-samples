@@ -31,6 +31,12 @@ void main() async {
   // const apiKey = ''; // Your API Key here.
   ArcGISEnvironment.apiKey = apiKey;
 
+  // (Optional) Supply a license key using the --dart-define-from-file command line argument.
+  const licenseKey = String.fromEnvironment('LICENSE_KEY');
+  if (licenseKey.isNotEmpty) {
+    ArcGISEnvironment.setLicenseUsingKey(licenseKey);
+  }
+
   WidgetsFlutterBinding.ensureInitialized();
 
   final prefs = await SharedPreferences.getInstance();
