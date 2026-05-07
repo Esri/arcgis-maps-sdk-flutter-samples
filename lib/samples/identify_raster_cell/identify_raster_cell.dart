@@ -76,6 +76,8 @@ class _IdentifyRasterCellState extends State<IdentifyRasterCell>
       screenPoint: position,
       tolerance: 1,
     );
+    if (!mounted) return;
+
     // Get the identified raster cell.
     if (identifyResult.geoElements.isNotEmpty) {
       // Create a StringBuffer to display information to the user.
