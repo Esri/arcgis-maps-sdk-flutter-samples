@@ -64,7 +64,7 @@ ThemeData _buildTheme(ColorScheme colorScheme) {
 
     // Icon theme for dropdown arrows and other icons.
     iconTheme: IconThemeData(
-      color: colorScheme.onSurface,  // Light: dark grey, Dark: light grey
+      color: colorScheme.onSurface, // Light: dark grey, Dark: light grey
       size: 24,
     ),
 
@@ -141,4 +141,3 @@ extension CustomTextTheme on TextTheme {
 
   TextStyle get customWhiteStyle => const TextStyle(color: Colors.white);
 }
-
