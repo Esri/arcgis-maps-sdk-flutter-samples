@@ -120,6 +120,7 @@ class _FindAddressWithReverseGeocodeState
       location: normalizedTapPoint as ArcGISPoint,
       parameters: reverseGeocodeParameters,
     );
+    if (!mounted) return;
     if (reverseGeocodeResult.isEmpty) return;
 
     // Get attributes from the first result and display a formatted address in a dialog.
