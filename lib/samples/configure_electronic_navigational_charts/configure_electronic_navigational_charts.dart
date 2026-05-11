@@ -83,7 +83,9 @@ class _ConfigureElectronicNavigationalChartsState
                 Padding(
                   padding: const EdgeInsets.all(8),
                   child: ElevatedButton(
-                    onPressed: _ready ? showDisplaySettings : null,
+                    onPressed: _ready && _encLayers.isNotEmpty
+                        ? showDisplaySettings
+                        : null,
                     child: const Text('Display Settings'),
                   ),
                 ),
@@ -98,39 +100,55 @@ class _ConfigureElectronicNavigationalChartsState
   }
 
   Future<void> onMapViewReady() async {
-    final downloadPaths = GoRouter.of(context).state.extra! as List<String>;
-    final hydrographyDirectory = Directory(downloadPaths[0]);
-    final exchangeSetFile = File(downloadPaths[1]);
+    try {
+      final downloadPaths = GoRouter.of(context).state.extra! as List<String>;
+      final hydrographyDirectory = Directory(downloadPaths[0]);
+      final exchangeSetFile = File(downloadPaths[1]);
 
-    // Configure the ENC resource directory to point to the downloaded hydrography data, and prepare a temp directory.
-    final environmentSettings = EncLayer.getEnvironmentSettings();
-    _sencDataDirectory = Directory.systemTemp.createTempSync('enc_senc_');
-    environmentSettings.resourceUri = hydrographyDirectory.uri;
-    environmentSettings.sencDataUri = _sencDataDirectory!.uri;
+      // Configure the ENC resource directory to point to the downloaded hydrography data, and prepare a temp directory.
+      final environmentSettings = EncLayer.getEnvironmentSettings();
+      _sencDataDirectory = Directory.systemTemp.createTempSync('enc_senc_');
+      environmentSettings.resourceUri = hydrographyDirectory.uri;
+      environmentSettings.sencDataUri = _sencDataDirectory!.uri;
 
-    configureEncDisplaySettings();
+      configureEncDisplaySettings();
 
-    // Create a map with an oceans basemap style.
-    final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISOceans);
-    map.initialViewpoint = Viewpoint.fromCenter(
-      ArcGISPoint(x: 60.95, y: -32.5, spatialReference: SpatialReference.wgs84),
-      scale: 67000,
-    );
-    _mapViewController.arcGISMap = map;
+      // Create a map with an oceans basemap style.
+      final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISOceans);
+      map.initialViewpoint = Viewpoint.fromCenter(
+        ArcGISPoint(
+          x: 60.95,
+          y: -32.5,
+          spatialReference: SpatialReference.wgs84,
+        ),
+        scale: 67000,
+      );
+      _mapViewController.arcGISMap = map;
 
-    // Create layers from the exchange set's datasets and add them to the map.
-    final exchangeSet = EncExchangeSet(fileUris: [exchangeSetFile.uri]);
-    await exchangeSet.load();
-    _encLayers.addAll(
-      exchangeSet.datasets.map((dataset) {
-        final cell = EncCell.withDataset(dataset);
-        return EncLayer(cell: cell);
-      }),
-    );
-    map.operationalLayers.addAll(_encLayers);
-
-    // Set the ready state variable to true to enable the sample UI.
-    setState(() => _ready = true);
+      // Create layers from the exchange set's datasets and add them to the map.
+      final exchangeSet = EncExchangeSet(fileUris: [exchangeSetFile.uri]);
+      await exchangeSet.load();
+      _encLayers.addAll(
+        exchangeSet.datasets.map((dataset) {
+          final cell = EncCell.withDataset(dataset);
+          return EncLayer(cell: cell);
+        }),
+      );
+      map.operationalLayers.addAll(_encLayers);
+    } on ArcGISException catch (e) {
+      showMessageDialog(
+        'Failed to load electronic navigational charts: ${e.message}',
+        title: 'Error',
+      );
+    } on Exception catch (e) {
+      showMessageDialog(
+        'Failed to configure electronic navigational charts: $e',
+        title: 'Error',
+      );
+    } finally {
+      // Set the ready state variable to true to hide the loading indicator.
+      setState(() => _ready = true);
+    }
   }
 
   Future<void> onTap(Offset localPosition) async {
