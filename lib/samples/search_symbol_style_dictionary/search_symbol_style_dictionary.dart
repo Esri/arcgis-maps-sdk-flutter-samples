@@ -40,9 +40,9 @@ class _SearchSymbolStyleDictionaryState
   var _ready = true;
   var _resultCount = 0;
   final _results = <_SymbolSearchPreview>[];
-
+  // Symbol style dictionary for mil2525d symbols.
   SymbolStyle? _symbolStyle;
-
+  var _statusMessage = 'No symbols to display. Run a search to see results.';
   @override
   void initState() {
     super.initState();
@@ -121,11 +121,7 @@ class _SearchSymbolStyleDictionaryState
                             ),
                           ),
                           child: _results.isEmpty
-                              ? const Center(
-                                  child: Text(
-                                    'No symbols to display. Run a search to see results.',
-                                  ),
-                                )
+                              ? Center(child: Text(_statusMessage))
                               : ListView.separated(
                                   padding: const EdgeInsets.all(12),
                                   itemCount: _results.length,
@@ -151,6 +147,7 @@ class _SearchSymbolStyleDictionaryState
   }
 
   Future<void> _performSearch() async {
+    setState(() => _ready = false);
     if (_symbolStyle == null) {
       // Download the sample data.
       final listPaths = GoRouter.of(context).state.extra! as List<String>;
@@ -158,18 +155,20 @@ class _SearchSymbolStyleDictionaryState
       if (listPaths.isNotEmpty) {
         final file = File(stylxPath);
         if (!file.existsSync() || file.lengthSync() == 0) {
-          throw Exception(
-            'Symbol style dictionary file not found or empty at path: ${file.path}',
-          );
+          _statusMessage =
+              'Symbol style dictionary file not found or empty at path: ${file.path}';
+          setState(() => _ready = true);
+          return;
         }
       }
 
       _symbolStyle = SymbolStyle.withStyleLocation(stylxPath);
       await _symbolStyle!.load();
       if (_symbolStyle!.loadStatus != LoadStatus.loaded) {
-        throw Exception(
-          'Failed to load the symbol style dictionary: ${_symbolStyle!.loadError}',
-        );
+        _statusMessage =
+            'Failed to load the symbol style dictionary: ${_symbolStyle!.loadError}';
+        setState(() => _ready = true);
+        return;
       }
     }
     // get parameters from input fields
@@ -203,6 +202,7 @@ class _SearchSymbolStyleDictionaryState
         ..clear()
         ..addAll(listSymbols);
       _resultCount = _results.length;
+      _ready = true;
     });
   }
 
@@ -216,45 +216,6 @@ class _SearchSymbolStyleDictionaryState
     return arcgisImage;
   }
 
-  Future<void> _performMockSearch() async {
-    setState(() => _ready = false);
-    await Future<void>.delayed(const Duration(milliseconds: 450));
-
-    final queryParts =
-        [
-              _nameController.text,
-              _tagController.text,
-              _symbolClassController.text,
-              _categoryController.text,
-              _keyController.text,
-            ]
-            .where((value) => value.trim().isNotEmpty)
-            .map((value) => value.trim().toLowerCase())
-            .toList();
-
-    final seeded = _mockSeedResults.where((result) {
-      if (queryParts.isEmpty) {
-        return true;
-      }
-      final haystack = [
-        result.name,
-        result.tags.join(' '),
-        result.symbolClass,
-        result.category,
-        result.key,
-      ].join(' ').toLowerCase();
-      return queryParts.every(haystack.contains);
-    }).toList();
-
-    setState(() {
-      _results
-        ..clear()
-        ..addAll(seeded);
-      _resultCount = _results.length;
-      _ready = true;
-    });
-  }
-
   void _clear() {
     _nameController.clear();
     _tagController.clear();
@@ -264,12 +225,13 @@ class _SearchSymbolStyleDictionaryState
 
     setState(() {
       _results.clear();
+      _statusMessage = '';
       _resultCount = 0;
     });
   }
 }
 
-class _SearchFields extends StatelessWidget {
+class _SearchFields extends StatefulWidget {
   const _SearchFields({
     required this.nameController,
     required this.tagController,
@@ -285,46 +247,75 @@ class _SearchFields extends StatelessWidget {
   final TextEditingController keyController;
 
   @override
+  State<_SearchFields> createState() => _SearchFieldsState();
+}
+
+class _SearchFieldsState extends State<_SearchFields> {
+  var _showMoreFilters = false;
+
+  @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
         final wide = constraints.maxWidth >= 780;
 
-        final fields = [
-          _SearchTextField(label: 'Name', controller: nameController),
-          _SearchTextField(label: 'Tag', controller: tagController),
+        final baseFields = [
+          _SearchTextField(label: 'Name', controller: widget.nameController),
+          _SearchTextField(label: 'Tag', controller: widget.tagController),
+        ];
+        final extraFields = [
           _SearchTextField(
             label: 'Symbol class',
-            controller: symbolClassController,
+            controller: widget.symbolClassController,
           ),
-          _SearchTextField(label: 'Category', controller: categoryController),
-          _SearchTextField(label: 'Key', controller: keyController),
+          _SearchTextField(
+            label: 'Category',
+            controller: widget.categoryController,
+          ),
+          _SearchTextField(label: 'Key', controller: widget.keyController),
         ];
+        final fields = [...baseFields, if (_showMoreFilters) ...extraFields];
 
-        if (wide) {
-          return Wrap(
-            spacing: 12,
-            runSpacing: 12,
-            children: fields
-                .map(
-                  (field) => SizedBox(
-                    width: (constraints.maxWidth - 24) / 2,
-                    child: field,
-                  ),
-                )
-                .toList(),
-          );
-        }
+        final fieldsWidget = wide
+            ? Wrap(
+                spacing: 12,
+                runSpacing: 12,
+                children: fields
+                    .map(
+                      (field) => SizedBox(
+                        width: (constraints.maxWidth - 24) / 2,
+                        child: field,
+                      ),
+                    )
+                    .toList(),
+              )
+            : Column(
+                children: fields
+                    .map(
+                      (field) => Padding(
+                        padding: const EdgeInsets.only(bottom: 10),
+                        child: field,
+                      ),
+                    )
+                    .toList(),
+              );
 
         return Column(
-          children: fields
-              .map(
-                (field) => Padding(
-                  padding: const EdgeInsets.only(bottom: 10),
-                  child: field,
-                ),
-              )
-              .toList(),
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            fieldsWidget,
+            TextButton.icon(
+              onPressed: () {
+                setState(() {
+                  _showMoreFilters = !_showMoreFilters;
+                });
+              },
+              icon: Icon(
+                _showMoreFilters ? Icons.expand_less : Icons.expand_more,
+              ),
+              label: Text(_showMoreFilters ? 'less' : 'more'),
+            ),
+          ],
         );
       },
     );
@@ -425,41 +416,3 @@ class _SymbolSearchPreview {
   final String key;
   final Image? swatch;
 }
-
-const _mockSeedResults = [
-  _SymbolSearchPreview(
-    name: 'Infantry Platoon',
-    tags: ['ground', 'friendly', 'maneuver'],
-    symbolClass: 'Unit',
-    category: 'Ground Units',
-    key: 'SFGPUCI----K---',
-  ),
-  _SymbolSearchPreview(
-    name: 'Medical Evacuation',
-    tags: ['support', 'medical', 'mobility'],
-    symbolClass: 'Unit',
-    category: 'Medical',
-    key: 'SFGPUUMED--K---',
-  ),
-  _SymbolSearchPreview(
-    name: 'Reconnaissance Team',
-    tags: ['ground', 'sensor', 'intelligence'],
-    symbolClass: 'Unit',
-    category: 'Recon',
-    key: 'SFGPUUR----K---',
-  ),
-  _SymbolSearchPreview(
-    name: 'Forward Operating Base',
-    tags: ['installation', 'ground', 'logistics'],
-    symbolClass: 'Installation',
-    category: 'Facilities',
-    key: 'GFGPGPP----A---',
-  ),
-  _SymbolSearchPreview(
-    name: 'Air Defense Battery',
-    tags: ['air', 'friendly', 'defense'],
-    symbolClass: 'Unit',
-    category: 'Air Defense',
-    key: 'SFGPUCAD---K---',
-  ),
-];
