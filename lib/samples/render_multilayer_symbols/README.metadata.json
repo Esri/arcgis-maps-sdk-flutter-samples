@@ -1,0 +1,40 @@
+{
+    "category": "Visualization",
+    "description": "Show different kinds of multilayer symbols on a map similar to some pre-defined 2D simple symbol styles.",
+    "ignore": false,
+    "images": [
+        "render_multilayer_symbols.png"
+    ],
+    "keywords": [
+        "graphic",
+        "marker",
+        "multilayer",
+        "picture",
+        "symbol",
+        "Graphic",
+        "GraphicsOverlay",
+        "MultiLayerPoint",
+        "MultiLayerPolygon",
+        "MultiLayerPolyline",
+        "PictureMarkerSymbolLayer",
+        "SolidFillSymbolLayer",
+        "SolidStrokeSymbolLayer",
+        "VectorMarkerSymbolLayer"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+        "Graphic",
+        "GraphicsOverlay",
+        "MultiLayerPoint",
+        "MultiLayerPolygon",
+        "MultiLayerPolyline",
+        "PictureMarkerSymbolLayer",
+        "SolidFillSymbolLayer",
+        "SolidStrokeSymbolLayer",
+        "VectorMarkerSymbolLayer"
+    ],
+    "snippets": [
+        "render_multilayer_symbols.dart"
+    ],
+    "title": "Render multilayer symbols"
+}
