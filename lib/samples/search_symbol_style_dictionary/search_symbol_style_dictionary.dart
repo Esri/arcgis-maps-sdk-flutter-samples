@@ -376,19 +376,62 @@ class _SearchResultCard extends StatelessWidget {
                 children: [
                   Text(result.name, style: textTheme.titleSmall),
                   const SizedBox(height: 3),
-                  Text(
-                    'Tags: ${result.tags.join(', ')}',
-                    style: textTheme.bodySmall,
+                  Text.rich(
+                    TextSpan(
+                      style: textTheme.bodySmall,
+                      children: [
+                        TextSpan(
+                          text: 'Key: ',
+                          style: textTheme.bodySmall?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        TextSpan(text: result.key),
+                      ],
+                    ),
                   ),
-                  Text(
-                    'Symbol class: ${result.symbolClass}',
-                    style: textTheme.bodySmall,
+                  Text.rich(
+                    TextSpan(
+                      style: textTheme.bodySmall,
+                      children: [
+                        TextSpan(
+                          text: 'Tags: ',
+                          style: textTheme.bodySmall?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        TextSpan(text: result.tags.join(', ')),
+                      ],
+                    ),
                   ),
-                  Text(
-                    'Category: ${result.category}',
-                    style: textTheme.bodySmall,
+                  Text.rich(
+                    TextSpan(
+                      style: textTheme.bodySmall,
+                      children: [
+                        TextSpan(
+                          text: 'Symbol class: ',
+                          style: textTheme.bodySmall?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        TextSpan(text: result.symbolClass),
+                      ],
+                    ),
                   ),
-                  Text('Key: ${result.key}', style: textTheme.bodySmall),
+                  Text.rich(
+                    TextSpan(
+                      style: textTheme.bodySmall,
+                      children: [
+                        TextSpan(
+                          text: 'Category: ',
+                          style: textTheme.bodySmall?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        TextSpan(text: result.category),
+                      ],
+                    ),
+                  ),
                 ],
               ),
             ),
