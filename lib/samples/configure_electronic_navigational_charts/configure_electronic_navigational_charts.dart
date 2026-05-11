@@ -46,6 +46,7 @@ class _ConfigureElectronicNavigationalChartsState
 
   @override
   void dispose() {
+    // Configure the ENC resource directory to point to the downloaded hydrography data, and prepare a temp directory.
     final environmentSettings = EncLayer.getEnvironmentSettings();
 
     // Reset global ENC environment paths and display settings when leaving the sample.
@@ -157,11 +158,11 @@ class _ConfigureElectronicNavigationalChartsState
       screenPoint: localPosition,
       tolerance: 10,
     );
+    if (!mounted) return;
 
     // Select the first identified ENC feature and show its acronym and description.
     final identifiedFeature = findFirstEncFeature(identifyLayerResults);
     if (identifiedFeature == null) return;
-    if (!mounted) return;
 
     identifiedFeature.layer.selectFeature(identifiedFeature.feature);
     final title = identifiedFeature.feature.acronym;
