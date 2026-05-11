@@ -47,7 +47,7 @@ class _RenderMultilayerSymbolsState extends State<RenderMultilayerSymbols>
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISLightGray);
     _mapViewController.arcGISMap = map;
 
-    // Set an initial viewpoint.
+    // Set an initial viewpoint covering the entire world.
     map.initialViewpoint = Viewpoint.fromTargetExtent(
       Envelope.fromPoints(
         ArcGISPoint(x: -180, y: -90, spatialReference: SpatialReference.wgs84),
@@ -400,7 +400,6 @@ class _RenderMultilayerSymbolsState extends State<RenderMultilayerSymbols>
             y: -6,
             placementMode: SymbolAnchorPlacementMode.absolute,
           );
-
     final blackSquareLayer =
         VectorMarkerSymbolLayer(
             vectorMarkerSymbolElements: [
@@ -419,7 +418,7 @@ class _RenderMultilayerSymbolsState extends State<RenderMultilayerSymbols>
                 ),
                 multilayerSymbol: MultilayerPolygonSymbol(
                   symbolLayers: [
-                    SolidFillSymbolLayer(color: Colors.black),
+                    SolidFillSymbolLayer(),
                     SolidStrokeSymbolLayer(width: 2, color: Colors.deepOrange),
                   ],
                 ),
@@ -432,7 +431,6 @@ class _RenderMultilayerSymbolsState extends State<RenderMultilayerSymbols>
             y: 1,
             placementMode: SymbolAnchorPlacementMode.absolute,
           );
-
     final purpleSquareLayer =
         VectorMarkerSymbolLayer(
             vectorMarkerSymbolElements: [
@@ -464,7 +462,6 @@ class _RenderMultilayerSymbolsState extends State<RenderMultilayerSymbols>
             y: 2,
             placementMode: SymbolAnchorPlacementMode.absolute,
           );
-
     final hexagonGeometry = Geometry.fromJsonString(
       '{"rings":[[[-2.89,5.0],[2.89,5.0],[5.77,0.0],[2.89,-5.0],[-2.89,-5.0],[-5.77,0.0],[-2.89,5.0]]]}',
     );
@@ -481,7 +478,6 @@ class _RenderMultilayerSymbolsState extends State<RenderMultilayerSymbols>
         ),
       ],
     )..size = 35;
-
     final complexPointSymbol = MultilayerPointSymbol(
       symbolLayers: [
         hexagonLayer,
@@ -514,7 +510,6 @@ class _RenderMultilayerSymbolsState extends State<RenderMultilayerSymbols>
         DashGeometricEffect(dashTemplate: const [5, 3]),
       ],
     )..capStyle = StrokeSymbolLayerCapStyle.square;
-
     final complexPolygonBuilder =
         PolygonBuilder(spatialReference: SpatialReference.wgs84)
           ..addPointXY(x: 120, y: 0)

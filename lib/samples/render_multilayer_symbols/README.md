@@ -15,19 +15,19 @@ The sample loads multilayer symbols for points, polylines, and polygons.
 ## How it works
 
 1. Create multilayer symbols for each predefined 2D simple symbol style.
-    * For multilayer point symbols, use the `MultilayerPoint` constructor.
-    * For multilayer polyline symbols, use the `MultiLayerPolyline` constructor.
-    * For multilayer polygon symbols, use the `MultiLayerPolygon` constructor.
+    * For multilayer point symbols, use the `MultilayerPointSymbol` constructor.
+    * For multilayer polyline symbols, use the `MultilayerPolylineSymbol` constructor.
+    * For multilayer polygon symbols, use the `MultilayerPolygonSymbol` constructor.
 2. Create graphics by passing in a geometry and the associated symbol.
-3. Add graphics to the graphics overlay with `graphicsOverlay.Graphics.Add(graphic)`
+3. Add graphics to the graphics overlay with `overlay.graphics.add(graphic)`
 
 ## Relevant API
 
 * Graphic
 * GraphicsOverlay
-* MultiLayerPoint
-* MultiLayerPolygon
-* MultiLayerPolyline
+* MultilayerPointSymbol
+* MultilayerPolygonSymbol
+* MultilayerPolylineSymbol
 * PictureMarkerSymbolLayer
 * SolidFillSymbolLayer
 * SolidStrokeSymbolLayer
