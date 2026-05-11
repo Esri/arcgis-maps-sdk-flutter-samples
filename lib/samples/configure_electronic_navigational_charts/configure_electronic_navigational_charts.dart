@@ -46,7 +46,6 @@ class _ConfigureElectronicNavigationalChartsState
 
   @override
   void dispose() {
-    // Configure the ENC resource directory to point to the downloaded hydrography data, and prepare a temp directory.
     final environmentSettings = EncLayer.getEnvironmentSettings();
 
     // Reset global ENC environment paths and display settings when leaving the sample.
@@ -103,6 +102,7 @@ class _ConfigureElectronicNavigationalChartsState
     final hydrographyDirectory = Directory(downloadPaths[0]);
     final exchangeSetFile = File(downloadPaths[1]);
 
+    // Configure the ENC resource directory to point to the downloaded hydrography data, and prepare a temp directory.
     final environmentSettings = EncLayer.getEnvironmentSettings();
     _sencDataDirectory = Directory.systemTemp.createTempSync('enc_senc_');
     environmentSettings.resourceUri = hydrographyDirectory.uri;
