@@ -42,7 +42,7 @@ class _RenderMultilayerSymbolsState extends State<RenderMultilayerSymbols>
     );
   }
 
-  Future<void> onMapViewReady() async {
+  void onMapViewReady() {
     // Create a map with a light gray basemap style.
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISLightGray);
     _mapViewController.arcGISMap = map;
