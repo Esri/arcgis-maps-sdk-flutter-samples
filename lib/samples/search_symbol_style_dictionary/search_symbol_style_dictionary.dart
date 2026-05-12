@@ -31,7 +31,7 @@ class SearchSymbolStyleDictionary extends StatefulWidget {
 class _SearchSymbolStyleDictionaryState
     extends State<SearchSymbolStyleDictionary>
     with SampleStateSupport {
-  final _nameController = TextEditingController(text: 'Maritime');
+  final _nameController = TextEditingController();
   final _tagController = TextEditingController();
   final _symbolClassController = TextEditingController();
   final _categoryController = TextEditingController();
