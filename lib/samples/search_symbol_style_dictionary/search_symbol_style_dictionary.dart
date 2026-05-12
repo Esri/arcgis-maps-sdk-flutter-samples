@@ -237,7 +237,7 @@ class _SearchSymbolStyleDictionaryState
 
     setState(() {
       _results.clear();
-      _statusMessage = '';
+      _statusMessage = 'No symbols to display. Enter search criteria to begin.';
       _resultCount = 0;
     });
   }
