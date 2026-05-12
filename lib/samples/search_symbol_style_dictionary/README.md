@@ -25,7 +25,7 @@ To search for certain symbols, enter text into one or more search boxes and clic
 ## Relevant API
 
 * Symbol
-* SymbolDictionary
+* DictionarySymbolStyle
 * SymbolStyleSearchParameters
 * SymbolStyleSearchResult
 
