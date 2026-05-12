@@ -24,14 +24,14 @@
         "search",
         "symbology",
         "Symbol",
-        "SymbolDictionary",
+        "DictionarySymbolStyle",
         "SymbolStyleSearchParameters",
         "SymbolStyleSearchResult"
     ],
     "redirect_from": [],
     "relevant_apis": [
         "Symbol",
-        "SymbolDictionary",
+        "DictionarySymbolStyle",
         "SymbolStyleSearchParameters",
         "SymbolStyleSearchResult"
     ],
