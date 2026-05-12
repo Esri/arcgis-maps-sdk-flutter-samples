@@ -44,9 +44,9 @@ When opened, the sample displays an electronic navigational chart. Tap on the ma
 
 ## Offline data
 
-This sample downloads the [ENC Exchange Set without updates](https://www.arcgis.com/home/item.html?id=9d2987a825c646468b3ce7512fb76e2d) item from *ArcGIS Online* automatically.
+This sample automatically downloads the [ENC Exchange Set without updates](https://www.arcgis.com/home/item.html?id=9d2987a825c646468b3ce7512fb76e2d) item from *ArcGIS Online*.
 
-The latest Hydrography Data can be downloaded from the [*Esri Developer* downloads](https://developers.arcgis.com/downloads/). The `S57DataDictionary.xml` file is contained there.
+The Hydrography Data is a separate resource from the ENC exchange set. If it is not already provided with your sample data, download it from the [*Esri Developer* downloads](https://developers.arcgis.com/downloads/). The `S57DataDictionary.xml` file is included in that download.
 
 ## Additional information
 
