@@ -82,6 +82,7 @@ class _ConfigureElectronicNavigationalChartsState
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8),
+                  // A button to view the settings sheet.
                   child: ElevatedButton(
                     onPressed: _ready && _encLayers.isNotEmpty
                         ? showDisplaySettings
