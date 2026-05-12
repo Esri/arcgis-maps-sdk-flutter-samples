@@ -124,6 +124,7 @@ class _ConfigureElectronicNavigationalChartsState
         ),
         scale: 67000,
       );
+      // Set the map to the map view controller.
       _mapViewController.arcGISMap = map;
 
       // Create layers from the exchange set's datasets and add them to the map.
