@@ -16,7 +16,7 @@ To search for certain symbols, enter text into one or more search boxes and clic
 
 ## How it works
 
-1. Create a `DictionarySymbolStyle` from the military symbology `.stylx` file using `DictionarySymbolStyle.fromFileUri`.
+1. Create a `DictionarySymbolStyle` from the military symbology `.stylx` file using `DictionarySymbolStyle.withFileUri(...)`.
 2. Create `SymbolStyleSearchParameters`.
 3. Add values to the `names`, `tags`, `symbolClasses`, `categories`, and `keys` lists on the search parameters.
 4. Search for matching symbols with `DictionarySymbolStyle.searchSymbols(...)`.
