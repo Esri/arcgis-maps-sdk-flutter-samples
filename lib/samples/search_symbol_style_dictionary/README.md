@@ -16,11 +16,11 @@ To search for certain symbols, enter text into one or more search boxes and clic
 
 ## How it works
 
-1. Create a symbol dictionary with the mil2525d specification by passing the string "mil2525d" and the path to a .stylx file to the `DictionarySymbolStyle.withFileUri` method.
-2. Create `StyleSymbolSearchParameters`.
-3. Add members to the `names`, `tags`, `symbolClasses`, `categories`, and `keys` list fields of the search parameters.
-4. Search for symbols using the parameters with `symbolStyle.searchSymbols(styleSymbolSearchParameters)`.
-5. Get the `Symbol` from the list of returned `StyleSymbolSearchResult`s.
+1. Create a `DictionarySymbolStyle` from the military symbology `.stylx` file using `DictionarySymbolStyle.fromFileUri`.
+2. Create `SymbolStyleSearchParameters`.
+3. Add values to the `names`, `tags`, `symbolClasses`, `categories`, and `keys` lists on the search parameters.
+4. Search for matching symbols with `DictionarySymbolStyle.searchSymbols(...)`.
+5. Get the `Symbol` from each returned `SymbolStyleSearchResult`.
 
 ## Relevant API
 
