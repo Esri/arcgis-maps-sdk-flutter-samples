@@ -112,6 +112,7 @@ class _ConfigureElectronicNavigationalChartsState
       environmentSettings.resourceUri = hydrographyDirectory.uri;
       environmentSettings.sencDataUri = _sencDataDirectory!.uri;
 
+      // Configure the ENC display settings before creating the ENC layers.
       configureEncDisplaySettings();
 
       // Create a map with an oceans basemap style.
@@ -199,7 +200,10 @@ class _ConfigureElectronicNavigationalChartsState
     );
   }
 
+  // Find the first ENC feature in the identify result list, including nested
+  // sublayer results.
   ({EncLayer layer, EncFeature feature})? findFirstEncFeature(
+    // Results returned from identifyLayers, which may include nested sublayer results.
     List<IdentifyLayerResult> identifyLayerResults,
   ) {
     for (final identifyLayerResult in identifyLayerResults) {
@@ -224,6 +228,7 @@ class _ConfigureElectronicNavigationalChartsState
     return null;
   }
 
+  // Configure the initial ENC display settings for the sample.
   void configureEncDisplaySettings() {
     final displaySettings = EncLayer.getEnvironmentSettings().displaySettings;
 
