@@ -2,7 +2,7 @@
 
 Display and configure electronic navigational charts per ENC specification.
 
-![Screenshot of Configure electronic navigational charts sample](configure_electronic_navigational_charts.png)
+![Image of Configure electronic navigational charts sample](configure_electronic_navigational_charts.png)
 
 ## Use case
 
