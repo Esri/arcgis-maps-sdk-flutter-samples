@@ -41,7 +41,7 @@ class _SearchSymbolStyleDictionaryState
   var _resultCount = 0;
   final _results = <_SymbolSearchPreview>[];
   // Symbol style dictionary for mil2525d symbols.
-  SymbolStyle? _symbolStyle;
+  DictionarySymbolStyle? _dictionarySymbolStyle;
   var _statusMessage = 'No symbols to display. Run a search to see results.';
   @override
   void initState() {
@@ -148,25 +148,29 @@ class _SearchSymbolStyleDictionaryState
 
   Future<void> _performSearch() async {
     setState(() => _ready = false);
-    if (_symbolStyle == null) {
-      // Download the sample data.
-      final listPaths = GoRouter.of(context).state.extra! as List<String>;
-      final stylxPath = listPaths.first;
-      if (listPaths.isNotEmpty) {
-        final file = File(stylxPath);
-        if (!file.existsSync() || file.lengthSync() == 0) {
-          _statusMessage =
-              'Symbol style dictionary file not found or empty at path: ${file.path}';
-          setState(() => _ready = true);
-          return;
-        }
+    if (_dictionarySymbolStyle == null) {
+      if (GoRouter.of(context).state.extra == null ||
+          (GoRouter.of(context).state.extra! as List<String>).isEmpty) {
+        _statusMessage = 'No symbol style dictionary file path provided.';
+        setState(() => _ready = true);
+        return;
       }
 
-      _symbolStyle = SymbolStyle.withStyleLocation(stylxPath);
-      await _symbolStyle!.load();
-      if (_symbolStyle!.loadStatus != LoadStatus.loaded) {
+      // Download the sample data.
+      final listPaths = GoRouter.of(context).state.extra! as List<String>;
+      final file = File(listPaths.first);
+      if (!file.existsSync() || file.lengthSync() == 0) {
         _statusMessage =
-            'Failed to load the symbol style dictionary: ${_symbolStyle!.loadError}';
+            'Symbol style dictionary file not found or empty at path: ${file.path}';
+        setState(() => _ready = true);
+        return;
+      }
+
+      _dictionarySymbolStyle = DictionarySymbolStyle.withFileUri(file.uri);
+      await _dictionarySymbolStyle!.load();
+      if (_dictionarySymbolStyle!.loadStatus != LoadStatus.loaded) {
+        _statusMessage =
+            'Failed to load the symbol style dictionary: ${_dictionarySymbolStyle!.loadError}';
         setState(() => _ready = true);
         return;
       }
@@ -180,7 +184,7 @@ class _SearchSymbolStyleDictionaryState
     searchFilter.keys.add(_keyController.text);
 
     // search for any matching symbols
-    final results = await _symbolStyle!.searchSymbols(searchFilter);
+    final results = await _dictionarySymbolStyle!.searchSymbols(searchFilter);
     final listSymbols = <_SymbolSearchPreview>[];
     for (final result in results.toList()) {
       final symbol = await result.getSymbol();

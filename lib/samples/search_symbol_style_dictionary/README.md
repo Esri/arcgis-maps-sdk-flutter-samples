@@ -16,7 +16,7 @@ To search for certain symbols, enter text into one or more search boxes and clic
 
 ## How it works
 
-1. Create a symbol dictionary with the mil2525d specification by passing the string "mil2525d" and the path to a .stylx file to the `SymbolStyle.withStyleLocation` method.
+1. Create a symbol dictionary with the mil2525d specification by passing the string "mil2525d" and the path to a .stylx file to the `DictionarySymbolStyle.withFileUri` method.
 2. Create `StyleSymbolSearchParameters`.
 3. Add members to the `names`, `tags`, `symbolClasses`, `categories`, and `keys` list fields of the search parameters.
 4. Search for symbols using the parameters with `symbolStyle.searchSymbols(styleSymbolSearchParameters)`.
