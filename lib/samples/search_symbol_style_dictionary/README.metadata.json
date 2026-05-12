@@ -1,6 +1,6 @@
 {
     "category": "Visualization",
-    "description": "Find symbols within the mil2525d specification that match a keyword.",
+    "description": "Find symbols within the mil2525d specification using one or more search criteria, such as name, tag, symbol class, category, or key.",
     "offline_data": [{
         "itemId": "c78b149a1d52414682c86a5feeb13d30",
         "downloadable": "mil2525d.stylx"
