@@ -14,6 +14,7 @@
 //
 
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
@@ -42,7 +43,10 @@ class _SearchSymbolStyleDictionaryState
   final _results = <_SymbolSearchPreview>[];
   // Symbol style dictionary for mil2525d symbols.
   DictionarySymbolStyle? _dictionarySymbolStyle;
+  // Message to show when there are no results to display.
   var _statusMessage = 'No symbols to display. Run a search to see results.';
+  // Placeholder image to use when a symbol swatch cannot be created.
+  final _emptyImage = ArcGISImage(height: 1, width: 1, data: Uint8List(4));
   @override
   void initState() {
     super.initState();
@@ -214,13 +218,13 @@ class _SearchSymbolStyleDictionaryState
         ..clear()
         ..addAll(listSymbols);
       _resultCount = _results.length;
-      _statusMessage =
-          _results.isEmpty ? 'No matching symbols found.' : '';
+      _statusMessage = _results.isEmpty ? 'No matching symbols found.' : '';
       _ready = true;
     });
   }
 
   Future<ArcGISImage> _getSwatchImage(ArcGISSymbol symbol) async {
+    if (!mounted) return _emptyImage;
     final screenScale = MediaQuery.devicePixelRatioOf(context);
     final arcgisImage = await symbol.createSwatch(
       screenScale: screenScale,
