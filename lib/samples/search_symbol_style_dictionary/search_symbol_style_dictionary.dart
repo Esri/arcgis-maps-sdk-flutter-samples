@@ -177,11 +177,19 @@ class _SearchSymbolStyleDictionaryState
     }
     // get parameters from input fields
     final searchFilter = SymbolStyleSearchParameters();
-    searchFilter.names.add(_nameController.text);
-    searchFilter.tags.add(_tagController.text);
-    searchFilter.symbolClasses.add(_symbolClassController.text);
-    searchFilter.categories.add(_categoryController.text);
-    searchFilter.keys.add(_keyController.text);
+
+    void addIfNotEmpty(List<String> target, String value) {
+      final trimmedValue = value.trim();
+      if (trimmedValue.isNotEmpty) {
+        target.add(trimmedValue);
+      }
+    }
+
+    addIfNotEmpty(searchFilter.names, _nameController.text);
+    addIfNotEmpty(searchFilter.tags, _tagController.text);
+    addIfNotEmpty(searchFilter.symbolClasses, _symbolClassController.text);
+    addIfNotEmpty(searchFilter.categories, _categoryController.text);
+    addIfNotEmpty(searchFilter.keys, _keyController.text);
 
     // search for any matching symbols
     final results = await _dictionarySymbolStyle!.searchSymbols(searchFilter);
