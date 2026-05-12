@@ -214,6 +214,8 @@ class _SearchSymbolStyleDictionaryState
         ..clear()
         ..addAll(listSymbols);
       _resultCount = _results.length;
+      _statusMessage =
+          _results.isEmpty ? 'No matching symbols found.' : '';
       _ready = true;
     });
   }
