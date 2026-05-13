@@ -29,9 +29,11 @@ void main() async {
   // Initialize Flutter before reading preferences and bundled sample metadata.
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Use the build-time API key by default. The About screen can set a
-  // session-only override later without revealing the active key.
-  ApiKeyManager.applyBuildTimeApiKey();
+  // Supply your apiKey using the --dart-define-from-file command line argument.
+  const apiKey = String.fromEnvironment('API_KEY');
+  // Alternatively, replace the above line with the following and hard-code your apiKey here:
+  // const apiKey = ''; // Your API Key here.
+  ApiKeyManager.setBuildTimeKey(apiKey);
 
   // (Optional) Supply a license key using the --dart-define-from-file command line argument.
   const licenseKey = String.fromEnvironment('LICENSE_KEY');

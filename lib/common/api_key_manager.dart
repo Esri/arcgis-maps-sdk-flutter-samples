@@ -20,13 +20,19 @@ import 'package:flutter/foundation.dart';
 class ApiKeyManager {
   ApiKeyManager._();
 
-  // The API key provided at build time using `--dart-define`.
-  static const _buildTimeApiKey = String.fromEnvironment('API_KEY');
+  // The API key provided by the app at startup.
+  static var _buildTimeApiKey = '';
 
   // Whether the active API key is a session-only override.
   static final isUsingOverride = ValueNotifier(false);
 
-  // Applies the build-time API key and clears any session-only override state.
+  // Stores and applies the default API key for the app session.
+  static void setBuildTimeKey(String buildTimeKey) {
+    _buildTimeApiKey = buildTimeKey;
+    applyBuildTimeApiKey();
+  }
+
+  // Applies the stored build-time API key and clears any override state.
   static void applyBuildTimeApiKey() {
     ArcGISEnvironment.apiKey = _buildTimeApiKey;
     isUsingOverride.value = false;
