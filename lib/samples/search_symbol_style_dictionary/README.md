@@ -2,7 +2,9 @@
 
 Find symbols within the mil2525d specification using one or more search criteria, such as name, tag, symbol class, category, or key.
 
-![Image of search symbol style dictionary](search_symbol_style_dictionary.png)
+| Search form                                        | Search results                                         |
+| -------------------------------------------------- | ------------------------------------------------------ |
+| ![Search form](search_symbol_style_dictionary.png) | ![Search results](search_symbol_style_dictionary2.png) |
 
 ## Use case
 
@@ -12,7 +14,7 @@ You can use support for military symbology to allow users to report changes in t
 
 By default, leaving the fields blank and hitting search will find all symbols.
 
-To search for certain symbols, enter text into one or more search boxes and click 'Search for symbols'. Results are shown in a list. Pressing 'Clear' will reset the search.
+To search for certain symbols, enter text into one or more search boxes and click 'Search for symbols'. Results are shown on a separate page, and the back button returns to the search form. Pressing 'Clear' will reset the search.
 
 ## How it works
 
@@ -20,12 +22,12 @@ To search for certain symbols, enter text into one or more search boxes and clic
 2. Create `SymbolStyleSearchParameters`.
 3. Add values to the `names`, `tags`, `symbolClasses`, `categories`, and `keys` lists on the search parameters.
 4. Search for matching symbols with `DictionarySymbolStyle.searchSymbols(...)`.
-5. Get the `Symbol` from each returned `SymbolStyleSearchResult`.
+5. Get the `ArcGISSymbol` from each returned `SymbolStyleSearchResult`.
 
 ## Relevant API
 
 * DictionarySymbolStyle
-* Symbol
+* ArcGISSymbol
 * SymbolStyleSearchParameters
 * SymbolStyleSearchResult
 

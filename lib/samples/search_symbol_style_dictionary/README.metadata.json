@@ -7,7 +7,8 @@
     }],
     "ignore": false,
     "images": [
-        "search_symbol_style_dictionary.png"
+        "search_symbol_style_dictionary.png",
+        "search_symbol_style_dictionary2.png"
     ],
     "keywords": [
         "CIM",
@@ -24,14 +25,14 @@
         "search",
         "symbology",
         "DictionarySymbolStyle",
-        "Symbol",
+        "ArcGISSymbol",
         "SymbolStyleSearchParameters",
         "SymbolStyleSearchResult"
     ],
     "redirect_from": [],
     "relevant_apis": [
         "DictionarySymbolStyle",
-        "Symbol",
+        "ArcGISSymbol",
         "SymbolStyleSearchParameters",
         "SymbolStyleSearchResult"
     ],

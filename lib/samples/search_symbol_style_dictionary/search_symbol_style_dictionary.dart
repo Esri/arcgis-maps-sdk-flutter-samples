@@ -41,6 +41,7 @@ class _SearchSymbolStyleDictionaryState
   var _ready = true;
   var _resultCount = 0;
   final _results = <_SymbolSearchPreview>[];
+  var _showResultsPage = false;
   // Symbol style dictionary for mil2525d symbols.
   DictionarySymbolStyle? _dictionarySymbolStyle;
   // Message to show when there are no results to display.
@@ -64,79 +65,23 @@ class _SearchSymbolStyleDictionaryState
       body: SafeArea(
         child: Stack(
           children: [
-            Align(
-              alignment: Alignment.topCenter,
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 800),
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 20, 16, 16),
-                  child: Column(
-                    spacing: 8,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Text(
-                        'Find symbols in the mil2525d specification using one or more search filters.',
-                        style: Theme.of(context).textTheme.bodyMedium,
-                      ),
-                      _SearchFields(
-                        nameController: _nameController,
-                        tagController: _tagController,
-                        symbolClassController: _symbolClassController,
-                        categoryController: _categoryController,
-                        keyController: _keyController,
-                      ),
-                      Wrap(
-                        spacing: 12,
-                        runSpacing: 8,
-                        children: [
-                          FilledButton.icon(
-                            onPressed: _performSearch,
-                            icon: const Icon(Icons.search),
-                            label: const Text('Search for symbols'),
-                          ),
-                          OutlinedButton.icon(
-                            onPressed: _clear,
-                            icon: const Icon(Icons.clear),
-                            label: const Text('Clear'),
-                          ),
-                        ],
-                      ),
-                      Text(
-                        'Results found: $_resultCount',
-                        style: Theme.of(context).textTheme.titleMedium,
-                      ),
-                      Expanded(
-                        child: DecoratedBox(
-                          decoration: BoxDecoration(
-                            color: Theme.of(
-                              context,
-                            ).colorScheme.surfaceContainerLow,
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(
-                              color: Theme.of(
-                                context,
-                              ).colorScheme.outlineVariant,
-                            ),
-                          ),
-                          child: _results.isEmpty
-                              ? Center(child: Text(_statusMessage))
-                              : ListView.separated(
-                                  padding: const EdgeInsets.all(12),
-                                  itemCount: _results.length,
-                                  separatorBuilder: (_, _) =>
-                                      const SizedBox(height: 8),
-                                  itemBuilder: (context, index) {
-                                    final result = _results[index];
-                                    return _SearchResultCard(result: result);
-                                  },
-                                ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+            if (_showResultsPage)
+              _SearchResultsPage(
+                resultCount: _resultCount,
+                results: _results,
+                statusMessage: _statusMessage,
+                onBack: _showSearchPage,
+              )
+            else
+              _SearchFormPage(
+                nameController: _nameController,
+                tagController: _tagController,
+                symbolClassController: _symbolClassController,
+                categoryController: _categoryController,
+                keyController: _keyController,
+                onSearch: _performSearch,
+                onClear: _clear,
               ),
-            ),
             LoadingIndicator(visible: !_ready),
           ],
         ),
@@ -145,12 +90,12 @@ class _SearchSymbolStyleDictionaryState
   }
 
   Future<void> _performSearch() async {
+    FocusManager.instance.primaryFocus?.unfocus();
     setState(() => _ready = false);
     if (_dictionarySymbolStyle == null) {
       if (GoRouter.of(context).state.extra == null ||
           (GoRouter.of(context).state.extra! as List<String>).isEmpty) {
-        _statusMessage = 'No symbol style dictionary file path provided.';
-        setState(() => _ready = true);
+        _showResultsMessage('No symbol style dictionary file path provided.');
         return;
       }
 
@@ -158,18 +103,19 @@ class _SearchSymbolStyleDictionaryState
       final listPaths = GoRouter.of(context).state.extra! as List<String>;
       final file = File(listPaths.first);
       if (!file.existsSync() || file.lengthSync() == 0) {
-        _statusMessage =
-            'Symbol style dictionary file not found or empty at path: ${file.path}';
-        setState(() => _ready = true);
+        _showResultsMessage(
+          'Symbol style dictionary file not found or empty at path: ${file.path}',
+        );
         return;
       }
 
       _dictionarySymbolStyle = DictionarySymbolStyle.withFileUri(file.uri);
       await _dictionarySymbolStyle!.load();
+      if (!mounted) return;
       if (_dictionarySymbolStyle!.loadStatus != LoadStatus.loaded) {
-        _statusMessage =
-            'Failed to load the symbol style dictionary: ${_dictionarySymbolStyle!.loadError}';
-        setState(() => _ready = true);
+        _showResultsMessage(
+          'Failed to load the symbol style dictionary: ${_dictionarySymbolStyle!.loadError}',
+        );
         return;
       }
     }
@@ -206,6 +152,7 @@ class _SearchSymbolStyleDictionaryState
         ),
       );
     }
+    if (!mounted) return;
 
     setState(() {
       _results
@@ -213,6 +160,7 @@ class _SearchSymbolStyleDictionaryState
         ..addAll(listSymbols);
       _resultCount = _results.length;
       _statusMessage = _results.isEmpty ? 'No matching symbols found.' : '';
+      _showResultsPage = true;
       _ready = true;
     });
   }
@@ -229,6 +177,7 @@ class _SearchSymbolStyleDictionaryState
   }
 
   void _clear() {
+    FocusManager.instance.primaryFocus?.unfocus();
     _nameController.clear();
     _tagController.clear();
     _symbolClassController.clear();
@@ -239,11 +188,98 @@ class _SearchSymbolStyleDictionaryState
       _results.clear();
       _statusMessage = 'No symbols to display. Enter search criteria to begin.';
       _resultCount = 0;
+      _showResultsPage = false;
     });
+  }
+
+  void _showResultsMessage(String message) {
+    if (!mounted) return;
+    setState(() {
+      _results.clear();
+      _resultCount = 0;
+      _statusMessage = message;
+      _showResultsPage = true;
+      _ready = true;
+    });
+  }
+
+  void _showSearchPage() {
+    FocusManager.instance.primaryFocus?.unfocus();
+    setState(() => _showResultsPage = false);
   }
 }
 
-class _SearchFields extends StatefulWidget {
+class _SearchFormPage extends StatelessWidget {
+  const _SearchFormPage({
+    required this.nameController,
+    required this.tagController,
+    required this.symbolClassController,
+    required this.categoryController,
+    required this.keyController,
+    required this.onSearch,
+    required this.onClear,
+  });
+
+  final TextEditingController nameController;
+  final TextEditingController tagController;
+  final TextEditingController symbolClassController;
+  final TextEditingController categoryController;
+  final TextEditingController keyController;
+  final VoidCallback onSearch;
+  final VoidCallback onClear;
+
+  @override
+  Widget build(BuildContext context) {
+    final viewInsets = MediaQuery.viewInsetsOf(context);
+
+    return Align(
+      alignment: Alignment.topCenter,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 800),
+        child: SingleChildScrollView(
+          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+          padding: EdgeInsets.fromLTRB(16, 20, 16, 16 + viewInsets.bottom),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(
+                'Find symbols in the mil2525d specification using one or more search filters.',
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+              const SizedBox(height: 12),
+              _SearchFields(
+                nameController: nameController,
+                tagController: tagController,
+                symbolClassController: symbolClassController,
+                categoryController: categoryController,
+                keyController: keyController,
+              ),
+              const SizedBox(height: 12),
+              Wrap(
+                spacing: 12,
+                runSpacing: 8,
+                children: [
+                  FilledButton.icon(
+                    onPressed: onSearch,
+                    icon: const Icon(Icons.search),
+                    label: const Text('Search for symbols'),
+                  ),
+                  OutlinedButton.icon(
+                    onPressed: onClear,
+                    icon: const Icon(Icons.clear),
+                    label: const Text('Clear'),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _SearchFields extends StatelessWidget {
   const _SearchFields({
     required this.nameController,
     required this.tagController,
@@ -259,77 +295,122 @@ class _SearchFields extends StatefulWidget {
   final TextEditingController keyController;
 
   @override
-  State<_SearchFields> createState() => _SearchFieldsState();
-}
-
-class _SearchFieldsState extends State<_SearchFields> {
-  var _showMoreFilters = false;
-
-  @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
         final wide = constraints.maxWidth >= 780;
-
-        final baseFields = [
-          _SearchTextField(label: 'Name', controller: widget.nameController),
-          _SearchTextField(label: 'Tag', controller: widget.tagController),
-        ];
-        final extraFields = [
+        final fields = [
+          _SearchTextField(label: 'Name', controller: nameController),
+          _SearchTextField(label: 'Tag', controller: tagController),
           _SearchTextField(
             label: 'Symbol class',
-            controller: widget.symbolClassController,
+            controller: symbolClassController,
           ),
-          _SearchTextField(
-            label: 'Category',
-            controller: widget.categoryController,
-          ),
-          _SearchTextField(label: 'Key', controller: widget.keyController),
+          _SearchTextField(label: 'Category', controller: categoryController),
+          _SearchTextField(label: 'Key', controller: keyController),
         ];
-        final fields = [...baseFields, if (_showMoreFilters) ...extraFields];
 
-        final fieldsWidget = wide
-            ? Wrap(
-                spacing: 12,
-                runSpacing: 12,
-                children: fields
-                    .map(
-                      (field) => SizedBox(
-                        width: (constraints.maxWidth - 24) / 2,
-                        child: field,
-                      ),
-                    )
-                    .toList(),
-              )
-            : Column(
-                children: fields
-                    .map(
-                      (field) => Padding(
-                        padding: const EdgeInsets.only(bottom: 10),
-                        child: field,
-                      ),
-                    )
-                    .toList(),
-              );
+        if (wide) {
+          return Wrap(
+            spacing: 12,
+            runSpacing: 12,
+            children: fields
+                .map(
+                  (field) => SizedBox(
+                    width: (constraints.maxWidth - 24) / 2,
+                    child: field,
+                  ),
+                )
+                .toList(),
+          );
+        }
 
         return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            fieldsWidget,
-            TextButton.icon(
-              onPressed: () {
-                setState(() {
-                  _showMoreFilters = !_showMoreFilters;
-                });
-              },
-              icon: Icon(
-                _showMoreFilters ? Icons.expand_less : Icons.expand_more,
-              ),
-              label: Text(_showMoreFilters ? 'less' : 'more'),
-            ),
-          ],
+          children: fields
+              .map(
+                (field) => Padding(
+                  padding: const EdgeInsets.only(bottom: 10),
+                  child: field,
+                ),
+              )
+              .toList(),
         );
       },
+    );
+  }
+}
+
+class _SearchResultsPage extends StatelessWidget {
+  const _SearchResultsPage({
+    required this.resultCount,
+    required this.results,
+    required this.statusMessage,
+    required this.onBack,
+  });
+
+  final int resultCount;
+  final List<_SymbolSearchPreview> results;
+  final String statusMessage;
+  final VoidCallback onBack;
+
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: Alignment.topCenter,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 800),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Row(
+                children: [
+                  BackButton(onPressed: onBack),
+                  const SizedBox(width: 4),
+                  Expanded(
+                    child: Text(
+                      'Results found: $resultCount',
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Expanded(
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.surfaceContainerLow,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: Theme.of(context).colorScheme.outlineVariant,
+                    ),
+                  ),
+                  child: results.isEmpty
+                      ? Center(
+                          child: Padding(
+                            padding: const EdgeInsets.all(16),
+                            child: Text(
+                              statusMessage,
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        )
+                      : ListView.separated(
+                          padding: const EdgeInsets.all(12),
+                          itemCount: results.length,
+                          separatorBuilder: (_, _) => const SizedBox(height: 8),
+                          itemBuilder: (context, index) {
+                            final result = results[index];
+                            return _SearchResultCard(result: result);
+                          },
+                        ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
