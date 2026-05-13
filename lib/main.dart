@@ -16,6 +16,7 @@
 
 import 'dart:convert';
 import 'package:arcgis_maps/arcgis_maps.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/common/api_key_manager.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/theme_data.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/models/sample.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/router_config.dart';
@@ -25,11 +26,12 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
-  // Supply your apiKey using the --dart-define-from-file command line argument.
-  const apiKey = String.fromEnvironment('API_KEY');
-  // Alternatively, replace the above line with the following and hard-code your apiKey here:
-  // const apiKey = ''; // Your API Key here.
-  ArcGISEnvironment.apiKey = apiKey;
+  // Initialize Flutter before reading preferences and bundled sample metadata.
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Use the build-time API key by default. The About screen can set a
+  // session-only override later without revealing the active key.
+  ApiKeyManager.applyBuildTimeApiKey();
 
   // (Optional) Supply a license key using the --dart-define-from-file command line argument.
   const licenseKey = String.fromEnvironment('LICENSE_KEY');
@@ -45,8 +47,6 @@ void main() async {
       extensions: [advancedEditingExtension, analysisExtension],
     );
   }
-
-  WidgetsFlutterBinding.ensureInitialized();
 
   final prefs = await SharedPreferences.getInstance();
   FavoriteRepository.instance.initialize(prefs);
