@@ -96,6 +96,41 @@ class _SearchSymbolStyleDictionaryState
     );
   }
 
+  // Load the symbol style dictionary from the file URI passed in the route parameters.
+  Future<void> _loadDictionarySymbolStyle() async {
+    // Download the sample data.
+    try {
+      final listPaths = GoRouter.of(context).state.extra! as List<String>;
+      final file = File(listPaths.first);
+      // load the symbol style dictionary from the file URI
+      _dictionarySymbolStyle = DictionarySymbolStyle.withFileUri(file.uri);
+      await _dictionarySymbolStyle!.load();
+    } on Exception catch (e) {
+      _showResultsMessage('Failed to load the symbol style dictionary: $e');
+    }
+  }
+
+  // Create a search filter using the parameters entered in the search fields.
+  SymbolStyleSearchParameters _getSearchParameters() {
+    final searchFilter = SymbolStyleSearchParameters();
+    // A helper function to add a search parameter to the search filter if the parameter value is not empty.
+    void addIfNotEmpty(List<String> target, String value) {
+      final trimmedValue = value.trim();
+      if (trimmedValue.isNotEmpty) {
+        target.add(trimmedValue);
+      }
+    }
+
+    // add search parameters from the search fields if they are not empty
+    addIfNotEmpty(searchFilter.names, _nameController.text);
+    addIfNotEmpty(searchFilter.tags, _tagController.text);
+    addIfNotEmpty(searchFilter.symbolClasses, _symbolClassController.text);
+    addIfNotEmpty(searchFilter.categories, _categoryController.text);
+    addIfNotEmpty(searchFilter.keys, _keyController.text);
+
+    return searchFilter;
+  }
+
   Future<void> _performSearch() async {
     FocusManager.instance.primaryFocus?.unfocus();
 
@@ -104,37 +139,14 @@ class _SearchSymbolStyleDictionaryState
 
     // load the symbol style dictionary if it hasn't been loaded yet
     if (_dictionarySymbolStyle == null) {
-      // Download the sample data.
-      final listPaths = GoRouter.of(context).state.extra! as List<String>;
-      final file = File(listPaths.first);
-      // load the symbol style dictionary from the file URI
-      _dictionarySymbolStyle = DictionarySymbolStyle.withFileUri(file.uri);
-      await _dictionarySymbolStyle!.load().onError((error, stackTrace) {
-        _showResultsMessage(
-          'Failed to load the symbol style dictionary: $error',
-        );
-        return;
-      });
+      await _loadDictionarySymbolStyle();
     }
     // create a search filter with the parameters entered in the search fields
-    final searchFilter = SymbolStyleSearchParameters();
-    // helper function to add a parameter to the search filter if it has a value
-    void addIfNotEmpty(List<String> target, String value) {
-      final trimmedValue = value.trim();
-      if (trimmedValue.isNotEmpty) {
-        target.add(trimmedValue);
-      }
-    }
-
-    // only add parameters that have values to the search filter
-    addIfNotEmpty(searchFilter.names, _nameController.text);
-    addIfNotEmpty(searchFilter.tags, _tagController.text);
-    addIfNotEmpty(searchFilter.symbolClasses, _symbolClassController.text);
-    addIfNotEmpty(searchFilter.categories, _categoryController.text);
-    addIfNotEmpty(searchFilter.keys, _keyController.text);
+    final searchFilter = _getSearchParameters();
 
     // search for any matching symbols
     final results = await _dictionarySymbolStyle!.searchSymbols(searchFilter);
+    // create a list of symbol search result previews with swatch images for the results
     final listSymbols = <_SymbolSearchPreview>[];
     for (final result in results.toList()) {
       final symbol = await result.getSymbol();
