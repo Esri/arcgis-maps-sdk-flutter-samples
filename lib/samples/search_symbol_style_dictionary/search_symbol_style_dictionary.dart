@@ -49,11 +49,6 @@ class _SearchSymbolStyleDictionaryState
   final _emptyImage = ArcGISImage(height: 1, width: 1, data: Uint8List(4));
 
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   void dispose() {
     _nameController.dispose();
     _tagController.dispose();
@@ -106,12 +101,10 @@ class _SearchSymbolStyleDictionaryState
                           ),
                         ],
                       ),
-                      const SizedBox(height: 14),
                       Text(
                         'Results found: $_resultCount',
                         style: Theme.of(context).textTheme.titleMedium,
                       ),
-                      const SizedBox(height: 10),
                       Expanded(
                         child: DecoratedBox(
                           decoration: BoxDecoration(
