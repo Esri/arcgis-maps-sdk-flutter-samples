@@ -11,6 +11,7 @@
     ],
     "keywords": [
         "CIM",
+        "DictionarySymbolStyle",
         "MIL-STD-2525B",
         "MIL-STD-2525C",
         "MIL-STD-2525D",
@@ -24,7 +25,6 @@
         "search",
         "symbology",
         "Symbol",
-        "DictionarySymbolStyle",
         "SymbolStyleSearchParameters",
         "SymbolStyleSearchResult"
     ],
