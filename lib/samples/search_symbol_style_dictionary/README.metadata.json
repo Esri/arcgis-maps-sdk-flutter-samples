@@ -30,8 +30,8 @@
     ],
     "redirect_from": [],
     "relevant_apis": [
-        "Symbol",
         "DictionarySymbolStyle",
+        "Symbol",
         "SymbolStyleSearchParameters",
         "SymbolStyleSearchResult"
     ],

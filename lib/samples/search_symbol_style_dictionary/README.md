@@ -24,8 +24,8 @@ To search for certain symbols, enter text into one or more search boxes and clic
 
 ## Relevant API
 
-* Symbol
 * DictionarySymbolStyle
+* Symbol
 * SymbolStyleSearchParameters
 * SymbolStyleSearchResult
 
