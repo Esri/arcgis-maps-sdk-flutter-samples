@@ -14,7 +14,6 @@
 //
 
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
@@ -32,22 +31,30 @@ class SearchSymbolStyleDictionary extends StatefulWidget {
 class _SearchSymbolStyleDictionaryState
     extends State<SearchSymbolStyleDictionary>
     with SampleStateSupport {
+  // Text editing controllers for search fields, name, tag, symbol class, category, and key.
   final _nameController = TextEditingController();
   final _tagController = TextEditingController();
   final _symbolClassController = TextEditingController();
   final _categoryController = TextEditingController();
   final _keyController = TextEditingController();
 
+  // A flag to prevent interaction when a search is in progress.
   var _ready = true;
+
+  // Number of results found in the most recent search.
   var _resultCount = 0;
+
+  // List of symbol search results to show in the UI.
   final _results = <_SymbolSearchPreview>[];
+
+  // Whether to show the search form page or the results page.
   var _showResultsPage = false;
+
   // Symbol style dictionary for mil2525d symbols.
   DictionarySymbolStyle? _dictionarySymbolStyle;
+
   // Message to show when there are no results to display.
   var _statusMessage = 'No symbols to display. Run a search to see results.';
-  // Placeholder image to use when a symbol swatch cannot be created.
-  final _emptyImage = ArcGISImage(height: 1, width: 1, data: Uint8List(4));
 
   @override
   void dispose() {
@@ -91,37 +98,27 @@ class _SearchSymbolStyleDictionaryState
 
   Future<void> _performSearch() async {
     FocusManager.instance.primaryFocus?.unfocus();
-    setState(() => _ready = false);
-    if (_dictionarySymbolStyle == null) {
-      if (GoRouter.of(context).state.extra == null ||
-          (GoRouter.of(context).state.extra! as List<String>).isEmpty) {
-        _showResultsMessage('No symbol style dictionary file path provided.');
-        return;
-      }
 
+    // prevent multiple simultaneous searches
+    setState(() => _ready = false);
+
+    // load the symbol style dictionary if it hasn't been loaded yet
+    if (_dictionarySymbolStyle == null) {
       // Download the sample data.
       final listPaths = GoRouter.of(context).state.extra! as List<String>;
       final file = File(listPaths.first);
-      if (!file.existsSync() || file.lengthSync() == 0) {
-        _showResultsMessage(
-          'Symbol style dictionary file not found or empty at path: ${file.path}',
-        );
-        return;
-      }
-
+      // load the symbol style dictionary from the file URI
       _dictionarySymbolStyle = DictionarySymbolStyle.withFileUri(file.uri);
-      await _dictionarySymbolStyle!.load();
-      if (!mounted) return;
-      if (_dictionarySymbolStyle!.loadStatus != LoadStatus.loaded) {
+      await _dictionarySymbolStyle!.load().onError((error, stackTrace) {
         _showResultsMessage(
-          'Failed to load the symbol style dictionary: ${_dictionarySymbolStyle!.loadError}',
+          'Failed to load the symbol style dictionary: $error',
         );
         return;
-      }
+      });
     }
-    // get parameters from input fields
+    // create a search filter with the parameters entered in the search fields
     final searchFilter = SymbolStyleSearchParameters();
-
+    // helper function to add a parameter to the search filter if it has a value
     void addIfNotEmpty(List<String> target, String value) {
       final trimmedValue = value.trim();
       if (trimmedValue.isNotEmpty) {
@@ -129,6 +126,7 @@ class _SearchSymbolStyleDictionaryState
       }
     }
 
+    // only add parameters that have values to the search filter
     addIfNotEmpty(searchFilter.names, _nameController.text);
     addIfNotEmpty(searchFilter.tags, _tagController.text);
     addIfNotEmpty(searchFilter.symbolClasses, _symbolClassController.text);
@@ -140,7 +138,6 @@ class _SearchSymbolStyleDictionaryState
     final listSymbols = <_SymbolSearchPreview>[];
     for (final result in results.toList()) {
       final symbol = await result.getSymbol();
-      final arcgisImage = await _getSwatchImage(symbol);
       listSymbols.add(
         _SymbolSearchPreview(
           name: result.name,
@@ -148,12 +145,13 @@ class _SearchSymbolStyleDictionaryState
           symbolClass: result.symbolClass,
           category: result.category,
           key: result.key,
-          swatch: Image.memory(arcgisImage.getEncodedBuffer()),
+          swatch: SwatchImage(symbol: symbol, width: 40, height: 40),
         ),
       );
     }
     if (!mounted) return;
 
+    // update the UI with search results.
     setState(() {
       _results
         ..clear()
@@ -165,17 +163,7 @@ class _SearchSymbolStyleDictionaryState
     });
   }
 
-  Future<ArcGISImage> _getSwatchImage(ArcGISSymbol symbol) async {
-    if (!mounted) return _emptyImage;
-    final screenScale = MediaQuery.devicePixelRatioOf(context);
-    final arcgisImage = await symbol.createSwatch(
-      screenScale: screenScale,
-      width: 40,
-      height: 40,
-    );
-    return arcgisImage;
-  }
-
+  // Clear search fields and results, and show the search form page.
   void _clear() {
     FocusManager.instance.primaryFocus?.unfocus();
     _nameController.clear();
@@ -209,6 +197,7 @@ class _SearchSymbolStyleDictionaryState
   }
 }
 
+// A widget has a list of search fields for symbol style dictionary search parameters.
 class _SearchFormPage extends StatelessWidget {
   const _SearchFormPage({
     required this.nameController,
@@ -279,6 +268,7 @@ class _SearchFormPage extends StatelessWidget {
   }
 }
 
+// A widget that shows the list of search fields for symbol style dictionary search parameters.
 class _SearchFields extends StatelessWidget {
   const _SearchFields({
     required this.nameController,
@@ -340,6 +330,7 @@ class _SearchFields extends StatelessWidget {
   }
 }
 
+// A widget that shows the search results for symbol style dictionary search.
 class _SearchResultsPage extends StatelessWidget {
   const _SearchResultsPage({
     required this.resultCount,
@@ -415,6 +406,7 @@ class _SearchResultsPage extends StatelessWidget {
   }
 }
 
+// A simple widget that shows a text field with a label for searching.
 class _SearchTextField extends StatelessWidget {
   const _SearchTextField({required this.label, required this.controller});
 
@@ -434,6 +426,7 @@ class _SearchTextField extends StatelessWidget {
   }
 }
 
+// A widget that shows a card with symbol information for a symbol style dictionary search result.
 class _SearchResultCard extends StatelessWidget {
   const _SearchResultCard({required this.result});
 
@@ -535,6 +528,7 @@ class _SearchResultCard extends StatelessWidget {
   }
 }
 
+// A data class to hold symbol information for a symbol style dictionary search result.
 class _SymbolSearchPreview {
   const _SymbolSearchPreview({
     required this.name,
@@ -550,5 +544,5 @@ class _SymbolSearchPreview {
   final String symbolClass;
   final String category;
   final String key;
-  final Image? swatch;
+  final SwatchImage? swatch;
 }

@@ -24,15 +24,15 @@
         "military symbology",
         "search",
         "symbology",
-        "DictionarySymbolStyle",
         "ArcGISSymbol",
+        "DictionarySymbolStyle",
         "SymbolStyleSearchParameters",
         "SymbolStyleSearchResult"
     ],
     "redirect_from": [],
     "relevant_apis": [
-        "DictionarySymbolStyle",
         "ArcGISSymbol",
+        "DictionarySymbolStyle",
         "SymbolStyleSearchParameters",
         "SymbolStyleSearchResult"
     ],
