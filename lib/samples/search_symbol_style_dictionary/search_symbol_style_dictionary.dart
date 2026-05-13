@@ -47,6 +47,7 @@ class _SearchSymbolStyleDictionaryState
   var _statusMessage = 'No symbols to display. Run a search to see results.';
   // Placeholder image to use when a symbol swatch cannot be created.
   final _emptyImage = ArcGISImage(height: 1, width: 1, data: Uint8List(4));
+
   @override
   void initState() {
     super.initState();
