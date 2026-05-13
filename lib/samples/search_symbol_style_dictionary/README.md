@@ -1,6 +1,6 @@
 # Search symbol style dictionary
 
-Find symbols within the mil2525d specification that match a keyword.
+Find symbols within the mil2525d specification using one or more search criteria, such as name, tag, symbol class, category, or key.
 
 ![Image of search symbol style dictionary](search_symbol_style_dictionary.png)
 
