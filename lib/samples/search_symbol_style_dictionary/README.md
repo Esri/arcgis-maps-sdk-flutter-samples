@@ -23,6 +23,7 @@ To search for certain symbols, enter text into one or more search boxes and clic
 3. Add values to the `names`, `tags`, `symbolClasses`, `categories`, and `keys` lists on the search parameters.
 4. Search for matching symbols with `DictionarySymbolStyle.searchSymbols(...)`.
 5. Get the `ArcGISSymbol` from each returned `SymbolStyleSearchResult`.
+6. Display the symbols in detail in a list.
 
 ## Relevant API
 
