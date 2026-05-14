@@ -173,6 +173,7 @@ class _ValidateUtilityNetworkTopologyState
             ),
             // Display the status information from the sample actions in the UI.
             Card(
+              margin: const EdgeInsets.fromLTRB(5, 0, 5, 0),
               color: Theme.of(context).cardTheme.color?.withValues(alpha: 0.95),
               child: Column(
                 spacing: 10,
