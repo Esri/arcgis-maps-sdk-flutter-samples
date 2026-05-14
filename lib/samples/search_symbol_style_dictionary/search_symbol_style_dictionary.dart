@@ -31,7 +31,7 @@ class SearchSymbolStyleDictionary extends StatefulWidget {
 class _SearchSymbolStyleDictionaryState
     extends State<SearchSymbolStyleDictionary>
     with SampleStateSupport {
-  // Text editing controllers for search fields, name, tag, symbol class, category, and key.
+  // Text editing controllers for the name, tag, symbol class, category, and key search fields.
   final _nameController = TextEditingController();
   final _tagController = TextEditingController();
   final _symbolClassController = TextEditingController();
@@ -50,7 +50,7 @@ class _SearchSymbolStyleDictionaryState
   // Whether to show the search form page or the results page.
   var _showResultsPage = false;
 
-  // Symbol style dictionary for mil2525d symbols.
+  // A symbol style dictionary for MIL2525D symbols.
   DictionarySymbolStyle? _dictionarySymbolStyle;
 
   // Message to show when there are no results to display.
@@ -72,6 +72,7 @@ class _SearchSymbolStyleDictionaryState
       body: SafeArea(
         child: Stack(
           children: [
+            // When search results are available, show the search results page.
             if (_showResultsPage)
               _SearchResultsPage(
                 resultCount: _resultCount,
@@ -79,6 +80,7 @@ class _SearchSymbolStyleDictionaryState
                 statusMessage: _statusMessage,
                 onBack: _showSearchPage,
               )
+            // Otherwise, show the search form page.
             else
               _SearchFormPage(
                 nameController: _nameController,
@@ -98,11 +100,12 @@ class _SearchSymbolStyleDictionaryState
 
   // Load the symbol style dictionary from the file URI passed in the route parameters.
   Future<void> _loadDictionarySymbolStyle() async {
-    // Download the sample data.
     try {
+      // Obtain the downloaded sample data.
       final listPaths = GoRouter.of(context).state.extra! as List<String>;
       final file = File(listPaths.first);
-      // load the symbol style dictionary from the file URI
+
+      // Load the symbol style dictionary from the file URI.
       _dictionarySymbolStyle = DictionarySymbolStyle.withFileUri(file.uri);
       await _dictionarySymbolStyle!.load();
     } on Exception catch (e) {
@@ -113,7 +116,7 @@ class _SearchSymbolStyleDictionaryState
   // Create a search filter using the parameters entered in the search fields.
   SymbolStyleSearchParameters _getSearchParameters() {
     final searchFilter = SymbolStyleSearchParameters();
-    // A helper function to add a search parameter to the search filter if the parameter value is not empty.
+    // A helper that adds a search parameter to the search filter when the value is not empty.
     void addIfNotEmpty(List<String> target, String value) {
       final trimmedValue = value.trim();
       if (trimmedValue.isNotEmpty) {
@@ -121,7 +124,7 @@ class _SearchSymbolStyleDictionaryState
       }
     }
 
-    // add search parameters from the search fields if they are not empty
+    // Add search parameters from the search fields if they are not empty.
     addIfNotEmpty(searchFilter.names, _nameController.text);
     addIfNotEmpty(searchFilter.tags, _tagController.text);
     addIfNotEmpty(searchFilter.symbolClasses, _symbolClassController.text);
@@ -134,19 +137,19 @@ class _SearchSymbolStyleDictionaryState
   Future<void> _performSearch() async {
     FocusManager.instance.primaryFocus?.unfocus();
 
-    // prevent multiple simultaneous searches
+    // Prevent multiple simultaneous searches.
     setState(() => _ready = false);
 
-    // load the symbol style dictionary if it hasn't been loaded yet
+    // Load the symbol style dictionary if it hasn't been loaded yet.
     if (_dictionarySymbolStyle == null) {
       await _loadDictionarySymbolStyle();
     }
-    // create a search filter with the parameters entered in the search fields
+    // Create a search filter with the parameters entered in the search fields.
     final searchFilter = _getSearchParameters();
 
-    // search for any matching symbols
+    // Search for any matching symbols.
     final results = await _dictionarySymbolStyle!.searchSymbols(searchFilter);
-    // create a list of symbol search result previews with swatch images for the results
+    // Create a list of search result previews with swatch images.
     final listSymbols = <_SymbolSearchPreview>[];
     for (final result in results.toList()) {
       final symbol = await result.getSymbol();
@@ -163,7 +166,7 @@ class _SearchSymbolStyleDictionaryState
     }
     if (!mounted) return;
 
-    // update the UI with search results.
+    // Update the UI with search results.
     setState(() {
       _results
         ..clear()
@@ -209,7 +212,7 @@ class _SearchSymbolStyleDictionaryState
   }
 }
 
-// A widget has a list of search fields for symbol style dictionary search parameters.
+// A widget that displays a list of search fields for symbol style dictionary search parameters.
 class _SearchFormPage extends StatelessWidget {
   const _SearchFormPage({
     required this.nameController,
@@ -342,7 +345,7 @@ class _SearchFields extends StatelessWidget {
   }
 }
 
-// A widget that shows the search results for symbol style dictionary search.
+// A widget that shows the results of a symbol style dictionary search.
 class _SearchResultsPage extends StatelessWidget {
   const _SearchResultsPage({
     required this.resultCount,
@@ -463,9 +466,7 @@ class _SearchResultCard extends StatelessWidget {
                 color: Theme.of(context).colorScheme.secondaryContainer,
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: result.swatch == null
-                  ? const Icon(Icons.military_tech)
-                  : result.swatch!,
+              child: result.swatch,
             ),
             const SizedBox(width: 10),
             Expanded(
@@ -540,7 +541,7 @@ class _SearchResultCard extends StatelessWidget {
   }
 }
 
-// A data class to hold symbol information for a symbol style dictionary search result.
+// A data class that holds symbol information for a symbol style dictionary search result.
 class _SymbolSearchPreview {
   const _SymbolSearchPreview({
     required this.name,
@@ -548,7 +549,7 @@ class _SymbolSearchPreview {
     required this.symbolClass,
     required this.category,
     required this.key,
-    this.swatch,
+    required this.swatch,
   });
 
   final String name;
@@ -556,5 +557,5 @@ class _SymbolSearchPreview {
   final String symbolClass;
   final String category;
   final String key;
-  final SwatchImage? swatch;
+  final SwatchImage swatch;
 }

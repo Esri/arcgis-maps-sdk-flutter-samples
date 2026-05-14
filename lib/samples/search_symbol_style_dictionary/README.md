@@ -14,7 +14,7 @@ You can use support for military symbology to allow users to report changes in t
 
 By default, leaving the fields blank and hitting search will find all symbols.
 
-To search for certain symbols, enter text into one or more search boxes and click 'Search for symbols'. Results are shown on a separate page, and the back button returns to the search form. Pressing 'Clear' will reset the search.
+To search for certain symbols, enter text into one or more search boxes and tap 'Search for symbols'. Results are shown on a separate page, and the back button returns to the search form. Pressing 'Clear' will reset the search.
 
 ## How it works
 
