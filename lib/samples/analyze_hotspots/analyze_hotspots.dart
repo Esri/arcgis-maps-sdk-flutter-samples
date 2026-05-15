@@ -61,7 +61,6 @@ class _AnalyzeHotspotsState extends State<AnalyzeHotspots>
 
   @override
   void initState() {
-    // Call the superclass implementation.
     super.initState();
     // Initialize the date range to the full range supported by the service.
     _selectedDateRange = DateTimeRange(start: _minimumDate, end: _maximumDate);
@@ -71,7 +70,6 @@ class _AnalyzeHotspotsState extends State<AnalyzeHotspots>
   void dispose() {
     // Cancel the job if it is still running when the sample is closed.
     _hotspotJob?.cancel().ignore();
-    // Call the superclass implementation.
     super.dispose();
   }
 
@@ -125,26 +123,17 @@ class _AnalyzeHotspotsState extends State<AnalyzeHotspots>
 
   // The build method for the Settings bottom sheet.
   Widget buildSettings(BuildContext context) {
-    // Build the shared bottom sheet used by other samples for settings.
     return BottomSheetSettings(
-      // Hide the settings bottom sheet when the close icon is tapped.
       onCloseIconPressed: () => setState(() => _settingsVisible = false),
-      // Build the controls displayed inside the settings bottom sheet.
       settingsWidgets: (context) => [
-        // Display the currently selected date range.
         Text(
           '${formatDate(_selectedDateRange.start)} - ${formatDate(_selectedDateRange.end)}',
         ),
-        // Add a row to hold the date range button.
         Row(
-          // Center the date range button in the bottom sheet.
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            // A button to show the system date range picker.
             ElevatedButton(
-              // Disable date selection while analysis is running.
               onPressed: _analysisInProgress ? null : chooseDateRange,
-              // Display the button label.
               child: const Text('Date range'),
             ),
           ],
@@ -158,16 +147,11 @@ class _AnalyzeHotspotsState extends State<AnalyzeHotspots>
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic)
       // Set the initial viewpoint around the Seattle area where the 911 call data is located.
       ..initialViewpoint = Viewpoint.fromCenter(
-        // Create the map center point in Web Mercator coordinates.
         ArcGISPoint(
-          // The x-coordinate of the map center.
           x: -13671170,
-          // The y-coordinate of the map center.
           y: 5693633,
-          // Set the point's spatial reference to Web Mercator.
           spatialReference: SpatialReference.webMercator,
         ),
-        // Set the initial map scale.
         scale: 57779,
       );
 
@@ -193,13 +177,9 @@ class _AnalyzeHotspotsState extends State<AnalyzeHotspots>
   Future<void> chooseDateRange() async {
     // Show the Flutter date range picker constrained to the sample data range.
     final dateRange = await showDateRangePicker(
-      // Use this widget's build context for the dialog.
       context: context,
-      // Set the earliest selectable date supported by the service.
       firstDate: _minimumDate,
-      // Set the latest selectable date supported by the service.
       lastDate: _maximumDate,
-      // Start the picker with the currently selected date range.
       initialDateRange: _selectedDateRange,
     );
 
