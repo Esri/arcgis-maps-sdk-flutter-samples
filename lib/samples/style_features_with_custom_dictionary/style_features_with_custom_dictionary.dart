@@ -89,8 +89,6 @@ class _StyleFeaturesWithCustomDictionaryState
     );
   }
 
-  //fixme update README
-  //fixme update screenshot
   void onMapViewReady() {
     // Create a map with a topographic basemap style and initial viewpoint.
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic)
