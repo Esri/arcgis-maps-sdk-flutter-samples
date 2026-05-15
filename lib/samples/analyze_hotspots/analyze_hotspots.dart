@@ -211,11 +211,14 @@ class _AnalyzeHotspotsState extends State<AnalyzeHotspots>
       );
 
       // Add a date range query to the geoprocessing parameters.
+      // Advance the selected end date by one day so the exclusive upper bound
+      // includes the entire end date selected in the date picker.
+      final endExclusive = _selectedDateRange.end.add(const Duration(days: 1));
       final query =
-          // Start the where clause with calls after the selected start date.
-          '("DATE" > date \'${formatDateTime(_selectedDateRange.start)}\' AND '
-          // Finish the where clause with calls before the selected end date.
-          '"DATE" < date \'${formatDateTime(_selectedDateRange.end)}\')';
+          // Start the where clause with calls on or after the selected start date.
+          '("DATE" >= date \'${formatDateTime(_selectedDateRange.start)}\' AND '
+          // Finish the where clause with calls before the day after the selected end date.
+          '"DATE" < date \'${formatDateTime(endExclusive)}\')';
       // Add the query string to the geoprocessing input named "Query".
       parameters.inputs['Query'] = GeoprocessingString(query);
 
