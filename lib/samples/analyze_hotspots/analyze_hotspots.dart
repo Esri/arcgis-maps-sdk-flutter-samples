@@ -183,8 +183,9 @@ class _AnalyzeHotspotsState extends State<AnalyzeHotspots>
       initialDateRange: _selectedDateRange,
     );
 
-    // If the user cancels the picker, keep the current date range.
-    if (dateRange == null) return;
+    // If the sample was closed while the picker was open, or the user
+    // cancels the picker, keep the current date range.
+    if (!mounted || dateRange == null) return;
     // Store the selected date range and refresh the settings display.
     setState(() => _selectedDateRange = dateRange);
   }
