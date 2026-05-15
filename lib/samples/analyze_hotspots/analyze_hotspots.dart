@@ -190,10 +190,11 @@ class _AnalyzeHotspotsState extends State<AnalyzeHotspots>
   }
 
   Future<void> analyzeHotspots() async {
-    // Ensure the selected end date is after the selected start date.
-    if (!_selectedDateRange.end.isAfter(_selectedDateRange.start)) {
+    // Ensure the selected date range is valid, allowing the same start and end date
+    // to represent a single selected calendar day.
+    if (_selectedDateRange.end.isBefore(_selectedDateRange.start)) {
       // Show an error if the selected range is not valid for analysis.
-      showMessageDialog('Select a date range with at least one day.');
+      showMessageDialog('Select a valid date range.');
       // Stop before creating a geoprocessing job.
       return;
     }
