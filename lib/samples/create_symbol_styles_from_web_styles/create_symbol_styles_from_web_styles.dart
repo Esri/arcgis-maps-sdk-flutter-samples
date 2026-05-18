@@ -27,7 +27,6 @@ class CreateSymbolStylesFromWebStyles extends StatefulWidget {
       _CreateSymbolStylesFromWebStylesState();
 }
 
-//fixme screenshot
 class _CreateSymbolStylesFromWebStylesState
     extends State<CreateSymbolStylesFromWebStyles>
     with SampleStateSupport {
