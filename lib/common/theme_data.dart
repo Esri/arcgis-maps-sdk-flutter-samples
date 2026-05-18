@@ -48,7 +48,7 @@ ThemeData _buildTheme(ColorScheme colorScheme) {
       style: ElevatedButton.styleFrom(
         backgroundColor: colorScheme.primary,
         foregroundColor: colorScheme.onPrimary,
-        disabledBackgroundColor: colorScheme.onSurface.withValues(alpha: 0.25),
+        disabledBackgroundColor: colorScheme.onInverseSurface.withValues(alpha: 0.5),
         disabledForegroundColor: colorScheme.onSurface.withValues(alpha: 0.65),
         elevation: 2,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
