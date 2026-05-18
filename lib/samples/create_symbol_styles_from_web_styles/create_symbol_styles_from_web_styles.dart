@@ -27,6 +27,9 @@ class CreateSymbolStylesFromWebStyles extends StatefulWidget {
       _CreateSymbolStylesFromWebStylesState();
 }
 
+//fixme comments
+//fixme README
+//fixme screenshot
 class _CreateSymbolStylesFromWebStylesState
     extends State<CreateSymbolStylesFromWebStyles>
     with SampleStateSupport {
@@ -34,26 +37,20 @@ class _CreateSymbolStylesFromWebStylesState
   final _mapViewController = ArcGISMapView.createController();
 
   // A feature layer with the LA County points of interest service.
-  final _featureLayer = FeatureLayer.withFeatureTable(
-    ServiceFeatureTable.withUri(
-      Uri.parse(
-        'http://services.arcgis.com/V6ZHFr6zdgNZuVG0/arcgis/rest/services/LA_County_Points_of_Interest/FeatureServer/0',
-      ),
-    ),
-  );
+  late final FeatureLayer _featureLayer;
 
   // The list of legend items shown in the legend sheet.
   final _legendItems = <_LegendItem>[];
 
-  // A subscription used to track map scale and toggle symbol scaling.
-  StreamSubscription<void>? _viewpointChangedSubscription;
+  // A subscription used to react to map scale changes.
+  StreamSubscription<double>? _scaleChangedSubscription;
 
   // A flag for when the map view is ready and controls can be used.
   var _ready = false;
 
   @override
   void dispose() {
-    _viewpointChangedSubscription?.cancel().ignore();
+    _scaleChangedSubscription?.cancel().ignore();
     super.dispose();
   }
 
@@ -78,7 +75,7 @@ class _CreateSymbolStylesFromWebStylesState
                 Row(
                   mainAxisAlignment: .spaceEvenly,
                   children: [
-                    // Show a legend sheet listing the current symbol swatches and names.
+                    // Show a legend sheet listing the symbol swatches and names.
                     ElevatedButton(
                       onPressed: _legendItems.isNotEmpty ? _showLegend : null,
                       child: const Text('Legend'),
@@ -97,7 +94,7 @@ class _CreateSymbolStylesFromWebStylesState
 
   Future<void> onMapViewReady() async {
     // Create a map with a light gray basemap and a fixed reference scale.
-    final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISLightGray)
+    final map = ArcGISMap.withBasemapStyle(.arcGISLightGray)
       ..referenceScale = 1e5
       ..initialViewpoint = Viewpoint.withLatLongScale(
         latitude: 34.28301,
@@ -106,34 +103,32 @@ class _CreateSymbolStylesFromWebStylesState
       );
 
     // Add the feature layer to the map.
+    _featureLayer = FeatureLayer.withFeatureTable(
+      ServiceFeatureTable.withUri(
+        Uri.parse(
+          'http://services.arcgis.com/V6ZHFr6zdgNZuVG0/arcgis/rest/services/LA_County_Points_of_Interest/FeatureServer/0',
+        ),
+      ),
+    );
     map.operationalLayers.add(_featureLayer);
     _mapViewController.arcGISMap = map;
 
+    // Prevent symbols from scaling when zoomed out too far.
+    _scaleChangedSubscription = _mapViewController.onScaleChanged.listen((
+      scale,
+    ) {
+      _featureLayer.scaleSymbols = scale >= 8e4;
+    });
+
     await _updateSymbolsFromWebStyle();
 
-    // Prevent symbols from scaling when zoomed out too far.
-    _viewpointChangedSubscription = _mapViewController.onViewpointChanged
-        .listen((_) {
-          final viewpoint = _mapViewController.getCurrentViewpoint(
-            ViewpointType.centerAndScale,
-          );
-          final scale = viewpoint?.targetScale;
-          if (scale != null) {
-            _featureLayer.scaleSymbols = scale >= 8e4;
-          }
-        });
-
     // Set the ready state variable to true to enable the sample UI.
-    if (!mounted) return;
     setState(() => _ready = true);
   }
 
   Future<void> _updateSymbolsFromWebStyle() async {
     try {
-      final symbolStyle = SymbolStyle.withStyleName(
-        'Esri2DPointSymbolsStyle',
-        portal: Portal.arcGISOnline(),
-      );
+      final symbolStyle = SymbolStyle.withStyleName('Esri2DPointSymbolsStyle');
 
       final symbolDetails = await _getSymbolDetails(
         symbolStyle: symbolStyle,
@@ -141,26 +136,18 @@ class _CreateSymbolStylesFromWebStylesState
       );
 
       // Build and sort legend items by symbol display name.
-      final legendItems =
-          symbolDetails
-              .map(
-                (detail) =>
-                    _LegendItem(name: detail.name, symbol: detail.symbol),
-              )
-              .toList()
-            ..sort((a, b) => a.name.compareTo(b.name));
+      final legendItems = symbolDetails
+          .map(
+            (detail) => _LegendItem(name: detail.name, symbol: detail.symbol),
+          )
+          .toList();
+      legendItems.sort((a, b) => a.name.compareTo(b.name));
+      _legendItems.addAll(legendItems);
 
       _featureLayer.renderer = _makeUniqueValueRenderer(
         fieldNames: const ['cat2'],
         symbolDetails: symbolDetails,
       );
-
-      if (!mounted) return;
-      setState(() {
-        _legendItems
-          ..clear()
-          ..addAll(legendItems);
-      });
     } on Exception catch (e) {
       showMessageDialog('Error updating symbols: $e');
     }

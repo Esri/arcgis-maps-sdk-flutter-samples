@@ -10,16 +10,16 @@
         "symbol",
         "symbology",
         "web style",
+        "ArcGISSymbol",
         "FeatureLayer",
-        "Symbol",
         "SymbolStyle",
         "UniqueValue",
         "UniqueValueRenderer"
     ],
     "redirect_from": [],
     "relevant_apis": [
+        "ArcGISSymbol",
         "FeatureLayer",
-        "Symbol",
         "SymbolStyle",
         "UniqueValue",
         "UniqueValueRenderer"
