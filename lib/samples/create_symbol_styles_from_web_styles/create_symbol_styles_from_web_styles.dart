@@ -48,6 +48,9 @@ class _CreateSymbolStylesFromWebStylesState
   // A flag for when the map view is ready and controls can be used.
   var _ready = false;
 
+  // A flag for when the legend bottom sheet is visible.
+  var _legendVisible = false;
+
   @override
   void dispose() {
     _scaleChangedSubscription?.cancel().ignore();
@@ -77,7 +80,9 @@ class _CreateSymbolStylesFromWebStylesState
                   children: [
                     // Show a legend sheet listing the symbol swatches and names.
                     ElevatedButton(
-                      onPressed: _legendItems.isNotEmpty ? _showLegend : null,
+                      onPressed: _legendItems.isNotEmpty
+                          ? () => setState(() => _legendVisible = true)
+                          : null,
                       child: const Text('Legend'),
                     ),
                   ],
@@ -89,6 +94,7 @@ class _CreateSymbolStylesFromWebStylesState
           ],
         ),
       ),
+      bottomSheet: _legendVisible ? _buildLegendSheet(context) : null,
     );
   }
 
@@ -194,45 +200,32 @@ class _CreateSymbolStylesFromWebStylesState
     );
   }
 
-  Future<void> _showLegend() async {
-    await showModalBottomSheet<void>(
-      context: context,
-      showDragHandle: true,
-      builder: (context) {
-        return SafeArea(
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
-                child: Row(
-                  children: [
-                    Text(
-                      'Symbol Styles',
-                      style: Theme.of(context).textTheme.titleMedium,
-                    ),
-                  ],
-                ),
-              ),
-              Expanded(
-                child: ListView.builder(
-                  itemCount: _legendItems.length,
-                  itemBuilder: (context, index) {
-                    final item = _legendItems[index];
-                    return ListTile(
-                      leading: SwatchImage(
-                        symbol: item.symbol,
-                        width: 24,
-                        height: 24,
-                      ),
-                      title: Text(item.name),
-                    );
-                  },
-                ),
-              ),
-            ],
+  Widget _buildLegendSheet(BuildContext context) {
+    return BottomSheetSettings(
+      title: 'Symbol Styles',
+      onCloseIconPressed: () => setState(() => _legendVisible = false),
+      settingsWidgets: (context) => [
+        ConstrainedBox(
+          constraints: BoxConstraints(
+            maxHeight: MediaQuery.sizeOf(context).height * 0.5,
           ),
-        );
-      },
+          child: ListView.builder(
+            shrinkWrap: true,
+            itemCount: _legendItems.length,
+            itemBuilder: (context, index) {
+              final item = _legendItems[index];
+              return ListTile(
+                leading: SwatchImage(
+                  symbol: item.symbol,
+                  width: 24,
+                  height: 24,
+                ),
+                title: Text(item.name),
+              );
+            },
+          ),
+        ),
+      ],
     );
   }
 }
