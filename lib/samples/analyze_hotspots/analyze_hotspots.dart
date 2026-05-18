@@ -85,6 +85,7 @@ class _AnalyzeHotspotsState extends State<AnalyzeHotspots>
             Column(
               children: [
                 Expanded(
+                  // Add a map view to the widget tree and set a controller.
                   child: ArcGISMapView(
                     controllerProvider: () => _mapViewController,
                     onMapViewReady: onMapViewReady,
@@ -93,6 +94,7 @@ class _AnalyzeHotspotsState extends State<AnalyzeHotspots>
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
+                    // Button to open the settings.
                     ElevatedButton(
                       onPressed: _analysisInProgress
                           ? null
@@ -100,6 +102,7 @@ class _AnalyzeHotspotsState extends State<AnalyzeHotspots>
                       child: const Text('Settings'),
                     ),
                     ElevatedButton(
+                      // Button to start the hotspot analysis.
                       onPressed: _ready && !_analysisInProgress
                           ? analyzeHotspots
                           : null,
@@ -162,15 +165,12 @@ class _AnalyzeHotspotsState extends State<AnalyzeHotspots>
       // Load the geoprocessing task so the Analyze button can create jobs from it.
       await _hotspotTask.load();
       // Enable the sample controls after the geoprocessing task loads.
-      if (mounted) setState(() => _ready = true);
+      setState(() => _ready = true);
     } on Exception catch (e) {
-      // Only update the UI if this widget is still in the widget tree.
-      if (mounted) {
-        // Mark the task load as failed so the loading indicator can be hidden.
-        setState(() => _taskLoadFailed = true);
-        // Show the task loading error to the user.
-        showMessageDialog('Failed to load geoprocessing task:\n$e');
-      }
+      // Mark the task load as failed so the loading indicator can be hidden.
+      setState(() => _taskLoadFailed = true);
+      // Show the task loading error to the user.
+      showMessageDialog('Failed to load geoprocessing task:\n$e');
     }
   }
 
@@ -251,22 +251,19 @@ class _AnalyzeHotspotsState extends State<AnalyzeHotspots>
         await _mapViewController.setViewpointGeometry(fullExtent);
       }
     } on Exception catch (e) {
-      // Only show errors if this widget is still in the widget tree.
-      if (mounted) {
-        // Get the geoprocessing job error, if the job reported one.
-        final jobError = _hotspotJob?.error;
-        // Display the job error when available, otherwise display the caught exception.
-        showMessageDialog(
-          jobError != null
-              ? 'Executing geoprocessing failed:\n${jobError.message}'
-              : 'An error occurred while analyzing hot spots:\n$e',
-        );
-      }
+      // Get the geoprocessing job error, if the job reported one.
+      final jobError = _hotspotJob?.error;
+      // Display the job error when available, otherwise display the caught exception.
+      showMessageDialog(
+        jobError != null
+            ? 'Executing geoprocessing failed:\n${jobError.message}'
+            : 'An error occurred while analyzing hot spots:\n$e',
+      );
     } finally {
       // Clear the stored job reference after it completes or fails.
       _hotspotJob = null;
-      // Hide the loading indicator and re-enable controls if the widget is still mounted.
-      if (mounted) setState(() => _analysisInProgress = false);
+      // Hide the loading indicator and re-enable controls.
+      setState(() => _analysisInProgress = false);
     }
   }
 
