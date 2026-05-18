@@ -27,7 +27,6 @@ class CreateSymbolStylesFromWebStyles extends StatefulWidget {
       _CreateSymbolStylesFromWebStylesState();
 }
 
-//fixme comments
 //fixme README
 //fixme screenshot
 class _CreateSymbolStylesFromWebStylesState
@@ -80,9 +79,7 @@ class _CreateSymbolStylesFromWebStylesState
                   children: [
                     // Show a legend sheet listing the symbol swatches and names.
                     ElevatedButton(
-                      onPressed: _legendItems.isNotEmpty
-                          ? () => setState(() => _legendVisible = true)
-                          : null,
+                      onPressed: () => setState(() => _legendVisible = true),
                       child: const Text('Legend'),
                     ),
                   ],
@@ -94,7 +91,38 @@ class _CreateSymbolStylesFromWebStylesState
           ],
         ),
       ),
+      // Show the legend as a bottom sheet when the legend button is pressed.
       bottomSheet: _legendVisible ? _buildLegendSheet(context) : null,
+    );
+  }
+
+  Widget _buildLegendSheet(BuildContext context) {
+    return BottomSheetSettings(
+      title: 'Symbol Styles',
+      onCloseIconPressed: () => setState(() => _legendVisible = false),
+      settingsWidgets: (context) => [
+        ConstrainedBox(
+          constraints: BoxConstraints(
+            maxHeight: MediaQuery.sizeOf(context).height * 0.4,
+          ),
+          child: ListView.separated(
+            shrinkWrap: true,
+            itemCount: _legendItems.length,
+            separatorBuilder: (_, _) => const SizedBox(height: 8),
+            itemBuilder: (context, index) {
+              final item = _legendItems[index];
+              return ListTile(
+                leading: SwatchImage(
+                  symbol: item.symbol,
+                  width: 24,
+                  height: 24,
+                ),
+                title: Text(item.name),
+              );
+            },
+          ),
+        ),
+      ],
     );
   }
 
@@ -108,7 +136,7 @@ class _CreateSymbolStylesFromWebStylesState
         scale: 10000,
       );
 
-    // Add the feature layer to the map.
+    // Add the LA County Points of Interest feature layer to the map.
     _featureLayer = FeatureLayer.withFeatureTable(
       ServiceFeatureTable.withUri(
         Uri.parse(
@@ -126,111 +154,69 @@ class _CreateSymbolStylesFromWebStylesState
       _featureLayer.scaleSymbols = scale >= 8e4;
     });
 
-    await _updateSymbolsFromWebStyle();
+    // Load the legend information.
+    await _loadLegend();
 
     // Set the ready state variable to true to enable the sample UI.
     setState(() => _ready = true);
   }
 
-  Future<void> _updateSymbolsFromWebStyle() async {
+  Future<void> _loadLegend() async {
     try {
+      // Load the "Esri2DPointSymbolsStyle" web style from ArcGIS Online.
       final symbolStyle = SymbolStyle.withStyleName('Esri2DPointSymbolsStyle');
 
-      final symbolDetails = await _getSymbolDetails(
-        symbolStyle: symbolStyle,
-        symbolTypes: _SymbolType.values,
+      // For each symbol type, prepare the symbol and associated category names.
+      final symbolDetails = await Future.wait(
+        _SymbolType.values.map((type) async {
+          final symbol = await symbolStyle.getSymbol([type.symbolName]);
+          return _SymbolDetail(
+            name: type.symbolName,
+            categoryNames: type.categoryNames,
+            symbol: symbol,
+          );
+        }),
       );
 
-      // Build and sort legend items by symbol display name.
+      // Create a unique value renderer to render the symbols.
+      final uniqueValues = <UniqueValue>[];
+      for (final detail in symbolDetails) {
+        for (final category in detail.categoryNames) {
+          uniqueValues.add(
+            UniqueValue(
+              label: detail.name,
+              symbol: detail.symbol,
+              values: [category],
+            ),
+          );
+        }
+      }
+      final renderer = UniqueValueRenderer(
+        fieldNames: const ['cat2'],
+        uniqueValues: uniqueValues,
+      );
+
+      // Set the renderer on the feature layer to apply the symbols to the map.
+      _featureLayer.renderer = renderer;
+
+      // Create legend items of each symbol for display in the legend sheet.
       final legendItems = symbolDetails
           .map(
-            (detail) => _LegendItem(name: detail.name, symbol: detail.symbol),
+            (symbolDetail) => _LegendItem(
+              name: symbolDetail.name,
+              symbol: symbolDetail.symbol,
+            ),
           )
           .toList();
       legendItems.sort((a, b) => a.name.compareTo(b.name));
       _legendItems.addAll(legendItems);
-
-      _featureLayer.renderer = _makeUniqueValueRenderer(
-        fieldNames: const ['cat2'],
-        symbolDetails: symbolDetails,
-      );
     } on Exception catch (e) {
       showMessageDialog('Error updating symbols: $e');
     }
   }
-
-  Future<List<_SymbolDetail>> _getSymbolDetails({
-    required SymbolStyle symbolStyle,
-    required List<_SymbolType> symbolTypes,
-  }) async {
-    final details = await Future.wait(
-      symbolTypes.map((type) async {
-        final symbol = await symbolStyle.getSymbol([type.symbolName]);
-        return _SymbolDetail(
-          name: type.symbolName,
-          categoryNames: type.categoryNames,
-          symbol: symbol,
-        );
-      }),
-    );
-
-    return details;
-  }
-
-  UniqueValueRenderer _makeUniqueValueRenderer({
-    required List<String> fieldNames,
-    required List<_SymbolDetail> symbolDetails,
-  }) {
-    final uniqueValues = <UniqueValue>[];
-    for (final detail in symbolDetails) {
-      for (final category in detail.categoryNames) {
-        uniqueValues.add(
-          UniqueValue(
-            label: detail.name,
-            symbol: detail.symbol,
-            values: [category],
-          ),
-        );
-      }
-    }
-
-    return UniqueValueRenderer(
-      fieldNames: fieldNames,
-      uniqueValues: uniqueValues,
-    );
-  }
-
-  Widget _buildLegendSheet(BuildContext context) {
-    return BottomSheetSettings(
-      title: 'Symbol Styles',
-      onCloseIconPressed: () => setState(() => _legendVisible = false),
-      settingsWidgets: (context) => [
-        ConstrainedBox(
-          constraints: BoxConstraints(
-            maxHeight: MediaQuery.sizeOf(context).height * 0.5,
-          ),
-          child: ListView.builder(
-            shrinkWrap: true,
-            itemCount: _legendItems.length,
-            itemBuilder: (context, index) {
-              final item = _legendItems[index];
-              return ListTile(
-                leading: SwatchImage(
-                  symbol: item.symbol,
-                  width: 24,
-                  height: 24,
-                ),
-                title: Text(item.name),
-              );
-            },
-          ),
-        ),
-      ],
-    );
-  }
 }
 
-// A struct-like model containing a symbol and associated category mappings.
+// A class containing a symbol and associated category mappings.
 final class _SymbolDetail {
   const _SymbolDetail({
     required this.name,
@@ -243,7 +229,7 @@ final class _SymbolDetail {
   final ArcGISSymbol symbol;
 }
 
-// A struct-like model describing an item shown in the legend list.
+// A class describing an item shown in the legend list.
 final class _LegendItem {
   const _LegendItem({required this.name, required this.symbol});
 
