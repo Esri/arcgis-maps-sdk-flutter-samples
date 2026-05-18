@@ -183,17 +183,19 @@ class _AnalyzeHotspotsState extends State<AnalyzeHotspots>
       initialDateRange: _selectedDateRange,
     );
 
-    // If the user cancels the picker, keep the current date range.
-    if (dateRange == null) return;
+    // If the sample was closed while the picker was open, or the user
+    // cancels the picker, keep the current date range.
+    if (!mounted || dateRange == null) return;
     // Store the selected date range and refresh the settings display.
     setState(() => _selectedDateRange = dateRange);
   }
 
   Future<void> analyzeHotspots() async {
-    // Ensure the selected end date is after the selected start date.
-    if (!_selectedDateRange.end.isAfter(_selectedDateRange.start)) {
+    // Ensure the selected date range is valid, allowing the same start and end date
+    // to represent a single selected calendar day.
+    if (_selectedDateRange.end.isBefore(_selectedDateRange.start)) {
       // Show an error if the selected range is not valid for analysis.
-      showMessageDialog('Select a date range with at least one day.');
+      showMessageDialog('Select a valid date range.');
       // Stop before creating a geoprocessing job.
       return;
     }
@@ -211,11 +213,14 @@ class _AnalyzeHotspotsState extends State<AnalyzeHotspots>
       );
 
       // Add a date range query to the geoprocessing parameters.
+      // Advance the selected end date by one day so the exclusive upper bound
+      // includes the entire end date selected in the date picker.
+      final endExclusive = _selectedDateRange.end.add(const Duration(days: 1));
       final query =
-          // Start the where clause with calls after the selected start date.
-          '("DATE" > date \'${formatDateTime(_selectedDateRange.start)}\' AND '
-          // Finish the where clause with calls before the selected end date.
-          '"DATE" < date \'${formatDateTime(_selectedDateRange.end)}\')';
+          // Start the where clause with calls on or after the selected start date.
+          '("DATE" >= date \'${formatDateTime(_selectedDateRange.start)}\' AND '
+          // Finish the where clause with calls before the day after the selected end date.
+          '"DATE" < date \'${formatDateTime(endExclusive)}\')';
       // Add the query string to the geoprocessing input named "Query".
       parameters.inputs['Query'] = GeoprocessingString(query);
 
