@@ -13,6 +13,8 @@
 // limitations under the License.
 //
 
+import 'dart:io';
+
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
@@ -89,8 +91,17 @@ class _AddFeaturesWithContingentValuesState
   }
 
   Future<void> onMapViewReady() async {
-    // Create a map with a topographic basemap.
-    final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic);
+    // Path to the downloaded VTPK.
+    final listPaths = GoRouter.of(context).state.extra! as List<String>;
+    final vtpkPath = listPaths.firstWhere(
+      (p) => p.endsWith('FillmoreTopographicMap.vtpk'),
+    );
+
+    final vtpkLayer = ArcGISVectorTiledLayer.withUri(Uri.file(vtpkPath));
+
+    final basemap = Basemap.withBaseLayer(vtpkLayer);
+    final map = ArcGISMap.withBasemap(basemap);
+
     _mapViewController.arcGISMap = map;
 
     // Load the geodatabase and feature table.
@@ -126,7 +137,9 @@ class _AddFeaturesWithContingentValuesState
     final originalPath = listPaths.first;
 
     // Create and load the geodatabase from the mobile geodatabase location.
-    _geodatabase = Geodatabase.withFileUri(Uri.file(originalPath));
+    final geodatabaseFile = File(originalPath);
+    _geodatabase = Geodatabase.withFileUri(geodatabaseFile.uri);
+
     await _geodatabase.load();
 
     // Get the first feature table.
@@ -136,12 +149,12 @@ class _AddFeaturesWithContingentValuesState
     final cvDef = _featureTable.contingentValuesDefinition;
     await cvDef.load();
     debugPrint('Contingent values definition loaded');
-    debugPrint('Field groups: ${cvDef.fieldGroups.length}');
-    for (final group in cvDef.fieldGroups) {
-      debugPrint(
-        'Group: ${group.name}, Fields: ${group.fields.map((f) => f).join(", ")}',
-      );
-    }
+    // debugPrint('Field groups: ${cvDef.fieldGroups.length}');
+    // for (final group in cvDef.fieldGroups) {
+    //   debugPrint(
+    //     'Group: ${group.name}, Fields: ${group.fields.map((f) => f).join(", ")}',
+    //   );
+    // }
   }
 
   // Configures the graphics overlay with a buffer symbol.
@@ -360,7 +373,7 @@ class _AddFeaturesWithContingentValuesState
       if (violations.isNotEmpty) {
         for (final violation in violations) {
           debugPrint(
-            'Violation: ${violation.type} on field group ${violation.fieldGroup?.name}',
+            'Violation: ${violation.type} on field group ${violation.fieldGroup.name}',
           );
         }
       }

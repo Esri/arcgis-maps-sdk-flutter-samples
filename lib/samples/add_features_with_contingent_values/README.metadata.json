@@ -7,6 +7,11 @@
             "itemId": "e12b54ea799f4606a2712157cf9f6e41",
             "downloadable": "ContingentValuesBirdNests.geodatabase.zip",
             "resource": "ContingentValuesBirdNests.geodatabase"
+        },
+        {
+            "itemId": "b5106355f1634b8996e634c04b6a930a",
+            "downloadable": "FillmoreTopographicMap.vtpk",
+            "resource": ""
         }
     ],
     "images": [
