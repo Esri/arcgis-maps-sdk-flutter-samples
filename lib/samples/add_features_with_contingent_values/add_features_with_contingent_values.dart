@@ -145,7 +145,7 @@ class _AddFeaturesWithContingentValuesState
     final vtpkPath = _vtpkPath;
     if (vtpkPath == null) return;
     final vtpkLayer = ArcGISVectorTiledLayer.withUri(Uri.file(vtpkPath));
-    
+
     // Create a basemap using the vector tiled layer and set to a map.
     final basemap = Basemap.withBaseLayer(vtpkLayer);
     final map = ArcGISMap.withBasemap(basemap);
@@ -153,14 +153,12 @@ class _AddFeaturesWithContingentValuesState
     _mapViewController.arcGISMap = map;
 
     // Load the geodatabase and configure the table and contingent values definition.
-    await _loadGeodatabase();
+    await _configureData();
 
     // Add feature layer to map.
     final featureLayer = FeatureLayer.withFeatureTable(_birdNestsTable);
     await featureLayer.load();
-    _mapViewController.arcGISMap?.operationalLayers
-      ?..clear()
-      ..add(featureLayer);
+    map.operationalLayers.add(featureLayer);
 
     // Configure overlays.
     _configureBufferOverlay(); // persisted buffers
@@ -185,7 +183,7 @@ class _AddFeaturesWithContingentValuesState
     setState(() => _ready = true);
   }
 
-  Future<void> _loadGeodatabase() async {
+  Future<void> _configureData() async {
     final gdbPath = _geodatabasePath;
     if (gdbPath == null) return;
 
@@ -196,7 +194,7 @@ class _AddFeaturesWithContingentValuesState
       tableName: _tableName,
     );
 
-    await table.load();
+    if (table == null) return;
 
     // Contingent values require the definition to be loaded.
     await table.contingentValuesDefinition.load();
@@ -212,6 +210,16 @@ class _AddFeaturesWithContingentValuesState
     final mapPoint = _mapViewController.screenToLocation(screen: offset);
     if (mapPoint == null) return;
 
+    // Shift the viewpoint upward so the point is visible above the bottom sheet.
+    final screenPoint = offset.translate(0, 200);
+    final adjustedLocation = _mapViewController.screenToLocation(
+      screen: screenPoint,
+    );
+
+    if (adjustedLocation != null) {
+      await _mapViewController.setViewpointCenter(adjustedLocation);
+    }
+
     // Create a draft feature (not inserted into the table yet).
     final draft =
         _birdNestsTable.createFeature(
@@ -222,12 +230,6 @@ class _AddFeaturesWithContingentValuesState
 
     // Reset all editor state and show bottom sheet.
     _startDraftEditing(draft);
-
-    // Move Map so we can see the tapped point.
-    await _mapViewController.setViewpointCenter(
-      mapPoint,
-      scale: _mapViewController.scale,
-    );
   }
 
   // Starts editing a draft feature and shows the editor sheet.
@@ -282,9 +284,6 @@ class _AddFeaturesWithContingentValuesState
       outline: outline,
     );
 
-    // IMPORTANT:
-    // We use per-graphic symbols (point + polygon), so disable renderer
-    _draftOverlay.renderer = null;
   }
 
   void _showDraftPointGraphic() {
