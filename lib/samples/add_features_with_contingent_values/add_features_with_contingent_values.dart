@@ -63,7 +63,7 @@ class _AddFeaturesWithContingentValuesState
   // Draft buffer graphic shown while the slider changes.
   Graphic? _draftBufferGraphic;
 
-  // Draft feature (not added to table until Done).
+  // Draft feature used when adding a new feature and is either discarded or added to the table while editing.
   ArcGISFeature? _draftFeature;
 
   // Draft Symbols.
@@ -79,7 +79,7 @@ class _AddFeaturesWithContingentValuesState
   // Protection options (names) based on contingent values for the current draft.
   List<String> _protectionOptions = const [];
 
-  // Currently selected protection name (user-facing).
+  // Currently selected protection name.
   String? _selectedProtectionName;
 
   // Buffer range derived from contingent range values.
@@ -124,30 +124,35 @@ class _AddFeaturesWithContingentValuesState
         right: false,
         child: Stack(
           children: [
+            // Add a map view to the widget tree and set a controller.
             ArcGISMapView(
               controllerProvider: () => _mapViewController,
               onMapViewReady: _onMapViewReady,
               onTap: _onTap,
             ),
+            // Display a progress indicator and prevent interaction until state is ready.
             LoadingIndicator(visible: !_ready),
           ],
         ),
       ),
+      // Show the settings as a bottom sheet when the map is tapped.
       bottomSheet: _sheetVisible ? _buildBottomSheet(context) : null,
     );
   }
 
   Future<void> _onMapViewReady() async {
-    // Set basemap from local VTPK.
+    // Create a vector tiled layer from a local file.
     final vtpkPath = _vtpkPath;
     if (vtpkPath == null) return;
-
     final vtpkLayer = ArcGISVectorTiledLayer.withUri(Uri.file(vtpkPath));
+    
+    // Create a basemap using the vector tiled layer and set to a map.
     final basemap = Basemap.withBaseLayer(vtpkLayer);
     final map = ArcGISMap.withBasemap(basemap);
+    // Set the map to the controller.
     _mapViewController.arcGISMap = map;
 
-    // Load the geodatabase + BirdNests table + contingent values definition.
+    // Load the geodatabase and configure the table and contingent values definition.
     await _loadGeodatabase();
 
     // Add feature layer to map.
@@ -176,6 +181,7 @@ class _AddFeaturesWithContingentValuesState
       paddingInDiPs: -20,
     );
 
+    // // Set the ready state variable to true to enable the sample UI.
     setState(() => _ready = true);
   }
 
@@ -189,9 +195,6 @@ class _AddFeaturesWithContingentValuesState
     final table = _geodatabase.getGeodatabaseFeatureTable(
       tableName: _tableName,
     );
-    if (table == null) {
-      throw StateError('Could not find geodatabase table: $_tableName');
-    }
 
     await table.load();
 
@@ -209,7 +212,7 @@ class _AddFeaturesWithContingentValuesState
     final mapPoint = _mapViewController.screenToLocation(screen: offset);
     if (mapPoint == null) return;
 
-    // Create a NEW draft feature (not inserted into the table yet).
+    // Create a draft feature (not inserted into the table yet).
     final draft =
         _birdNestsTable.createFeature(
               attributes: <String, dynamic>{},
@@ -244,7 +247,7 @@ class _AddFeaturesWithContingentValuesState
       _sheetVisible = true;
     });
 
-    // Show a draft point marker at the tap geometry.
+    // Show a draft point marker at the tapped geometry.
     _showDraftPointGraphic();
     // Clear any prior draft buffer.
     _clearDraftBufferGraphic();
@@ -264,7 +267,7 @@ class _AddFeaturesWithContingentValuesState
   }
 
   void _configureDraftOverlay() {
-    // Draft point symbol (tap location)
+    // Draft point symbol (tap location).
     _draftPointSymbol = SimpleMarkerSymbol(
       color: const Color(0xFF000000),
       size: 11,
