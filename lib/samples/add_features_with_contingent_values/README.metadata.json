@@ -1,7 +1,24 @@
 {
-    "category": "Maps",
+    "category": "Edit and Manage Data",
     "description": "Create and add features whose attribute values satisfy a predefined set of contingencies.",
     "ignore": false,
+    "images": [
+        "add_features_with_contingent_values.png"
+    ],
+    "keywords": [
+        "coded values",
+        "contingent values",
+        "feature table",
+        "geodatabase",
+        "ArcGISFeatureTable",
+        "CodedValue",
+        "CodedValueDomain",
+        "ContingencyConstraintViolation",
+        "ContingentCodedValue",
+        "ContingentRangeValue",
+        "ContingentValuesDefinition",
+        "ContingentValuesResult"
+    ],
     "offline_data": [
         {
             "itemId": "e12b54ea799f4606a2712157cf9f6e41",
@@ -14,33 +31,16 @@
             "resource": ""
         }
     ],
-    "images": [
-        "add_features_with_contingent_values.png"
-    ],
-    "keywords": [
-        "coded values",
-        "contingent values",
-        "feature table",
-        "geodatabase",
-        "AGSArcGISFeatureTable",
-        "AGSCodedValue",
-        "AGSCodedValueDomain",
-        "AGSContingencyConstraintViolation",
-        "AGSContingentCodedValue",
-        "AGSContingentRangeValue",
-        "AGSContingentValuesDefinition",
-        "AGSContingentValuesResult"
-    ],
     "redirect_from": [],
     "relevant_apis": [
-        "AGSArcGISFeatureTable",
-        "AGSCodedValue",
-        "AGSCodedValueDomain",
-        "AGSContingencyConstraintViolation",
-        "AGSContingentCodedValue",
-        "AGSContingentRangeValue",
-        "AGSContingentValuesDefinition",
-        "AGSContingentValuesResult"
+        "ArcGISFeatureTable",
+        "CodedValue",
+        "CodedValueDomain",
+        "ContingencyConstraintViolation",
+        "ContingentCodedValue",
+        "ContingentRangeValue",
+        "ContingentValuesDefinition",
+        "ContingentValuesResult"
     ],
     "snippets": [
         "add_features_with_contingent_values.dart"

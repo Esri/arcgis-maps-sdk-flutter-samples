@@ -1,3 +1,4 @@
+//
 // Copyright 2026 Esri
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -31,42 +32,88 @@ class AddFeaturesWithContingentValues extends StatefulWidget {
 class _AddFeaturesWithContingentValuesState
     extends State<AddFeaturesWithContingentValues>
     with SampleStateSupport {
-  // Create a controller for the map view.
+  // Controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
+
+  // A flag for when the local map view is ready and controls can be used.
+  var _ready = false;
+
+  // A flag for when the bottom sheet is visible.
+  var _sheetVisible = false;
+
+  // Downloaded local resource paths.
+  String? _geodatabasePath;
+  String? _vtpkPath;
 
   // Contingent values birds nests geodatabase.
   late final Geodatabase _geodatabase;
 
-  // Feature table with contingent values definitions.
-  late final ArcGISFeatureTable _featureTable;
+  // Bird Nests Feature Table.
+  late final ArcGISFeatureTable _birdNestsTable;
 
-  // Graphics overlay for buffer visualization.
-  final _graphicsOverlay = GraphicsOverlay();
+  // Persisted buffers (queried from table where BufferSize > 0).
+  final _bufferOverlay = GraphicsOverlay();
 
-  // Current feature being edited.
-  ArcGISFeature? _currentFeature;
+  // Draft graphics shown while user is editing a new feature.
+  final _draftOverlay = GraphicsOverlay();
 
-  // UI state.
-  var _ready = false;
-  var _showAddFeatureSheet = false;
+  // Draft point marker graphic for the tap location.
+  Graphic? _draftPointGraphic;
 
-  // Attribute selections.
-  String? _selectedStatus;
-  String? _selectedProtection;
-  int _selectedBufferSize = 0;
+  // Draft buffer graphic shown while the slider changes.
+  Graphic? _draftBufferGraphic;
 
-  // Available options.
-  List<CodedValue> _statusOptions = [];
-  List<String> _protectionOptionNames = [];
-  int _minBufferSize = 0;
-  int _maxBufferSize = 0;
+  // Draft feature (not added to table until Done).
+  ArcGISFeature? _draftFeature;
 
-  // Validation state.
+  // Draft Symbols.
+  late final SimpleMarkerSymbol _draftPointSymbol;
+  late final SimpleFillSymbol _draftFillSymbol;
+
+  // Status options from coded value domain.
+  List<CodedValue> _statusOptions = const [];
+
+  // Currently selected status coded value.
+  CodedValue? _selectedStatus;
+
+  // Protection options (names) based on contingent values for the current draft.
+  List<String> _protectionOptions = const [];
+
+  // Currently selected protection name (user-facing).
+  String? _selectedProtectionName;
+
+  // Buffer range derived from contingent range values.
+  int _bufferMin = 0;
+  int _bufferMax = 0;
+
+  // Currently selected buffer size.
+  int? _selectedBufferSize;
+
+  // Whether the current draft selections satisfy all contingencies.
   var _isValid = false;
 
-  // Field group names.
-  static const _protectionFieldGroup = 'ProtectionFieldGroup';
-  static const _bufferSizeFieldGroup = 'BufferSizeFieldGroup';
+  // Constants for table/field names.
+  static const _tableName = 'BirdNests';
+
+  static const _fieldStatus = 'Status';
+  static const _fieldProtection = 'Protection';
+  static const _fieldBufferSize = 'BufferSize';
+
+  static const _protectionGroup = 'ProtectionFieldGroup';
+  static const _bufferGroup = 'BufferSizeFieldGroup';
+
+  @override
+  void initState() {
+    super.initState();
+    _initDownloadResources();
+  }
+
+  // Reads the resolved file paths passed via GoRouter extras.
+  void _initDownloadResources() {
+    final listPaths = GoRouter.of(context).state.extra! as List<String>;
+    _geodatabasePath = listPaths[0];
+    _vtpkPath = listPaths[1];
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -79,467 +126,573 @@ class _AddFeaturesWithContingentValuesState
           children: [
             ArcGISMapView(
               controllerProvider: () => _mapViewController,
-              onMapViewReady: onMapViewReady,
-              onTap: onTap,
+              onMapViewReady: _onMapViewReady,
+              onTap: _onTap,
             ),
-            if (!_ready) const Center(child: CircularProgressIndicator()),
+            LoadingIndicator(visible: !_ready),
           ],
         ),
       ),
-      bottomSheet: _showAddFeatureSheet ? _buildAddFeatureSheet(context) : null,
+      bottomSheet: _sheetVisible ? _buildBottomSheet(context) : null,
     );
   }
 
-  Future<void> onMapViewReady() async {
-    // Path to the downloaded VTPK.
-    final listPaths = GoRouter.of(context).state.extra! as List<String>;
-    final vtpkPath = listPaths.firstWhere(
-      (p) => p.endsWith('FillmoreTopographicMap.vtpk'),
-    );
+  Future<void> _onMapViewReady() async {
+    // Set basemap from local VTPK.
+    final vtpkPath = _vtpkPath;
+    if (vtpkPath == null) return;
 
     final vtpkLayer = ArcGISVectorTiledLayer.withUri(Uri.file(vtpkPath));
-
     final basemap = Basemap.withBaseLayer(vtpkLayer);
     final map = ArcGISMap.withBasemap(basemap);
-
     _mapViewController.arcGISMap = map;
 
-    // Load the geodatabase and feature table.
+    // Load the geodatabase + BirdNests table + contingent values definition.
     await _loadGeodatabase();
 
-    // Create a feature layer and add it to the map.
-    final featureLayer = FeatureLayer.withFeatureTable(_featureTable);
-    map.operationalLayers.add(featureLayer);
-
-    // Configure graphics overlay for buffers.
-    _configureGraphicsOverlay();
-    _mapViewController.graphicsOverlays.add(_graphicsOverlay);
-
-    // Load existing buffer graphics.
-    await _refreshAllBuffers();
-
-    // Zoom to layer extent.
+    // Add feature layer to map.
+    final featureLayer = FeatureLayer.withFeatureTable(_birdNestsTable);
     await featureLayer.load();
-    if (featureLayer.fullExtent != null) {
-      await _mapViewController.setViewpointGeometry(
-        featureLayer.fullExtent!,
-        paddingInDiPs: 15,
-      );
-    }
+    _mapViewController.arcGISMap?.operationalLayers
+      ?..clear()
+      ..add(featureLayer);
+
+    // Configure overlays.
+    _configureBufferOverlay(); // persisted buffers
+    _configureDraftOverlay(); // draft point + draft buffer
+    _mapViewController.graphicsOverlays
+      ..add(_bufferOverlay)
+      ..add(_draftOverlay);
+
+    // Load static domain options.
+    _loadStatusOptions();
+
+    // Draw existing persisted buffer graphics.
+    await _refreshPersistedBuffers();
+
+    // Zoom to feature layer extent.
+    await _mapViewController.setViewpointGeometry(
+      featureLayer.fullExtent!,
+      paddingInDiPs: -20,
+    );
 
     setState(() => _ready = true);
   }
 
-  // Loads the geodatabase and feature table.
   Future<void> _loadGeodatabase() async {
-    // Get the geodatabase path from router extras.
-    final listPaths = GoRouter.of(context).state.extra! as List<String>;
-    final originalPath = listPaths.first;
+    final gdbPath = _geodatabasePath;
+    if (gdbPath == null) return;
 
-    // Create and load the geodatabase from the mobile geodatabase location.
-    final geodatabaseFile = File(originalPath);
-    _geodatabase = Geodatabase.withFileUri(geodatabaseFile.uri);
-
+    _geodatabase = Geodatabase.withFileUri(File(gdbPath).uri);
     await _geodatabase.load();
 
-    // Get the first feature table.
-    _featureTable = _geodatabase.geodatabaseFeatureTables.first;
-
-    // Load the contingent values definition.
-    final cvDef = _featureTable.contingentValuesDefinition;
-    await cvDef.load();
-    debugPrint('Contingent values definition loaded');
-    // debugPrint('Field groups: ${cvDef.fieldGroups.length}');
-    // for (final group in cvDef.fieldGroups) {
-    //   debugPrint(
-    //     'Group: ${group.name}, Fields: ${group.fields.map((f) => f).join(", ")}',
-    //   );
-    // }
-  }
-
-  // Configures the graphics overlay with a buffer symbol.
-  void _configureGraphicsOverlay() {
-    // Create outline symbol.
-    final outlineSymbol = SimpleLineSymbol(
-      color: const Color(0xFF000000),
-      width: 2,
+    final table = _geodatabase.getGeodatabaseFeatureTable(
+      tableName: _tableName,
     );
-
-    // Create fill symbol with red diagonal pattern.
-    final fillSymbol = SimpleFillSymbol(
-      style: SimpleFillSymbolStyle.forwardDiagonal,
-      color: const Color(0xFFFF0000),
-      outline: outlineSymbol,
-    );
-
-    _graphicsOverlay.renderer = SimpleRenderer(symbol: fillSymbol);
-  }
-
-  // Refreshes all buffer graphics by querying features with BufferSize > 0.
-  Future<void> _refreshAllBuffers() async {
-    // Clear existing graphics.
-    _graphicsOverlay.graphics.clear();
-
-    // Query features with buffer size > 0.
-    final params = QueryParameters()..whereClause = 'BufferSize > 0';
-
-    try {
-      final result = await _featureTable.queryFeatures(params);
-
-      // Create buffer graphics for each feature.
-      for (final feature in result.features()) {
-        final bufferSize = feature.attributes['BufferSize'] as int?;
-        if (bufferSize != null && bufferSize > 0 && feature.geometry != null) {
-          final buffer = GeometryEngine.buffer(
-            geometry: feature.geometry!,
-            distance: bufferSize.toDouble(),
-          );
-          _graphicsOverlay.graphics.add(Graphic(geometry: buffer));
-        }
-      }
-    } catch (e) {
-      debugPrint('Error refreshing buffers: $e');
+    if (table == null) {
+      throw StateError('Could not find geodatabase table: $_tableName');
     }
+
+    await table.load();
+
+    // Contingent values require the definition to be loaded.
+    await table.contingentValuesDefinition.load();
+
+    _birdNestsTable = table;
   }
 
-  // Called when the map is tapped.
-  Future<void> onTap(Offset offset) async {
+  // OnTap starts the draft edit session.
+  Future<void> _onTap(Offset offset) async {
     if (!_ready) return;
 
     // Convert screen point to map point.
     final mapPoint = _mapViewController.screenToLocation(screen: offset);
     if (mapPoint == null) return;
 
-    // Create a new feature with geometry at the tapped location.
-    final feature =
-        _featureTable.createFeature(attributes: {}, geometry: mapPoint)
+    // Create a NEW draft feature (not inserted into the table yet).
+    final draft =
+        _birdNestsTable.createFeature(
+              attributes: <String, dynamic>{},
+              geometry: mapPoint,
+            )
             as ArcGISFeature;
 
-    // Add feature to the table immediately.
-    await _featureTable.addFeature(feature);
-    _currentFeature = feature;
+    // Reset all editor state and show bottom sheet.
+    _startDraftEditing(draft);
 
-    // Load status options from the Status field's coded value domain.
-    _loadStatusOptions();
-
-    // Reset UI state.
-    _resetUIState();
-
-    // Show the add feature bottom sheet.
-    setState(() => _showAddFeatureSheet = true);
-  }
-
-  // Loads the Status field's coded value options.
-  void _loadStatusOptions() {
-    final statusField = _featureTable.fields.firstWhere(
-      (f) => f.name == 'Status',
-      orElse: () => throw Exception('Status field not found'),
+    // Move Map so we can see the tapped point.
+    await _mapViewController.setViewpointCenter(
+      mapPoint,
+      scale: _mapViewController.scale,
     );
-
-    if (statusField.domain is CodedValueDomain) {
-      _statusOptions = (statusField.domain! as CodedValueDomain).codedValues;
-    }
   }
 
-  // Resets the UI state when opening the add feature sheet.
-  void _resetUIState() {
-    _selectedStatus = null;
-    _selectedProtection = null;
-    _selectedBufferSize = 0;
-    _protectionOptionNames = [];
-    _minBufferSize = 0;
-    _maxBufferSize = 0;
-    _isValid = false;
-  }
+  // Starts editing a draft feature and shows the editor sheet.
+  void _startDraftEditing(ArcGISFeature draft) {
+    setState(() {
+      _draftFeature = draft;
 
-  // Gets contingent coded value names for a field.
-  List<String> _getContingentCodedValueNames(
-    String fieldName,
-    String fieldGroupName,
-  ) {
-    if (_currentFeature == null) return [];
+      _selectedStatus = null;
+      _protectionOptions = const [];
+      _selectedProtectionName = null;
 
-    try {
-      final result = _featureTable.getContingentValues(
-        feature: _currentFeature!,
-        field: fieldName,
-      );
-      final values = result.contingentValuesByFieldGroup[fieldGroupName] ?? [];
+      _bufferMin = 0;
+      _bufferMax = 0;
+      _selectedBufferSize = null;
 
-      return values
-          .whereType<ContingentCodedValue>()
-          .map((cv) => cv.codedValue.name)
-          .toList();
-    } catch (e) {
-      debugPrint('Error getting contingent coded values: $e');
-      return [];
-    }
-  }
-
-  // Gets contingent range values (min, max) for a field.
-  List<num> _getContingentRange(String fieldName, String fieldGroupName) {
-    if (_currentFeature == null) return [0, 0];
-
-    try {
-      final result = _featureTable.getContingentValues(
-        feature: _currentFeature!,
-        field: fieldName,
-      );
-      final values = result.contingentValuesByFieldGroup[fieldGroupName] ?? [];
-
-      final rangeValue = values.whereType<ContingentRangeValue>().firstOrNull;
-      if (rangeValue != null) {
-        return [
-          (rangeValue.minValue ?? 0) as num,
-          (rangeValue.maxValue ?? 0) as num,
-        ];
-      }
-    } catch (e) {
-      debugPrint('Error getting contingent range: $e');
-    }
-
-    return [0, 0];
-  }
-
-  // Updates a field value and triggers cascading updates.
-  void _updateField(String field, dynamic value) {
-    if (_currentFeature == null) return;
-
-    // Update attribute immediately (synchronous).
-    _currentFeature!.attributes[field] = value;
-
-    // Trigger cascading updates based on which field changed.
-    if (field == 'Status') {
-      _selectedStatus = value as String;
-      _updateProtectionOptions();
-    } else if (field == 'Protection') {
-      _selectedProtection = value as String;
-      _updateBufferSizeRange();
-    } else if (field == 'BufferSize') {
-      _selectedBufferSize = value as int;
-    }
-
-    // Validate and update UI immediately.
-    _validateAndUpdateUI();
-  }
-
-  // Updates the Protection options based on the selected Status.
-  void _updateProtectionOptions() {
-    _protectionOptionNames = _getContingentCodedValueNames(
-      'Protection',
-      _protectionFieldGroup,
-    );
-
-    // Reset downstream selections.
-    _selectedProtection = null;
-    _currentFeature!.attributes['Protection'] = null;
-    _selectedBufferSize = 0;
-    _currentFeature!.attributes['BufferSize'] = 0;
-    _minBufferSize = 0;
-    _maxBufferSize = 0;
-
-    setState(() {});
-  }
-
-  // Updates the BufferSize range based on the selected Protection.
-  void _updateBufferSizeRange() {
-    final range = _getContingentRange('BufferSize', _bufferSizeFieldGroup);
-    _minBufferSize = range[0].toInt();
-    _maxBufferSize = range[1].toInt();
-    _selectedBufferSize = _minBufferSize;
-
-    // Update attribute with min value.
-    _currentFeature!.attributes['BufferSize'] = _selectedBufferSize;
-
-    setState(() {});
-  }
-
-  // Validates the feature and updates the UI state.
-  void _validateAndUpdateUI() {
-    if (_currentFeature == null) {
       _isValid = false;
-      setState(() {});
+      _sheetVisible = true;
+    });
+
+    // Show a draft point marker at the tap geometry.
+    _showDraftPointGraphic();
+    // Clear any prior draft buffer.
+    _clearDraftBufferGraphic();
+  }
+
+  void _configureBufferOverlay() {
+    // Persisted buffers: red diagonal fill with black outline.
+    final outline = SimpleLineSymbol(color: const Color(0xFF000000), width: 2);
+
+    final fill = SimpleFillSymbol(
+      style: SimpleFillSymbolStyle.forwardDiagonal,
+      color: const Color(0xFFFF0000),
+      outline: outline,
+    );
+
+    _bufferOverlay.renderer = SimpleRenderer(symbol: fill);
+  }
+
+  void _configureDraftOverlay() {
+    // Draft point symbol (tap location)
+    _draftPointSymbol = SimpleMarkerSymbol(
+      color: const Color(0xFF000000),
+      size: 11,
+    );
+
+    // Draft buffer symbol (same visual style as persisted buffers)
+    final outline = SimpleLineSymbol(color: const Color(0xFF000000), width: 2);
+
+    _draftFillSymbol = SimpleFillSymbol(
+      style: SimpleFillSymbolStyle.forwardDiagonal,
+      color: const Color(0xFFFF0000),
+      outline: outline,
+    );
+
+    // IMPORTANT:
+    // We use per-graphic symbols (point + polygon), so disable renderer
+    _draftOverlay.renderer = null;
+  }
+
+  void _showDraftPointGraphic() {
+    final feature = _draftFeature;
+    final geom = feature?.geometry;
+    if (geom == null) return;
+
+    // Remove any existing draft point graphic first.
+    if (_draftPointGraphic != null) {
+      _draftOverlay.graphics.remove(_draftPointGraphic);
+      _draftPointGraphic = null;
+    }
+
+    final g = Graphic(geometry: geom, symbol: _draftPointSymbol);
+    _draftOverlay.graphics.add(g);
+    _draftPointGraphic = g;
+  }
+
+  void _clearDraftPointGraphic() {
+    if (_draftPointGraphic != null) {
+      _draftOverlay.graphics.remove(_draftPointGraphic);
+      _draftPointGraphic = null;
+    }
+  }
+
+  void _clearDraftBufferGraphic() {
+    if (_draftBufferGraphic != null) {
+      _draftOverlay.graphics.remove(_draftBufferGraphic);
+      _draftBufferGraphic = null;
+    }
+  }
+
+  // Updates the draft buffer graphic to match the current BufferSize.
+  void _updateDraftBufferGraphic(double distance) {
+    final feature = _draftFeature;
+    final geom = feature?.geometry;
+    if (geom == null) return;
+
+    if (distance <= 0) {
+      _clearDraftBufferGraphic();
       return;
     }
 
-    try {
-      final violations = _featureTable.validateContingencyConstraints(
-        feature: _currentFeature!,
-      );
-      setState(() {
-        _isValid = violations.isEmpty;
-      });
+    final buffer = GeometryEngine.buffer(geometry: geom, distance: distance);
 
-      if (violations.isNotEmpty) {
-        for (final violation in violations) {
-          debugPrint(
-            'Violation: ${violation.type} on field group ${violation.fieldGroup.name}',
-          );
-        }
+    if (_draftBufferGraphic == null) {
+      final g = Graphic(geometry: buffer, symbol: _draftFillSymbol);
+      _draftOverlay.graphics.add(g);
+      _draftBufferGraphic = g;
+    } else {
+      _draftBufferGraphic!.geometry = buffer;
+    }
+  }
+
+  // Domain + contingent values
+
+  // Loads the Status field's coded value domain options.
+  void _loadStatusOptions() {
+    final statusField = _birdNestsTable.fields.firstWhere(
+      (f) => f.name == _fieldStatus,
+      orElse: () => throw Exception('Status field not found'),
+    );
+
+    final domain = statusField.domain;
+    if (domain is CodedValueDomain) {
+      // Store options once. Bottom sheet will read from this list.
+      _statusOptions = domain.codedValues;
+    }
+  }
+
+  // Refresh contingent Protection dropdown options based on the draft feature.
+  Future<void> _refreshProtectionOptions() async {
+    final feature = _draftFeature;
+    if (feature == null) return;
+
+    final result = _birdNestsTable.getContingentValues(
+      feature: feature,
+      field: _fieldProtection,
+    );
+
+    final values =
+        result.contingentValuesByFieldGroup[_protectionGroup] ?? const [];
+
+    final names = <String>[];
+    for (final v in values) {
+      if (v is ContingentCodedValue) {
+        names.add(v.codedValue.name);
       }
-    } catch (e) {
-      debugPrint('Error validating feature: $e');
+    }
+
+    setState(() {
+      _protectionOptions = names;
+    });
+  }
+
+  // Applies the selected protection name to the draft feature attribute map.
+  void _applyProtectionByName(String name) {
+    final feature = _draftFeature;
+    if (feature == null) return;
+
+    final result = _birdNestsTable.getContingentValues(
+      feature: feature,
+      field: _fieldProtection,
+    );
+
+    final values =
+        result.contingentValuesByFieldGroup[_protectionGroup] ?? const [];
+
+    for (final v in values) {
+      if (v is ContingentCodedValue && v.codedValue.name == name) {
+        feature.attributes[_fieldProtection] = v.codedValue.code;
+        return;
+      }
+    }
+  }
+
+  // Refreshes buffer min/max range based on contingent range values.
+  Future<void> _refreshBufferRange() async {
+    final feature = _draftFeature;
+    if (feature == null) return;
+
+    final result = _birdNestsTable.getContingentValues(
+      feature: feature,
+      field: _fieldBufferSize,
+    );
+
+    final values =
+        result.contingentValuesByFieldGroup[_bufferGroup] ?? const [];
+
+    var minV = 0;
+    var maxV = 0;
+
+    for (final v in values) {
+      if (v is ContingentRangeValue) {
+        minV = (v.minValue as num).toInt();
+        maxV = (v.maxValue as num).toInt();
+        break;
+      }
+    }
+
+    setState(() {
+      _bufferMin = minV;
+      _bufferMax = maxV;
+    });
+
+    // If range collapses to a single value, auto-set it and update draft buffer.
+    if (minV == maxV) {
+      feature.attributes[_fieldBufferSize] = minV;
+      setState(() => _selectedBufferSize = minV);
+      _updateDraftBufferGraphic(minV.toDouble());
+      _validateDraft();
+    }
+  }
+
+  // Validates contingent constraints for the current draft feature.
+  void _validateDraft() {
+    final feature = _draftFeature;
+    if (feature == null) return;
+
+    final violations = _birdNestsTable.validateContingencyConstraints(
+      feature: feature,
+    );
+    final ok = violations.isEmpty;
+
+    setState(() => _isValid = ok);
+
+    if (!ok && mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Invalid contingent values')),
+      );
+    }
+  }
+
+  // Refreshes all persisted buffer graphics by querying features with BufferSize > 0.
+  Future<void> _refreshPersistedBuffers() async {
+    _bufferOverlay.graphics.clear();
+
+    final params = QueryParameters()..whereClause = '$_fieldBufferSize > 0';
+
+    try {
+      final result = await _birdNestsTable.queryFeatures(params);
+
+      for (final feature in result.features()) {
+        final bufferSize = feature.attributes[_fieldBufferSize] as num?;
+        if (bufferSize == null || bufferSize <= 0 || feature.geometry == null) {
+          continue;
+        }
+
+        final buffer = GeometryEngine.buffer(
+          geometry: feature.geometry!,
+          distance: bufferSize.toDouble(),
+        );
+
+        _bufferOverlay.graphics.add(Graphic(geometry: buffer));
+      }
+    } on Exception catch (e) {
+      debugPrint('Error refreshing persisted buffers: $e');
+    }
+  }
+
+  Future<void> _saveAndClose() async {
+    final feature = _draftFeature;
+    if (feature == null) return;
+
+    // Ensure final validation passed.
+    _validateDraft();
+    if (!_isValid) return;
+
+    try {
+      // Add to the table.
+      await _birdNestsTable.addFeature(feature);
+
+      // Refresh persisted buffers so the saved feature appears in the overlay.
+      await _refreshPersistedBuffers();
+
+      // Clear draft UI and dismiss.
+      _endDraftEditing(dismissSheet: true);
+    } on Exception catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Failed to save feature: $e')));
+    }
+  }
+
+  void _discardAndClose() {
+    // Draft-only: just clear graphics and reset state.
+    _endDraftEditing(dismissSheet: true);
+  }
+
+  // Ends draft editing by clearing draft graphics and resetting draft state.
+  void _endDraftEditing({required bool dismissSheet}) {
+    _clearDraftPointGraphic();
+    _clearDraftBufferGraphic();
+
+    setState(() {
+      _draftFeature = null;
+
+      _selectedStatus = null;
+      _protectionOptions = const [];
+      _selectedProtectionName = null;
+
+      _bufferMin = 0;
+      _bufferMax = 0;
+      _selectedBufferSize = null;
+
       _isValid = false;
-      setState(() {});
-    }
+
+      if (dismissSheet) {
+        _sheetVisible = false;
+      }
+    });
   }
 
-  // Confirms adding the feature (Save button).
-  Future<void> _confirmAddFeature() async {
-    if (_currentFeature == null) return;
+  // Bottom sheet UI.
+  Widget _buildBottomSheet(BuildContext context) {
+    return BottomSheetSettings(
+      onCloseIconPressed: _discardAndClose,
+      settingsWidgets: (context) => [
+        Text('Add Bird Nest', style: Theme.of(context).textTheme.titleLarge),
+        const SizedBox(height: 12),
 
-    try {
-      // Update the feature in the table.
-      await _featureTable.updateFeature(_currentFeature!);
-
-      // Refresh all buffers.
-      await _refreshAllBuffers();
-
-      _currentFeature = null;
-      setState(() => _showAddFeatureSheet = false);
-    } catch (e) {
-      debugPrint('Error saving feature: $e');
-    }
-  }
-
-  // Cancels adding the feature (Discard button).
-  Future<void> _cancelAddFeature() async {
-    if (_currentFeature == null) return;
-
-    try {
-      // Delete the feature from the table.
-      await _featureTable.deleteFeature(_currentFeature!);
-
-      _currentFeature = null;
-      setState(() => _showAddFeatureSheet = false);
-    } catch (e) {
-      debugPrint('Error discarding feature: $e');
-    }
-  }
-
-  // Builds the add feature bottom sheet UI.
-  Widget _buildAddFeatureSheet(BuildContext context) {
-    return Container(
-      height: MediaQuery.of(context).size.height * 0.5,
-      padding: const EdgeInsets.all(16),
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black26,
-            blurRadius: 10,
-            offset: Offset(0, -2),
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
-          // Header
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              TextButton(
-                onPressed: _cancelAddFeature,
-                child: const Text('Discard'),
+        // Status (coded value domain).
+        Text('Status', style: Theme.of(context).textTheme.titleMedium),
+        DropdownButton<CodedValue?>(
+          isExpanded: true,
+          value: _selectedStatus,
+          hint: const Text('Select status'),
+          items: [
+            const DropdownMenuItem<CodedValue?>(child: Text('')),
+            ..._statusOptions.map(
+              (cv) => DropdownMenuItem<CodedValue?>(
+                value: cv,
+                child: Text(cv.name),
               ),
-              const Text(
-                'Add Bird Nest',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-              ),
-              TextButton(
-                onPressed: _isValid ? _confirmAddFeature : null,
-                child: const Text('Save'),
-              ),
-            ],
-          ),
-          const Divider(),
-
-          // Attribute editing form
-          Expanded(
-            child: ListView(
-              children: [
-                const Text(
-                  'Set the attributes',
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 12),
-
-                // Status Picker
-                DropdownButtonFormField<String>(
-                  value: _selectedStatus,
-                  decoration: const InputDecoration(
-                    labelText: 'Status',
-                    border: OutlineInputBorder(),
-                  ),
-                  items: _statusOptions.map((cv) {
-                    return DropdownMenuItem(
-                      value: cv.code.toString(),
-                      child: Text(cv.name),
-                    );
-                  }).toList(),
-                  onChanged: (value) {
-                    if (value != null) _updateField('Status', value);
-                  },
-                ),
-                const SizedBox(height: 12),
-
-                // Protection Picker (enabled only after Status is selected)
-                DropdownButtonFormField<String>(
-                  value: _selectedProtection,
-                  decoration: const InputDecoration(
-                    labelText: 'Protection',
-                    border: OutlineInputBorder(),
-                  ),
-                  items: _protectionOptionNames.map((name) {
-                    return DropdownMenuItem(value: name, child: Text(name));
-                  }).toList(),
-                  onChanged: _selectedStatus == null
-                      ? null
-                      : (value) {
-                          if (value != null) _updateField('Protection', value);
-                        },
-                ),
-                const SizedBox(height: 16),
-
-                // BufferSize Slider (enabled only after Protection is selected)
-                Text(
-                  'Exclusion Area Buffer Size: $_selectedBufferSize',
-                  style: const TextStyle(fontWeight: FontWeight.w500),
-                ),
-                if (_minBufferSize > 0 || _maxBufferSize > 0)
-                  Text(
-                    'Range: $_minBufferSize to $_maxBufferSize',
-                    style: const TextStyle(fontSize: 12, color: Colors.grey),
-                  ),
-                Slider(
-                  value: _selectedBufferSize.toDouble(),
-                  min: _minBufferSize.toDouble(),
-                  max: _maxBufferSize > 0 ? _maxBufferSize.toDouble() : 1,
-                  divisions: _maxBufferSize > _minBufferSize
-                      ? _maxBufferSize - _minBufferSize
-                      : null,
-                  label: _selectedBufferSize.toString(),
-                  onChanged: _selectedProtection == null
-                      ? null
-                      : (value) {
-                          _updateField('BufferSize', value.round());
-                        },
-                ),
-                const SizedBox(height: 8),
-                const Text(
-                  'The options will vary depending on which values are selected.',
-                  style: TextStyle(
-                    fontSize: 12,
-                    fontStyle: FontStyle.italic,
-                    color: Colors.grey,
-                  ),
-                ),
-              ],
             ),
+          ],
+          onChanged: (cv) async {
+            final feature = _draftFeature;
+            if (feature == null) return;
+
+            if (cv == null) {
+              // Reset only selection-dependent state (keep draft feature + point).
+              setState(() {
+                _selectedStatus = null;
+                _protectionOptions = const [];
+                _selectedProtectionName = null;
+                _bufferMin = 0;
+                _bufferMax = 0;
+                _selectedBufferSize = null;
+                _isValid = false;
+              });
+              _clearDraftBufferGraphic();
+              return;
+            }
+
+            setState(() {
+              _selectedStatus = cv;
+              _protectionOptions = const [];
+              _selectedProtectionName = null;
+              _bufferMin = 0;
+              _bufferMax = 0;
+              _selectedBufferSize = null;
+              _isValid = false;
+            });
+
+            // Apply status code to draft attributes.
+            feature.attributes[_fieldStatus] = cv.code;
+
+            // Refresh next field options.
+            await _refreshProtectionOptions();
+          },
+        ),
+        const SizedBox(height: 12),
+
+        // Protection (contingent coded values).
+        Text('Protection', style: Theme.of(context).textTheme.titleMedium),
+        DropdownButton<String?>(
+          isExpanded: true,
+          value: _selectedProtectionName,
+          hint: const Text('Select protection'),
+          items: [
+            const DropdownMenuItem<String?>(child: Text('')),
+            ..._protectionOptions.map(
+              (name) =>
+                  DropdownMenuItem<String?>(value: name, child: Text(name)),
+            ),
+          ],
+          onChanged: (_selectedStatus == null)
+              ? null
+              : (name) async {
+                  final feature = _draftFeature;
+                  if (feature == null) return;
+                  if (name == null) return;
+
+                  setState(() {
+                    _selectedProtectionName = name;
+                    _bufferMin = 0;
+                    _bufferMax = 0;
+                    _selectedBufferSize = null;
+                    _isValid = false;
+                  });
+
+                  // Apply protection code to draft attributes.
+                  _applyProtectionByName(name);
+
+                  // Refresh buffer range options.
+                  await _refreshBufferRange();
+                },
+        ),
+        const SizedBox(height: 12),
+
+        // Buffer size (contingent range values) + LIVE buffer preview.
+        Text('Buffer Size', style: Theme.of(context).textTheme.titleMedium),
+        Text('$_bufferMin to $_bufferMax'),
+        Slider(
+          value: (_selectedBufferSize ?? _bufferMin).toDouble().clamp(
+            _bufferMin.toDouble(),
+            _bufferMax.toDouble(),
           ),
-        ],
-      ),
+          min: _bufferMin.toDouble(),
+          max: (_bufferMax == 0 ? 1 : _bufferMax).toDouble(),
+          divisions: (_bufferMax - _bufferMin).abs() == 0
+              ? 1
+              : (_bufferMax - _bufferMin).abs(),
+          label: (_selectedBufferSize ?? _bufferMin).toString(),
+          onChanged: (_selectedProtectionName == null || _bufferMax == 0)
+              ? null
+              : (value) {
+                  final feature = _draftFeature;
+                  if (feature == null) return;
+
+                  final intVal = value.round();
+
+                  setState(() {
+                    _selectedBufferSize = intVal;
+                    _isValid = false;
+                  });
+
+                  // Apply buffer size to draft attributes.
+                  feature.attributes[_fieldBufferSize] = intVal;
+
+                  // LIVE: update the draft buffer graphic as the slider changes.
+                  _updateDraftBufferGraphic(intVal.toDouble());
+
+                  // Validate contingent constraints.
+                  _validateDraft();
+                },
+        ),
+        const SizedBox(height: 12),
+
+        // Actions.
+        Row(
+          children: [
+            Expanded(
+              child: OutlinedButton(
+                onPressed: _discardAndClose,
+                child: const Text('Cancel'),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: ElevatedButton(
+                onPressed: _isValid ? _saveAndClose : null,
+                child: const Text('Done'),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+      ],
     );
   }
 }
