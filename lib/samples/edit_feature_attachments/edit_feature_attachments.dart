@@ -33,6 +33,7 @@ class _EditFeatureAttachmentsState extends State<EditFeatureAttachments>
     with SampleStateSupport {
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
+
   // Create a feature layer with a feature table.
   final _featureLayer = FeatureLayer.withFeatureTable(
     ServiceFeatureTable.withUri(
@@ -41,6 +42,7 @@ class _EditFeatureAttachmentsState extends State<EditFeatureAttachments>
       ),
     ),
   );
+
   // The currently selected feature.
   ArcGISFeature? _selectedFeature;
 
@@ -127,6 +129,7 @@ class AttachmentsOptions extends StatefulWidget {
     required this.onCloseIconPressed,
     super.key,
   });
+
   final ArcGISFeature arcGISFeature;
   final FutureOr<void> Function(ArcGISFeature) applyEdits;
   final void Function() onCloseIconPressed;
@@ -254,14 +257,12 @@ class _AttachmentsOptionsState extends State<AttachmentsOptions>
                 icon: const Icon(Icons.save),
                 onPressed: () {
                   // Save the attachment to the device.
-                  FilePicker.platform
-                      .saveFile(
-                        dialogTitle: 'Save Attachment',
-                        fileName: attachment.name,
-                        bytes: data,
-                        lockParentWindow: true,
-                      )
-                      .ignore();
+                  FilePicker.saveFile(
+                    dialogTitle: 'Save Attachment',
+                    fileName: attachment.name,
+                    bytes: data,
+                    lockParentWindow: true,
+                  ).ignore();
                 },
               ),
               IconButton(
@@ -279,7 +280,7 @@ class _AttachmentsOptionsState extends State<AttachmentsOptions>
 
   // Add an attachment to the selected feature by FilePicker.
   Future<void> addAttachment() async {
-    final result = await FilePicker.platform.pickFiles(
+    final result = await FilePicker.pickFiles(
       type: FileType.custom,
       allowedExtensions: ['png', 'jpg', 'jpeg', 'pdf', 'txt'],
     );
