@@ -55,7 +55,6 @@
             // replace display_map with the directory name of any other sample
             "toolArgs": [
                 "--dart-define=SAMPLE=display_map",
-                "--dart-define-from-file=env.json"
             ]
         },
     ]
