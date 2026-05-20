@@ -10,7 +10,7 @@
             "type": "dart",
             "flutterMode": "debug",
             "toolArgs": [
-                "--dart-define-from-file=env.json"
+                "--dart-define-from-file=../flutter/arcgis_maps/test/env.json"
             ]
         },
         {
@@ -19,7 +19,7 @@
             "type": "dart",
             "flutterMode": "release",
             "toolArgs": [
-                "--dart-define-from-file=env.json"
+                "--dart-define-from-file=../flutter/arcgis_maps/test/env.json"
             ]
         },
         {
@@ -42,8 +42,8 @@
             "program": "lib/utils/sample_runner.dart",
             // replace display_map with the directory name of any other sample
             "toolArgs": [
-                "--dart-define=SAMPLE=display_map",
-                "--dart-define-from-file=env.json"
+                "--dart-define=SAMPLE=SearchSymbolStyleDictionary",
+                "--dart-define-from-file=../flutter/arcgis_maps/test/env.json"
             ]
         },
         {
@@ -54,7 +54,8 @@
             "program": "lib/utils/sample_runner.dart",
             // replace display_map with the directory name of any other sample
             "toolArgs": [
-                "--dart-define=SAMPLE=display_map",
+                "--dart-define=SAMPLE=show_extruded_features",
+                "--dart-define-from-file=../flutter/arcgis_maps/test/env.json"
             ]
         },
     ]
