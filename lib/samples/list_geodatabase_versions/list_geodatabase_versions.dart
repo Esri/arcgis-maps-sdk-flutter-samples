@@ -142,6 +142,10 @@ class _ListGeodatabaseVersionsState extends State<ListGeodatabaseVersions>
   }
 
   Future<void> _loadVersions() async {
+    if (_isLoading) {
+      return;
+    }
+    GeoprocessingJob? activeJob;
     setState(() {
       _isLoading = true;
       _errorMessage = '';
@@ -153,6 +157,7 @@ class _ListGeodatabaseVersionsState extends State<ListGeodatabaseVersions>
 
       // Create a job to execute the task with the parameters.
       final job = _geoprocessingTask.createJob(parameters: parameters);
+      activeJob = job;
 
       // Store the job so it can be cancelled if the widget is disposed before it completes.
       _job = job;
@@ -201,8 +206,10 @@ class _ListGeodatabaseVersionsState extends State<ListGeodatabaseVersions>
     } on Exception catch (e) {
       setState(() => _errorMessage = e.toString());
     } finally {
-      _job = null;
-      setState(() => _isLoading = false);
+      if (identical(_job, activeJob)) {
+        _job = null;
+        setState(() => _isLoading = false);
+      }
     }
   }
 }
