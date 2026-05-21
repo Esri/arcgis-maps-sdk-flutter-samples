@@ -13,7 +13,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-
 import 'dart:async';
 
 import 'package:arcgis_maps/arcgis_maps.dart';
@@ -42,22 +41,32 @@ class _ListGeodatabaseVersionsState extends State<ListGeodatabaseVersions>
   // The geoprocessing job created to list versions. Stored here so it can be
   // cancelled if the widget is disposed.
   GeoprocessingJob? _job;
+
+  // A flag to indicate whether the geoprocessing task is currently running.
   var _isLoading = false;
+
+  // A message to display if an error occurs while loading versions.
   var _errorMessage = '';
+
+  // The list of geodatabase versions returned by the geoprocessing task.
   var _versions = <_GeodatabaseVersionInfo>[];
 
   @override
   void initState() {
     super.initState();
+    // Load the versions when the widget is first created.
     _loadVersions().ignore();
   }
 
   @override
   void dispose() {
+    // Cancel the geoprocessing job if it's still running when the widget is disposed.
     _job?.cancel().ignore();
     super.dispose();
   }
 
+  // Build the UI for the sample, showing a list of geodatabase versions and
+  // a button to refresh the list.
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -69,6 +78,8 @@ class _ListGeodatabaseVersionsState extends State<ListGeodatabaseVersions>
               crossAxisAlignment: CrossAxisAlignment.start,
               spacing: 8,
               children: [
+                // A row with the title of the sample and a button to refresh
+                // the list of versions.
                 Row(
                   children: [
                     Expanded(
@@ -84,23 +95,26 @@ class _ListGeodatabaseVersionsState extends State<ListGeodatabaseVersions>
                     ),
                   ],
                 ),
+                // A description of the sample and a count of how many versions have been loaded.
                 Text(
-                  'Connect to a geoprocessing service and list the returned '
-                  'geodatabase versions.',
+                  'Connect to a geoprocessing service and list the returned geodatabase versions.',
                   style: Theme.of(context).textTheme.bodyMedium,
                 ),
+                // Show the number of versions loaded, or a message if no versions have been loaded yet.
                 Text(
                   _versions.isEmpty
                       ? 'No versions loaded.'
                       : '${_versions.length} versions found.',
                   style: Theme.of(context).textTheme.titleSmall,
                 ),
+                // Show an error message if one exists.
                 if (_errorMessage.isNotEmpty) ...[
                   Text(
                     _errorMessage,
                     style: Theme.of(context).textTheme.customErrorStyle,
                   ),
                 ],
+                // Show the list of versions in an expanded widget to fill available space.
                 Expanded(child: _buildVersionList()),
               ],
             ),
@@ -111,6 +125,8 @@ class _ListGeodatabaseVersionsState extends State<ListGeodatabaseVersions>
     );
   }
 
+  // Build a list view to display the geodatabase versions. If no versions have
+  // been loaded yet, show a message prompting the user to refresh the list.
   Widget _buildVersionList() {
     if (_versions.isEmpty) {
       return ListView(
@@ -119,15 +135,16 @@ class _ListGeodatabaseVersionsState extends State<ListGeodatabaseVersions>
             child: Padding(
               padding: EdgeInsets.all(16),
               child: Text(
-                'Tap Refresh to run the geoprocessing task and view the '
-                'versions returned by the service.',
+                'Tap Refresh to run the geoprocessing task and view the geodatabase versions returned by the service.',
               ),
             ),
           ),
         ],
       );
     }
-
+    // Build a list view of cards, one for each geodatabase version.
+    // Each card shows information about the version,
+    // such as its name, access level, creation date, and other relevant details.
     return RefreshIndicator(
       onRefresh: _loadVersions,
       child: ListView.separated(
@@ -141,7 +158,9 @@ class _ListGeodatabaseVersionsState extends State<ListGeodatabaseVersions>
     );
   }
 
+  // Load the geodatabase versions by running the geoprocessing task.
   Future<void> _loadVersions() async {
+    // If a load is already in progress, do nothing.
     if (_isLoading) {
       return;
     }
@@ -164,6 +183,7 @@ class _ListGeodatabaseVersionsState extends State<ListGeodatabaseVersions>
 
       // Run the job and wait for the result.
       final result = await job.run();
+
       // Get the "Versions" output from the result, which should be a feature set.
       final output = result.outputs['Versions'];
       if (output is! GeoprocessingFeatures) {
@@ -218,10 +238,12 @@ class _ListGeodatabaseVersionsState extends State<ListGeodatabaseVersions>
 class _VersionCard extends StatelessWidget {
   const _VersionCard({required this.version});
 
+  // The geodatabase version to display information about.
   final _GeodatabaseVersionInfo version;
 
   @override
   Widget build(BuildContext context) {
+    // Build a card to display the version information.
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -229,11 +251,8 @@ class _VersionCard extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                version.name,
-                style: Theme.of(context).textTheme.titleMedium,
-              ),
-              const SizedBox(height: 12),
+              Text(version.name, style: Theme.of(context).textTheme.titleSmall),
+              const SizedBox(height: 8),
               _InfoRow(
                 label: 'Object ID',
                 value: version.objectId?.toString() ?? 'Unavailable',
@@ -286,7 +305,6 @@ class _InfoRow extends StatelessWidget {
 
 // A class to hold information about a geodatabase version,
 // extracted from the attributes of a geoprocessing result feature.
-
 class _GeodatabaseVersionInfo {
   _GeodatabaseVersionInfo({
     required this.name,
