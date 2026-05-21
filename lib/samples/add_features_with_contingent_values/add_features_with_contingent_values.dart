@@ -283,7 +283,6 @@ class _AddFeaturesWithContingentValuesState
       color: const Color(0xFFFF0000),
       outline: outline,
     );
-
   }
 
   void _showDraftPointGraphic() {
@@ -317,6 +316,13 @@ class _AddFeaturesWithContingentValuesState
     }
   }
 
+  // Clears the graphics overlay and resets the draft graphic variables.
+  void _clearDraftGraphics() {
+    _draftOverlay.graphics.clear();
+    _draftPointGraphic = null;
+    _draftBufferGraphic = null;
+  }
+
   // Updates the draft buffer graphic to match the current BufferSize.
   void _updateDraftBufferGraphic(double distance) {
     final feature = _draftFeature;
@@ -340,18 +346,24 @@ class _AddFeaturesWithContingentValuesState
   }
 
   // Domain + contingent values
-
   // Loads the Status field's coded value domain options.
   void _loadStatusOptions() {
-    final statusField = _birdNestsTable.fields.firstWhere(
-      (f) => f.name == _fieldStatus,
-      orElse: () => throw Exception('Status field not found'),
-    );
+    try {
+      final statusField = _birdNestsTable.fields.firstWhere(
+        (f) => f.name == _fieldStatus,
+      );
 
-    final domain = statusField.domain;
-    if (domain is CodedValueDomain) {
-      // Store options once. Bottom sheet will read from this list.
-      _statusOptions = domain.codedValues;
+      final domain = statusField.domain;
+      if (domain is CodedValueDomain) {
+        // Store options once. Bottom sheet will read from this list.
+        _statusOptions = domain.codedValues;
+      }
+    } on Exception catch (_) {
+      if (!context.mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Failed to load status options.')),
+      );
     }
   }
 
@@ -517,8 +529,7 @@ class _AddFeaturesWithContingentValuesState
 
   // Ends draft editing by clearing draft graphics and resetting draft state.
   void _endDraftEditing({required bool dismissSheet}) {
-    _clearDraftPointGraphic();
-    _clearDraftBufferGraphic();
+    _clearDraftGraphics();
 
     setState(() {
       _draftFeature = null;
