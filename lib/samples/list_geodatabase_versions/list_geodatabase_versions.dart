@@ -13,8 +13,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-import 'dart:async';
 
+import 'dart:async';
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
@@ -161,9 +161,8 @@ class _ListGeodatabaseVersionsState extends State<ListGeodatabaseVersions>
   // Load the geodatabase versions by running the geoprocessing task.
   Future<void> _loadVersions() async {
     // If a load is already in progress, do nothing.
-    if (_isLoading) {
-      return;
-    }
+    if (_isLoading) return;
+
     GeoprocessingJob? activeJob;
     setState(() {
       _isLoading = true;
