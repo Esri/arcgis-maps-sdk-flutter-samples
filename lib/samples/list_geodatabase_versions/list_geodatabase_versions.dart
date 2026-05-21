@@ -173,7 +173,7 @@ class _ListGeodatabaseVersionsState extends State<ListGeodatabaseVersions>
       final parameters = await _geoprocessingTask.createDefaultParameters();
 
       // Create a job to execute the task with the parameters.
-      final job = _geoprocessingTask.createJob(parameters: parameters);
+      final job = _geoprocessingTask.createJob(parameters);
       activeJob = job;
 
       // Store the job so it can be cancelled if the widget is disposed before it completes.
