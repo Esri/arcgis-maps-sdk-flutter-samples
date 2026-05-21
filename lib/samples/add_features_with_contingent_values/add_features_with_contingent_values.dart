@@ -1,4 +1,3 @@
-//
 // Copyright 2026 Esri
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -179,7 +178,7 @@ class _AddFeaturesWithContingentValuesState
       paddingInDiPs: -20,
     );
 
-    // // Set the ready state variable to true to enable the sample UI.
+    // Set the ready state variable to true to enable the sample UI.
     setState(() => _ready = true);
   }
 
@@ -187,6 +186,7 @@ class _AddFeaturesWithContingentValuesState
     final gdbPath = _geodatabasePath;
     if (gdbPath == null) return;
 
+    // Create and load a geodatabase from a local file.
     _geodatabase = Geodatabase.withFileUri(File(gdbPath).uri);
     await _geodatabase.load();
 
@@ -275,7 +275,7 @@ class _AddFeaturesWithContingentValuesState
       size: 11,
     );
 
-    // Draft buffer symbol (same visual style as persisted buffers)
+    // Draft buffer symbol (same visual style as persisted buffers).
     final outline = SimpleLineSymbol(color: const Color(0xFF000000), width: 2);
 
     _draftFillSymbol = SimpleFillSymbol(
@@ -302,6 +302,7 @@ class _AddFeaturesWithContingentValuesState
     _draftPointGraphic = g;
   }
 
+  // Removes the graphic from the graphics overlay and resets the state.
   void _clearDraftPointGraphic() {
     if (_draftPointGraphic != null) {
       _draftOverlay.graphics.remove(_draftPointGraphic);
@@ -636,7 +637,7 @@ class _AddFeaturesWithContingentValuesState
         ),
         const SizedBox(height: 12),
 
-        // Buffer size (contingent range values) + LIVE buffer preview.
+        // Buffer size (contingent range values) and buffer preview.
         Text('Buffer Size', style: Theme.of(context).textTheme.titleMedium),
         Text('$_bufferMin to $_bufferMax'),
         Slider(
@@ -666,7 +667,7 @@ class _AddFeaturesWithContingentValuesState
                   // Apply buffer size to draft attributes.
                   feature.attributes[_fieldBufferSize] = intVal;
 
-                  // LIVE: update the draft buffer graphic as the slider changes.
+                  // Update the draft buffer graphic as the slider changes.
                   _updateDraftBufferGraphic(intVal.toDouble());
 
                   // Validate contingent constraints.
@@ -675,7 +676,7 @@ class _AddFeaturesWithContingentValuesState
         ),
         const SizedBox(height: 12),
 
-        // Actions.
+        // Buttons to either discard or save feature edits.
         Row(
           children: [
             Expanded(
