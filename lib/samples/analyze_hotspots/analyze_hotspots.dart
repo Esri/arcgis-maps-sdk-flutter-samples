@@ -112,7 +112,7 @@ class _AnalyzeHotspotsState extends State<AnalyzeHotspots>
                   child: Text(
                     // Show the currently selected date range below the action buttons.
                     'Selected date range: '
-                    '${formatDate(_selectedDateRange.start)} - '
+                    '${formatDate(_selectedDateRange.start)} to '
                     '${formatDate(_selectedDateRange.end)}',
                   ),
                 ),
