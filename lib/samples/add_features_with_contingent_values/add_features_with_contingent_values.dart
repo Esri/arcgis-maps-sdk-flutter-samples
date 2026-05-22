@@ -301,14 +301,6 @@ class _AddFeaturesWithContingentValuesState
     _draftPointGraphic = g;
   }
 
-  // Removes the graphic from the graphics overlay and resets the state.
-  void _clearDraftPointGraphic() {
-    if (_draftPointGraphic != null) {
-      _draftOverlay.graphics.remove(_draftPointGraphic);
-      _draftPointGraphic = null;
-    }
-  }
-
   void _clearDraftBufferGraphic() {
     if (_draftBufferGraphic != null) {
       _draftOverlay.graphics.remove(_draftBufferGraphic);
