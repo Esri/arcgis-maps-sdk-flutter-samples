@@ -56,9 +56,6 @@ class _AnalyzeHotspotsState extends State<AnalyzeHotspots>
   // A flag for when analysis is running.
   var _analysisInProgress = false;
 
-  // A flag for when the settings bottom sheet is visible.
-  var _settingsVisible = false;
-
   @override
   void initState() {
     super.initState();
@@ -94,21 +91,30 @@ class _AnalyzeHotspotsState extends State<AnalyzeHotspots>
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    // Button to open the settings.
-                    ElevatedButton(
-                      onPressed: _analysisInProgress
-                          ? null
-                          : () => setState(() => _settingsVisible = true),
-                      child: const Text('Settings'),
+                    // Button to pick the analysis date range.
+                    OutlinedButton.icon(
+                      onPressed: _analysisInProgress ? null : chooseDateRange,
+                      icon: const Icon(Icons.date_range),
+                      label: const Text('Select Date'),
                     ),
-                    ElevatedButton(
+                    OutlinedButton.icon(
                       // Button to start the hotspot analysis.
                       onPressed: _ready && !_analysisInProgress
                           ? analyzeHotspots
                           : null,
-                      child: const Text('Analyze'),
+                      icon: const Icon(Icons.analytics),
+                      label: const Text('Analyze'),
                     ),
                   ],
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 8, bottom: 12),
+                  child: Text(
+                    // Show the currently selected date range below the action buttons.
+                    'Selected date range: '
+                    '${formatDate(_selectedDateRange.start)} - '
+                    '${formatDate(_selectedDateRange.end)}',
+                  ),
                 ),
               ],
             ),
@@ -119,29 +125,6 @@ class _AnalyzeHotspotsState extends State<AnalyzeHotspots>
           ],
         ),
       ),
-      // The Settings bottom sheet.
-      bottomSheet: _settingsVisible ? buildSettings(context) : null,
-    );
-  }
-
-  // The build method for the Settings bottom sheet.
-  Widget buildSettings(BuildContext context) {
-    return BottomSheetSettings(
-      onCloseIconPressed: () => setState(() => _settingsVisible = false),
-      settingsWidgets: (context) => [
-        Text(
-          '${formatDate(_selectedDateRange.start)} - ${formatDate(_selectedDateRange.end)}',
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            ElevatedButton(
-              onPressed: _analysisInProgress ? null : chooseDateRange,
-              child: const Text('Date range'),
-            ),
-          ],
-        ),
-      ],
     );
   }
 
