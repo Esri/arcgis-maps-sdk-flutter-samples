@@ -33,20 +33,26 @@ class _ValidateUtilityNetworkTopologyState
     with SampleStateSupport {
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
+
   // The web map used in the sample.
   late ArcGISMap _map;
+
   // The utility network used in the sample.
   late UtilityNetwork _utilityNetwork;
+
   // The trace parameters to be used for performing traces.
   late UtilityTraceParameters _traceParameters;
 
   // Variables used for editing.
   // The name of the 'Electric Distribution Line' feature table.
   final _lineTableName = 'Electric Distribution Line';
+
   // The name of the 'Electric Distribution Device' feature table.
   final _deviceTableName = 'Electric Distribution Device';
+
   // The name of the device status field in the 'Electric Distribution Device' feature table.
   final _deviceStatusField = 'devicestatus';
+
   // The name of the nominal voltage field in the 'Electric Distribution Line' feature table.
   final _nominalVoltageField = 'nominalvoltage';
 
@@ -166,9 +172,9 @@ class _ValidateUtilityNetworkTopologyState
               ],
             ),
             // Display the status information from the sample actions in the UI.
-            Container(
-              padding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
-              color: Colors.white.withValues(alpha: 0.95),
+            Card(
+              margin: const EdgeInsets.fromLTRB(5, 0, 5, 0),
+              color: Theme.of(context).cardTheme.color?.withValues(alpha: 0.95),
               child: Column(
                 spacing: 10,
                 mainAxisSize: MainAxisSize.min,
