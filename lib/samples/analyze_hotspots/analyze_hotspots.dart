@@ -208,7 +208,7 @@ class _AnalyzeHotspotsState extends State<AnalyzeHotspots>
       parameters.inputs['Query'] = GeoprocessingString(query);
 
       // Create, run, and await the geoprocessing job.
-      _hotspotJob = _hotspotTask.createJob(parameters: parameters);
+      _hotspotJob = _hotspotTask.createJob(parameters);
       // Run the job and wait for the geoprocessing result.
       final result = await _hotspotJob!.run();
 
