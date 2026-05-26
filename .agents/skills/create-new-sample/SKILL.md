@@ -5,7 +5,7 @@ description: Stub in a new sample and implement it.
 # Inputs
 - Sample name
 - Sample category
-- Design doc path from `../common-samples/designs/`
+- Design directory from `../common-samples/designs/`
 
 # Expected outputs
 - New sample directory: `lib/samples/<sample_name_snake_case>/`
@@ -14,12 +14,9 @@ description: Stub in a new sample and implement it.
 - Any required registration updates so the sample appears in the
   app
 
-If the expected directory is not created, report an error and
-stop the process.
-
 # Workflow
 
-## 1. Determine the Sample name, category, and design doc path
+## 1. Determine the Sample name, category, and design directory
 
 If the user did not specify Sample name and category, prompt the
 user to input them. The Sample name should be in Title Case
@@ -27,9 +24,8 @@ user to input them. The Sample name should be in Title Case
 the existing categories (e.g., "Analysis", "Visualization",
 etc.).
 
-The design doc must be available in `../common-samples/designs/`.
-If it cannot be located, or if the Sample name or category does not
-match, report an error and stop the process.
+The design directory must be available in `../common-samples/designs/`.
+If it cannot be located, report an error and stop the process.
 
 ## 2. Run the `generate_new_sample.dart` script
 
@@ -51,9 +47,10 @@ note their locations for reference during implementation.
 ## 4. Implement the sample
 
 Use the generated sample files as a starting point. Refer to the
-design doc and any existing implementations in other languages to
-implement the sample in Dart/Flutter. Follow existing patterns and
-conventions used in other samples.
+`implementation-details.md` file in the design directory and any
+existing implementations in other languages to implement the
+sample in Dart/Flutter. Follow existing patterns and conventions
+used in other samples.
 
 ## 5. Run the initialize step
 
