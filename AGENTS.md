@@ -36,3 +36,23 @@ Each sample has a design document in the `common-samples` repository, cloned to
 Design docs are stored in `../common-samples/designs/`. Each subdirectory
 represents one design and uses the sample name in CamelCase. The matching sample
 directory under `lib/samples/` uses snake_case.
+
+## Other implementation repos
+
+These designs are also implemented for other platforms. Each platform has its own
+repo. These implementations can be used as a basis for porting the design to
+Flutter. Known repos are:
+
+### Swift samples repo
+
+Git URL: https://github.com/Esri/arcgis-maps-sdk-swift-samples
+
+Samples are under the `Shared/Samples/` directory. Each subdirectory is one
+sample. The Sample name is in sentence case, such as "Analyze hotspots".
+
+### Kotlin samples repo
+
+Git URL: https://github.com/Esri/arcgis-maps-sdk-kotlin-samples
+
+Samples are under the `samples` directory. Each subdirectory is one sample.
+The Sample name is in lowercase with dashes, such as `analyze-hotspots`.
