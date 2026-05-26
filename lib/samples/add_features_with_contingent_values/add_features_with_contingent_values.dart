@@ -34,7 +34,7 @@ class _AddFeaturesWithContingentValuesState
   // Controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
 
-  // A flag for when the local map view is ready and controls can be used.
+  // A flag for when the map view is ready and controls can be used.
   var _ready = false;
 
   // A flag for when the bottom sheet is visible.
