@@ -451,11 +451,11 @@ class _AddFeaturesWithContingentValuesState
     final violations = _birdNestsTable.validateContingencyConstraints(
       feature: feature,
     );
-    final ok = violations.isEmpty;
+    // Capture whether the current draft selections satisfy all contingencies i.e. there are no violations
+    setState(() => _isValid = violations.isEmpty);
 
-    setState(() => _isValid = ok);
-
-    if (!ok && mounted) {
+    // Display a warning if the contingent valid are not valid.
+    if (!_isValid && mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Invalid contingent values')),
       );
