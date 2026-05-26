@@ -88,7 +88,7 @@ class _AddFeaturesWithContingentValuesState
   // Currently selected buffer size.
   int? _selectedBufferSize;
 
-  // Whether the current draft selections satisfy all contingencies.
+  // Whether the current draft selections satisfy all contingencies and there are no violations.
   var _isValid = false;
 
   // Constants for table/field names.
