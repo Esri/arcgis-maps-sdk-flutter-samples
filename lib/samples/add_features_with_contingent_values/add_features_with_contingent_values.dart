@@ -190,16 +190,12 @@ class _AddFeaturesWithContingentValuesState
     _geodatabase = Geodatabase.withFileUri(File(gdbPath).uri);
     await _geodatabase.load();
 
-    final table = _geodatabase.getGeodatabaseFeatureTable(
+    _birdNestsTable = _geodatabase.getGeodatabaseFeatureTable(
       tableName: _tableName,
-    );
-
-    if (table == null) return;
+    )!;
 
     // Contingent values require the definition to be loaded.
-    await table.contingentValuesDefinition.load();
-
-    _birdNestsTable = table;
+    await _birdNestsTable.contingentValuesDefinition.load();
   }
 
   // OnTap starts the draft edit session.
