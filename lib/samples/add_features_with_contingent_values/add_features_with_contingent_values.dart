@@ -447,7 +447,7 @@ class _AddFeaturesWithContingentValuesState
     final violations = _birdNestsTable.validateContingencyConstraints(
       feature: feature,
     );
-    // Capture whether the current draft selections satisfy all contingencies i.e. there are no violations
+    // Capture whether the current draft selections satisfy all contingencies i.e. there are no violations.
     setState(() => _isValid = violations.isEmpty);
 
     // Display a warning if the contingent valid are not valid.
