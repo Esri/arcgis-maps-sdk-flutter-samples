@@ -45,46 +45,44 @@ class _ApplyDictionaryRendererToFeatureLayerState
   }
 
   Future<void> onMapViewReady() async {
-    final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic);
-    _mapViewController.arcGISMap = map;
-
     final listPaths = GoRouter.of(context).state.extra! as List<String>;
     final styleFile = File(listPaths.first);
     final geodatabaseFile = File(listPaths.last);
+
+    final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic);
+    _mapViewController.arcGISMap = map;
+
+    final geodatabase = Geodatabase.withFileUri(geodatabaseFile.uri);
+    await geodatabase.load();
 
     final dictionarySymbolStyle = DictionarySymbolStyle.withFileUri(
       styleFile.uri,
     );
     await dictionarySymbolStyle.load();
 
-    final geodatabase = Geodatabase.withFileUri(geodatabaseFile.uri);
-    await geodatabase.load();
-
-    EnvelopeBuilder? envelopeBuilder;
+    final featureLayers = <FeatureLayer>[];
     for (final table in geodatabase.geodatabaseFeatureTables) {
-      await table.load();
-
       final featureLayer = FeatureLayer.withFeatureTable(table);
       featureLayer.renderer = DictionaryRenderer(
         dictionarySymbolStyle: dictionarySymbolStyle,
       );
-      await featureLayer.load();
-      map.operationalLayers.add(featureLayer);
-
-      final fullExtent = featureLayer.fullExtent;
-      if (fullExtent == null) continue;
-
-      envelopeBuilder ??= EnvelopeBuilder.fromEnvelope(fullExtent);
-      if (envelopeBuilder.extent != fullExtent) {
-        envelopeBuilder.unionWithEnvelope(fullExtent);
-      }
+      featureLayer.minScale = 1000000;
+      featureLayers.add(featureLayer);
     }
 
-    if (envelopeBuilder != null) {
-      envelopeBuilder.expandBy(1.2);
-      _mapViewController.setViewpoint(
-        Viewpoint.fromTargetExtent(envelopeBuilder.extent),
-      );
-    }
+    map.operationalLayers.addAll(featureLayers);
+
+    await Future.wait(featureLayers.map((layer) => layer.load()));
+
+    final envelopeBuilder = EnvelopeBuilder(
+      spatialReference: SpatialReference.wgs84,
+    );
+    featureLayers
+        .map((layer) => layer.fullExtent)
+        .nonNulls
+        .forEach(envelopeBuilder.unionWithEnvelope);
+    _mapViewController.setViewpoint(
+      Viewpoint.fromTargetExtent(envelopeBuilder.extent),
+    );
   }
 }

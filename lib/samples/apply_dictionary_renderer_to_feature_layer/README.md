@@ -15,17 +15,17 @@ Pan and zoom around the map. Observe the displayed military symbology on the map
 
 ## How it works
 
-1. Create a `Geodatabase` using `Geodatabase(geodatabasePath)`.
+1. Create a `Geodatabase` using `Geodatabase.withFileUr()`.
 2. Load the geodatabase using `Geodatabase.load()`.
-3. Instantiate a `DictionarySymbolStyle` using `DictionarySymbolStyle.withFileUri(styleFileUri)`.
+3. Instantiate a `DictionarySymbolStyle` using `DictionarySymbolStyle.withFileUri()`.
 4. Load the dictionary symbol style using `DictionarySymbolStyle.load()`.
 5. Cycle through each `GeodatabaseFeatureTable` from the geodatabase using `Geodatabase.geodatabaseFeatureTables`.
-6. Create a `FeatureLayer` from each table within the geodatabase using `FeatureLayer.withFeatureTable(...)`.
-7. Load the feature layer with `FeatureLayer.load()`.
-8. After the layers have loaded, create a new extent from the union of all layer extents.
-9. Set that extent as the map view viewpoint using `ArcGISMapViewController.setViewpoint(...)`.
-10. Add each feature layer to the map using `ArcGISMap.operationalLayers.add(featureLayer)`.
-11. Create a `DictionaryRenderer` and assign it to each feature layer using `featureLayer.renderer = dictionaryRenderer`.
+6. Create a `FeatureLayer` from each table within the geodatabase using `FeatureLayer.withFeatureTable()`.
+7. Create a `DictionaryRenderer` and assign it to each feature layer using `featureLayer.renderer = dictionaryRenderer`.
+8. Add the feature layers to the map using `ArcGISMap.operationalLayers.addAll()`.
+9. Load the feature layers with `FeatureLayer.load()`.
+10. After the layers have loaded, create a new extent from the union of all layer extents.
+11. Set that extent as the map view viewpoint using `ArcGISMapViewController.setViewpoint()`.
 
 ## Relevant API
 
