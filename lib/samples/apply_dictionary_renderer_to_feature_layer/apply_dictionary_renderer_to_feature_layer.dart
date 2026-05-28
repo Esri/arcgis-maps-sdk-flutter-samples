@@ -44,8 +44,6 @@ class _ApplyDictionaryRendererToFeatureLayerState
     );
   }
 
-  //fixme screenshot
-
   Future<void> onMapViewReady() async {
     final listPaths = GoRouter.of(context).state.extra! as List<String>;
 
