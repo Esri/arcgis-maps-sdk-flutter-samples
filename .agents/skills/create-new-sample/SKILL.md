@@ -5,8 +5,8 @@ description: Scaffolds, implements, and validates a new Flutter sample based on 
 
 # Inputs
 
-- sample_name: The name of the sample in sentence case (e.g., "Analyze
-	hotspots").
+- sample_name: The name of the sample in TitleCase (e.g.,
+	"AnalyzeHotspots").
 - sample_category: The category of the sample (e.g., "Analysis",
 	"Visualization").
 - design_directory: The directory containing the design files for the sample,
@@ -27,8 +27,8 @@ description: Scaffolds, implements, and validates a new Flutter sample based on 
 ## Phase 1: Strict Validation & Setup
 
 1. Validate that the user provided `sample_name`. If not provided, prompt the
-	user to input it. Ensure it is in sentence case. If the input is malformed,
-	halt execution.
+	user to input it. If necessary, convert it to TitleCase. If the input is
+	malformed, halt execution.
 2. Verify the `design_directory` exists. If not found, halt execution.
 3. Validate that the user provided `sample_category` or that
 	`sample_category` can be determined from the
@@ -61,12 +61,13 @@ required.
 
 Use the scaffolded Dart files as your foundation.
 
-Translate the logic identified in Phase 3 into Dart/Flutter.
-
 API Reference Protocol: Do not attempt to ingest the entire
 `documentation_directory`. Instead, cross-reference the specific ArcGIS
 classes identified in Phase 3 by reading only their corresponding Dart
-documentation files within `../flutter/arcgis_maps/doc/api/`.
+documentation files within `../flutter/arcgis_maps/doc/api/`. Do not attempt
+to read from the `.pub-cache` directory.
+
+Translate the logic identified in Phase 3 into Dart/Flutter.
 
 If a specific API file is missing, leave a
 `// TODO: Implement <Feature> - API doc missing` comment in the Dart code and
