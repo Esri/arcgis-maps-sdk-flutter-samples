@@ -15,7 +15,7 @@ Pan and zoom around the map. Observe the displayed military symbology on the map
 
 ## How it works
 
-1. Create a `Geodatabase` using `Geodatabase.withFileUr()`.
+1. Create a `Geodatabase` using `Geodatabase.withFileUri()`.
 2. Load the geodatabase using `Geodatabase.load()`.
 3. Instantiate a `DictionarySymbolStyle` using `DictionarySymbolStyle.withFileUri()`.
 4. Load the dictionary symbol style using `DictionarySymbolStyle.load()`.
