@@ -158,10 +158,6 @@ class _Message {
 }
 
 /// A DOM-based XML parser for the MIL-STD-2525D messages file.
-///
-/// Mirrors the Swift `MessageParser` (which uses Foundation's event-driven
-/// `XMLParser`). Dart's `xml` package gives us a small DOM, which is plenty
-/// for a file of this size and keeps the logic linear and easy to read.
 class _MessageParser {
   final List<_Message> messages = [];
 
