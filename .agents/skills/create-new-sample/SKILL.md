@@ -1,74 +1,67 @@
 ---
 name: create-new-sample
-description: Stub in a new sample and implement it.
+description: Scaffolds, implements, and validates a new Flutter sample based on existing designs.
 ---
 # Inputs
-- Sample name
-- Sample category
-- Design directory from `../common-samples/designs/`
-- Documentation directory from `../flutter/arcgis_maps/doc/api/`
+- sample_name: The name of the sample in Title Case (e.g., "Analyze Hotspots").
+- sample_category: The category of the sample (e.g., "Analysis", "Visualization").
+- design_directory: The directory containing the design files for the sample, located in `../common-samples/designs/`.
+- documentation_directory: Path to the API docs at `../flutter/arcgis_maps/doc/api/`.
 
 # Expected outputs
 - New sample directory: `lib/samples/<sample_name_snake_case>/`
 - Sample implementation file(s)
 - Sample `README.md`
-- Any required registration updates so the sample appears in the
-  app
+- Required registration updates so the sample appears in the app
+- `AGENT_REPORT.md` detailing execution status
 
-# Workflow
+# Agent Workflow
 
-## 1. Determine the Sample name, category, and design directory
+## Phase 1: Strict Validation & Setup
 
-If the user did not specify Sample name and category, prompt the user
-to input them. The Sample name should be in Title Case (e.g.,
-"Analyze Hotspots") and the category should be one of the existing
-categories (e.g., "Analysis", "Visualization", etc.).
+1. Validate that the user provided `sample_name`. If not provided, prompt the user to input it. Ensure it is in sentence case. If the input is malformed, halt execution.
+2. Verify the `design_directory` exists. If not found, halt execution.
+3. Validate that the user provided `sample_category` or that `sample_category` can be determined from the `implementation-details.md` file in the design directory. If it cannot be determined, halt execution.
+4. Verify the `documentation_directory` exists and contains API reference files. If not found, halt execution.
 
-The design directory must be available in
-`../common-samples/designs/`. If it cannot be located, report an
-error and stop the process.
+## Phase 2: Scaffolding
 
-## 2. Run the `generate_new_sample.dart` script
-
-Run `dart tool/generate_new_sample.dart` passing the Sample name and
-the Sample category as arguments. For example:
+Execute the scaffolding script:
 ```bash
-dart tool/generate_new_sample.dart "Analyze Hotspots" "Analysis"
+dart tool/generate_new_sample.dart "<sample_name>" "<sample_category>"
 ```
+If the script returns a non-zero exit code, halt execution and report the console error.
 
-If the script returns a non-zero exit code, report the error and
-stop the process.
+## Phase 3: Targeted Context Gathering
 
-## 3. Locate other implementations of the sample
+Read the `implementation-details.md` file located within the provided `design_directory`.
 
-Check the Swift and Kotlin samples repos (as described in AGENTS.md)
-for existing implementations of the sample. If found, note their
-locations for reference during implementation.
+Locate the corresponding Swift and Kotlin implementations by querying the repos defined in `AGENTS.md`.
 
-## 4. Implement the sample
+Read only the core controller/view files from those cross-platform samples to identify the primary ArcGIS mapping classes and architectural patterns required.
 
-Use the generated sample files as a starting point. Refer to the
-`implementation-details.md` file in the design directory and any
-existing implementations in other languages to implement the sample
-in Dart/Flutter.
+## Phase 4: Deterministic Implementation
 
-Refer to the API surface at `../flutter/arcgis_maps/doc/api/**` to
-determine the proper API calls and usage. These files were produced by
-running `dart doc` in the `arcgis_maps/` directory.
+Use the scaffolded Dart files as your foundation.
 
-If the required API reference is missing or invalid, report an error
-message specifying the issue but continue to implement as much of the
-sample as possible.
+Translate the logic identified in Phase 3 into Dart/Flutter.
 
-Follow existing patterns and conventions used in other samples.
+API Reference Protocol: Do not attempt to ingest the entire `documentation_directory`. Instead, cross-reference the specific ArcGIS classes identified in Phase 3 by reading only their corresponding Dart documentation files within `../flutter/arcgis_maps/doc/api/`.
 
-## 5. Run the initialize step
+If a specific API file is missing, leave a `// TODO: Implement <Feature> - API doc missing` comment in the Dart code and continue.
 
-After implementing the sample, run `dart tool/initialize.dart` to
-regenerate any affected code and update the project state.
+## Phase 5: State Synchronization
 
-## 6. Check for analyze issues
+Execute the initialization script to regenerate affected code:
+```bash
+dart tool/initialize.dart
+```
+If this fails, do not attempt to fix the generator script. Halt and report the failure.
 
-Run `flutter analyze` to check for any issues in the code. Address any
-issues that are found.
+## Phase 6: Validation & Structured Reporting
 
+Run `flutter analyze` against the newly created sample directory.
+
+Circuit Breaker: Attempt to resolve any detected analysis issues. You are permitted a maximum of 3 iterative fix attempts. If issues persist after 3 attempts, cease fixing.
+
+Generate a file named `AGENT_REPORT.md` in the new sample directory. This file must contain a markdown table reporting the pass, fail, or skip status of the following stages: Scaffolding, Implementation, Initialization, and Analysis. Include a brief notes column for any captured console errors or missing API files.
