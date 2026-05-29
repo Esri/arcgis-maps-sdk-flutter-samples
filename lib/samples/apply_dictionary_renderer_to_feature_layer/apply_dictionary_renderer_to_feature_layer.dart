@@ -37,6 +37,7 @@ class _ApplyDictionaryRendererToFeatureLayerState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // Add a map view to the widget tree and set a controller.
       body: ArcGISMapView(
         controllerProvider: () => _mapViewController,
         onMapViewReady: onMapViewReady,
@@ -45,9 +46,8 @@ class _ApplyDictionaryRendererToFeatureLayerState
   }
 
   Future<void> onMapViewReady() async {
-    final listPaths = GoRouter.of(context).state.extra! as List<String>;
-
     // Create file references for the dictionary style and geodatabase.
+    final listPaths = GoRouter.of(context).state.extra! as List<String>;
     final styleFile = File(listPaths.first);
     final geodatabaseFile = File(listPaths.last);
 
