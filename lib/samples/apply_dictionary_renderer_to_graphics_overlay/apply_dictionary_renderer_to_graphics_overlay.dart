@@ -44,21 +44,16 @@ class _ApplyDictionaryRendererToGraphicsOverlayState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        top: false,
-        left: false,
-        right: false,
-        child: Stack(
-          children: [
-            // Add a scene view to the widget tree and set a controller.
-            ArcGISSceneView(
-              controllerProvider: () => _sceneViewController,
-              onSceneViewReady: onSceneViewReady,
-            ),
-            // Display a progress indicator and prevent interaction until state is ready.
-            LoadingIndicator(visible: !_ready),
-          ],
-        ),
+      body: Stack(
+        children: [
+          // Add a scene view to the widget tree and set a controller.
+          ArcGISSceneView(
+            controllerProvider: () => _sceneViewController,
+            onSceneViewReady: onSceneViewReady,
+          ),
+          // Display a progress indicator and prevent interaction until state is ready.
+          LoadingIndicator(visible: !_ready),
+        ],
       ),
     );
   }
@@ -97,7 +92,7 @@ class _ApplyDictionaryRendererToGraphicsOverlayState
 
   // Creates a dictionary renderer for styling with MIL-STD-2525D symbols.
   Future<DictionaryRenderer> getMIL2525DRenderer() async {
-    // Create a dictionary symbol style form a dictionary style portal item.
+    // Create a dictionary symbol style from a dictionary style portal item.
     final portalItem = PortalItem.withPortalAndItemId(
       portal: Portal.arcGISOnline(),
       itemId: 'd815f3bdf6e6452bb8fd153b654c94ca',
@@ -107,7 +102,7 @@ class _ApplyDictionaryRendererToGraphicsOverlayState
     );
     await dictionarySymbolStyle.load();
 
-    // Uses the "Ordered Anchor Points" for the symbol style draw rule.
+    // Use the "Ordered Anchor Points" for the symbol style draw rule.
     final drawRuleConfiguration = dictionarySymbolStyle.configurations
         .firstWhere((item) => item.name == 'model');
     drawRuleConfiguration.value = 'ORDERED ANCHOR POINTS';
@@ -115,7 +110,7 @@ class _ApplyDictionaryRendererToGraphicsOverlayState
     return DictionaryRenderer(dictionarySymbolStyle: dictionarySymbolStyle);
   }
 
-  // Load and Create MessageGraphics.
+  // Load and create message graphics.
   Future<List<Graphic>> generateMessageGraphics() async {
     // Create file reference for the MIL-STD-2525D XML File.
     final listPaths = GoRouter.of(context).state.extra! as List<String>;
@@ -141,7 +136,7 @@ class _ApplyDictionaryRendererToGraphicsOverlayState
 
           return Graphic(geometry: multipoint, attributes: message.other);
         })
-        .whereType<Graphic>()
+        .nonNulls
         .toList(growable: false);
   }
 }
@@ -154,8 +149,8 @@ class _Message {
   /// The integer value of the `<_wkid>` element.
   int? wkid;
 
-  /// Every other child element name → its text content.
-  Map<String, dynamic> other = {};
+  /// A map containing every other element name from the XML file mapped to its text content.
+  Map<String, String> other = {};
 }
 
 /// A DOM-based XML parser for the MIL-STD-2525D messages file.
