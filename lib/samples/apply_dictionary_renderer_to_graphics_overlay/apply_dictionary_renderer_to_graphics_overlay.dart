@@ -38,7 +38,7 @@ class _ApplyDictionaryRendererToGraphicsOverlayState
   // The graphics overlay for displaying the message graphics on the scene.
   final _graphicsOverlay = GraphicsOverlay();
 
-  // A flag for when the map view is ready and controls can be used.
+  // A flag for when the scene view is ready and controls can be used.
   var _ready = false;
 
   @override
@@ -50,6 +50,7 @@ class _ApplyDictionaryRendererToGraphicsOverlayState
         right: false,
         child: Stack(
           children: [
+            // Add a scene view to the widget tree and set a controller.
             ArcGISSceneView(
               controllerProvider: () => _sceneViewController,
               onSceneViewReady: onSceneViewReady,
@@ -77,7 +78,7 @@ class _ApplyDictionaryRendererToGraphicsOverlayState
     // Attach the overlay to the scene view.
     _sceneViewController.graphicsOverlays.add(_graphicsOverlay);
 
-    // Frame the SceneView to the overlay extent.
+    // Set a viewpoint camera to the scene view using the extent of the graphics overlay.
     final extent = _graphicsOverlay.extent;
     if (extent != null) {
       final camera = Camera.withLookAtPoint(
@@ -90,7 +91,7 @@ class _ApplyDictionaryRendererToGraphicsOverlayState
       _sceneViewController.setViewpointCamera(camera);
     }
 
-    // Enable the sample UI.
+    // Set the ready state variable to true to enable the sample UI.
     setState(() => _ready = true);
   }
 
@@ -125,10 +126,10 @@ class _ApplyDictionaryRendererToGraphicsOverlayState
     final parser = _MessageParser()..parse(xmlString);
 
     // Convert each parsed message into a Graphic.
-    // Skip messages without a usable WKID.
     return parser.messages
         .map<Graphic?>((message) {
           final wkid = message.wkid;
+          // Skip messages without a usable WKID.
           if (wkid == null) return null;
 
           final spatialReference = SpatialReference(wkid: wkid);
