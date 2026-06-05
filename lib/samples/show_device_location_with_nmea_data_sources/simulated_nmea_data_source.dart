@@ -18,8 +18,8 @@ import 'package:async/async.dart';
 class SimulatedNmeaDataSource {
   SimulatedNmeaDataSource(
     this.nmeaSentences, {
-    Duration interval = const Duration(seconds: 1),
-  }) : _interval = interval {
+    this._interval = const Duration(seconds: 1),
+  }) {
     _nmeaMessagesController.onListen = _start;
     _nmeaMessagesController.onCancel = _shutdown;
 
