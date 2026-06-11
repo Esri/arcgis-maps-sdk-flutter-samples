@@ -31,8 +31,7 @@
         "NmeaSatelliteInfo"
     ],
     "snippets": [
-        "show_device_location_with_nmea_data_sources.dart",
-        "simulated_nmea_data_source.dart"
+        "show_device_location_with_nmea_data_sources.dart"
     ],
     "title": "Show device location with NMEA data sources"
 }
