@@ -10,12 +10,16 @@
         "map",
         "ArcGISMap",
         "ArcGISMapViewController",
+        "BasemapGallery",
+        "BasemapGalleryController",
         "Basemap"
     ],
     "redirect_from": [],
     "relevant_apis": [
         "ArcGISMap",
         "ArcGISMapViewController",
+        "BasemapGallery",
+        "BasemapGalleryController",
         "Basemap"
     ],
     "snippets": [

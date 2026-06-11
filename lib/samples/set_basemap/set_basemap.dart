@@ -14,10 +14,9 @@
 // limitations under the License.
 //
 
-import 'dart:async';
-
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
+import 'package:arcgis_maps_toolkit/arcgis_maps_toolkit.dart';
 import 'package:flutter/material.dart';
 
 class SetBasemap extends StatefulWidget {
@@ -28,130 +27,97 @@ class SetBasemap extends StatefulWidget {
 }
 
 class _SetBasemapState extends State<SetBasemap> with SampleStateSupport {
-  // Create a key to access the scaffold state.
-  final _scaffoldStateKey = GlobalKey<ScaffoldState>();
-  // Create a controller for the map view and a map with a navigation basemap.
+  // Create a controller for the map view and a map with an imagery basemap.
   final _mapViewController = ArcGISMapView.createController();
-  final _arcGISMap = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISNavigation);
-  // Create a dictionary to store basemaps.
-  final _basemaps = <Basemap, Image>{};
-  // Create a default image.
-  final _defaultImage = Image.asset('assets/basemap_default.png');
-  // Create a future to load basemaps.
-  late Future<void> _loadBasemapsFuture;
-  // Create a variable to store the selected basemap.
-  Basemap? _selectedBasemap;
+  final _arcGISMap = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISImagery);
+  // Create a controller for the basemap gallery component.
+  late final BasemapGalleryController _basemapGalleryController;
+  // Track whether the basemap gallery panel is visible.
+  var _showBasemapGallery = false;
 
   @override
   void initState() {
     super.initState();
-    // Load basemaps when the app starts.
-    _loadBasemapsFuture = loadBasemaps();
+    // Configure the gallery to update the map's basemap automatically.
+    _basemapGalleryController = BasemapGalleryController()
+      ..geoModel = _arcGISMap
+      ..viewStyle = BasemapGalleryViewStyle.automatic;
+  }
+
+  @override
+  void dispose() {
+    _basemapGalleryController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // Create a scaffold with a key to access the scaffold state.
-      key: _scaffoldStateKey,
-      // Create an end drawer to display basemaps.
-      endDrawer: Drawer(
-        child: SafeArea(
-          // Create a future builder to load basemaps.
-          child: FutureBuilder(
-            future: _loadBasemapsFuture,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.done) {
-                // Create a grid view to display basemaps.
-                return GridView.count(
-                  crossAxisCount: 2,
-                  children: _basemaps.keys
-                      .map(
-                        // Create a list tile for each basemap.
-                        (basemap) => ListTile(
-                          title: Container(
-                            // Add a border to the selected basemap.
-                            decoration: _selectedBasemap == basemap
-                                ? BoxDecoration(
-                                    border: Border.all(
-                                      color: Colors.blue,
-                                      width: 4,
-                                    ),
-                                  )
-                                : null,
-                            // Display the basemap image.
-                            child: _basemaps[basemap] ?? _defaultImage,
-                          ),
-                          // Display the basemap name.
-                          subtitle: Text(
-                            basemap.name,
-                            textAlign: TextAlign.center,
-                          ),
-                          // Update the map with the selected basemap.
-                          onTap: () {
-                            _selectedBasemap = basemap;
-                            _arcGISMap.basemap = basemap;
-                            _scaffoldStateKey.currentState!.closeEndDrawer();
-                          },
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          // Use half of the available width for the gallery panel.
+          final galleryWidth = constraints.maxWidth / 2;
+
+          return Stack(
+            children: [
+              // Show the map in the background.
+              ArcGISMapView(
+                controllerProvider: () => _mapViewController,
+                onMapViewReady: onMapViewReady,
+              ),
+              // Show the basemap gallery as an overlay panel.
+              if (_showBasemapGallery)
+                SafeArea(
+                  child: Align(
+                    alignment: Alignment.topRight,
+                    child: Container(
+                      width: galleryWidth,
+                      margin: const EdgeInsets.fromLTRB(16, 16, 16, 80),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.surface,
+                        border: Border.all(
+                          color: Theme.of(context).colorScheme.outline,
                         ),
-                      )
-                      .toList(),
-                );
-              } else {
-                // Display a loading message while loading basemaps.
-                return const Center(child: Text('Loading basemaps...'));
-              }
-            },
-          ),
-        ),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Theme(
+                        data: Theme.of(context).copyWith(
+                          textTheme: Theme.of(context).textTheme.copyWith(
+                            bodySmall: Theme.of(
+                              context,
+                            ).textTheme.bodySmall?.copyWith(fontSize: 11),
+                          ),
+                        ),
+                        child: BasemapGallery(
+                          controller: _basemapGalleryController,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+            ],
+          );
+        },
       ),
-      // Create a stack with the map view and a floating action button to open the end drawer.
-      body: Stack(
-        children: [
-          // Create an ArcGIS map view with a controller.
-          ArcGISMapView(
-            controllerProvider: () => _mapViewController,
-            onMapViewReady: onMapViewReady,
-          ),
-          Positioned(
-            bottom: 70,
-            right: 30,
-            child: FloatingActionButton(
-              onPressed: () => _scaffoldStateKey.currentState!.openEndDrawer(),
-              shape: const RoundedRectangleBorder(),
-              child: const Icon(Icons.map),
-            ),
-          ),
-        ],
+      // Toggle the basemap gallery panel.
+      floatingActionButton: FloatingActionButton(
+        onPressed: () =>
+            setState(() => _showBasemapGallery = !_showBasemapGallery),
+        shape: const RoundedRectangleBorder(),
+        child: const Icon(Icons.map),
       ),
     );
   }
 
   void onMapViewReady() {
-    // Set the map view controller's map to the ArcGIS map.
+    // Set the map's initial viewpoint.
+    _arcGISMap.initialViewpoint = Viewpoint.withLatLongScale(
+      latitude: 33.7,
+      longitude: -118.4,
+      scale: 1000000,
+    );
+
+    // Assign the map to the map view controller.
     _mapViewController.arcGISMap = _arcGISMap;
-  }
-
-  Future<void> loadBasemaps() async {
-    // Create a portal to access online items.
-    final portal = Portal.arcGISOnline();
-    // Load basemaps from portal.
-    final basemaps = await portal.developerBasemaps();
-    await Future.wait(basemaps.map((basemap) => basemap.load()));
-    basemaps.sort((a, b) => a.name.compareTo(b.name));
-
-    // Load each basemap to access and display attribute data in the UI.
-    for (final basemap in basemaps) {
-      if (basemap.item != null) {
-        final thumbnail = basemap.item!.thumbnail;
-        if (thumbnail != null) {
-          await thumbnail.load();
-          _basemaps[basemap] = Image.network(thumbnail.uri.toString());
-        }
-      } else {
-        // If the basemap does not have a thumbnail, use the default image.
-        _basemaps[basemap] = _defaultImage;
-      }
-    }
   }
 }
