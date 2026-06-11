@@ -23,9 +23,9 @@ Tap the map button to show or hide the basemap gallery. Select an item in the ga
 
 * ArcGISMap
 * ArcGISMapViewController
+* Basemap
 * BasemapGallery
 * BasemapGalleryController
-* Basemap
 
 ## Additional information
 

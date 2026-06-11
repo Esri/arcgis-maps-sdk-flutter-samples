@@ -10,17 +10,17 @@
         "map",
         "ArcGISMap",
         "ArcGISMapViewController",
+        "Basemap",
         "BasemapGallery",
-        "BasemapGalleryController",
-        "Basemap"
+        "BasemapGalleryController"
     ],
     "redirect_from": [],
     "relevant_apis": [
         "ArcGISMap",
         "ArcGISMapViewController",
+        "Basemap",
         "BasemapGallery",
-        "BasemapGalleryController",
-        "Basemap"
+        "BasemapGalleryController"
     ],
     "snippets": [
         "set_basemap.dart"
