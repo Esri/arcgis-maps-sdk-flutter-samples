@@ -319,8 +319,11 @@ class _GenerateGeodatabaseReplicaFromFeatureServiceState
       displayGeodatabase(geodatabase);
 
       // Unregister the replica because this sample will not synchronize edits.
-      await _geodatabaseSyncTask.unregisterGeodatabase(geodatabase);
-
+      try {
+        await _geodatabaseSyncTask.unregisterGeodatabase(geodatabase);
+      } on ArcGISException catch (e) {
+        showMessageDialog(e.message, title: 'Warning');
+      }
       // Update the UI after the replica has been displayed.
       setState(() {
         _progress = null;
