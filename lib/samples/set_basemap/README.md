@@ -16,7 +16,7 @@ Tap the map button to show or hide the basemap gallery. Select a basemap in the 
 
 1. Create an `ArcGISMap` object with an initial basemap style.
 2. Set the map to the `ArcGISMapViewController` object.
-3. Create a `BasemapGalleryController` and set its `geoModel` to the map.
+3. Create a `BasemapGalleryController` and set the map to the `geoModel` property.
 4. Show the `BasemapGallery` toolkit component and let users select a basemap.
 
 ## Relevant API
