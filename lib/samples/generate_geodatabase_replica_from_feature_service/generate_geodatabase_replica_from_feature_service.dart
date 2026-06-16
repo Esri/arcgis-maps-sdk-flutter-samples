@@ -313,16 +313,22 @@ class _GenerateGeodatabaseReplicaFromFeatureServiceState
 
       // Run the job and load the resulting local geodatabase.
       final geodatabase = await _generateGeodatabaseJob!.run();
-      await geodatabase.load();
-
-      // Replace the online layers with feature layers from the local geodatabase.
-      displayGeodatabase(geodatabase);
-
-      // Unregister the replica because this sample will not synchronize edits.
       try {
-        await _geodatabaseSyncTask.unregisterGeodatabase(geodatabase);
-      } on ArcGISException catch (e) {
-        showMessageDialog(e.message, title: 'Warning');
+        await geodatabase.load();
+
+        // Replace the online layers with feature layers from the local geodatabase.
+        displayGeodatabase(geodatabase);
+
+        // Unregister the replica because this sample will not synchronize edits.
+        try {
+          await _geodatabaseSyncTask.unregisterGeodatabase(geodatabase);
+        } on ArcGISException catch (e) {
+          showMessageDialog(e.message, title: 'Warning');
+        }
+      } catch (_) {
+        // Ensure local resources are released if loading/display fails.
+        geodatabase.close();
+        rethrow;
       }
       // Update the UI after the replica has been displayed.
       setState(() {
@@ -341,6 +347,13 @@ class _GenerateGeodatabaseReplicaFromFeatureServiceState
       if (e.errorType != ArcGISExceptionType.commonUserCanceled) {
         showMessageDialog(e.message, title: 'Error');
       }
+    } on Exception catch (e) {
+      // Reset generation state for unexpected errors (for example, local file I/O).
+      setState(() {
+        _progress = null;
+        _statusMessage = 'Tap the generate button to take the area offline.';
+      });
+      showMessageDialog(e.toString(), title: 'Error');
     } finally {
       // Clear job state and progress listeners after completion.
       _generateGeodatabaseJob = null;
