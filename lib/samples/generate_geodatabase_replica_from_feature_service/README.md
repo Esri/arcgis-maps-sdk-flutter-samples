@@ -6,11 +6,11 @@ Generate a local geodatabase replica from an online feature service.
 
 ## Use case
 
-Generating geodatabase replica is the first step toward taking a feature service offline. It allows you to save features locally for offline display.
+Generating a local geodatabase replica is the first step toward taking a feature service offline. It allows you to save features locally for offline display.
 
 ## How to use the sample
 
-Zoom to any extent. Then click the generate button to generate a geodatabase of features from a feature service filtered to the current extent. A red outline will show the extent used. The job's progress is shown while the geodatabase is generated. When complete, the map will reload with only the layers in the geodatabase, clipped to the extent.
+Zoom to any extent. Then tap the generate button to generate a geodatabase of features from a feature service filtered to the current extent. A red outline will show the extent used. The job's progress is shown while the geodatabase is generated. When complete, the map will reload with only the layers in the geodatabase, clipped to the extent.
 
 ## How it works
 
