@@ -39,11 +39,11 @@ jobs:
 
       - run: |
           zip -r veracode-scan-target.zip ./ \
+            -x ".git/*" \
             -x ".github/*" \
             -x "tool/*" \
             -x ".gitignore" \
-            -x ".metadata" \
-
+            -x ".metadata"
       # download the Veracode Static Analysis Pipeline scan jar
       - run: curl --silent --show-error --fail -O https://downloads.veracode.com/securityscan/pipeline-scan-LATEST.zip
       - run: unzip -o pipeline-scan-LATEST.zip
