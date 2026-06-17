@@ -36,6 +36,8 @@ jobs:
       # copies all sources into ZIP file for submitting for analysis.
       # Replace this section with your applications build steps
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event_name == 'schedule' && 'v.next' || github.ref }}
 
       - run: |
           zip -r veracode-scan-target.zip ./ \
