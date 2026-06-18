@@ -254,10 +254,11 @@ class _UpdateBasemapForContrastAccessibilityState
       final basemap = _basemapForContrastAppearance(appearance);
       await basemap.load();
 
+      if (!mounted) return;
+
       // Apply the loaded basemap and restore the reference layer visibility.
       _arcGISMap.basemap = basemap;
       _applyReferenceLayerVisibility();
-
       // Store the active appearance and enable controls.
       setState(() {
         _contrastAppearance = appearance;
@@ -265,6 +266,7 @@ class _UpdateBasemapForContrastAccessibilityState
       });
     } on ArcGISException catch (error) {
       // Show ArcGIS load failures in the shared sample dialog.
+      if (!mounted) return;
       showMessageDialog(error.message, title: 'Error', showOK: true);
       setState(() => _ready = true);
     }
