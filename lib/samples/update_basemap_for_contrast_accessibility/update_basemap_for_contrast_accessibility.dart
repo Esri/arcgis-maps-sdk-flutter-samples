@@ -13,6 +13,7 @@
 // limitations under the License.
 //
 
+import 'package:app_settings/app_settings.dart';
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
@@ -49,6 +50,9 @@ class _UpdateBasemapForContrastAccessibilityState
   // Track when the map is ready for interaction.
   var _ready = false;
   var _mapViewReady = false;
+
+  // A flag for when the settings bottom sheet is visible.
+  var _settingsVisible = false;
 
   @override
   void initState() {
@@ -89,25 +93,36 @@ class _UpdateBasemapForContrastAccessibilityState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: [
-          // Add a map view to display the contrast-specific basemap.
-          ArcGISMapView(
-            controllerProvider: () => _mapViewController,
-            onMapViewReady: onMapViewReady,
-          ),
-          // Add controls for contrast mode, manual appearance, and reference layers.
-          SafeArea(
-            minimum: const EdgeInsets.all(16),
-            child: Align(
-              alignment: Alignment.bottomCenter,
-              child: _buildControls(context),
+      body: SafeArea(
+        top: false,
+        left: false,
+        right: false,
+        child: Stack(
+          children: [
+            Column(
+              children: [
+                Expanded(
+                  child: ArcGISMapView(
+                    controllerProvider: () => _mapViewController,
+                    onMapViewReady: onMapViewReady,
+                  ),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ElevatedButton(
+                      onPressed: _ready ? _showContrastSettings : null,
+                      child: const Text('Contrast Options'),
+                    ),
+                  ],
+                ),
+              ],
             ),
-          ),
-          // Display a progress indicator while the selected basemap is loading.
-          LoadingIndicator(visible: !_ready),
-        ],
+            LoadingIndicator(visible: !_ready),
+          ],
+        ),
       ),
+      bottomSheet: _settingsVisible ? _buildContrastSettings(context) : null,
     );
   }
 
@@ -120,71 +135,100 @@ class _UpdateBasemapForContrastAccessibilityState
     await _setContrastAppearance(_automaticContrastAppearance());
   }
 
-  Widget _buildControls(BuildContext context) {
-    // Build an adaptive control panel using the current app theme.
-    return ConstrainedBox(
-      constraints: const BoxConstraints(maxWidth: 520),
-      child: Card(
-        margin: EdgeInsets.zero,
-        child: Padding(
-          padding: const EdgeInsets.all(16),
+  void _showContrastSettings() {
+    setState(() => _settingsVisible = true);
+  }
+
+  Widget _buildContrastSettings(BuildContext context) {
+    final sectionTitleStyle = Theme.of(
+      context,
+    ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600);
+
+    return BottomSheetSettings(
+      title: 'Contrast Options',
+      onCloseIconPressed: () => setState(() => _settingsVisible = false),
+      settingsWidgets: (context) => [
+        // Reference layers toggle.
+        SwitchListTile(
+          contentPadding: EdgeInsets.zero,
+          title: const Text('Reference layers'),
+          subtitle: Text(
+            _referenceLayersVisible
+                ? 'Labels and boundary reference layers are visible.'
+                : 'Labels and boundary reference layers are hidden.',
+          ),
+          value: _referenceLayersVisible,
+          onChanged: _ready ? _setReferenceLayersVisible : null,
+        ),
+        const Divider(height: 24),
+        // Visual contrast mode.
+        Text('Visual contrast mode', style: sectionTitleStyle),
+        RadioGroup<ContrastMode>(
+          groupValue: _contrastMode,
+          onChanged: (mode) {
+            if (_ready && mode != null) _setContrastMode(mode);
+          },
           child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // Toggle reference layers for the active basemap.
-              SwitchListTile(
+              RadioListTile<ContrastMode>(
                 contentPadding: EdgeInsets.zero,
-                title: const Text('Reference layers'),
-                value: _referenceLayersVisible,
-                onChanged: _ready ? _setReferenceLayersVisible : null,
-              ),
-              const SizedBox(height: 12),
-              // Choose whether contrast follows the device or manual controls.
-              SegmentedButton<ContrastMode>(
-                segments: const [
-                  ButtonSegment(
-                    value: ContrastMode.automatic,
-                    label: Text('Automatic'),
-                  ),
-                  ButtonSegment(
-                    value: ContrastMode.manual,
-                    label: Text('Manual'),
-                  ),
-                ],
-                selected: {_contrastMode},
-                onSelectionChanged: _ready
-                    ? (selection) => _setContrastMode(selection.first)
-                    : null,
-              ),
-              if (_contrastMode == ContrastMode.manual) ...[
-                const SizedBox(height: 12),
-                // Choose a contrast appearance directly in manual mode.
-                DropdownMenu<ContrastAppearance>(
-                  expandedInsets: EdgeInsets.zero,
-                  initialSelection: _contrastAppearance,
-                  label: const Text('Appearance'),
-                  dropdownMenuEntries: ContrastAppearance.values
-                      .map(
-                        (appearance) => DropdownMenuEntry(
-                          value: appearance,
-                          label: appearance.label,
-                        ),
-                      )
-                      .toList(),
-                  onSelected: _ready
-                      ? (appearance) {
-                          if (appearance != null) {
-                            _setContrastAppearance(appearance).ignore();
-                          }
-                        }
-                      : null,
+                enabled: _ready,
+                title: const Text('Automatic'),
+                subtitle: const Text(
+                  'Use device light, dark, and high-contrast settings to auto-select basemap.',
                 ),
-              ],
+                value: ContrastMode.automatic,
+              ),
+              RadioListTile<ContrastMode>(
+                contentPadding: EdgeInsets.zero,
+                enabled: _ready,
+                title: const Text('Manual'),
+                subtitle: const Text(
+                  'Choose one of the four basemaps manually.',
+                ),
+                value: ContrastMode.manual,
+              ),
             ],
           ),
         ),
-      ),
+        // Manual contrast options (only when Manual is selected).
+        if (_contrastMode == ContrastMode.manual) ...[
+          const SizedBox(height: 12),
+          Text('Manual contrast', style: sectionTitleStyle),
+          RadioGroup<ContrastAppearance>(
+            groupValue: _contrastAppearance,
+            onChanged: (appearance) {
+              if (_ready && appearance != null) {
+                _setContrastAppearance(appearance).ignore();
+              }
+            },
+            child: Column(
+              children: [
+                for (final appearance in ContrastAppearance.values)
+                  RadioListTile<ContrastAppearance>(
+                    contentPadding: EdgeInsets.zero,
+                    enabled: _ready,
+                    title: Text(appearance.label),
+                    subtitle: Text(appearance.description),
+                    value: appearance,
+                  ),
+              ],
+            ),
+          ),
+        ],
+        const SizedBox(height: 12),
+        // Deep-link to system accessibility settings (Swift PR parity).
+        SizedBox(
+          width: double.infinity,
+          child: OutlinedButton.icon(
+            icon: const Icon(Icons.settings_accessibility),
+            label: const Text('Go to Settings'),
+            onPressed: () => AppSettings.openAppSettings(
+              type: AppSettingsType.accessibility,
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -288,12 +332,23 @@ class _UpdateBasemapForContrastAccessibilityState
 
 extension on ContrastAppearance {
   String get label {
-    // Provide a concise label for the manual appearance picker.
     return switch (this) {
       ContrastAppearance.light => 'Light',
       ContrastAppearance.highContrastLight => 'High contrast light',
       ContrastAppearance.dark => 'Dark',
       ContrastAppearance.highContrastDark => 'High contrast dark',
+    };
+  }
+
+  String get description {
+    return switch (this) {
+      ContrastAppearance.light =>
+        'Regular light basemap for regular light theme.',
+      ContrastAppearance.highContrastLight =>
+        'High-contrast light basemap for enhanced light theme.',
+      ContrastAppearance.dark => 'Regular dark basemap for regular dark theme.',
+      ContrastAppearance.highContrastDark =>
+        'High-contrast dark basemap for enhanced dark theme.',
     };
   }
 }
