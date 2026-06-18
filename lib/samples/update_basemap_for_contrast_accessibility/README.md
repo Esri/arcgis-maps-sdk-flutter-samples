@@ -44,4 +44,4 @@ For more background information on the cartographic approach behind the enhanced
 
 ## Tags
 
-accessibility, accessible, basemap, colorblind, contrast, dark, enhanced, high, inclusive, legibility, light, living atlas, readability, vision, visual impairment, WCAG
+accessible, accessibility, basemap, colorblind, contrast, dark, enhanced, high, inclusive, legibility, light, living atlas, readability, vision, visual impairment, WCAG
