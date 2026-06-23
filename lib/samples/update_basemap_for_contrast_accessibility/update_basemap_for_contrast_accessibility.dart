@@ -102,6 +102,7 @@ class _UpdateBasemapForContrastAccessibilityState
             Column(
               children: [
                 Expanded(
+                  // Add a map view to the widget tree and set a controller.
                   child: ArcGISMapView(
                     controllerProvider: () => _mapViewController,
                     onMapViewReady: onMapViewReady,
@@ -111,7 +112,9 @@ class _UpdateBasemapForContrastAccessibilityState
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     ElevatedButton(
-                      onPressed: _ready ? _showContrastSettings : null,
+                      onPressed: _ready
+                          ? () => setState(() => _settingsVisible = true)
+                          : null,
                       child: const Text('Contrast Options'),
                     ),
                   ],
@@ -135,10 +138,6 @@ class _UpdateBasemapForContrastAccessibilityState
     await _setContrastAppearance(_automaticContrastAppearance());
   }
 
-  void _showContrastSettings() {
-    setState(() => _settingsVisible = true);
-  }
-
   Widget _buildContrastSettings(BuildContext context) {
     final sectionTitleStyle = Theme.of(
       context,
@@ -148,83 +147,95 @@ class _UpdateBasemapForContrastAccessibilityState
       title: 'Contrast Options',
       onCloseIconPressed: () => setState(() => _settingsVisible = false),
       settingsWidgets: (context) => [
-        // Reference layers toggle.
-        SwitchListTile(
-          contentPadding: EdgeInsets.zero,
-          title: const Text('Reference layers'),
-          subtitle: Text(
-            _referenceLayersVisible
-                ? 'Labels and boundary reference layers are visible.'
-                : 'Labels and boundary reference layers are hidden.',
+        Container(
+          constraints: BoxConstraints(
+            maxHeight: MediaQuery.sizeOf(context).height * 0.4,
           ),
-          value: _referenceLayersVisible,
-          onChanged: _ready ? _setReferenceLayersVisible : null,
-        ),
-        const Divider(height: 24),
-        // Visual contrast mode.
-        Text('Visual contrast mode', style: sectionTitleStyle),
-        RadioGroup<ContrastMode>(
-          groupValue: _contrastMode,
-          onChanged: (mode) {
-            if (_ready && mode != null) _setContrastMode(mode);
-          },
-          child: Column(
-            children: [
-              RadioListTile<ContrastMode>(
-                contentPadding: EdgeInsets.zero,
-                enabled: _ready,
-                title: const Text('Automatic'),
-                subtitle: const Text(
-                  'Use device light, dark, and high-contrast settings to auto-select basemap.',
-                ),
-                value: ContrastMode.automatic,
-              ),
-              RadioListTile<ContrastMode>(
-                contentPadding: EdgeInsets.zero,
-                enabled: _ready,
-                title: const Text('Manual'),
-                subtitle: const Text(
-                  'Choose one of the four basemaps manually.',
-                ),
-                value: ContrastMode.manual,
-              ),
-            ],
-          ),
-        ),
-        // Manual contrast options (only when Manual is selected).
-        if (_contrastMode == ContrastMode.manual) ...[
-          const SizedBox(height: 12),
-          Text('Manual contrast', style: sectionTitleStyle),
-          RadioGroup<ContrastAppearance>(
-            groupValue: _contrastAppearance,
-            onChanged: (appearance) {
-              if (_ready && appearance != null) {
-                _setContrastAppearance(appearance).ignore();
-              }
-            },
+          child: SingleChildScrollView(
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                for (final appearance in ContrastAppearance.values)
-                  RadioListTile<ContrastAppearance>(
-                    contentPadding: EdgeInsets.zero,
-                    enabled: _ready,
-                    title: Text(appearance.label),
-                    subtitle: Text(appearance.description),
-                    value: appearance,
+                // Reference layers toggle.
+                SwitchListTile(
+                  contentPadding: EdgeInsets.zero,
+                  title: const Text('Reference layers'),
+                  subtitle: Text(
+                    _referenceLayersVisible
+                        ? 'Labels and boundary reference layers are visible.'
+                        : 'Labels and boundary reference layers are hidden.',
                   ),
+                  value: _referenceLayersVisible,
+                  onChanged: _ready ? _setReferenceLayersVisible : null,
+                ),
+                const Divider(height: 24),
+                // Visual contrast mode.
+                Text('Visual contrast mode', style: sectionTitleStyle),
+                RadioGroup<ContrastMode>(
+                  groupValue: _contrastMode,
+                  onChanged: (mode) {
+                    if (_ready && mode != null) _setContrastMode(mode);
+                  },
+                  child: Column(
+                    children: [
+                      RadioListTile<ContrastMode>(
+                        contentPadding: EdgeInsets.zero,
+                        enabled: _ready,
+                        title: const Text('Automatic'),
+                        subtitle: const Text(
+                          'Use device light, dark, and high-contrast settings to auto-select basemap.',
+                        ),
+                        value: ContrastMode.automatic,
+                      ),
+                      RadioListTile<ContrastMode>(
+                        contentPadding: EdgeInsets.zero,
+                        enabled: _ready,
+                        title: const Text('Manual'),
+                        subtitle: const Text(
+                          'Choose one of the four basemaps manually.',
+                        ),
+                        value: ContrastMode.manual,
+                      ),
+                    ],
+                  ),
+                ),
+                // Manual contrast options (only when Manual is selected).
+                if (_contrastMode == ContrastMode.manual) ...[
+                  const SizedBox(height: 12),
+                  Text('Manual contrast', style: sectionTitleStyle),
+                  RadioGroup<ContrastAppearance>(
+                    groupValue: _contrastAppearance,
+                    onChanged: (appearance) {
+                      if (_ready && appearance != null) {
+                        _setContrastAppearance(appearance).ignore();
+                      }
+                    },
+                    child: Column(
+                      children: [
+                        for (final appearance in ContrastAppearance.values)
+                          RadioListTile<ContrastAppearance>(
+                            contentPadding: EdgeInsets.zero,
+                            enabled: _ready,
+                            title: Text(appearance.label),
+                            subtitle: Text(appearance.description),
+                            value: appearance,
+                          ),
+                      ],
+                    ),
+                  ),
+                ],
+                const SizedBox(height: 12),
+                // Deep-link to system accessibility settings.
+                SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton.icon(
+                    icon: const Icon(Icons.settings_accessibility),
+                    label: const Text('Go to Settings'),
+                    onPressed: () => AppSettings.openAppSettings(
+                      type: AppSettingsType.accessibility,
+                    ),
+                  ),
+                ),
               ],
-            ),
-          ),
-        ],
-        const SizedBox(height: 12),
-        // Deep-link to system accessibility settings (Swift PR parity).
-        SizedBox(
-          width: double.infinity,
-          child: OutlinedButton.icon(
-            icon: const Icon(Icons.settings_accessibility),
-            label: const Text('Go to Settings'),
-            onPressed: () => AppSettings.openAppSettings(
-              type: AppSettingsType.accessibility,
             ),
           ),
         ),
@@ -287,7 +298,9 @@ class _UpdateBasemapForContrastAccessibilityState
 
   void _syncAutomaticContrast() {
     // Only synchronize automatically after the map view is ready.
-    if (!_mapViewReady || _contrastMode != ContrastMode.automatic) return;
+    if (!_mapViewReady || !_ready || _contrastMode != ContrastMode.automatic) {
+      return;
+    }
 
     // Apply the resolved appearance when it differs from the current one.
     final appearance = _automaticContrastAppearance();

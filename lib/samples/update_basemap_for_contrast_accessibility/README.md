@@ -25,9 +25,8 @@ Tap **Contrast Options** to show or hide the basemap's reference layers. Switch 
 
 ## Relevant API
 
-* Basemap
+* ArcGISMap
 * BasemapStyle
-* Map
 
 ## About the data
 
@@ -44,4 +43,4 @@ For more background information on the cartographic approach behind the enhanced
 
 ## Tags
 
-accessible, accessibility, basemap, colorblind, contrast, dark, enhanced, high, inclusive, legibility, light, living atlas, readability, vision, visual impairment, WCAG
+accessibility, accessible, basemap, colorblind, contrast, dark, enhanced, high, inclusive, legibility, light, living atlas, readability, vision, visual impairment, WCAG

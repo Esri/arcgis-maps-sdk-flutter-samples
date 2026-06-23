@@ -26,7 +26,7 @@ enum SampleCategory {
   accessibility(
     'Accessibility',
     Icons.accessibility_new,
-    'assets/category_images/all_background.webp',
+    'assets/category_images/accessibility_background.webp',
   ),
   analysis(
     'Analysis',

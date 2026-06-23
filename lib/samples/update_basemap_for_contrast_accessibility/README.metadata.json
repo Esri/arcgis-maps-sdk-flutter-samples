@@ -6,8 +6,9 @@
         "update_basemap_for_contrast_accessibility.png"
     ],
     "keywords": [
-        "accessible",
+        "WCAG",
         "accessibility",
+        "accessible",
         "basemap",
         "colorblind",
         "contrast",
@@ -21,16 +22,13 @@
         "readability",
         "vision",
         "visual impairment",
-        "WCAG",
-        "Basemap",
-        "BasemapStyle",
-        "Map"
+        "ArcGISMap",
+        "BasemapStyle"
     ],
     "redirect_from": [],
     "relevant_apis": [
-        "Basemap",
-        "BasemapStyle",
-        "Map"
+        "ArcGISMap",
+        "BasemapStyle"
     ],
     "snippets": [
         "update_basemap_for_contrast_accessibility.dart"
