@@ -116,7 +116,36 @@ class _ShowPortalUserInfoState extends State<ShowPortalUserInfo>
             }
 
             // If the portal load succeeded, display the portal information.
-            final titleStyle = Theme.of(context).textTheme.titleMedium;
+            final theme = Theme.of(context);
+            final colorScheme = theme.colorScheme;
+            final titleStyle = theme.textTheme.titleMedium;
+            // simple_html_css applies black as its default text color, so provide
+            // theme-aware styles for dark mode and portal-authored HTML colors.
+            final htmlTextStyle = theme.textTheme.bodyMedium?.copyWith(
+              color: colorScheme.onSurface,
+            );
+            final htmlOverrideStyle = {
+              for (final tag in [
+                'body',
+                'p',
+                'div',
+                'span',
+                'ul',
+                'ol',
+                'li',
+                'h1',
+                'h2',
+                'h3',
+                'h4',
+                'h5',
+                'h6',
+              ])
+                tag: TextStyle(color: colorScheme.onSurface),
+              'a': TextStyle(
+                color: colorScheme.primary,
+                decoration: TextDecoration.underline,
+              ),
+            };
             return SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -124,7 +153,7 @@ class _ShowPortalUserInfoState extends State<ShowPortalUserInfo>
                 children: [
                   Text(
                     '${_portal.user?.fullName} Profile',
-                    style: Theme.of(context).textTheme.titleLarge,
+                    style: theme.textTheme.titleLarge,
                   ),
                   if (_userThumbnail != null)
                     Image.memory(_userThumbnail!)
@@ -158,6 +187,8 @@ class _ShowPortalUserInfoState extends State<ShowPortalUserInfo>
                       text: HTML.toTextSpan(
                         context,
                         _portal.portalInfo?.organizationDescription ?? '',
+                        defaultTextStyle: htmlTextStyle,
+                        overrideStyle: htmlOverrideStyle,
                       ),
                     ),
                   ),
