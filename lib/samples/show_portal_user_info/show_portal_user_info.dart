@@ -121,9 +121,9 @@ class _ShowPortalUserInfoState extends State<ShowPortalUserInfo>
             final titleStyle = theme.textTheme.titleMedium;
             // simple_html_css applies black as its default text color, so provide
             // theme-aware styles for dark mode and portal-authored HTML colors.
-            final htmlTextStyle = theme.textTheme.bodyMedium?.copyWith(
-              color: colorScheme.onSurface,
-            );
+final htmlTextStyle = DefaultTextStyle.of(context).style.copyWith(
+  color: colorScheme.onSurface,
+);
             final htmlOverrideStyle = {
               for (final tag in [
                 'body',
