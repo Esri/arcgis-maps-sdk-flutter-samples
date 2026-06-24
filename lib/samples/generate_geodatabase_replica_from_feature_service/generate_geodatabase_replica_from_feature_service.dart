@@ -39,28 +39,39 @@ class _GenerateGeodatabaseReplicaFromFeatureServiceState
     with SampleStateSupport {
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
+
   // Create a key to locate the map view when converting screen coordinates.
   final _mapKey = GlobalKey();
+
   // Create a key to locate the outline used as the download extent.
   final _outlineKey = GlobalKey();
+
   // Create the geodatabase sync task from the sync-enabled feature service.
   final _geodatabaseSyncTask = GeodatabaseSyncTask.withUri(
     Uri.parse(_featureServiceUri),
   );
+
   // Store the map so operational layers can be swapped between online and local data.
   late ArcGISMap _map;
+
   // Store the current generate job so it can be canceled.
   GenerateGeodatabaseJob? _generateGeodatabaseJob;
+
   // Store the current geodatabase so its local resources can be closed.
   Geodatabase? _geodatabase;
+
   // Store job stream subscriptions so the widget can dispose of them.
   StreamSubscription<int>? _progressSubscription;
+
   // A message that describes the current sample state.
   var _statusMessage = 'Loading feature layers.';
+
   // A flag for when the map view is ready and controls can be used.
   var _ready = false;
+
   // A flag for when a generated replica is displayed.
   var _replicaDisplayed = false;
+
   // A progress value for the generate geodatabase job.
   double? _progress;
 
@@ -182,11 +193,13 @@ class _GenerateGeodatabaseReplicaFromFeatureServiceState
       // Add the online feature service layers for the initial connected view.
       addOnlineFeatureLayers();
 
-      // Set the viewpoint to the feature service extent when it is available.
-      final initialExtent =
-          _geodatabaseSyncTask.featureServiceInfo?.initialExtent;
-      if (initialExtent != null) {
-        await _mapViewController.setViewpointGeometry(initialExtent);
+      // Zoom to the local basemap extent (San Francisco).
+      final basemapExtent = _map.basemap?.baseLayers.first.fullExtent;
+      if (basemapExtent != null) {
+        await _mapViewController.setViewpointGeometry(
+          basemapExtent,
+          paddingInDiPs: 20,
+        );
       }
 
       // Enable the sample UI after setup is complete.
@@ -212,6 +225,7 @@ class _GenerateGeodatabaseReplicaFromFeatureServiceState
 
     // Create a tile cache and tiled layer from the local tile package.
     final tileCache = TileCache.withFileUri(tpkxFile.uri);
+    await tileCache.load();
     final tiledLayer = ArcGISTiledLayer.withTileCache(tileCache);
 
     // Create a map that uses the local tiled layer as its basemap.
