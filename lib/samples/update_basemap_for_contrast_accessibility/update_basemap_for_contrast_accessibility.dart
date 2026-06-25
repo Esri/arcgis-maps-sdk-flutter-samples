@@ -357,6 +357,7 @@ class _UpdateBasemapForContrastAccessibilityState
   }
 }
 
+// Extension on ContrastAppearance to provide labels and descriptions for the UI.
 extension on ContrastAppearance {
   String get label {
     return switch (this) {
