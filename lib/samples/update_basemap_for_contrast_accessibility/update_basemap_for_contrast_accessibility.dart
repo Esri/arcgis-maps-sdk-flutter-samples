@@ -18,8 +18,10 @@ import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
 
+// Create an enumeration to define the contrast mode options.
 enum ContrastMode { automatic, manual }
 
+// Create an enumeration to define the contrast appearance options.
 enum ContrastAppearance { light, highContrastLight, dark, highContrastDark }
 
 class UpdateBasemapForContrastAccessibility extends StatefulWidget {
@@ -47,8 +49,10 @@ class _UpdateBasemapForContrastAccessibilityState
   var _contrastAppearance = ContrastAppearance.light;
   var _referenceLayersVisible = true;
 
-  // Track when the map is ready for interaction.
+  // Track when the controls can be used and the loading indicator can be hidden.
   var _ready = false;
+
+  // Track when the map view has been initialized before reacting to device setting changes.
   var _mapViewReady = false;
 
   // A flag for when the settings bottom sheet is visible.
