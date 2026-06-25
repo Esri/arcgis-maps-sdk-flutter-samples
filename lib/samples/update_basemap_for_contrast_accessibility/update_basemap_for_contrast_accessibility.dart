@@ -115,6 +115,7 @@ class _UpdateBasemapForContrastAccessibilityState
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
+                    // Add a button to toggle the visibility of the settings panel.
                     ElevatedButton(
                       onPressed: _ready
                           ? () => setState(() => _settingsVisible = true)
@@ -125,6 +126,7 @@ class _UpdateBasemapForContrastAccessibilityState
                 ),
               ],
             ),
+            // Display a progress indicator and prevent interaction until state is ready.
             LoadingIndicator(visible: !_ready),
           ],
         ),
