@@ -333,16 +333,10 @@ class _UpdateBasemapForContrastAccessibilityState
   Basemap _basemapForContrastAppearance(ContrastAppearance appearance) {
     // Return an authored basemap for the selected contrast appearance.
     return switch (appearance) {
-      ContrastAppearance.light => Basemap.withUri(
-        Uri.parse(
-          'https://www.arcgis.com/home/item.html?id=979c6cc89af9449cbeb5342a439c6a76',
-        ),
-      )!,
-      ContrastAppearance.dark => Basemap.withUri(
-        Uri.parse(
-          'https://www.arcgis.com/home/item.html?id=358ec1e175ea41c3bf5c68f0da11ae2b',
-        ),
-      )!,
+      ContrastAppearance.light => Basemap.withStyle(
+        BasemapStyle.arcGISLightGray,
+      ),
+      ContrastAppearance.dark => Basemap.withStyle(BasemapStyle.arcGISDarkGray),
       ContrastAppearance.highContrastLight => Basemap.withUri(
         Uri.parse(
           'https://www.arcgis.com/home/item.html?id=084291b0ecad4588b8c8853898d72445',

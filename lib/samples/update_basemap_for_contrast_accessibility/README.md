@@ -27,6 +27,7 @@ Tap **Contrast Options** to show or hide the basemap's reference layers. Switch 
 
 * ArcGISMap
 * Basemap
+* BasemapStyle
 
 ## About the data
 

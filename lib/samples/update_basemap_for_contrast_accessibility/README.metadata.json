@@ -23,12 +23,14 @@
         "vision",
         "visual impairment",
         "ArcGISMap",
-        "Basemap"
+        "Basemap",
+        "BasemapStyle"
     ],
     "redirect_from": [],
     "relevant_apis": [
         "ArcGISMap",
-        "Basemap"
+        "Basemap",
+        "BasemapStyle"
     ],
     "snippets": [
         "update_basemap_for_contrast_accessibility.dart"
