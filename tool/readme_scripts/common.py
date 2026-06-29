@@ -37,6 +37,7 @@ exception_proper_nouns = {
 # A set of category folder names.
 # From common-samples/designs/categories.md
 categories = {
+    'Accessibility',
     'Analysis',
     'Augmented Reality',
     'Cloud and Portal',

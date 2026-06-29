@@ -23,6 +23,11 @@ enum SampleCategory {
     Icons.favorite,
     'assets/category_images/all_background.webp',
   ),
+  accessibility(
+    'Accessibility',
+    Icons.accessibility_new,
+    'assets/category_images/accessibility_background.webp',
+  ),
   analysis(
     'Analysis',
     Icons.analytics,
