@@ -1,0 +1,31 @@
+{
+    "category": "Maps",
+    "description": "Restrict zooming between specific scale ranges.",
+    "ignore": false,
+    "images": [
+        "set_min_and_max_scale.png"
+    ],
+    "keywords": [
+        "area of interest",
+        "level of detail",
+        "maximum",
+        "minimum",
+        "scale",
+        "viewpoint",
+        "ArcGISMap",
+        "ArcGISMapView",
+        "Basemap",        
+        "ViewPoint"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+        "ArcGISMap",
+        "ArcGISMapView",
+        "Basemap",        
+        "ViewPoint"
+    ],
+    "snippets": [
+        "set_min_and_max_scale.dart"
+    ],
+    "title": "Set min and max scale"
+}
