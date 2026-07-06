@@ -28,8 +28,6 @@ class _SetMinAndMaxScaleState extends State<SetMinAndMaxScale>
     with SampleStateSupport {
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
-  // A flag for when the map view is ready and controls can be used.
-  var _ready = false;
 
   @override
   Widget build(BuildContext context) {
@@ -41,8 +39,6 @@ class _SetMinAndMaxScaleState extends State<SetMinAndMaxScale>
             controllerProvider: () => _mapViewController,
             onMapViewReady: onMapViewReady,
           ),
-          // Display a progress indicator and prevent interaction until state is ready.
-          LoadingIndicator(visible: !_ready),
         ],
       ),
     );
@@ -59,13 +55,10 @@ class _SetMinAndMaxScaleState extends State<SetMinAndMaxScale>
       ),
       scale: 3000,
     );
-    // Set min and max scales of map.
-    map.minScale = 800;
+    // Set min and max scales to the map.
+    map.minScale = 8000;
     map.maxScale = 2000;
     // Set the map to the map view controller.
     _mapViewController.arcGISMap = map;
-
-    // Set the ready state variable to true to enable the sample UI.
-    setState(() => _ready = true);
   }
 }
