@@ -8,8 +8,10 @@ environment:
   sdk: '>=3.12.1 <4.0.0'
 
 dependencies:
-  arcgis_maps: ^300.1.0
-  arcgis_maps_toolkit: ^300.1.0
+  arcgis_maps:
+    path: ../flutter/arcgis_maps
+  arcgis_maps_toolkit:
+    path: ../arcgis-maps-sdk-flutter-toolkit
   app_settings: ^7.0.0
   async: ^2.12.0
   build: ^2.4.2
@@ -17,7 +19,7 @@ dependencies:
   file_picker: ^12.0.0-beta.5
   flutter:
     sdk: flutter
-  flutter_archive: 6.0.4
+  flutter_archive: ^6.3.1
   flutter_localizations:
     sdk: flutter
   flutter_syntax_view: ^4.1.7
