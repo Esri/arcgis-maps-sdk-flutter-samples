@@ -8,9 +8,9 @@ environment:
   sdk: '>=3.12.1 <4.0.0'
 
 dependencies:
+  app_settings: ^7.0.0
   arcgis_maps: ^300.1.0
   arcgis_maps_toolkit: ^300.1.0
-  app_settings: ^7.0.0
   async: ^2.12.0
   build: ^2.4.2
   build_config: ^1.1.2
