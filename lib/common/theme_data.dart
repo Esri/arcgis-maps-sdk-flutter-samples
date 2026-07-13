@@ -48,7 +48,9 @@ ThemeData _buildTheme(ColorScheme colorScheme) {
       style: ElevatedButton.styleFrom(
         backgroundColor: colorScheme.primary,
         foregroundColor: colorScheme.onPrimary,
-        disabledBackgroundColor: colorScheme.onInverseSurface.withValues(alpha: 0.5),
+        disabledBackgroundColor: colorScheme.onInverseSurface.withValues(
+          alpha: 0.5,
+        ),
         disabledForegroundColor: colorScheme.onSurface.withValues(alpha: 0.65),
         elevation: 2,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
@@ -84,13 +86,8 @@ ThemeData _buildTheme(ColorScheme colorScheme) {
     popupMenuTheme: PopupMenuThemeData(
       color: colorScheme.surfaceContainerHigh,
       elevation: 6,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
-      textStyle: TextStyle(
-        color: colorScheme.onSurface,
-        fontSize: 14,
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      textStyle: TextStyle(color: colorScheme.onSurface, fontSize: 14),
     ),
 
     // Text selection theme (affects dropdown selected items).

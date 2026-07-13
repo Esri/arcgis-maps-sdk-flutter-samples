@@ -113,7 +113,7 @@ class _GenerateOfflineMapState extends State<GenerateOfflineMap>
                 progress: _progress != null ? _progress! / 100.0 : 0.0,
                 onCancel: () => _generateOfflineMapJob?.cancel(),
               ),
-            )
+            ),
           ],
         ),
       ),
