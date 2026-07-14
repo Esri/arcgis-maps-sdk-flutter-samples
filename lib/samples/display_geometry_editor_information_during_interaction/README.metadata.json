@@ -1,0 +1,43 @@
+{
+    "category": "Edit and Manage Data",
+    "description": "Use the geometry editor to see information about the geometry editor's previewed geometry during an editing interaction.",
+    "ignore": false,
+    "images": [
+        "display_geometry_editor_information_during_interaction.png"
+    ],
+    "keywords": [
+        "draw",
+        "edit",
+        "geometry editor",
+        "interaction preview",
+        "ArcGISMapViewController",
+        "Geometry",
+        "GeometryEditor",
+        "GeometryEditor.onCanRedoChanged",
+        "GeometryEditor.onCanUndoChanged",
+        "GeometryEditor.onInteractionPreviewChanged",
+        "GeometryEditorInteractionPreview",
+        "GeometryEditorInteractionType",
+        "Graphic",
+        "GraphicsOverlay",
+        "IdentifyGraphicsOverlayResult",
+        "InteractionConfiguration",
+        "VertexTool"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+        "Geometry",
+        "GeometryEditor",
+        "GeometryEditor.onCanRedoChanged",
+        "GeometryEditor.onCanUndoChanged",
+        "GeometryEditor.onInteractionPreviewChanged",
+        "GeometryEditorInteractionPreview",
+        "GeometryEditorInteractionType",
+        "Graphic",
+        "GraphicsOverlay"
+    ],
+    "snippets": [
+        "display_geometry_editor_information_during_interaction.dart"
+    ],
+    "title": "Display geometry editor information during interaction"
+}
