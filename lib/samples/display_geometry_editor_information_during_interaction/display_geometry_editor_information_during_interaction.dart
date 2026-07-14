@@ -41,8 +41,7 @@ class _DisplayGeometryEditorInformationDuringInteractionState
   final _graphicsOverlay = GraphicsOverlay();
 
   // Keep stream subscriptions so they can be cancelled when the sample closes.
-  final _subscriptions = <StreamSubscription<void>>[];
-
+  final _subscriptions = <StreamSubscription<dynamic>>[];
   // A flag for when the map view is ready and controls can be used.
   var _ready = false;
 
