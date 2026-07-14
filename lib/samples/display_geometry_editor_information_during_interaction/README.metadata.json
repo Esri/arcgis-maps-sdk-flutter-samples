@@ -10,7 +10,6 @@
         "edit",
         "geometry editor",
         "interaction preview",
-        "ArcGISMapViewController",
         "Geometry",
         "GeometryEditor",
         "GeometryEditor.onCanRedoChanged",
@@ -19,10 +18,7 @@
         "GeometryEditorInteractionPreview",
         "GeometryEditorInteractionType",
         "Graphic",
-        "GraphicsOverlay",
-        "IdentifyGraphicsOverlayResult",
-        "InteractionConfiguration",
-        "VertexTool"
+        "GraphicsOverlay"
     ],
     "redirect_from": [],
     "relevant_apis": [
