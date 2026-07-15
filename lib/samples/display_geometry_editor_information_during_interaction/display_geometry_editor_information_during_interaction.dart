@@ -76,30 +76,25 @@ class _DisplayGeometryEditorInformationDuringInteractionState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        top: false,
-        left: false,
-        right: false,
-        child: Stack(
-          children: [
-            Column(
-              children: [
-                Expanded(
-                  // Add a map view to the widget tree and set a controller.
-                  child: ArcGISMapView(
-                    controllerProvider: () => _mapViewController,
-                    onMapViewReady: onMapViewReady,
-                    onTap: onTap,
-                  ),
+      body: Stack(
+        children: [
+          Column(
+            children: [
+              Expanded(
+                // Add a map view to the widget tree and set a controller.
+                child: ArcGISMapView(
+                  controllerProvider: () => _mapViewController,
+                  onMapViewReady: onMapViewReady,
+                  onTap: onTap,
                 ),
-              ],
-            ),
-            // Display the editing controls over the map.
-            Positioned(top: 10, right: 10, child: buildEditingPanel(context)),
-            // Display a progress indicator and prevent interaction until state is ready.
-            LoadingIndicator(visible: !_ready),
-          ],
-        ),
+              ),
+            ],
+          ),
+          // Display the editing controls over the map.
+          Positioned(top: 10, right: 10, child: buildEditingPanel(context)),
+          // Display a progress indicator and prevent interaction until state is ready.
+          LoadingIndicator(visible: !_ready),
+        ],
       ),
     );
   }
@@ -409,12 +404,12 @@ class _DisplayGeometryEditorInformationDuringInteractionState
                   // Display information about the current interaction preview.
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
+                    spacing: 8,
                     children: [
                       Text(
                         _interactionPreviewDescription!,
                         style: Theme.of(context).textTheme.labelMedium,
                       ),
-                      const SizedBox(width: 8),
                       Expanded(
                         child: Text(
                           _interactionPreviewValue!,
