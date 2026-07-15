@@ -141,6 +141,7 @@ class _DisplayGeometryEditorInformationDuringInteractionState
         (canRedo) => setState(() => _geometryEditorCanRedo = canRedo),
       ),
     );
+    // Set the geometry editor to the map view controller.
     _mapViewController.geometryEditor = _geometryEditor;
 
     // Set the ready state variable to true to enable the sample UI.
