@@ -324,16 +324,6 @@ class _DisplayGeometryEditorInformationDuringInteractionState
     });
   }
 
-  void onUndo() {
-    // Undo the previous geometry editor action.
-    _geometryEditor.undo();
-  }
-
-  void onRedo() {
-    // Redo the previous undone geometry editor action.
-    _geometryEditor.redo();
-  }
-
   Widget buildEditingPanel(BuildContext context) {
     // Build a compact panel for editing actions and interaction feedback.
     return Card(
@@ -384,7 +374,9 @@ class _DisplayGeometryEditorInformationDuringInteractionState
                       child: Tooltip(
                         message: 'Undo',
                         child: ElevatedButton(
-                          onPressed: _geometryEditorCanUndo ? onUndo : null,
+                          onPressed: _geometryEditorCanUndo
+                              ? _geometryEditor.undo
+                              : null,
                           child: const Icon(Icons.undo),
                         ),
                       ),
@@ -393,7 +385,9 @@ class _DisplayGeometryEditorInformationDuringInteractionState
                       child: Tooltip(
                         message: 'Redo',
                         child: ElevatedButton(
-                          onPressed: _geometryEditorCanRedo ? onRedo : null,
+                          onPressed: _geometryEditorCanRedo
+                              ? _geometryEditor.redo
+                              : null,
                           child: const Icon(Icons.redo),
                         ),
                       ),
