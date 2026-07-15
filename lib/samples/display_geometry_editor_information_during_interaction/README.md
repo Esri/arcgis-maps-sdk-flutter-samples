@@ -33,8 +33,6 @@ Use the buttons in the settings view to undo or redo changes made to the geometr
 
 * Geometry
 * GeometryEditor
-* GeometryEditor.onCanRedoChanged
-* GeometryEditor.onCanUndoChanged
 * GeometryEditor.onInteractionPreviewChanged
 * GeometryEditorInteractionPreview
 * GeometryEditorInteractionType

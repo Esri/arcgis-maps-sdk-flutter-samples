@@ -12,8 +12,6 @@
         "interaction preview",
         "Geometry",
         "GeometryEditor",
-        "GeometryEditor.onCanRedoChanged",
-        "GeometryEditor.onCanUndoChanged",
         "GeometryEditor.onInteractionPreviewChanged",
         "GeometryEditorInteractionPreview",
         "GeometryEditorInteractionType",
@@ -24,8 +22,6 @@
     "relevant_apis": [
         "Geometry",
         "GeometryEditor",
-        "GeometryEditor.onCanRedoChanged",
-        "GeometryEditor.onCanUndoChanged",
         "GeometryEditor.onInteractionPreviewChanged",
         "GeometryEditorInteractionPreview",
         "GeometryEditorInteractionType",
