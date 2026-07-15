@@ -158,7 +158,6 @@ class _DisplayGeometryEditorInformationDuringInteractionState
       screenPoint: localPosition,
       tolerance: 12,
     );
-    if (!mounted) return;
     if (results.graphics.isEmpty) return;
 
     // Start editing the identified graphic's geometry.
