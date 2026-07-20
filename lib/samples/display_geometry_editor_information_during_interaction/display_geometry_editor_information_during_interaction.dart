@@ -111,7 +111,7 @@ class _DisplayGeometryEditorInformationDuringInteractionState
     // Set the initial viewpoint over the editable geometries.
     _mapViewController.setViewpoint(
       Viewpoint.fromJsonString('''
-{"rotation":0.0,"scale":17000,"targetGeometry":{"spatialReference":{"wkid":3857},"x":-13045202.018086127,"y":4035612.571361517}}
+{"rotation":0.0,"scale":35000,"targetGeometry":{"spatialReference":{"wkid":3857},"x":-13045202.018086127,"y":4035612.571361517}}
 '''),
     );
 
