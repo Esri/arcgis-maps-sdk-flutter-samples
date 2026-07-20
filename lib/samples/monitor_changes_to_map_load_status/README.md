@@ -1,8 +1,8 @@
 # Monitor changes to map load status
 
-Determine the map's load status which can be: `notLoaded`, `failed`, `loading`, `loaded`.
+Determine the map's load status which can be: `notLoaded`, `failedToLoad`, `loading`, `loaded`.
 
-![Image of monitor changes to map load status](monitor_changes_to_map_load_status.jpg)
+![Image of monitor changes to map load status](monitor_changes_to_map_load_status.png)
 
 ## Use case
 
@@ -17,14 +17,15 @@ Open the sample to load the map. The load status will be displayed on screen.
 The `LoadStatus` is `loaded` when any of the following criteria are met:
 
 * The map has a valid spatial reference.
-* The map has an an initial viewpoint.
+* The map has an initial viewpoint.
 * One of the map's predefined layers has been created.
 
 ## Relevant API
 
 * ArcGISMap
+* ArcGISMap.onLoadStatusChanged
 * ArcGISMapView
-* LoadStatusChangedListener/LoadStatusChanged signal
+* LoadStatus
 
 ## Tags
 
