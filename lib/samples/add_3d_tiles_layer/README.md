@@ -6,7 +6,7 @@ Add a layer to visualize 3D tiles data that conforms to the OGC 3D Tiles specifi
 
 ## Use case
 
-One possible use case could be is that when added to a scene, a 3D tiles layer can assist in performing visual analysis, such as an exploratory line of sight analysis. An exploratory [line of sight analysis](https://developers.arcgis.com/documentation/mapping-apis-and-services/spatial-analysis/tutorials/apis/display-a-line-of-sight/) can be used to assess whether a view is obstructed between an observer and a target.
+One possible use case is that, when added to a scene, a 3D tiles layer can assist in performing visual analysis, such as an exploratory line of sight analysis. An exploratory [line of sight analysis](https://developers.arcgis.com/documentation/mapping-apis-and-services/spatial-analysis/tutorials/apis/display-a-line-of-sight/) can be used to assess whether a view is obstructed between an observer and a target.
 
 ## How to use the sample
 
