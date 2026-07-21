@@ -72,12 +72,12 @@ class _Add3dTilesLayerState extends State<Add3dTilesLayer>
     scene.baseSurface.elevationSources.add(elevationSource);
 
     // Add 3D tiles to the scene.
-    final stuttgart3DtilesLayer = Ogc3DTilesLayer.withUri(
+    final stuttgart3Dtiles = Ogc3DTilesLayer.withUri(
       Uri.parse(
         'https://tiles.arcgis.com/tiles/ZQgQTuoyBrtmoGdP/arcgis/rest/services/Stuttgart/3DTilesServer/tileset.json',
       ),
     );
-    scene.operationalLayers.add(stuttgart3DtilesLayer);
+    scene.operationalLayers.add(stuttgart3Dtiles);
 
     return scene;
   }
