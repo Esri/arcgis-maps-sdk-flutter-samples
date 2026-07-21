@@ -75,7 +75,6 @@ class _MonitorChangesToMapLoadStatusState
 
   // Updates the displayed map load status based on the current load state.
   void updateMapStatus(LoadStatus status) {
-    if (!mounted) return;
     setState(() {
       _mapLoadStatus = switch (status) {
         LoadStatus.notLoaded => 'Not Loaded',
@@ -92,18 +91,12 @@ class _MonitorChangesToMapLoadStatusState
     final map = ArcGISMap.withBasemapStyle(.arcGISImagery);
 
     // Monitor changes to the map's load status.
-    _loadStatusSubscription?.cancel().ignore();
     _loadStatusSubscription = map.onLoadStatusChanged.listen(updateMapStatus);
 
     // Set the map to the map view controller.
     _mapViewController.arcGISMap = map;
 
-    // Trigger the load (the listener will update the UI as status changes).
-    try {
-      await map.load();
-    } on Exception catch (_) {
-      // Fallback in case an exception occurs before failed status is emitted.
-      updateMapStatus(LoadStatus.failedToLoad);
-    }
+    // Load the map.
+    await map.load();
   }
 }
