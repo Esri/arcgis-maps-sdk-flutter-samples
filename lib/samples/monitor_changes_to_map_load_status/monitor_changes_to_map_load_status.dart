@@ -36,7 +36,7 @@ class _MonitorChangesToMapLoadStatusState
   StreamSubscription<LoadStatus>? _loadStatusSubscription;
 
   // A variable indicating the load status of the map.
-  var _mapLoadStatus = '';
+  var _mapLoadStatus = 'Unknown';
 
   @override
   Widget build(BuildContext context) {
@@ -86,17 +86,14 @@ class _MonitorChangesToMapLoadStatusState
     });
   }
 
-  Future<void> onMapViewReady() async {
+  void onMapViewReady() {
     // Create a map with an imagery basemap style
     final map = ArcGISMap.withBasemapStyle(.arcGISImagery);
-
-    // Monitor changes to the map's load status.
-    _loadStatusSubscription = map.onLoadStatusChanged.listen(updateMapStatus);
 
     // Set the map to the map view controller.
     _mapViewController.arcGISMap = map;
 
-    // Load the map.
-    await map.load();
+    // Monitor changes to the map's load status.
+    _loadStatusSubscription = map.onLoadStatusChanged.listen(updateMapStatus);
   }
 }
