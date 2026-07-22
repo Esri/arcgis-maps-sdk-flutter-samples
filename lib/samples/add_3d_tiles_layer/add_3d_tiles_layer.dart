@@ -46,7 +46,7 @@ class _Add3dTilesLayerState extends State<Add3dTilesLayer>
   }
 
   ArcGISScene _setupScene() {
-    // Create a Scene with the ArcGIS DarkGrayBase basemap style.
+    // Create a Scene with the ArcGIS DarkGray basemap style.
     final scene = ArcGISScene.withBasemapStyle(BasemapStyle.arcGISDarkGray);
 
     // Set the scene's initial viewpoint.
