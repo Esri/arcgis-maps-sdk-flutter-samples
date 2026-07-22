@@ -40,7 +40,7 @@ class _Add3dTilesLayerState extends State<Add3dTilesLayer>
     );
   }
 
-  Future<void> onSceneViewReady() async {
+  void onSceneViewReady() {
     // Add the scene to the view controller.
     _sceneViewController.arcGISScene = _setupScene();
   }
