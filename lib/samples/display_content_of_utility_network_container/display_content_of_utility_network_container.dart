@@ -103,20 +103,7 @@ class _DisplayContentOfUtilityNetworkContainerState
                 // Add a banner to show the results of the identify operation.
                 Visibility(
                   visible: _message.isNotEmpty,
-                  child: Container(
-                    padding: const EdgeInsets.all(5),
-                    color: Colors.grey[400],
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          _message,
-                          textAlign: TextAlign.center,
-                          style: Theme.of(context).textTheme.labelMedium,
-                        ),
-                      ],
-                    ),
-                  ),
+                  child: MapBanner(text: _message),
                 ),
                 Expanded(
                   // Add a map view to the widget tree and set a controller.
