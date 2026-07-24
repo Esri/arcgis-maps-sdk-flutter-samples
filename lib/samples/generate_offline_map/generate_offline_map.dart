@@ -108,10 +108,12 @@ class _GenerateOfflineMapState extends State<GenerateOfflineMap>
             // Display a progress indicator and a cancel button during the offline map generation.
             Visibility(
               visible: _progress != null,
-              child: DownloadProgressCard(
-                title: 'Generating Offline Map',
-                progress: _progress != null ? _progress! / 100.0 : 0.0,
-                onCancel: () => _generateOfflineMapJob?.cancel(),
+              child: Center(
+                child: DownloadProgressCard(
+                  title: 'Generating Offline Map',
+                  progress: _progress != null ? _progress! / 100.0 : 0.0,
+                  onCancel: () => _generateOfflineMapJob?.cancel(),
+                ),
               ),
             ),
           ],

@@ -162,14 +162,16 @@ class _GenerateGeodatabaseReplicaFromFeatureServiceState
             // Display a progress indicator and a cancel button during generation.
             Visibility(
               visible: _progress != null,
-              child: DownloadProgressCard(
-                title: 'Creating geodatabase',
-                progress: _progress ?? 0,
-                onCancel: () {
-                  // Cancel the active generate geodatabase job.
-                  _generateGeodatabaseJob?.cancel().ignore();
-                },
-                cancelLabel: 'Cancel Job',
+              child: Center(
+                child: DownloadProgressCard(
+                  title: 'Creating geodatabase',
+                  progress: _progress ?? 0,
+                  onCancel: () {
+                    // Cancel the active generate geodatabase job.
+                    _generateGeodatabaseJob?.cancel().ignore();
+                  },
+                  cancelLabel: 'Cancel Job',
+                ),
               ),
             ),
           ],
