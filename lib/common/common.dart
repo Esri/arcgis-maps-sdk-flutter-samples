@@ -20,6 +20,7 @@ export 'dialogs.dart';
 export 'download_util.dart';
 export 'feature_popup_view.dart';
 export 'loading_indicator.dart';
+export 'map_banner.dart';
 export 'sample_state_support.dart';
 export 'swatch_image.dart';
 export 'theme_data.dart';
