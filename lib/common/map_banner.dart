@@ -29,7 +29,7 @@ class MapBanner extends StatelessWidget {
       child: IgnorePointer(
         child: Container(
           padding: const EdgeInsets.all(10),
-          color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.7),
+          color: ColorScheme.of(context).surface.withValues(alpha: 0.7),
           child: Row(
             mainAxisAlignment: .center,
             children: [
@@ -37,7 +37,7 @@ class MapBanner extends StatelessWidget {
                 child: Text(
                   text,
                   textAlign: .center,
-                  style: Theme.of(context).textTheme.labelMedium,
+                  style: TextTheme.of(context).labelMedium,
                   maxLines: 4,
                   overflow: .ellipsis,
                 ),

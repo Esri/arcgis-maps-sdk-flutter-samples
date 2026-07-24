@@ -49,37 +49,21 @@ class _ShowExploratoryViewshedFromGeoelementInSceneState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        top: false,
-        left: false,
-        right: false,
-        child: Stack(
-          children: [
-            // Add a scene view to the widget tree and set a controller.
-            ArcGISSceneView(
-              controllerProvider: () => _sceneViewController,
-              onSceneViewReady: onSceneViewReady,
-              onTap: onTap,
-            ),
-            // Display a progress indicator and prevent interaction until state is ready.
-            LoadingIndicator(visible: !_ready),
-            // Banner at the top.
-            SafeArea(
-              child: IgnorePointer(
-                child: Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(10),
-                  color: Colors.black.withValues(alpha: 0.5),
-                  child: const Text(
-                    'Tap on the map to move the tank and update the viewshed.',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(color: Colors.white, fontSize: 16),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
+      body: Stack(
+        children: [
+          // Add a scene view to the widget tree and set a controller.
+          ArcGISSceneView(
+            controllerProvider: () => _sceneViewController,
+            onSceneViewReady: onSceneViewReady,
+            onTap: onTap,
+          ),
+          // Display a progress indicator and prevent interaction until state is ready.
+          LoadingIndicator(visible: !_ready),
+          // Banner at the top.
+          const MapBanner(
+            text: 'Tap on the map to move the tank and update the viewshed.',
+          ),
+        ],
       ),
     );
   }
