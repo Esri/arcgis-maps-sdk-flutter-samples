@@ -46,26 +46,9 @@ class _IdentifyLayerFeaturesState extends State<IdentifyLayerFeatures>
             onTap: onTap,
           ),
           // Add a banner to show the results of the identify operation.
-          SafeArea(
-            child: IgnorePointer(
-              child: Visibility(
-                visible: _message.isNotEmpty,
-                child: Container(
-                  padding: const EdgeInsets.all(10),
-                  color: Colors.black.withValues(alpha: 0.7),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        _message,
-                        textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.customWhiteStyle,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
+          Visibility(
+            visible: _message.isNotEmpty,
+            child: MapBanner(text: _message),
           ),
           // Display a progress indicator and prevent interaction until state is ready.
           LoadingIndicator(visible: !_ready),

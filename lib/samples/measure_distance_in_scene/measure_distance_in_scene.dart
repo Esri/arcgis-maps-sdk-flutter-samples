@@ -123,26 +123,7 @@ class _MeasureDistanceInSceneState extends State<MeasureDistanceInScene>
               ],
             ),
             // Display a banner with instructions at the top.
-            SafeArea(
-              left: false,
-              right: false,
-              child: IgnorePointer(
-                child: Container(
-                  padding: const EdgeInsets.all(10),
-                  color: Colors.white.withValues(alpha: 0.7),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        _measurementState.instructions,
-                        textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.labelMedium,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
+            MapBanner(text: _measurementState.instructions),
             // Display a progress indicator and prevent interaction until state is ready.
             LoadingIndicator(visible: !_ready),
           ],

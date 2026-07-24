@@ -114,37 +114,13 @@ class _AddDynamicEntityLayerState extends State<AddDynamicEntityLayer>
             LoadingIndicator(visible: !_ready),
             // Display a banner with the current status at the top.
             if (_streamService != null)
-              SafeArea(
-                child: IgnorePointer(
-                  child: Container(
-                    padding: const EdgeInsets.all(10),
-                    color: Colors.black.withValues(alpha: 0.7),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Expanded(
-                          child: StreamBuilder<ConnectionStatus>(
-                            stream: _streamService!.onConnectionStatusChanged,
-                            initialData: _streamService!.connectionStatus,
-                            builder: (context, snapshot) {
-                              final status =
-                                  snapshot.data ??
-                                  ConnectionStatus.disconnected;
-                              return Text(
-                                'Status: ${status.label}',
-                                softWrap: true,
-                                textAlign: TextAlign.center,
-                                style: Theme.of(
-                                  context,
-                                ).textTheme.customWhiteStyle,
-                              );
-                            },
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
+              StreamBuilder(
+                stream: _streamService!.onConnectionStatusChanged,
+                initialData: _streamService!.connectionStatus,
+                builder: (context, snapshot) {
+                  final status = snapshot.data ?? .disconnected;
+                  return MapBanner(text: 'Status: ${status.label}');
+                },
               ),
           ],
         ),

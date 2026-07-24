@@ -87,20 +87,7 @@ class _DownloadPreplannedMapAreaState extends State<DownloadPreplannedMapArea>
               ],
             ),
             // Display the name of the current map.
-            Container(
-              padding: const EdgeInsets.all(10),
-              color: Colors.black.withValues(alpha: 0.7),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    _title,
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.customWhiteStyle,
-                  ),
-                ],
-              ),
-            ),
+            MapBanner(text: _title),
             // Display a progress indicator and prevent interaction until state is ready.
             LoadingIndicator(visible: !_ready),
           ],

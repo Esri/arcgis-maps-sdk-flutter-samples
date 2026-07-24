@@ -111,24 +111,7 @@ class _CreateBuffersAroundPointsState extends State<CreateBuffersAroundPoints>
             // Display a progress indicator and prevent interaction until state is ready.
             LoadingIndicator(visible: !_ready),
             // Display a banner with instructions at the top.
-            SafeArea(
-              child: IgnorePointer(
-                child: Container(
-                  padding: const EdgeInsets.all(10),
-                  color: Colors.white.withValues(alpha: 0.7),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        _status.label,
-                        textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.labelMedium,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
+            MapBanner(text: _status.label),
           ],
         ),
       ),
