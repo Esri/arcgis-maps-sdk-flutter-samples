@@ -54,12 +54,12 @@ class _ShowCalloutState extends State<ShowCallout> with SampleStateSupport {
     if (mapPoint == null) return;
 
     // Project the tapped point to WGS84 for coordinate formatting.
-    final tapLocation =
-        GeometryEngine.project(
-              mapPoint,
-              outputSpatialReference: SpatialReference.wgs84,
-            )
-            as ArcGISPoint;
+    final projected = GeometryEngine.project(
+      mapPoint,
+      outputSpatialReference: SpatialReference.wgs84,
+    );
+    if (projected is! ArcGISPoint) return;
+    final tapLocation = projected;
 
     // Format the coordinates using the CoordinateFormatter.toLatitudeLongitude.
     final coordinateText = CoordinateFormatter.toLatitudeLongitude(
@@ -73,6 +73,7 @@ class _ShowCalloutState extends State<ShowCallout> with SampleStateSupport {
       mapPoint,
       title: 'Location',
       detail: coordinateText,
+      style: ThemedCalloutStyle.themed(context),
     );
   }
 }

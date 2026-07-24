@@ -17,7 +17,7 @@ Tap anywhere on the map. A callout showing the WGS84 coordinates for the tapped 
 1. Create an `ArcGISMap` and set it on an `ArcGISMapView`.
 2. Configure an `onTap` event handler on the `ArcGISMapView`.
 3. Project the tapped location to WGS84 using `GeometryEngine.project`.
-4. Display the tapped location’s coordinates in a callout with `Callout.showAt`.
+4. Display the tapped location’s coordinates in a callout with `ArcGISMapViewController.callout.showAt`.
 
 ## Relevant API
 
