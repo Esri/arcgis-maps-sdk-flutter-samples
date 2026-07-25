@@ -41,27 +41,16 @@ class _MonitorChangesToMapLoadStatusState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: Stack(
-          children: [
-            // Add a map view to the widget tree and set a controller.
-            ArcGISMapView(
-              controllerProvider: () => _mapViewController,
-              onMapViewReady: onMapViewReady,
-            ),
-            // Display the status of the current map.
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(10),
-              color: Colors.black.withValues(alpha: 0.7),
-              child: Text(
-                'Load Status: $_mapLoadStatus',
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.customWhiteStyle,
-              ),
-            ),
-          ],
-        ),
+      body: Stack(
+        children: [
+          // Add a map view to the widget tree and set a controller.
+          ArcGISMapView(
+            controllerProvider: () => _mapViewController,
+            onMapViewReady: onMapViewReady,
+          ),
+          // Display the status of the current map.
+          MapBanner(text: 'Load Status: $_mapLoadStatus'),
+        ],
       ),
     );
   }
