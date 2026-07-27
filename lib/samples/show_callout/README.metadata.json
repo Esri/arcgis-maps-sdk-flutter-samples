@@ -1,0 +1,31 @@
+{
+    "category": "Maps",
+    "description": "Show a callout with the latitude and longitude of user-tapped points.",
+    "ignore": false,
+    "images": [
+        "show_callout.png"
+    ],
+    "keywords": [
+        "balloon",
+        "bubble",
+        "callout",
+        "flyout",
+        "flyover",
+        "info window",
+        "popup",
+        "tap",
+        "ArcGISMapView",
+        "ArcGISMapViewController.callout",
+        "GeometryEngine.project"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+        "ArcGISMapView",
+        "ArcGISMapViewController.callout",
+        "GeometryEngine.project"        
+    ],
+    "snippets": [
+        "show_callout.dart"
+    ],
+    "title": "Show callout"
+}
