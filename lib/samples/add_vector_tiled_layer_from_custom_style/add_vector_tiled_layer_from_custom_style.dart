@@ -31,13 +31,8 @@ class AddVectorTiledLayerFromCustomStyle extends StatefulWidget {
 class _AddVectorTiledLayerFromCustomStyleState
     extends State<AddVectorTiledLayerFromCustomStyle>
     with SampleStateSupport {
-  // Create a controller for the map view.
-  final _mapViewController = ArcGISMapView.createController();
-  // Cache style layers to avoid recreating them for repeated selections.
-  final _vectorTiledLayers = <String, ArcGISVectorTiledLayer>{};
-
   // Keep the online style labels and associated ArcGIS Online item IDs.
-  static const _onlineStyles = <String, String>{
+  static const _onlineStyles = {
     'Default': '1349bfa0ed08485d8a92c442a3850b06',
     'Style 1': 'bd8ac41667014d98b933e97713ba8377',
     'Style 2': '02f85ec376084c508b9c8e5a311724fa',
@@ -45,25 +40,54 @@ class _AddVectorTiledLayerFromCustomStyleState
   };
 
   // Keep the offline style labels and associated ArcGIS Online item IDs.
-  static const _offlineStyles = <String, String>{
+  static const _offlineStyles = {
     'Light': 'e01262ef2a4f4d91897d9bbd3a9b1075',
     'Dark': 'ce8a34e5d4ca4fa193a097511daa8855',
   };
 
+  // Create a controller for the map view.
+  final _mapViewController = ArcGISMapView.createController();
+
   // Track the selected style label.
   var _selectedStyleLabel = 'Default';
 
-  // Store the URI of the downloaded local vector tile package.
-  Uri? _vtpkUri;
+  // Cache style layers to avoid recreating them for repeated selections.
+  final _vectorTiledLayers = <String, ArcGISVectorTiledLayer>{};
+
+  // The URI of the downloaded local vector tile package.
+  late Uri _vtpkUri;
 
   // Keep a temporary folder for exported style resources.
-  late final Uri _temporaryDirectoryUri;
+  late Uri _temporaryDirectoryUri;
 
-  // Track whether initial setup has completed.
+  // A flag for when the map view is ready and controls can be used.
   var _ready = false;
 
-  // Track whether style loading work is in progress.
-  var _isBusy = false;
+  @override
+  void initState() {
+    // Resolve the local vector tile package from downloadable resources.
+    final listPaths = GoRouter.of(context).state.extra! as List<String>;
+    _vtpkUri = Uri.file(listPaths.first);
+
+    // Create a temporary directory for exported style resources.
+    final temporaryDirectory = Directory.systemTemp.createTempSync(
+      'add_vector_tiled_layer_from_custom_style_',
+    );
+    _temporaryDirectoryUri = temporaryDirectory.uri;
+
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    // Remove temporary exported resources when the sample is disposed.
+    final directory = Directory.fromUri(_temporaryDirectoryUri);
+    if (directory.existsSync()) {
+      directory.deleteSync(recursive: true);
+    }
+
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -77,32 +101,27 @@ class _AddVectorTiledLayerFromCustomStyleState
             Column(
               children: [
                 Expanded(
-                  // Add the map view and connect lifecycle callbacks.
+                  // Add a map view to the widget tree and set a controller.
                   child: ArcGISMapView(
                     controllerProvider: () => _mapViewController,
-                    onMapViewReady: _onMapViewReady,
+                    onMapViewReady: onMapViewReady,
                   ),
                 ),
                 // Add a style picker to switch between online and offline styles.
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text('Style'),
-                    const SizedBox(width: 12),
-                    DropdownButton<String>(
+                    DropdownButton(
                       value: _selectedStyleLabel,
-                      onChanged: (_ready && !_isBusy)
-                          ? (value) {
-                              if (value == null ||
-                                  value == _selectedStyleLabel) {
-                                return;
-                              }
-                              _applyStyleSelection(value).ignore();
-                            }
-                          : null,
+                      onChanged: (value) {
+                        if (value == null || value == _selectedStyleLabel) {
+                          return;
+                        }
+                        _applyStyleSelection(value).ignore();
+                      },
                       items: [..._onlineStyles.keys, ..._offlineStyles.keys]
                           .map((label) {
-                            return DropdownMenuItem<String>(
+                            return DropdownMenuItem(
                               value: label,
                               child: Text(label),
                             );
@@ -113,47 +132,19 @@ class _AddVectorTiledLayerFromCustomStyleState
                 ),
               ],
             ),
-            // Display a progress indicator while setup or style loading runs.
-            LoadingIndicator(visible: !_ready || _isBusy),
+            // Display a progress indicator and prevent interaction until state is ready.
+            LoadingIndicator(visible: !_ready),
           ],
         ),
       ),
     );
   }
 
-  @override
-  void dispose() {
-    // Remove temporary exported resources when the sample is disposed.
-    final directory = Directory.fromUri(_temporaryDirectoryUri);
-    if (directory.existsSync()) {
-      directory.deleteSync(recursive: true);
-    }
-    super.dispose();
-  }
-
-  Future<void> _onMapViewReady() async {
-    // Create a temporary directory for exported style resources.
-    final temporaryDirectory = Directory.systemTemp.createTempSync(
-      'add_vector_tiled_layer_from_custom_style_',
-    );
-    _temporaryDirectoryUri = temporaryDirectory.uri;
-
-    // Resolve the local vector tile package from downloadable resources.
-    final listPaths = GoRouter.of(context).state.extra as List<String>?;
-    if (listPaths == null || listPaths.isEmpty) {
-      showMessageDialog(
-        'The required offline vector tile package is unavailable.',
-        title: 'Missing Data',
-      );
-      return;
-    }
-    _vtpkUri = Uri.file(listPaths.first);
-
+  Future<void> onMapViewReady() async {
     // Create an empty map and set it on the map view.
-    final map = ArcGISMap();
-    _mapViewController.arcGISMap = map;
+    _mapViewController.arcGISMap = ArcGISMap();
 
-    // Apply the default style when the map view is ready.
+    // Apply the default style.
     await _applyStyleSelection(_selectedStyleLabel);
 
     // Mark setup complete so the style picker can be used.
@@ -161,24 +152,25 @@ class _AddVectorTiledLayerFromCustomStyleState
   }
 
   Future<void> _applyStyleSelection(String styleLabel) async {
-    // Block interactions while creating or loading the selected style.
+    // Block interactions while loading the selected style.
     setState(() {
-      _isBusy = true;
+      _ready = false;
       _selectedStyleLabel = styleLabel;
     });
 
     try {
-      // Get a cached layer or create and cache one.
+      // Get the cached layer or create a new one.
       final layer =
           _vectorTiledLayers[styleLabel] ??
           await _createAndCacheVectorTiledLayer(styleLabel);
 
       // Create and apply a basemap from the selected vector tiled layer.
       final basemap = Basemap.withBaseLayer(layer);
-      _mapViewController.arcGISMap?.basemap = basemap;
+      _mapViewController.arcGISMap!.basemap = basemap;
 
       // Apply a viewpoint that matches the selected style type.
       if (_offlineStyles.containsKey(styleLabel)) {
+        // Offline - use a viewpoint over Dodge City, KS.
         _mapViewController.setViewpoint(
           Viewpoint.withLatLongScale(
             latitude: 37.76528,
@@ -187,13 +179,11 @@ class _AddVectorTiledLayerFromCustomStyleState
           ),
         );
       } else {
+        // Online - use a viewpoint over Europe and Africa.
         _mapViewController.setViewpoint(
-          Viewpoint.fromCenter(
-            ArcGISPoint(
-              x: 1990591.559979,
-              y: 794036.007991,
-              spatialReference: SpatialReference.webMercator,
-            ),
+          Viewpoint.withLatLongScale(
+            latitude: 28.53345,
+            longitude: 17.56488,
             scale: 100000000,
           ),
         );
@@ -206,7 +196,7 @@ class _AddVectorTiledLayerFromCustomStyleState
       showMessageDialog(e.toString(), title: 'Error');
     } finally {
       // Re-enable interactions after style work completes.
-      setState(() => _isBusy = false);
+      setState(() => _ready = true);
     }
   }
 
@@ -221,7 +211,7 @@ class _AddVectorTiledLayerFromCustomStyleState
       layer = await _createOfflineVectorTiledLayer(_offlineStyles[styleLabel]!);
     }
 
-    // Load the layer before assigning it to a map.
+    // Load the layer before assigning it to the map.
     await layer.load();
 
     // Cache the layer for later reuse.
@@ -243,12 +233,6 @@ class _AddVectorTiledLayerFromCustomStyleState
   Future<ArcGISVectorTiledLayer> _createOfflineVectorTiledLayer(
     String styleItemId,
   ) async {
-    // Read the local vector tile package URI provided by downloadable resources.
-    final vtpkUri = _vtpkUri;
-    if (vtpkUri == null) {
-      throw Exception('The local vector tile package is not available.');
-    }
-
     // Create a portal item and export task for the selected style item.
     final portalItem = PortalItem.withPortalAndItemId(
       portal: Portal.arcGISOnline(),
@@ -272,7 +256,7 @@ class _AddVectorTiledLayerFromCustomStyleState
     }
 
     // Create a vector tile cache from the downloaded local package.
-    final vectorTileCache = VectorTileCache(fileUri: vtpkUri);
+    final vectorTileCache = VectorTileCache(fileUri: _vtpkUri);
 
     // Create a vector tiled layer from tile and style caches.
     return ArcGISVectorTiledLayer.withVectorTileCache(
