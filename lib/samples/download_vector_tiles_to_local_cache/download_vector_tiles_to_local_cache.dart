@@ -321,11 +321,13 @@ class _DownloadVectorTilesToLocalCacheState
 
   // Return a Widget with a linear progress bar.
   Widget buildProgressIndicator() {
-    return DownloadProgressCard(
-      title: 'Downloading...',
-      progress: _progress,
-      onCancel: cancelDownloadingJob,
-      cancelLabel: 'Cancel Job',
+    return Center(
+      child: DownloadProgressCard(
+        title: 'Downloading...',
+        progress: _progress,
+        onCancel: cancelDownloadingJob,
+        cancelLabel: 'Cancel Job',
+      ),
     );
   }
 }
