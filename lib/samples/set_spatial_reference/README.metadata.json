@@ -1,0 +1,34 @@
+{
+    "category": "Maps",
+    "description": "Specify a map's spatial reference.",
+    "ignore": false,
+    "images": [
+        "set_spatial_reference.png"
+    ],
+    "keywords": [
+        "WGS84",
+        "WKID",
+        "Web Mercator",
+        "coordinate system",
+        "project",
+        "projection",
+        "spatial reference",
+        "ArcGISMap",
+        "ArcGISMapImageLayer",
+        "ArcGISMapView",
+        "Basemap",
+        "SpatialReference"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+        "ArcGISMap",
+        "ArcGISMapImageLayer",
+        "ArcGISMapView",
+        "Basemap",
+        "SpatialReference"
+    ],
+    "snippets": [
+        "set_spatial_reference.dart"
+    ],
+    "title": "Set spatial reference"
+}
