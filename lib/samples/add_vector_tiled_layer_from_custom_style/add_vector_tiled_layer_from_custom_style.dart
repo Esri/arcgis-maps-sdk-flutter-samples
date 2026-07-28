@@ -108,27 +108,21 @@ class _AddVectorTiledLayerFromCustomStyleState
                   ),
                 ),
                 // Add a style picker to switch between online and offline styles.
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    DropdownButton(
-                      value: _selectedStyleLabel,
-                      onChanged: (value) {
-                        if (value == null || value == _selectedStyleLabel) {
-                          return;
-                        }
-                        _applyStyleSelection(value).ignore();
-                      },
-                      items: [..._onlineStyles.keys, ..._offlineStyles.keys]
-                          .map((label) {
-                            return DropdownMenuItem(
-                              value: label,
-                              child: Text(label),
-                            );
-                          })
-                          .toList(),
-                    ),
-                  ],
+                Center(
+                  child: DropdownButton(
+                    value: _selectedStyleLabel,
+                    onChanged: (value) {
+                      if (value == null || value == _selectedStyleLabel) {
+                        return;
+                      }
+                      _applyStyleSelection(value).ignore();
+                    },
+                    items: [..._onlineStyles.keys, ..._offlineStyles.keys].map((
+                      label,
+                    ) {
+                      return DropdownMenuItem(value: label, child: Text(label));
+                    }).toList(),
+                  ),
                 ),
               ],
             ),
