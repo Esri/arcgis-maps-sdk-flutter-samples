@@ -10,7 +10,7 @@ Choosing the correct spatial reference is important for ensuring accurate projec
 
 ## How to use the sample
 
-Pan and zoom around the map. Observe how the map is displayed in the World Bonne spatial reference. Pick a different spatial reference and see the map reproject.
+ Pan and zoom around the map. Observe how the map is displayed in the World Bonne spatial reference. Pick a different spatial reference and see the map reprojected.
 
 ## How it works
 
@@ -40,7 +40,7 @@ Operational layers will automatically project to this spatial reference when pos
 
 * Reprojected on device (on-the-fly reprojection), such as a `FeatureLayer` created from a mobile geodatabase
 * Reprojected from the service, such as an `ArcGISMapImageLayer`
-* Not able to reproject, such as an `ArcGISTiledLayer` with defined spatial reference in its tile cache. These layer might be able to reproject in a future update.
+* Not able to reproject, such as an `ArcGISTiledLayer` with defined spatial reference in its tile cache. These layers might be able to reproject in a future update.
 
 For more information, check out the API reference doc for `setSpatialReference` method.
 

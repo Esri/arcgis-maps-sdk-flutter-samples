@@ -42,7 +42,7 @@ class _SetSpatialReferenceState extends State<SetSpatialReference>
   void initState() {
     super.initState();
 
-    // Add spatial references to the dropdown menu.2
+    // Add spatial references to the dropdown menu.
     _spatialReferences.addAll([
       DropdownMenuEntry(
         value: SpatialReference(wkid: 102299),
@@ -103,30 +103,27 @@ class _SetSpatialReferenceState extends State<SetSpatialReference>
                     onMapViewReady: onMapViewReady,
                   ),
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    // A dropdown button to select the spatial reference.
-                    DropdownMenu(
-                      dropdownMenuEntries: _spatialReferences,
-                      textAlign: TextAlign.center,
-                      onSelected: (spatialReference) {
-                        // Return if no spatial reference was selected.
-                        if (spatialReference == null) return;
+                Center(
+                  // A dropdown button to select the spatial reference.
+                  child: DropdownMenu(
+                    dropdownMenuEntries: _spatialReferences,
+                    textAlign: TextAlign.center,
+                    onSelected: (spatialReference) {
+                      // Return if no spatial reference was selected.
+                      if (spatialReference == null) return;
 
-                        // Update the selected spatial reference.
-                        setState(() {
-                          _selectedSpatialReference = spatialReference;
-                        });
+                      // Update the selected spatial reference.
+                      setState(() {
+                        _selectedSpatialReference = spatialReference;
+                      });
 
-                        // Set the map's spatial reference to the selected value.
-                        _mapViewController.arcGISMap?.setSpatialReference(
-                          spatialReference,
-                        );
-                      },
-                      initialSelection: _selectedSpatialReference,
-                    ),
-                  ],
+                      // Set the map's spatial reference to the selected value.
+                      _mapViewController.arcGISMap?.setSpatialReference(
+                        spatialReference,
+                      );
+                    },
+                    initialSelection: _selectedSpatialReference,
+                  ),
                 ),
               ],
             ),
@@ -149,7 +146,7 @@ class _SetSpatialReferenceState extends State<SetSpatialReference>
       ),
     );
 
-    // Create a basemap from the map image layer.15
+    // Create a basemap from the map image layer.
     map.basemap = Basemap.withBaseLayer(mapImageLayer);
 
     // Set the map to the map view controller.
