@@ -595,6 +595,7 @@ class _Animate3dGraphicState extends State<Animate3dGraphic>
   void _showCameraSettings() {
     showModalBottomSheet<void>(
       context: context,
+      isScrollControlled: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
@@ -603,69 +604,76 @@ class _Animate3dGraphicState extends State<Animate3dGraphic>
           builder: (context, setModalState) {
             return Padding(
               padding: bottomSheetPadding(context),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    'Camera Settings',
-                    style: Theme.of(context).textTheme.titleLarge,
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxHeight: MediaQuery.sizeOf(context).height * 0.8,
+                ),
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        'Camera Settings',
+                        style: Theme.of(context).textTheme.titleLarge,
+                      ),
+                      const SizedBox(height: 16),
+                      _buildSlider(
+                        label: 'Distance',
+                        value: _cameraDistance,
+                        min: 500,
+                        max: 8000,
+                        onChanged: (value) {
+                          setModalState(() => _cameraDistance = value);
+                          _cameraController.cameraDistance = value;
+                        },
+                      ),
+                      _buildSlider(
+                        label: 'Heading Offset',
+                        value: _cameraHeading,
+                        min: -180,
+                        max: 180,
+                        onChanged: (value) {
+                          setModalState(() => _cameraHeading = value);
+                          _cameraController.cameraHeadingOffset = value;
+                        },
+                      ),
+                      _buildSlider(
+                        label: 'Pitch Offset',
+                        value: _cameraPitch,
+                        min: 0,
+                        max: 180,
+                        onChanged: (value) {
+                          setModalState(() => _cameraPitch = value);
+                          _cameraController.cameraPitchOffset = value;
+                        },
+                      ),
+                      SwitchListTile(
+                        title: const Text('Auto Heading'),
+                        value: _autoHeading,
+                        onChanged: (value) {
+                          setModalState(() => _autoHeading = value);
+                          _cameraController.isAutoHeadingEnabled = value;
+                        },
+                      ),
+                      SwitchListTile(
+                        title: const Text('Auto Pitch'),
+                        value: _autoPitch,
+                        onChanged: (value) {
+                          setModalState(() => _autoPitch = value);
+                          _cameraController.isAutoPitchEnabled = value;
+                        },
+                      ),
+                      SwitchListTile(
+                        title: const Text('Auto Roll'),
+                        value: _autoRoll,
+                        onChanged: (value) {
+                          setModalState(() => _autoRoll = value);
+                          _cameraController.isAutoRollEnabled = value;
+                        },
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 16),
-                  _buildSlider(
-                    label: 'Distance',
-                    value: _cameraDistance,
-                    min: 500,
-                    max: 8000,
-                    onChanged: (value) {
-                      setModalState(() => _cameraDistance = value);
-                      _cameraController.cameraDistance = value;
-                    },
-                  ),
-                  _buildSlider(
-                    label: 'Heading Offset',
-                    value: _cameraHeading,
-                    min: -180,
-                    max: 180,
-                    onChanged: (value) {
-                      setModalState(() => _cameraHeading = value);
-                      _cameraController.cameraHeadingOffset = value;
-                    },
-                  ),
-                  _buildSlider(
-                    label: 'Pitch Offset',
-                    value: _cameraPitch,
-                    min: 0,
-                    max: 180,
-                    onChanged: (value) {
-                      setModalState(() => _cameraPitch = value);
-                      _cameraController.cameraPitchOffset = value;
-                    },
-                  ),
-                  SwitchListTile(
-                    title: const Text('Auto Heading'),
-                    value: _autoHeading,
-                    onChanged: (value) {
-                      setModalState(() => _autoHeading = value);
-                      _cameraController.isAutoHeadingEnabled = value;
-                    },
-                  ),
-                  SwitchListTile(
-                    title: const Text('Auto Pitch'),
-                    value: _autoPitch,
-                    onChanged: (value) {
-                      setModalState(() => _autoPitch = value);
-                      _cameraController.isAutoPitchEnabled = value;
-                    },
-                  ),
-                  SwitchListTile(
-                    title: const Text('Auto Roll'),
-                    value: _autoRoll,
-                    onChanged: (value) {
-                      setModalState(() => _autoRoll = value);
-                      _cameraController.isAutoRollEnabled = value;
-                    },
-                  ),
-                ],
+                ),
               ),
             );
           },
