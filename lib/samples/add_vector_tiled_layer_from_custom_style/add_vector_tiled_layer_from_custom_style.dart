@@ -159,8 +159,8 @@ class _AddVectorTiledLayerFromCustomStyleState
     });
 
     try {
-      // Get the cached layer or create a new one.
-      final layer = await _createAndCacheVectorTiledLayer(styleLabel);
+      // Get the layer for the selected style.
+      final layer = await _getVectorTiledLayer(styleLabel);
 
       // Create and apply a basemap from the selected vector tiled layer.
       final basemap = Basemap.withBaseLayer(layer);
@@ -198,9 +198,7 @@ class _AddVectorTiledLayerFromCustomStyleState
     }
   }
 
-  Future<ArcGISVectorTiledLayer> _createAndCacheVectorTiledLayer(
-    String styleLabel,
-  ) async {
+  Future<ArcGISVectorTiledLayer> _getVectorTiledLayer(String styleLabel) async {
     // Check if the layer is already cached and return it if available.
     if (_vectorTiledLayers.containsKey(styleLabel)) {
       return _vectorTiledLayers[styleLabel]!;
