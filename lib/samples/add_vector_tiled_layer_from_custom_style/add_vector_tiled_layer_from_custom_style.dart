@@ -252,7 +252,7 @@ class _AddVectorTiledLayerFromCustomStyleState
     final itemResourceCache = result.itemResourceCache;
     if (itemResourceCache == null) {
       throw Exception(
-        'Failed to export style resources for the selected style.',
+        'Failed to export style resources for style item $itemId.',
       );
     }
 

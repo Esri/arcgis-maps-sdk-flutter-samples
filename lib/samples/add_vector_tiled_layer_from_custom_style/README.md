@@ -1,6 +1,6 @@
 # Add vector tiled layer from custom style
 
-Load an ArcGIS vector tiled layers using custom styles.
+Load ArcGIS vector tiled layers using custom styles.
 
 ![Image of add vector tiled layer from custom style](add_vector_tiled_layer_from_custom_style.png)
 
