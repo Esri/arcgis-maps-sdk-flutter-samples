@@ -26,7 +26,6 @@ class SetSpatialReference extends StatefulWidget {
 
 class _SetSpatialReferenceState extends State<SetSpatialReference>
     with SampleStateSupport {
-      
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
 
@@ -35,6 +34,56 @@ class _SetSpatialReferenceState extends State<SetSpatialReference>
 
   // The spatial reference currently selected in the dropdown.
   SpatialReference? _selectedSpatialReference;
+
+  // Stores the spatial references available in the dropdown.
+  final _spatialReferences = <DropdownMenuEntry<SpatialReference>>[];
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Add spatial references to the dropdown menu.2
+    _spatialReferences.addAll([
+      DropdownMenuEntry(
+        value: SpatialReference(wkid: 102299),
+        label: 'Berghaus Star AAG',
+      ),
+      DropdownMenuEntry(value: SpatialReference(wkid: 54050), label: 'Fuller'),
+      DropdownMenuEntry(
+        value: SpatialReference(wkid: 27200),
+        label: 'New Zealand Map Grid',
+      ),
+      DropdownMenuEntry(
+        value: SpatialReference(wkid: 102018),
+        label: 'North Pole Stereographic',
+      ),
+      DropdownMenuEntry(
+        value: SpatialReference(wkid: 54090),
+        label: 'Peirce Quincuncial',
+      ),
+      DropdownMenuEntry(
+        value: SpatialReference(wkid: 32610),
+        label: 'UTM Zone 10 N',
+      ),
+      DropdownMenuEntry(
+        value: SpatialReference(wkid: 54024),
+        label: 'World Bonne',
+      ),
+      DropdownMenuEntry(
+        value: SpatialReference(wkid: 54052),
+        label: 'World Goode Homolosine',
+      ),
+      DropdownMenuEntry(
+        value: SpatialReference(wkid: 102038),
+        label: 'World Orthographic',
+      ),
+      DropdownMenuEntry(
+        value: SpatialReference.webMercator,
+        label: 'Web Mercator',
+      ),
+      DropdownMenuEntry(value: SpatialReference.wgs84, label: 'WGS 84'),
+    ]);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -58,78 +107,24 @@ class _SetSpatialReferenceState extends State<SetSpatialReference>
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     // A dropdown button to select the spatial reference.
-                    DropdownButton<SpatialReference>(
-                      alignment: Alignment.center,
-                      value: _selectedSpatialReference,
-                      // Set the onChanged callback to update the selected spatial reference.
-                      onChanged: (spatialReference) {
+                    DropdownMenu(
+                      dropdownMenuEntries: _spatialReferences,
+                      textAlign: TextAlign.center,
+                      onSelected: (spatialReference) {
+                        // Return if no spatial reference was selected.
                         if (spatialReference == null) return;
 
-                        setState(
-                          () => _selectedSpatialReference = spatialReference,
-                        );
+                        // Update the selected spatial reference.
+                        setState(() {
+                          _selectedSpatialReference = spatialReference;
+                        });
 
                         // Set the map's spatial reference to the selected value.
                         _mapViewController.arcGISMap?.setSpatialReference(
                           spatialReference,
                         );
                       },
-                      items: [
-                        DropdownMenuItem(
-                          value: SpatialReference(wkid: 102299),
-                          child: const Text('Berghaus Star AAG'),
-                        ),
-
-                        DropdownMenuItem(
-                          value: SpatialReference(wkid: 54050),
-                          child: const Text('Fuller'),
-                        ),
-
-                        DropdownMenuItem(
-                          value: SpatialReference(wkid: 27200),
-                          child: const Text('New Zealand Map Grid'),
-                        ),
-
-                        DropdownMenuItem(
-                          value: SpatialReference(wkid: 102018),
-                          child: const Text('North Pole Stereographic'),
-                        ),
-
-                        DropdownMenuItem(
-                          value: SpatialReference(wkid: 54090),
-                          child: const Text('Peirce Quincuncial'),
-                        ),
-
-                        DropdownMenuItem(
-                          value: SpatialReference(wkid: 32610),
-                          child: const Text('UTM Zone 10 N'),
-                        ),
-
-                        DropdownMenuItem(
-                          value: SpatialReference(wkid: 54024),
-                          child: const Text('World Bonne'),
-                        ),
-
-                        DropdownMenuItem(
-                          value: SpatialReference(wkid: 54052),
-                          child: const Text('World Goode Homolosine'),
-                        ),
-
-                        DropdownMenuItem(
-                          value: SpatialReference(wkid: 102038),
-                          child: const Text('World Orthographic'),
-                        ),
-
-                        DropdownMenuItem(
-                          value: SpatialReference.webMercator,
-                          child: const Text('Web Mercator'),
-                        ),
-
-                        DropdownMenuItem(
-                          value: SpatialReference.wgs84,
-                          child: const Text('WGS 84'),
-                        ),
-                      ],
+                      initialSelection: _selectedSpatialReference,
                     ),
                   ],
                 ),
