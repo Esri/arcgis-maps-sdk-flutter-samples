@@ -160,9 +160,7 @@ class _AddVectorTiledLayerFromCustomStyleState
 
     try {
       // Get the cached layer or create a new one.
-      final layer =
-          _vectorTiledLayers[styleLabel] ??
-          await _createAndCacheVectorTiledLayer(styleLabel);
+      final layer = await _createAndCacheVectorTiledLayer(styleLabel);
 
       // Create and apply a basemap from the selected vector tiled layer.
       final basemap = Basemap.withBaseLayer(layer);
@@ -203,6 +201,11 @@ class _AddVectorTiledLayerFromCustomStyleState
   Future<ArcGISVectorTiledLayer> _createAndCacheVectorTiledLayer(
     String styleLabel,
   ) async {
+    // Check if the layer is already cached and return it if available.
+    if (_vectorTiledLayers.containsKey(styleLabel)) {
+      return _vectorTiledLayers[styleLabel]!;
+    }
+
     // Resolve the layer source using online or offline style item IDs.
     final ArcGISVectorTiledLayer layer;
     if (_onlineStyles.containsKey(styleLabel)) {
@@ -231,18 +234,18 @@ class _AddVectorTiledLayerFromCustomStyleState
   }
 
   Future<ArcGISVectorTiledLayer> _createOfflineVectorTiledLayer(
-    String styleItemId,
+    String itemId,
   ) async {
     // Create a portal item and export task for the selected style item.
     final portalItem = PortalItem.withPortalAndItemId(
       portal: Portal.arcGISOnline(),
-      itemId: styleItemId,
+      itemId: itemId,
     );
     final exportTask = ExportVectorTilesTask.withPortalItem(portalItem);
 
     // Export only style resources into a per-style temporary folder.
     final styleFolder = Directory.fromUri(
-      _temporaryDirectoryUri.resolve('$styleItemId/'),
+      _temporaryDirectoryUri.resolve('$itemId/'),
     )..createSync(recursive: true);
     final job = exportTask.exportStyleResourceCache(
       itemResourceCacheUri: styleFolder.uri,
