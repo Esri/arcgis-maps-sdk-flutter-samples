@@ -43,27 +43,25 @@ class BottomSheetSettings extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: padding ?? bottomSheetPadding(context),
-      child: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: .min,
-          children: [
-            Row(
-              children: [
-                Text(
-                  title ?? 'Settings',
-                  style: Theme.of(context).textTheme.titleLarge,
-                ),
-                const Spacer(),
-                IconButton(
-                  icon: const Icon(Icons.close),
-                  onPressed: onCloseIconPressed,
-                ),
-              ],
-            ),
-            // Display the setting widgets.
-            ...settingsWidgets(context),
-          ],
-        ),
+      child: ListView(
+        shrinkWrap: true,
+        children: [
+          Row(
+            children: [
+              Text(
+                title ?? 'Settings',
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
+              const Spacer(),
+              IconButton(
+                icon: const Icon(Icons.close),
+                onPressed: onCloseIconPressed,
+              ),
+            ],
+          ),
+          // Display the setting widgets.
+          ...settingsWidgets(context),
+        ],
       ),
     );
   }
