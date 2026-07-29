@@ -42,7 +42,7 @@ class OfflineDataLocation {
 class OfflineData {
   /// Creates an [OfflineData] instance from a JSON list of downloadable resources.
   OfflineData.fromJson(List<dynamic> json) {
-    downloadableResources = json
+    _downloadableResources = json
         .map(
           (e) =>
               DownloadableResource.fromJson(e as Map<String, dynamic>? ?? {}),
@@ -51,12 +51,15 @@ class OfflineData {
   }
 
   /// The list of downloadable resources for this offline data.
-  List<DownloadableResource> downloadableResources = [];
+  List<DownloadableResource> _downloadableResources = [];
+
+  /// Whether this offline data has any downloadable resources.
+  bool get hasDownloadableResources => _downloadableResources.isNotEmpty;
 
   /// Returns whether all downloadable resources are present in the offline data location.
   bool allResourcesDownloaded() {
     final basePath = OfflineDataLocation.instance.location.path;
-    return downloadableResources.every(
+    return _downloadableResources.every(
       (r) => File(path.join(basePath, r.downloadable)).existsSync(),
     );
   }
@@ -69,9 +72,9 @@ class OfflineData {
     required RequestCancelToken requestCancelToken,
     void Function(int progress)? onProgress,
   }) async {
-    final itemIds = downloadableResources.map((r) => r.itemId).toList();
+    final itemIds = _downloadableResources.map((r) => r.itemId).toList();
     final basePath = OfflineDataLocation.instance.location.path;
-    final destinationFiles = downloadableResources
+    final destinationFiles = _downloadableResources
         .map((r) => File(path.join(basePath, r.downloadable)))
         .toList();
 
@@ -91,7 +94,7 @@ class OfflineData {
   void cleanupFiles() {
     final basePath = OfflineDataLocation.instance.location.path;
     try {
-      for (final resource in downloadableResources) {
+      for (final resource in _downloadableResources) {
         final file = File(path.join(basePath, resource.downloadable));
         if (file.existsSync()) {
           file.deleteSync();
@@ -116,5 +119,31 @@ class OfflineData {
       // Ignore errors during cleanup - file may not exist or may be locked.
       debugPrint('Cleanup warning: ${e.message}');
     }
+  }
+
+  /// Returns the expected file paths of the downloaded resources after extraction.
+  ///
+  /// For ZIP resources, returns the path to the resource inside the extracted directory.
+  /// For non-ZIP resources, returns the direct file path.
+  List<String> downloadedFilePaths() {
+    final basePath = OfflineDataLocation.instance.location.path;
+    return _downloadableResources.map((r) {
+      // Remove only the trailing extension (e.g., .zip, .vtpk).
+      final downloadableWithoutExt = path.withoutExtension(r.downloadable);
+
+      // Check if this is a ZIP file (using both metadata flag and filename).
+      final isZip = r.downloadable.toLowerCase().endsWith('.zip');
+
+      if (isZip) {
+        // For ZIP files, the structure is:
+        // <appDir>/<downloadableWithoutExt>/<resource>
+        return r.resource != null
+            ? path.join(basePath, downloadableWithoutExt, r.resource)
+            : path.join(basePath, downloadableWithoutExt);
+      } else {
+        // For non-ZIP files, the file is stored directly.
+        return path.join(basePath, r.downloadable);
+      }
+    }).toList();
   }
 }

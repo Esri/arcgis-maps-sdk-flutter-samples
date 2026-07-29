@@ -58,7 +58,7 @@ void main() async {
     return s.key == sampleFolderName;
   });
 
-  final initialRoute = sample.hasDownloadableResources
+  final initialRoute = sample.offlineData.hasDownloadableResources
       ? '/${sample.key}/resources'
       : '/${sample.key}/live';
 

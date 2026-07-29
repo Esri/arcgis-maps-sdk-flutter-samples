@@ -63,10 +63,6 @@ class Sample {
 
   OfflineData get offlineData => _offlineData;
 
-  /// Returns true if this sample requires downloadable resources.
-  bool get hasDownloadableResources =>
-      _offlineData.downloadableResources.isNotEmpty;
-
   Widget getSampleWidget() => _sampleWidget;
 }
 

@@ -47,7 +47,7 @@ class SampleListView extends StatelessWidget {
               subtitle: Text(sample.description),
               onTap: () async {
                 if (context.mounted) {
-                  if (sample.hasDownloadableResources) {
+                  if (sample.offlineData.hasDownloadableResources) {
                     unawaited(context.push('/sample/${sample.key}/resources'));
                   } else {
                     unawaited(context.push('/sample/${sample.key}/live'));

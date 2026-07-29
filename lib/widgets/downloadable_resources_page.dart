@@ -15,14 +15,10 @@
 //
 
 import 'dart:async';
-import 'dart:io';
 import 'package:arcgis_maps/arcgis_maps.dart';
-import 'package:arcgis_maps_sdk_flutter_samples/common/download_util.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/models/offline_data.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:path/path.dart' as path;
-import 'package:path_provider/path_provider.dart';
 
 typedef OnComplete = void Function(List<String>);
 
@@ -62,7 +58,15 @@ class _DownloadableResourcesPageState extends State<DownloadableResourcesPage> {
   @override
   void initState() {
     super.initState();
-    _checkIfResourcesExist();
+
+    if (widget.offlineData.allResourcesDownloaded()) {
+      _isComplete = true;
+      _progress = 100;
+      _shouldShowUI = false;
+
+      // if the data has already been downloaded, immediately open the sample.
+      WidgetsBinding.instance.addPostFrameCallback((_) => _openSample());
+    }
   }
 
   @override
@@ -177,20 +181,6 @@ class _DownloadableResourcesPageState extends State<DownloadableResourcesPage> {
     }
   }
 
-  // Check if all resources already exist.
-  void _checkIfResourcesExist() {
-    if (widget.offlineData.allResourcesDownloaded()) {
-      setState(() {
-        _isComplete = true;
-        _progress = 100;
-        _shouldShowUI = false;
-      });
-
-      // if the data has been downloaded, directly open the sample.
-      _openSample().ignore();
-    }
-  }
-
   // Start the download of resources.
   Future<void> _startDownload() async {
     setState(() {
@@ -212,7 +202,7 @@ class _DownloadableResourcesPageState extends State<DownloadableResourcesPage> {
       });
 
       // directly open the sample after downloading
-      _openSample().ignore();
+      _openSample();
     } on Exception catch (e) {
       // show a snackbar with error message
       if (mounted) {
@@ -240,45 +230,14 @@ class _DownloadableResourcesPageState extends State<DownloadableResourcesPage> {
     }
   }
 
-  /// Returns the expected file paths of the downloaded resources after extraction.
-  ///
-  /// For ZIP resources, returns the path to the resource inside the extracted directory.
-  /// For non-ZIP resources, returns the direct file path.
-  Future<List<String>> _getDownloadFilePaths() async {
-    //fixme
-    final appDir = await getApplicationDocumentsDirectory();
-    return widget.offlineData.downloadableResources.map((res) {
-      // Remove only the trailing extension (e.g., .zip, .vtpk).
-      final downloadableWithoutExt = path.withoutExtension(res.downloadable);
-
-      // Check if this is a ZIP file (using both metadata flag and filename).
-      final isZip = res.downloadable.toLowerCase().endsWith('.zip');
-
-      if (isZip) {
-        // For ZIP files, the structure is:
-        // <appDir>/<downloadableWithoutExt>/<resource>
-        return res.resource != null
-            ? path.join(
-                appDir.absolute.path,
-                downloadableWithoutExt,
-                res.resource,
-              )
-            : path.join(appDir.absolute.path, downloadableWithoutExt);
-      } else {
-        // For non-ZIP files, the file is stored directly.
-        return path.join(appDir.absolute.path, res.downloadable);
-      }
-    }).toList();
-  }
-
   // Cancel the ongoing download.
   void _cancelDownload() {
     _requestCancelToken.cancel();
   }
 
   // Call back to onComplete.
-  Future<void> _openSample() async {
-    final downloadPaths = await _getDownloadFilePaths();
+  void _openSample() {
+    final downloadPaths = widget.offlineData.downloadedFilePaths();
     widget.onComplete(downloadPaths);
   }
 }
