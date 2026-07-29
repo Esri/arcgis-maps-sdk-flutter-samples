@@ -17,7 +17,7 @@ Choosing the correct spatial reference is important for ensuring accurate projec
 1. Instantiate an `ArcGISMap` object using a spatial reference.
 2. Instantiate a `Basemap` object using an `ArcGISMapImageLayer` object.
 3. Set the basemap to the map.
-4. Set the map to an `ArcGISMapView` object.
+4. Set the map to an `ArcGISMapViewController` object.
 5. Change the map's spatial reference using the `setSpatialReference` method.
 
 The ArcGIS map image layer will reproject into the spatial reference set to the map (such as World Bonne (WKID: 54024)), and not the map service's default spatial reference.
@@ -27,6 +27,7 @@ The ArcGIS map image layer will reproject into the spatial reference set to the 
 * ArcGISMap
 * ArcGISMapImageLayer
 * ArcGISMapView
+* ArcGISMapViewController
 * Basemap
 * SpatialReference
 
