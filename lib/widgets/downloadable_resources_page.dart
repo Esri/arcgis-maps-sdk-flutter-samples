@@ -194,7 +194,9 @@ class _DownloadableResourcesPageState extends State<DownloadableResourcesPage> {
       await widget.offlineData.downloadResources(
         requestCancelToken: _requestCancelToken,
         onProgress: (progress) {
-          setState(() => _progress = progress);
+          if (mounted) {
+            setState(() => _progress = progress);
+          }
         },
       );
 
@@ -226,11 +228,13 @@ class _DownloadableResourcesPageState extends State<DownloadableResourcesPage> {
 
       widget.offlineData.cleanupFiles();
 
-      setState(() {
-        _isDownloading = false;
-        _isComplete = false;
-        _progress = 0;
-      });
+      if (mounted) {
+        setState(() {
+          _isDownloading = false;
+          _isComplete = false;
+          _progress = 0;
+        });
+      }
     }
   }
 
