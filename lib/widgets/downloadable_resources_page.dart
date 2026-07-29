@@ -199,19 +199,7 @@ class _DownloadableResourcesPageState extends State<DownloadableResourcesPage> {
     });
 
     try {
-      final appDir = await getApplicationDocumentsDirectory();
-      final itemIds = widget.offlineData.downloadableResources
-          .map((r) => r.itemId)
-          .toList();
-      final destinationFiles = widget.offlineData.downloadableResources.map((
-        r,
-      ) {
-        return File(path.join(appDir.absolute.path, r.downloadable));
-      }).toList();
-
-      await downloadSampleDataWithProgress(
-        itemIds: itemIds,
-        destinationFiles: destinationFiles,
+      await widget.offlineData.downloadResources(
         requestCancelToken: _requestCancelToken,
         onProgress: (progress) {
           setState(() => _progress = progress);
@@ -224,7 +212,7 @@ class _DownloadableResourcesPageState extends State<DownloadableResourcesPage> {
       });
 
       // directly open the sample after downloading
-      unawaited(_openSample());
+      _openSample().ignore();
     } on Exception catch (e) {
       // show a snackbar with error message
       if (mounted) {
@@ -242,7 +230,7 @@ class _DownloadableResourcesPageState extends State<DownloadableResourcesPage> {
         ).showSnackBar(SnackBar(content: Text(message)));
       }
 
-      await _cleanupFiles();
+      widget.offlineData.cleanupFiles();
 
       setState(() {
         _isDownloading = false;
@@ -257,6 +245,7 @@ class _DownloadableResourcesPageState extends State<DownloadableResourcesPage> {
   /// For ZIP resources, returns the path to the resource inside the extracted directory.
   /// For non-ZIP resources, returns the direct file path.
   Future<List<String>> _getDownloadFilePaths() async {
+    //fixme
     final appDir = await getApplicationDocumentsDirectory();
     return widget.offlineData.downloadableResources.map((res) {
       // Remove only the trailing extension (e.g., .zip, .vtpk).
@@ -280,44 +269,6 @@ class _DownloadableResourcesPageState extends State<DownloadableResourcesPage> {
         return path.join(appDir.absolute.path, res.downloadable);
       }
     }).toList();
-  }
-
-  /// Cleans up partially downloaded files and extracted directories.
-  ///
-  /// Deletes:
-  /// - The downloaded file (ZIP or non-ZIP)
-  /// - The extracted directory (for ZIP files only)
-  Future<void> _cleanupFiles() async {
-    final appDir = await getApplicationDocumentsDirectory();
-    for (final resource in widget.offlineData.downloadableResources) {
-      try {
-        // Delete the downloaded file.
-        final downloadedFile = File(
-          path.join(appDir.absolute.path, resource.downloadable),
-        );
-        if (downloadedFile.existsSync()) {
-          downloadedFile.deleteSync();
-        }
-
-        // For ZIP files, also delete the extracted directory.
-        final isZip = resource.downloadable.toLowerCase().endsWith('.zip');
-        if (isZip) {
-          // Use path.withoutExtension to match the extraction directory naming.
-          final extractionDirName = path.withoutExtension(
-            resource.downloadable,
-          );
-          final extractionDir = Directory(
-            path.join(appDir.absolute.path, extractionDirName),
-          );
-          if (extractionDir.existsSync()) {
-            extractionDir.deleteSync(recursive: true);
-          }
-        }
-      } on FileSystemException catch (e) {
-        // Ignore errors during cleanup - file may not exist or may be locked.
-        debugPrint('Cleanup warning: ${e.message}');
-      }
-    }
   }
 
   // Cancel the ongoing download.

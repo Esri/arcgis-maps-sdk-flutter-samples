@@ -15,7 +15,10 @@
 //
 
 import 'dart:io';
+import 'package:arcgis_maps/arcgis_maps.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/common/download_util.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/models/downloadable_resource.dart';
+import 'package:flutter/material.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 
@@ -52,13 +55,66 @@ class OfflineData {
 
   /// Returns whether all downloadable resources are present in the offline data location.
   bool allResourcesDownloaded() {
+    final basePath = OfflineDataLocation.instance.location.path;
     return downloadableResources.every(
-      (resource) => File(
-        path.join(
-          OfflineDataLocation.instance.location.path,
-          resource.downloadable,
-        ),
-      ).existsSync(),
+      (r) => File(path.join(basePath, r.downloadable)).existsSync(),
     );
+  }
+
+  /// Downloads the resources to the offline data location.
+  ///
+  /// [requestCancelToken] is used to handle cancellation of the download.
+  /// [onProgress] is a callback that provides the download progress as an integer percentage.
+  Future<void> downloadResources({
+    required RequestCancelToken requestCancelToken,
+    void Function(int progress)? onProgress,
+  }) async {
+    final itemIds = downloadableResources.map((r) => r.itemId).toList();
+    final basePath = OfflineDataLocation.instance.location.path;
+    final destinationFiles = downloadableResources
+        .map((r) => File(path.join(basePath, r.downloadable)))
+        .toList();
+
+    await downloadSampleDataWithProgress(
+      itemIds: itemIds,
+      destinationFiles: destinationFiles,
+      requestCancelToken: requestCancelToken,
+      onProgress: onProgress,
+    );
+  }
+
+  /// Cleans up downloaded files and extracted directories for this offline data.
+  ///
+  /// Deletes:
+  /// - The downloaded file (ZIP or non-ZIP)
+  /// - The extracted directory (for ZIP files only)
+  void cleanupFiles() {
+    final basePath = OfflineDataLocation.instance.location.path;
+    try {
+      for (final resource in downloadableResources) {
+        final file = File(path.join(basePath, resource.downloadable));
+        if (file.existsSync()) {
+          file.deleteSync();
+        }
+
+        // For ZIP files, also delete the extracted directory.
+        final isZip = resource.downloadable.toLowerCase().endsWith('.zip');
+        if (isZip) {
+          // Use path.withoutExtension to match the extraction directory naming.
+          final extractionDirName = path.withoutExtension(
+            resource.downloadable,
+          );
+          final extractionDir = Directory(
+            path.join(basePath, extractionDirName),
+          );
+          if (extractionDir.existsSync()) {
+            extractionDir.deleteSync(recursive: true);
+          }
+        }
+      }
+    } on FileSystemException catch (e) {
+      // Ignore errors during cleanup - file may not exist or may be locked.
+      debugPrint('Cleanup warning: ${e.message}');
+    }
   }
 }
