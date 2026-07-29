@@ -18,7 +18,7 @@ import 'dart:async';
 import 'dart:io';
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/download_util.dart';
-import 'package:arcgis_maps_sdk_flutter_samples/models/downloadable_resource.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/models/offline_data.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:path/path.dart' as path;
@@ -36,13 +36,13 @@ typedef OnComplete = void Function(List<String>);
 class DownloadableResourcesPage extends StatefulWidget {
   const DownloadableResourcesPage({
     required this.sampleTitle,
-    required this.resources,
+    required this.offlineData,
     required this.onComplete,
     super.key,
   });
 
   final String sampleTitle;
-  final List<DownloadableResource> resources;
+  final OfflineData offlineData;
   final OnComplete onComplete;
 
   @override
@@ -62,7 +62,7 @@ class _DownloadableResourcesPageState extends State<DownloadableResourcesPage> {
   @override
   void initState() {
     super.initState();
-    _checkIfResourcesExist().ignore();
+    _checkIfResourcesExist();
   }
 
   @override
@@ -178,19 +178,8 @@ class _DownloadableResourcesPageState extends State<DownloadableResourcesPage> {
   }
 
   // Check if all resources already exist.
-  Future<void> _checkIfResourcesExist() async {
-    final appDir = await getApplicationDocumentsDirectory();
-    var allResourcesExist = true;
-
-    for (final resource in widget.resources) {
-      final file = File(path.join(appDir.absolute.path, resource.downloadable));
-      if (!file.existsSync()) {
-        allResourcesExist = false;
-        break;
-      }
-    }
-
-    if (allResourcesExist) {
+  void _checkIfResourcesExist() {
+    if (widget.offlineData.allResourcesDownloaded()) {
       setState(() {
         _isComplete = true;
         _progress = 100;
@@ -198,9 +187,7 @@ class _DownloadableResourcesPageState extends State<DownloadableResourcesPage> {
       });
 
       // if the data has been downloaded, directly open the sample.
-      if (mounted) {
-        unawaited(_openSample());
-      }
+      _openSample().ignore();
     }
   }
 
@@ -213,8 +200,12 @@ class _DownloadableResourcesPageState extends State<DownloadableResourcesPage> {
 
     try {
       final appDir = await getApplicationDocumentsDirectory();
-      final itemIds = widget.resources.map((r) => r.itemId).toList();
-      final destinationFiles = widget.resources.map((r) {
+      final itemIds = widget.offlineData.downloadableResources
+          .map((r) => r.itemId)
+          .toList();
+      final destinationFiles = widget.offlineData.downloadableResources.map((
+        r,
+      ) {
         return File(path.join(appDir.absolute.path, r.downloadable));
       }).toList();
 
@@ -267,7 +258,7 @@ class _DownloadableResourcesPageState extends State<DownloadableResourcesPage> {
   /// For non-ZIP resources, returns the direct file path.
   Future<List<String>> _getDownloadFilePaths() async {
     final appDir = await getApplicationDocumentsDirectory();
-    return widget.resources.map((res) {
+    return widget.offlineData.downloadableResources.map((res) {
       // Remove only the trailing extension (e.g., .zip, .vtpk).
       final downloadableWithoutExt = path.withoutExtension(res.downloadable);
 
@@ -298,7 +289,7 @@ class _DownloadableResourcesPageState extends State<DownloadableResourcesPage> {
   /// - The extracted directory (for ZIP files only)
   Future<void> _cleanupFiles() async {
     final appDir = await getApplicationDocumentsDirectory();
-    for (final resource in widget.resources) {
+    for (final resource in widget.offlineData.downloadableResources) {
       try {
         // Delete the downloaded file.
         final downloadedFile = File(

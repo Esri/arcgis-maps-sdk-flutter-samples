@@ -89,7 +89,7 @@ GoRouter routerConfig(List<Sample> allSamples) {
 
               return DownloadableResourcesPage(
                 sampleTitle: sample.title,
-                resources: sample.downloadableResources,
+                offlineData: sample.offlineData,
                 onComplete: (downloadPaths) {
                   context.pushReplacement(
                     '/sample/${sample.key}/live',
@@ -138,7 +138,7 @@ GoRouter routerConfigWithSample(Sample sample, String initialLocation) {
         builder: (context, state) {
           return DownloadableResourcesPage(
             sampleTitle: sample.title,
-            resources: sample.downloadableResources,
+            offlineData: sample.offlineData,
             onComplete: (downloadPaths) {
               context.go('/${sample.key}/live', extra: downloadPaths);
             },

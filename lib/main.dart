@@ -18,6 +18,7 @@ import 'dart:convert';
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/api_key_manager.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/theme_data.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/models/offline_data.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/models/sample.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/router_config.dart';
 import 'package:flutter/material.dart';
@@ -52,6 +53,7 @@ void main() async {
 
   final prefs = await SharedPreferences.getInstance();
   FavoriteRepository.instance.initialize(prefs);
+  await OfflineDataLocation.instance.initialize();
 
   final jsonString = await rootBundle.loadString(
     'assets/generated_samples_list.json',
