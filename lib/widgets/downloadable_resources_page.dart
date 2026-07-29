@@ -65,7 +65,9 @@ class _DownloadableResourcesPageState extends State<DownloadableResourcesPage> {
       _shouldShowUI = false;
 
       // if the data has already been downloaded, immediately open the sample.
-      WidgetsBinding.instance.addPostFrameCallback((_) => _openSample());
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) _openSample();
+      });
     }
   }
 
@@ -195,6 +197,8 @@ class _DownloadableResourcesPageState extends State<DownloadableResourcesPage> {
           setState(() => _progress = progress);
         },
       );
+
+      if (!mounted) return;
 
       setState(() {
         _isComplete = true;

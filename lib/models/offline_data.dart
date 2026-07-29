@@ -18,7 +18,7 @@ import 'dart:io';
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/download_util.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/models/downloadable_resource.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 
@@ -30,23 +30,21 @@ class OfflineDataLocation {
 
   /// Initializes the offline data location by obtaining the application documents directory.
   Future<void> initialize() async {
-    _location = await getApplicationDocumentsDirectory();
+    _location ??= await getApplicationDocumentsDirectory();
   }
 
   /// The directory where offline data is stored.
-  Directory get location => _location;
+  Directory get location => _location!;
 
-  late final Directory _location;
+  Directory? _location;
 }
 
 class OfflineData {
   /// Creates an [OfflineData] instance from a JSON list of downloadable resources.
   OfflineData.fromJson(List<dynamic> json) {
     _downloadableResources = json
-        .map(
-          (e) =>
-              DownloadableResource.fromJson(e as Map<String, dynamic>? ?? {}),
-        )
+        .whereType<Map<String, dynamic>>()
+        .map(DownloadableResource.fromJson)
         .toList(growable: false);
   }
 
