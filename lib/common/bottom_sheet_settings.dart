@@ -23,41 +23,47 @@ import 'package:flutter/material.dart';
 /// The rest of area will be filled with the widgets returned by the [settingsWidgets] function.
 ///  - [onCloseIconPressed] is called when the close icon is pressed.
 ///  - [settingsWidgets] is a list of widgets to display in the container.
-///
+///  - optional [padding] can be provided to customize the padding of the container.
+///  - optional [title] can be provided to customize the title of the container.
+///    If not provided, the default title is "Settings".
 class BottomSheetSettings extends StatelessWidget {
   const BottomSheetSettings({
     required this.onCloseIconPressed,
     required this.settingsWidgets,
+    this.padding,
     this.title,
     super.key,
   });
   final VoidCallback onCloseIconPressed;
   final List<Widget> Function(BuildContext) settingsWidgets;
+  final EdgeInsets? padding;
   final String? title;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: bottomSheetPadding(context),
-      child: Column(
-        mainAxisSize: .min,
-        children: [
-          Row(
-            children: [
-              Text(
-                title ?? 'Settings',
-                style: Theme.of(context).textTheme.titleLarge,
-              ),
-              const Spacer(),
-              IconButton(
-                icon: const Icon(Icons.close),
-                onPressed: onCloseIconPressed,
-              ),
-            ],
-          ),
-          // Display the setting widgets.
-          ...settingsWidgets(context),
-        ],
+      padding: padding ?? bottomSheetPadding(context),
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: .min,
+          children: [
+            Row(
+              children: [
+                Text(
+                  title ?? 'Settings',
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
+                const Spacer(),
+                IconButton(
+                  icon: const Icon(Icons.close),
+                  onPressed: onCloseIconPressed,
+                ),
+              ],
+            ),
+            // Display the setting widgets.
+            ...settingsWidgets(context),
+          ],
+        ),
       ),
     );
   }
@@ -66,7 +72,7 @@ class BottomSheetSettings extends StatelessWidget {
 EdgeInsets bottomSheetPadding(BuildContext context) {
   return EdgeInsets.fromLTRB(
     20,
-    20,
+    5,
     20,
     max(
       20,
