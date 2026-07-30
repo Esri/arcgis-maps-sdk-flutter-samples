@@ -500,89 +500,91 @@ class _Animate3dGraphicState extends State<Animate3dGraphic>
       builder: (context) {
         return Padding(
           padding: bottomSheetPadding(context),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                'Mission Settings',
-                style: Theme.of(context).textTheme.titleLarge,
-              ),
-              const SizedBox(height: 16),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'Mission Settings',
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
+                const SizedBox(height: 16),
 
-              // Progress widgets have to update for every frame, so wrapped with a StatefulBuilder.
-              StatefulBuilder(
-                builder: (context, setModalState) {
-                  // Store the setter.
-                  _modalStateSetter = setModalState;
-                  return Column(
-                    children: [
-                      // Progress Indicator
-                      Padding(
-                        padding: const EdgeInsets.all(8),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Text(
-                              'Progress',
-                              style: TextStyle(fontSize: 18),
-                            ),
-                            Text(
-                              '${(_progress * 100).toStringAsFixed(1)}%',
-                              style: const TextStyle(fontSize: 18),
-                            ),
-                          ],
+                // Progress widgets have to update for every frame, so wrapped with a StatefulBuilder.
+                StatefulBuilder(
+                  builder: (context, setModalState) {
+                    // Store the setter.
+                    _modalStateSetter = setModalState;
+                    return Column(
+                      children: [
+                        // Progress Indicator
+                        Padding(
+                          padding: const EdgeInsets.all(8),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text(
+                                'Progress',
+                                style: TextStyle(fontSize: 18),
+                              ),
+                              Text(
+                                '${(_progress * 100).toStringAsFixed(1)}%',
+                                style: const TextStyle(fontSize: 18),
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                      LinearProgressIndicator(value: _progress),
-                    ],
-                  );
-                },
-              ),
+                        LinearProgressIndicator(value: _progress),
+                      ],
+                    );
+                  },
+                ),
 
-              const SizedBox(height: 24),
-              // Dropdown to select mission.
-              DropdownMenu(
-                initialSelection: _currentMission,
-                onSelected: (mission) {
-                  if (mission != null) {
-                    if (_ticker.isActive) {
-                      _ticker.stop();
-                      setState(() => _isPlaying = false);
+                const SizedBox(height: 24),
+                // Dropdown to select mission.
+                DropdownMenu(
+                  initialSelection: _currentMission,
+                  onSelected: (mission) {
+                    if (mission != null) {
+                      if (_ticker.isActive) {
+                        _ticker.stop();
+                        setState(() => _isPlaying = false);
+                      }
+                      setState(() {
+                        _currentMission = mission;
+                        _currentFrameIndex = 0;
+                      });
+                      // Update the modal to show progress reset to 0
+                      _modalStateSetter?.call(() {});
+
+                      _loadMissionFrames(mission).ignore();
                     }
-                    setState(() {
-                      _currentMission = mission;
-                      _currentFrameIndex = 0;
-                    });
-                    // Update the modal to show progress reset to 0
-                    _modalStateSetter?.call(() {});
-
-                    _loadMissionFrames(mission).ignore();
-                  }
-                },
-                dropdownMenuEntries: Mission.values.map((mission) {
-                  return DropdownMenuEntry(
-                    value: mission,
-                    label: mission.label,
-                  );
-                }).toList(),
-              ),
-              const SizedBox(height: 16),
-              DropdownMenu(
-                initialSelection: _animationSpeed,
-                onSelected: (speed) {
-                  if (speed != null) {
-                    setState(() => _animationSpeed = speed);
-                    _updateFrameInterval();
-                  }
-                },
-                dropdownMenuEntries: AnimationSpeed.values.map((speed) {
-                  return DropdownMenuEntry(
-                    value: speed,
-                    label: 'Speed: ${speed.label}',
-                  );
-                }).toList(),
-              ),
-            ],
+                  },
+                  dropdownMenuEntries: Mission.values.map((mission) {
+                    return DropdownMenuEntry(
+                      value: mission,
+                      label: mission.label,
+                    );
+                  }).toList(),
+                ),
+                const SizedBox(height: 16),
+                DropdownMenu(
+                  initialSelection: _animationSpeed,
+                  onSelected: (speed) {
+                    if (speed != null) {
+                      setState(() => _animationSpeed = speed);
+                      _updateFrameInterval();
+                    }
+                  },
+                  dropdownMenuEntries: AnimationSpeed.values.map((speed) {
+                    return DropdownMenuEntry(
+                      value: speed,
+                      label: 'Speed: ${speed.label}',
+                    );
+                  }).toList(),
+                ),
+              ],
+            ),
           ),
         );
       },
