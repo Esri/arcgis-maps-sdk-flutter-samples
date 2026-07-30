@@ -33,7 +33,7 @@ Pan and zoom to explore the vector tile basemap. Select a theme to see it applie
 
 ## Offline data
 
-[Dodge City OSM vector tile package](https://www.arcgis.com/home/item.html?id=f4b742a57af344988b02227e2824ca5f)
+This sample uses the [Dodge City OSM](https://www.arcgis.com/home/item.html?id=f4b742a57af344988b02227e2824ca5f) vector tile package. It is downloaded from ArcGIS Online automatically.
 
 ## Tags
 
