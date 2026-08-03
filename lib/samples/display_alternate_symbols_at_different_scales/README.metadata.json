@@ -1,0 +1,41 @@
+{
+    "category": "Visualization",
+    "description": "Apply a unique value with alternate symbols at different scales.",
+    "ignore": false,
+    "images": [
+        "display_alternate_symbols_at_different_scales.png"
+    ],
+    "keywords": [
+        "alternate symbols",
+        "multilayer symbol",
+        "scale based rendering",
+        "simple marker symbol",
+        "symbol reference properties",
+        "symbology",
+        "unique value",
+        "unique value renderer",
+        "ArcGISMapViewController.onViewpointChanged",
+        "FeatureLayer",
+        "MultilayerPointSymbol",
+        "ServiceFeatureTable",
+        "SimpleMarkerSymbol",
+        "SymbolReferenceProperties",
+        "UniqueValue",
+        "UniqueValueRenderer"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+        "ArcGISMapViewController.onViewpointChanged",
+        "FeatureLayer",
+        "MultilayerPointSymbol",
+        "ServiceFeatureTable",
+        "SimpleMarkerSymbol",
+        "SymbolReferenceProperties",
+        "UniqueValue",
+        "UniqueValueRenderer"
+    ],
+    "snippets": [
+        "display_alternate_symbols_at_different_scales.dart"
+    ],
+    "title": "Display alternate symbols at different scales"
+}
