@@ -1,0 +1,40 @@
+{
+    "category": "Edit and Manage Data",
+    "description": "Use transactions to manage how changes are committed to a geodatabase.",
+    "ignore": false,
+    "images": [
+        "edit_geodatabase_with_transactions.png"
+    ],
+    "offline_data": [
+        {
+            "itemId": "43809fd639f242fd8045ecbafd61a579",
+            "downloadable": "SaveTheBay.zip",
+            "resource": "SaveTheBay.geodatabase"
+        }
+    ],
+
+    "keywords": [
+        "commit",
+        "database",
+        "geodatabase",
+        "transact",
+        "transactions",
+        "Geodatabase",
+        "Geodatabase.beginTransaction",
+        "Geodatabase.commitTransaction",
+        "Geodatabase.isInTransaction",
+        "Geodatabase.rollbackTransaction"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+        "Geodatabase",
+        "Geodatabase.beginTransaction",
+        "Geodatabase.commitTransaction",
+        "Geodatabase.isInTransaction",
+        "Geodatabase.rollbackTransaction"
+    ],
+    "snippets": [
+        "edit_geodatabase_with_transactions.dart"
+    ],
+    "title": "Edit geodatabase with transactions"
+}
