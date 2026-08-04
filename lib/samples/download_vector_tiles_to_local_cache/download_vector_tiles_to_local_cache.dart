@@ -229,7 +229,7 @@ class _DownloadVectorTilesToLocalCacheState
       // If the job succeeded, load the downloaded caches into the map view.
       _loadExportedVectorTiles(result);
     } on ArcGISException catch (e) {
-      showMessageDialog('Failed to download vector tiles: ${e.message}');
+      showExceptionDialog('Failed to load vector tiles', e);
     } finally {
       _exportVectorTilesJob = null;
     }

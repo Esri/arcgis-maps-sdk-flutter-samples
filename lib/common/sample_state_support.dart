@@ -14,6 +14,7 @@
 // limitations under the License.
 //
 
+import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
 
@@ -34,5 +35,19 @@ mixin SampleStateSupport<T extends StatefulWidget> on State<T> {
     if (mounted) {
       showAlertDialog(context, message, title: title, showOK: showOK).ignore();
     }
+  }
+
+  void showExceptionDialog(
+    String message,
+    Exception e, {
+    String title = 'Error',
+    bool showOK = false,
+  }) {
+    final exceptionMessage = e is ArcGISException ? e.message : e.toString();
+    showMessageDialog(
+      '$message: $exceptionMessage',
+      title: title,
+      showOK: showOK,
+    );
   }
 }

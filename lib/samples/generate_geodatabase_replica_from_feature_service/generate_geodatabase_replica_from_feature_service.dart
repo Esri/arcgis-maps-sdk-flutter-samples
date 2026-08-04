@@ -209,15 +209,8 @@ class _GenerateGeodatabaseReplicaFromFeatureServiceState
         _ready = true;
         _statusMessage = 'Tap the generate button to take the area offline.';
       });
-    } on ArcGISException catch (e) {
-      // Show ArcGIS errors raised while loading the task or map.
-      showMessageDialog(e.message, title: 'Error');
-    } on FileSystemException catch (e) {
-      // Show local file errors raised while finding the downloaded basemap.
-      showMessageDialog(e.message, title: 'Error');
     } on Exception catch (e) {
-      // Show any local file or routing errors raised during setup.
-      showMessageDialog(e.toString(), title: 'Error');
+      showExceptionDialog('Failed to load sample data', e);
     }
   }
 
@@ -339,7 +332,11 @@ class _GenerateGeodatabaseReplicaFromFeatureServiceState
         try {
           await _geodatabaseSyncTask.unregisterGeodatabase(geodatabase);
         } on ArcGISException catch (e) {
-          showMessageDialog(e.message, title: 'Warning');
+          showExceptionDialog(
+            'Failed to unregister geodatabase',
+            e,
+            title: 'Warning',
+          );
         }
       } catch (_) {
         // Ensure local resources are released if loading/display fails.
@@ -361,7 +358,7 @@ class _GenerateGeodatabaseReplicaFromFeatureServiceState
 
       // Report failures unless the user canceled the job.
       if (e.errorType != ArcGISExceptionType.commonUserCanceled) {
-        showMessageDialog(e.message, title: 'Error');
+        showExceptionDialog('Failed to generate geodatabase', e);
       }
     } on Exception catch (e) {
       // Reset generation state for unexpected errors (for example, local file I/O).
@@ -369,7 +366,7 @@ class _GenerateGeodatabaseReplicaFromFeatureServiceState
         _progress = null;
         _statusMessage = 'Tap the generate button to take the area offline.';
       });
-      showMessageDialog(e.toString(), title: 'Error');
+      showExceptionDialog('Failed to generate geodatabase', e);
     } finally {
       // Clear job state and progress listeners after completion.
       _generateGeodatabaseJob = null;

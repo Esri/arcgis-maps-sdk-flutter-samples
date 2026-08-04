@@ -210,7 +210,7 @@ class _ShowDeviceLocationState extends State<ShowDeviceLocation>
     try {
       await _locationDataSource.start();
     } on ArcGISException catch (e) {
-      showMessageDialog(e.message);
+      showExceptionDialog('Failed to start location data source', e);
     }
 
     // Set the ready state variable to true to enable the UI.

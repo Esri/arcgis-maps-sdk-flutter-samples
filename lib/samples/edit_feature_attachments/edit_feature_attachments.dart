@@ -111,7 +111,7 @@ class _EditFeatureAttachmentsState extends State<EditFeatureAttachments>
       // Apply the edits to the service.
       await serviceFeatureTable.applyEdits();
     } on ArcGISException catch (e) {
-      showMessageDialog(e.toString(), title: 'Error', showOK: true);
+      showExceptionDialog('Failed to apply edits', e, showOK: true);
     }
     return Future.value();
   }
@@ -312,7 +312,7 @@ class _AttachmentsOptionsState extends State<AttachmentsOptions>
         _isLoading = false;
       });
     } on ArcGISException catch (e) {
-      showMessageDialog(e.toString(), title: 'Error', showOK: true);
+      showExceptionDialog('Failed to load attachments', e, showOK: true);
       setState(() => _isLoading = false);
     }
   }

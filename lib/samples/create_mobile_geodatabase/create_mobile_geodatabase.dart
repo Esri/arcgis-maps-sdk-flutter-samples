@@ -145,7 +145,7 @@ class _CreateMobileGeodatabaseState extends State<CreateMobileGeodatabase>
       _geodatabase = await Geodatabase.create(fileUri: geodatabaseFile.uri);
       await _createGeodatabaseFeatureTable();
     } on Exception catch (e) {
-      showMessageDialog(e.toString(), title: 'Error');
+      showExceptionDialog('Failed to create mobile geodatabase', e);
     }
     return Future.value();
   }
@@ -172,7 +172,7 @@ class _CreateMobileGeodatabaseState extends State<CreateMobileGeodatabase>
       _map.operationalLayers.add(FeatureLayer.withFeatureTable(_featureTable!));
       setState(() => _featureCount = _featureTable!.numberOfFeatures);
     } on ArcGISException catch (e) {
-      showMessageDialog(e.toString(), title: 'Error');
+      showExceptionDialog('Failed to create feature table', e);
     }
     return Future.value();
   }

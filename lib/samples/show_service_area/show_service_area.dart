@@ -180,7 +180,7 @@ class _ShowServiceAreaState extends State<ShowServiceArea>
       _serviceAreaParameters.defaultImpedanceCutoffs.clear();
       _serviceAreaParameters.defaultImpedanceCutoffs.addAll([3, 8, 12]);
     } on Exception catch (e) {
-      showMessageDialog('Error creating service area parameters:\n $e');
+      showExceptionDialog('Failed to create service area parameters', e);
     }
 
     // Toggle the _ready flag to enable the UI.

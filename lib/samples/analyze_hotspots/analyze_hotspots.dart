@@ -153,7 +153,7 @@ class _AnalyzeHotspotsState extends State<AnalyzeHotspots>
       // Mark the task load as failed so the loading indicator can be hidden.
       setState(() => _taskLoadFailed = true);
       // Show the task loading error to the user.
-      showMessageDialog('Failed to load geoprocessing task:\n$e');
+      showExceptionDialog('Failed to load geoprocessing task', e);
     }
   }
 

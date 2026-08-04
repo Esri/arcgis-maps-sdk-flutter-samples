@@ -526,7 +526,7 @@ class _ValidateUtilityNetworkTopologyState
       });
     } on ArcGISException catch (e) {
       // If the trace fails update the status.
-      showMessageDialog(e.additionalMessage, title: e.message, showOK: true);
+      showExceptionDialog('Trace failed', e);
       setState(() {
         _statusTitle = 'Trace failed:';
         _statusDetail = "Tap 'Get State' to check the updated network state.";

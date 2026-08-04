@@ -138,16 +138,8 @@ class _ConfigureElectronicNavigationalChartsState
         }),
       );
       map.operationalLayers.addAll(_encLayers);
-    } on ArcGISException catch (e) {
-      showMessageDialog(
-        'Failed to load electronic navigational charts: ${e.message}',
-        title: 'Error',
-      );
     } on Exception catch (e) {
-      showMessageDialog(
-        'Failed to configure electronic navigational charts: $e',
-        title: 'Error',
-      );
+      showExceptionDialog('Failed to load electronic navigational charts', e);
     } finally {
       // Set the ready state variable to true to hide the loading indicator.
       setState(() => _ready = true);
