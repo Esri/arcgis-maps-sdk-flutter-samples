@@ -14,13 +14,11 @@
 //
 
 import 'dart:async';
-import 'dart:io';
 
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_tts/flutter_tts.dart';
+import 'package:stts/stts.dart';
 
 class NavigateRoute extends StatefulWidget {
   const NavigateRoute({super.key});
@@ -45,7 +43,7 @@ class _NavigateRouteState extends State<NavigateRoute> with SampleStateSupport {
   final _directionsList = <DirectionManeuver>[];
 
   // Third-party plugin for text-to-speech.
-  final _flutterTts = FlutterTts();
+  final _tts = Tts();
 
   // Create a simulated location data source from the route geometry.
   final _simulatedLocationDataSource = SimulatedLocationDataSource();
@@ -124,7 +122,8 @@ class _NavigateRouteState extends State<NavigateRoute> with SampleStateSupport {
     _simulatedLocationDataSource.stop().ignore();
     _startedSubscription?.cancel().ignore();
     _autoPanModeSubscription?.cancel().ignore();
-    _flutterTts.stop().ignore();
+    _tts.stop().ignore();
+    _tts.dispose().ignore();
     super.dispose();
   }
 
@@ -198,8 +197,8 @@ class _NavigateRouteState extends State<NavigateRoute> with SampleStateSupport {
     // Solve the route.
     await solveRoute();
 
-    // Initialize Flutter TTS.
-    await initFlutterTts();
+    // Initialize TTS.
+    await initTts();
 
     // Set the initial viewpoint to encompass the route geometry.
     setInitialViewpoint();
@@ -208,30 +207,15 @@ class _NavigateRouteState extends State<NavigateRoute> with SampleStateSupport {
     setState(() => _ready = true);
   }
 
-  Future<void> initFlutterTts() async {
+  Future<void> initTts() async {
     // Detect the user's locale.
     final locale = Localizations.localeOf(context).toLanguageTag();
 
     // Set the language based on the user's locale.
-    await _flutterTts.setLanguage(locale);
-    await _flutterTts.setSpeechRate(0.5);
-    await _flutterTts.setVolume(1);
-    await _flutterTts.setPitch(1.3);
-
-    // Check if platform is iOS.
-    final isIOS = !kIsWeb && Platform.isIOS;
-
-    if (isIOS) {
-      await _flutterTts.setIosAudioCategory(
-        IosTextToSpeechAudioCategory.playback,
-        [
-          IosTextToSpeechAudioCategoryOptions.allowBluetooth,
-          IosTextToSpeechAudioCategoryOptions.allowBluetoothA2DP,
-          IosTextToSpeechAudioCategoryOptions.mixWithOthers,
-        ],
-        IosTextToSpeechAudioMode.voicePrompt,
-      );
-    }
+    await _tts.setLanguage(locale);
+    await _tts.setRate(0.5);
+    await _tts.setVolume(1);
+    await _tts.setPitch(1.3);
   }
 
   void setInitialViewpoint() {
@@ -357,7 +341,7 @@ class _NavigateRouteState extends State<NavigateRoute> with SampleStateSupport {
     // Listen for voice guidance updates.
     _routeTracker.onNewVoiceGuidance.listen((voiceGuidance) async {
       _speechEngineReady = false;
-      await _flutterTts.speak(voiceGuidance.text);
+      await _tts.start(voiceGuidance.text);
       _speechEngineReady = true;
     });
   }
@@ -439,7 +423,7 @@ Next direction: ${_directionsList[status.currentManeuverIndex + 1].directionText
     _routeGraphicsOverlay.graphics.add(_routeTraveledGraphic);
 
     // Stop any ongoing speech.
-    await _flutterTts.stop();
+    await _tts.stop();
 
     // Reset the status text.
     _statusTextNotifier.value = 'Directions are shown here.';
