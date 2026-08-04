@@ -13,7 +13,6 @@
 // limitations under the License.
 
 import 'dart:io';
-
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
@@ -30,16 +29,22 @@ class EditGeodatabaseWithTransactions extends StatefulWidget {
 class _EditGeodatabaseWithTransactionsState
     extends State<EditGeodatabaseWithTransactions>
     with SampleStateSupport {
-  // Create a map view controller.
+  // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
 
-  // The local geodatabase.
+  // Stores the loaded geodatabase.
   Geodatabase? _geodatabase;
 
-  // Variables to manage sample state.
+  // Indicates whether the sample is ready.
   var _ready = false;
+
+  // The status message displayed in the UI.
   var _statusText = 'Tap Start to begin a transaction.';
+
+  // Tracks whether a transaction is currently active.
   var _isInTransaction = false;
+
+  // Indicates whether edits require a transaction.
   var _transactionIsRequired = true;
 
   // Stores the downloaded geodatabase path.
@@ -48,6 +53,7 @@ class _EditGeodatabaseWithTransactionsState
   @override
   void initState() {
     super.initState();
+    // Initialize the sample resources.
     _initDownloadResources();
   }
 
@@ -68,19 +74,24 @@ class _EditGeodatabaseWithTransactionsState
           children: [
             Column(
               children: [
+                // Display the current status in the UI.
                 MapBanner(text: _statusText),
                 Expanded(
+                  // Add a map view to the widget tree and set a controller.
                   child: ArcGISMapView(
                     controllerProvider: () => _mapViewController,
                     onMapViewReady: onMapViewReady,
                     onTap: onTap,
                   ),
                 ),
+
+                // Display controls for managing transactions.
                 Padding(
                   padding: const EdgeInsets.all(16),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
+                      // Allow transactions to be enabled or disabled.
                       SwitchListTile(
                         contentPadding: EdgeInsets.zero,
                         title: const Text('Requires Transaction'),
@@ -88,16 +99,20 @@ class _EditGeodatabaseWithTransactionsState
                         onChanged: _isInTransaction
                             ? null
                             : (value) {
+                                // Update the transaction requirement and status message.
                                 setState(() {
                                   _transactionIsRequired = value;
-
                                   _statusText = value
                                       ? 'Tap Start to begin a transaction.'
                                       : 'Transactions are disabled.';
                                 });
                               },
                       ),
+
+                      // Add spacing between the controls.
                       const SizedBox(height: 12),
+
+                      // Start or end a transaction.
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
@@ -116,6 +131,7 @@ class _EditGeodatabaseWithTransactionsState
                 ),
               ],
             ),
+            // Display a progress indicator and prevent interaction until state is ready.
             LoadingIndicator(visible: !_ready),
           ],
         ),
@@ -137,10 +153,11 @@ class _EditGeodatabaseWithTransactionsState
     // Set the map on the controller.
     _mapViewController.arcGISMap = map;
 
+    // Create and load the geodatabase.
     final geodatabaseFile = File(_saveTheBayPath);
 
-    // Create and load the geodatabase.
     _geodatabase = Geodatabase.withFileUri(geodatabaseFile.uri);
+
     await _geodatabase!.load();
 
     // Add feature tables as feature layers.
@@ -159,14 +176,13 @@ class _EditGeodatabaseWithTransactionsState
       }
     }
 
-    setState(() {
-      _ready = true;
-    });
+    // Set the ready state variable to true to enable the sample UI.
+    setState(() => _ready = true);
   }
 
   // Handle map taps.
   Future<void> onTap(Offset offset) async {
-    if (!_isInTransaction) {
+    if (!_transactionIsRequired && !_isInTransaction) {
       return;
     }
 
@@ -190,8 +206,7 @@ class _EditGeodatabaseWithTransactionsState
     );
 
     // Load the feature tables.
-    await marineTable.load();
-    await birdTable.load();
+    await Future.wait([marineTable.load(), birdTable.load()]);
 
     if (!mounted) return;
 
@@ -200,7 +215,10 @@ class _EditGeodatabaseWithTransactionsState
       context: context,
       isScrollControlled: true,
       builder: (context) {
+        // Default to the marine feature table.
         var selectedTable = marineTable;
+
+        // Stores the selected feature type.
         FeatureType? selectedType;
 
         return StatefulBuilder(
@@ -210,14 +228,18 @@ class _EditGeodatabaseWithTransactionsState
                 height: 550,
                 child: Column(
                   children: [
+                    // Display actions for cancelling or creating a feature.
                     Padding(
                       padding: const EdgeInsets.all(16),
                       child: Row(
                         children: [
+                          // Dismiss the sheet without creating a feature.
                           TextButton(
                             onPressed: () => Navigator.pop(context),
                             child: const Text('Cancel'),
                           ),
+
+                          // Display the sheet title.
                           const Expanded(
                             child: Center(
                               child: Text(
@@ -229,6 +251,8 @@ class _EditGeodatabaseWithTransactionsState
                               ),
                             ),
                           ),
+
+                          // Return the selected table and feature type.
                           TextButton(
                             onPressed: selectedType == null
                                 ? null
@@ -243,6 +267,8 @@ class _EditGeodatabaseWithTransactionsState
                         ],
                       ),
                     ),
+
+                    // Display the feature type section title.
                     const Padding(
                       padding: EdgeInsets.symmetric(horizontal: 16),
                       child: Align(
@@ -253,6 +279,8 @@ class _EditGeodatabaseWithTransactionsState
                         ),
                       ),
                     ),
+
+                    // Select the feature table to add features to.
                     Padding(
                       padding: const EdgeInsets.all(16),
                       child: ToggleButtons(
@@ -262,8 +290,10 @@ class _EditGeodatabaseWithTransactionsState
                         ],
                         onPressed: (index) {
                           setSheetState(() {
+                            // Clear the selected feature type when switching tables.
                             selectedType = null;
 
+                            // Update the selected feature table.
                             selectedTable = index == 0
                                 ? marineTable
                                 : birdTable;
@@ -281,6 +311,8 @@ class _EditGeodatabaseWithTransactionsState
                         ],
                       ),
                     ),
+
+                    // Display the available feature types.
                     Expanded(
                       child: ListView.builder(
                         itemCount: selectedTable.featureTypes.length,
@@ -289,10 +321,15 @@ class _EditGeodatabaseWithTransactionsState
                               .elementAt(index);
 
                           return ListTile(
+                            // Display the feature type name.
                             title: Text(featureType.name),
+
+                            // Indicate the selected feature type.
                             trailing: selectedType == featureType
                                 ? const Icon(Icons.check)
                                 : null,
+
+                            // Select the feature type.
                             onTap: () {
                               setSheetState(() {
                                 selectedType = featureType;
