@@ -38,7 +38,7 @@ class _DisplayAlternateSymbolsAtDifferentScalesState
   var _currentScale = 0.0;
 
   // A subscription for viewpoint changes.
-  StreamSubscription<dynamic>? _viewpointChangedSubscription;
+  StreamSubscription<void>? _viewpointChangedSubscription;
 
   @override
   void dispose() {
@@ -58,9 +58,9 @@ class _DisplayAlternateSymbolsAtDifferentScalesState
             Column(
               children: [
                 // Display the current map scale.
-                Text(
-                  'Scale: 1:${_currentScale.isFinite ? _currentScale.round() : 0}',
-                  textAlign: TextAlign.center,
+                MapBanner(
+                  text:
+                      'Scale: 1:${_currentScale.isFinite ? _currentScale.round() : 0}',
                 ),
                 Expanded(
                   // Add a map view to the widget tree and set a controller.
@@ -96,62 +96,6 @@ class _DisplayAlternateSymbolsAtDifferentScalesState
     );
   }
 
-  // Creates a unique value renderer with alternate symbols by scale.
-  UniqueValueRenderer makeUniqueValueRenderer() {
-    final purpleDiamond = SimpleMarkerSymbol(
-      style: SimpleMarkerSymbolStyle.diamond,
-      color: Colors.purple,
-      size: 15,
-    ).toMultilayerSymbol();
-
-    final redTriangle = SimpleMarkerSymbol(
-      style: SimpleMarkerSymbolStyle.triangle,
-      color: Colors.red,
-      size: 30,
-    ).toMultilayerSymbol();
-
-    redTriangle.referenceProperties = SymbolReferenceProperties(
-      minScale: 5000,
-      maxScale: 0,
-    );
-
-    final blueSquare = SimpleMarkerSymbol(
-      style: SimpleMarkerSymbolStyle.square,
-      color: Colors.blue,
-      size: 30,
-    ).toMultilayerSymbol();
-
-    blueSquare.referenceProperties = SymbolReferenceProperties(
-      minScale: 10000,
-      maxScale: 5000,
-    );
-
-    final yellowDiamond = SimpleMarkerSymbol(
-      style: SimpleMarkerSymbolStyle.diamond,
-      color: Colors.yellow,
-      size: 30,
-    ).toMultilayerSymbol();
-
-    yellowDiamond.referenceProperties = SymbolReferenceProperties(
-      minScale: 20000,
-      maxScale: 10000,
-    );
-
-    final uniqueValue = UniqueValue(
-      description: 'unique values based on request type',
-      label: 'unique value',
-      symbol: redTriangle,
-      values: ['Damaged Property'],
-      alternateSymbols: [blueSquare, yellowDiamond],
-    );
-
-    return UniqueValueRenderer(
-      fieldNames: ['req_type'],
-      uniqueValues: [uniqueValue],
-      defaultSymbol: purpleDiamond,
-    );
-  }
-
   void onMapViewReady() {
     // Create a map with a basemap style and initial viewpoint.
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic);
@@ -183,7 +127,7 @@ class _DisplayAlternateSymbolsAtDifferentScalesState
     // Set the map to the map view controller.
     _mapViewController.arcGISMap = map;
 
-    // Update the current map scale.
+    // Listen to changes in the viewpoint and update the state with the new map scale.
     _viewpointChangedSubscription = _mapViewController.onViewpointChanged
         .listen((_) {
           setState(() {
@@ -191,8 +135,68 @@ class _DisplayAlternateSymbolsAtDifferentScalesState
           });
         });
 
+    // Set the ready state variable to true to enable the sample UI.
     setState(() {
       _ready = true;
     });
+  }
+
+  // Creates a unique value renderer with alternate symbols by scale.
+  UniqueValueRenderer makeUniqueValueRenderer() {
+    final purpleDiamond = SimpleMarkerSymbol(
+      style: SimpleMarkerSymbolStyle.diamond,
+      color: Colors.purple,
+      size: 15,
+    ).toMultilayerSymbol();
+
+    final redTriangle = SimpleMarkerSymbol(
+      style: SimpleMarkerSymbolStyle.triangle,
+      color: Colors.red,
+      size: 30,
+    ).toMultilayerSymbol();
+
+    // Apply reference properties to the symbol to define min and max scale values at which the symbol will be visible.
+    redTriangle.referenceProperties = SymbolReferenceProperties(
+      minScale: 5000,
+      maxScale: 0,
+    );
+
+    final blueSquare = SimpleMarkerSymbol(
+      style: SimpleMarkerSymbolStyle.square,
+      color: Colors.blue,
+      size: 30,
+    ).toMultilayerSymbol();
+
+    // Apply reference properties to the symbol to define min and max scale values at which the symbol will be visible.
+    blueSquare.referenceProperties = SymbolReferenceProperties(
+      minScale: 10000,
+      maxScale: 5000,
+    );
+
+    final yellowDiamond = SimpleMarkerSymbol(
+      style: SimpleMarkerSymbolStyle.diamond,
+      color: Colors.yellow,
+      size: 30,
+    ).toMultilayerSymbol();
+
+    // Apply reference properties to the symbol to define min and max scale values at which the symbol will be visible.
+    yellowDiamond.referenceProperties = SymbolReferenceProperties(
+      minScale: 20000,
+      maxScale: 10000,
+    );
+
+    final uniqueValue = UniqueValue(
+      description: 'unique values based on request type',
+      label: 'unique value',
+      symbol: redTriangle,
+      values: ['Damaged Property'],
+      alternateSymbols: [blueSquare, yellowDiamond],
+    );
+
+    return UniqueValueRenderer(
+      fieldNames: ['req_type'],
+      uniqueValues: [uniqueValue],
+      defaultSymbol: purpleDiamond,
+    );
   }
 }
