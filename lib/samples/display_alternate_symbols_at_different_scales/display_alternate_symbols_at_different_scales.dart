@@ -69,22 +69,19 @@ class _DisplayAlternateSymbolsAtDifferentScalesState
                     onMapViewReady: onMapViewReady,
                   ),
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    // A button to perform a task.
-                    ElevatedButton(
-                      onPressed: () {
-                        final initialViewpoint =
-                            _mapViewController.arcGISMap?.initialViewpoint;
+                Center(
+                  // A button to reset the viewpoint to the initial viewpoint of the map.
+                  child: ElevatedButton(
+                    onPressed: () {
+                      final initialViewpoint =
+                          _mapViewController.arcGISMap?.initialViewpoint;
 
-                        if (initialViewpoint != null) {
-                          _mapViewController.setViewpoint(initialViewpoint);
-                        }
-                      },
-                      child: const Text('Reset Viewpoint'),
-                    ),
-                  ],
+                      if (initialViewpoint != null) {
+                        _mapViewController.setViewpoint(initialViewpoint);
+                      }
+                    },
+                    child: const Text('Reset Viewpoint'),
+                  ),
                 ),
               ],
             ),
@@ -143,12 +140,14 @@ class _DisplayAlternateSymbolsAtDifferentScalesState
 
   // Creates a unique value renderer with alternate symbols by scale.
   UniqueValueRenderer makeUniqueValueRenderer() {
+    // Create a purple diamond marker symbol and convert it to a multilayer symbol.
     final purpleDiamond = SimpleMarkerSymbol(
       style: SimpleMarkerSymbolStyle.diamond,
       color: Colors.purple,
       size: 15,
     ).toMultilayerSymbol();
 
+    // Create a red triangle marker symbol and convert it to a multilayer symbol.
     final redTriangle = SimpleMarkerSymbol(
       style: SimpleMarkerSymbolStyle.triangle,
       color: Colors.red,
@@ -160,7 +159,7 @@ class _DisplayAlternateSymbolsAtDifferentScalesState
       minScale: 5000,
       maxScale: 0,
     );
-
+    // Create a blue square marker symbol and convert it to a multilayer symbol.
     final blueSquare = SimpleMarkerSymbol(
       style: SimpleMarkerSymbolStyle.square,
       color: Colors.blue,
@@ -173,6 +172,7 @@ class _DisplayAlternateSymbolsAtDifferentScalesState
       maxScale: 5000,
     );
 
+    // Create a yellow diamond marker symbol and convert it to a multilayer symbol.
     final yellowDiamond = SimpleMarkerSymbol(
       style: SimpleMarkerSymbolStyle.diamond,
       color: Colors.yellow,
@@ -185,6 +185,7 @@ class _DisplayAlternateSymbolsAtDifferentScalesState
       maxScale: 10000,
     );
 
+    // Define the symbols used to render "Damaged Property" features.
     final uniqueValue = UniqueValue(
       description: 'unique values based on request type',
       label: 'unique value',
@@ -193,6 +194,7 @@ class _DisplayAlternateSymbolsAtDifferentScalesState
       alternateSymbols: [blueSquare, yellowDiamond],
     );
 
+    // Configure the renderer to display unique and alternate symbols for request types.
     return UniqueValueRenderer(
       fieldNames: ['req_type'],
       uniqueValues: [uniqueValue],
