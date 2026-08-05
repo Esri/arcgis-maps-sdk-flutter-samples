@@ -32,8 +32,8 @@ class _EditGeodatabaseWithTransactionsState
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
 
-  // Stores the loaded geodatabase.
-  Geodatabase? _geodatabase;
+  // The local geodatabase used to store and edit feature data.
+  late Geodatabase _geodatabase;
 
   // Indicates whether the sample is ready.
   var _ready = false;
@@ -50,10 +50,22 @@ class _EditGeodatabaseWithTransactionsState
   // Stores the downloaded geodatabase path.
   var _saveTheBayPath = '';
 
+  // The name of the marine observations feature table in the local geodatabase.
+  static const _marineTableName = 'Save_The_Bay_Marine_Sync';
+
+  // The name of the bird observations feature table in the local geodatabase.
+  static const _birdsTableName = 'Save_The_Bay_Birds_Sync';
+
+  // The feature table containing marine observation records.
+  late GeodatabaseFeatureTable _marineTable;
+
+  // The feature table containing bird observation records.
+  late GeodatabaseFeatureTable _birdTable;
+
   @override
   void initState() {
     super.initState();
-    // Initialize the sample resources.
+    // Download the required data and initialize the sample.
     _initDownloadResources();
   }
 
@@ -152,24 +164,26 @@ class _EditGeodatabaseWithTransactionsState
 
     // Create and load the geodatabase.
     final geodatabaseFile = File(_saveTheBayPath);
-    _geodatabase = Geodatabase.withFileUri(geodatabaseFile.uri);
+    final geodatabase = Geodatabase.withFileUri(geodatabaseFile.uri);
 
-    await _geodatabase!.load();
+    await geodatabase.load();
+
+    // Store a reference to the opened local geodatabase.
+    _geodatabase = geodatabase;
 
     // Add feature tables as feature layers.
-    for (final table in _geodatabase!.geodatabaseFeatureTables) {
-      final layer = FeatureLayer.withFeatureTable(table);
-
-      map.operationalLayers.add(layer);
-
+    for (final table in geodatabase.geodatabaseFeatureTables) {
       // Set display names.
-      if (table.tableName == 'Save_The_Bay_Marine_Sync') {
+      if (table.tableName == _marineTableName) {
         table.displayName = 'Marine';
+        _marineTable = table;
       }
-
-      if (table.tableName == 'Save_The_Bay_Birds_Sync') {
+      if (table.tableName == _birdsTableName) {
         table.displayName = 'Bird';
+        _birdTable = table;
       }
+      // Create a feature layer from the table and add it to the map.
+      map.operationalLayers.add(FeatureLayer.withFeatureTable(table));
     }
 
     // Set the ready state variable to true to enable the sample UI.
@@ -178,41 +192,47 @@ class _EditGeodatabaseWithTransactionsState
 
   // Handle map taps.
   Future<void> onTap(Offset offset) async {
-    if (_transactionIsRequired && !_isInTransaction) {
+    // Return if edits are not currently allowed.
+    if ((_transactionIsRequired && !_isInTransaction) || _geodatabase == null) {
       return;
     }
 
-    if (_geodatabase == null) {
-      return;
-    }
-
+    // Get the map location corresponding to the screen tap.
     final mapPoint = _mapViewController.screenToLocation(screen: offset);
 
     if (mapPoint == null) {
       return;
     }
 
-    // Get the marine and bird feature tables.
-    final marineTable = _geodatabase!.geodatabaseFeatureTables.firstWhere(
-      (table) => table.tableName == 'Save_The_Bay_Marine_Sync',
-    );
-
-    final birdTable = _geodatabase!.geodatabaseFeatureTables.firstWhere(
-      (table) => table.tableName == 'Save_The_Bay_Birds_Sync',
-    );
-
-    // Load the feature tables.
-    await Future.wait([marineTable.load(), birdTable.load()]);
-
     if (!mounted) return;
 
     // Show a sheet to select a feature type.
-    final result = await showModalBottomSheet<Map<String, dynamic>>(
+    final result = await _showCreateFutureSheet();
+
+    if (result == null) {
+      return;
+    }
+
+    // Create a feature with the selected type and add it to the table.
+    final feature = result!.table.createFeature(
+      attributes: {'type': result.type.id},
+      geometry: mapPoint,
+    );
+
+    await result.table.addFeature(feature);
+
+    // Update the status message to indicate that the feature was added successfully.
+    setState(() => _statusText = 'Feature Added.');
+  }
+
+  Future<({GeodatabaseFeatureTable table, FeatureType type})?>
+  _showCreateFutureSheet() async {
+    return showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       builder: (context) {
         // Default to the marine feature table.
-        var selectedTable = marineTable;
+        var selectedTable = _marineTable;
 
         // Stores the selected feature type.
         FeatureType? selectedType;
@@ -224,85 +244,78 @@ class _EditGeodatabaseWithTransactionsState
                 height: 550,
                 child: Column(
                   children: [
-                    // Display actions for cancelling or creating a feature.
                     Padding(
                       padding: const EdgeInsets.all(16),
-                      child: Row(
+                      child: Column(
                         children: [
-                          // Dismiss the sheet without creating a feature.
-                          TextButton(
-                            onPressed: () => Navigator.pop(context),
-                            child: const Text('Cancel'),
-                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              // Dismiss the sheet without creating a feature.
+                              TextButton(
+                                onPressed: () => Navigator.pop(context),
+                                child: const Text('Cancel'),
+                              ),
 
-                          // Display the sheet title.
-                          const Expanded(
-                            child: Center(
-                              child: Text(
+                              // Display the sheet title.
+                              const Text(
                                 'New Feature',
                                 style: TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
+                              // Return the selected table and feature type.
+                              TextButton(
+                                onPressed: selectedType == null
+                                    ? null
+                                    : () {
+                                        Navigator.pop(context, (
+                                          table: selectedTable,
+                                          type: selectedType,
+                                        ));
+                                      },
+                                child: const Text('Done'),
+                              ),
+                            ],
+                          ),
+
+                          // Display a heading for the feature type selection.
+                          const Padding(
+                            padding: EdgeInsets.only(top: 20, bottom: 8),
+                            child: Text(
+                              'Feature Type',
+                              style: TextStyle(fontSize: 16),
                             ),
                           ),
 
-                          // Return the selected table and feature type.
-                          TextButton(
-                            onPressed: selectedType == null
-                                ? null
-                                : () {
-                                    Navigator.pop(context, {
-                                      'table': selectedTable,
-                                      'type': selectedType,
-                                    });
-                                  },
-                            child: const Text('Done'),
-                          ),
-                        ],
-                      ),
-                    ),
+                          // Allow the user to choose which feature table to add features to.
+                          ToggleButtons(
+                            isSelected: [
+                              selectedTable.tableName == _marineTableName,
+                              selectedTable.tableName == _birdsTableName,
+                            ],
+                            onPressed: (index) {
+                              setSheetState(() {
+                                // Clear the selected feature type when switching tables.
+                                selectedType = null;
 
-                    // Display the feature type section title.
-                    const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 16),
-                      child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          'Feature Type',
-                          style: TextStyle(fontSize: 16),
-                        ),
-                      ),
-                    ),
-
-                    // Select the feature table to add features to.
-                    Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: ToggleButtons(
-                        isSelected: [
-                          selectedTable.tableName == 'Save_The_Bay_Marine_Sync',
-                          selectedTable.tableName == 'Save_The_Bay_Birds_Sync',
-                        ],
-                        onPressed: (index) {
-                          setSheetState(() {
-                            // Clear the selected feature type when switching tables.
-                            selectedType = null;
-
-                            // Update the selected feature table.
-                            selectedTable = index == 0
-                                ? marineTable
-                                : birdTable;
-                          });
-                        },
-                        children: const [
-                          Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 24),
-                            child: Text('Marine'),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 24),
-                            child: Text('Bird'),
+                                // Update the selected feature table.
+                                selectedTable = index == 0
+                                    ? _marineTable
+                                    : _birdTable;
+                              });
+                            },
+                            children: const [
+                              Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 24),
+                                child: Text('Marine'),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 24),
+                                child: Text('Bird'),
+                              ),
+                            ],
                           ),
                         ],
                       ),
@@ -343,26 +356,6 @@ class _EditGeodatabaseWithTransactionsState
         );
       },
     );
-
-    if (result == null) {
-      return;
-    }
-
-    final selectedTable = result['table'] as GeodatabaseFeatureTable;
-
-    final selectedType = result['type'] as FeatureType;
-
-    // Create a feature with the selected type and add it to the table.
-    final feature = selectedTable.createFeature(
-      attributes: {'type': selectedType.id},
-      geometry: mapPoint,
-    );
-
-    await selectedTable.addFeature(feature);
-
-    setState(() {
-      _statusText = 'Added feature.';
-    });
   }
 
   // Starts or ends a transaction.
@@ -372,15 +365,16 @@ class _EditGeodatabaseWithTransactionsState
       return;
     }
 
-    _geodatabase!.beginTransaction();
+    _geodatabase.beginTransaction();
 
+    // Mark the transaction as active and update the status message.
     setState(() {
       _isInTransaction = true;
       _statusText = 'Transaction started.';
     });
   }
 
-  // Show transaction options.
+  // Display a dialog for committing or rolling back the current transaction.
   Future<void> _showEndTransactionDialog() async {
     await showDialog<void>(
       context: context,
@@ -394,8 +388,11 @@ class _EditGeodatabaseWithTransactionsState
             TextButton(
               onPressed: () {
                 Navigator.pop(context);
-                _geodatabase!.commitTransaction();
 
+                // Commit the transaction and save the edits to the geodatabase.
+                _geodatabase.commitTransaction();
+
+                // Update the UI to indicate that the transaction has ended.
                 setState(() {
                   _isInTransaction = false;
                   _statusText = 'Edits committed to geodatabase.';
@@ -406,8 +403,11 @@ class _EditGeodatabaseWithTransactionsState
             TextButton(
               onPressed: () {
                 Navigator.pop(context);
-                _geodatabase!.rollbackTransaction();
 
+                // Roll back the transaction and discard any pending edits.
+                _geodatabase.rollbackTransaction();
+
+                // Update the UI to indicate that the transaction has ended.
                 setState(() {
                   _isInTransaction = false;
                   _statusText = 'Edits discarded.';
@@ -417,6 +417,7 @@ class _EditGeodatabaseWithTransactionsState
             ),
             TextButton(
               onPressed: () {
+                // Close the dialog without changing the transaction state.
                 Navigator.pop(context);
               },
               child: const Text('Cancel'),
