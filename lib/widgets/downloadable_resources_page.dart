@@ -15,14 +15,10 @@
 //
 
 import 'dart:async';
-import 'dart:io';
 import 'package:arcgis_maps/arcgis_maps.dart';
-import 'package:arcgis_maps_sdk_flutter_samples/common/download_util.dart';
-import 'package:arcgis_maps_sdk_flutter_samples/models/downloadable_resource.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/models/offline_data.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:path/path.dart' as path;
-import 'package:path_provider/path_provider.dart';
 
 typedef OnComplete = void Function(List<String>);
 
@@ -36,13 +32,13 @@ typedef OnComplete = void Function(List<String>);
 class DownloadableResourcesPage extends StatefulWidget {
   const DownloadableResourcesPage({
     required this.sampleTitle,
-    required this.resources,
+    required this.offlineData,
     required this.onComplete,
     super.key,
   });
 
   final String sampleTitle;
-  final List<DownloadableResource> resources;
+  final OfflineData offlineData;
   final OnComplete onComplete;
 
   @override
@@ -62,7 +58,17 @@ class _DownloadableResourcesPageState extends State<DownloadableResourcesPage> {
   @override
   void initState() {
     super.initState();
-    _checkIfResourcesExist().ignore();
+
+    if (widget.offlineData.allResourcesDownloaded()) {
+      _isComplete = true;
+      _progress = 100;
+      _shouldShowUI = false;
+
+      // if the data has already been downloaded, immediately open the sample.
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) _openSample();
+      });
+    }
   }
 
   @override
@@ -177,33 +183,6 @@ class _DownloadableResourcesPageState extends State<DownloadableResourcesPage> {
     }
   }
 
-  // Check if all resources already exist.
-  Future<void> _checkIfResourcesExist() async {
-    final appDir = await getApplicationDocumentsDirectory();
-    var allResourcesExist = true;
-
-    for (final resource in widget.resources) {
-      final file = File(path.join(appDir.absolute.path, resource.downloadable));
-      if (!file.existsSync()) {
-        allResourcesExist = false;
-        break;
-      }
-    }
-
-    if (allResourcesExist) {
-      setState(() {
-        _isComplete = true;
-        _progress = 100;
-        _shouldShowUI = false;
-      });
-
-      // if the data has been downloaded, directly open the sample.
-      if (mounted) {
-        unawaited(_openSample());
-      }
-    }
-  }
-
   // Start the download of resources.
   Future<void> _startDownload() async {
     setState(() {
@@ -212,20 +191,16 @@ class _DownloadableResourcesPageState extends State<DownloadableResourcesPage> {
     });
 
     try {
-      final appDir = await getApplicationDocumentsDirectory();
-      final itemIds = widget.resources.map((r) => r.itemId).toList();
-      final destinationFiles = widget.resources.map((r) {
-        return File(path.join(appDir.absolute.path, r.downloadable));
-      }).toList();
-
-      await downloadSampleDataWithProgress(
-        itemIds: itemIds,
-        destinationFiles: destinationFiles,
+      await widget.offlineData.downloadResources(
         requestCancelToken: _requestCancelToken,
         onProgress: (progress) {
-          setState(() => _progress = progress);
+          if (mounted) {
+            setState(() => _progress = progress);
+          }
         },
       );
+
+      if (!mounted) return;
 
       setState(() {
         _isComplete = true;
@@ -233,7 +208,7 @@ class _DownloadableResourcesPageState extends State<DownloadableResourcesPage> {
       });
 
       // directly open the sample after downloading
-      unawaited(_openSample());
+      _openSample();
     } on Exception catch (e) {
       // show a snackbar with error message
       if (mounted) {
@@ -251,80 +226,14 @@ class _DownloadableResourcesPageState extends State<DownloadableResourcesPage> {
         ).showSnackBar(SnackBar(content: Text(message)));
       }
 
-      await _cleanupFiles();
+      widget.offlineData.cleanupFiles();
 
-      setState(() {
-        _isDownloading = false;
-        _isComplete = false;
-        _progress = 0;
-      });
-    }
-  }
-
-  /// Returns the expected file paths of the downloaded resources after extraction.
-  ///
-  /// For ZIP resources, returns the path to the resource inside the extracted directory.
-  /// For non-ZIP resources, returns the direct file path.
-  Future<List<String>> _getDownloadFilePaths() async {
-    final appDir = await getApplicationDocumentsDirectory();
-    return widget.resources.map((res) {
-      // Remove only the trailing extension (e.g., .zip, .vtpk).
-      final downloadableWithoutExt = path.withoutExtension(res.downloadable);
-
-      // Check if this is a ZIP file (using both metadata flag and filename).
-      final isZip = res.downloadable.toLowerCase().endsWith('.zip');
-
-      if (isZip) {
-        // For ZIP files, the structure is:
-        // <appDir>/<downloadableWithoutExt>/<resource>
-        return res.resource != null
-            ? path.join(
-                appDir.absolute.path,
-                downloadableWithoutExt,
-                res.resource,
-              )
-            : path.join(appDir.absolute.path, downloadableWithoutExt);
-      } else {
-        // For non-ZIP files, the file is stored directly.
-        return path.join(appDir.absolute.path, res.downloadable);
-      }
-    }).toList();
-  }
-
-  /// Cleans up partially downloaded files and extracted directories.
-  ///
-  /// Deletes:
-  /// - The downloaded file (ZIP or non-ZIP)
-  /// - The extracted directory (for ZIP files only)
-  Future<void> _cleanupFiles() async {
-    final appDir = await getApplicationDocumentsDirectory();
-    for (final resource in widget.resources) {
-      try {
-        // Delete the downloaded file.
-        final downloadedFile = File(
-          path.join(appDir.absolute.path, resource.downloadable),
-        );
-        if (downloadedFile.existsSync()) {
-          downloadedFile.deleteSync();
-        }
-
-        // For ZIP files, also delete the extracted directory.
-        final isZip = resource.downloadable.toLowerCase().endsWith('.zip');
-        if (isZip) {
-          // Use path.withoutExtension to match the extraction directory naming.
-          final extractionDirName = path.withoutExtension(
-            resource.downloadable,
-          );
-          final extractionDir = Directory(
-            path.join(appDir.absolute.path, extractionDirName),
-          );
-          if (extractionDir.existsSync()) {
-            extractionDir.deleteSync(recursive: true);
-          }
-        }
-      } on FileSystemException catch (e) {
-        // Ignore errors during cleanup - file may not exist or may be locked.
-        debugPrint('Cleanup warning: ${e.message}');
+      if (mounted) {
+        setState(() {
+          _isDownloading = false;
+          _isComplete = false;
+          _progress = 0;
+        });
       }
     }
   }
@@ -335,8 +244,8 @@ class _DownloadableResourcesPageState extends State<DownloadableResourcesPage> {
   }
 
   // Call back to onComplete.
-  Future<void> _openSample() async {
-    final downloadPaths = await _getDownloadFilePaths();
+  void _openSample() {
+    final downloadPaths = widget.offlineData.downloadedFilePaths();
     widget.onComplete(downloadPaths);
   }
 }

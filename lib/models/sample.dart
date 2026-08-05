@@ -17,7 +17,7 @@
 import 'dart:async';
 
 // run `dart run build_runner build` to generate samples_widget_list.dart
-import 'package:arcgis_maps_sdk_flutter_samples/models/downloadable_resource.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/models/offline_data.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/models/samples_widget_list.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -33,9 +33,7 @@ class Sample {
       _title = json['title'] as String? ?? '',
       _keywords = List<String>.from(json['keywords'] as List? ?? []),
       _key = json['key'] as String? ?? '',
-      _downloadableResources = _parseDownloadableResources(
-        json['offline_data'] as List? ?? [],
-      ),
+      _offlineData = OfflineData.fromJson(json['offline_data'] as List? ?? []),
       _sampleWidget = sampleWidgets[json['key']]!();
   final String _category;
   final String _description;
@@ -44,16 +42,7 @@ class Sample {
   final List<String> _keywords;
   final Widget _sampleWidget;
   final String _key;
-  final List<DownloadableResource> _downloadableResources;
-
-  static List<DownloadableResource> _parseDownloadableResources(
-    List<dynamic> resources,
-  ) {
-    return resources
-        .whereType<Map<String, dynamic>>()
-        .map(DownloadableResource.fromJson)
-        .toList();
-  }
+  final OfflineData _offlineData;
 
   String get title => _title;
 
@@ -72,11 +61,7 @@ class Sample {
   set isFavorite(bool value) =>
       FavoriteRepository.instance.setFavorite(_key, value);
 
-  List<DownloadableResource> get downloadableResources =>
-      _downloadableResources;
-
-  /// Returns true if this sample requires downloadable resources.
-  bool get hasDownloadableResources => _downloadableResources.isNotEmpty;
+  OfflineData get offlineData => _offlineData;
 
   Widget getSampleWidget() => _sampleWidget;
 }
