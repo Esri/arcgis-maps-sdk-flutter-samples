@@ -24,7 +24,6 @@ migrate_working_dir/
 #.vscode/
 
 # Flutter/Dart/Pub related
-pubspec.lock
 pubspec_overrides.yaml
 **/doc/api/
 **/ios/Flutter/.last_build_id
