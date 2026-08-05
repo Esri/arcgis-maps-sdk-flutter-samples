@@ -193,7 +193,7 @@ class _EditGeodatabaseWithTransactionsState
   // Handle map taps.
   Future<void> onTap(Offset offset) async {
     // Return if edits are not currently allowed.
-    if ((_transactionIsRequired && !_isInTransaction) || _geodatabase == null) {
+    if (_transactionIsRequired && !_isInTransaction) {
       return;
     }
 
@@ -214,7 +214,7 @@ class _EditGeodatabaseWithTransactionsState
     }
 
     // Create a feature with the selected type and add it to the table.
-    final feature = result!.table.createFeature(
+    final feature = result.table.createFeature(
       attributes: {'type': result.type.id},
       geometry: mapPoint,
     );
