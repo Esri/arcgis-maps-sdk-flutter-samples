@@ -96,19 +96,16 @@ class _EditGeodatabaseWithTransactionsState
                         contentPadding: EdgeInsets.zero,
                         title: const Text('Requires Transaction'),
                         value: _transactionIsRequired,
-                        onChanged: _isInTransaction
-                            ? null
-                            : (value) {
-                                // Update the transaction requirement and status message.
-                                setState(() {
-                                  _transactionIsRequired = value;
-                                  _statusText = value
-                                      ? 'Tap Start to begin a transaction.'
-                                      : 'Transactions are disabled.';
-                                });
-                              },
+                        onChanged: (value) {
+                          // Update the transaction requirement and status message.
+                          setState(() {
+                            _transactionIsRequired = value;
+                            _statusText = value
+                                ? 'Tap Start to begin a transaction.'
+                                : 'Transactions are disabled.';
+                          });
+                        },
                       ),
-
                       // Add spacing between the controls.
                       const SizedBox(height: 12),
 
@@ -155,7 +152,6 @@ class _EditGeodatabaseWithTransactionsState
 
     // Create and load the geodatabase.
     final geodatabaseFile = File(_saveTheBayPath);
-
     _geodatabase = Geodatabase.withFileUri(geodatabaseFile.uri);
 
     await _geodatabase!.load();
@@ -182,7 +178,7 @@ class _EditGeodatabaseWithTransactionsState
 
   // Handle map taps.
   Future<void> onTap(Offset offset) async {
-    if (!_transactionIsRequired && !_isInTransaction) {
+    if (_transactionIsRequired && !_isInTransaction) {
       return;
     }
 
@@ -371,17 +367,11 @@ class _EditGeodatabaseWithTransactionsState
 
   // Starts or ends a transaction.
   Future<void> _startOrEndTransaction() async {
-    if (_geodatabase == null) {
-      showMessageDialog('Geodatabase is not loaded.');
-      return;
-    }
-
     if (_isInTransaction) {
       await _showEndTransactionDialog();
       return;
     }
 
-    // Begin a transaction.
     _geodatabase!.beginTransaction();
 
     setState(() {
@@ -404,7 +394,6 @@ class _EditGeodatabaseWithTransactionsState
             TextButton(
               onPressed: () {
                 Navigator.pop(context);
-
                 _geodatabase!.commitTransaction();
 
                 setState(() {
@@ -417,7 +406,6 @@ class _EditGeodatabaseWithTransactionsState
             TextButton(
               onPressed: () {
                 Navigator.pop(context);
-
                 _geodatabase!.rollbackTransaction();
 
                 setState(() {
