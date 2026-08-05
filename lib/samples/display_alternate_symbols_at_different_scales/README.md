@@ -20,7 +20,7 @@ Zoom in and out of the map to see alternate symbols at each scale. The symbology
 2. Create two alternate symbols (a blue square and a yellow diamond) to be used as alternate symbols. To create an alternate symbol:
 
     a. Create a symbol using `SimpleMarkerSymbol`.
-    b. Convert the simple marker symbol to a multilayer symbol using `SimpleMarkerSymbol.toMultilayerSymbol()`. 
+    b. Convert the simple marker symbol to a multilayer symbol using `SimpleMarkerSymbol.toMultilayerSymbol()`.
     c. Set the valid scale range by assigning `SymbolReferenceProperties` to the multilayer symbol.
 
 3. Create a third multilayer symbol (a red triangle) to be used as the primary symbol in a `UniqueValue`.
