@@ -21,7 +21,6 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   flutter_syntax_view: ^4.1.7
-  flutter_tts: ^4.2.5
   glob: ^2.1.3
   go_router: ^17.3.0
   http: ^1.3.0
@@ -33,6 +32,7 @@ dependencies:
   share_plus: ^13.2.0
   shared_preferences: ^2.5.3
   simple_html_css: ^5.0.0
+  stts: ^1.3.3
   url_launcher: ^6.3.1
   webview_flutter: ^4.14.1
   xml: ^7.0.1

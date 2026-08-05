@@ -18,10 +18,9 @@ import 'dart:io';
 
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_tts/flutter_tts.dart';
 import 'package:go_router/go_router.dart';
+import 'package:stts/stts.dart';
 
 class NavigateRouteWithRerouting extends StatefulWidget {
   const NavigateRouteWithRerouting({super.key});
@@ -40,7 +39,7 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
   var _ready = false;
 
   // A text-to-speech plugin to provide voice guidance.
-  late FlutterTts _flutterTts;
+  final _tts = Tts();
 
   // A RouteTask to solve the route.
   late RouteTask _routeTask;
@@ -263,7 +262,8 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
 
   @override
   void dispose() {
-    _flutterTts.stop().ignore();
+    _tts.stop().ignore();
+    _tts.dispose().ignore();
     _simulatedLocationDataSource?.stop().ignore();
     _voiceGuidanceSubscription?.cancel().ignore();
     _trackingStatusSubscription?.cancel().ignore();
@@ -292,38 +292,22 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
       }
     });
 
-    // Initialize FlutterTts.
-    await initFlutterTts();
+    // Initialize TTS.
+    await initTts();
 
     setState(() => _ready = true);
   }
 
-  // Initialize the FlutterTts plugin.
-  Future<void> initFlutterTts() async {
+  // Initialize the TTS plugin.
+  Future<void> initTts() async {
     // Detect the user's locale.
     final locale = Localizations.localeOf(context).toLanguageTag();
 
-    _flutterTts = FlutterTts();
-
     // Set the language based on the user's locale.
-    await _flutterTts.setLanguage(locale);
-    await _flutterTts.setSpeechRate(0.5);
-    await _flutterTts.setVolume(1);
-    await _flutterTts.setPitch(1.3);
-
-    // Perform iOS-specific initialization.
-    final isIOS = !kIsWeb && Platform.isIOS;
-    if (isIOS) {
-      await _flutterTts.setIosAudioCategory(
-        IosTextToSpeechAudioCategory.playback,
-        [
-          IosTextToSpeechAudioCategoryOptions.allowBluetooth,
-          IosTextToSpeechAudioCategoryOptions.allowBluetoothA2DP,
-          IosTextToSpeechAudioCategoryOptions.mixWithOthers,
-        ],
-        IosTextToSpeechAudioMode.voicePrompt,
-      );
-    }
+    await _tts.setLanguage(locale);
+    await _tts.setRate(0.5);
+    await _tts.setVolume(1);
+    await _tts.setPitch(1.3);
   }
 
   // Initialize the route task, route parameters, and route result.
@@ -421,7 +405,7 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
       updateProgress,
     );
     _rerouteStartedSubscription = _routeTracker.onRerouteStarted.listen((_) {
-      _flutterTts.speak('Rerouting').ignore();
+      _tts.start('Rerouting').ignore();
       setState(() => _routeStatus = 'Rerouting');
     });
     _rerouteCompletedSubscription = _routeTracker.onRerouteCompleted.listen((
@@ -436,7 +420,7 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
     final nextDirection = voiceGuidance.text;
     if (nextDirection.isEmpty) return;
     _routeTracker.setSpeechEngineReady(() => false);
-    _flutterTts.speak(nextDirection).then((value) {
+    _tts.start(nextDirection).then((value) {
       _routeTracker.setSpeechEngineReady(() => true);
     }).ignore();
   }
@@ -531,7 +515,7 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
 
   // Stop the navigation.
   Future<void> stop() async {
-    await _flutterTts.stop();
+    await _tts.stop();
     // Stop the location display.
     _mapViewController.locationDisplay.autoPanMode =
         LocationDisplayAutoPanMode.off;
