@@ -131,10 +131,7 @@ class _ApplyScheduledUpdatesToPreplannedMapAreaState
         await _loadMapPackageMap();
       }
     } on ArcGISException catch (e) {
-      showMessageDialog(
-        'The offline map sync failed with error: {$e}.',
-        title: 'Error',
-      );
+      showExceptionDialog('The offline map sync failed with error', e);
     } finally {
       // Refresh the update status.
       await _checkForUpdates();
@@ -164,10 +161,7 @@ class _ApplyScheduledUpdatesToPreplannedMapAreaState
     try {
       await _mobileMapPackage!.load();
     } on ArcGISException catch (e) {
-      showMessageDialog(
-        'Mobile Map Package failed to load with error: {$e}',
-        title: 'Error',
-      );
+      showExceptionDialog('Mobile Map Package failed to load with error', e);
       return false;
     }
 

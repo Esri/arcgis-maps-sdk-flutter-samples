@@ -209,7 +209,7 @@ class _CreateSymbolStylesFromWebStylesState
       legendItems.sort((a, b) => a.name.compareTo(b.name));
       _legendItems.addAll(legendItems);
     } on Exception catch (e) {
-      showMessageDialog('Error updating symbols: $e');
+      showExceptionDialog('Error updating symbols', e);
     }
   }
 }

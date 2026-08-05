@@ -180,12 +180,8 @@ class _AddVectorTiledLayerFromCustomStyleState
           ),
         );
       }
-    } on ArcGISException catch (e) {
-      // Show ArcGIS runtime failures.
-      showMessageDialog(e.message, title: 'ArcGIS Error');
     } on Exception catch (e) {
-      // Show non-ArcGIS failures.
-      showMessageDialog(e.toString(), title: 'Error');
+      showExceptionDialog('Failed to apply style selection', e);
     } finally {
       // Re-enable interactions after style work completes.
       setState(() => _ready = true);

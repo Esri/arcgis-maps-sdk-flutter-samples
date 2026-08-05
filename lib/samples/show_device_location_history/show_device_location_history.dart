@@ -162,7 +162,7 @@ class _ShowDeviceLocationHistoryState extends State<ShowDeviceLocationHistory>
     try {
       await _locationDataSource.start();
     } on ArcGISException catch (e) {
-      showMessageDialog(e.message);
+      showExceptionDialog('Failed to start location data source', e);
     }
 
     // Listen for location changes.

@@ -180,12 +180,8 @@ class _ControlAnnotationSublayerVisibilityState
 
       // Set the ready state variable to true to enable the sample UI.
       setState(() => _ready = true);
-    } on ArcGISException catch (e) {
-      showMessageDialog('${e.message}.');
-    } on Exception {
-      showMessageDialog(
-        'There was an error loading the data required for the sample.',
-      );
+    } on Exception catch (e) {
+      showExceptionDialog('Failed to load annotation sublayers', e);
     }
   }
 }

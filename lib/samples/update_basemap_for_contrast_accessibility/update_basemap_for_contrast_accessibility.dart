@@ -281,10 +281,10 @@ class _UpdateBasemapForContrastAccessibilityState
         _contrastAppearance = appearance;
         _ready = true;
       });
-    } on ArcGISException catch (error) {
+    } on ArcGISException catch (e) {
       // Show ArcGIS load failures in the shared sample dialog.
       if (!mounted) return;
-      showMessageDialog(error.message, title: 'Error', showOK: true);
+      showExceptionDialog('Failed to load basemap for contrast appearance', e);
       setState(() => _ready = true);
     }
   }
