@@ -62,7 +62,7 @@ class _DownloadableResourcesPageState extends State<DownloadableResourcesPage> {
   @override
   void initState() {
     super.initState();
-    _checkIfResourcesExist();
+    _checkIfResourcesExist().ignore();
   }
 
   @override
@@ -87,12 +87,12 @@ class _DownloadableResourcesPageState extends State<DownloadableResourcesPage> {
           padding: const EdgeInsets.all(40),
           child: Center(
             child: Column(
-              mainAxisSize: MainAxisSize.min,
+              mainAxisSize: .min,
               children: [
                 Text(
                   'This sample requires downloadable resources',
                   style: Theme.of(context).textTheme.titleMedium,
-                  textAlign: TextAlign.center,
+                  textAlign: .center,
                 ),
                 const SizedBox(height: 20),
                 // Download progress indicator
@@ -112,7 +112,7 @@ class _DownloadableResourcesPageState extends State<DownloadableResourcesPage> {
                       Text(
                         '$_progress% download complete',
                         style: Theme.of(context).textTheme.bodyMedium,
-                        textAlign: TextAlign.center,
+                        textAlign: .center,
                       ),
                     ],
                   ),
@@ -122,7 +122,7 @@ class _DownloadableResourcesPageState extends State<DownloadableResourcesPage> {
                   child: Text(
                     'The resources have been downloaded.',
                     style: Theme.of(context).textTheme.bodySmall,
-                    textAlign: TextAlign.center,
+                    textAlign: .center,
                   ),
                 ),
                 // Button [Download|Cancel|Open]
@@ -239,10 +239,10 @@ class _DownloadableResourcesPageState extends State<DownloadableResourcesPage> {
       if (mounted) {
         var message = 'Error downloading resources. Please try again.';
         if (e is ArcGISException &&
-            e.errorType == ArcGISExceptionType.commonUserDefinedFailure &&
+            e.errorType == .commonUserDefinedFailure &&
             (e.wrappedException is ArcGISException?) &&
             (e.wrappedException as ArcGISException?)?.errorType ==
-                ArcGISExceptionType.commonUserCanceled) {
+                .commonUserCanceled) {
           message = 'Cancelled';
         }
 
@@ -261,43 +261,70 @@ class _DownloadableResourcesPageState extends State<DownloadableResourcesPage> {
     }
   }
 
-  // Get the file paths of the downloaded resources.
+  /// Returns the expected file paths of the downloaded resources after extraction.
+  ///
+  /// For ZIP resources, returns the path to the resource inside the extracted directory.
+  /// For non-ZIP resources, returns the direct file path.
   Future<List<String>> _getDownloadFilePaths() async {
     final appDir = await getApplicationDocumentsDirectory();
     return widget.resources.map((res) {
-      final downloadablePrefix = res.downloadable.split('.').first;
-      if (res.downloadable.toLowerCase().endsWith('.zip')) {
+      // Remove only the trailing extension (e.g., .zip, .vtpk).
+      final downloadableWithoutExt = path.withoutExtension(res.downloadable);
+
+      // Check if this is a ZIP file (using both metadata flag and filename).
+      final isZip = res.downloadable.toLowerCase().endsWith('.zip');
+
+      if (isZip) {
+        // For ZIP files, the structure is:
+        // <appDir>/<downloadableWithoutExt>/<resource>
         return res.resource != null
-            ? path.join(appDir.absolute.path, downloadablePrefix, res.resource)
-            : path.join(appDir.absolute.path, downloadablePrefix);
+            ? path.join(
+                appDir.absolute.path,
+                downloadableWithoutExt,
+                res.resource,
+              )
+            : path.join(appDir.absolute.path, downloadableWithoutExt);
       } else {
+        // For non-ZIP files, the file is stored directly.
         return path.join(appDir.absolute.path, res.downloadable);
       }
     }).toList();
   }
 
-  // Clean up partially downloaded files.
+  /// Cleans up partially downloaded files and extracted directories.
+  ///
+  /// Deletes:
+  /// - The downloaded file (ZIP or non-ZIP)
+  /// - The extracted directory (for ZIP files only)
   Future<void> _cleanupFiles() async {
     final appDir = await getApplicationDocumentsDirectory();
     for (final resource in widget.resources) {
       try {
-        final file = File(
+        // Delete the downloaded file.
+        final downloadedFile = File(
           path.join(appDir.absolute.path, resource.downloadable),
         );
-        if (file.existsSync()) {
-          file.deleteSync();
+        if (downloadedFile.existsSync()) {
+          downloadedFile.deleteSync();
         }
-        final dir = Directory(
-          path.join(
-            appDir.absolute.path,
-            resource.downloadable.split('.').first,
-          ),
-        );
-        if (dir.existsSync()) {
-          dir.deleteSync(recursive: true);
+
+        // For ZIP files, also delete the extracted directory.
+        final isZip = resource.downloadable.toLowerCase().endsWith('.zip');
+        if (isZip) {
+          // Use path.withoutExtension to match the extraction directory naming.
+          final extractionDirName = path.withoutExtension(
+            resource.downloadable,
+          );
+          final extractionDir = Directory(
+            path.join(appDir.absolute.path, extractionDirName),
+          );
+          if (extractionDir.existsSync()) {
+            extractionDir.deleteSync(recursive: true);
+          }
         }
-      } on FileSystemException {
-        // Ignore errors during cleanup.
+      } on FileSystemException catch (e) {
+        // Ignore errors during cleanup - file may not exist or may be locked.
+        debugPrint('Cleanup warning: ${e.message}');
       }
     }
   }

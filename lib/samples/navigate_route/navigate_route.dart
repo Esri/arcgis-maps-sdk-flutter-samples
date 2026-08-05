@@ -121,10 +121,10 @@ class _NavigateRouteState extends State<NavigateRoute> with SampleStateSupport {
 
   @override
   void dispose() {
-    _simulatedLocationDataSource.stop();
-    _startedSubscription?.cancel();
-    _autoPanModeSubscription?.cancel();
-    _flutterTts.stop();
+    _simulatedLocationDataSource.stop().ignore();
+    _startedSubscription?.cancel().ignore();
+    _autoPanModeSubscription?.cancel().ignore();
+    _flutterTts.stop().ignore();
     super.dispose();
   }
 
@@ -175,31 +175,11 @@ class _NavigateRouteState extends State<NavigateRoute> with SampleStateSupport {
             // Display a progress indicator and prevent interaction until state is ready.
             LoadingIndicator(visible: !_ready),
             // Display a banner with the current status at the top.
-            SafeArea(
-              child: IgnorePointer(
-                child: Container(
-                  padding: const EdgeInsets.all(10),
-                  color: Colors.white.withValues(alpha: 0.7),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Expanded(
-                        child: ValueListenableBuilder(
-                          valueListenable: _statusTextNotifier,
-                          builder: (context, statusText, child) {
-                            return Text(
-                              statusText,
-                              softWrap: true,
-                              textAlign: TextAlign.center,
-                              style: Theme.of(context).textTheme.labelMedium,
-                            );
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+            ValueListenableBuilder(
+              valueListenable: _statusTextNotifier,
+              builder: (context, statusText, child) {
+                return MapBanner(text: statusText);
+              },
             ),
           ],
         ),
@@ -431,10 +411,9 @@ class _NavigateRouteState extends State<NavigateRoute> with SampleStateSupport {
     );
     _statusTextNotifier.value =
         '''
-  Distance remaining: ${status.routeProgress.remainingDistance.displayText} ${status.routeProgress.remainingDistance.displayTextUnits.abbreviation}
-  Time remaining: $formattedTime
-  Next direction: ${_directionsList[status.currentManeuverIndex + 1].directionText}
-  ''';
+Distance remaining: ${status.routeProgress.remainingDistance.displayText} ${status.routeProgress.remainingDistance.displayTextUnits.abbreviation}
+Time remaining: $formattedTime
+Next direction: ${_directionsList[status.currentManeuverIndex + 1].directionText}''';
   }
 
   void recenter() {

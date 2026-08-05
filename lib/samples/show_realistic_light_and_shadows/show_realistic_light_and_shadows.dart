@@ -83,12 +83,7 @@ class _ShowRealisticLightAndShadowsState
                           .map(
                             (label) => DropdownMenuItem(
                               value: label,
-                              child: Text(
-                                label,
-                                style: TextStyle(
-                                  color: Theme.of(context).primaryColor,
-                                ),
-                              ),
+                              child: Text(label),
                             ),
                           )
                           .toList(),
@@ -114,7 +109,8 @@ class _ShowRealisticLightAndShadowsState
                         padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
                         child: Slider(
                           max: 24,
-                          divisions: 24 * 4, // 15-minute increments
+                          divisions: 24 * 4,
+                          // 15-minute increments
                           value: _timeValue,
                           label: '${_timeValue.toStringAsFixed(2)} h',
                           onChanged: (value) {
@@ -138,7 +134,7 @@ class _ShowRealisticLightAndShadowsState
                       child: Text(
                         // Format the sun time as [MMMM dd, yyyy, hh:mm a]
                         _dateFormat.format(_sunTime),
-                        style: TextStyle(color: Theme.of(context).primaryColor),
+                        style: Theme.of(context).textTheme.bodyMedium,
                       ),
                     ),
                   ],

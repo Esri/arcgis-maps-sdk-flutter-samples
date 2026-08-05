@@ -59,7 +59,7 @@ class _SnapGeometryEditsWithUtilityNetworkRulesState
   @override
   void dispose() {
     // Release resources.
-    _canUndoSubscription?.cancel();
+    _canUndoSubscription?.cancel().ignore();
     _geodatabase?.close();
 
     super.dispose();
@@ -147,27 +147,10 @@ class _SnapGeometryEditsWithUtilityNetworkRulesState
           // Display a progress indicator and prevent interaction until state is ready.
           LoadingIndicator(visible: !_ready),
           // Display a banner with instructions at the top.
-          SafeArea(
-            left: false,
-            right: false,
-            child: IgnorePointer(
-              child: Container(
-                padding: const EdgeInsets.all(10),
-                color: Colors.white.withValues(alpha: 0.7),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      _selectedElement == null
-                          ? 'Tap a point feature to edit'
-                          : 'Group: ${_selectedElement!.assetGroup.name}, Type: ${_selectedElement!.assetType.name}',
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.labelMedium,
-                    ),
-                  ],
-                ),
-              ),
-            ),
+          MapBanner(
+            text: _selectedElement == null
+                ? 'Tap a point feature to edit'
+                : 'Group: ${_selectedElement!.assetGroup.name}, Type: ${_selectedElement!.assetType.name}',
           ),
         ],
       ),
@@ -436,7 +419,7 @@ class _SnapGeometryEditsWithUtilityNetworkRulesState
 
     final geometry = _mapViewController.geometryEditor!.stop()!;
     _selectedFeature!.geometry = geometry;
-    _selectedFeature!.featureTable!.updateFeature(_selectedFeature!);
+    _selectedFeature!.featureTable!.updateFeature(_selectedFeature!).ignore();
 
     clearSelection();
   }
@@ -572,7 +555,8 @@ class _SnapSourceSwatchState extends State<SnapSourceSwatch> {
           .then((image) {
             // Signal that the swatch image is ready.
             _swatchCompleter.complete(image.getEncodedBuffer());
-          });
+          })
+          .ignore();
     });
   }
 

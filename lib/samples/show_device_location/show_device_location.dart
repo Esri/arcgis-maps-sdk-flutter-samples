@@ -53,9 +53,9 @@ class _ShowDeviceLocationState extends State<ShowDeviceLocation>
   @override
   void dispose() {
     // When exiting, stop the location data source and cancel subscriptions.
-    _locationDataSource.stop();
-    _statusSubscription?.cancel();
-    _autoPanModeSubscription?.cancel();
+    _locationDataSource.stop().ignore();
+    _statusSubscription?.cancel().ignore();
+    _autoPanModeSubscription?.cancel().ignore();
 
     super.dispose();
   }
@@ -80,10 +80,9 @@ class _ShowDeviceLocationState extends State<ShowDeviceLocation>
                 ),
                 Center(
                   child: ElevatedButton(
-                    onPressed:
-                        _status == LocationDataSourceStatus.failedToStart
-                            ? null
-                            : () => setState(() => _settingsVisible = true),
+                    onPressed: _status == LocationDataSourceStatus.failedToStart
+                        ? null
+                        : () => setState(() => _settingsVisible = true),
                     child: const Text('Location Settings'),
                   ),
                 ),

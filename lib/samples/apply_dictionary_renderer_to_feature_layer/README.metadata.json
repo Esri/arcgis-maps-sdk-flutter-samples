@@ -1,0 +1,34 @@
+{
+    "category": "Visualization",
+    "description": "Convert features into graphics to show them with mil2525d symbols.",
+    "offline_data": [
+        {
+            "itemId": "c78b149a1d52414682c86a5feeb13d30",
+            "downloadable": "mil2525d.stylx"
+        },
+        {
+            "itemId": "e0d41b4b409a49a5a7ba11939d8535dc",
+            "downloadable": "militaryoverlay.geodatabase.zip",
+            "resource": "militaryoverlay.geodatabase"
+        }
+    ],
+    "ignore": false,
+    "images": [
+        "apply_dictionary_renderer_to_feature_layer.png"
+    ],
+    "keywords": [
+        "military",
+        "symbol",
+        "DictionaryRenderer",
+        "DictionarySymbolStyle"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+        "DictionaryRenderer",
+        "DictionarySymbolStyle"
+    ],
+    "snippets": [
+        "apply_dictionary_renderer_to_feature_layer.dart"
+    ],
+    "title": "Apply dictionary renderer to feature layer"
+}

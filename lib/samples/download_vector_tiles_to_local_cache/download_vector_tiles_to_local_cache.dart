@@ -19,6 +19,7 @@ import 'dart:io';
 
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/widgets/download_progress_card.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -79,17 +80,17 @@ class _DownloadVectorTilesToLocalCacheState
                   ),
                 ),
                 Center(
-                  child:
-                      _previewMap
-                          ? ElevatedButton(
-                            onPressed: closePreviewVectorTiles,
-                            child: const Text('Close Preview Vector Tiles'),
-                          )
-                          : ElevatedButton(
-                            onPressed:
-                                _isJobStarted ? null : startDownloadVectorTiles,
-                            child: const Text('Download Vector Tiles'),
-                          ),
+                  child: _previewMap
+                      ? ElevatedButton(
+                          onPressed: closePreviewVectorTiles,
+                          child: const Text('Close Preview Vector Tiles'),
+                        )
+                      : ElevatedButton(
+                          onPressed: _isJobStarted
+                              ? null
+                              : startDownloadVectorTiles,
+                          child: const Text('Download Vector Tiles'),
+                        ),
                 ),
               ],
             ),
@@ -320,31 +321,12 @@ class _DownloadVectorTilesToLocalCacheState
 
   // Return a Widget with a linear progress bar.
   Widget buildProgressIndicator() {
-    return Container(
-      color: Colors.white,
-      constraints: BoxConstraints(
-        maxWidth: MediaQuery.sizeOf(context).width * 0.6,
-      ),
-      padding: const EdgeInsets.all(20),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        spacing: 20,
-        children: [
-          Text('Downloading...', style: Theme.of(context).textTheme.labelLarge),
-          Text(
-            '${(_progress * 100).toStringAsFixed(0)}% completed',
-            style: Theme.of(context).textTheme.labelMedium,
-          ),
-          LinearProgressIndicator(
-            value: _progress,
-            backgroundColor: Colors.grey[200],
-            color: Colors.blue,
-          ),
-          ElevatedButton(
-            onPressed: cancelDownloadingJob,
-            child: const Text('Cancel Job'),
-          ),
-        ],
+    return Center(
+      child: DownloadProgressCard(
+        title: 'Downloading...',
+        progress: _progress,
+        onCancel: cancelDownloadingJob,
+        cancelLabel: 'Cancel Job',
       ),
     );
   }

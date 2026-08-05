@@ -34,30 +34,43 @@ class _SampleInfoPopupMenuState extends State<SampleInfoPopupMenu>
   Widget build(BuildContext context) {
     return PopupMenuButton(
       icon: const Icon(Icons.more_vert),
-      itemBuilder: (context) => const [
-        PopupMenuItem(
+      itemBuilder: (context) => [
+        const PopupMenuItem(
           value: 'README',
           child: ListTile(
             leading: Icon(Icons.description),
             title: Text('README'),
           ),
         ),
-        PopupMenuItem(
+        const PopupMenuItem(
           value: 'Code',
           child: ListTile(leading: Icon(Icons.source), title: Text('Code')),
         ),
-        PopupMenuItem(
+        const PopupMenuItem(
           value: 'Website',
           child: ListTile(
             leading: Icon(Icons.link_rounded),
             title: Text('Website'),
           ),
         ),
+        PopupMenuItem(
+          value: 'ToggleFavorite',
+          child: ListTile(
+            leading: Icon(
+              widget.sample.isFavorite ? Icons.favorite : Icons.favorite_border,
+            ),
+            title: Text(widget.sample.isFavorite ? 'Unfavorite' : 'Favorite'),
+          ),
+        ),
       ],
       onSelected: (result) {
         switch (result) {
           case 'Website':
-            _launchSampleUrl();
+            _launchSampleUrl().ignore();
+          case 'ToggleFavorite':
+            setState(
+              () => widget.sample.isFavorite = !widget.sample.isFavorite,
+            );
           default:
             _navigateTo(context, result);
         }
@@ -66,7 +79,7 @@ class _SampleInfoPopupMenuState extends State<SampleInfoPopupMenu>
   }
 
   Future<void> _launchSampleUrl() async {
-    if (!await launchUrl(webPageUrl(), mode: LaunchMode.externalApplication)) {
+    if (!await launchUrl(webPageUrl(), mode: .externalApplication)) {
       showMessageDialog('Could not launch ${webPageUrl()}');
     }
   }
@@ -96,7 +109,7 @@ class _SampleInfoPopupMenuState extends State<SampleInfoPopupMenu>
     if (stack.isEmpty || stack.last.endsWith('/live')) {
       // If there is nothing on the stack from this sample, or if we're on the live
       // running sample, push the location onto the stack.
-      context.push(toLocation);
+      context.push(toLocation).ignore();
     } else {
       if (stack.last != toLocation) {
         if (stack.contains(toLocation)) {
@@ -104,7 +117,7 @@ class _SampleInfoPopupMenuState extends State<SampleInfoPopupMenu>
           context.pop();
         } else {
           // Otherwise push the new location onto the navigation stack.
-          context.push(toLocation);
+          context.push(toLocation).ignore();
         }
       }
     }

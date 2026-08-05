@@ -1,0 +1,33 @@
+{
+    "category": "Edit and Manage Data",
+    "description": "Connect to a service and list versions of the geodatabase.",
+    "ignore": false,
+    "images": [
+        "list_geodatabase_versions.png"
+    ],
+    "keywords": [
+        "conflict resolution",
+        "data management",
+        "database",
+        "multi-user",
+        "sync",
+        "version",
+        "GeoprocessingFeatures",
+        "GeoprocessingJob",
+        "GeoprocessingParameters",
+        "GeoprocessingResult",
+        "GeoprocessingTask"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+        "GeoprocessingFeatures",
+        "GeoprocessingJob",
+        "GeoprocessingParameters",
+        "GeoprocessingResult",
+        "GeoprocessingTask"
+    ],
+    "snippets": [
+        "list_geodatabase_versions.dart"
+    ],
+    "title": "List geodatabase versions"
+}

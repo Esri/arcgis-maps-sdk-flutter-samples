@@ -35,28 +35,40 @@ class _AnimateImagesWithImageOverlayState
     with TickerProviderStateMixin, SampleStateSupport {
   // Create a controller for the scene view.
   final _sceneViewController = ArcGISSceneView.createController();
+
   // A flag to toggle the start/stop of the image animation.
   var _started = false;
+
   // Define the animated speeds available in the dropdown button.
   final _animatedSpeeds = ['Fast', 'Medium', 'Slow'];
+
   // The initial selected animated speed.
   var _selectedAnimatedSpeed = 'Slow';
+
   // The speed of the image frame animation in milliseconds.
   var _imageFrameSpeed = 0;
+
   // The last frame time in milliseconds to control the animation speed.
   var _lastFrameTime = 0;
+
   // The initial opacity of the image overlay.
   var _opacity = 0.5;
+
   // Create an ImageOverlay to display the animated images.
   final _imageOverlay = ImageOverlay();
+
   // A list to hold the ArcGIS image files for the animation.
   List<File> _imageFileList = [];
+
   // An integer to track the current ArcGIS image index.
   var _imageFrameIndex = 0;
+
   // A timer to control and change the ArcGIS image periodically.
   Ticker? _ticker;
+
   // A flag for when the scene view is ready and controls can be used.
   var _ready = false;
+
   // The image envelope defines the extent of the image frame.
   final imageEnvelope = Envelope.fromCenter(
     ArcGISPoint(
@@ -128,15 +140,10 @@ class _AnimateImagesWithImageOverlayState
                           });
                         }
                       },
-                      items: _animatedSpeeds.map((String speed) {
+                      items: _animatedSpeeds.map((speed) {
                         return DropdownMenuItem<String>(
                           value: speed,
-                          child: Text(
-                            speed,
-                            style: TextStyle(
-                              color: Theme.of(context).primaryColor,
-                            ),
-                          ),
+                          child: Text(speed),
                         );
                       }).toList(),
                     ),
@@ -199,7 +206,7 @@ class _AnimateImagesWithImageOverlayState
     _lastFrameTime = 0;
     // create a ticker to control the image frame animation.
     _ticker = _ticker ?? createTicker(_onTicker);
-    _ticker!.start();
+    _ticker!.start().ignore();
     setState(() => _started = true);
   }
 
@@ -278,6 +285,9 @@ class _AnimateImagesWithImageOverlayState
     );
 
     // Once the image frame is loaded, set it to the image overlay.
-    imageFrame.load().then((_) => _imageOverlay.imageFrame = imageFrame);
+    imageFrame
+        .load()
+        .then((_) => _imageOverlay.imageFrame = imageFrame)
+        .ignore();
   }
 }

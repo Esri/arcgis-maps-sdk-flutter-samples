@@ -87,7 +87,7 @@ class _AnalyzeNetworkWithSubnetworkTraceState
       'I68VGU^nMurF',
     );
 
-    _setup();
+    _setup().ignore();
   }
 
   @override

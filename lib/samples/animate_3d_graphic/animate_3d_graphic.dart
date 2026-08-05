@@ -485,7 +485,7 @@ class _Animate3dGraphicState extends State<Animate3dGraphic>
     if (_ticker.isActive) {
       _ticker.stop();
     } else {
-      _ticker.start();
+      _ticker.start().ignore();
     }
     setState(() => _isPlaying = _ticker.isActive);
   }
@@ -500,101 +500,104 @@ class _Animate3dGraphicState extends State<Animate3dGraphic>
       builder: (context) {
         return Padding(
           padding: bottomSheetPadding(context),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                'Mission Settings',
-                style: Theme.of(context).textTheme.titleLarge,
-              ),
-              const SizedBox(height: 16),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'Mission Settings',
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
+                const SizedBox(height: 16),
 
-              // Progress widgets have to update for every frame, so wrapped with a StatefulBuilder.
-              StatefulBuilder(
-                builder: (context, setModalState) {
-                  // Store the setter.
-                  _modalStateSetter = setModalState;
-                  return Column(
-                    children: [
-                      // Progress Indicator
-                      Padding(
-                        padding: const EdgeInsets.all(8),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Text(
-                              'Progress',
-                              style: TextStyle(fontSize: 18),
-                            ),
-                            Text(
-                              '${(_progress * 100).toStringAsFixed(1)}%',
-                              style: const TextStyle(fontSize: 18),
-                            ),
-                          ],
+                // Progress widgets have to update for every frame, so wrapped with a StatefulBuilder.
+                StatefulBuilder(
+                  builder: (context, setModalState) {
+                    // Store the setter.
+                    _modalStateSetter = setModalState;
+                    return Column(
+                      children: [
+                        // Progress Indicator
+                        Padding(
+                          padding: const EdgeInsets.all(8),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text(
+                                'Progress',
+                                style: TextStyle(fontSize: 18),
+                              ),
+                              Text(
+                                '${(_progress * 100).toStringAsFixed(1)}%',
+                                style: const TextStyle(fontSize: 18),
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                      LinearProgressIndicator(value: _progress),
-                    ],
-                  );
-                },
-              ),
+                        LinearProgressIndicator(value: _progress),
+                      ],
+                    );
+                  },
+                ),
 
-              const SizedBox(height: 24),
-              // Dropdown to select mission.
-              DropdownMenu(
-                initialSelection: _currentMission,
-                onSelected: (mission) {
-                  if (mission != null) {
-                    if (_ticker.isActive) {
-                      _ticker.stop();
-                      setState(() => _isPlaying = false);
+                const SizedBox(height: 24),
+                // Dropdown to select mission.
+                DropdownMenu(
+                  initialSelection: _currentMission,
+                  onSelected: (mission) {
+                    if (mission != null) {
+                      if (_ticker.isActive) {
+                        _ticker.stop();
+                        setState(() => _isPlaying = false);
+                      }
+                      setState(() {
+                        _currentMission = mission;
+                        _currentFrameIndex = 0;
+                      });
+                      // Update the modal to show progress reset to 0
+                      _modalStateSetter?.call(() {});
+
+                      _loadMissionFrames(mission).ignore();
                     }
-                    setState(() {
-                      _currentMission = mission;
-                      _currentFrameIndex = 0;
-                    });
-                    // Update the modal to show progress reset to 0
-                    _modalStateSetter?.call(() {});
-
-                    _loadMissionFrames(mission);
-                  }
-                },
-                dropdownMenuEntries: Mission.values.map((mission) {
-                  return DropdownMenuEntry(
-                    value: mission,
-                    label: mission.label,
-                  );
-                }).toList(),
-              ),
-              const SizedBox(height: 16),
-              DropdownMenu(
-                initialSelection: _animationSpeed,
-                onSelected: (speed) {
-                  if (speed != null) {
-                    setState(() => _animationSpeed = speed);
-                    _updateFrameInterval();
-                  }
-                },
-                dropdownMenuEntries: AnimationSpeed.values.map((speed) {
-                  return DropdownMenuEntry(
-                    value: speed,
-                    label: 'Speed: ${speed.label}',
-                  );
-                }).toList(),
-              ),
-            ],
+                  },
+                  dropdownMenuEntries: Mission.values.map((mission) {
+                    return DropdownMenuEntry(
+                      value: mission,
+                      label: mission.label,
+                    );
+                  }).toList(),
+                ),
+                const SizedBox(height: 16),
+                DropdownMenu(
+                  initialSelection: _animationSpeed,
+                  onSelected: (speed) {
+                    if (speed != null) {
+                      setState(() => _animationSpeed = speed);
+                      _updateFrameInterval();
+                    }
+                  },
+                  dropdownMenuEntries: AnimationSpeed.values.map((speed) {
+                    return DropdownMenuEntry(
+                      value: speed,
+                      label: 'Speed: ${speed.label}',
+                    );
+                  }).toList(),
+                ),
+              ],
+            ),
           ),
         );
       },
     ).whenComplete(() {
       _modalStateSetter = null;
-    });
+    }).ignore();
   }
 
   // Shows the camera settings in a bottom sheet.
   void _showCameraSettings() {
     showModalBottomSheet<void>(
       context: context,
+      isScrollControlled: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
@@ -603,75 +606,82 @@ class _Animate3dGraphicState extends State<Animate3dGraphic>
           builder: (context, setModalState) {
             return Padding(
               padding: bottomSheetPadding(context),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    'Camera Settings',
-                    style: Theme.of(context).textTheme.titleLarge,
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxHeight: MediaQuery.sizeOf(context).height * 0.8,
+                ),
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        'Camera Settings',
+                        style: Theme.of(context).textTheme.titleLarge,
+                      ),
+                      const SizedBox(height: 16),
+                      _buildSlider(
+                        label: 'Distance',
+                        value: _cameraDistance,
+                        min: 500,
+                        max: 8000,
+                        onChanged: (value) {
+                          setModalState(() => _cameraDistance = value);
+                          _cameraController.cameraDistance = value;
+                        },
+                      ),
+                      _buildSlider(
+                        label: 'Heading Offset',
+                        value: _cameraHeading,
+                        min: -180,
+                        max: 180,
+                        onChanged: (value) {
+                          setModalState(() => _cameraHeading = value);
+                          _cameraController.cameraHeadingOffset = value;
+                        },
+                      ),
+                      _buildSlider(
+                        label: 'Pitch Offset',
+                        value: _cameraPitch,
+                        min: 0,
+                        max: 180,
+                        onChanged: (value) {
+                          setModalState(() => _cameraPitch = value);
+                          _cameraController.cameraPitchOffset = value;
+                        },
+                      ),
+                      SwitchListTile(
+                        title: const Text('Auto Heading'),
+                        value: _autoHeading,
+                        onChanged: (value) {
+                          setModalState(() => _autoHeading = value);
+                          _cameraController.isAutoHeadingEnabled = value;
+                        },
+                      ),
+                      SwitchListTile(
+                        title: const Text('Auto Pitch'),
+                        value: _autoPitch,
+                        onChanged: (value) {
+                          setModalState(() => _autoPitch = value);
+                          _cameraController.isAutoPitchEnabled = value;
+                        },
+                      ),
+                      SwitchListTile(
+                        title: const Text('Auto Roll'),
+                        value: _autoRoll,
+                        onChanged: (value) {
+                          setModalState(() => _autoRoll = value);
+                          _cameraController.isAutoRollEnabled = value;
+                        },
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 16),
-                  _buildSlider(
-                    label: 'Distance',
-                    value: _cameraDistance,
-                    min: 500,
-                    max: 8000,
-                    onChanged: (value) {
-                      setModalState(() => _cameraDistance = value);
-                      _cameraController.cameraDistance = value;
-                    },
-                  ),
-                  _buildSlider(
-                    label: 'Heading Offset',
-                    value: _cameraHeading,
-                    min: -180,
-                    max: 180,
-                    onChanged: (value) {
-                      setModalState(() => _cameraHeading = value);
-                      _cameraController.cameraHeadingOffset = value;
-                    },
-                  ),
-                  _buildSlider(
-                    label: 'Pitch Offset',
-                    value: _cameraPitch,
-                    min: 0,
-                    max: 180,
-                    onChanged: (value) {
-                      setModalState(() => _cameraPitch = value);
-                      _cameraController.cameraPitchOffset = value;
-                    },
-                  ),
-                  SwitchListTile(
-                    title: const Text('Auto Heading'),
-                    value: _autoHeading,
-                    onChanged: (value) {
-                      setModalState(() => _autoHeading = value);
-                      _cameraController.isAutoHeadingEnabled = value;
-                    },
-                  ),
-                  SwitchListTile(
-                    title: const Text('Auto Pitch'),
-                    value: _autoPitch,
-                    onChanged: (value) {
-                      setModalState(() => _autoPitch = value);
-                      _cameraController.isAutoPitchEnabled = value;
-                    },
-                  ),
-                  SwitchListTile(
-                    title: const Text('Auto Roll'),
-                    value: _autoRoll,
-                    onChanged: (value) {
-                      setModalState(() => _autoRoll = value);
-                      _cameraController.isAutoRollEnabled = value;
-                    },
-                  ),
-                ],
+                ),
               ),
             );
           },
         );
       },
-    );
+    ).ignore();
   }
 
   // Builds a labeled slider widget.

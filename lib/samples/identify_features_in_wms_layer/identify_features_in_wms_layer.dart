@@ -40,47 +40,27 @@ class _IdentifyFeaturesInWmsLayerState extends State<IdentifyFeaturesInWmsLayer>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        top: false,
-        left: false,
-        right: false,
-        child: Stack(
-          children: [
-            Column(
-              children: [
-                Expanded(
-                  // Add a map view to the widget tree and set a controller.
-                  child: ArcGISMapView(
-                    controllerProvider: () => _mapViewController,
-                    onMapViewReady: onMapViewReady,
-                    onTap: onTap,
-                  ),
-                ),
-              ],
-            ),
-            // Display a banner with instructions.
-            SafeArea(
-              child: IgnorePointer(
-                child: Container(
-                  padding: const EdgeInsets.all(10),
-                  color: Colors.white.withValues(alpha: 0.7),
-                  child: const Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        'Tap on the map to identify features in the WMS layer.',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(color: Colors.black),
-                      ),
-                    ],
-                  ),
+      body: Stack(
+        children: [
+          Column(
+            children: [
+              Expanded(
+                // Add a map view to the widget tree and set a controller.
+                child: ArcGISMapView(
+                  controllerProvider: () => _mapViewController,
+                  onMapViewReady: onMapViewReady,
+                  onTap: onTap,
                 ),
               ),
-            ),
-            // Display a progress indicator and prevent interaction until state is ready.
-            LoadingIndicator(visible: !_ready),
-          ],
-        ),
+            ],
+          ),
+          // Display a banner with instructions.
+          const MapBanner(
+            text: 'Tap on the map to identify features in the WMS layer.',
+          ),
+          // Display a progress indicator and prevent interaction until state is ready.
+          LoadingIndicator(visible: !_ready),
+        ],
       ),
     );
   }
@@ -166,7 +146,7 @@ class _IdentifyFeaturesInWmsLayerState extends State<IdentifyFeaturesInWmsLayer>
           child: WebViewWidget(controller: _webViewController),
         ),
       ),
-    );
+    ).ignore();
   }
 
   // A helper method to update the initial scale of the provided HTML content to improve readability.

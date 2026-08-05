@@ -94,73 +94,69 @@ class _CreatePlanarAndGeodeticBuffersState
   Widget buildSettings(BuildContext context) {
     return BottomSheetSettings(
       onCloseIconPressed: () => setState(() => _settingsVisible = false),
-      settingsWidgets:
-          (context) => [
-            Row(
-              children: [
-                const Text('Buffer Radius (miles)'),
-                const Spacer(),
-                Text(
-                  _bufferRadius.round().toString(),
-                  textAlign: TextAlign.right,
-                ),
-              ],
-            ),
-            Row(
-              children: [
-                Expanded(
-                  // A slider to adjust the buffer radius.
-                  child: Slider(
-                    value: _bufferRadius,
-                    min: 200,
-                    max: 2000,
-                    onChanged: (value) => setState(() => _bufferRadius = value),
-                  ),
-                ),
-              ],
-            ),
-            Row(
-              spacing: 10,
-              children: [
-                SizedBox(
-                  width: 30,
-                  height: 30,
-                  child: Container(
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.green,
-                    ),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(width: 2),
-                        color: Colors.red.withAlpha(127),
-                      ),
-                    ),
-                  ),
-                ),
-                const Text('Planar Buffer'),
-              ],
-            ),
-            const SizedBox(height: 10),
-            Row(
-              spacing: 10,
-              children: [
-                SizedBox(
-                  width: 30,
-                  height: 30,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(width: 2),
-                      color: Colors.green,
-                    ),
-                  ),
-                ),
-                const Text('Geodetic Buffer'),
-              ],
+      settingsWidgets: (context) => [
+        Row(
+          children: [
+            const Text('Buffer Radius (miles)'),
+            const Spacer(),
+            Text(_bufferRadius.round().toString(), textAlign: TextAlign.right),
+          ],
+        ),
+        Row(
+          children: [
+            Expanded(
+              // A slider to adjust the buffer radius.
+              child: Slider(
+                value: _bufferRadius,
+                min: 200,
+                max: 2000,
+                onChanged: (value) => setState(() => _bufferRadius = value),
+              ),
             ),
           ],
+        ),
+        Row(
+          spacing: 10,
+          children: [
+            SizedBox(
+              width: 30,
+              height: 30,
+              child: Container(
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.green,
+                ),
+                child: Container(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(width: 2),
+                    color: Colors.red.withAlpha(127),
+                  ),
+                ),
+              ),
+            ),
+            const Text('Planar Buffer'),
+          ],
+        ),
+        const SizedBox(height: 10),
+        Row(
+          spacing: 10,
+          children: [
+            SizedBox(
+              width: 30,
+              height: 30,
+              child: Container(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(width: 2),
+                  color: Colors.green,
+                ),
+              ),
+            ),
+            const Text('Geodetic Buffer'),
+          ],
+        ),
+      ],
     );
   }
 

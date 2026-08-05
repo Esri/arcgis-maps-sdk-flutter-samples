@@ -135,25 +135,7 @@ class _RunValveIsolationTraceState extends State<RunValveIsolationTrace>
               text: _loading ? _statusMessage : '',
             ),
             // Display a banner with instructions at the top.
-            IgnorePointer(
-              child: Container(
-                padding: const EdgeInsets.all(5),
-                color: Colors.white.withValues(alpha: 0.7),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        _statusMessage ?? '',
-                        textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.labelMedium,
-                        maxLines: 4,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+            MapBanner(text: _statusMessage ?? ''),
           ],
         ),
       ),

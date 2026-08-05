@@ -1,0 +1,31 @@
+{
+    "category": "Visualization",
+    "description": "Create symbol styles from a style file hosted on a portal.",
+    "ignore": false,
+    "images": [
+        "create_symbol_styles_from_web_styles.png"
+    ],
+    "keywords": [
+        "renderer",
+        "symbol",
+        "symbology",
+        "web style",
+        "ArcGISSymbol",
+        "FeatureLayer",
+        "SymbolStyle",
+        "UniqueValue",
+        "UniqueValueRenderer"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+        "ArcGISSymbol",
+        "FeatureLayer",
+        "SymbolStyle",
+        "UniqueValue",
+        "UniqueValueRenderer"
+    ],
+    "snippets": [
+        "create_symbol_styles_from_web_styles.dart"
+    ],
+    "title": "Create symbol styles from web styles"
+}

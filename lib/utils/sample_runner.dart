@@ -1,5 +1,5 @@
 //
-// Copyright 2024 Esri
+// Copyright 2026 Esri
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import 'package:arcgis_maps_sdk_flutter_samples/models/sample.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/router_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 /// Run an individual sample outside of the Sample Viewer App.
 void main() async {
@@ -37,13 +38,20 @@ void main() async {
   // Alternatively, replace sample below with the directory name of the individual sample in snake case
   // const sampleFolderName = 'display_map';
 
+  WidgetsFlutterBinding.ensureInitialized();
+
+  final prefs = await SharedPreferences.getInstance();
+  FavoriteRepository.instance.initialize(prefs);
+
   final jsonString = await rootBundle.loadString(
     'assets/generated_samples_list.json',
   );
   final sampleData = jsonDecode(jsonString) as Map<String, dynamic>;
+
   final allSamples = List<Sample>.unmodifiable(
     sampleData.values.whereType<Map<String, dynamic>>().map(Sample.fromJson),
   );
+
   final sample = allSamples.firstWhere((s) {
     return s.key == sampleFolderName;
   });
@@ -54,5 +62,11 @@ void main() async {
 
   final router = routerConfigWithSample(sample, initialRoute);
 
-  runApp(MaterialApp.router(routerConfig: router, theme: sampleViewerTheme));
+  runApp(
+    MaterialApp.router(
+      routerConfig: router,
+      theme: sampleViewerLightTheme,
+      darkTheme: sampleViewerDarkTheme,
+    ),
+  );
 }

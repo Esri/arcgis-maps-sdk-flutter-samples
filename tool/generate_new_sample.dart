@@ -85,7 +85,7 @@ Directory createNewSample(String sampleCamelName) {
 String camelToSnake(String input) {
   final snakeCase = input.replaceAllMapped(
     RegExp('([a-z])([0-9A-Z])'),
-    (Match match) => '${match.group(1)}_${match.group(2)!.toLowerCase()}',
+    (match) => '${match.group(1)}_${match.group(2)!.toLowerCase()}',
   );
   return snakeCase.toLowerCase();
 }
@@ -138,7 +138,7 @@ void createNewSampleFile(
         final newLine = line.replaceAll('SampleWidget', sampleCamelName);
         sampleFile.writeAsStringSync(
           '$newLine${Platform.lineTerminator}',
-          mode: FileMode.append,
+          mode: .append,
         );
       }
     }

@@ -1,0 +1,27 @@
+{
+    "category": "Scenes",
+    "description": "Add a layer to visualize 3D tiles data that conforms to the OGC 3D Tiles specification.",
+    "ignore": false,
+    "images": [
+        "add_3d_tiles_layer.png"
+    ],
+    "keywords": [
+        "3d tiles",
+        "OGC",
+        "OGC API",
+        "layers",
+        "scene",
+        "service",
+        "ArcGISSceneView",        
+        "Ogc3DTilesLayer"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+        "ArcGISSceneView",
+        "Ogc3DTilesLayer"
+    ],
+    "snippets": [
+        "add_3d_tiles_layer.dart"
+    ],
+    "title": "Add 3D tiles layer"
+}

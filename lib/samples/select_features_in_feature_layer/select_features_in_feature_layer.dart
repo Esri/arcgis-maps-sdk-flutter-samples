@@ -91,9 +91,7 @@ class _SelectFeaturesInFeatureLayerState
     if (features.isEmpty) {
       final featureQueryResult = await _featureLayer.getSelectedFeatures();
       final selectedFeatures = featureQueryResult.features();
-      for (final feature in selectedFeatures) {
-        _featureLayer.unselectFeature(feature);
-      }
+      selectedFeatures.forEach(_featureLayer.unselectFeature);
     } else {
       // Select the identified features.
       _featureLayer.selectFeatures(features);

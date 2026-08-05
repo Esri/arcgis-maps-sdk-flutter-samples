@@ -94,7 +94,7 @@ class _SampleViewerAppState extends State<SampleViewerApp>
               final box = context.findRenderObject()! as RenderBox;
               final position = box.localToGlobal(box.size.center(Offset.zero));
 
-              context.push('/search', extra: position);
+              context.push('/search', extra: position).ignore();
             },
             child: const Icon(Icons.search),
           );
@@ -116,10 +116,9 @@ class _ResponsiveCategoryGrid extends StatelessWidget {
         builder: (context, constraints) {
           final cardSize = switch (orientation) {
             // Two columns in portrait.
-            Orientation.portrait => (constraints.maxWidth - cardSpacing) / 2,
+            .portrait => (constraints.maxWidth - cardSpacing) / 2,
             // Four columns in landscape.
-            Orientation.landscape =>
-              (constraints.maxWidth - cardSpacing * 3) / 4,
+            .landscape => (constraints.maxWidth - cardSpacing * 3) / 4,
           };
 
           return Wrap(

@@ -51,7 +51,7 @@ class _StyleGraphicsWithSymbolsState extends State<StyleGraphicsWithSymbols>
     );
   }
 
-  void onMapViewReady() {
+  Future<void> onMapViewReady() async {
     // Create the map.
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISOceans);
 
@@ -78,7 +78,7 @@ class _StyleGraphicsWithSymbolsState extends State<StyleGraphicsWithSymbols>
     _createText();
 
     // Update the extent to encompass all of the symbols.
-    _setExtent();
+    await _setExtent();
 
     // Set the ready state variable to true to enable the sample UI.
     setState(() => _ready = true);

@@ -24,12 +24,15 @@ class _ShowPortalUserInfoState extends State<ShowPortalUserInfo>
     clientId: 'T0A3SudETrIQndd2',
     redirectUri: Uri.parse('my-ags-flutter-app://auth'),
   );
+
   // Create a Portal that requires authentication.
   final _portal = Portal.arcGISOnline(
     connection: PortalConnection.authenticated,
   );
+
   // Create a Future that tracks the loading of the portal.
   Future<void>? _portalLoadFuture;
+
   // Create variables to store the user and organization thumbnails.
   Uint8List? _userThumbnail;
   Uint8List? _organizationThumbnail;
@@ -67,7 +70,8 @@ class _ShowPortalUserInfoState extends State<ShowPortalUserInfo>
           // ignore: avoid_print
           print('Error revoking tokens: $error');
         })
-        .whenComplete(Authenticator.clearCredentials);
+        .whenComplete(Authenticator.clearCredentials)
+        .ignore();
 
     super.dispose();
   }
@@ -115,7 +119,36 @@ class _ShowPortalUserInfoState extends State<ShowPortalUserInfo>
             }
 
             // If the portal load succeeded, display the portal information.
-            final titleStyle = Theme.of(context).textTheme.titleMedium;
+            final theme = Theme.of(context);
+            final colorScheme = theme.colorScheme;
+            final titleStyle = theme.textTheme.titleMedium;
+            // simple_html_css applies black as its default text color, so provide
+            // theme-aware styles for dark mode and portal-authored HTML colors.
+            final htmlTextStyle = DefaultTextStyle.of(
+              context,
+            ).style.copyWith(color: colorScheme.onSurface);
+            final htmlOverrideStyle = {
+              for (final tag in const [
+                'body',
+                'p',
+                'div',
+                'span',
+                'ul',
+                'ol',
+                'li',
+                'h1',
+                'h2',
+                'h3',
+                'h4',
+                'h5',
+                'h6',
+              ])
+                tag: TextStyle(color: colorScheme.onSurface),
+              'a': TextStyle(
+                color: colorScheme.primary,
+                decoration: TextDecoration.underline,
+              ),
+            };
             return SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -123,7 +156,7 @@ class _ShowPortalUserInfoState extends State<ShowPortalUserInfo>
                 children: [
                   Text(
                     '${_portal.user?.fullName} Profile',
-                    style: Theme.of(context).textTheme.titleLarge,
+                    style: theme.textTheme.titleLarge,
                   ),
                   if (_userThumbnail != null)
                     Image.memory(_userThumbnail!)
@@ -157,6 +190,8 @@ class _ShowPortalUserInfoState extends State<ShowPortalUserInfo>
                       text: HTML.toTextSpan(
                         context,
                         _portal.portalInfo?.organizationDescription ?? '',
+                        defaultTextStyle: htmlTextStyle,
+                        overrideStyle: htmlOverrideStyle,
                       ),
                     ),
                   ),
@@ -173,9 +208,9 @@ class _ShowPortalUserInfoState extends State<ShowPortalUserInfo>
   void loadThumbnails() {
     _portal.user?.thumbnail?.loadBytes().then((bytes) {
       setState(() => _userThumbnail = bytes);
-    });
+    }).ignore();
     _portal.portalInfo?.thumbnail?.loadBytes().then((bytes) {
       setState(() => _organizationThumbnail = bytes);
-    });
+    }).ignore();
   }
 }

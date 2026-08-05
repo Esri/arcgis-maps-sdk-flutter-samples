@@ -83,7 +83,7 @@ class _ShowUtilityAssociationsState extends State<ShowUtilityAssociations>
         null;
     ArcGISEnvironment.authenticationManager.arcGISCredentialStore.removeAll();
 
-    _viewpointChangedSubscription?.cancel();
+    _viewpointChangedSubscription?.cancel().ignore();
 
     super.dispose();
   }
@@ -102,10 +102,10 @@ class _ShowUtilityAssociationsState extends State<ShowUtilityAssociations>
           SafeArea(
             child: Align(
               alignment: Alignment.topLeft,
-              child: Container(
+              child: Card(
                 margin: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.9),
+                elevation: 4,
+                shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Padding(
@@ -115,27 +115,44 @@ class _ShowUtilityAssociationsState extends State<ShowUtilityAssociations>
                     crossAxisAlignment: CrossAxisAlignment.start,
                     spacing: 5,
                     children: [
-                      const Text('Utility association types'),
+                      Text(
+                        'Utility association types',
+                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
                       Container(
                         decoration: BoxDecoration(
-                          border: Border.all(color: Colors.grey),
+                          border: Border.all(
+                            color: Theme.of(context).colorScheme.outlineVariant,
+                          ),
+                          borderRadius: BorderRadius.circular(8),
                         ),
                         padding: const EdgeInsets.fromLTRB(5, 5, 50, 5),
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
+                          spacing: 6,
                           children: [
                             Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 SwatchImage(symbol: _attachmentSymbol),
-                                const Text('Attachment'),
+                                const SizedBox(width: 8),
+                                Text(
+                                  'Attachment',
+                                  style: Theme.of(context).textTheme.bodySmall,
+                                ),
                               ],
                             ),
                             Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 SwatchImage(symbol: _connectivitySymbol),
-                                const Text('Connectivity'),
+                                const SizedBox(width: 8),
+                                Text(
+                                  'Connectivity',
+                                  style: Theme.of(context).textTheme.bodySmall,
+                                ),
                               ],
                             ),
                           ],

@@ -18,6 +18,16 @@ import 'package:flutter/material.dart';
 
 enum SampleCategory {
   all('All', Icons.apps, 'assets/category_images/all_background.webp'),
+  favorites(
+    'Favorites',
+    Icons.favorite,
+    'assets/category_images/all_background.webp',
+  ),
+  accessibility(
+    'Accessibility',
+    Icons.accessibility_new,
+    'assets/category_images/accessibility_background.webp',
+  ),
   analysis(
     'Analysis',
     Icons.analytics,

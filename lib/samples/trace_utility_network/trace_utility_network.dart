@@ -219,29 +219,7 @@ class _TraceUtilityNetworkState extends State<TraceUtilityNetwork>
             // Loading indicator.
             LoadingIndicator(visible: !_ready),
             // Display a banner with instructions at the top.
-            SafeArea(
-              left: false,
-              right: false,
-              child: IgnorePointer(
-                child: Container(
-                  padding: const EdgeInsets.all(5),
-                  color: Colors.white.withValues(alpha: 0.7),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      FittedBox(
-                        fit: BoxFit.scaleDown,
-                        child: Text(
-                          _message,
-                          textAlign: TextAlign.center,
-                          style: Theme.of(context).textTheme.labelMedium,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
+            MapBanner(text: _message),
           ],
         ),
       ),
@@ -381,7 +359,7 @@ class _TraceUtilityNetworkState extends State<TraceUtilityNetwork>
     // Create UtilityElement by its source type.
     if (networkSource.sourceType == UtilityNetworkSourceType.junction) {
       // If the source type is a junction.
-      _createJunctionElement(feature, networkSource);
+      _createJunctionElement(feature, networkSource).ignore();
     } else if (networkSource.sourceType == UtilityNetworkSourceType.edge) {
       // If the source type is an edge.
       _createEdgeJunctionElement(feature, point);

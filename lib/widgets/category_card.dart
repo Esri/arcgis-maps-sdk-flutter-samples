@@ -51,15 +51,13 @@ class _CategoryCardState extends State<CategoryCard>
       duration: const Duration(milliseconds: 1000),
     );
 
-    _slideAnimation = Tween(
-      begin: const Offset(0, 1.2),
-      end: Offset.zero,
-    ).animate(
-      CurvedAnimation(
-        parent: _controller,
-        curve: const Interval(0, 0.6, curve: Curves.easeOut),
-      ),
-    );
+    _slideAnimation = Tween(begin: const Offset(0, 1.2), end: Offset.zero)
+        .animate(
+          CurvedAnimation(
+            parent: _controller,
+            curve: const Interval(0, 0.6, curve: Curves.easeOut),
+          ),
+        );
 
     _fadeAnimation = Tween<double>(begin: 0, end: 1).animate(
       CurvedAnimation(
@@ -69,7 +67,7 @@ class _CategoryCardState extends State<CategoryCard>
     );
 
     Future.delayed(Duration(milliseconds: widget.index * 120), () {
-      if (mounted) _controller.forward();
+      if (mounted) _controller.forward().ignore();
     });
   }
 
@@ -95,11 +93,10 @@ class _CategoryCardState extends State<CategoryCard>
         });
         widget.onClick();
       },
-      onTapCancel:
-          () => setState(() {
-            _scale = 1.0;
-            _iconPressed = false;
-          }),
+      onTapCancel: () => setState(() {
+        _scale = 1.0;
+        _iconPressed = false;
+      }),
       child: AnimatedScale(
         scale: _scale,
         duration: const Duration(milliseconds: 200),
@@ -116,7 +113,7 @@ class _CategoryCardState extends State<CategoryCard>
               children: [
                 _AnimatedCategoryBackground(category: widget.category),
                 Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisAlignment: .center,
                   children: [
                     _AnimatedIcon(
                       category: widget.category,
@@ -132,7 +129,7 @@ class _CategoryCardState extends State<CategoryCard>
                           widget.category.title,
                           style: Theme.of(context).textTheme.titleMedium
                               ?.copyWith(color: Colors.white),
-                          textAlign: TextAlign.center,
+                          textAlign: .center,
                         ),
                       ),
                     ),
@@ -180,7 +177,7 @@ class _AnimatedIconState extends State<_AnimatedIcon>
     );
 
     Future.delayed(Duration(milliseconds: widget.index * 120), () {
-      if (mounted) _entryController.forward();
+      if (mounted) _entryController.forward().ignore();
     });
   }
 
@@ -210,7 +207,7 @@ class _AnimatedIconState extends State<_AnimatedIcon>
               padding: const EdgeInsets.all(8),
               decoration: const BoxDecoration(
                 color: Colors.black87,
-                shape: BoxShape.circle,
+                shape: .circle,
               ),
               child: Icon(widget.category.icon, size: 30, color: Colors.white),
             ),
@@ -238,7 +235,7 @@ class _AnimatedCategoryBackground extends StatelessWidget {
         children: [
           Image.asset(
             category.backgroundImage,
-            fit: BoxFit.cover,
+            fit: .cover,
             width: double.infinity,
             height: double.infinity,
           ),

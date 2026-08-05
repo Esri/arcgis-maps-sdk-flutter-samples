@@ -33,7 +33,8 @@ class ReadmePage extends StatefulWidget {
 
 class _ReadmePageState extends State<ReadmePage> {
   var _isLoading = true;
-  var _htmlData = '';
+  var _markdownHtml = '';
+  Brightness? _lastBrightness;
 
   final _controller = WebViewController();
 
@@ -41,24 +42,45 @@ class _ReadmePageState extends State<ReadmePage> {
   void initState() {
     super.initState();
 
-    _controller.setNavigationDelegate(
-      NavigationDelegate(
-        onNavigationRequest: (request) {
-          final uri = Uri.parse(request.url);
+    _controller
+        .setNavigationDelegate(
+          NavigationDelegate(
+            onNavigationRequest: (request) {
+              final uri = Uri.parse(request.url);
 
-          // Allow the view to load the initial 'about:blank' page.
-          if (uri.scheme == 'about') {
-            return NavigationDecision.navigate;
-          }
+              // Allow the view to load the initial 'about:blank' page.
+              if (uri.scheme == 'about') {
+                return .navigate;
+              }
 
-          // Launch any other URL in the system browser (instead of this WebViewController).
-          launchUrl(uri, mode: LaunchMode.externalApplication);
-          return NavigationDecision.prevent;
-        },
-      ),
-    );
+              // Launch any other URL in the system browser (instead of this WebViewController).
+              launchUrl(uri, mode: .externalApplication).ignore();
+              return .prevent;
+            },
+          ),
+        )
+        .ignore();
 
-    _fetchMarkDown();
+    _fetchMarkDown().ignore();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    // When the theme brightness changes, reload the HTML with the new theme colors.
+    final brightness = Theme.of(context).brightness;
+    if (_lastBrightness == brightness) {
+      return;
+    }
+
+    _lastBrightness = brightness;
+    if (_markdownHtml.isNotEmpty) {
+      Future.delayed(const Duration(milliseconds: 100), () async {
+        if (!mounted) return;
+        await _loadStyledHtml();
+      }).ignore();
+    }
   }
 
   Future<void> _fetchMarkDown() async {
@@ -68,6 +90,8 @@ class _ReadmePageState extends State<ReadmePage> {
         'https://github.com/Esri/arcgis-maps-sdk-flutter-samples/raw/main/lib/samples/${widget.sample.key}/${widget.sample.key}.png';
 
     final response = await http.get(Uri.parse(readmeUrl));
+    if (!mounted) return;
+
     if (response.statusCode == 200) {
       var markdownData = response.body;
 
@@ -78,28 +102,50 @@ class _ReadmePageState extends State<ReadmePage> {
       );
 
       // Convert the markdown to html.
-      final html = md.markdownToHtml(markdownData);
+      _markdownHtml = md.markdownToHtml(markdownData);
+    } else {
+      _markdownHtml = '<p>Failed to load README.md</p>';
+    }
 
-      // Inject custom CSS for styling.
-      final styledHtml =
-          '''
+    await _loadStyledHtml();
+    if (!mounted) return;
+
+    setState(() => _isLoading = false);
+  }
+
+  Future<void> _loadStyledHtml() async {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
+    final styledHtml =
+        '''
       <html>
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
         <style>
+          :root {
+            color-scheme: ${theme.brightness == .dark ? 'dark' : 'light'};
+          }
           body {
+            background-color: ${_toCssColor(colorScheme.surface)};
+            color: ${_toCssColor(colorScheme.onSurface)};
             font-family: Arial, sans-serif;
             line-height: 1.6;
             padding: 16px;
             word-wrap: break-word;
             overflow-wrap: break-word;
           }
+          a {
+            color: ${_toCssColor(colorScheme.primary)};
+          }
           h1, h2, h3, h4, h5, h6 {
+            color: ${_toCssColor(colorScheme.onSurface)};
             font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
           }
           code {
-            background-color: #f5f5f5;
+            background-color: ${_toCssColor(colorScheme.surfaceContainer)};
             padding: 2px 4px;
+            color: ${_toCssColor(colorScheme.onSurface)};
             border-radius: 4px;
             font-family: 'Courier New', Courier, monospace;
           }
@@ -110,45 +156,43 @@ class _ReadmePageState extends State<ReadmePage> {
         </style>
       </head>
       <body>
-        $html
+        $_markdownHtml
       </body>
       </html>
     ''';
 
-      setState(() {
-        _htmlData = styledHtml;
-        _controller.loadHtmlString(_htmlData);
-        _isLoading = false;
-      });
-    } else {
-      setState(() {
-        _htmlData = 'Failed to load README.md';
-        _controller.loadHtmlString(_htmlData);
-        _isLoading = false;
-      });
-    }
+    await _controller.loadHtmlString(styledHtml);
+  }
+
+  String _toCssColor(Color color) {
+    final hex = color.toARGB32().toRadixString(16).padLeft(8, '0');
+    // Convert ARGB to RGBA for CSS.
+    return '#${hex.substring(2)}${hex.substring(0, 2)}';
   }
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Scaffold(
       appBar: AppBar(
-        title: FittedBox(
-          fit: BoxFit.scaleDown,
-          child: Text(widget.sample.title),
-        ),
+        title: FittedBox(fit: .scaleDown, child: Text(widget.sample.title)),
         actions: [SampleInfoPopupMenu(sample: widget.sample)],
       ),
       body: Column(
         children: [
           Container(
             width: double.infinity,
-            color: Colors.grey[300],
-            child: const ListTile(
-              leading: Icon(Icons.description),
+            color: colorScheme.surfaceContainer,
+            child: ListTile(
+              leading: Icon(Icons.description, color: colorScheme.onSurface),
               title: Text(
                 'Readme',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: .bold,
+                  color: colorScheme.onSurface,
+                ),
               ),
             ),
           ),

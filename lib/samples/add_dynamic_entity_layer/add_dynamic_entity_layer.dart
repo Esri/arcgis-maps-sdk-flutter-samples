@@ -114,37 +114,13 @@ class _AddDynamicEntityLayerState extends State<AddDynamicEntityLayer>
             LoadingIndicator(visible: !_ready),
             // Display a banner with the current status at the top.
             if (_streamService != null)
-              SafeArea(
-                child: IgnorePointer(
-                  child: Container(
-                    padding: const EdgeInsets.all(10),
-                    color: Colors.black.withValues(alpha: 0.7),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Expanded(
-                          child: StreamBuilder<ConnectionStatus>(
-                            stream: _streamService!.onConnectionStatusChanged,
-                            initialData: _streamService!.connectionStatus,
-                            builder: (context, snapshot) {
-                              final status =
-                                  snapshot.data ??
-                                  ConnectionStatus.disconnected;
-                              return Text(
-                                'Status: ${status.label}',
-                                softWrap: true,
-                                textAlign: TextAlign.center,
-                                style: Theme.of(
-                                  context,
-                                ).textTheme.customWhiteStyle,
-                              );
-                            },
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
+              StreamBuilder(
+                stream: _streamService!.onConnectionStatusChanged,
+                initialData: _streamService!.connectionStatus,
+                builder: (context, snapshot) {
+                  final status = snapshot.data ?? .disconnected;
+                  return MapBanner(text: 'Status: ${status.label}');
+                },
               ),
           ],
         ),
@@ -292,6 +268,7 @@ class _AddDynamicEntityLayerState extends State<AddDynamicEntityLayer>
               "\n(", Round($feature.point_x, 6), ", ", Round($feature.point_y, 6), ")"
             )
             ''',
+      style: ThemedCalloutStyle.themed(context),
     );
 
     if (!shown) {
@@ -371,10 +348,13 @@ class _AddDynamicEntityLayerState extends State<AddDynamicEntityLayer>
               if (service != null) {
                 try {
                   await service.purgeAll();
+
+                  if (!context.mounted) return;
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text('All observations purged.')),
                   );
                 } on Exception catch (_) {
+                  if (!context.mounted) return;
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
                       content: Text('Failed to purge observations.'),

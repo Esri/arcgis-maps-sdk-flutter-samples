@@ -113,12 +113,14 @@ class _FindRouteInMobileMapPackageState
                           : null,
                       // When the card is tapped, navigate to a FindRouteInMap page.
                       onTap: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute<void>(
-                            builder: (context) =>
-                                FindRouteInMap(sampleData: data),
-                          ),
-                        );
+                        Navigator.of(context)
+                            .push(
+                              MaterialPageRoute<void>(
+                                builder: (context) =>
+                                    FindRouteInMap(sampleData: data),
+                              ),
+                            )
+                            .ignore();
                       },
                     ),
                   ),
@@ -205,26 +207,9 @@ class _FindRouteInMapState extends State<FindRouteInMap>
               ],
             ),
             // Add a banner to show the results of the identify operation.
-            SafeArea(
-              child: IgnorePointer(
-                child: Visibility(
-                  visible: _message.isNotEmpty,
-                  child: Container(
-                    padding: const EdgeInsets.all(10),
-                    color: Colors.black.withValues(alpha: 0.7),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          _message,
-                          textAlign: TextAlign.center,
-                          style: Theme.of(context).textTheme.customWhiteStyle,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
+            Visibility(
+              visible: _message.isNotEmpty,
+              child: MapBanner(text: _message),
             ),
             // Display a progress indicator and prevent interaction until state is ready.
             LoadingIndicator(visible: !_ready),

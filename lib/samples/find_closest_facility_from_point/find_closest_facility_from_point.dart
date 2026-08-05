@@ -126,10 +126,9 @@ class _FindClosestFacilityFromPointState
       _incidentsLayerUri,
     );
     // Create a marker symbol for the incidents.
-    final incidentsMarkerSymbol =
-        PictureMarkerSymbol.withUri(_fireImageUri)
-          ..width = 30
-          ..height = 30;
+    final incidentsMarkerSymbol = PictureMarkerSymbol.withUri(_fireImageUri)
+      ..width = 30
+      ..height = 30;
     // Create a feature layer for the incidents.
     final incidentsLayer = FeatureLayer.withFeatureTable(incidentsFeatureTable)
       ..renderer = SimpleRenderer(symbol: incidentsMarkerSymbol);
@@ -169,10 +168,9 @@ class _FindClosestFacilityFromPointState
   FeatureLayer buildFeatureLayer(Uri tableUri, Uri imageUri) {
     // Create a feature table and feature layer for the facilities or incidents.
     final featureTable = ServiceFeatureTable.withUri(tableUri);
-    final markerSymbol =
-        PictureMarkerSymbol.withUri(imageUri)
-          ..width = 30
-          ..height = 30;
+    final markerSymbol = PictureMarkerSymbol.withUri(imageUri)
+      ..width = 30
+      ..height = 30;
     final featureLayer = FeatureLayer.withFeatureTable(featureTable)
       ..renderer = SimpleRenderer(symbol: markerSymbol);
 
@@ -186,16 +184,15 @@ class _FindClosestFacilityFromPointState
     // Create query parameters to get all features.
     final featureQueryParams = QueryParameters()..whereClause = '1=1';
     // Create default parameters for the closest facility task.
-    final parameters =
-        await _closestFacilityTask.createDefaultParameters()
-          ..setFacilitiesWithFeatureTable(
-            featureTable: facilitiesFeatureTable as ArcGISFeatureTable,
-            queryParameters: featureQueryParams,
-          )
-          ..setIncidentsWithFeatureTable(
-            featureTable: incidentsFeatureTable as ArcGISFeatureTable,
-            queryParameters: featureQueryParams,
-          );
+    final parameters = await _closestFacilityTask.createDefaultParameters()
+      ..setFacilitiesWithFeatureTable(
+        featureTable: facilitiesFeatureTable as ArcGISFeatureTable,
+        queryParameters: featureQueryParams,
+      )
+      ..setIncidentsWithFeatureTable(
+        featureTable: incidentsFeatureTable as ArcGISFeatureTable,
+        queryParameters: featureQueryParams,
+      );
 
     return parameters;
   }

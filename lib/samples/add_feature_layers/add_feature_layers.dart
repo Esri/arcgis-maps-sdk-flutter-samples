@@ -18,6 +18,7 @@ import 'dart:io';
 
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/common/token_challenger_handler.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -55,7 +56,7 @@ class _AddFeatureLayersState extends State<AddFeatureLayers>
     // Add feature layer sources to the list.
     _featureLayerSources.addAll(const [
       // Add a dropdown menu item to load a feature service from a uri.
-      DropdownMenuEntry(value: Source.url, label: 'URL'),
+      DropdownMenuEntry(value: Source.url, label: 'Service Feature Table'),
       // Add a dropdown menu item to load a feature service from a portal item.
       DropdownMenuEntry(value: Source.portalItem, label: 'Portal Item'),
       // Add a dropdown menu item to load a feature service from a geodatabase.
@@ -65,6 +66,16 @@ class _AddFeatureLayersState extends State<AddFeatureLayers>
       DropdownMenuEntry(value: Source.shapefile, label: 'Shapefile'),
     ]);
     _initDownloadResources();
+
+    // Set up authentication for the sample server.
+    // Note: Never hardcode login information in a production application.
+    // This is done solely for the sake of the sample.
+    ArcGISEnvironment
+        .authenticationManager
+        .arcGISAuthenticationChallengeHandler = TokenChallengeHandler(
+      'viewer01',
+      'I68VGU^nMurF',
+    );
   }
 
   void _initDownloadResources() {
@@ -72,6 +83,17 @@ class _AddFeatureLayersState extends State<AddFeatureLayers>
     _dataSources[Source.geodatabase] = listPaths[0];
     _dataSources[Source.geopackage] = listPaths[1];
     _dataSources[Source.shapefile] = listPaths[2];
+  }
+
+  @override
+  void dispose() {
+    // Remove the TokenChallengeHandler and erase any credentials that were generated.
+    ArcGISEnvironment
+            .authenticationManager
+            .arcGISAuthenticationChallengeHandler =
+        null;
+    ArcGISEnvironment.authenticationManager.arcGISCredentialStore.removeAll();
+    super.dispose();
   }
 
   @override
@@ -127,13 +149,13 @@ class _AddFeatureLayersState extends State<AddFeatureLayers>
       case Source.url:
         loadFeatureServiceFromUri();
       case Source.portalItem:
-        loadPortalItem();
+        loadPortalItem().ignore();
       case Source.geodatabase:
-        loadGeodatabase();
+        loadGeodatabase().ignore();
       case Source.geopackage:
-        loadGeopackage();
+        loadGeopackage().ignore();
       case Source.shapefile:
-        loadShapefile();
+        loadShapefile().ignore();
     }
   }
 
@@ -155,7 +177,7 @@ class _AddFeatureLayersState extends State<AddFeatureLayers>
   void loadFeatureServiceFromUri() {
     // Create a uri to a feature service.
     final uri = Uri.parse(
-      'https://sampleserver6.arcgisonline.com/arcgis/rest/services/DamageAssessment/FeatureServer/0',
+      'https://sampleserver7.arcgisonline.com/server/rest/services/DamageAssessment/FeatureServer/0',
     );
     // Create a service feature table with the uri.
     final serviceFeatureTables = ServiceFeatureTable.withUri(uri);
@@ -169,9 +191,9 @@ class _AddFeatureLayersState extends State<AddFeatureLayers>
     // Set the viewpoint to the feature layer.
     _mapViewController.setViewpoint(
       Viewpoint.withLatLongScale(
-        latitude: 41.773519,
-        longitude: -88.153104,
-        scale: 6000,
+        latitude: 41.7735,
+        longitude: -88.1431,
+        scale: 4000,
       ),
     );
   }

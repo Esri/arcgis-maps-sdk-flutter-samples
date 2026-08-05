@@ -50,7 +50,7 @@ class _SampleWidgetState extends State<SampleWidget> with SampleStateSupport {
                   ),
                 ),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  mainAxisAlignment: .spaceEvenly,
                   children: [
                     // A button to perform a task.
                     ElevatedButton(
@@ -71,7 +71,7 @@ class _SampleWidgetState extends State<SampleWidget> with SampleStateSupport {
 
   Future<void> onMapViewReady() async {
     // Create a map with a topographic basemap style.
-    final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic);
+    final map = ArcGISMap.withBasemapStyle(.arcGISTopographic);
     _mapViewController.arcGISMap = map;
 
     // Perform some long-running setup task.

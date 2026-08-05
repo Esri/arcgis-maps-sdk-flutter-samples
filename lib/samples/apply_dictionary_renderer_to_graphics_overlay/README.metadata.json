@@ -1,0 +1,35 @@
+{
+    "category": "Visualization",
+    "description": "Create graphics from an XML file with key-value pairs for each graphic, and display the military symbols using a MIL-STD-2525D web style in 3D.",
+    "offline_data": [
+        {
+            "itemId": "8776cfc26eed4485a03de6316826384c",
+            "downloadable": "Mil2525DMessages-OAP.zip",
+            "resource": "Mil2525DMessages.xml"
+        }
+    ],
+    "ignore": false,
+    "images": [
+        "apply_dictionary_renderer_to_graphics_overlay.png"
+    ],
+    "keywords": [
+        "defense",
+        "military",
+        "situational awareness",
+        "tactical",
+        "visualization",
+        "DictionaryRenderer",
+        "DictionarySymbolStyle",
+        "GraphicsOverlay"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+        "DictionaryRenderer",
+        "DictionarySymbolStyle",
+        "GraphicsOverlay"
+    ],
+    "snippets": [
+        "apply_dictionary_renderer_to_graphics_overlay.dart"
+    ],
+    "title": "Apply dictionary renderer to graphics overlay"
+}

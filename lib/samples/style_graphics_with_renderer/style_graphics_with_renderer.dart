@@ -294,9 +294,7 @@ class _StyleGraphicsWithRendererState extends State<StyleGraphicsWithRenderer>
     );
 
     final heart = MutablePart(spatialReference: spatialReference);
-    for (final segment in [leftCurve, leftArc, rightArc, rightCurve]) {
-      heart.addSegment(segment);
-    }
+    [leftCurve, leftArc, rightArc, rightCurve].forEach(heart.addSegment);
 
     final heartShape = PolygonBuilder(spatialReference: spatialReference);
     heartShape.parts.addPart(heart);

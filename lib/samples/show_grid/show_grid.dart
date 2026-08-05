@@ -68,16 +68,15 @@ class _ShowGridState extends State<ShowGrid> with SampleStateSupport {
               children: [
                 Expanded(
                   // Add a map view to the widget tree and set a controller.
-                  child:
-                      _isMapView
-                          ? ArcGISMapView(
-                            controllerProvider: () => _mapViewController,
-                            onMapViewReady: onMapViewReady,
-                          )
-                          : ArcGISSceneView(
-                            controllerProvider: () => _sceneViewController,
-                            onSceneViewReady: onMapViewReady,
-                          ),
+                  child: _isMapView
+                      ? ArcGISMapView(
+                          controllerProvider: () => _mapViewController,
+                          onMapViewReady: onMapViewReady,
+                        )
+                      : ArcGISSceneView(
+                          controllerProvider: () => _sceneViewController,
+                          onSceneViewReady: onMapViewReady,
+                        ),
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -334,10 +333,9 @@ class _GridOptionsState extends State<GridOptions> with SampleStateSupport {
         onChanged(newValue as T);
       },
       label: Text(labelText),
-      dropdownMenuEntries:
-          items.map((value) {
-            return DropdownMenuEntry(value: value, label: value.toString());
-          }).toList(),
+      dropdownMenuEntries: items.map((value) {
+        return DropdownMenuEntry(value: value, label: value.toString());
+      }).toList(),
     );
   }
 
@@ -404,12 +402,11 @@ class _GridOptionsState extends State<GridOptions> with SampleStateSupport {
     };
 
     final isUnsupportedGrid = gridType != GridType.latitudeLongitude;
-    final filteredItems =
-        widget.isSceneView && isUnsupportedGrid
-            ? GridLabelPositionType.values
-                .where((type) => !unsupportedInSceneView.contains(type))
-                .toList()
-            : GridLabelPositionType.values;
+    final filteredItems = widget.isSceneView && isUnsupportedGrid
+        ? GridLabelPositionType.values
+              .where((type) => !unsupportedInSceneView.contains(type))
+              .toList()
+        : GridLabelPositionType.values;
 
     return _createDropdownMenu(
       value: labelPositionType,
