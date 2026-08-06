@@ -10,6 +10,7 @@
 **/.vagrant/
 **/DerivedData/
 Icon?
+**/Pods/
 Package.resolved
 **/.symlinks/
 profile
