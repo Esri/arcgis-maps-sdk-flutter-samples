@@ -126,16 +126,14 @@ class _DisplayAlternateSymbolsAtDifferentScalesState
 
     // Listen to changes in the viewpoint and update the state with the new map scale.
     _viewpointChangedSubscription = _mapViewController.onViewpointChanged
-        .listen((_) {
-          setState(() {
+        .listen(
+          (_) => setState(() {
             _currentScale = _mapViewController.scale;
-          });
-        });
+          }),
+        );
 
     // Set the ready state variable to true to enable the sample UI.
-    setState(() {
-      _ready = true;
-    });
+    setState(() => _ready = true);
   }
 
   // Creates a unique value renderer with alternate symbols by scale.
