@@ -14,25 +14,35 @@
 // limitations under the License.
 //
 
+import 'package:arcgis_maps/arcgis_maps.dart';
+
 /// Represents a resource that can be downloaded for a sample.
 class DownloadableResource {
-  const DownloadableResource({
+  DownloadableResource({
+    required this.portal,
     required this.itemId,
     required this.downloadable,
     this.resource,
   });
 
-  factory DownloadableResource.fromJson(Map<String, dynamic> json) {
+  factory DownloadableResource.fromJson(
+    Map<String, dynamic> json,
+    Portal portal,
+  ) {
     return DownloadableResource(
+      portal: portal,
       itemId: json['itemId'] as String,
       downloadable: json['downloadable'] as String,
       resource: json['resource'] as String?,
     );
   }
 
+  final Portal portal;
   final String itemId;
   final String downloadable;
   final String? resource;
+
+  PortalItem? _portalItem;
 
   Map<String, dynamic> toJson() {
     return {
@@ -40,5 +50,21 @@ class DownloadableResource {
       'downloadable': downloadable,
       'resource': resource,
     };
+  }
+
+  Future<PortalItem> cachedPortalItem() async {
+    if (_portalItem != null) {
+      return _portalItem!;
+    }
+
+    final portalItem = PortalItem.withPortalAndItemId(
+      portal: portal,
+      itemId: itemId,
+    );
+    await portalItem.load();
+    //fixme save the portalItem JSON to OfflineDataLocation and look for it there before loading from network.
+
+    _portalItem = portalItem;
+    return _portalItem!;
   }
 }

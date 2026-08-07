@@ -41,14 +41,16 @@ class OfflineDataLocation {
 
 class OfflineData {
   /// Creates an [OfflineData] instance from a JSON list of downloadable resources.
-  OfflineData.fromJson(List<dynamic> json) {
+  OfflineData.fromJson(List<dynamic> json, Portal portal) {
     _downloadableResources = json
         .whereType<Map<String, dynamic>>()
-        .map(DownloadableResource.fromJson)
+        .map((json) => DownloadableResource.fromJson(json, portal))
         .toList(growable: false);
   }
 
   /// The list of downloadable resources for this offline data.
+  List<DownloadableResource> get downloadableResources =>
+      List.unmodifiable(_downloadableResources);
   List<DownloadableResource> _downloadableResources = [];
 
   /// Whether this offline data has any downloadable resources.
@@ -70,15 +72,8 @@ class OfflineData {
     required RequestCancelToken requestCancelToken,
     void Function(int progress)? onProgress,
   }) async {
-    final itemIds = _downloadableResources.map((r) => r.itemId).toList();
-    final basePath = OfflineDataLocation.instance.location.path;
-    final destinationFiles = _downloadableResources
-        .map((r) => File(path.join(basePath, r.downloadable)))
-        .toList();
-
     await downloadSampleDataWithProgress(
-      itemIds: itemIds,
-      destinationFiles: destinationFiles,
+      offlineData: this,
       requestCancelToken: requestCancelToken,
       onProgress: onProgress,
     );

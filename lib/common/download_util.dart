@@ -17,9 +17,9 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:arcgis_maps/arcgis_maps.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/models/offline_data.dart';
 import 'package:flutter_archive/flutter_archive.dart';
-
-const portal = 'https://arcgis.com';
+import 'package:path/path.dart' as path;
 
 /// Fetch the Sample data from the provided PortalItem ID.
 /// Parameters:
@@ -28,34 +28,32 @@ const portal = 'https://arcgis.com';
 /// - [requestCancelToken]: downloads can be cancelled via this token.
 /// - [onProgress] is called with a value from 0 to 100 as the download progresses.
 Future<List<ResponseInfo>> downloadSampleDataWithProgress({
-  required List<String> itemIds,
-  required List<File> destinationFiles,
+  required OfflineData offlineData,
   required RequestCancelToken requestCancelToken,
   void Function(int progress)? onProgress,
 }) async {
   var currentProgress = 0;
   final responses = <ResponseInfo>[];
-  final totalItems = itemIds.length;
-  if (totalItems != destinationFiles.length) {
-    throw ArgumentError(
-      'itemIds and destinationFiles must have the same length: '
-      '${itemIds.length} != ${destinationFiles.length}',
-    );
-  } else if (totalItems == 0) {
+  final totalItems = offlineData.downloadableResources.length;
+  if (totalItems == 0) {
     onProgress?.call(100);
     return <ResponseInfo>[];
   }
 
   onProgress?.call(currentProgress);
 
-  final zipFiles = <File>[];
-  for (var i = 0; i < itemIds.length; i++) {
-    final itemId = itemIds[i];
-    final destinationFile = destinationFiles[i];
+  final portalItems = await Future.wait(
+    offlineData.downloadableResources.map((r) => r.cachedPortalItem()),
+  );
 
-    final requestUri = Uri.parse(
-      '$portal/sharing/rest/content/items/$itemId/data',
-    );
+  final zipFiles = <File>[];
+  final basePath = OfflineDataLocation.instance.location.path;
+  for (var i = 0; i < portalItems.length; i++) {
+    final portalItem = portalItems[i];
+    final destinationFile = File(path.join(basePath, portalItem.name));
+
+    final requestUri = Uri.parse('${portalItem.uri}/data');
+
     final response = await ArcGISHttpClient.download(
       requestUri,
       destinationFile.uri,

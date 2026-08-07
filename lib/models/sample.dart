@@ -17,6 +17,7 @@
 import 'dart:async';
 
 // run `dart run build_runner build` to generate samples_widget_list.dart
+import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/models/offline_data.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/models/samples_widget_list.dart';
 import 'package:flutter/material.dart';
@@ -33,7 +34,10 @@ class Sample {
       _title = json['title'] as String? ?? '',
       _keywords = List<String>.from(json['keywords'] as List? ?? []),
       _key = json['key'] as String? ?? '',
-      _offlineData = OfflineData.fromJson(json['offline_data'] as List? ?? []),
+      _offlineData = OfflineData.fromJson(
+        json['offline_data'] as List? ?? [],
+        Portal.arcGISOnline(),
+      ),
       _sampleWidget = sampleWidgets[json['key']]!();
   final String _category;
   final String _description;
