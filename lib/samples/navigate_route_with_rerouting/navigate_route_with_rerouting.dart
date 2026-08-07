@@ -305,7 +305,7 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
 
     // Set the language based on the user's locale.
     await _tts.setLanguage(locale);
-    await _tts.setRate(0.5);
+    await _tts.setRate(1);
     await _tts.setVolume(1);
     await _tts.setPitch(1.3);
   }
