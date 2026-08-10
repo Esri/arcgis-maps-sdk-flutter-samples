@@ -1,0 +1,46 @@
+# Configure basemap style parameters
+
+Apply basemap style parameters customization for a basemap, such as displaying all labels in a specific language or displaying every label in their corresponding local language.
+
+![Configure basemap style parameters](configure_basemap_style_parameters.png)
+
+## Use case
+
+When creating an application that’s used in multiple countries, basemaps can reflect the languages and cultures of the users' location. For example, if an application user is in Greece, displaying the labels on a basemap in Greek reflects the local language. Customizing the language setting on the basemap can be controlled by an application user (such as by setting preferences) or implicitly managed within the application logic (by querying the locale of the platform running the application).
+
+## How to use the sample
+
+This sample showcases the workflow of configuring basemap style parameters by displaying a basemap with labels in different languages and launches with a `Viewpoint` near Athens, Greece. By default, the `languageStrategy` property is set to `BasemapStyleLanguageStrategy.local`, which displays all labels in their corresponding local language. This can be changed to `BasemapStyleLanguageStrategy.global`, which displays all labels in English. The `specificLanguage` property displays all labels in a selected language and overrides the `languageStrategy` setting.
+
+Pan and zoom to navigate the map to neighboring countries that use different alphabets, such as Bulgaria and Turkey, to see how different labels are displayed depending on the selected `languageStrategy` and `specificLanguage` settings: all English, all Greek, all Bulgarian, all Turkish, or each in their local language.
+
+## How it works
+
+1. Create a `BasemapStyleParameters` object.
+2. Configure customization preferences on the `BasemapStyleParameters` object, for instance:
+    * setting the `languageStrategy` property to `BasemapStyleLanguageStrategy.local`, or
+    * setting the `specificLanguage` property to `"el"` changes the label language to Greek.
+3. The `specificLanguage` property always overrides the `languageStrategy`, which means `specificLanguage` must be set to an empty string in order to use the language strategy.
+4. Create a basemap using a `BasemapStyle` and the configured `BasemapStyleParameters`.
+5. Assign the configured basemap to the `ArcGISMap`'s `basemap` property.
+6. To modify the basemap style, for example if you want to change your preferences, repeat the above steps.
+
+## Relevant API
+
+* ArcGISMap
+* ArcGISMapView
+* Basemap
+* BasemapStyleLanguageStrategy
+* BasemapStyleParameters
+
+## About the data
+
+The main data for this sample is the `BasemapStyle`, which includes basemaps that support both language localization and global language setting. The supported languages, along with their language code, can be found in the [API's documentation](https://developers.arcgis.com/rest/basemap-styles/languages/).
+
+## Additional information
+
+For ArcGIS Basemap styles, language localization becomes visible when you zoom in closer.
+
+## Tags
+
+basemap style, language, language strategy, map, point, viewpoint
