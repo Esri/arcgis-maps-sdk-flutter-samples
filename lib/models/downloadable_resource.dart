@@ -14,7 +14,12 @@
 // limitations under the License.
 //
 
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:arcgis_maps/arcgis_maps.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/models/offline_data.dart';
+import 'package:path/path.dart' as path;
 
 /// Represents a resource that can be downloaded for a sample.
 class DownloadableResource {
@@ -22,6 +27,7 @@ class DownloadableResource {
     required this.portal,
     required this.itemId,
     required this.downloadable,
+    //fixme remove `downloadable`
     this.resource,
   });
 
@@ -57,14 +63,48 @@ class DownloadableResource {
       return _portalItem!;
     }
 
+    final serialized = portalItemJsonFile();
+
+    if (serialized.existsSync()) {
+      final jsonString = await serialized.readAsString();
+      final json = jsonDecode(jsonString) as Map<String, dynamic>;
+      _portalItem = PortalItem.fromJson(json);
+      return _portalItem!;
+    }
+
     final portalItem = PortalItem.withPortalAndItemId(
       portal: portal,
       itemId: itemId,
     );
     await portalItem.load();
-    //fixme save the portalItem JSON to OfflineDataLocation and look for it there before loading from network.
+
+    serialized.writeAsStringSync(jsonEncode(portalItem.toJson()), flush: true);
 
     _portalItem = portalItem;
     return _portalItem!;
+  }
+
+  File portalItemJsonFile() {
+    return File(
+      path.join(OfflineDataLocation.instance.location.path, '$itemId.json'),
+    );
+  }
+
+  Directory downloadingDirectory() {
+    return Directory(
+      path.join(
+        OfflineDataLocation.instance.location.path,
+        '$itemId.downloading',
+      ),
+    );
+  }
+
+  Directory downloadedDirectory() {
+    return Directory(
+      path.join(
+        OfflineDataLocation.instance.location.path,
+        '$itemId.downloaded',
+      ),
+    );
   }
 }

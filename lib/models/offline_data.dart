@@ -30,7 +30,18 @@ class OfflineDataLocation {
 
   /// Initializes the offline data location by obtaining the application documents directory.
   Future<void> initialize() async {
-    _location ??= await getApplicationDocumentsDirectory();
+    if (_location != null) {
+      return;
+    }
+
+    final documents = await getApplicationDocumentsDirectory();
+    final location = Directory(
+      path.join(documents.path, 'OfflineDataLocation'),
+    );
+    if (!location.existsSync()) {
+      location.createSync(recursive: true);
+    }
+    _location = location;
   }
 
   /// The directory where offline data is stored.
@@ -38,6 +49,23 @@ class OfflineDataLocation {
 
   Directory? _location;
 }
+
+// On-disk layout:
+//
+// Root directory:
+// ${ApplicationDocumentsDirectory}/OfflineDataLocation/
+//
+// Serialized PortalItem JSON:
+// ${portalItem.itemId}.json
+//
+// Downloaded resources:
+//   If single file:
+//   ${portalItem.itemId}.downloaded/${portalItem.name}
+//   If zip file:
+//   ${portalItem.itemId}.downloaded/ (all extracted files)
+//
+// While downloading is in progress:
+// ${portalItem.itemId}.downloading/
 
 class OfflineData {
   /// Creates an [OfflineData] instance from a JSON list of downloadable resources.
@@ -48,20 +76,23 @@ class OfflineData {
         .toList(growable: false);
   }
 
-  /// The list of downloadable resources for this offline data.
-  List<DownloadableResource> get downloadableResources =>
-      List.unmodifiable(_downloadableResources);
   List<DownloadableResource> _downloadableResources = [];
 
   /// Whether this offline data has any downloadable resources.
   bool get hasDownloadableResources => _downloadableResources.isNotEmpty;
 
-  /// Returns whether all downloadable resources are present in the offline data location.
-  bool allResourcesDownloaded() {
-    final basePath = OfflineDataLocation.instance.location.path;
-    return _downloadableResources.every(
-      (r) => File(path.join(basePath, r.downloadable)).existsSync(),
-    );
+  /// Whether all downloadable resources are present in the offline data location.
+  bool get allResourcesDownloaded {
+    for (final resource in _downloadableResources) {
+      if (!resource.portalItemJsonFile().existsSync()) {
+        return false;
+      }
+      if (!resource.downloadedDirectory().existsSync()) {
+        return false;
+      }
+    }
+
+    return true;
   }
 
   /// Downloads the resources to the offline data location.
@@ -75,16 +106,21 @@ class OfflineData {
     var currentProgress = 0;
     onProgress?.call(currentProgress);
 
-    final portalItems = await Future.wait(
-      _downloadableResources.map((r) => r.cachedPortalItem()),
-    );
-
-    final zipFiles = <File>[];
-    final basePath = OfflineDataLocation.instance.location.path;
     var completedItems = 0;
-    for (final portalItem in portalItems) {
+    for (final resource in _downloadableResources) {
+      final portalItem = await resource.cachedPortalItem();
       final requestUri = Uri.parse('${portalItem.uri}/data');
-      final destinationFile = File(path.join(basePath, portalItem.name));
+
+      final downloadingDir = resource.downloadingDirectory();
+      if (downloadingDir.existsSync()) {
+        downloadingDir.deleteSync(recursive: true);
+      }
+      downloadingDir.createSync(recursive: true);
+
+      final destinationFile = File(
+        path.join(downloadingDir.path, portalItem.name),
+      );
+
       await ArcGISHttpClient.download(
         requestUri,
         destinationFile.uri,
@@ -94,7 +130,8 @@ class OfflineData {
             // Calculate progress: completed items + current item progress
             final currentItemProgress = bytesReceived / (totalBytes ?? 1);
             final overallProgress =
-                (completedItems + currentItemProgress) / portalItems.length;
+                (completedItems + currentItemProgress) /
+                _downloadableResources.length;
 
             final nextProgress = (overallProgress * 100).round();
             if (nextProgress != currentProgress) {
@@ -104,54 +141,43 @@ class OfflineData {
           },
         ),
       );
-      ++completedItems;
+
+      final downloadedDir = resource.downloadedDirectory();
+      if (downloadedDir.existsSync()) {
+        downloadedDir.deleteSync(recursive: true);
+      }
 
       if (destinationFile.path.contains('.zip')) {
-        zipFiles.add(destinationFile);
+        await ZipFile.extractToDirectory(
+          zipFile: destinationFile,
+          destinationDir: downloadedDir,
+        );
+        downloadingDir.deleteSync(recursive: true);
+      } else {
+        downloadingDir.renameSync(downloadedDir.path);
       }
-    }
 
-    // Decompress any zip files received.
-    await Future.wait(zipFiles.map(_extractZipArchive));
+      ++completedItems;
+    }
 
     onProgress?.call(100);
   }
 
-  static Future<void> _extractZipArchive(File archiveFile) async {
-    // Save all files to a directory with the filename without the zip extension in the same directory as the zip file.
-    final pathWithoutExt = archiveFile.path.replaceFirst(RegExp(r'.zip$'), '');
-    final dir = Directory.fromUri(Uri.parse(pathWithoutExt));
-    if (dir.existsSync()) dir.deleteSync(recursive: true);
-    await ZipFile.extractToDirectory(zipFile: archiveFile, destinationDir: dir);
-  }
-
   /// Cleans up downloaded files and extracted directories for this offline data.
-  ///
-  /// Deletes:
-  /// - The downloaded file (ZIP or non-ZIP)
-  /// - The extracted directory (for ZIP files only)
   void cleanupFiles() {
-    final basePath = OfflineDataLocation.instance.location.path;
     try {
       for (final resource in _downloadableResources) {
-        final file = File(path.join(basePath, resource.downloadable));
-        if (file.existsSync()) {
-          file.deleteSync();
+        final portalItemJsonFile = resource.portalItemJsonFile();
+        if (portalItemJsonFile.existsSync()) {
+          portalItemJsonFile.deleteSync();
         }
-
-        // For ZIP files, also delete the extracted directory.
-        final isZip = resource.downloadable.toLowerCase().endsWith('.zip');
-        if (isZip) {
-          // Use path.withoutExtension to match the extraction directory naming.
-          final extractionDirName = path.withoutExtension(
-            resource.downloadable,
-          );
-          final extractionDir = Directory(
-            path.join(basePath, extractionDirName),
-          );
-          if (extractionDir.existsSync()) {
-            extractionDir.deleteSync(recursive: true);
-          }
+        final downloadingDir = resource.downloadingDirectory();
+        if (downloadingDir.existsSync()) {
+          downloadingDir.deleteSync(recursive: true);
+        }
+        final downloadedDir = resource.downloadedDirectory();
+        if (downloadedDir.existsSync()) {
+          downloadedDir.deleteSync(recursive: true);
         }
       }
     } on FileSystemException catch (e) {
@@ -164,25 +190,22 @@ class OfflineData {
   ///
   /// For ZIP resources, returns the path to the resource inside the extracted directory.
   /// For non-ZIP resources, returns the direct file path.
-  List<String> downloadedFilePaths() {
-    final basePath = OfflineDataLocation.instance.location.path;
-    return _downloadableResources.map((r) {
-      // Remove only the trailing extension (e.g., .zip, .vtpk).
-      final downloadableWithoutExt = path.withoutExtension(r.downloadable);
+  Future<List<String>> downloadedFilePaths() async {
+    return Future.wait(
+      _downloadableResources.map((r) async {
+        final portalItem = await r.cachedPortalItem();
+        final downloadedDir = r.downloadedDirectory();
 
-      // Check if this is a ZIP file (using both metadata flag and filename).
-      final isZip = r.downloadable.toLowerCase().endsWith('.zip');
-
-      if (isZip) {
-        // For ZIP files, the structure is:
-        // <appDir>/<downloadableWithoutExt>/<resource>
-        return r.resource != null
-            ? path.join(basePath, downloadableWithoutExt, r.resource)
-            : path.join(basePath, downloadableWithoutExt);
-      } else {
-        // For non-ZIP files, the file is stored directly.
-        return path.join(basePath, r.downloadable);
-      }
-    }).toList();
+        if (portalItem.name.toLowerCase().endsWith('.zip')) {
+          // For ZIP files, return the path to the resource inside the extracted directory.
+          return r.resource != null
+              ? path.join(downloadedDir.path, r.resource)
+              : downloadedDir.path;
+        } else {
+          // For non-ZIP files, return the direct file path.
+          return path.join(downloadedDir.path, portalItem.name);
+        }
+      }),
+    );
   }
 }

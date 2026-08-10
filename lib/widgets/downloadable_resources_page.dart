@@ -59,7 +59,7 @@ class _DownloadableResourcesPageState extends State<DownloadableResourcesPage> {
   void initState() {
     super.initState();
 
-    if (widget.offlineData.allResourcesDownloaded()) {
+    if (widget.offlineData.allResourcesDownloaded) {
       _isComplete = true;
       _progress = 100;
       _shouldShowUI = false;
@@ -244,8 +244,8 @@ class _DownloadableResourcesPageState extends State<DownloadableResourcesPage> {
   }
 
   // Call back to onComplete.
-  void _openSample() {
-    final downloadPaths = widget.offlineData.downloadedFilePaths();
+  Future<void> _openSample() async {
+    final downloadPaths = await widget.offlineData.downloadedFilePaths();
     widget.onComplete(downloadPaths);
   }
 }
