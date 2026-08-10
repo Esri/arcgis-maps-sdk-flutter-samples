@@ -26,8 +26,6 @@ class DownloadableResource {
   DownloadableResource({
     required this.portal,
     required this.itemId,
-    required this.downloadable,
-    //fixme remove `downloadable`
     this.resource,
   });
 
@@ -38,24 +36,18 @@ class DownloadableResource {
     return DownloadableResource(
       portal: portal,
       itemId: json['itemId'] as String,
-      downloadable: json['downloadable'] as String,
       resource: json['resource'] as String?,
     );
   }
 
   final Portal portal;
   final String itemId;
-  final String downloadable;
   final String? resource;
 
   PortalItem? _portalItem;
 
   Map<String, dynamic> toJson() {
-    return {
-      'itemId': itemId,
-      'downloadable': downloadable,
-      'resource': resource,
-    };
+    return {'itemId': itemId, 'resource': resource};
   }
 
   Future<PortalItem> cachedPortalItem() async {
