@@ -17,7 +17,6 @@
 export 'bottom_sheet_settings.dart';
 export 'callout_theme.dart';
 export 'dialogs.dart';
-export 'download_util.dart';
 export 'feature_popup_view.dart';
 export 'loading_indicator.dart';
 export 'map_banner.dart';

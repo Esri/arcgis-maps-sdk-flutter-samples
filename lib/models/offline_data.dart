@@ -16,9 +16,9 @@
 
 import 'dart:io';
 import 'package:arcgis_maps/arcgis_maps.dart';
-import 'package:arcgis_maps_sdk_flutter_samples/common/download_util.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/models/downloadable_resource.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_archive/flutter_archive.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 
@@ -72,11 +72,57 @@ class OfflineData {
     required RequestCancelToken requestCancelToken,
     void Function(int progress)? onProgress,
   }) async {
-    await downloadSampleDataWithProgress(
-      offlineData: this,
-      requestCancelToken: requestCancelToken,
-      onProgress: onProgress,
+    var currentProgress = 0;
+    onProgress?.call(currentProgress);
+
+    final portalItems = await Future.wait(
+      _downloadableResources.map((r) => r.cachedPortalItem()),
     );
+
+    final zipFiles = <File>[];
+    final basePath = OfflineDataLocation.instance.location.path;
+    var completedItems = 0;
+    for (final portalItem in portalItems) {
+      final requestUri = Uri.parse('${portalItem.uri}/data');
+      final destinationFile = File(path.join(basePath, portalItem.name));
+      await ArcGISHttpClient.download(
+        requestUri,
+        destinationFile.uri,
+        requestInfo: RequestInfo(
+          requestCancelToken: requestCancelToken,
+          onReceiveProgress: (bytesReceived, totalBytes) {
+            // Calculate progress: completed items + current item progress
+            final currentItemProgress = bytesReceived / (totalBytes ?? 1);
+            final overallProgress =
+                (completedItems + currentItemProgress) / portalItems.length;
+
+            final nextProgress = (overallProgress * 100).round();
+            if (nextProgress != currentProgress) {
+              currentProgress = nextProgress;
+              onProgress?.call(currentProgress);
+            }
+          },
+        ),
+      );
+      ++completedItems;
+
+      if (destinationFile.path.contains('.zip')) {
+        zipFiles.add(destinationFile);
+      }
+    }
+
+    // Decompress any zip files received.
+    await Future.wait(zipFiles.map(_extractZipArchive));
+
+    onProgress?.call(100);
+  }
+
+  static Future<void> _extractZipArchive(File archiveFile) async {
+    // Save all files to a directory with the filename without the zip extension in the same directory as the zip file.
+    final pathWithoutExt = archiveFile.path.replaceFirst(RegExp(r'.zip$'), '');
+    final dir = Directory.fromUri(Uri.parse(pathWithoutExt));
+    if (dir.existsSync()) dir.deleteSync(recursive: true);
+    await ZipFile.extractToDirectory(zipFile: archiveFile, destinationDir: dir);
   }
 
   /// Cleans up downloaded files and extracted directories for this offline data.
