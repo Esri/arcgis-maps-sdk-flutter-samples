@@ -246,6 +246,6 @@ class _DownloadableResourcesPageState extends State<DownloadableResourcesPage> {
   // Call back to onComplete.
   Future<void> _openSample() async {
     final downloadPaths = await widget.offlineData.downloadedFilePaths();
-    widget.onComplete(downloadPaths);
+    if (mounted) widget.onComplete(downloadPaths);
   }
 }

@@ -27,7 +27,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 /// The metadata is taken from the sample's README.metadata.json data via generated_samples_list.json.
 /// The Widget for each sample is pulled from the samples_widget_list.dart.
 class Sample {
-  Sample.fromJson(Map<String, dynamic> json)
+  Sample.fromJson(Map<String, dynamic> json, Portal portal)
     : _category = json['category'] as String? ?? '',
       _description = json['description'] as String? ?? '',
       _snippets = List<String>.from(json['snippets'] as List? ?? []),
@@ -36,7 +36,7 @@ class Sample {
       _key = json['key'] as String? ?? '',
       _offlineData = OfflineData.fromJson(
         json['offline_data'] as List? ?? [],
-        Portal.arcGISOnline(),
+        portal,
       ),
       _sampleWidget = sampleWidgets[json['key']]!();
   final String _category;
