@@ -27,7 +27,10 @@ class ConfigureBasemapStyleParameters extends StatefulWidget {
 
 // Represents a basemap language strategy option displayed in the UI.
 class _LanguageStrategyOption {
-  const _LanguageStrategyOption({required this.label, required this.languageStrategy});
+  const _LanguageStrategyOption({
+    required this.label,
+    required this.languageStrategy,
+  });
 
   final String label;
   final BasemapStyleLanguageStrategy languageStrategy;
@@ -35,7 +38,10 @@ class _LanguageStrategyOption {
 
 // Represents a specific basemap language option displayed in the UI.
 class _SpecificLanguageOption {
-  const _SpecificLanguageOption({required this.label, required this.specificLanguage});
+  const _SpecificLanguageOption({
+    required this.label,
+    required this.specificLanguage,
+  });
 
   final String label;
   final String specificLanguage;
@@ -84,9 +90,15 @@ class _ConfigureBasemapStyleParametersState
 
   // Available specific language options that can override the selected language strategy.
   final _languages = [
-    const _SpecificLanguageOption(label: '🇧🇬 Bulgarian', specificLanguage: 'bg'),
+    const _SpecificLanguageOption(
+      label: '🇧🇬 Bulgarian',
+      specificLanguage: 'bg',
+    ),
     const _SpecificLanguageOption(label: '🇬🇷 Greek', specificLanguage: 'el'),
-    const _SpecificLanguageOption(label: '🇹🇷 Turkish', specificLanguage: 'tr'),
+    const _SpecificLanguageOption(
+      label: '🇹🇷 Turkish',
+      specificLanguage: 'tr',
+    ),
   ];
 
   @override
@@ -177,53 +189,60 @@ class _ConfigureBasemapStyleParametersState
       onCloseIconPressed: () => setState(() => _bottomSheetVisible = false),
       settingsWidgets: (context) => [
         // Displays the available language strategy options.
-        ExpansionTile(
-          title: const Text('Strategy'),
-          children: _strategies.map((languageStrategy) {
-            // Check whether this strategy is currently selected.
-            final isSelected =
-                _selectedSpecificLanguage.isEmpty &&
-                _selectedLanguageStrategy == languageStrategy.languageStrategy;
+        const Text('Strategy', style: TextStyle(fontWeight: FontWeight.bold)),
+        RadioGroup<BasemapStyleLanguageStrategy>(
+          groupValue: _selectedSpecificLanguage.isEmpty
+              ? _selectedLanguageStrategy
+              : null,
+          onChanged: (value) {
+            // Ignore null values from the radio group.
+            if (value == null) return;
 
-            return CheckboxListTile(
-              value: isSelected,
-              title: Text(languageStrategy.label),
-              controlAffinity: ListTileControlAffinity.leading,
-              onChanged: (_) {
-                setState(() {
-                  // Update the selected strategy and clear any specific language.
-                  _selectedLanguageStrategy = languageStrategy.languageStrategy;
-                  _selectedSpecificLanguage = '';
-                });
-                // Apply the updated language setting.
-                _setBasemapLanguage();
-              },
-            );
-          }).toList(),
+            setState(() {
+              // Update the selected strategy and clear any specific language.
+              _selectedLanguageStrategy = value;
+              _selectedSpecificLanguage = '';
+            });
+            // Apply the updated language setting.
+            _setBasemapLanguage();
+          },
+          child: Column(
+            children: _strategies.map((languageStrategy) {
+              return RadioListTile<BasemapStyleLanguageStrategy>(
+                value: languageStrategy.languageStrategy,
+                title: Text(languageStrategy.label),
+                controlAffinity: ListTileControlAffinity.leading,
+              );
+            }).toList(),
+          ),
         ),
 
         // Displays the available specific language options.
-        ExpansionTile(
-          title: const Text('Specific'),
-          children: _languages.map((language) {
-            // Check whether this specific language is currently selected.
-            final isSelected =
-                _selectedSpecificLanguage == language.specificLanguage;
+        const Text('Specific', style: TextStyle(fontWeight: FontWeight.bold)),
+        RadioGroup<String>(
+          groupValue: _selectedSpecificLanguage.isNotEmpty
+              ? _selectedSpecificLanguage
+              : null,
+          onChanged: (value) {
+            // Ignore null values from the radio group.
+            if (value == null) return;
 
-            return CheckboxListTile(
-              value: isSelected,
-              title: Text(language.label),
-              controlAffinity: ListTileControlAffinity.leading,
-              onChanged: (_) {
-                // Update the selected specific language.
-                setState(
-                  () => _selectedSpecificLanguage = language.specificLanguage,
-                );
-                // Apply the updated language setting.
-                _setBasemapLanguage();
-              },
-            );
-          }).toList(),
+            setState(() {
+              // Update the selected specific language.
+              _selectedSpecificLanguage = value;
+            });
+            // Apply the updated language setting.
+            _setBasemapLanguage();
+          },
+          child: Column(
+            children: _languages.map((language) {
+              return RadioListTile<String>(
+                value: language.specificLanguage,
+                title: Text(language.label),
+                controlAffinity: ListTileControlAffinity.leading,
+              );
+            }).toList(),
+          ),
         ),
       ],
     );
