@@ -26,16 +26,16 @@ class ConfigureBasemapStyleParameters extends StatefulWidget {
 }
 
 // Represents a basemap language strategy option displayed in the UI.
-class _Strategy {
-  const _Strategy({required this.label, required this.languageStrategy});
+class _LanguageStrategyOption {
+  const _LanguageStrategyOption({required this.label, required this.languageStrategy});
 
   final String label;
   final BasemapStyleLanguageStrategy languageStrategy;
 }
 
 // Represents a specific basemap language option displayed in the UI.
-class _Language {
-  const _Language({required this.label, required this.specificLanguage});
+class _SpecificLanguageOption {
+  const _SpecificLanguageOption({required this.label, required this.specificLanguage});
 
   final String label;
   final String specificLanguage;
@@ -64,19 +64,19 @@ class _ConfigureBasemapStyleParametersState
 
   // Available basemap language strategy options displayed in the Strategy section.
   final _strategies = [
-    const _Strategy(
+    const _LanguageStrategyOption(
       label: 'Default Language',
       languageStrategy: BasemapStyleLanguageStrategy.default_,
     ),
-    const _Strategy(
+    const _LanguageStrategyOption(
       label: 'Global',
       languageStrategy: BasemapStyleLanguageStrategy.global,
     ),
-    const _Strategy(
+    const _LanguageStrategyOption(
       label: 'Local',
       languageStrategy: BasemapStyleLanguageStrategy.local,
     ),
-    const _Strategy(
+    const _LanguageStrategyOption(
       label: 'System Locale',
       languageStrategy: BasemapStyleLanguageStrategy.applicationLocale,
     ),
@@ -84,9 +84,9 @@ class _ConfigureBasemapStyleParametersState
 
   // Available specific language options that can override the selected language strategy.
   final _languages = [
-    const _Language(label: '🇧🇬 Bulgarian', specificLanguage: 'bg'),
-    const _Language(label: '🇬🇷 Greek', specificLanguage: 'el'),
-    const _Language(label: '🇹🇷 Turkish', specificLanguage: 'tr'),
+    const _SpecificLanguageOption(label: '🇧🇬 Bulgarian', specificLanguage: 'bg'),
+    const _SpecificLanguageOption(label: '🇬🇷 Greek', specificLanguage: 'el'),
+    const _SpecificLanguageOption(label: '🇹🇷 Turkish', specificLanguage: 'tr'),
   ];
 
   @override
