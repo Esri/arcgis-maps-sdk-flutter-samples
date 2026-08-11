@@ -50,13 +50,16 @@ class DownloadableResource {
     return {'itemId': itemId, 'resource': resource};
   }
 
+  /// Returns the PortalItem for this resource, from cache if available or else loaded from the network.
   Future<PortalItem> cachedPortalItem() async {
+    // If the PortalItem is already cached in memory, return it.
     if (_portalItem != null) {
       return _portalItem!;
     }
 
     final serialized = portalItemJsonFile();
 
+    // If the PortalItem JSON is already cached on disk, read it and return the PortalItem.
     if (serialized.existsSync()) {
       final jsonString = await serialized.readAsString();
       final json = jsonDecode(jsonString) as Map<String, dynamic>;
@@ -64,14 +67,15 @@ class DownloadableResource {
       return _portalItem!;
     }
 
+    // Not currently cached -- load the PortalItem from the portal and cache it to disk.
     final portalItem = PortalItem.withPortalAndItemId(
       portal: portal,
       itemId: itemId,
     );
     await portalItem.load();
-
     serialized.writeAsStringSync(jsonEncode(portalItem.toJson()), flush: true);
 
+    // Cache the PortalItem in memory and return it.
     _portalItem = portalItem;
     return _portalItem!;
   }
@@ -99,4 +103,8 @@ class DownloadableResource {
       ),
     );
   }
+
+  // Whether this resource has been successfully downloaded.
+  bool get isDownloaded =>
+      portalItemJsonFile().existsSync() && downloadedDirectory().existsSync();
 }
