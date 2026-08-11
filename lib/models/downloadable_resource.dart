@@ -61,10 +61,15 @@ class DownloadableResource {
 
     // If the PortalItem JSON is already cached on disk, read it and return the PortalItem.
     if (serialized.existsSync()) {
-      final jsonString = await serialized.readAsString();
-      final json = jsonDecode(jsonString) as Map<String, dynamic>;
-      _portalItem = PortalItem.fromJson(json);
-      return _portalItem!;
+      try {
+        final jsonString = await serialized.readAsString();
+        final json = jsonDecode(jsonString) as Map<String, dynamic>;
+        _portalItem = PortalItem.fromJson(json);
+        return _portalItem!;
+      } on Exception catch (_) {
+        // If reading or parsing the JSON fails, fall through to load from the network.
+        serialized.deleteSync();
+      }
     }
 
     // Not currently cached -- load the PortalItem from the portal and cache it to disk.
@@ -73,7 +78,7 @@ class DownloadableResource {
       itemId: itemId,
     );
     await portalItem.load();
-    serialized.writeAsStringSync(jsonEncode(portalItem.toJson()), flush: true);
+    await serialized.writeAsString(jsonEncode(portalItem.toJson()));
 
     // Cache the PortalItem in memory and return it.
     _portalItem = portalItem;

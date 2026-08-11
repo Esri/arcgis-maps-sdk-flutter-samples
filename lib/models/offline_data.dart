@@ -125,7 +125,14 @@ class OfflineData {
           requestCancelToken: requestCancelToken,
           onReceiveProgress: (bytesReceived, totalBytes) {
             // Calculate progress: completed items + current item progress
-            final currentItemProgress = bytesReceived / (totalBytes ?? 1);
+            final validProgress =
+                totalBytes != null &&
+                totalBytes > 0 &&
+                bytesReceived >= 0 &&
+                bytesReceived <= totalBytes;
+            final currentItemProgress = validProgress
+                ? bytesReceived / totalBytes
+                : .5; // treat invalid progress as 50%
             final overallProgress =
                 (completedItems + currentItemProgress) /
                 _downloadableResources.length;
@@ -146,7 +153,7 @@ class OfflineData {
         downloadedDir.deleteSync(recursive: true);
       }
 
-      if (destinationFile.path.contains('.zip')) {
+      if (destinationFile.path.toLowerCase().endsWith('.zip')) {
         // Zip files: extract to the downloaded directory and delete the temporary.
         await ZipFile.extractToDirectory(
           zipFile: destinationFile,
