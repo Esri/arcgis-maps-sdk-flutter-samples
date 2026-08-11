@@ -66,7 +66,7 @@ class _DownloadableResourcesPageState extends State<DownloadableResourcesPage> {
 
       // if the data has already been downloaded, immediately open the sample.
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted) _openSample();
+        if (mounted) _openSample().ignore();
       });
     }
   }
@@ -208,7 +208,7 @@ class _DownloadableResourcesPageState extends State<DownloadableResourcesPage> {
       });
 
       // directly open the sample after downloading
-      _openSample();
+      _openSample().ignore();
     } on Exception catch (e) {
       // show a snackbar with error message
       if (mounted) {
