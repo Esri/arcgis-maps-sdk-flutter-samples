@@ -26,16 +26,16 @@ class ConfigureBasemapStyleParameters extends StatefulWidget {
 }
 
 // Represents a basemap language strategy option displayed in the UI.
-class Strategy {
-  const Strategy({required this.label, required this.languageStrategy});
+class _Strategy {
+  const _Strategy({required this.label, required this.languageStrategy});
 
   final String label;
   final BasemapStyleLanguageStrategy languageStrategy;
 }
 
 // Represents a specific basemap language option displayed in the UI.
-class Language {
-  const Language({required this.label, required this.specificLanguage});
+class _Language {
+  const _Language({required this.label, required this.specificLanguage});
 
   final String label;
   final String specificLanguage;
@@ -59,21 +59,24 @@ class _ConfigureBasemapStyleParametersState
   // Create basemap style parameters for the selected language setting.
   final parameters = BasemapStyleParameters();
 
-  // Available basemap language strategy options displayed in the Strategic section.
+  // Controls whether the language settings sheet is visible.
+  var _bottomSheetVisible = false;
+
+  // Available basemap language strategy options displayed in the Strategy section.
   final _strategies = [
-    const Strategy(
+    const _Strategy(
       label: 'Default Language',
       languageStrategy: BasemapStyleLanguageStrategy.default_,
     ),
-    const Strategy(
+    const _Strategy(
       label: 'Global',
       languageStrategy: BasemapStyleLanguageStrategy.global,
     ),
-    const Strategy(
+    const _Strategy(
       label: 'Local',
       languageStrategy: BasemapStyleLanguageStrategy.local,
     ),
-    const Strategy(
+    const _Strategy(
       label: 'System Locale',
       languageStrategy: BasemapStyleLanguageStrategy.applicationLocale,
     ),
@@ -81,9 +84,9 @@ class _ConfigureBasemapStyleParametersState
 
   // Available specific language options that can override the selected language strategy.
   final _languages = [
-    const Language(label: '🇧🇬 Bulgarian', specificLanguage: 'bg'),
-    const Language(label: '🇬🇷 Greek', specificLanguage: 'el'),
-    const Language(label: '🇹🇷 Turkish', specificLanguage: 'tr'),
+    const _Language(label: '🇧🇬 Bulgarian', specificLanguage: 'bg'),
+    const _Language(label: '🇬🇷 Greek', specificLanguage: 'el'),
+    const _Language(label: '🇹🇷 Turkish', specificLanguage: 'tr'),
   ];
 
   @override
@@ -104,21 +107,24 @@ class _ConfigureBasemapStyleParametersState
                     onMapViewReady: onMapViewReady,
                   ),
                 ),
-                // Build the language settings menu.
-                Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: ElevatedButton(
-                    onPressed: _showLanguageSettings,
-                    child: const Text('Language Settings'),
-                  ),
+                // Add a language settings button to the widget tree.
+                ElevatedButton(
+                  onPressed: _ready
+                      ? () => setState(() => _bottomSheetVisible = true)
+                      : null,
+                  child: const Text('Language Settings'),
                 ),
               ],
             ),
-            // Display a progress indicator and prevent interaction until state is ready.
+            // Display a progress indicator while the sample is initializing.
             LoadingIndicator(visible: !_ready),
           ],
         ),
       ),
+      // Display the language settings sheet when visible.
+      bottomSheet: _bottomSheetVisible
+          ? _buildLanguageSettingsSheet(context)
+          : null,
     );
   }
 
@@ -165,86 +171,61 @@ class _ConfigureBasemapStyleParametersState
   }
 
   // Displays a bottom sheet for selecting a language strategy or a specific language.
-  Future<void> _showLanguageSettings() async {
-    await showModalBottomSheet<void>(
-      context: context,
-      builder: (context) {
-        return SafeArea(
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // Title displayed at the top of the settings panel.
-                const Center(
-                  child: Padding(
-                    padding: EdgeInsets.only(top: 16),
-                    child: Text(
-                      'Language Settings',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ),
+  Widget _buildLanguageSettingsSheet(BuildContext context) {
+    return BottomSheetSettings(
+      title: 'Language Settings',
+      onCloseIconPressed: () => setState(() => _bottomSheetVisible = false),
+      settingsWidgets: (context) => [
+        // Displays the available language strategy options.
+        ExpansionTile(
+          title: const Text('Strategy'),
+          children: _strategies.map((languageStrategy) {
+            // Check whether this strategy is currently selected.
+            final isSelected =
+                _selectedSpecificLanguage.isEmpty &&
+                _selectedLanguageStrategy == languageStrategy.languageStrategy;
 
-                // Displays the available language strategy options.
-                ExpansionTile(
-                  title: const Text('Strategic'),
-                  children: _strategies.map((languageStrategy) {
-                    // Check whether this strategy is currently selected.
-                    final isSelected =
-                        _selectedSpecificLanguage.isEmpty &&
-                        _selectedLanguageStrategy ==
-                            languageStrategy.languageStrategy;
-                    return CheckboxListTile(
-                      value: isSelected,
-                      title: Text(languageStrategy.label),
-                      controlAffinity: ListTileControlAffinity.leading,
-                      onChanged: (_) {
-                        setState(() {
-                          // Update the selected strategy and clear any specific language.
-                          _selectedLanguageStrategy =
-                              languageStrategy.languageStrategy;
-                          _selectedSpecificLanguage = '';
-                        });
-                        // Apply the updated language setting.
-                        _setBasemapLanguage();
-                        Navigator.pop(context);
-                      },
-                    );
-                  }).toList(),
-                ),
+            return CheckboxListTile(
+              value: isSelected,
+              title: Text(languageStrategy.label),
+              controlAffinity: ListTileControlAffinity.leading,
+              onChanged: (_) {
+                setState(() {
+                  // Update the selected strategy and clear any specific language.
+                  _selectedLanguageStrategy = languageStrategy.languageStrategy;
+                  _selectedSpecificLanguage = '';
+                });
+                // Apply the updated language setting.
+                _setBasemapLanguage();
+              },
+            );
+          }).toList(),
+        ),
 
-                // Displays the available specific language options.
-                ExpansionTile(
-                  title: const Text('Specific'),
-                  children: _languages.map((language) {
-                    // Check whether this specific language is currently selected.
-                    final isSelected =
-                        _selectedSpecificLanguage == language.specificLanguage;
-                    return CheckboxListTile(
-                      value: isSelected,
-                      title: Text(language.label),
-                      controlAffinity: ListTileControlAffinity.leading,
-                      onChanged: (_) {
-                        // Update the selected specific language.
-                        setState(
-                          () => _selectedSpecificLanguage =
-                              language.specificLanguage,
-                        );
-                        // Apply the updated language setting.
-                        _setBasemapLanguage();
-                        Navigator.pop(context);
-                      },
-                    );
-                  }).toList(),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
+        // Displays the available specific language options.
+        ExpansionTile(
+          title: const Text('Specific'),
+          children: _languages.map((language) {
+            // Check whether this specific language is currently selected.
+            final isSelected =
+                _selectedSpecificLanguage == language.specificLanguage;
+
+            return CheckboxListTile(
+              value: isSelected,
+              title: Text(language.label),
+              controlAffinity: ListTileControlAffinity.leading,
+              onChanged: (_) {
+                // Update the selected specific language.
+                setState(
+                  () => _selectedSpecificLanguage = language.specificLanguage,
+                );
+                // Apply the updated language setting.
+                _setBasemapLanguage();
+              },
+            );
+          }).toList(),
+        ),
+      ],
     );
   }
 }
