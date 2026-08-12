@@ -28,10 +28,10 @@ class ApplyScenePropertyExpressions extends StatefulWidget {
 class _ApplyScenePropertyExpressionsState
     extends State<ApplyScenePropertyExpressions>
     with SampleStateSupport {
-  // Create a controller for the map view.
+  // Create a controller for the scene view.
   final _sceneViewController = ArcGISSceneView.createController();
 
-  // A flag for when the map view is ready and controls can be used.
+  // A flag for when the scene view is ready and controls can be used.
   var _ready = false;
 
   // The cone graphic whose heading and pitch are controlled by expressions.
@@ -64,12 +64,14 @@ class _ApplyScenePropertyExpressionsState
                     onSceneViewReady: onSceneViewReady,
                   ),
                 ),
-                // Add a settings button to the widget tree.
-                ElevatedButton(
-                  onPressed: _ready
-                      ? () => setState(() => _settingsVisible = true)
-                      : null,
-                  child: const Text('Settings'),
+                // Add a centered settings button to the widget tree.
+                Center(
+                  child: ElevatedButton(
+                    onPressed: _ready
+                        ? () => setState(() => _settingsVisible = true)
+                        : null,
+                    child: const Text('Settings'),
+                  ),
                 ),
               ],
             ),
@@ -83,7 +85,7 @@ class _ApplyScenePropertyExpressionsState
     );
   }
 
-  Future<void> onSceneViewReady() async {
+  void onSceneViewReady() {
     // Create the scene with an imagery basemap.
     final scene = ArcGISScene.withBasemapStyle(
       BasemapStyle.arcGISImageryStandard,
@@ -140,10 +142,12 @@ class _ApplyScenePropertyExpressionsState
       pitch: 50,
       roll: 0,
     );
-    scene.initialViewpoint = Viewpoint.withPointScaleCamera(
-      center: lookAtPoint,
-      scale: 1,
-      camera: camera,
+    _sceneViewController.setViewpoint(
+      Viewpoint.withPointScaleCamera(
+        center: lookAtPoint,
+        scale: 1,
+        camera: camera,
+      ),
     );
 
     // Set the ready state variable to true to enable the sample UI.
