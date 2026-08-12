@@ -115,12 +115,14 @@ class _UpdateBasemapForContrastAccessibilityState
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    // Add a button to toggle the visibility of the settings panel.
-                    ElevatedButton(
-                      onPressed: _ready
-                          ? () => setState(() => _settingsVisible = true)
-                          : null,
-                      child: const Text('Contrast Options'),
+                    // Add a centered button to toggle the visibility of the settings panel.
+                    Center(
+                      child: ElevatedButton(
+                        onPressed: _ready
+                            ? () => setState(() => _settingsVisible = true)
+                            : null,
+                        child: const Text('Contrast Options'),
+                      ),
                     ),
                   ],
                 ),
