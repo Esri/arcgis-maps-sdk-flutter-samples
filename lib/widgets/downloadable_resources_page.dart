@@ -59,14 +59,14 @@ class _DownloadableResourcesPageState extends State<DownloadableResourcesPage> {
   void initState() {
     super.initState();
 
-    if (widget.offlineData.allResourcesDownloaded()) {
+    if (widget.offlineData.allResourcesDownloaded) {
       _isComplete = true;
       _progress = 100;
       _shouldShowUI = false;
 
       // if the data has already been downloaded, immediately open the sample.
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted) _openSample();
+        if (mounted) _openSample().ignore();
       });
     }
   }
@@ -208,7 +208,7 @@ class _DownloadableResourcesPageState extends State<DownloadableResourcesPage> {
       });
 
       // directly open the sample after downloading
-      _openSample();
+      _openSample().ignore();
     } on Exception catch (e) {
       // show a snackbar with error message
       if (mounted) {
@@ -244,8 +244,8 @@ class _DownloadableResourcesPageState extends State<DownloadableResourcesPage> {
   }
 
   // Call back to onComplete.
-  void _openSample() {
-    final downloadPaths = widget.offlineData.downloadedFilePaths();
-    widget.onComplete(downloadPaths);
+  Future<void> _openSample() async {
+    final downloadPaths = await widget.offlineData.downloadedFilePaths();
+    if (mounted) widget.onComplete(downloadPaths);
   }
 }

@@ -17,6 +17,7 @@
 import 'dart:async';
 
 // run `dart run build_runner build` to generate samples_widget_list.dart
+import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/models/offline_data.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/models/samples_widget_list.dart';
 import 'package:flutter/material.dart';
@@ -26,14 +27,17 @@ import 'package:shared_preferences/shared_preferences.dart';
 /// The metadata is taken from the sample's README.metadata.json data via generated_samples_list.json.
 /// The Widget for each sample is pulled from the samples_widget_list.dart.
 class Sample {
-  Sample.fromJson(Map<String, dynamic> json)
+  Sample.fromJson(Map<String, dynamic> json, Portal portal)
     : _category = json['category'] as String? ?? '',
       _description = json['description'] as String? ?? '',
       _snippets = List<String>.from(json['snippets'] as List? ?? []),
       _title = json['title'] as String? ?? '',
       _keywords = List<String>.from(json['keywords'] as List? ?? []),
       _key = json['key'] as String? ?? '',
-      _offlineData = OfflineData.fromJson(json['offline_data'] as List? ?? []),
+      _offlineData = OfflineData.fromJson(
+        json['offline_data'] as List? ?? [],
+        portal,
+      ),
       _sampleWidget = sampleWidgets[json['key']]!();
   final String _category;
   final String _description;

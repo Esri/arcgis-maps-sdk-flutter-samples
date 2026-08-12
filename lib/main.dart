@@ -60,8 +60,11 @@ void main() async {
   );
   final sampleData = jsonDecode(jsonString) as Map<String, dynamic>;
 
+  final portal = Portal.arcGISOnline();
   final allSamples = List<Sample>.unmodifiable(
-    sampleData.values.whereType<Map<String, dynamic>>().map(Sample.fromJson),
+    sampleData.values.whereType<Map<String, dynamic>>().map(
+      (json) => Sample.fromJson(json, portal),
+    ),
   );
 
   final router = routerConfig(allSamples);

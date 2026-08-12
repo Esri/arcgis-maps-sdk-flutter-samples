@@ -16,11 +16,30 @@
 
 import 'dart:io';
 import 'package:arcgis_maps/arcgis_maps.dart';
-import 'package:arcgis_maps_sdk_flutter_samples/common/download_util.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/models/downloadable_resource.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_archive/flutter_archive.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
+
+// On-disk layout
+//
+// Root directory:
+// ${ApplicationDocumentsDirectory}/OfflineDataLocation/
+//
+// Downloadable resources in the root directory:
+//
+//   Serialized PortalItem JSON:
+//   ${portalItem.itemId}.json
+//
+//   While downloading is in progress:
+//   ${portalItem.itemId}.downloading/
+//
+//   Downloaded resources:
+//     If single file:
+//     ${portalItem.itemId}.downloaded/${portalItem.name}
+//     If zip file:
+//     ${portalItem.itemId}.downloaded/ (all extracted files)
 
 class OfflineDataLocation {
   // Private constructor to enforce singleton pattern.
@@ -30,7 +49,18 @@ class OfflineDataLocation {
 
   /// Initializes the offline data location by obtaining the application documents directory.
   Future<void> initialize() async {
-    _location ??= await getApplicationDocumentsDirectory();
+    if (_location != null) {
+      return;
+    }
+
+    final documents = await getApplicationDocumentsDirectory();
+    final location = Directory(
+      path.join(documents.path, 'OfflineDataLocation'),
+    );
+    if (!location.existsSync()) {
+      location.createSync(recursive: true);
+    }
+    _location = location;
   }
 
   /// The directory where offline data is stored.
@@ -41,26 +71,21 @@ class OfflineDataLocation {
 
 class OfflineData {
   /// Creates an [OfflineData] instance from a JSON list of downloadable resources.
-  OfflineData.fromJson(List<dynamic> json) {
+  OfflineData.fromJson(List<dynamic> json, Portal portal) {
     _downloadableResources = json
         .whereType<Map<String, dynamic>>()
-        .map(DownloadableResource.fromJson)
+        .map((json) => DownloadableResource.fromJson(json, portal))
         .toList(growable: false);
   }
 
-  /// The list of downloadable resources for this offline data.
   List<DownloadableResource> _downloadableResources = [];
 
   /// Whether this offline data has any downloadable resources.
   bool get hasDownloadableResources => _downloadableResources.isNotEmpty;
 
-  /// Returns whether all downloadable resources are present in the offline data location.
-  bool allResourcesDownloaded() {
-    final basePath = OfflineDataLocation.instance.location.path;
-    return _downloadableResources.every(
-      (r) => File(path.join(basePath, r.downloadable)).existsSync(),
-    );
-  }
+  /// Whether all downloadable resources are present in the offline data location.
+  bool get allResourcesDownloaded =>
+      _downloadableResources.every((resource) => resource.isDownloaded);
 
   /// Downloads the resources to the offline data location.
   ///
@@ -70,47 +95,97 @@ class OfflineData {
     required RequestCancelToken requestCancelToken,
     void Function(int progress)? onProgress,
   }) async {
-    final itemIds = _downloadableResources.map((r) => r.itemId).toList();
-    final basePath = OfflineDataLocation.instance.location.path;
-    final destinationFiles = _downloadableResources
-        .map((r) => File(path.join(basePath, r.downloadable)))
-        .toList();
+    var currentProgress = 0;
+    onProgress?.call(currentProgress);
 
-    await downloadSampleDataWithProgress(
-      itemIds: itemIds,
-      destinationFiles: destinationFiles,
-      requestCancelToken: requestCancelToken,
-      onProgress: onProgress,
-    );
+    var completedItems = 0;
+    for (final resource in _downloadableResources) {
+      final portalItem = await resource.cachedPortalItem();
+
+      // Compose the request URI for downloading the item's file contents.
+      final requestUri = Uri.parse('${portalItem.uri}/data');
+
+      // Prepare a temporary "downloading" directory for use during the download.
+      final downloadingDir = resource.downloadingDirectory();
+      if (downloadingDir.existsSync()) {
+        downloadingDir.deleteSync(recursive: true);
+      }
+      downloadingDir.createSync(recursive: true);
+
+      // Identify the destination within the downloading directory.
+      final destinationFile = File(
+        path.join(downloadingDir.path, portalItem.name),
+      );
+
+      // Download it!
+      await ArcGISHttpClient.download(
+        requestUri,
+        destinationFile.uri,
+        requestInfo: RequestInfo(
+          requestCancelToken: requestCancelToken,
+          onReceiveProgress: (bytesReceived, totalBytes) {
+            // Calculate progress: completed items + current item progress
+            final validProgress =
+                totalBytes != null &&
+                totalBytes > 0 &&
+                bytesReceived >= 0 &&
+                bytesReceived <= totalBytes;
+            final currentItemProgress = validProgress
+                ? bytesReceived / totalBytes
+                : .5; // treat invalid progress as 50%
+            final overallProgress =
+                (completedItems + currentItemProgress) /
+                _downloadableResources.length;
+
+            final nextProgress = (overallProgress * 100).round();
+            if (nextProgress != currentProgress) {
+              currentProgress = nextProgress;
+              onProgress?.call(currentProgress);
+            }
+          },
+        ),
+      );
+
+      // Now that the download has completed successfully, prepare the final "downloaded" directory.
+      // (This prevents partial downloads from being mistaken for completed downloads.)
+      final downloadedDir = resource.downloadedDirectory();
+      if (downloadedDir.existsSync()) {
+        downloadedDir.deleteSync(recursive: true);
+      }
+
+      if (destinationFile.path.toLowerCase().endsWith('.zip')) {
+        // Zip files: extract to the downloaded directory and delete the temporary.
+        await ZipFile.extractToDirectory(
+          zipFile: destinationFile,
+          destinationDir: downloadedDir,
+        );
+        downloadingDir.deleteSync(recursive: true);
+      } else {
+        // Non-zip files: rename the temporary directory to the final downloaded directory.
+        downloadingDir.renameSync(downloadedDir.path);
+      }
+
+      ++completedItems;
+    }
+
+    onProgress?.call(100);
   }
 
   /// Cleans up downloaded files and extracted directories for this offline data.
-  ///
-  /// Deletes:
-  /// - The downloaded file (ZIP or non-ZIP)
-  /// - The extracted directory (for ZIP files only)
   void cleanupFiles() {
-    final basePath = OfflineDataLocation.instance.location.path;
     try {
       for (final resource in _downloadableResources) {
-        final file = File(path.join(basePath, resource.downloadable));
-        if (file.existsSync()) {
-          file.deleteSync();
+        final portalItemJsonFile = resource.portalItemJsonFile();
+        if (portalItemJsonFile.existsSync()) {
+          portalItemJsonFile.deleteSync();
         }
-
-        // For ZIP files, also delete the extracted directory.
-        final isZip = resource.downloadable.toLowerCase().endsWith('.zip');
-        if (isZip) {
-          // Use path.withoutExtension to match the extraction directory naming.
-          final extractionDirName = path.withoutExtension(
-            resource.downloadable,
-          );
-          final extractionDir = Directory(
-            path.join(basePath, extractionDirName),
-          );
-          if (extractionDir.existsSync()) {
-            extractionDir.deleteSync(recursive: true);
-          }
+        final downloadingDir = resource.downloadingDirectory();
+        if (downloadingDir.existsSync()) {
+          downloadingDir.deleteSync(recursive: true);
+        }
+        final downloadedDir = resource.downloadedDirectory();
+        if (downloadedDir.existsSync()) {
+          downloadedDir.deleteSync(recursive: true);
         }
       }
     } on FileSystemException catch (e) {
@@ -123,25 +198,22 @@ class OfflineData {
   ///
   /// For ZIP resources, returns the path to the resource inside the extracted directory.
   /// For non-ZIP resources, returns the direct file path.
-  List<String> downloadedFilePaths() {
-    final basePath = OfflineDataLocation.instance.location.path;
-    return _downloadableResources.map((r) {
-      // Remove only the trailing extension (e.g., .zip, .vtpk).
-      final downloadableWithoutExt = path.withoutExtension(r.downloadable);
+  Future<List<String>> downloadedFilePaths() async {
+    return Future.wait(
+      _downloadableResources.map((r) async {
+        final portalItem = await r.cachedPortalItem();
+        final downloadedDir = r.downloadedDirectory();
 
-      // Check if this is a ZIP file (using both metadata flag and filename).
-      final isZip = r.downloadable.toLowerCase().endsWith('.zip');
-
-      if (isZip) {
-        // For ZIP files, the structure is:
-        // <appDir>/<downloadableWithoutExt>/<resource>
-        return r.resource != null
-            ? path.join(basePath, downloadableWithoutExt, r.resource)
-            : path.join(basePath, downloadableWithoutExt);
-      } else {
-        // For non-ZIP files, the file is stored directly.
-        return path.join(basePath, r.downloadable);
-      }
-    }).toList();
+        if (portalItem.name.toLowerCase().endsWith('.zip')) {
+          // For ZIP files, return the path to the resource inside the extracted directory.
+          return r.resource != null
+              ? path.join(downloadedDir.path, r.resource)
+              : downloadedDir.path;
+        } else {
+          // For non-ZIP files, return the direct file path.
+          return path.join(downloadedDir.path, portalItem.name);
+        }
+      }),
+    );
   }
 }

@@ -17,8 +17,7 @@
         "GeodatabaseSyncTask"
     ],
     "offline_data": [{
-        "itemId": "e4a398afe9a945f3b0f4dca1e4faccb5",
-        "downloadable": "SanFrancisco.tpkx"
+        "itemId": "e4a398afe9a945f3b0f4dca1e4faccb5"
     }],
     "redirect_from": [],
     "relevant_apis": [

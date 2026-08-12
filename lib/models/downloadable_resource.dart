@@ -14,31 +14,102 @@
 // limitations under the License.
 //
 
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:arcgis_maps/arcgis_maps.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/models/offline_data.dart';
+import 'package:path/path.dart' as path;
+
 /// Represents a resource that can be downloaded for a sample.
 class DownloadableResource {
-  const DownloadableResource({
+  DownloadableResource({
+    required this.portal,
     required this.itemId,
-    required this.downloadable,
     this.resource,
   });
 
-  factory DownloadableResource.fromJson(Map<String, dynamic> json) {
+  factory DownloadableResource.fromJson(
+    Map<String, dynamic> json,
+    Portal portal,
+  ) {
     return DownloadableResource(
+      portal: portal,
       itemId: json['itemId'] as String,
-      downloadable: json['downloadable'] as String,
       resource: json['resource'] as String?,
     );
   }
 
+  final Portal portal;
   final String itemId;
-  final String downloadable;
   final String? resource;
 
+  PortalItem? _portalItem;
+
   Map<String, dynamic> toJson() {
-    return {
-      'itemId': itemId,
-      'downloadable': downloadable,
-      'resource': resource,
-    };
+    return {'itemId': itemId, 'resource': resource};
   }
+
+  /// Returns the PortalItem for this resource, from cache if available or else loaded from the network.
+  Future<PortalItem> cachedPortalItem() async {
+    // If the PortalItem is already cached in memory, return it.
+    if (_portalItem != null) {
+      return _portalItem!;
+    }
+
+    final serialized = portalItemJsonFile();
+
+    // If the PortalItem JSON is already cached on disk, read it and return the PortalItem.
+    if (serialized.existsSync()) {
+      try {
+        final jsonString = await serialized.readAsString();
+        final json = jsonDecode(jsonString) as Map<String, dynamic>;
+        _portalItem = PortalItem.fromJson(json);
+        return _portalItem!;
+      } on Exception catch (_) {
+        // If reading or parsing the JSON fails, fall through to load from the network.
+        serialized.deleteSync();
+      }
+    }
+
+    // Not currently cached -- load the PortalItem from the portal and cache it to disk.
+    final portalItem = PortalItem.withPortalAndItemId(
+      portal: portal,
+      itemId: itemId,
+    );
+    await portalItem.load();
+    await serialized.writeAsString(jsonEncode(portalItem.toJson()));
+
+    // Cache the PortalItem in memory and return it.
+    _portalItem = portalItem;
+    return _portalItem!;
+  }
+
+  File portalItemJsonFile() {
+    return File(
+      path.join(OfflineDataLocation.instance.location.path, '$itemId.json'),
+    );
+  }
+
+  Directory downloadingDirectory() {
+    return Directory(
+      path.join(
+        OfflineDataLocation.instance.location.path,
+        '$itemId.downloading',
+      ),
+    );
+  }
+
+  Directory downloadedDirectory() {
+    return Directory(
+      path.join(
+        OfflineDataLocation.instance.location.path,
+        '$itemId.downloaded',
+      ),
+    );
+  }
+
+  // Whether this resource has been successfully downloaded.
+  bool get isDownloaded =>
+      portalItemJsonFile().existsSync() && downloadedDirectory().existsSync();
 }

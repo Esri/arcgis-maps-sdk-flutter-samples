@@ -3,7 +3,6 @@
     "description": "Control the behavior of the camera in a scene.",
     "offline_data": [
         {
-            "downloadable": "Bristol.zip",
             "itemId": "681d6f7694644709a7c830ec57a2d72b",
             "resource": "Bristol.dae"
         }

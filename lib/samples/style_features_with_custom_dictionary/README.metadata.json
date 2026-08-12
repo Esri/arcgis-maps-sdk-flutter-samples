@@ -3,8 +3,7 @@
     "description": "Use a custom dictionary style created from a web style or local style file (.stylx) to symbolize features using a variety of attribute values.",
     "offline_data": [
         {
-            "itemId": "751138a2e0844e06853522d54103222a",
-            "downloadable": "Restaurant.stylx"
+            "itemId": "751138a2e0844e06853522d54103222a"
         }
     ],
     "ignore": false,
