@@ -110,7 +110,9 @@ class _ConfigureElectronicNavigationalChartsState
       final exchangeSetFile = File(
         path.join(
           downloadPaths[1],
-          'ExchangeSetwithoutUpdates/ENC_ROOT/CATALOG.031',
+          'ExchangeSetwithoutUpdates',
+          'ENC_ROOT',
+          'CATALOG.031',
         ),
       );
 
