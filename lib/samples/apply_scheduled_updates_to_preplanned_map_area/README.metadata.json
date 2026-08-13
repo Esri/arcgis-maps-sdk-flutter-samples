@@ -3,8 +3,7 @@
     "description": "Apply scheduled updates to a downloaded preplanned map area.",
     "offline_data": [
         {
-            "itemId": "740b663bff5e4198b9b6674af93f638a",
-            "resource": ""
+            "itemId": "740b663bff5e4198b9b6674af93f638a"
         }
     ],
     "ignore": false,
