@@ -22,6 +22,7 @@ import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:path/path.dart' as path;
 
 class QueryDynamicEntities extends StatefulWidget {
   const QueryDynamicEntities({super.key});
@@ -167,7 +168,9 @@ class _QueryDynamicEntitiesState extends State<QueryDynamicEntities>
     final listPaths = GoRouter.of(context).state.extra! as List<String>;
 
     // Create a custom data source that streams PHX air traffic observations.
-    final provider = _PhxAirTrafficProvider(localJsonPath: listPaths.first);
+    final provider = _PhxAirTrafficProvider(
+      localJsonPath: path.join(listPaths.first, 'phx_air_traffic.json'),
+    );
     _dataSource = CustomDynamicEntityDataSource(provider);
 
     // Create a dynamic entity later from the custom data source.

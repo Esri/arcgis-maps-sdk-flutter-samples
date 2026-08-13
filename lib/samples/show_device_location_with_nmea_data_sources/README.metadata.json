@@ -19,8 +19,7 @@
         "NmeaSatelliteInfo"
     ],
      "offline_data": [{
-        "itemId": "d5bad9f4fee9483791e405880fb466da",
-        "resource": "Redlands.nmea"
+        "itemId": "d5bad9f4fee9483791e405880fb466da"
     }],
     "redirect_from": [],
     "relevant_apis": [

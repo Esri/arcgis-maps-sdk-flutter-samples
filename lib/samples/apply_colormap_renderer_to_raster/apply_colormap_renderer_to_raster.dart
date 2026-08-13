@@ -19,6 +19,7 @@ import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:path/path.dart' as path;
 
 class ApplyColormapRendererToRaster extends StatefulWidget {
   const ApplyColormapRendererToRaster({super.key});
@@ -59,7 +60,7 @@ class _ApplyColormapRendererToRasterState
 
     // Get the application documents directory.
     final listPaths = GoRouter.of(context).state.extra! as List<String>;
-    final mspkFile = File(listPaths.first);
+    final mspkFile = File(path.join(listPaths.first, 'ShastaBW.tif'));
 
     // Create a Raster from the local tif file.
     final raster = Raster.withFileUri(mspkFile.uri);

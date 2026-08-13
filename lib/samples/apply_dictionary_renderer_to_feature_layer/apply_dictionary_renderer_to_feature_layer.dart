@@ -19,6 +19,7 @@ import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:path/path.dart' as path;
 
 class ApplyDictionaryRendererToFeatureLayer extends StatefulWidget {
   const ApplyDictionaryRendererToFeatureLayer({super.key});
@@ -49,7 +50,9 @@ class _ApplyDictionaryRendererToFeatureLayerState
     // Create file references for the dictionary style and geodatabase.
     final listPaths = GoRouter.of(context).state.extra! as List<String>;
     final styleFile = File(listPaths.first);
-    final geodatabaseFile = File(listPaths.last);
+    final geodatabaseFile = File(
+      path.join(listPaths.last, 'militaryoverlay.geodatabase'),
+    );
 
     // Create the map and assign it to the map view controller.
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic);

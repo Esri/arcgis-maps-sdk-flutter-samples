@@ -21,6 +21,7 @@ import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/token_challenger_handler.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:path/path.dart' as path;
 
 // Create an enumeration to define the feature layer sources.
 enum Source { url, portalItem, geodatabase, geopackage, shapefile }
@@ -80,9 +81,15 @@ class _AddFeatureLayersState extends State<AddFeatureLayers>
 
   void _initDownloadResources() {
     final listPaths = GoRouter.of(context).state.extra! as List<String>;
-    _dataSources[Source.geodatabase] = listPaths[0];
-    _dataSources[Source.geopackage] = listPaths[1];
-    _dataSources[Source.shapefile] = listPaths[2];
+    _dataSources[Source.geodatabase] = path.join(
+      listPaths[0],
+      'LA_Trails.geodatabase',
+    );
+    _dataSources[Source.geopackage] = path.join(listPaths[1], 'AuroraCO.gpkg');
+    _dataSources[Source.shapefile] = path.join(
+      listPaths[2],
+      'ScottishWildlifeTrust_ReserveBoundaries_20201102.shp',
+    );
   }
 
   @override

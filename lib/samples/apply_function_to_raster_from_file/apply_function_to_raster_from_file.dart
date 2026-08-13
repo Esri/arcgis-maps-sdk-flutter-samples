@@ -19,6 +19,7 @@ import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:path/path.dart' as path;
 
 class ApplyFunctionToRasterFromFile extends StatefulWidget {
   const ApplyFunctionToRasterFromFile({super.key});
@@ -79,7 +80,9 @@ class _ApplyFunctionToRasterFromFileState
     final listPaths = GoRouter.of(context).state.extra! as List<String>;
 
     // Create and load a Raster from the local tif file.
-    final shastaElevationRaster = Raster.withFileUri(Uri.file(listPaths[0]));
+    final shastaElevationRaster = Raster.withFileUri(
+      Uri.file(path.join(listPaths[0], 'Shasta_Elevation.tif')),
+    );
     await shastaElevationRaster.load();
     // Load the color configuration from the JSON file located in the app's directory.
     final file = File(listPaths[1]);

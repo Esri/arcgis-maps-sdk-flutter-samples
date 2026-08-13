@@ -19,6 +19,7 @@ import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:path/path.dart' as path;
 
 class ShowExploratoryViewshedFromGeoelementInScene extends StatefulWidget {
   const ShowExploratoryViewshedFromGeoelementInScene({super.key});
@@ -202,7 +203,7 @@ class _ShowExploratoryViewshedFromGeoelementInSceneState
   // Loads the 3D tank model from local sample data and returns it as a Graphic.
   Future<Graphic> _loadTankGraphic() async {
     final listPaths = GoRouter.of(context).state.extra! as List<String>;
-    final tankModelPath = listPaths.first;
+    final tankModelPath = path.join(listPaths.first, 'bradle.3ds');
 
     // Define the tank symbol.
     final tankSymbol =

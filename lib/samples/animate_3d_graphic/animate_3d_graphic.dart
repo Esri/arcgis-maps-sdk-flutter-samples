@@ -19,6 +19,7 @@ import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:go_router/go_router.dart';
+import 'package:path/path.dart' as path;
 
 class Animate3dGraphic extends StatefulWidget {
   const Animate3dGraphic({super.key});
@@ -274,7 +275,7 @@ class _Animate3dGraphicState extends State<Animate3dGraphic>
     );
 
     final listPaths = GoRouterState.of(context).extra! as List<String>;
-    final planeModelPath = listPaths.first;
+    final planeModelPath = path.join(listPaths.first, 'Bristol.dae');
 
     // Define the plane symbol.
     final planeSymbol = ModelSceneSymbol.withUri(

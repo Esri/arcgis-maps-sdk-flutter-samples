@@ -23,11 +23,7 @@ import 'package:path/path.dart' as path;
 
 /// Represents a resource that can be downloaded for a sample.
 class DownloadableResource {
-  DownloadableResource({
-    required this.portal,
-    required this.itemId,
-    this.resource,
-  });
+  DownloadableResource({required this.portal, required this.itemId});
 
   factory DownloadableResource.fromJson(
     Map<String, dynamic> json,
@@ -36,18 +32,16 @@ class DownloadableResource {
     return DownloadableResource(
       portal: portal,
       itemId: json['itemId'] as String,
-      resource: json['resource'] as String?,
     );
   }
 
   final Portal portal;
   final String itemId;
-  final String? resource;
 
   PortalItem? _portalItem;
 
   Map<String, dynamic> toJson() {
-    return {'itemId': itemId, 'resource': resource};
+    return {'itemId': itemId};
   }
 
   /// Returns the PortalItem for this resource, from cache if available or else loaded from the network.

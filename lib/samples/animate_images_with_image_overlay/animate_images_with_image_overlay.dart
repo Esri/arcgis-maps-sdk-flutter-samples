@@ -21,6 +21,7 @@ import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:go_router/go_router.dart';
+import 'package:path/path.dart' as path;
 
 class AnimateImagesWithImageOverlay extends StatefulWidget {
   const AnimateImagesWithImageOverlay({super.key});
@@ -261,7 +262,9 @@ class _AnimateImagesWithImageOverlayState
   Future<void> initImageFrames() async {
     final listPaths = GoRouterState.of(context).extra! as List<String>;
     // The sample data contains images of the Pacific South West region.
-    final directory = Directory.fromUri(Uri.parse(listPaths.first));
+    final directory = Directory.fromUri(
+      Uri.file(path.join(listPaths.first, 'PacificSouthWest')),
+    );
 
     // Get a list of all PNG image files in the extracted directory.
     _imageFileList = directory
