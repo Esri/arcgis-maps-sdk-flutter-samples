@@ -60,10 +60,10 @@ class _ApplyColormapRendererToRasterState
 
     // Get the application documents directory.
     final listPaths = GoRouter.of(context).state.extra! as List<String>;
-    final mspkFile = File(path.join(listPaths.first, 'ShastaBW.tif'));
+    final tifFile = File(path.join(listPaths.first, 'ShastaBW.tif'));
 
     // Create a Raster from the local tif file.
-    final raster = Raster.withFileUri(mspkFile.uri);
+    final raster = Raster.withFileUri(tifFile.uri);
 
     // Create a Raster Layer.
     final rasterLayer = RasterLayer.withRaster(raster);
