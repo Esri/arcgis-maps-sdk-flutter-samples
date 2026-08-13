@@ -88,9 +88,9 @@ class _SetSurfacePlacementModeState extends State<SetSurfacePlacementMode>
                               selected: {_showBillboarded},
                               onSelectionChanged: (selection) {
                                 // Update the selected draped mode.
-                                setState(() {
-                                  _showBillboarded = selection.first;
-                                });
+                                setState(
+                                  () => _showBillboarded = selection.first,
+                                );
                                 // Update the visible draped overlay.
                                 _overlays[SurfacePlacement.drapedBillboarded]
                                         ?.isVisible =
@@ -185,9 +185,7 @@ class _SetSurfacePlacementModeState extends State<SetSurfacePlacementMode>
     _sceneViewController.setViewpointCamera(camera);
 
     // Mark the scene as ready and refresh the UI.
-    setState(() {
-      _ready = true;
-    });
+    setState(() => _ready = true);
   }
 
   // Creates graphics overlays for each surface placement mode.
@@ -208,6 +206,13 @@ class _SetSurfacePlacementModeState extends State<SetSurfacePlacementMode>
 
       // Set the surface placement mode.
       overlay.sceneProperties.surfacePlacement = placement;
+
+      // Set initial visibility for draped overlays based on the selected draped mode.
+      if (placement == SurfacePlacement.drapedBillboarded) {
+        overlay.isVisible = _showBillboarded;
+      } else if (placement == SurfacePlacement.drapedFlat) {
+        overlay.isVisible = !_showBillboarded;
+      }
 
       // Add graphics to the overlay.
       _addGraphicsForPlacement(
@@ -260,7 +265,7 @@ class _SetSurfacePlacementModeState extends State<SetSurfacePlacementMode>
     );
     // Offset the label above its location.
     textSymbol.offsetY = 20;
-    
+
     // Add a cyan halo to improve label visibility.
     textSymbol.haloWidth = 1;
     textSymbol.haloColor = Colors.cyan;
@@ -294,9 +299,7 @@ class _SetSurfacePlacementModeState extends State<SetSurfacePlacementMode>
 
   // Updates the z-value for all graphics.
   void _updateGraphics(double value) {
-    setState(() {
-      _zValue = value;
-    });
+    setState(() => _zValue = value);
 
     // Loop through every graphic overlay.
     for (final overlay in _overlays.values) {
