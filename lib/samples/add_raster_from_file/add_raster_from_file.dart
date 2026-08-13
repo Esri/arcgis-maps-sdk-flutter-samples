@@ -83,7 +83,7 @@ class _AddRasterFromFileState extends State<AddRasterFromFile>
   Future<RasterLayer?> loadRasterLayerFromFile() async {
     final listPaths = GoRouter.of(context).state.extra! as List<String>;
     final shastaTifFile = File(
-      path.join(listPaths.first, 'raster-file/Shasta.tif'),
+      path.join(listPaths.first, 'raster-file', 'Shasta.tif'),
     );
 
     // Create a raster from the file URI.
