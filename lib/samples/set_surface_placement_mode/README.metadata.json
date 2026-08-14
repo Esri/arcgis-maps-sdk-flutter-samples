@@ -18,14 +18,14 @@
         "surface placement",
         "Graphic",
         "GraphicsOverlay",
-        "GraphicsOverlaySceneProperties",
+        "GraphicsOverlay.sceneProperties",
         "SurfacePlacement"
     ],
     "redirect_from": [],
     "relevant_apis": [
         "Graphic",
         "GraphicsOverlay",
-        "GraphicsOverlaySceneProperties",
+        "GraphicsOverlay.sceneProperties",
         "SurfacePlacement"
     ],
     "snippets": [
