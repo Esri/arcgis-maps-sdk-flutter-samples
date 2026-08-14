@@ -20,9 +20,7 @@
         "VectorTileCache"
     ],
     "offline_data": [
-        {
-            "itemId": "f4b742a57af344988b02227e2824ca5f"
-        }
+        "f4b742a57af344988b02227e2824ca5f"
     ],
     "redirect_from": [],
     "relevant_apis": [

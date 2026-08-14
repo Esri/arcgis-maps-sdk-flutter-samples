@@ -22,9 +22,7 @@
         "RasterCell.attributes",
         "RasterLayer"
     ],
-    "offline_data": [{
-        "itemId": "b5f977c78ec74b3a8857ca86d1d9b318"
-    }],
+    "offline_data": ["b5f977c78ec74b3a8857ca86d1d9b318"],
     "redirect_from": [],
     "relevant_apis": [
         "ArcGISMapViewController.identifyLayer",

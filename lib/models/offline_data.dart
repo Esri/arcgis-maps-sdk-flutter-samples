@@ -73,8 +73,8 @@ class OfflineData {
   /// Creates an [OfflineData] instance from a JSON list of downloadable resources.
   OfflineData.fromJson(List<dynamic> json, Portal portal) {
     _downloadableResources = json
-        .whereType<Map<String, dynamic>>()
-        .map((json) => DownloadableResource.fromJson(json, portal))
+        .whereType<String>()
+        .map((itemId) => DownloadableResource(portal: portal, itemId: itemId))
         .toList(growable: false);
   }
 

@@ -20,12 +20,8 @@
         "ContingentValuesResult"
     ],
     "offline_data": [
-        {
-            "itemId": "e12b54ea799f4606a2712157cf9f6e41"
-        },
-        {
-            "itemId": "b5106355f1634b8996e634c04b6a930a"
-        }
+        "e12b54ea799f4606a2712157cf9f6e41",
+        "b5106355f1634b8996e634c04b6a930a"
     ],
     "redirect_from": [],
     "relevant_apis": [
