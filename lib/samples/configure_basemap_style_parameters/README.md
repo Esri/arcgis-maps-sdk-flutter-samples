@@ -12,7 +12,7 @@ When creating an application that’s used in multiple countries, basemaps can r
 
 This sample showcases the workflow of configuring basemap style parameters by displaying a basemap with labels in different languages and launches with a `Viewpoint` near Athens, Greece. By default, the `languageStrategy` property is set to `BasemapStyleLanguageStrategy.local`, which displays all labels in their corresponding local language. This can be changed to `BasemapStyleLanguageStrategy.global`, which displays all labels in English. The `specificLanguage` property displays all labels in a selected language and overrides the `languageStrategy` setting.
 
-Pan and zoom to navigate the map to neighboring countries that use different alphabets, such as Bulgaria and Turkey, to see how different labels are displayed depending on the selected `languageStrategy` and `specificLanguage` settings: all English, all Greek, all Bulgarian, all Turkish, or each in their local language.
+Pan and zoom to navigate the map to neighboring countries that use different alphabets, such as Bulgaria and Turkey, to see how different labels are displayed depending on the selected `languageStrategy` and `specificLanguage` settings: all English, all Greek, all Bulgarian, all Turkish, or each their own.
 
 ## How it works
 
