@@ -19,6 +19,7 @@ import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:path/path.dart' as path;
 
 class AddRasterFromFile extends StatefulWidget {
   const AddRasterFromFile({super.key});
@@ -81,7 +82,9 @@ class _AddRasterFromFileState extends State<AddRasterFromFile>
 
   Future<RasterLayer?> loadRasterLayerFromFile() async {
     final listPaths = GoRouter.of(context).state.extra! as List<String>;
-    final shastaTifFile = File(listPaths.first);
+    final shastaTifFile = File(
+      path.join(listPaths.first, 'raster-file', 'Shasta.tif'),
+    );
 
     // Create a raster from the file URI.
     final raster = Raster.withFileUri(shastaTifFile.uri);

@@ -205,10 +205,8 @@ class OfflineData {
         final downloadedDir = r.downloadedDirectory();
 
         if (portalItem.name.toLowerCase().endsWith('.zip')) {
-          // For ZIP files, return the path to the resource inside the extracted directory.
-          return r.resource != null
-              ? path.join(downloadedDir.path, r.resource)
-              : downloadedDir.path;
+          // For ZIP files, return the extracted directory root.
+          return downloadedDir.path;
         } else {
           // For non-ZIP files, return the direct file path.
           return path.join(downloadedDir.path, portalItem.name);

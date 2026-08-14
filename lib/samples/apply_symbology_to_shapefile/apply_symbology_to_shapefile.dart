@@ -19,6 +19,7 @@ import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:path/path.dart' as path;
 
 class ApplySymbologyToShapefile extends StatefulWidget {
   const ApplySymbologyToShapefile({super.key});
@@ -92,7 +93,7 @@ class _ApplySymbologyToShapefileState extends State<ApplySymbologyToShapefile>
 
     final listPaths = GoRouter.of(context).state.extra! as List<String>;
     // Get the Shapefile from the download resource.
-    final shapefile = File(listPaths.first);
+    final shapefile = File(path.join(listPaths.first, 'Subdivisions.shp'));
 
     // Create a feature table from the Shapefile URI.
     final shapefileFeatureTable = ShapefileFeatureTable.withFileUri(

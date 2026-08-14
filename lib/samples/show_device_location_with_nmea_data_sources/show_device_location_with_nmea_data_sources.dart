@@ -21,6 +21,7 @@ import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:async/async.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:path/path.dart' as path;
 
 class ShowDeviceLocationWithNmeaDataSources extends StatefulWidget {
   const ShowDeviceLocationWithNmeaDataSources({super.key});
@@ -219,7 +220,7 @@ class _ShowDeviceLocationWithNmeaDataSourcesState
   Future<List<String>> _loadNmeaFile() async {
     final listPaths = GoRouter.of(context).state.extra! as List<String>;
 
-    final nmeaFile = File(listPaths.first);
+    final nmeaFile = File(path.join(listPaths.first, 'Redlands.nmea'));
 
     // Read and return the file as a list of String lines.
     return nmeaFile.readAsLines();

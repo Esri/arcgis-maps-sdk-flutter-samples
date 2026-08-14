@@ -19,6 +19,7 @@ import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:path/path.dart' as path;
 
 class ConfigureElectronicNavigationalCharts extends StatefulWidget {
   const ConfigureElectronicNavigationalCharts({super.key});
@@ -103,8 +104,17 @@ class _ConfigureElectronicNavigationalChartsState
   Future<void> onMapViewReady() async {
     try {
       final downloadPaths = GoRouter.of(context).state.extra! as List<String>;
-      final hydrographyDirectory = Directory(downloadPaths[0]);
-      final exchangeSetFile = File(downloadPaths[1]);
+      final hydrographyDirectory = Directory(
+        path.join(downloadPaths[0], 'hydrography'),
+      );
+      final exchangeSetFile = File(
+        path.join(
+          downloadPaths[1],
+          'ExchangeSetwithoutUpdates',
+          'ENC_ROOT',
+          'CATALOG.031',
+        ),
+      );
 
       // Configure the ENC resource directory to point to the downloaded hydrography data, and prepare a temp directory.
       final environmentSettings = EncLayer.getEnvironmentSettings();

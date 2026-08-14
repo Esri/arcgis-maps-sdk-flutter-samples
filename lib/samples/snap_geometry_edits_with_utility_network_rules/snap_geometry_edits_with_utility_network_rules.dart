@@ -22,6 +22,7 @@ import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:go_router/go_router.dart';
+import 'package:path/path.dart' as path;
 
 class SnapGeometryEditsWithUtilityNetworkRules extends StatefulWidget {
   const SnapGeometryEditsWithUtilityNetworkRules({super.key});
@@ -183,7 +184,9 @@ class _SnapGeometryEditsWithUtilityNetworkRulesState
   Future<void> onMapViewReady() async {
     // Download the Naperville utility network geodatabase.
     final listPaths = GoRouter.of(context).state.extra! as List<String>;
-    final geodatabaseFile = File(listPaths.first);
+    final geodatabaseFile = File(
+      path.join(listPaths.first, 'NapervilleGasUtilities.geodatabase'),
+    );
 
     // Configure the map, centered on Naperville, IL.
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISStreetsNight);

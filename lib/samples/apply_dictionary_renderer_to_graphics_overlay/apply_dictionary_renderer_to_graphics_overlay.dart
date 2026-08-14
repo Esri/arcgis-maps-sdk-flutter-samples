@@ -19,6 +19,7 @@ import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:path/path.dart' as path;
 import 'package:xml/xml.dart';
 
 class ApplyDictionaryRendererToGraphicsOverlay extends StatefulWidget {
@@ -114,7 +115,9 @@ class _ApplyDictionaryRendererToGraphicsOverlayState
   Future<List<Graphic>> generateMessageGraphics() async {
     // Create file reference for the MIL-STD-2525D XML File.
     final listPaths = GoRouter.of(context).state.extra! as List<String>;
-    final mil2525XMLFile = File(listPaths.first);
+    final mil2525XMLFile = File(
+      path.join(listPaths.first, 'Mil2525DMessages.xml'),
+    );
 
     // Read the XML as a string and parse it into a list of Message objects.
     final xmlString = await mil2525XMLFile.readAsString();

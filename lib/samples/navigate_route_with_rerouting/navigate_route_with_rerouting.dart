@@ -20,6 +20,7 @@ import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:path/path.dart' as path;
 import 'package:stts/stts.dart';
 
 class NavigateRouteWithRerouting extends StatefulWidget {
@@ -107,9 +108,11 @@ class _NavigateRouteWithReroutingState extends State<NavigateRouteWithRerouting>
   void initState() {
     final listPaths = GoRouter.of(context).state.extra! as List<String>;
     // Store the path of the downloaded geodatabase.
-    _geodatabasePath = listPaths[0];
+    _geodatabasePath = path.join(listPaths[0], 'sandiego.geodatabase');
     // Create a simulated location data source using the downloaded JSON file.
-    _simulatedLocationDataSource = getLocationDataSource(listPaths[1]);
+    _simulatedLocationDataSource = getLocationDataSource(
+      path.join(listPaths[1], 'SanDiegoTourPath.json'),
+    );
 
     super.initState();
   }

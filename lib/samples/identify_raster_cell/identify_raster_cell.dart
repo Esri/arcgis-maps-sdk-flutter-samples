@@ -17,6 +17,7 @@ import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:path/path.dart' as path;
 
 class IdentifyRasterCell extends StatefulWidget {
   const IdentifyRasterCell({super.key});
@@ -109,7 +110,9 @@ class _IdentifyRasterCellState extends State<IdentifyRasterCell>
   Future<void> loadRasterLayer() async {
     final listPaths = GoRouter.of(context).state.extra! as List<String>;
     // Create a Raster from the local tif file.
-    final raster = Raster.withFileUri(Uri.file(listPaths.first));
+    final raster = Raster.withFileUri(
+      Uri.file(path.join(listPaths.first, 'SA_EVI_8Day_03May20.tif')),
+    );
     // Create a Raster Layer.
     _rasterLayer = RasterLayer.withRaster(raster);
     // Load the Raster Layer.
