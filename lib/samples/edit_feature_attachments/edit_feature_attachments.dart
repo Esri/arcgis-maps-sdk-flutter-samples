@@ -258,7 +258,6 @@ class _AttachmentsOptionsState extends State<AttachmentsOptions>
                     dialogTitle: 'Save Attachment',
                     fileName: attachment.name,
                     bytes: data,
-                    lockParentWindow: true,
                   ).ignore();
                 },
               ),
@@ -277,20 +276,19 @@ class _AttachmentsOptionsState extends State<AttachmentsOptions>
 
   // Add an attachment to the selected feature by FilePicker.
   Future<void> addAttachment() async {
-    final result = await FilePicker.pickFiles(
+    final files = await FilePicker.pickFiles(
       type: FileType.custom,
       allowedExtensions: ['png', 'jpg', 'jpeg', 'pdf', 'txt'],
     );
 
-    if (result != null) {
+    if (files.isNotEmpty) {
       setState(() => _isLoading = true);
 
-      final platformFile = result.files.single;
+      final platformFile = files.first;
       final file = File(platformFile.path!);
 
       // Get the context type for the file.
-      final fileExtension = platformFile.extension?.toLowerCase();
-      final contentType = getContextType(fileExtension ?? 'default');
+      final contentType = getContextType(file.path);
       final fileBytes = await file.readAsBytes();
 
       await widget.arcGISFeature.addAttachment(
@@ -317,7 +315,8 @@ class _AttachmentsOptionsState extends State<AttachmentsOptions>
     }
   }
 
-  String getContextType(String fileExtension) {
+  String getContextType(String filePath) {
+    final fileExtension = filePath.split('.').lastOrNull?.toLowerCase() ?? '';
     switch (fileExtension) {
       case 'jpg':
       case 'jpeg':
