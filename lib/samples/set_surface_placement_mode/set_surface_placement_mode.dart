@@ -103,7 +103,6 @@ class _SetSurfacePlacementModeState extends State<SetSurfacePlacementMode>
                           ),
                         ],
                       ),
-
                       const SizedBox(height: 16),
                       // Adjust the z-value applied to all graphics.
                       Row(
