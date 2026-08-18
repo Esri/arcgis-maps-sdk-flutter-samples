@@ -25,12 +25,8 @@
         "VoiceGuidance"
     ],
     "offline_data": [
-      {
-        "itemId": "df193653ed39449195af0c9725701dca"
-      },
-      {
-        "itemId": "4caec8c55ea2463982f1af7d9611b8d5"
-      }
+      "df193653ed39449195af0c9725701dca",
+      "4caec8c55ea2463982f1af7d9611b8d5"
     ],
     "redirect_from": [],
     "relevant_apis": [

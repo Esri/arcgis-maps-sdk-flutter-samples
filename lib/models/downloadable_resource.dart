@@ -25,24 +25,10 @@ import 'package:path/path.dart' as path;
 class DownloadableResource {
   DownloadableResource({required this.portal, required this.itemId});
 
-  factory DownloadableResource.fromJson(
-    Map<String, dynamic> json,
-    Portal portal,
-  ) {
-    return DownloadableResource(
-      portal: portal,
-      itemId: json['itemId'] as String,
-    );
-  }
-
   final Portal portal;
   final String itemId;
 
   PortalItem? _portalItem;
-
-  Map<String, dynamic> toJson() {
-    return {'itemId': itemId};
-  }
 
   /// Returns the PortalItem for this resource, from cache if available or else loaded from the network.
   Future<PortalItem> cachedPortalItem() async {

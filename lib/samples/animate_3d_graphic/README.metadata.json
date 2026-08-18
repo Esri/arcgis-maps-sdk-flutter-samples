@@ -25,9 +25,7 @@
         "SceneProperties",
         "SurfacePlacement"
     ],
-    "offline_data": [{
-        "itemId": "681d6f7694644709a7c830ec57a2d72b"
-    }],
+    "offline_data": ["681d6f7694644709a7c830ec57a2d72b"],
     "redirect_from": [],
     "relevant_apis": [
         "ArcGISScene",

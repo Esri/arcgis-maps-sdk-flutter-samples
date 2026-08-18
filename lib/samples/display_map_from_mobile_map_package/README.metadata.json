@@ -12,9 +12,7 @@
         "ArcGISMapView",
         "MobileMapPackage"
     ],
-    "offline_data": [{
-        "itemId": "e1f3a7254cb845b09450f54937c16061"
-    }],
+    "offline_data": ["e1f3a7254cb845b09450f54937c16061"],
     "redirect_from": [],
     "relevant_apis": [
         "ArcGISMapView",

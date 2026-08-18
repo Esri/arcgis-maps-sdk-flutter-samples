@@ -2,12 +2,8 @@
   "category": "Layers",
   "description": "Apply a raster function to a local raster file and display the output with a raster layer.",
   "offline_data": [
-    {
-      "itemId": "b051f5c3e01048f3bf11c59b41507896"
-    },
-    {
-      "itemId": "5356dbf91788474493467519e268cf87"
-    }
+    "b051f5c3e01048f3bf11c59b41507896",
+    "5356dbf91788474493467519e268cf87"
   ],
   "ignore": false,
   "images": [
