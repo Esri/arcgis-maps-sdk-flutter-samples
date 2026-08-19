@@ -1,0 +1,35 @@
+{
+    "category": "Scenes",
+    "description": "Position graphics relative to a surface using different surface placement modes.",
+    "ignore": false,
+    "images": [
+        "set_surface_placement_mode.png"
+    ],
+    "keywords": [
+        "3D",
+        "absolute",
+        "altitude",
+        "draped",
+        "elevation",
+        "floating",
+        "relative",
+        "scenes",
+        "sea level",
+        "surface placement",
+        "Graphic",
+        "GraphicsOverlay",
+        "GraphicsOverlay.sceneProperties",
+        "SurfacePlacement"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+        "Graphic",
+        "GraphicsOverlay",
+        "GraphicsOverlay.sceneProperties",
+        "SurfacePlacement"
+    ],
+    "snippets": [
+        "set_surface_placement_mode.dart"
+    ],
+    "title": "Set surface placement mode"
+}
