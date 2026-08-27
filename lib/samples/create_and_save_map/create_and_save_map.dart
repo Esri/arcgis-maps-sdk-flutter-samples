@@ -29,7 +29,7 @@ class CreateAndSaveMap extends StatefulWidget {
 
 // A convenience class to record the selection state of a map layer.
 class LayerRecord {
-  LayerRecord({required this.layer});
+  LayerRecord(String uri) : layer = ArcGISMapImageLayer.withUri(Uri.parse(uri));
 
   final ArcGISMapImageLayer layer;
   bool selected = false;
@@ -60,18 +60,10 @@ class _CreateAndSaveMapState extends State<CreateAndSaveMap>
   // Layers that can be added to the map.
   final _layerRecords = [
     LayerRecord(
-      layer: ArcGISMapImageLayer.withUri(
-        Uri.parse(
-          'https://sampleserver6.arcgisonline.com/arcgis/rest/services/WorldTimeZones/MapServer',
-        ),
-      ),
+      'https://sampleserver6.arcgisonline.com/arcgis/rest/services/WorldTimeZones/MapServer',
     ),
     LayerRecord(
-      layer: ArcGISMapImageLayer.withUri(
-        Uri.parse(
-          'https://sampleserver6.arcgisonline.com/arcgis/rest/services/Census/MapServer',
-        ),
-      ),
+      'https://sampleserver6.arcgisonline.com/arcgis/rest/services/Census/MapServer',
     ),
   ];
 
