@@ -27,8 +27,6 @@ class CreateAndSaveMap extends StatefulWidget {
   State<CreateAndSaveMap> createState() => _CreateAndSaveMapState();
 }
 
-//fixme sync up readme
-
 // A convenience class to record the selection state of a map layer.
 class LayerRecord {
   LayerRecord({required this.layer});
