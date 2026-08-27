@@ -27,8 +27,15 @@ class CreateAndSaveMap extends StatefulWidget {
   State<CreateAndSaveMap> createState() => _CreateAndSaveMapState();
 }
 
-//fixme comments
 //fixme sync up readme
+
+// A convenience class to record the selection state of a map layer.
+class LayerRecord {
+  LayerRecord({required this.layer});
+
+  final ArcGISMapImageLayer layer;
+  bool selected = false;
+}
 
 class _CreateAndSaveMapState extends State<CreateAndSaveMap>
     with SampleStateSupport {
@@ -53,19 +60,22 @@ class _CreateAndSaveMapState extends State<CreateAndSaveMap>
   late String _rememberedApiKey;
 
   // Layers that can be added to the map.
-  final _layers = [
-    ArcGISMapImageLayer.withUri(
-      Uri.parse(
-        'https://sampleserver6.arcgisonline.com/arcgis/rest/services/WorldTimeZones/MapServer',
+  final _layerRecords = [
+    LayerRecord(
+      layer: ArcGISMapImageLayer.withUri(
+        Uri.parse(
+          'https://sampleserver6.arcgisonline.com/arcgis/rest/services/WorldTimeZones/MapServer',
+        ),
       ),
     ),
-    ArcGISMapImageLayer.withUri(
-      Uri.parse(
-        'https://sampleserver6.arcgisonline.com/arcgis/rest/services/Census/MapServer',
+    LayerRecord(
+      layer: ArcGISMapImageLayer.withUri(
+        Uri.parse(
+          'https://sampleserver6.arcgisonline.com/arcgis/rest/services/Census/MapServer',
+        ),
       ),
     ),
   ];
-  final _selectedLayers = <ArcGISMapImageLayer>{};
 
   // Controllers to capture title, tags, and description.
   final _titleController = TextEditingController(text: 'My web map');
@@ -224,11 +234,12 @@ class _CreateAndSaveMapState extends State<CreateAndSaveMap>
           onChanged: (style) => style != null ? _updateBasemap(style) : null,
         ),
         // Checkboxes to select operational layers.
-        for (final layer in _layers)
+        for (final layerRecord in _layerRecords)
           CheckboxListTile(
-            title: Text(layer.name),
-            value: _selectedLayers.contains(layer),
-            onChanged: (selected) => _updateLayer(layer, selected ?? false),
+            title: Text(layerRecord.layer.name),
+            value: layerRecord.selected,
+            onChanged: (selected) =>
+                _selectLayer(layerRecord, selected ?? false),
           ),
         // Text field to enter the map title.
         TextField(
@@ -269,14 +280,17 @@ class _CreateAndSaveMapState extends State<CreateAndSaveMap>
     _map!.basemap = Basemap.withStyle(_selectedBasemapStyle);
   }
 
-  void _updateLayer(ArcGISMapImageLayer layer, bool selected) {
-    // Keep the map operational layers synchronized with the checkboxes.
-    setState(
-      () =>
-          selected ? _selectedLayers.add(layer) : _selectedLayers.remove(layer),
-    );
+  void _selectLayer(LayerRecord layerRecord, bool selected) {
+    // Update the selection state of the layer record.
+    setState(() => layerRecord.selected = selected);
+
+    // Update the operational layers to reflect the current selection.
     _map!.operationalLayers.clear();
-    _map!.operationalLayers.addAll(_selectedLayers);
+    _map!.operationalLayers.addAll(
+      _layerRecords
+          .where((layerRecord) => layerRecord.selected)
+          .map((layerRecord) => layerRecord.layer),
+    );
   }
 
   Future<void> _saveMap() async {
