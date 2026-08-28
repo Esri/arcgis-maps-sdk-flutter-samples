@@ -20,19 +20,19 @@ import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:arcgis_maps_toolkit/arcgis_maps_toolkit.dart';
 import 'package:flutter/material.dart';
 
-class CreateAndSaveMap extends StatefulWidget {
-  const CreateAndSaveMap({super.key});
-
-  @override
-  State<CreateAndSaveMap> createState() => _CreateAndSaveMapState();
-}
-
 // A convenience class to record the selection state of a map layer.
 class LayerRecord {
   LayerRecord(String uri) : layer = ArcGISMapImageLayer.withUri(Uri.parse(uri));
 
   final ArcGISMapImageLayer layer;
   bool selected = false;
+}
+
+class CreateAndSaveMap extends StatefulWidget {
+  const CreateAndSaveMap({super.key});
+
+  @override
+  State<CreateAndSaveMap> createState() => _CreateAndSaveMapState();
 }
 
 class _CreateAndSaveMapState extends State<CreateAndSaveMap>
@@ -54,8 +54,6 @@ class _CreateAndSaveMapState extends State<CreateAndSaveMap>
     clientId: 'T0A3SudETrIQndd2',
     redirectUri: Uri.parse('my-ags-flutter-app://auth'),
   );
-  // Set aside the API Key so that it does not interfere with portal authentication.
-  late String _rememberedApiKey;
 
   // Layers that can be added to the map.
   final _layerRecords = [
@@ -91,12 +89,18 @@ class _CreateAndSaveMapState extends State<CreateAndSaveMap>
   // A flag to indicate whether the map view is ready.
   var _ready = false;
 
+  // The Sample Viewer uses an API Key to provide access in most samples. In this sample,
+  // we need to set it aside so that only OAuth authentication is used. The key will be
+  // restored when this sample is disposed.
+  late String _sampleViewerApiKey;
+
   @override
   void initState() {
     super.initState();
 
-    // Set aside the API Key so that portal authentication is used.
-    _rememberedApiKey = ArcGISEnvironment.apiKey;
+    // Temporarily set aside the Sample Viewer application API Key so that portal authentication
+    // gets used for this sample. Store the key to be reset on dispose.
+    _sampleViewerApiKey = ArcGISEnvironment.apiKey;
     ArcGISEnvironment.apiKey = '';
   }
 
@@ -116,8 +120,8 @@ class _CreateAndSaveMapState extends State<CreateAndSaveMap>
         .whenComplete(Authenticator.clearCredentials)
         .ignore();
 
-    // Restore the API Key.
-    ArcGISEnvironment.apiKey = _rememberedApiKey;
+    // Restore the Sample Viewer application API Key.
+    ArcGISEnvironment.apiKey = _sampleViewerApiKey;
 
     super.dispose();
   }
