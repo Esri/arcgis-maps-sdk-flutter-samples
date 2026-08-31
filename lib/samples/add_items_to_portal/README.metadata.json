@@ -2,7 +2,9 @@
     "category": "Cloud and Portal",
     "description": "This sample demonstrates how to add and delete items in a user's portal.",
     "ignore": false,
-    "images": [],
+    "images": [
+        "add_items_to_portal.png"
+    ],
     "keywords": [
         "add item",
         "cloud",
