@@ -87,45 +87,47 @@ class _AddItemsToPortalState extends State<AddItemsToPortal>
 
   @override
   Widget build(BuildContext context) {
-    // Wrap the controls in an Authenticator to handle the OAuth workflow.
-    return Authenticator(
-      oAuthUserConfigurations: [_oauthUserConfiguration],
-      child: SafeArea(
-        child: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // A button to load the portal and start the authentication workflow.
-              ElevatedButton(
-                onPressed: !_portalLoaded && !_operationInProgress
-                    ? _authenticatePortal
-                    : null,
-                child: const Text('Authenticate Portal'),
-              ),
-              // A button to add the CSV item.
-              ElevatedButton(
-                onPressed:
-                    _portalLoaded &&
-                        _portalItem == null &&
-                        !_operationInProgress
-                    ? _addItem
-                    : null,
-                child: const Text('Add Item'),
-              ),
-              // A button to delete the item that was added.
-              ElevatedButton(
-                onPressed:
-                    _portalLoaded &&
-                        _portalItem != null &&
-                        !_operationInProgress
-                    ? _deleteItem
-                    : null,
-                child: const Text('Delete Item'),
-              ),
-              const SizedBox(height: 40),
-              // The current status message.
-              Text(_message),
-            ],
+    return Scaffold(
+      body: SafeArea(
+        // Wrap the controls in an Authenticator to handle the OAuth workflow.
+        child: Authenticator(
+          oAuthUserConfigurations: [_oauthUserConfiguration],
+          child: Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // A button to load the portal and start the authentication workflow.
+                ElevatedButton(
+                  onPressed: !_portalLoaded && !_operationInProgress
+                      ? _authenticatePortal
+                      : null,
+                  child: const Text('Authenticate Portal'),
+                ),
+                // A button to add the CSV item.
+                ElevatedButton(
+                  onPressed:
+                      _portalLoaded &&
+                          _portalItem == null &&
+                          !_operationInProgress
+                      ? _addItem
+                      : null,
+                  child: const Text('Add Item'),
+                ),
+                // A button to delete the item that was added.
+                ElevatedButton(
+                  onPressed:
+                      _portalLoaded &&
+                          _portalItem != null &&
+                          !_operationInProgress
+                      ? _deleteItem
+                      : null,
+                  child: const Text('Delete Item'),
+                ),
+                const SizedBox(height: 40),
+                // The current status message.
+                Text(_message),
+              ],
+            ),
           ),
         ),
       ),
