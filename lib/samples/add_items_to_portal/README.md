@@ -16,12 +16,12 @@ Portals allow you to share and publish data with others. This sample creates a C
 
 ## How it works
 
-1. Create and load an authenticated `Portal`.
-2. Create a `PortalItem` of type `CSV`.
-3. Add the item with `PortalUser.addPortalItem` and URL content parameters.
-4. Delete the item with `PortalUser.deletePortalItem`.
-
-### fixme steps
+1. Add an `Authenticator` widget (from the Toolkit) to handle the authentication workflow.
+2. Create a new `Portal` and load it to invoke the authentication challenge.
+3. Once authenticated, create a `PortalItem` of type `PortalItemType.csv`.
+4. Add the item with `PortalUser.addPortalItem` and supply the CSV file data.
+5. Access the newly-created item's properties, such as `item.itemId`.
+6. Delete the item with `PortalUser.deletePortalItem`.
 
 ## Relevant API
 

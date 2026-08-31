@@ -28,23 +28,29 @@ class AddItemsToPortal extends StatefulWidget {
 
 class _AddItemsToPortalState extends State<AddItemsToPortal>
     with SampleStateSupport {
-  // Configure OAuth authentication for ArcGIS Online.
+  // Create an OAuthUserConfiguration.
+  // This document describes the steps to configure OAuth for your app:
+  // https://developers.arcgis.com/documentation/security-and-authentication/user-authentication/flows/authorization-code-with-pkce/
   final _oauthUserConfiguration = OAuthUserConfiguration(
     portalUri: Uri.parse('https://www.arcgis.com'),
     clientId: 'T0A3SudETrIQndd2',
     redirectUri: Uri.parse('my-ags-flutter-app://auth'),
   );
 
-  // Create an authenticated portal for the user's content.
+  // An authenticated portal to log in to.
   final _portal = Portal.arcGISOnline(connection: .authenticated);
 
-  // Keep the item reference so the same item can be deleted later.
+  // The portal item to be added and deleted.
   PortalItem? _portalItem;
 
-  //fixme comments
+  // A flag indicating whether the portal has been loaded and authenticated.
   var _portalLoaded = false;
 
+  // A flag indicating whether an operation (add or delete) is in progress.
   var _operationInProgress = false;
+
+  // A message to display the status of the workflow.
+  var _message = '';
 
   // The Sample Viewer uses an API Key to provide access in most samples. In this sample,
   // we need to set it aside so that only OAuth authentication is used. The key will be
@@ -88,29 +94,37 @@ class _AddItemsToPortalState extends State<AddItemsToPortal>
         child: Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,
-            spacing: 10,
             children: [
-              // Load the portal and start the authentication workflow.
+              // A button to load the portal and start the authentication workflow.
               ElevatedButton(
-                onPressed: _portalLoaded || _operationInProgress
-                    ? null
-                    : _authenticatePortal,
+                onPressed: !_portalLoaded && !_operationInProgress
+                    ? _authenticatePortal
+                    : null,
                 child: const Text('Authenticate Portal'),
               ),
-              // Add the CSV item after the portal user is authenticated.
+              // A button to add the CSV item.
               ElevatedButton(
-                onPressed: _portalLoaded && !_operationInProgress
+                onPressed:
+                    _portalLoaded &&
+                        _portalItem == null &&
+                        !_operationInProgress
                     ? _addItem
                     : null,
                 child: const Text('Add Item'),
               ),
-              // Delete the item that was added by this sample.
+              // A button to delete the item that was added.
               ElevatedButton(
-                onPressed: _portalItem != null && !_operationInProgress
+                onPressed:
+                    _portalLoaded &&
+                        _portalItem != null &&
+                        !_operationInProgress
                     ? _deleteItem
                     : null,
                 child: const Text('Delete Item'),
               ),
+              const SizedBox(height: 40),
+              // The current status message.
+              Text(_message),
             ],
           ),
         ),
@@ -123,12 +137,15 @@ class _AddItemsToPortalState extends State<AddItemsToPortal>
     setState(() => _operationInProgress = true);
 
     try {
-      // Load the portal to trigger the OAuth sign-in page.
+      // Load the portal to trigger the OAuth workflow.
       await _portal.load();
-      setState(() => _portalLoaded = true);
-      showMessageDialog('Signed in as ${_portal.user!.username}.');
+
+      setState(() {
+        _portalLoaded = true;
+        _message = 'Signed in as ${_portal.user!.username}';
+      });
     } on ArcGISException catch (error) {
-      // Display authentication errors from the portal.
+      // Display authentication errors.
       showExceptionDialog('Portal authentication failed', error);
     }
 
@@ -137,20 +154,22 @@ class _AddItemsToPortalState extends State<AddItemsToPortal>
   }
 
   Future<void> _addItem() async {
-    // Disable the controls while the item is uploaded.
+    // Disable the controls while the item is being added.
     setState(() => _operationInProgress = true);
 
     try {
       // Create a CSV portal item.
       final item = PortalItem.withPortalAndType(portal: _portal, type: .csv);
       item.title = 'Sample CSV Item';
+
+      // Sample CSV content to be uploaded with the portal item.
       const csvData = '''
 City,Lat,Long
 Paris,48.8566,2.3522
 London,51.5074,-0.1278
 ''';
 
-      // Add the CSV content and load the returned item properties.
+      // Add the portal item.
       await _portal.user!.addPortalItem(
         item,
         contentParams: PortalItemContentParameters.withData(
@@ -158,13 +177,13 @@ London,51.5074,-0.1278
           filename: 'cities.csv',
         ),
       );
-      setState(() => _portalItem = item);
-      showMessageDialog(
-        'The CSV item was added to your portal.',
-        title: 'Item added',
-      );
+
+      setState(() {
+        _portalItem = item;
+        _message = 'Added item ${item.itemId}';
+      });
     } on ArcGISException catch (error) {
-      // Display upload errors from the portal.
+      // Display errors adding to the portal.
       showExceptionDialog('Unable to add item', error);
     }
 
@@ -179,11 +198,11 @@ London,51.5074,-0.1278
     try {
       // Delete the portal item created by the Add Item action.
       await _portal.user!.deletePortalItem(_portalItem!);
-      setState(() => _portalItem = null);
-      showMessageDialog(
-        'The CSV item was deleted from your portal.',
-        title: 'Item deleted',
-      );
+
+      setState(() {
+        _portalItem = null;
+        _message = 'Portal item deleted';
+      });
     } on ArcGISException catch (error) {
       // Display deletion errors from the portal.
       showExceptionDialog('Unable to delete item', error);
