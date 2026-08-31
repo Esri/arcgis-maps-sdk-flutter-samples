@@ -1,0 +1,26 @@
+{
+    "category": "Cloud and Portal",
+    "description": "This sample demonstrates how to add and delete items in a user's portal.",
+    "ignore": false,
+    "images": [],
+    "keywords": [
+        "add item",
+        "cloud",
+        "portal",
+        "Portal",
+        "PortalItem",
+        "PortalUser.addPortalItem",
+        "PortalUser.deletePortalItem"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+        "Portal",
+        "PortalItem",
+        "PortalUser.addPortalItem",
+        "PortalUser.deletePortalItem"
+    ],
+    "snippets": [
+        "add_items_to_portal.dart"
+    ],
+    "title": "Add items to portal"
+}
