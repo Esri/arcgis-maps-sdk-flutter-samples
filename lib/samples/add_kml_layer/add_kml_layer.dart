@@ -13,13 +13,10 @@
 // limitations under the License.
 //
 
-import 'dart:io';
-
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:path/path.dart' as path;
 
 // Define the available KML data sources.
 enum KmlSource { url, localFile, portalItem }
@@ -151,10 +148,7 @@ class _AddKmlLayerState extends State<AddKmlLayer> with SampleStateSupport {
         return KmlLayer(dataset);
       case KmlSource.localFile:
         final listPaths = GoRouter.of(context).state.extra! as List<String>;
-        final kmlFile = File(
-          path.join(listPaths.first, 'US_State_Capitals.kml'),
-        );
-        final dataset = KmlDataset(kmlFile.uri);
+        final dataset = KmlDataset(Uri.file(listPaths.first));
         return KmlLayer(dataset);
       case KmlSource.portalItem:
         final portalItem = PortalItem.withPortalAndItemId(
