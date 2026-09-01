@@ -147,8 +147,13 @@ class _AddKmlLayerState extends State<AddKmlLayer> with SampleStateSupport {
         );
         return KmlLayer(dataset);
       case KmlSource.localFile:
-        final listPaths = GoRouter.of(context).state.extra! as List<String>;
-        final dataset = KmlDataset(Uri.file(listPaths.first));
+        final extra = GoRouter.of(context).state.extra;
+        if (extra is! List<String> || extra.isEmpty) {
+          throw Exception(
+            'Offline data path not available. Download the sample data first.',
+          );
+        }
+        final dataset = KmlDataset(Uri.file(extra.first));
         return KmlLayer(dataset);
       case KmlSource.portalItem:
         final portalItem = PortalItem.withPortalAndItemId(
