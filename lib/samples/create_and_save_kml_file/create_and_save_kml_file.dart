@@ -21,9 +21,6 @@ import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 
-// Define the point icon styles available for new KML placemarks.
-enum _PointStyle { noStyle, star, diamond, circle, square, roundPin, squarePin }
-
 class CreateAndSaveKmlFile extends StatefulWidget {
   const CreateAndSaveKmlFile({super.key});
 
@@ -132,7 +129,7 @@ class _CreateAndSaveKmlFileState extends State<CreateAndSaveKmlFile>
                       .map(
                         (style) => MenuItemButton(
                           onPressed: () => _startPointSketch(style),
-                          child: Text(_pointStyleLabel(style)),
+                          child: Text(style.label),
                         ),
                       )
                       .toList(),
@@ -243,7 +240,7 @@ class _CreateAndSaveKmlFileState extends State<CreateAndSaveKmlFile>
 
   void _startPointSketch(_PointStyle pointStyle) {
     // Start a point sketch with the selected KML icon style.
-    final icon = KmlIcon(Uri.parse(_pointStyleUrl(pointStyle)));
+    final icon = KmlIcon(Uri.parse(pointStyle.url));
     _startSketch(
       GeometryType.point,
       KmlStyle()..iconStyle = KmlIconStyle(icon: icon),
@@ -396,39 +393,6 @@ class _CreateAndSaveKmlFileState extends State<CreateAndSaveKmlFile>
     );
   }
 
-  String _pointStyleLabel(_PointStyle pointStyle) {
-    // Return the menu label for a point icon style.
-    return switch (pointStyle) {
-      .noStyle => 'No Style',
-      .star => 'Star',
-      .diamond => 'Diamond',
-      .circle => 'Circle',
-      .square => 'Square',
-      .roundPin => 'Round pin',
-      .squarePin => 'Square pin',
-    };
-  }
-
-  String _pointStyleUrl(_PointStyle pointStyle) {
-    // Return the icon URL for a point icon style.
-    return switch (pointStyle) {
-      .noStyle =>
-        'http://resources.esri.com/help/900/arcgisexplorer/sdk/doc/bitmaps/148cca9a-87a8-42bd-9da4-5fe427b6fb7b127.png',
-      .star =>
-        'https://static.arcgis.com/images/Symbols/Shapes/BlueStarLargeB.png',
-      .diamond =>
-        'https://static.arcgis.com/images/Symbols/Shapes/BlueDiamondLargeB.png',
-      .circle =>
-        'https://static.arcgis.com/images/Symbols/Shapes/BlueCircleLargeB.png',
-      .square =>
-        'https://static.arcgis.com/images/Symbols/Shapes/BlueSquareLargeB.png',
-      .roundPin =>
-        'https://static.arcgis.com/images/Symbols/Shapes/BluePin1LargeB.png',
-      .squarePin =>
-        'https://static.arcgis.com/images/Symbols/Shapes/BluePin2LargeB.png',
-    };
-  }
-
   String _colorLabel(Color color) {
     // Return the menu label for a KML style color.
     return switch (color) {
@@ -441,4 +405,41 @@ class _CreateAndSaveKmlFileState extends State<CreateAndSaveKmlFile>
       _ => 'Unknown',
     };
   }
+}
+
+// Define the point icon styles available for new KML placemarks.
+enum _PointStyle {
+  noStyle(
+    'No Style',
+    'http://resources.esri.com/help/900/arcgisexplorer/sdk/doc/bitmaps/148cca9a-87a8-42bd-9da4-5fe427b6fb7b127.png',
+  ),
+  star(
+    'Star',
+    'https://static.arcgis.com/images/Symbols/Shapes/BlueStarLargeB.png',
+  ),
+  diamond(
+    'Diamond',
+    'https://static.arcgis.com/images/Symbols/Shapes/BlueDiamondLargeB.png',
+  ),
+  circle(
+    'Circle',
+    'https://static.arcgis.com/images/Symbols/Shapes/BlueCircleLargeB.png',
+  ),
+  square(
+    'Square',
+    'https://static.arcgis.com/images/Symbols/Shapes/BlueSquareLargeB.png',
+  ),
+  roundPin(
+    'Round pin',
+    'https://static.arcgis.com/images/Symbols/Shapes/BluePin1LargeB.png',
+  ),
+  squarePin(
+    'Square pin',
+    'https://static.arcgis.com/images/Symbols/Shapes/BluePin2LargeB.png',
+  );
+
+  const _PointStyle(this.label, this.url);
+
+  final String label;
+  final String url;
 }
