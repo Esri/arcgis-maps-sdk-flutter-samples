@@ -1,0 +1,40 @@
+{
+    "category": "Layers",
+    "description": "Show a callout with formatted content for a KML feature.",
+    "ignore": false,
+    "images": [
+        "identify_kml_features.png"
+    ],
+    "keywords": [
+        "KML",
+        "KMZ",
+        "Keyhole",
+        "NOAA",
+        "NWS",
+        "OGC",
+        "weather",
+        "ArcGISMapView",
+        "ArcGISMapViewController.callout",
+        "ArcGISMapViewController.identifyLayer",
+        "IdentifyLayerResult",
+        "KmlDataset",
+        "KmlLayer",
+        "KmlPlacemark",
+        "KmlPlacemark.balloonContent"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+        "ArcGISMapView",
+        "ArcGISMapViewController.callout",
+        "ArcGISMapViewController.identifyLayer",
+        "IdentifyLayerResult",
+        "KmlDataset",
+        "KmlLayer",
+        "KmlPlacemark",
+        "KmlPlacemark.balloonContent"
+    ],
+    "snippets": [
+        "identify_kml_features.dart"
+    ],
+    "title": "Identify KML features"
+}
