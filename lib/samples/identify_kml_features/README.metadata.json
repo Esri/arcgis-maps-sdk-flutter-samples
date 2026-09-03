@@ -8,10 +8,10 @@
     "keywords": [
         "KML",
         "KMZ",
-        "keyhole",
         "NOAA",
         "NWS",
         "OGC",
+        "keyhole",
         "weather",
         "ArcGISMapView",
         "ArcGISMapViewController.callout",
