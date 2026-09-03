@@ -46,4 +46,4 @@ KML features can have rich HTML content, including images.
 
 ## Tags
 
-Keyhole, KML, KMZ, NOAA, NWS, OGC, weather
+keyhole, KML, KMZ, NOAA, NWS, OGC, weather
