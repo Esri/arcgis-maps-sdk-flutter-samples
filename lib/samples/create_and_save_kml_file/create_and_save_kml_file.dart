@@ -60,6 +60,13 @@ class _CreateAndSaveKmlFileState extends State<CreateAndSaveKmlFile>
   var _canSaveSketch = false;
 
   @override
+  void dispose() {
+    // Cancel the geometry listener before disposing this sample state.
+    _geometrySubscription?.cancel().ignore();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
@@ -77,6 +84,7 @@ class _CreateAndSaveKmlFileState extends State<CreateAndSaveKmlFile>
                     onMapViewReady: _onMapViewReady,
                   ),
                 ),
+                // Add sketching and export controls below the map view.
                 _buildControls(),
               ],
             ),
@@ -112,18 +120,20 @@ class _CreateAndSaveKmlFileState extends State<CreateAndSaveKmlFile>
   }
 
   Widget _buildControls() {
-    // Build feature and export controls when a geometry type has not been selected.
+    // Build controls based on whether a sketch is active.
     if (_selectedGeometryType == null) {
       return Padding(
         padding: const EdgeInsets.all(8),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+            // Provide menus to choose a point icon or line and area colors.
             Wrap(
               alignment: WrapAlignment.spaceEvenly,
               spacing: 8,
               runSpacing: 4,
               children: [
+                // Start a point sketch after the user chooses its icon style.
                 MenuAnchor(
                   menuChildren: _PointStyle.values
                       .map(
@@ -145,6 +155,7 @@ class _CreateAndSaveKmlFileState extends State<CreateAndSaveKmlFile>
                     ),
                   ),
                 ),
+                // Start a line sketch after the user chooses its line color.
                 MenuAnchor(
                   menuChildren: _styleColors
                       .map(
@@ -166,6 +177,7 @@ class _CreateAndSaveKmlFileState extends State<CreateAndSaveKmlFile>
                     ),
                   ),
                 ),
+                // Start an area sketch after the user chooses its fill color.
                 MenuAnchor(
                   menuChildren: _styleColors
                       .map(
@@ -189,13 +201,16 @@ class _CreateAndSaveKmlFileState extends State<CreateAndSaveKmlFile>
                 ),
               ],
             ),
+            // Allow exporting or resetting only after a placemark has been saved.
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
+                // Export the KML document as a KMZ file.
                 ElevatedButton(
                   onPressed: _ready && _hasSavedSketches ? _saveKmz : null,
                   child: const Text('Save KMZ file'),
                 ),
+                // Discard the current document and begin a new one.
                 ElevatedButton(
                   onPressed: _ready && _hasSavedSketches
                       ? _createKmlDocumentAndLayer
@@ -209,16 +224,18 @@ class _CreateAndSaveKmlFileState extends State<CreateAndSaveKmlFile>
       );
     }
 
-    // Build controls for an active sketch.
+    // Provide actions to save a valid sketch or discard an active sketch.
     return Padding(
       padding: const EdgeInsets.all(8),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
+          // Add the completed geometry to the KML document.
           ElevatedButton(
             onPressed: _canSaveSketch ? _completeSketch : null,
             child: const Text('Save Sketch'),
           ),
+          // End the geometry editor session without adding a placemark.
           TextButton(
             onPressed: _cancelSketch,
             child: const Text('Cancel Sketch'),
@@ -375,13 +392,6 @@ class _CreateAndSaveKmlFileState extends State<CreateAndSaveKmlFile>
     };
   }
 
-  @override
-  void dispose() {
-    // Cancel the geometry listener before disposing this sample state.
-    _geometrySubscription?.cancel().ignore();
-    super.dispose();
-  }
-
   Widget _buildColorMenuItem(Color color) {
     // Build a color swatch and label for a style menu option.
     return Row(
@@ -409,10 +419,6 @@ class _CreateAndSaveKmlFileState extends State<CreateAndSaveKmlFile>
 
 // Define the point icon styles available for new KML placemarks.
 enum _PointStyle {
-  noStyle(
-    'No Style',
-    'http://resources.esri.com/help/900/arcgisexplorer/sdk/doc/bitmaps/148cca9a-87a8-42bd-9da4-5fe427b6fb7b127.png',
-  ),
   star(
     'Star',
     'https://static.arcgis.com/images/Symbols/Shapes/BlueStarLargeB.png',
