@@ -10,7 +10,7 @@ If you need to create and save data on the fly, you can use KML to create points
 
 ## How to use the sample
 
-Select an icon or color from the New Point, New Line, or New Area menus to start adding a geometry. Click on the map view to place vertices, then click the "Save Sketch" button to add the geometry to the KML document as a new KML placemark. When you are finished adding KML nodes, click on the "Save KMZ file" button and choose a name and location to save the active KML document as a .kmz file. Use the "Reset" button to clear the current KML document and start a new one.
+Select an icon or color from the New Point, New Line, or New Area menus to start adding a geometry. Tap on the map view to place vertices, then tap the "Save Sketch" button to add the geometry to the KML document as a new KML placemark. When you are finished adding KML nodes, tap the "Save KMZ file" button and choose a name and location to save the active KML document as a .kmz file. Use the "Reset" button to clear the current KML document and start a new one.
 
 ## How it works
 
