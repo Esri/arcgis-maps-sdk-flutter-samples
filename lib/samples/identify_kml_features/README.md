@@ -27,11 +27,8 @@ Note: There are several types of KML features. This sample only identifies featu
 
 ## Relevant API
 
-* ArcGISMapView
-* ArcGISMapViewController.callout
-* ArcGISMapViewController.identifyLayer
+* GeoViewController.identifyLayer
 * IdentifyLayerResult
-* KmlDataset
 * KmlLayer
 * KmlPlacemark
 * KmlPlacemark.balloonContent
@@ -46,4 +43,4 @@ KML features can have rich HTML content, including images.
 
 ## Tags
 
-keyhole, KML, KMZ, NOAA, NWS, OGC, weather
+Keyhole, KML, KMZ, NOAA, NWS, OGC, weather

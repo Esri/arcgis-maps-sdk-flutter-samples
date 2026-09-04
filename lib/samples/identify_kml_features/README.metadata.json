@@ -8,27 +8,21 @@
     "keywords": [
         "KML",
         "KMZ",
+        "Keyhole",
         "NOAA",
         "NWS",
         "OGC",
-        "keyhole",
         "weather",
-        "ArcGISMapView",
-        "ArcGISMapViewController.callout",
         "ArcGISMapViewController.identifyLayer",
         "IdentifyLayerResult",
-        "KmlDataset",
         "KmlLayer",
         "KmlPlacemark",
         "KmlPlacemark.balloonContent"
     ],
     "redirect_from": [],
     "relevant_apis": [
-        "ArcGISMapView",
-        "ArcGISMapViewController.callout",
         "ArcGISMapViewController.identifyLayer",
         "IdentifyLayerResult",
-        "KmlDataset",
         "KmlLayer",
         "KmlPlacemark",
         "KmlPlacemark.balloonContent"
