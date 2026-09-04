@@ -1,0 +1,39 @@
+{
+    "category": "Edit and Manage Data",
+    "description": "Construct a KML document and save it as a KMZ file.",
+    "ignore": false,
+    "images": [
+        "create_and_save_kml_file.png"
+    ],
+    "keywords": [
+        "KML",
+        "KMZ",
+        "Keyhole",
+        "OGC",
+        "GeometryEditor",
+        "GeometryEngine",
+        "KmlDataset",
+        "KmlDocument",
+        "KmlGeometry",
+        "KmlLayer",
+        "KmlNode",
+        "KmlPlacemark",
+        "KmlStyle"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+        "GeometryEditor",
+        "GeometryEngine",
+        "KmlDataset",
+        "KmlDocument",
+        "KmlGeometry",
+        "KmlLayer",
+        "KmlNode",
+        "KmlPlacemark",
+        "KmlStyle"
+    ],
+    "snippets": [
+        "create_and_save_kml_file.dart"
+    ],
+    "title": "Create and save KML file"
+}
