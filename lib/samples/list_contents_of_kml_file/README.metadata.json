@@ -1,0 +1,47 @@
+{
+    "category": "Maps",
+    "description": "List the contents of a KML file.",
+    "ignore": false,
+    "images": [
+        "list_contents_of_kml_file.png"
+    ],
+    "keywords": [
+        "KML",
+        "KMZ",
+        "Keyhole",
+        "OGC",
+        "layers",
+        "KmlContainer",
+        "KmlDataset",
+        "KmlDocument",
+        "KmlFolder",
+        "KmlGroundOverlay",
+        "KmlLayer",
+        "KmlNetworkLink",
+        "KmlNode",
+        "KmlPhotoOverlay",
+        "KmlPlacemark",
+        "KmlScreenOverlay"
+    ],
+    "offline_data": [
+        "b3ebedc3bed940fa985d824d55c44a2f"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+        "KmlContainer",
+        "KmlDataset",
+        "KmlDocument",
+        "KmlFolder",
+        "KmlGroundOverlay",
+        "KmlLayer",
+        "KmlNetworkLink",
+        "KmlNode",
+        "KmlPhotoOverlay",
+        "KmlPlacemark",
+        "KmlScreenOverlay"
+    ],
+    "snippets": [
+        "list_contents_of_kml_file.dart"
+    ],
+    "title": "List contents of KML file"
+}
