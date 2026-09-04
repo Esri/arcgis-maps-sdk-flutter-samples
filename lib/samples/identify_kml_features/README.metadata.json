@@ -13,7 +13,7 @@
         "NWS",
         "OGC",
         "weather",
-        "ArcGISMapViewController.identifyLayer",
+        "GeoViewController.identifyLayer",
         "IdentifyLayerResult",
         "KmlLayer",
         "KmlPlacemark",
@@ -21,7 +21,7 @@
     ],
     "redirect_from": [],
     "relevant_apis": [
-        "ArcGISMapViewController.identifyLayer",
+        "GeoViewController.identifyLayer",
         "IdentifyLayerResult",
         "KmlLayer",
         "KmlPlacemark",
