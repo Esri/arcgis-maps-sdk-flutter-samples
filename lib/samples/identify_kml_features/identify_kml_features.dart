@@ -27,9 +27,6 @@ class IdentifyKmlFeatures extends StatefulWidget {
 
 class _IdentifyKmlFeaturesState extends State<IdentifyKmlFeatures>
     with SampleStateSupport {
-  // Create a map with a dark gray basemap style.
-  final _map = ArcGISMap.withBasemapStyle(.arcGISDarkGrayBase);
-
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
 
@@ -57,17 +54,7 @@ class _IdentifyKmlFeaturesState extends State<IdentifyKmlFeatures>
             onTap: _onTap,
           ),
           // Prompt the user to identify a KML feature.
-          const SafeArea(
-            child: Align(
-              alignment: Alignment.topCenter,
-              child: Card(
-                child: Padding(
-                  padding: EdgeInsets.all(8),
-                  child: Text('Tap a weather feature to view its details.'),
-                ),
-              ),
-            ),
-          ),
+          const MapBanner(text: 'Tap a weather feature to view its details.'),
           // Display a progress indicator and prevent interaction until the layer is ready.
           LoadingIndicator(visible: !_ready),
         ],
@@ -76,9 +63,10 @@ class _IdentifyKmlFeaturesState extends State<IdentifyKmlFeatures>
   }
 
   Future<void> _onMapViewReady() async {
-    // Set the map and add the KML layer to its operational layers.
-    _mapViewController.arcGISMap = _map;
-    _map.operationalLayers.add(_forecastLayer);
+    // Create a map with a dark gray basemap style and add the KML layer.
+    final map = ArcGISMap.withBasemapStyle(.arcGISDarkGrayBase);
+    map.operationalLayers.add(_forecastLayer);
+    _mapViewController.arcGISMap = map;
 
     try {
       // Load the KML layer before enabling identify operations.
