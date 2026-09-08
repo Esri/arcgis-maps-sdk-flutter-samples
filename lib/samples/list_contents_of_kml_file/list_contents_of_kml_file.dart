@@ -17,6 +17,7 @@ import 'dart:io';
 
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
+import 'package:arcgis_maps_sdk_flutter_samples/samples/list_contents_of_kml_file/selected_kml_item_view.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -113,6 +114,18 @@ class _ListContentsOfKmlFileState extends State<ListContentsOfKmlFile>
     return ListTile(
       title: Text(node.name),
       subtitle: Text('${node.runtimeType}'),
+      onTap: () {
+        Navigator.of(context)
+            .push<void>(
+              MaterialPageRoute<void>(
+                builder: (context) => SelectedKmlItemView(
+                  kmlDataset: _kmlDataset!,
+                  selectedKmlNode: node,
+                ),
+              ),
+            )
+            .ignore();
+      },
     );
   }
 }
