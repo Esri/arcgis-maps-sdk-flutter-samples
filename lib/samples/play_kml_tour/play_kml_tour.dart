@@ -166,8 +166,9 @@ class _PlayKmlTourState extends State<PlayKmlTour> with SampleStateSupport {
   KmlTour? _findTour(List<KmlNode> rootNodes) {
     // Search the KML hierarchy breadth-first for the first tour.
     final nodesToExplore = List<KmlNode>.of(rootNodes);
-    while (nodesToExplore.isNotEmpty) {
-      final node = nodesToExplore.removeAt(0);
+    var index = 0;
+    while (index < nodesToExplore.length) {
+      final node = nodesToExplore[index++];
       if (node is KmlTour) return node;
       if (node is KmlContainer) {
         nodesToExplore.addAll(node.childNodes);
