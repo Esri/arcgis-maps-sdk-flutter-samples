@@ -157,6 +157,9 @@ class _PlayKmlTourState extends State<PlayKmlTour> with SampleStateSupport {
     } on Exception catch (exception) {
       // Report a failure to load or initialize the KML tour.
       showExceptionDialog('Failed to load KML tour', exception);
+    } finally {
+      // Hide the loading indicator even if the tour fails to load.
+      setState(() => _ready = true);
     }
   }
 
