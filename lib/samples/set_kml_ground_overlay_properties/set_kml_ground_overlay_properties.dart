@@ -111,10 +111,10 @@ class _SetKmlGroundOverlayPropertiesState
 
     // Create a geometry for the ground overlay.
     final overlayGeometry = Envelope.fromXY(
-      xMin: -123.066227926904,
-      yMin: 44.04736963555683,
-      xMax: -123.0796942287304,
-      yMax: 44.03878298600624,
+      xMin: -123.0796942287304,
+      yMin: 44.03878298600624,
+      xMax: -123.066227926904,
+      yMax: 44.04736963555683,
       spatialReference: SpatialReference.wgs84,
     );
 
