@@ -104,7 +104,7 @@ class _SetKmlGroundOverlayPropertiesState
   }
 
   Future<void> onSceneViewReady() async {
-    // Create a scene with an imagery basemap style and set the scene view.
+    // Create a scene with an imagery basemap style and set to the scene view.
     final scene = ArcGISScene.withBasemapStyle(.arcGISImagery);
     _sceneViewController.arcGISScene = scene;
 
@@ -120,7 +120,7 @@ class _SetKmlGroundOverlayPropertiesState
     // Create a KML Icon for the overlay image using the path to an image file.
     final kmlIcon = KmlIcon(_kmlIconFile.uri);
 
-    // Create a KML ground overlay.
+    // Create a KML ground overlay using the geometry and icon.
     _kmlGroundOverlay = KmlGroundOverlay.create(
       geometry: overlayGeometry,
       icon: kmlIcon,
