@@ -129,10 +129,15 @@ class _PlayKmlTourState extends State<PlayKmlTour> with SampleStateSupport {
 
     try {
       // Get the path to the downloaded KMZ file.
-      final dataPaths = GoRouter.of(context).state.extra! as List<String>;
+      final extra = GoRouter.of(context).state.extra;
+      if (extra is! List<String> || extra.isEmpty) {
+        throw Exception(
+          'Offline data path not available. Download the sample data first.',
+        );
+      }
 
       // Create a KML dataset from the local KMZ file and add its layer.
-      final dataset = KmlDataset(Uri.file(dataPaths.first));
+      final dataset = KmlDataset(Uri.file(extra.first));
       scene.operationalLayers.add(KmlLayer(dataset));
       // Load the dataset before traversing the node hierarchy because its
       // root nodes are populated during loading.
