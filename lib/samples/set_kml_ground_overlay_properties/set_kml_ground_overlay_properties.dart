@@ -48,8 +48,9 @@ class _SetKmlGroundOverlayPropertiesState
 
   @override
   void initState() {
-    _initDownloadResources();
     super.initState();
+    // Get the resources required for the sample.
+    _initDownloadResources();
   }
 
   void _initDownloadResources() {
@@ -160,8 +161,8 @@ class _SetKmlGroundOverlayPropertiesState
   }
 
   void _updateOverlay(double opacity) {
-    // Change the color of the KML ground overlay image to edit the alpha-value to match the updated opacity value.
-    // Other color values are left as-is in the original image.
-    _kmlGroundOverlay.color = Color.fromARGB((255 * opacity).toInt(), 0, 0, 0);
+    // Change the opacity of the overlay according to the provided value.
+    // The color remains the same.
+    _kmlGroundOverlay.color = Colors.black.withValues(alpha: opacity);
   }
 }

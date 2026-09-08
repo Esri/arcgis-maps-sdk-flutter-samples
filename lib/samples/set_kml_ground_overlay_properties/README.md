@@ -17,7 +17,7 @@ Use the slider to adjust the opacity of the ground overlay.
 1. Create an `Envelope` defining the geometry of the overlay.
 2. Create a `KmlIcon` using a `Uri` linking to an image.
 3. Create a `KmlGroundOverlay` using the envelope and icon.
-4. Set the value of`KmlGroundOverlay.rotation`.
+4. Set the value of `KmlGroundOverlay.rotation`.
 5. Create a `KmlDataset` using the ground overlay.
 6. Create a `KmlLayer` using the dataset.
 7. Add the KML layer to the scene.
