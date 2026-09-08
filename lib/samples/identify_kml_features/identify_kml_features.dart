@@ -136,6 +136,22 @@ class _IdentifyKmlFeaturesState extends State<IdentifyKmlFeatures>
   }
 
   Widget _buildBalloonContent(BuildContext context, String htmlContent) {
+    // Normalize malformed NOAA HTML for simple_html_css's XML-based parser.
+    final normalizedHtml = htmlContent
+        .replaceAll(
+          RegExp(
+            r'<head\b[^>]*>.*?</head>',
+            caseSensitive: false,
+            dotAll: true,
+          ),
+          '',
+        )
+        .replaceAllMapped(
+          RegExp('style="([^"]*);><td', caseSensitive: false),
+          (match) => 'style="${match.group(1)};"><td',
+        )
+        .replaceAll('&ge;', '&#8805;');
+
     // Create theme-aware styles for the KML balloon's HTML content.
     final colorScheme = Theme.of(context).colorScheme;
     final defaultTextStyle = DefaultTextStyle.of(
@@ -157,7 +173,7 @@ class _IdentifyKmlFeaturesState extends State<IdentifyKmlFeatures>
         child: RichText(
           text: HTML.toTextSpan(
             context,
-            htmlContent,
+            normalizedHtml,
             defaultTextStyle: defaultTextStyle,
             overrideStyle: overrideStyle,
           ),
