@@ -162,7 +162,6 @@ class _SetKmlGroundOverlayPropertiesState
 
   void _updateOverlay(double opacity) {
     // Change the opacity of the overlay according to the provided value.
-    // The color remains the same.
     _kmlGroundOverlay.color = Colors.black.withValues(alpha: opacity);
   }
 }
