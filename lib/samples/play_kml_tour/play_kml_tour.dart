@@ -212,7 +212,7 @@ class _PlayKmlTourState extends State<PlayKmlTour> with SampleStateSupport {
   }
 
   void _restoreInitialViewpoint() {
-    // Restore the viewpoint captured from the KML layer during loading.
+    // Restore the scene's initial viewpoint, if one is set.
     final initialViewpoint = _scene?.initialViewpoint;
     if (initialViewpoint != null) {
       _sceneViewController.setViewpoint(initialViewpoint);
