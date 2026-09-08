@@ -29,88 +29,90 @@ class ListContentsOfKmlFile extends StatefulWidget {
 
 class _ListContentsOfKmlFileState extends State<ListContentsOfKmlFile>
     with SampleStateSupport {
-  // Create a controller for the scene view.
-  final _sceneViewController = ArcGISSceneView.createController();
-  // A flag for when the scene view is ready and controls can be used.
-  var _ready = false;
+  // The KML dataset from the test file.
+  KmlDataset? _kmlDataset;
 
   @override
   Widget build(BuildContext context) {
+    KmlDocument? kmlDocument;
+
+    if (_kmlDataset == null) {
+      // Load the dataset from file.
+      _loadKmlDataset().ignore();
+    } else {
+      // The first and only root node in this dataset is a KML document.
+      kmlDocument = _kmlDataset!.rootNodes.first as KmlDocument;
+    }
+
     return Scaffold(
       body: SafeArea(
-        top: false,
         left: false,
         right: false,
         child: Stack(
           children: [
-            Column(
-              children: [
-                Expanded(
-                  // Add a scene view to the widget tree and set a controller.
-                  child: ArcGISSceneView(
-                    controllerProvider: () => _sceneViewController,
-                    onSceneViewReady: onSceneViewReady,
-                  ),
-                ),
-                Row(
-                  mainAxisAlignment: .spaceEvenly,
-                  children: [
-                    // A button to perform a task.
-                    ElevatedButton(
-                      onPressed: performTask,
-                      child: const Text('Perform Task'),
+            if (kmlDocument == null)
+              const Center(child: Text('KML dataset loading...'))
+            else
+              Column(
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 15),
+                    child: Column(
+                      children: [
+                        Text('Expand the KML folders to view child nodes.'),
+                        Text('Tap on the nodes to view them in a scene.'),
+                      ],
                     ),
-                  ],
-                ),
-              ],
-            ),
+                  ),
+                  Expanded(
+                    child: ListView(
+                      children: [
+                        ExpansionTile(
+                          title: const Text('Document'),
+                          initiallyExpanded: true,
+                          childrenPadding: const EdgeInsets.only(left: 16),
+                          children: kmlDocument.childNodes
+                              .map(_buildKmlNode)
+                              .toList(),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             // Display a progress indicator and prevent interaction until state is ready.
-            LoadingIndicator(visible: !_ready),
+            LoadingIndicator(visible: _kmlDataset == null),
           ],
         ),
       ),
     );
   }
 
-  Future<void> onSceneViewReady() async {
-    // Create a scene with an imagery basemap style and add it to the scene view.
-    final scene = ArcGISScene.withBasemapStyle(.arcGISImagery);
-    _sceneViewController.arcGISScene = scene;
-
-    // Add a surface to the scene based on elevation data.
-    scene.baseSurface.elevationSources.add(
-      ArcGISTiledElevationSource.withUri(
-        Uri.parse(
-          'https://elevation3d.arcgis.com/arcgis/rest/services/WorldElevation3D/Terrain3D/ImageServer',
-        ),
-      ),
-    );
-
-    // Create a KML layer from a local .kmz file.
+  Future<void> _loadKmlDataset() async {
+    // Create a KML dataset from a local .kmz file.
     final listPaths = GoRouter.of(context).state.extra! as List<String>;
     final kmzFile = File(listPaths.first);
     final kmlDataset = KmlDataset(kmzFile.uri);
-    final kmlLayer = KmlLayer(kmlDataset);
 
-    // Load the dataset and add the layer to the scene.
     await kmlDataset.load();
-    scene.operationalLayers.add(kmlLayer);
-
-    // Perform some long-running setup task.
-    await Future<void>.delayed(const Duration(seconds: 10));
-
-    // Set the ready state variable to true to enable the sample UI.
-    setState(() => _ready = true);
+    setState(() {
+      _kmlDataset = kmlDataset;
+    });
   }
 
-  Future<void> performTask() async {
-    setState(() => _ready = false);
+  Widget _buildKmlNode(KmlNode node) {
+    if (node is KmlFolder) {
+      return ExpansionTile(
+        title: Text(node.name),
+        subtitle: Text('${node.runtimeType}'),
+        childrenPadding: const EdgeInsets.only(left: 16),
+        children: node.childNodes.map(_buildKmlNode).toList(),
+      );
+    }
 
-    // Perform some task.
-    // ignore: avoid_print
-    print('Perform task');
-    await Future<void>.delayed(const Duration(seconds: 5));
-
-    setState(() => _ready = true);
+    return ListTile(
+      title: Text(node.name),
+      subtitle: Text('${node.runtimeType}'),
+    );
   }
 }
