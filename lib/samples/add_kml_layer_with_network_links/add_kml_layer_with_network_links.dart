@@ -82,7 +82,7 @@ class _AddKmlLayerWithNetworkLinksState
         }
 
         // Show the network link messages.
-        return [for (final message in _networkLinkMessages) Text(message)];
+        return _networkLinkMessages.map(Text.new).toList();
       },
     );
   }
