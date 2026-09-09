@@ -32,8 +32,16 @@ class _AddKmlLayerWithNetworkLinksState
     with SampleStateSupport {
   // Create a controller for the scene view.
   final _sceneViewController = ArcGISSceneView.createController();
+
+  // A subscription to listen for network link messages.
   StreamSubscription<({KmlNetworkLink networkLink, String message})>?
   _messageSubscription;
+
+  // A list to store network link messages.
+  final _networkLinkMessages = <String>[];
+
+  // A flag to indicate whether the bottom sheet is visible.
+  var _bottomSheetVisible = false;
 
   @override
   void dispose() {
@@ -51,6 +59,31 @@ class _AddKmlLayerWithNetworkLinksState
         controllerProvider: () => _sceneViewController,
         onSceneViewReady: onSceneViewReady,
       ),
+      // A bottom sheet to display network link messages.
+      bottomSheet: _bottomSheetVisible ? _buildBottomSheet(context) : null,
+      // A button to bring up the bottom sheet.
+      floatingActionButton: _bottomSheetVisible
+          ? null
+          : FloatingActionButton(
+              onPressed: () => setState(() => _bottomSheetVisible = true),
+              child: const Icon(Icons.message_outlined),
+            ),
+    );
+  }
+
+  Widget _buildBottomSheet(BuildContext context) {
+    return BottomSheetSettings(
+      title: 'Network Link Messages',
+      onCloseIconPressed: () => setState(() => _bottomSheetVisible = false),
+      settingsWidgets: (context) {
+        if (_networkLinkMessages.isEmpty) {
+          // A message indicating that no network link messages have been received.
+          return [const Text('No network link messages received.')];
+        }
+
+        // Show the network link messages.
+        return [for (final message in _networkLinkMessages) Text(message)];
+      },
     );
   }
 
@@ -79,7 +112,10 @@ class _AddKmlLayerWithNetworkLinksState
 
     // Listen for network link control messages.
     _messageSubscription = dataset.onNetworkLinkMessageReceived.listen((event) {
-      showMessageDialog(event.message, title: 'KML Network Link Message');
+      setState(() {
+        _networkLinkMessages.add(event.message);
+        _bottomSheetVisible = true;
+      });
     });
   }
 }
