@@ -85,7 +85,7 @@ class _IdentifyKmlFeaturesState extends State<IdentifyKmlFeatures>
       showExceptionDialog('Failed to load KML layer', exception);
     } finally {
       // Hide the loading indicator after the layer finishes loading.
-      if (mounted) setState(() => _ready = true);
+      setState(() => _ready = true);
     }
   }
 
