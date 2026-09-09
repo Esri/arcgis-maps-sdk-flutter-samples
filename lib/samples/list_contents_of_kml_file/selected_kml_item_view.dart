@@ -80,28 +80,125 @@ class _SelectedKmlItemViewState extends State<SelectedKmlItemView>
       ),
     );
 
+    // Create a KML layer and add it to the scene.
     final kmlLayer = KmlLayer(widget._kmlDataset);
     scene.operationalLayers.add(kmlLayer);
 
-    // Center on the selected KML node.
-    final nodeCenterPoint = widget._selectedKmlNode.extent!.center;
-
-    // final viewpoint = Viewpoint.fromTargetExtent(widget._selectedKmlNode.extent!);
-
-    final viewpoint = Viewpoint.withExtentCamera(
-      targetExtent: widget._selectedKmlNode.extent!,
-      camera: Camera.withLookAtPoint(
-        lookAtPoint: nodeCenterPoint,
-        distance: 500,
-        heading: 0,
-        pitch: 30,
-        roll: 0,
-      ),
+    // Set the viewpoint based on the selected node.
+    final viewpoint = await _createViewpointForKmlNode(
+      widget._selectedKmlNode,
+      scene.baseSurface,
     );
-
-    _sceneViewController.setViewpoint(viewpoint);
+    if (viewpoint != null) {
+      _sceneViewController.setViewpoint(viewpoint);
+    }
 
     // Set the ready state variable to true to enable the sample UI.
     setState(() => _ready = true);
+  }
+
+  Future<Viewpoint?> _createViewpointForKmlNode(
+    KmlNode kmlNode,
+    Surface surface,
+  ) async {
+    // Ensure the surface for the scene is loaded.
+    if (surface.loadStatus != .loaded) {
+      await surface.load();
+    }
+
+    final kmlViewpoint = kmlNode.viewpoint;
+    if (kmlViewpoint != null) {
+      return _createViewpointWithKmlViewpoint(kmlViewpoint, surface);
+    } else if (kmlNode.extent != null) {
+      return _viewpointWithExtent(kmlNode.extent, surface);
+    } else {
+      return null;
+    }
+  }
+
+  Future<Viewpoint> _createViewpointWithKmlViewpoint(
+    KmlViewpoint kmlViewpoint,
+    Surface surface,
+  ) async {
+    // Center on the selected KML node.
+    final Camera viewpointCamera;
+
+    if (kmlViewpoint.type == .lookAt) {
+      var lookAtPoint = kmlViewpoint.location;
+      if (kmlViewpoint.altitudeMode != .absolute) {
+        // If the elevation is relative, account for the surface's elevation.
+        final elevation = await surface.getElevation(kmlViewpoint.location);
+        final kmlViewpointAltitude = kmlViewpoint.location.z ?? 0;
+        lookAtPoint = ArcGISPoint(
+          x: kmlViewpoint.location.x,
+          y: kmlViewpoint.location.y,
+          z: kmlViewpointAltitude + elevation,
+        );
+      }
+
+      viewpointCamera = Camera.withLookAtPoint(
+        lookAtPoint: lookAtPoint,
+        distance: kmlViewpoint.range,
+        heading: kmlViewpoint.heading,
+        pitch: kmlViewpoint.pitch,
+        roll: kmlViewpoint.roll,
+      );
+    } else {
+      viewpointCamera = Camera.withLocation(
+        location: kmlViewpoint.location,
+        heading: kmlViewpoint.heading,
+        pitch: kmlViewpoint.pitch,
+        roll: kmlViewpoint.roll,
+      );
+    }
+
+    final viewpoint = Viewpoint.withExtentCamera(
+      targetExtent: widget._selectedKmlNode.extent!,
+      camera: viewpointCamera,
+    );
+
+    return viewpoint;
+  }
+
+  Future<Viewpoint?> _viewpointWithExtent(
+    Envelope? extent,
+    Surface surface,
+  ) async {
+    if (extent == null || extent.isEmpty) return null;
+
+    final extentCenter = extent.center;
+    final elevation = await surface.getElevation(extentCenter);
+
+    if (extent.width == 0 || extent.height == 0) {
+      // If the extent is not empty, but the width and height are still zero,
+      // default values (based on Google Earth) are used to create a camera.
+      final centerAltitude = extentCenter.z ?? 0;
+      final elevatedCenter = ArcGISPoint(
+        x: extentCenter.x,
+        y: extentCenter.y,
+        z: centerAltitude + elevation,
+      );
+      final camera = Camera.withLookAtPoint(
+        lookAtPoint: elevatedCenter,
+        distance: 1000,
+        heading: 0,
+        pitch: 45,
+        roll: 0,
+      );
+
+      return Viewpoint.withLatLongScaleCamera(
+        latitude: .nan,
+        longitude: .nan,
+        scale: .nan,
+        camera: camera,
+      );
+    } else {
+      final extentBuilder = EnvelopeBuilder.fromEnvelope(extent)
+        ..zMax += elevation
+        ..zMin += elevation
+        ..expandBy(1.1);
+
+      return Viewpoint.fromTargetExtent(extentBuilder.extent);
+    }
   }
 }

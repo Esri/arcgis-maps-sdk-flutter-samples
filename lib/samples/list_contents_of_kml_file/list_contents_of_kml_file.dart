@@ -30,19 +30,24 @@ class ListContentsOfKmlFile extends StatefulWidget {
 
 class _ListContentsOfKmlFileState extends State<ListContentsOfKmlFile>
     with SampleStateSupport {
-  // The KML dataset from the test file.
-  KmlDataset? _kmlDataset;
+  // The KML dataset from the file.
+  late KmlDataset _kmlDataset;
+
+  // The KML document containing the nodes to list.
+  KmlDocument? _kmlDocument;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _initKmlFile();
+  }
 
   @override
   Widget build(BuildContext context) {
-    KmlDocument? kmlDocument;
-
-    if (_kmlDataset == null) {
+    if (_kmlDocument == null) {
       // Load the dataset from file.
       _loadKmlDataset().ignore();
-    } else {
-      // The first and only root node in this dataset is a KML document.
-      kmlDocument = _kmlDataset!.rootNodes.first as KmlDocument;
     }
 
     return Scaffold(
@@ -51,7 +56,7 @@ class _ListContentsOfKmlFileState extends State<ListContentsOfKmlFile>
         right: false,
         child: Stack(
           children: [
-            if (kmlDocument == null)
+            if (_kmlDocument == null)
               const Center(child: Text('KML dataset loading...'))
             else
               Column(
@@ -72,7 +77,7 @@ class _ListContentsOfKmlFileState extends State<ListContentsOfKmlFile>
                           title: const Text('Document'),
                           initiallyExpanded: true,
                           childrenPadding: const EdgeInsets.only(left: 16),
-                          children: kmlDocument.childNodes
+                          children: _kmlDocument!.childNodes
                               .map(_buildKmlNode)
                               .toList(),
                         ),
@@ -82,22 +87,26 @@ class _ListContentsOfKmlFileState extends State<ListContentsOfKmlFile>
                 ],
               ),
             // Display a progress indicator and prevent interaction until state is ready.
-            LoadingIndicator(visible: _kmlDataset == null),
+            LoadingIndicator(visible: _kmlDocument == null),
           ],
         ),
       ),
     );
   }
 
-  Future<void> _loadKmlDataset() async {
-    // Create a KML dataset from a local .kmz file.
+  void _initKmlFile() {
     final listPaths = GoRouter.of(context).state.extra! as List<String>;
     final kmzFile = File(listPaths.first);
-    final kmlDataset = KmlDataset(kmzFile.uri);
 
-    await kmlDataset.load();
+    // Create a KML dataset from a local .kmz file.
+    _kmlDataset = KmlDataset(kmzFile.uri);
+  }
+
+  Future<void> _loadKmlDataset() async {
+    await _kmlDataset.load();
     setState(() {
-      _kmlDataset = kmlDataset;
+      // The first and only root node in this dataset is a KML document.
+      _kmlDocument = _kmlDataset.rootNodes.first as KmlDocument;
     });
   }
 
@@ -119,7 +128,7 @@ class _ListContentsOfKmlFileState extends State<ListContentsOfKmlFile>
             .push<void>(
               MaterialPageRoute<void>(
                 builder: (context) => SelectedKmlItemView(
-                  kmlDataset: _kmlDataset!,
+                  kmlDataset: _kmlDataset,
                   selectedKmlNode: node,
                 ),
               ),
