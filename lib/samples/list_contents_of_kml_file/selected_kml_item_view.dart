@@ -40,7 +40,8 @@ class _SelectedKmlItemViewState extends State<SelectedKmlItemView>
 
   @override
   void dispose() {
-    // Clean up the controller to avoid memory retention.
+    // Clean up the scene to avoid memory retention.
+    _sceneViewController.arcGISScene?.operationalLayers.clear();
     _sceneViewController.arcGISScene = null;
     super.dispose();
   }
@@ -103,6 +104,14 @@ class _SelectedKmlItemViewState extends State<SelectedKmlItemView>
     // Set the ready state variable to true to enable the sample UI.
     if (mounted) {
       setState(() => _ready = true);
+
+      if (viewpoint == null) {
+        showAlertDialog(
+          context,
+          'This node has no extent to view.',
+          showOK: true,
+        ).ignore();
+      }
     }
   }
 

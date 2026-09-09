@@ -1,5 +1,5 @@
 {
-    "category": "Maps",
+    "category": "Edit and Manage Data",
     "description": "List the contents of a KML file.",
     "ignore": false,
     "images": [
@@ -23,10 +23,10 @@
         "KmlPlacemark",
         "KmlScreenOverlay"
     ],
+    "redirect_from": [],
     "offline_data": [
         "b3ebedc3bed940fa985d824d55c44a2f"
     ],
-    "redirect_from": [],
     "relevant_apis": [
         "KmlContainer",
         "KmlDataset",
@@ -41,7 +41,8 @@
         "KmlScreenOverlay"
     ],
     "snippets": [
-        "list_contents_of_kml_file.dart"
+        "list_contents_of_kml_file.dart",
+        "selected_kml_item_view.dart"
     ],
     "title": "List contents of KML file"
 }
