@@ -108,7 +108,7 @@ class _SelectedKmlItemViewState extends State<SelectedKmlItemView>
       if (viewpoint == null) {
         showAlertDialog(
           context,
-          'This node has no extent to view.',
+          'This node has no viewpoint or extent to view.',
           showOK: true,
         ).ignore();
       }
