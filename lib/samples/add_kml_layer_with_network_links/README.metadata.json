@@ -1,0 +1,29 @@
+{
+    "category": "Layers",
+    "description": "Display a file with a KML network link, including displaying any network link control messages at launch.",
+    "ignore": false,
+    "images": [
+        "add_kml_layer_with_network_links.png"
+    ],
+    "keywords": [
+        "KML",
+        "KMZ",
+        "Keyhole",
+        "network link",
+        "network link control",
+        "OGC",
+        "KmlDataset",
+        "KmlDataset.onNetworkLinkMessageReceived",
+        "KmlLayer"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+        "KmlDataset",
+        "KmlDataset.onNetworkLinkMessageReceived",
+        "KmlLayer"
+    ],
+    "snippets": [
+        "add_kml_layer_with_network_links.dart"
+    ],
+    "title": "Add KML layer with network links"
+}
