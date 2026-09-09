@@ -1,0 +1,42 @@
+{
+    "category": "Visualization",
+    "description": "Play tours in KML files.",
+    "ignore": false,
+    "images": [
+        "play_kml_tour.png"
+    ],
+    "keywords": [
+        "KML",
+        "animation",
+        "interactive",
+        "narration",
+        "pause",
+        "play",
+        "story",
+        "tour",
+        "KmlTour",
+        "KmlTour.onTourStatusChanged",
+        "KmlTour.tourStatus",
+        "KmlTourController",
+        "KmlTourController.pause()",
+        "KmlTourController.play()",
+        "KmlTourController.reset()",
+        "KmlTourController.tour"
+    ],
+    "offline_data": ["f10b1d37fdd645c9bc9b189fb546307c"],
+    "redirect_from": [],
+    "relevant_apis": [
+        "KmlTour",
+        "KmlTour.onTourStatusChanged",
+        "KmlTour.tourStatus",
+        "KmlTourController",
+        "KmlTourController.pause()",
+        "KmlTourController.play()",
+        "KmlTourController.reset()",
+        "KmlTourController.tour"
+    ],
+    "snippets": [
+        "play_kml_tour.dart"
+    ],
+    "title": "Play KML tour"
+}
