@@ -40,16 +40,15 @@ class _ListContentsOfKmlFileState extends State<ListContentsOfKmlFile>
   void initState() {
     super.initState();
 
+    // Initialize the KML file.
     _initKmlFile();
+
+    // Load the dataset from file.
+    _loadKmlDataset().ignore();
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_kmlDocument == null) {
-      // Load the dataset from file.
-      _loadKmlDataset().ignore();
-    }
-
     return Scaffold(
       body: SafeArea(
         left: false,
@@ -104,10 +103,12 @@ class _ListContentsOfKmlFileState extends State<ListContentsOfKmlFile>
 
   Future<void> _loadKmlDataset() async {
     await _kmlDataset.load();
-    setState(() {
-      // The first and only root node in this dataset is a KML document.
-      _kmlDocument = _kmlDataset.rootNodes.first as KmlDocument;
-    });
+    if (mounted) {
+      setState(() {
+        // The first and only root node in this dataset is a KML document.
+        _kmlDocument = _kmlDataset.rootNodes.first as KmlDocument;
+      });
+    }
   }
 
   Widget _buildKmlNode(KmlNode node) {

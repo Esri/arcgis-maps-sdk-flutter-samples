@@ -19,13 +19,13 @@ import 'package:flutter/material.dart';
 
 class SelectedKmlItemView extends StatefulWidget {
   const SelectedKmlItemView({
-    required this._kmlDataset,
-    required this._selectedKmlNode,
+    required this.kmlDataset,
+    required this.selectedKmlNode,
     super.key,
   });
 
-  final KmlDataset _kmlDataset;
-  final KmlNode _selectedKmlNode;
+  final KmlDataset kmlDataset;
+  final KmlNode selectedKmlNode;
 
   @override
   State<SelectedKmlItemView> createState() => _SelectedKmlItemViewState();
@@ -49,7 +49,7 @@ class _SelectedKmlItemViewState extends State<SelectedKmlItemView>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(widget._selectedKmlNode.name)),
+      appBar: AppBar(title: Text(widget.selectedKmlNode.name)),
       body: SafeArea(
         left: false,
         right: false,
@@ -89,12 +89,12 @@ class _SelectedKmlItemViewState extends State<SelectedKmlItemView>
     );
 
     // Create a KML layer and add it to the scene.
-    final kmlLayer = KmlLayer(widget._kmlDataset);
+    final kmlLayer = KmlLayer(widget.kmlDataset);
     scene.operationalLayers.add(kmlLayer);
 
     // Set the viewpoint based on the selected node.
     final viewpoint = await _createViewpointForKmlNode(
-      widget._selectedKmlNode,
+      widget.selectedKmlNode,
       scene.baseSurface,
     );
     if (viewpoint != null) {
@@ -171,7 +171,7 @@ class _SelectedKmlItemViewState extends State<SelectedKmlItemView>
     }
 
     final viewpoint = Viewpoint.withExtentCamera(
-      targetExtent: widget._selectedKmlNode.extent!,
+      targetExtent: widget.selectedKmlNode.extent!,
       camera: viewpointCamera,
     );
 
