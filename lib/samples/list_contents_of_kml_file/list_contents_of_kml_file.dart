@@ -112,17 +112,21 @@ class _ListContentsOfKmlFileState extends State<ListContentsOfKmlFile>
 
   Widget _buildKmlNode(KmlNode node) {
     if (node is KmlFolder) {
+      // Create an expandable list tile for folders. Tapping on the tile
+      // expands the tile to show the contents.
       return ExpansionTile(
         title: Text(node.name),
-        subtitle: Text('${node.runtimeType}'),
+        subtitle: Text(_getFriendlyTypeName(node)),
         childrenPadding: const EdgeInsets.only(left: 16),
         children: node.childNodes.map(_buildKmlNode).toList(),
       );
     }
 
+    // Create a list tile for non-folder elements. Tapping on the tile opens the
+    // scene view to show the KML item.
     return ListTile(
       title: Text(node.name),
-      subtitle: Text('${node.runtimeType}'),
+      subtitle: Text(_getFriendlyTypeName(node)),
       onTap: () {
         Navigator.of(context)
             .push<void>(
@@ -136,5 +140,32 @@ class _ListContentsOfKmlFileState extends State<ListContentsOfKmlFile>
             .ignore();
       },
     );
+  }
+
+  // Function to create a readable title from the node type.
+  String _getFriendlyTypeName(KmlNode node) {
+    final nodeTypeName = node.runtimeType.toString();
+    switch (nodeTypeName) {
+      case 'KmlDocument':
+        return 'Document';
+      case 'KmlFolder':
+        return 'Folder';
+      case 'KmlContainer':
+        return 'Container';
+      case 'KmlGroundOverlay':
+        return 'Ground Overlay';
+      case 'KmlNetworkLink':
+        return 'Network Link';
+      case 'KmlPhotoOverlay':
+        return 'Photo Overlay';
+      case 'KmlPlacemark':
+        return 'Placemark';
+      case 'KmlScreenOverlay':
+        return 'Screen Overlay';
+      case 'KmlTour':
+        return 'Tour';
+      default:
+        return 'Unknown';
+    }
   }
 }
