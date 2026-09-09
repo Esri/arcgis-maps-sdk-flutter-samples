@@ -10,7 +10,7 @@ KML files can reference other KML files on the network and support automatically
 
 ## How to use the sample
 
-The sample will load the KML file automatically. The data shown should refresh automatically every few seconds. Pan and zoom to explore the map.
+The sample will load the KML file automatically. The data shown should refresh automatically every few seconds. Pan and zoom to explore the scene.
 
 ## How it works
 
@@ -30,7 +30,7 @@ This sample uses the radar.kmz file, which can be found on [ArcGIS Online](https
 
 ## About the data
 
-This map shows the current air traffic in parts of Europe with heading, altitude, and ground speed. Additionally, noise levels from ground monitoring stations are shown.
+This scene shows the current air traffic in parts of Europe with heading, altitude, and ground speed. Additionally, noise levels from ground monitoring stations are shown.
 
 ## Tags
 
