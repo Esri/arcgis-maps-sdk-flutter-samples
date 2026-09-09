@@ -170,12 +170,12 @@ class _SelectedKmlItemViewState extends State<SelectedKmlItemView>
       );
     }
 
-    final viewpoint = Viewpoint.withExtentCamera(
-      targetExtent: widget.selectedKmlNode.extent!,
+    return Viewpoint.withLatLongScaleCamera(
+      latitude: 0,
+      longitude: 0,
+      scale: 1,
       camera: viewpointCamera,
     );
-
-    return viewpoint;
   }
 
   Future<Viewpoint?> _viewpointWithExtent(
@@ -196,7 +196,7 @@ class _SelectedKmlItemViewState extends State<SelectedKmlItemView>
         y: extentCenter.y,
         z: centerAltitude + elevation,
       );
-      final camera = Camera.withLookAtPoint(
+      final viewpointCamera = Camera.withLookAtPoint(
         lookAtPoint: elevatedCenter,
         distance: 1000,
         heading: 0,
@@ -205,10 +205,10 @@ class _SelectedKmlItemViewState extends State<SelectedKmlItemView>
       );
 
       return Viewpoint.withLatLongScaleCamera(
-        latitude: .nan,
-        longitude: .nan,
-        scale: .nan,
-        camera: camera,
+        latitude: 0,
+        longitude: 0,
+        scale: 1,
+        camera: viewpointCamera,
       );
     } else {
       final extentBuilder = EnvelopeBuilder.fromEnvelope(extent)
