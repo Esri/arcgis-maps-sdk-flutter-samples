@@ -9,9 +9,9 @@
         "KML",
         "KMZ",
         "Keyhole",
+        "OGC",
         "network link",
         "network link control",
-        "OGC",
         "KmlDataset",
         "KmlDataset.onNetworkLinkMessageReceived",
         "KmlLayer"
