@@ -39,6 +39,13 @@ class _SelectedKmlItemViewState extends State<SelectedKmlItemView>
   var _ready = false;
 
   @override
+  void dispose() {
+    // Clean up the controller to avoid memory retention.
+    _sceneViewController.arcGISScene = null;
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text(widget._selectedKmlNode.name)),
@@ -94,7 +101,9 @@ class _SelectedKmlItemViewState extends State<SelectedKmlItemView>
     }
 
     // Set the ready state variable to true to enable the sample UI.
-    setState(() => _ready = true);
+    if (mounted) {
+      setState(() => _ready = true);
+    }
   }
 
   Future<Viewpoint?> _createViewpointForKmlNode(
