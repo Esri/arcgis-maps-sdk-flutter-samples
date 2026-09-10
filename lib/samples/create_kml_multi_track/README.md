@@ -1,8 +1,8 @@
 # Create KML multi track
 
-Create, save and preview a KML multi_track, captured from a location data source.
+Create, save and preview a KML multi-track, captured from a location data source.
 
-![Create KML multi_track](create_kml_multi_track.png)
+![Create KML multi-track](create_kml_multi_track.png)
 
 ## Use case
 
