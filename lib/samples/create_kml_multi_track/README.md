@@ -1,4 +1,4 @@
-# Create KML multi-track
+# Create KML multi track
 
 Create, save and preview a KML multi-track, captured from a location data source.
 
