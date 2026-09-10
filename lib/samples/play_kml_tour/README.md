@@ -15,7 +15,7 @@ The sample will load the downloaded KMZ file. When a tour is found, the _Play_ b
 ## How it works
 
 1. Load the KML file and add it to a layer.
-2. Create the KML tour controller. Wire up the buttons to the `play`, `pause`, and `reset` methods.
+2. Create the KML tour controller. Wire up the buttons to the `Play`, `Pause`, and `Reset` methods.
 3. Explore the tree of KML content to find the first KML tour. Once a tour is found, provide it to the KML tour controller.
 4. Enable the buttons to allow the user to play, pause, and reset the tour.
 
