@@ -146,27 +146,21 @@ class _ListContentsOfKmlFileState extends State<ListContentsOfKmlFile>
   // Function to create a readable title from the node type.
   String _getFriendlyTypeName(KmlNode node) {
     final nodeTypeName = node.runtimeType.toString();
-    switch (nodeTypeName) {
-      case 'KmlDocument':
-        return 'Document';
-      case 'KmlFolder':
-        return 'Folder';
-      case 'KmlContainer':
-        return 'Container';
-      case 'KmlGroundOverlay':
-        return 'Ground Overlay';
-      case 'KmlNetworkLink':
-        return 'Network Link';
-      case 'KmlPhotoOverlay':
-        return 'Photo Overlay';
-      case 'KmlPlacemark':
-        return 'Placemark';
-      case 'KmlScreenOverlay':
-        return 'Screen Overlay';
-      case 'KmlTour':
-        return 'Tour';
-      default:
-        return 'Unknown';
+
+    final String friendlyName;
+    if (nodeTypeName.startsWith('Kml')) {
+      // Strip 'Kml'
+      friendlyName = nodeTypeName
+          .replaceFirst(RegExp('^Kml'), '')
+          .replaceAllMapped(
+            RegExp('[A-Z][a-z]*'),
+            (match) => ' ${match.group(0)}',
+          )
+          .trim();
+    } else {
+      friendlyName = 'Unknown Type';
     }
+
+    return friendlyName;
   }
 }

@@ -97,21 +97,24 @@ class _SelectedKmlItemViewState extends State<SelectedKmlItemView>
       widget.selectedKmlNode,
       scene.baseSurface,
     );
+
+    // Check if the widget is still mounted after the await before continuing.
+    if (!mounted) return;
+
     if (viewpoint != null) {
       _sceneViewController.setViewpoint(viewpoint);
     }
 
     // Set the ready state variable to true to enable the sample UI.
-    if (mounted) {
-      setState(() => _ready = true);
+    setState(() => _ready = true);
 
-      if (viewpoint == null) {
-        showAlertDialog(
-          context,
-          'This node has no viewpoint or extent to view.',
-          showOK: true,
-        ).ignore();
-      }
+    // Alert the user if there is no valid viewpoint.
+    if (viewpoint == null) {
+      showAlertDialog(
+        context,
+        'This node has no viewpoint or extent to view.',
+        showOK: true,
+      ).ignore();
     }
   }
 
