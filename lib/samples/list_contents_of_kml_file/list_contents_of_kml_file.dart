@@ -17,7 +17,6 @@ import 'dart:io';
 
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
-import 'package:arcgis_maps_sdk_flutter_samples/samples/list_contents_of_kml_file/selected_kml_item_view.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -30,91 +29,153 @@ class ListContentsOfKmlFile extends StatefulWidget {
 
 class _ListContentsOfKmlFileState extends State<ListContentsOfKmlFile>
     with SampleStateSupport {
-  // The KML dataset from the file.
-  late KmlDataset _kmlDataset;
+  // Create a controller for the scene view.
+  final _sceneViewController = ArcGISSceneView.createController();
+
+  // Dataset for the data in KML file.
+  late final KmlDataset _kmlDataset;
 
   // The KML document containing the nodes to list.
   KmlDocument? _kmlDocument;
 
+  var _showBottomSheet = true;
+
+  // A flag for when the scene view is ready and controls can be used.
+  var _ready = false;
+
   @override
   void initState() {
     super.initState();
+    _kmlDataset = _initKmlDataset();
+  }
 
-    // Initialize the KML file.
-    _initKmlFile();
-
-    // Load the dataset from file.
-    _loadKmlDataset().ignore();
+  @override
+  void dispose() {
+    // Clean up the scene to avoid memory retention.
+    _sceneViewController.arcGISScene?.operationalLayers.clear();
+    _sceneViewController.arcGISScene = null;
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
+        top: false,
         left: false,
         right: false,
         child: Stack(
           children: [
-            if (_kmlDocument == null)
-              const Center(child: Text('KML dataset loading...'))
-            else
-              Column(
-                children: [
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 15),
-                    child: Column(
-                      children: [
-                        Text('Expand the KML folders to view child nodes.'),
-                        Text('Tap on the nodes to view them in a scene.'),
-                      ],
-                    ),
+            Column(
+              children: [
+                Expanded(
+                  // Add a scene view to the widget tree and set a controller.
+                  child: ArcGISSceneView(
+                    controllerProvider: () => _sceneViewController,
+                    onSceneViewReady: onSceneViewReady,
                   ),
-                  Expanded(
-                    child: ListView(
-                      children: [
-                        ExpansionTile(
-                          title: const Text('Document'),
-                          initiallyExpanded: true,
-                          childrenPadding: const EdgeInsets.only(left: 16),
-                          children: _kmlDocument!.childNodes
-                              .map(_buildKmlNode)
-                              .toList(),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
+                ),
+                ElevatedButton(
+                  onPressed: () => setState(() => _showBottomSheet = true),
+                  child: const Text('Show KML contents'),
+                ),
+              ],
+            ),
             // Display a progress indicator and prevent interaction until state is ready.
-            LoadingIndicator(visible: _kmlDocument == null),
+            LoadingIndicator(visible: !_ready),
           ],
         ),
       ),
+      bottomSheet: _showBottomSheet
+          ? SizedBox(
+              height: 300,
+              child: BottomSheetSettings(
+                title: 'KML Contents',
+                onCloseIconPressed: () => setState(() {
+                  _showBottomSheet = false;
+                }),
+                settingsWidgets: (context) => [
+                  SizedBox(height: 240, child: _buildKmlList()),
+                ],
+              ),
+            )
+          : null,
     );
   }
 
-  void _initKmlFile() {
-    final listPaths = GoRouter.of(context).state.extra! as List<String>;
-    final kmzFile = File(listPaths.first);
+  Future<void> onSceneViewReady() async {
+    // Create a scene with an imagery basemap style and add it to the scene view.
+    final scene = ArcGISScene.withBasemapStyle(.arcGISImagery);
+    _sceneViewController.arcGISScene = scene;
 
-    // Create a KML dataset from a local .kmz file.
-    _kmlDataset = KmlDataset(kmzFile.uri);
+    // Add a surface to the scene based on elevation data.
+    scene.baseSurface.elevationSources.add(
+      ArcGISTiledElevationSource.withUri(
+        Uri.parse(
+          'https://elevation3d.arcgis.com/arcgis/rest/services/WorldElevation3D/Terrain3D/ImageServer',
+        ),
+      ),
+    );
+    // await scene.baseSurface.load();
+
+    // Create a KML layer and add it to the scene.
+    await _kmlDataset.load();
+    final kmlDocument = _kmlDataset.rootNodes.first as KmlDocument;
+    final kmlLayer = KmlLayer(_kmlDataset);
+    scene.operationalLayers.add(kmlLayer);
+
+    // Check if the widget is still mounted after the await before continuing.
+    if (!mounted) return;
+
+    // Set the ready state variable to true to enable the sample UI.
+    setState(() {
+      _kmlDocument = kmlDocument;
+      _ready = true;
+    });
   }
 
-  Future<void> _loadKmlDataset() async {
-    await _kmlDataset.load();
-    if (mounted) {
-      setState(() {
-        // The first and only root node in this dataset is a KML document.
-        _kmlDocument = _kmlDataset.rootNodes.first as KmlDocument;
-      });
-    }
+  KmlDataset _initKmlDataset() {
+    // Create a KML layer and add it to the scene.
+    final listPaths = GoRouter.of(context).state.extra! as List<String>;
+    final kmlFile = File(listPaths.first);
+    final kmlDataset = KmlDataset(kmlFile.uri);
+    return kmlDataset;
+  }
+
+  Widget _buildKmlList() {
+    return _kmlDocument == null
+        ? const Center(child: Text('KML dataset loading...'))
+        : Column(
+            children: [
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 15),
+                child: Column(
+                  children: [
+                    Text('Expand the KML folders to view child nodes.'),
+                    Text('Tap on the nodes to view them in a scene.'),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: ListView(
+                  children: [
+                    ExpansionTile(
+                      title: const Text('Document'),
+                      initiallyExpanded: true,
+                      childrenPadding: const EdgeInsets.only(left: 16),
+                      children: _kmlDocument!.childNodes
+                          .map(_buildKmlNode)
+                          .toList(),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          );
   }
 
   Widget _buildKmlNode(KmlNode node) {
     if (node is KmlFolder) {
-      // Create an expandable list tile for folders. Tapping on the tile
-      // expands the tile to show the contents.
       return ExpansionTile(
         title: Text(node.name),
         subtitle: Text(_getFriendlyTypeName(node)),
@@ -123,44 +184,151 @@ class _ListContentsOfKmlFileState extends State<ListContentsOfKmlFile>
       );
     }
 
-    // Create a list tile for non-folder elements. Tapping on the tile opens the
-    // scene view to show the KML item.
     return ListTile(
       title: Text(node.name),
       subtitle: Text(_getFriendlyTypeName(node)),
-      onTap: () {
-        Navigator.of(context)
-            .push<void>(
-              MaterialPageRoute<void>(
-                builder: (context) => SelectedKmlItemView(
-                  kmlDataset: _kmlDataset,
-                  selectedKmlNode: node,
-                ),
-              ),
-            )
-            .ignore();
-      },
+      onTap: () => _onKmlNodeSelected(node).ignore(),
     );
   }
 
-  // Function to create a readable title from the node type.
   String _getFriendlyTypeName(KmlNode node) {
-    final nodeTypeName = node.runtimeType.toString();
+    return node.runtimeType
+        .toString()
+        .replaceFirst(RegExp('^Kml'), '')
+        .replaceAllMapped(
+          RegExp('[A-Z][a-z]*'),
+          (match) => ' ${match.group(0)}',
+        )
+        .trim();
+  }
 
-    final String friendlyName;
-    if (nodeTypeName.startsWith('Kml')) {
-      // Strip 'Kml'
-      friendlyName = nodeTypeName
-          .replaceFirst(RegExp('^Kml'), '')
-          .replaceAllMapped(
-            RegExp('[A-Z][a-z]*'),
-            (match) => ' ${match.group(0)}',
-          )
-          .trim();
-    } else {
-      friendlyName = 'Unknown Type';
+  Future<void> _onKmlNodeSelected(KmlNode kmlNode) async {
+    Viewpoint? nodeViewpoint;
+
+    final surface = _sceneViewController.arcGISScene?.baseSurface;
+    if (surface != null) {
+      nodeViewpoint = await _createViewpointForKmlNode(kmlNode, surface);
     }
 
-    return friendlyName;
+    if (!mounted) return;
+
+    if (nodeViewpoint != null) {
+      // Change the viewpoint to show the item on the scene.
+      _sceneViewController.setViewpointAnimated(nodeViewpoint);
+      // Hide the bottom sheet.
+      setState(() => _showBottomSheet = false);
+    } else {
+      // Nothing to show, so alert the user.
+      showAlertDialog(
+        context,
+        'This node has no viewpoint or extent to view.',
+        showOK: true,
+      ).ignore();
+    }
+  }
+
+  Future<Viewpoint?> _createViewpointForKmlNode(
+    KmlNode kmlNode,
+    Surface surface,
+  ) async {
+    // Ensure the surface for the scene is loaded.
+    if (surface.loadStatus != .loaded) {
+      await surface.load();
+    }
+
+    final kmlViewpoint = kmlNode.viewpoint;
+    if (kmlViewpoint != null) {
+      return _createViewpointWithKmlViewpoint(kmlViewpoint, surface);
+    } else if (kmlNode.extent != null) {
+      return _createViewpointWithExtent(kmlNode.extent, surface);
+    } else {
+      return null;
+    }
+  }
+
+  Future<Viewpoint> _createViewpointWithKmlViewpoint(
+    KmlViewpoint kmlViewpoint,
+    Surface surface,
+  ) async {
+    // Center on the selected KML node.
+    final Camera viewpointCamera;
+
+    if (kmlViewpoint.type == .lookAt) {
+      var lookAtPoint = kmlViewpoint.location;
+      if (kmlViewpoint.altitudeMode != .absolute) {
+        // If the elevation is relative, account for the surface's elevation.
+        final elevation = await surface.getElevation(kmlViewpoint.location);
+        final kmlViewpointAltitude = kmlViewpoint.location.z ?? 0;
+        lookAtPoint = ArcGISPoint(
+          x: kmlViewpoint.location.x,
+          y: kmlViewpoint.location.y,
+          z: kmlViewpointAltitude + elevation,
+        );
+      }
+
+      viewpointCamera = Camera.withLookAtPoint(
+        lookAtPoint: lookAtPoint,
+        distance: kmlViewpoint.range,
+        heading: kmlViewpoint.heading,
+        pitch: kmlViewpoint.pitch,
+        roll: kmlViewpoint.roll,
+      );
+    } else {
+      viewpointCamera = Camera.withLocation(
+        location: kmlViewpoint.location,
+        heading: kmlViewpoint.heading,
+        pitch: kmlViewpoint.pitch,
+        roll: kmlViewpoint.roll,
+      );
+    }
+
+    return Viewpoint.withLatLongScaleCamera(
+      latitude: 0,
+      longitude: 0,
+      scale: 1,
+      camera: viewpointCamera,
+    );
+  }
+
+  Future<Viewpoint?> _createViewpointWithExtent(
+    Envelope? extent,
+    Surface surface,
+  ) async {
+    if (extent == null || extent.isEmpty) return null;
+
+    final extentCenter = extent.center;
+    final elevation = await surface.getElevation(extentCenter);
+
+    if (extent.width == 0 || extent.height == 0) {
+      // If the extent is not empty, but the width and height are still zero,
+      // default values (based on Google Earth) are used to create a camera.
+      final centerAltitude = extentCenter.z ?? 0;
+      final elevatedCenter = ArcGISPoint(
+        x: extentCenter.x,
+        y: extentCenter.y,
+        z: centerAltitude + elevation,
+      );
+      final viewpointCamera = Camera.withLookAtPoint(
+        lookAtPoint: elevatedCenter,
+        distance: 1000,
+        heading: 0,
+        pitch: 45,
+        roll: 0,
+      );
+
+      return Viewpoint.withLatLongScaleCamera(
+        latitude: 0,
+        longitude: 0,
+        scale: 1,
+        camera: viewpointCamera,
+      );
+    } else {
+      final extentBuilder = EnvelopeBuilder.fromEnvelope(extent)
+        ..zMax += elevation
+        ..zMin += elevation
+        ..expandBy(1.1);
+
+      return Viewpoint.fromTargetExtent(extentBuilder.extent);
+    }
   }
 }
