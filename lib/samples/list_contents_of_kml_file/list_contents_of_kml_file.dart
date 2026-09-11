@@ -266,7 +266,7 @@ class _ListContentsOfKmlFileState extends State<ListContentsOfKmlFile>
     }
   }
 
-  // Function to create a Viewpiont based on a KML viewpoint.
+  // Function to create a Viewpoint based on a KML viewpoint.
   Future<Viewpoint> _createViewpointWithKmlViewpoint(
     KmlViewpoint kmlViewpoint,
     Surface surface,
