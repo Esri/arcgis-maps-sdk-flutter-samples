@@ -190,30 +190,33 @@ class _ListContentsOfKmlFileState extends State<ListContentsOfKmlFile>
   }
 
   // Build function for KML leaf nodes. Clicking on these will view the item on the scene view.
-  Widget _buildKmlNode(KmlNode node) {
-    if (node is KmlFolder) {
+  Widget _buildKmlNode(KmlNode kmlNode) {
+    // Ensure node is visible.
+    kmlNode.isVisible = true;
+
+    if (kmlNode is KmlContainer) {
       return ExpansionTile(
         // Add an onTap GestureDetector to the text so users can view the folder's
         // viewpoint while still being able to expand the tile.
         title: GestureDetector(
-          onTap: () => _onKmlNodeSelected(node),
-          child: Text(node.name),
+          onTap: () => _onKmlNodeSelected(kmlNode),
+          child: Text(kmlNode.name),
         ),
-        subtitle: Text(_getFriendlyTypeName(node)),
+        subtitle: Text(_getFriendlyTypeName(kmlNode)),
         childrenPadding: const EdgeInsets.only(left: 16),
-        children: node.childNodes.map(_buildKmlNode).toList(),
+        children: kmlNode.childNodes.map(_buildKmlNode).toList(),
       );
     }
 
     return ListTile(
-      title: Text(node.name),
-      subtitle: Text(_getFriendlyTypeName(node)),
-      onTap: () => _onKmlNodeSelected(node).ignore(),
+      title: Text(kmlNode.name),
+      subtitle: Text(_getFriendlyTypeName(kmlNode)),
+      onTap: () => _onKmlNodeSelected(kmlNode).ignore(),
     );
   }
 
-  String _getFriendlyTypeName(KmlNode node) {
-    return node.runtimeType
+  String _getFriendlyTypeName(KmlNode kmlNode) {
+    return kmlNode.runtimeType
         .toString()
         .replaceFirst(RegExp('^Kml'), '')
         .replaceAllMapped(
@@ -235,9 +238,6 @@ class _ListContentsOfKmlFileState extends State<ListContentsOfKmlFile>
     if (!mounted) return;
 
     if (nodeViewpoint != null) {
-      // Ensure node is visible.
-      kmlNode.isVisible = true;
-
       // Change the viewpoint to show the item on the scene.
       _sceneViewController.setViewpointAnimated(nodeViewpoint, duration: 1);
       // Hide the bottom sheet.
