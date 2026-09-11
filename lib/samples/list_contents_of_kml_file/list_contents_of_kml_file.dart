@@ -147,7 +147,7 @@ class _ListContentsOfKmlFileState extends State<ListContentsOfKmlFile>
     });
   }
 
-  // Function to initialize a KmlDataset based on the smaple's KML file.
+  // Function to initialize a KmlDataset based on the sample's KML file.
   KmlDataset _initKmlDataset() {
     // Create a KML layer and add it to the scene.
     final listPaths = GoRouter.of(context).state.extra! as List<String>;
