@@ -87,16 +87,30 @@ class _ListContentsOfKmlFileState extends State<ListContentsOfKmlFile>
         ),
       ),
       bottomSheet: _showBottomSheet
-          ? SizedBox(
-              height: 300,
-              child: BottomSheetSettings(
-                title: 'KML Contents',
-                onCloseIconPressed: () => setState(() {
-                  _showBottomSheet = false;
-                }),
-                settingsWidgets: (context) => [
-                  SizedBox(height: 240, child: _buildKmlList()),
-                ],
+          ? FractionallySizedBox(
+              heightFactor: 0.75,
+              child: Padding(
+                padding: bottomSheetPadding(context),
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+                        Text(
+                          'KML Contents',
+                          style: Theme.of(context).textTheme.titleLarge,
+                        ),
+                        const Spacer(),
+                        IconButton(
+                          icon: const Icon(Icons.close),
+                          onPressed: () => setState(() {
+                            _showBottomSheet = false;
+                          }),
+                        ),
+                      ],
+                    ),
+                    Expanded(child: _buildKmlList()),
+                  ],
+                ),
               ),
             )
           : null,
@@ -116,7 +130,6 @@ class _ListContentsOfKmlFileState extends State<ListContentsOfKmlFile>
         ),
       ),
     );
-    // await scene.baseSurface.load();
 
     // Create a KML layer and add it to the scene.
     await _kmlDataset.load();
@@ -134,6 +147,7 @@ class _ListContentsOfKmlFileState extends State<ListContentsOfKmlFile>
     });
   }
 
+  // Function to initialize a KmlDataset based on the smaple's KML file.
   KmlDataset _initKmlDataset() {
     // Create a KML layer and add it to the scene.
     final listPaths = GoRouter.of(context).state.extra! as List<String>;
@@ -142,6 +156,7 @@ class _ListContentsOfKmlFileState extends State<ListContentsOfKmlFile>
     return kmlDataset;
   }
 
+  // Build function to create the collapsible list for the contents of the KML file.
   Widget _buildKmlList() {
     return _kmlDocument == null
         ? const Center(child: Text('KML dataset loading...'))
@@ -174,6 +189,7 @@ class _ListContentsOfKmlFileState extends State<ListContentsOfKmlFile>
           );
   }
 
+  // Build function for KML leaf nodes. Clicking on these will view the item on the scene view.
   Widget _buildKmlNode(KmlNode node) {
     if (node is KmlFolder) {
       return ExpansionTile(
@@ -202,6 +218,7 @@ class _ListContentsOfKmlFileState extends State<ListContentsOfKmlFile>
         .trim();
   }
 
+  // Function called when a leaf node is tapped. Sets viewpoint for the selected KML node.
   Future<void> _onKmlNodeSelected(KmlNode kmlNode) async {
     Viewpoint? nodeViewpoint;
 
@@ -214,7 +231,7 @@ class _ListContentsOfKmlFileState extends State<ListContentsOfKmlFile>
 
     if (nodeViewpoint != null) {
       // Change the viewpoint to show the item on the scene.
-      _sceneViewController.setViewpointAnimated(nodeViewpoint);
+      _sceneViewController.setViewpointAnimated(nodeViewpoint, duration: 1);
       // Hide the bottom sheet.
       setState(() => _showBottomSheet = false);
     } else {
@@ -227,6 +244,7 @@ class _ListContentsOfKmlFileState extends State<ListContentsOfKmlFile>
     }
   }
 
+  // Function to create a Viewpoint based on a KML node.
   Future<Viewpoint?> _createViewpointForKmlNode(
     KmlNode kmlNode,
     Surface surface,
@@ -238,19 +256,21 @@ class _ListContentsOfKmlFileState extends State<ListContentsOfKmlFile>
 
     final kmlViewpoint = kmlNode.viewpoint;
     if (kmlViewpoint != null) {
+      // The node has a KML viewpoint. Get an ArcGIS Viewpoint from the KML viewpoint.
       return _createViewpointWithKmlViewpoint(kmlViewpoint, surface);
     } else if (kmlNode.extent != null) {
+      // The node does not have a KML viewpoint. Build an ArcGIS Viewpoint based on the extent.
       return _createViewpointWithExtent(kmlNode.extent, surface);
     } else {
       return null;
     }
   }
 
+  // Function to create a Viewpiont based on a KML viewpoint.
   Future<Viewpoint> _createViewpointWithKmlViewpoint(
     KmlViewpoint kmlViewpoint,
     Surface surface,
   ) async {
-    // Center on the selected KML node.
     final Camera viewpointCamera;
 
     if (kmlViewpoint.type == .lookAt) {
@@ -282,6 +302,7 @@ class _ListContentsOfKmlFileState extends State<ListContentsOfKmlFile>
       );
     }
 
+    // Create Viewpoint using the viewpointCamera.
     return Viewpoint.withLatLongScaleCamera(
       latitude: 0,
       longitude: 0,
@@ -290,6 +311,7 @@ class _ListContentsOfKmlFileState extends State<ListContentsOfKmlFile>
     );
   }
 
+  // Function to create a Viewpoint based on an KML node extent.
   Future<Viewpoint?> _createViewpointWithExtent(
     Envelope? extent,
     Surface surface,
