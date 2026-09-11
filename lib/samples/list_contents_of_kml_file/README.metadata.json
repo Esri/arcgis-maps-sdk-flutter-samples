@@ -41,8 +41,7 @@
         "KmlScreenOverlay"
     ],
     "snippets": [
-        "list_contents_of_kml_file.dart",
-        "selected_kml_item_view.dart"
+        "list_contents_of_kml_file.dart"
     ],
     "title": "List contents of KML file"
 }
