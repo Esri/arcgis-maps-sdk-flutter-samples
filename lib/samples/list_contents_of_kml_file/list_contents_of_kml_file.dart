@@ -38,6 +38,7 @@ class _ListContentsOfKmlFileState extends State<ListContentsOfKmlFile>
   // The KML document containing the nodes to list.
   KmlDocument? _kmlDocument;
 
+  // Flag to indicate if the bottom sheet should be shown.
   var _showBottomSheet = true;
 
   // A flag for when the scene view is ready and controls can be used.
@@ -50,18 +51,9 @@ class _ListContentsOfKmlFileState extends State<ListContentsOfKmlFile>
   }
 
   @override
-  void dispose() {
-    // Clean up the scene to avoid memory retention.
-    _sceneViewController.arcGISScene?.operationalLayers.clear();
-    _sceneViewController.arcGISScene = null;
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        top: false,
         left: false,
         right: false,
         child: Stack(
@@ -75,6 +67,7 @@ class _ListContentsOfKmlFileState extends State<ListContentsOfKmlFile>
                     onSceneViewReady: onSceneViewReady,
                   ),
                 ),
+                // Button to show the bottom sheet.
                 ElevatedButton(
                   onPressed: () => setState(() => _showBottomSheet = true),
                   child: const Text('Show KML contents'),
@@ -87,31 +80,30 @@ class _ListContentsOfKmlFileState extends State<ListContentsOfKmlFile>
         ),
       ),
       bottomSheet: _showBottomSheet
-          ? FractionallySizedBox(
-              heightFactor: 0.75,
-              child: Padding(
-                padding: bottomSheetPadding(context),
-                child: Column(
+          ? BottomSheetSettings(
+              title: 'KML Contents',
+              onCloseIconPressed: () =>
+                  setState(() => _showBottomSheet = false),
+              settingsWidgets: (context) => [
+                const Column(
                   children: [
-                    Row(
-                      children: [
-                        Text(
-                          'KML Contents',
-                          style: Theme.of(context).textTheme.titleLarge,
-                        ),
-                        const Spacer(),
-                        IconButton(
-                          icon: const Icon(Icons.close),
-                          onPressed: () => setState(() {
-                            _showBottomSheet = false;
-                          }),
-                        ),
-                      ],
-                    ),
-                    Expanded(child: _buildKmlList()),
+                    Text('Expand the KML folders to view child nodes.'),
+                    Text('Tap on the nodes to view them in a scene.'),
                   ],
                 ),
-              ),
+
+                if (_kmlDocument != null)
+                  ExpansionTile(
+                    title: const Text('Document'),
+                    initiallyExpanded: true,
+                    childrenPadding: const EdgeInsets.only(left: 16),
+                    children: _kmlDocument!.childNodes
+                        .map(_buildKmlNode)
+                        .toList(),
+                  )
+                else
+                  const Center(child: Text('KML dataset loading...')),
+              ],
             )
           : null,
     );
@@ -149,44 +141,10 @@ class _ListContentsOfKmlFileState extends State<ListContentsOfKmlFile>
 
   // Function to initialize a KmlDataset based on the sample's KML file.
   KmlDataset _initKmlDataset() {
-    // Create a KML layer and add it to the scene.
     final listPaths = GoRouter.of(context).state.extra! as List<String>;
     final kmlFile = File(listPaths.first);
     final kmlDataset = KmlDataset(kmlFile.uri);
     return kmlDataset;
-  }
-
-  // Build function to create the collapsible list for the contents of the KML file.
-  Widget _buildKmlList() {
-    return _kmlDocument == null
-        ? const Center(child: Text('KML dataset loading...'))
-        : Column(
-            children: [
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 15),
-                child: Column(
-                  children: [
-                    Text('Expand the KML folders to view child nodes.'),
-                    Text('Tap on the nodes to view them in a scene.'),
-                  ],
-                ),
-              ),
-              Expanded(
-                child: ListView(
-                  children: [
-                    ExpansionTile(
-                      title: const Text('Document'),
-                      initiallyExpanded: true,
-                      childrenPadding: const EdgeInsets.only(left: 16),
-                      children: _kmlDocument!.childNodes
-                          .map(_buildKmlNode)
-                          .toList(),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          );
   }
 
   // Build function for KML leaf nodes. Clicking on these will view the item on the scene view.
@@ -233,9 +191,8 @@ class _ListContentsOfKmlFileState extends State<ListContentsOfKmlFile>
     final surface = _sceneViewController.arcGISScene?.baseSurface;
     if (surface != null) {
       nodeViewpoint = await _createViewpointForKmlNode(kmlNode, surface);
+      if (!mounted) return;
     }
-
-    if (!mounted) return;
 
     if (nodeViewpoint != null) {
       // Change the viewpoint to show the item on the scene.
