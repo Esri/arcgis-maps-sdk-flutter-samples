@@ -193,7 +193,12 @@ class _ListContentsOfKmlFileState extends State<ListContentsOfKmlFile>
   Widget _buildKmlNode(KmlNode node) {
     if (node is KmlFolder) {
       return ExpansionTile(
-        title: Text(node.name),
+        // Add an onTap GestureDetector to the text so users can view the folder's
+        // viewpoint while still being able to expand the tile.
+        title: GestureDetector(
+          onTap: () => _onKmlNodeSelected(node),
+          child: Text(node.name),
+        ),
         subtitle: Text(_getFriendlyTypeName(node)),
         childrenPadding: const EdgeInsets.only(left: 16),
         children: node.childNodes.map(_buildKmlNode).toList(),
@@ -230,6 +235,9 @@ class _ListContentsOfKmlFileState extends State<ListContentsOfKmlFile>
     if (!mounted) return;
 
     if (nodeViewpoint != null) {
+      // Ensure node is visible.
+      kmlNode.isVisible = true;
+
       // Change the viewpoint to show the item on the scene.
       _sceneViewController.setViewpointAnimated(nodeViewpoint, duration: 1);
       // Hide the bottom sheet.
