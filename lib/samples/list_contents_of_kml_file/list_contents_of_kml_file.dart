@@ -311,7 +311,7 @@ class _ListContentsOfKmlFileState extends State<ListContentsOfKmlFile>
     );
   }
 
-  // Function to create a Viewpoint based on an KML node extent.
+  // Function to create a Viewpoint based on a KML node extent.
   Future<Viewpoint?> _createViewpointWithExtent(
     Envelope? extent,
     Surface surface,
