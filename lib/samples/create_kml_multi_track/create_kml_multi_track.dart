@@ -292,11 +292,12 @@ class _CreateKmlMultiTrackState extends State<CreateKmlMultiTrack>
     if (!_isRecording) return;
 
     // Add a timestamped KML track element and display its position.
-    _trackElements.add(
-      KmlTrackElement(when: DateTime.now(), coordinate: location.position),
-    );
+    setState(() {
+      _trackElements.add(
+        KmlTrackElement(when: DateTime.now(), coordinate: location.position),
+      );
+    });
     _trackElementOverlay.graphics.add(Graphic(geometry: location.position));
-    setState(() {});
   }
 
   void _toggleRecording() {
