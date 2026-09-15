@@ -214,10 +214,10 @@ class _CreateKmlMultiTrackState extends State<CreateKmlMultiTrack>
     );
 
     // Start the simulated navigation and listen for recording locations.
-    await _startNavigation(routePolyline);
+    final navigationStarted = await _startNavigation(routePolyline);
 
-    // Set the ready state variable to true to enable the sample UI.
-    if (mounted) setState(() => _ready = true);
+    // Enable the sample UI only when navigation starts successfully.
+    if (mounted) setState(() => _ready = navigationStarted);
   }
 
   Polyline _createCoastalTrail() {
@@ -259,7 +259,7 @@ class _CreateKmlMultiTrackState extends State<CreateKmlMultiTrack>
     return builder.toGeometry() as Polyline;
   }
 
-  Future<void> _startNavigation(Polyline routePolyline) async {
+  Future<bool> _startNavigation(Polyline routePolyline) async {
     // Generate one simulated location per second along the trail.
     _simulatedLocationDataSource.setLocationsWithPolyline(
       routePolyline,
@@ -280,10 +280,12 @@ class _CreateKmlMultiTrackState extends State<CreateKmlMultiTrack>
       locationDisplay.start();
       _locationSubscription ??= _simulatedLocationDataSource.onLocationChanged
           .listen(_recordLocation);
+      return true;
     } on ArcGISException catch (exception) {
       if (mounted) {
         showExceptionDialog('Failed to start simulated navigation', exception);
       }
+      return false;
     }
   }
 
@@ -329,12 +331,7 @@ class _CreateKmlMultiTrackState extends State<CreateKmlMultiTrack>
     _tracks.add(track);
 
     // Convert the track multipoint to a polyline for display.
-    final multipoint = track.geometry as Multipoint;
-    final polylineBuilder = PolylineBuilder(
-      spatialReference: multipoint.spatialReference,
-    );
-    multipoint.points.forEach(polylineBuilder.addPoint);
-    _trackOverlay.graphics.add(Graphic(geometry: polylineBuilder.toGeometry()));
+    _trackOverlay.graphics.add(_graphicForTrack(track.geometry));
 
     // Clear the active elements and return to navigation mode.
     _trackElements.clear();
@@ -395,26 +392,50 @@ class _CreateKmlMultiTrackState extends State<CreateKmlMultiTrack>
         _isViewingSavedTracks = true;
         _ready = true;
       });
+      _displayLoadedTracks(0);
       // Frame the combined geometry so every loaded track is initially visible.
       await _mapViewController.setViewpointGeometry(
         allTracks,
         paddingInDiPs: 25,
       );
     } on Exception catch (exception) {
-      // Restore controls and report any KML export or load failure.
+      // Restart navigation before restoring controls after a round-trip failure.
       if (!mounted) return;
-      setState(() => _ready = true);
       showExceptionDialog('Failed to save or load KML multi-track', exception);
+      final navigationStarted = await _startNavigation(_createCoastalTrail());
+      if (mounted) setState(() => _ready = navigationStarted);
     }
   }
 
   Future<void> _previewTrack(int index) async {
-    // Select and frame the requested saved track geometry.
+    // Display only the selected track, or every track for the first option.
     setState(() => _selectedTrackIndex = index);
+    _displayLoadedTracks(index);
     await _mapViewController.setViewpointGeometry(
       _loadedTrackGeometries[index],
       paddingInDiPs: 25,
     );
+  }
+
+  void _displayLoadedTracks(int index) {
+    // Index zero represents all tracks; subsequent indexes select one track.
+    final geometries = index == 0
+        ? _loadedTrackGeometries.skip(1)
+        : [_loadedTrackGeometries[index]];
+    // Replace the overlay contents so only the requested tracks are displayed.
+    _trackOverlay.graphics
+      ..clear()
+      ..addAll(geometries.map(_graphicForTrack));
+  }
+
+  Graphic _graphicForTrack(Geometry geometry) {
+    // Convert the KML track's multipoint geometry to a displayable polyline.
+    final multipoint = geometry as Multipoint;
+    final polylineBuilder = PolylineBuilder(
+      spatialReference: multipoint.spatialReference,
+    );
+    multipoint.points.forEach(polylineBuilder.addPoint);
+    return Graphic(geometry: polylineBuilder.toGeometry());
   }
 
   void _recenter() {
@@ -444,8 +465,8 @@ class _CreateKmlMultiTrackState extends State<CreateKmlMultiTrack>
       routePolyline,
       paddingInDiPs: 25,
     );
-    await _startNavigation(routePolyline);
+    final navigationStarted = await _startNavigation(routePolyline);
 
-    if (mounted) setState(() => _ready = true);
+    if (mounted) setState(() => _ready = navigationStarted);
   }
 }
