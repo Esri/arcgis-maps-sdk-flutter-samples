@@ -46,7 +46,7 @@ class _CreateKmlMultiTrackState extends State<CreateKmlMultiTrack>
   Directory? _temporaryDirectory;
   List<Geometry> _loadedTrackGeometries = [];
   var _selectedTrackIndex = 0;
-  // A flag for when the map view is ready and controls can be used.
+  // Flags for controlling elements of the UI during different operations.
   var _ready = false;
   var _isRecording = false;
   var _isRecenterEnabled = false;
@@ -188,7 +188,7 @@ class _CreateKmlMultiTrackState extends State<CreateKmlMultiTrack>
     final map = ArcGISMap.withBasemapStyle(.arcGISStreets);
     _mapViewController.arcGISMap = map;
 
-    // Configure renderers for track elements and completed tracks.
+    // Configure renderers for track elements and completed tracks graphics overlay and then add to the controller.
     _trackElementOverlay.renderer = SimpleRenderer(
       symbol: SimpleMarkerSymbol(color: Colors.red, size: 10),
     );

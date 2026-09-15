@@ -1,8 +1,8 @@
-# Create KML multi track
+# Create KML multi-track
 
 Create, save and preview a KML multi-track, captured from a location data source.
 
-![Create KML multi_track](create_kml_multi_track.png)
+![Create KML multi-track](create_kml_multi_track.png)
 
 ## Use case
 
@@ -35,4 +35,4 @@ Tap **Start Navigation** to begin moving along a simulated trail. Tap **Record T
 
 ## Tags
 
-export, geoview-compose, hiking, kml, kmz, multi-track, record, track
+export, hiking, kml, kmz, multi-track, record, track
