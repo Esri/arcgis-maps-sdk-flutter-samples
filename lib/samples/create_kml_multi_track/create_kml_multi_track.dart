@@ -41,10 +41,14 @@ class _CreateKmlMultiTrackState extends State<CreateKmlMultiTrack>
   // Store the completed tracks that will form the KML multi-track.
   final _tracks = <KmlTrack>[];
 
+  // Manage subscriptions for recording locations and tracking auto-pan changes.
   StreamSubscription<ArcGISLocation>? _locationSubscription;
   StreamSubscription<LocationDisplayAutoPanMode>? _autoPanModeSubscription;
+  // Store the temporary directory containing the generated KMZ file.
   Directory? _temporaryDirectory;
-  List<Geometry> _loadedTrackGeometries = [];
+  // Store loaded track geometries, with all tracks combined at index zero.
+  var _loadedTrackGeometries = <Geometry>[];
+  // Track the geometry currently selected for preview.
   var _selectedTrackIndex = 0;
   // Flags for controlling elements of the UI during different operations.
   var _ready = false;
@@ -99,10 +103,12 @@ class _CreateKmlMultiTrackState extends State<CreateKmlMultiTrack>
                         controllerProvider: () => _mapViewController,
                         onMapViewReady: onMapViewReady,
                       ),
+                      // Display the current recording or saved-track status.
                       MapBanner(text: _statusText),
                     ],
                   ),
                 ),
+                // Display controls for recording or browsing saved tracks.
                 Padding(
                   padding: const EdgeInsets.all(8),
                   child: _isViewingSavedTracks
@@ -160,7 +166,7 @@ class _CreateKmlMultiTrackState extends State<CreateKmlMultiTrack>
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        DropdownButton<int>(
+        DropdownButton(
           value: _selectedTrackIndex,
           items: List.generate(
             _loadedTrackGeometries.length,
@@ -294,7 +300,7 @@ class _CreateKmlMultiTrackState extends State<CreateKmlMultiTrack>
   }
 
   void _toggleRecording() {
-    // Start a fresh track or complete the active track.
+    // Complete the active track or start a fresh track.
     if (_isRecording) {
       _completeTrack();
     } else {
@@ -367,7 +373,7 @@ class _CreateKmlMultiTrackState extends State<CreateKmlMultiTrack>
         throw Exception('The saved placemark does not contain a multi-track.');
       }
 
-      // Collect the union and individual geometries for the track picker.
+      // Extract each track geometry and combine them for the "All Tracks" view.
       final trackGeometries = kmlGeometry.tracks
           .map((track) => track.geometry)
           .toList();
@@ -379,6 +385,8 @@ class _CreateKmlMultiTrackState extends State<CreateKmlMultiTrack>
         );
       }
 
+      // Put the combined geometry first to match the track picker's ordering,
+      // then switch from recording controls to the saved-track browser.
       if (!mounted) return;
       setState(() {
         _loadedTrackGeometries = [allTracks, ...trackGeometries];
@@ -386,6 +394,7 @@ class _CreateKmlMultiTrackState extends State<CreateKmlMultiTrack>
         _isViewingSavedTracks = true;
         _ready = true;
       });
+      // Frame the combined geometry so every loaded track is initially visible.
       await _mapViewController.setViewpointGeometry(
         allTracks,
         paddingInDiPs: 25,
