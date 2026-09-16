@@ -1,16 +1,16 @@
-# Create KML multi-track
+# Create KML multi track
 
-Create, save and preview a KML multi-track, captured from a location data source.
+Create, save and preview a KML multi track, captured from a location data source.
 
-![Create KML multi-track](create_kml_multi_track.png)
+![Create KML multi track](create_kml_multi_track.png)
 
 ## Use case
 
-When capturing location data for outdoor activities such as hiking or skiing, it can be useful to record and share your path. This sample demonstrates how you can collect individual KML tracks during a navigation session, then combine and export them as a KML multi-track.
+When capturing location data for outdoor activities such as hiking or skiing, it can be useful to record and share your path. This sample demonstrates how you can collect individual KML tracks during a navigation session, then combine and export them as a KML multi track.
 
 ## How to use the sample
 
-Tap **Record Track** to start recording your current path on the simulated trail. Tap **Stop Recording** to end recording and capture a KML track. Repeat these steps to capture multiple KML tracks in a single session. Tap the **Save** button to convert the recorded tracks into a KML multi-track and save it to a local `.kmz` file. Then use the picker to select a track from the saved KML multi-track. Tap the **Delete** button to remove the local file and reset the sample.
+Tap **Record Track** to start recording your current path on the simulated trail. Tap **Stop Recording** to end recording and capture a KML track. Repeat these steps to capture multiple KML tracks in a single session. Tap the **Save** button to convert the recorded tracks into a KML multi track and save it to a local `.kmz` file. Then use the picker to select a track from the saved KML multi track. Tap the **Delete** button to remove the local file and reset the sample.
 
 ## How it works
 
@@ -35,4 +35,4 @@ Tap **Record Track** to start recording your current path on the simulated trail
 
 ## Tags
 
-export, hiking, kml, kmz, multi-track, record, track
+export, hiking, kml, kmz, multi track, record, track

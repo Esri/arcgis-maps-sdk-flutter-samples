@@ -1,6 +1,6 @@
 {
     "category": "Edit and Manage Data",
-    "description": "Create, save and preview a KML multi-track, captured from a location data source.",
+    "description": "Create, save and preview a KML multi track, captured from a location data source.",
     "ignore": false,
     "images": [
         "create_kml_multi_track.png"
@@ -10,7 +10,7 @@
         "hiking",
         "kml",
         "kmz",
-        "multi-track",
+        "multi track",
         "record",
         "track",
         "KmlDataset",
@@ -34,5 +34,5 @@
     "snippets": [
         "create_kml_multi_track.dart"
     ],
-    "title": "Create KML multi-track"
+    "title": "Create KML multi track"
 }
