@@ -332,8 +332,10 @@ class _ListContentsOfKmlFileState extends State<ListContentsOfKmlFile>
   List<KmlNode> _buildAncestorNodeList(KmlNode kmlNode) {
     final ancestors = <KmlNode>[];
 
+    // Add current node to the list.
     ancestors.add(kmlNode);
 
+    // Recursively add parent nodes to the list.
     final parent = kmlNode.parentNode;
     if (parent != null) {
       ancestors.addAll(_buildAncestorNodeList(parent));
