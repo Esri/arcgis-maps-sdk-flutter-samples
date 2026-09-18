@@ -41,7 +41,7 @@ class _ListContentsOfKmlFileState extends State<ListContentsOfKmlFile>
   // Flag to indicate if the bottom sheet should be shown.
   var _showBottomSheet = true;
 
-  // Listing of parent nodes of the selected KML node. List inlcudes selected
+  // Listing of parent nodes of the selected KML node. List includes selected
   // node. Used to expand list tiles to show selected node.
   var _selectedNodeAncestors = <KmlNode>[];
 
