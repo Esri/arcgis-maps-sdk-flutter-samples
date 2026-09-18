@@ -327,18 +327,15 @@ class _ListContentsOfKmlFileState extends State<ListContentsOfKmlFile>
     }
   }
 
-  // Recursive function to build list of ancestors for a given KML node. List
-  // includes the initial node.
+  // Function to build list of ancestors for a given KML node. List includes the
+  // initial node.
   List<KmlNode> _buildAncestorNodeList(KmlNode kmlNode) {
-    final ancestors = <KmlNode>[];
+    final ancestors = [kmlNode];
 
-    // Add current node to the list.
-    ancestors.add(kmlNode);
-
-    // Recursively add parent nodes to the list.
-    final parent = kmlNode.parentNode;
-    if (parent != null) {
-      ancestors.addAll(_buildAncestorNodeList(parent));
+    var parentNode = kmlNode.parentNode;
+    while (parentNode != null) {
+      ancestors.add(parentNode);
+      parentNode = parentNode.parentNode;
     }
 
     return ancestors;
