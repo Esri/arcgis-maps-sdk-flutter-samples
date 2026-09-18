@@ -41,6 +41,10 @@ class _ListContentsOfKmlFileState extends State<ListContentsOfKmlFile>
   // Flag to indicate if the bottom sheet should be shown.
   var _showBottomSheet = true;
 
+  // Listing of parent nodes of the selected KML node. List inlcudes selected
+  // node. Used to expand list tiles to show selected node.
+  var _selectedNodeAncestors = <KmlNode>[];
+
   // A flag for when the scene view is ready and controls can be used.
   var _ready = false;
 
@@ -161,6 +165,7 @@ class _ListContentsOfKmlFileState extends State<ListContentsOfKmlFile>
           child: Text(kmlNode.name),
         ),
         subtitle: Text(_getFriendlyTypeName(kmlNode)),
+        initiallyExpanded: _selectedNodeAncestors.contains(kmlNode),
         childrenPadding: const EdgeInsets.only(left: 16),
         children: kmlNode.childNodes.map(_buildKmlNode).toList(),
       );
@@ -187,6 +192,9 @@ class _ListContentsOfKmlFileState extends State<ListContentsOfKmlFile>
   // Function called when a leaf node is tapped. Sets viewpoint for the selected KML node.
   Future<void> _onKmlNodeSelected(KmlNode kmlNode) async {
     Viewpoint? nodeViewpoint;
+
+    // Record which node has been selected and the node's ancestry.
+    _selectedNodeAncestors = _buildAncestorNodeList(kmlNode);
 
     final surface = _sceneViewController.arcGISScene?.baseSurface;
     if (surface != null) {
@@ -317,5 +325,20 @@ class _ListContentsOfKmlFileState extends State<ListContentsOfKmlFile>
 
       return Viewpoint.fromTargetExtent(extentBuilder.extent);
     }
+  }
+
+  // Recursive function to build list of ancestors for a given KML node. List
+  // includes the initial node.
+  List<KmlNode> _buildAncestorNodeList(KmlNode kmlNode) {
+    final ancestors = <KmlNode>[];
+
+    ancestors.add(kmlNode);
+
+    final parent = kmlNode.parentNode;
+    if (parent != null) {
+      ancestors.addAll(_buildAncestorNodeList(parent));
+    }
+
+    return ancestors;
   }
 }
