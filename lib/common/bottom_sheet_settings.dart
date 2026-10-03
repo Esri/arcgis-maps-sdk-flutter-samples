@@ -16,7 +16,7 @@
 
 import 'dart:math';
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 ///
 /// The widget has a column layout with a title and a close icon button on the top.

@@ -18,8 +18,8 @@ import 'package:arcgis_maps_sdk_flutter_samples/models/category.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/widgets/about_info.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/widgets/category_card.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/widgets/sample_viewer_page.dart';
-import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:material_ui/material_ui.dart';
 
 class SampleViewerApp extends StatefulWidget {
   const SampleViewerApp({super.key});

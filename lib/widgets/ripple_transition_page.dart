@@ -15,8 +15,9 @@
 //
 
 import 'dart:math';
-import 'package:flutter/material.dart';
+
 import 'package:go_router/go_router.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Custom transition page to ripple out from a given screen offset.
 class RippleTransitionPage extends CustomTransitionPage<void> {

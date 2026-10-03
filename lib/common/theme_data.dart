@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 // Light Theme Color Scheme
 final lightColorScheme = ColorScheme.fromSeed(seedColor: Colors.deepPurple);

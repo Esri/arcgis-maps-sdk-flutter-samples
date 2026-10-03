@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 ///
 /// Shows an alert dialog with a message.

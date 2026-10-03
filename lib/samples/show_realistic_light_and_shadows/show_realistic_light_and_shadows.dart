@@ -15,8 +15,8 @@
 
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
-import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:material_ui/material_ui.dart';
 
 class ShowRealisticLightAndShadows extends StatefulWidget {
   const ShowRealisticLightAndShadows({super.key});

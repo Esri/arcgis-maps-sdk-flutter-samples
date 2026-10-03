@@ -16,9 +16,9 @@
 
 import 'package:arcgis_maps_sdk_flutter_samples/models/sample.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/widgets/sample_info_popup_menu.dart';
-import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:markdown/markdown.dart' as md;
+import 'package:material_ui/material_ui.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 

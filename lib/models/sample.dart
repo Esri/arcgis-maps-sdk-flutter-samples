@@ -20,7 +20,7 @@ import 'dart:async';
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/models/offline_data.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/models/samples_widget_list.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Class that contains information about each of the samples.

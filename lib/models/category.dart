@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 enum SampleCategory {
   all('All', Icons.apps, 'assets/category_images/all_background.webp'),

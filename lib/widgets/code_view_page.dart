@@ -16,9 +16,9 @@
 
 import 'package:arcgis_maps_sdk_flutter_samples/models/sample.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/widgets/sample_info_popup_menu.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_syntax_view/flutter_syntax_view.dart';
 import 'package:http/http.dart' as http;
+import 'package:material_ui/material_ui.dart';
 
 class CodeViewPage extends StatefulWidget {
   const CodeViewPage({required this.sample, super.key});

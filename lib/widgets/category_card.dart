@@ -15,7 +15,7 @@
 //
 
 import 'package:arcgis_maps_sdk_flutter_samples/models/category.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 class CategoryCard extends StatefulWidget {
   const CategoryCard({

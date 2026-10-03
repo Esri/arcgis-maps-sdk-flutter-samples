@@ -16,8 +16,8 @@
 
 import 'package:arcgis_maps_sdk_flutter_samples/models/sample.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/widgets/sample_info_popup_menu.dart';
-import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:material_ui/material_ui.dart';
 
 class SampleDetailPage extends StatelessWidget {
   const SampleDetailPage({required this.sample, super.key});

@@ -15,7 +15,7 @@
 //
 
 import 'package:arcgis_maps_sdk_flutter_samples/common/api_key_manager.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 class AboutInfo extends StatefulWidget {

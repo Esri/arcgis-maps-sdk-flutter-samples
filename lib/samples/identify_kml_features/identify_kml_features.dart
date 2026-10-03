@@ -15,7 +15,7 @@
 
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:simple_html_css/simple_html_css.dart';
 
 class IdentifyKmlFeatures extends StatefulWidget {

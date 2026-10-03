@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 ///
 /// A widget that displays a circular progress indicator when [visible] is true.

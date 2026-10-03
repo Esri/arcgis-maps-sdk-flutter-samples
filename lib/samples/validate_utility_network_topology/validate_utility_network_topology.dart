@@ -18,7 +18,7 @@ import 'dart:math';
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/token_challenger_handler.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 class ValidateUtilityNetworkTopology extends StatefulWidget {
   const ValidateUtilityNetworkTopology({super.key});

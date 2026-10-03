@@ -18,8 +18,8 @@ import 'dart:async';
 
 import 'package:arcgis_maps_sdk_flutter_samples/models/sample.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/widgets/sample_info_popup_menu.dart';
-import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:material_ui/material_ui.dart';
 
 class SampleListView extends StatelessWidget {
   const SampleListView({required this.samples, super.key});
