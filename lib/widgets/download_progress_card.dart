@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// A reusable, dialog-like card widget for displaying download/job progress.
 class DownloadProgressCard extends StatelessWidget {

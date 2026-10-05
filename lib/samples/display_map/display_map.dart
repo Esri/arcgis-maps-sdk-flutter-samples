@@ -15,7 +15,7 @@
 //
 
 import 'package:arcgis_maps/arcgis_maps.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 class DisplayMap extends StatelessWidget {
   const DisplayMap({super.key});

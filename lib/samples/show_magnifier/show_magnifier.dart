@@ -15,7 +15,7 @@
 //
 
 import 'package:arcgis_maps/arcgis_maps.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 class ShowMagnifier extends StatelessWidget {
   const ShowMagnifier({super.key});

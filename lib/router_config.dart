@@ -24,9 +24,9 @@ import 'package:arcgis_maps_sdk_flutter_samples/widgets/readme_page.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/widgets/ripple_transition_page.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/widgets/sample_detail_page.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/widgets/sample_viewer_page.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
+import 'package:material_ui/material_ui.dart';
 
 GoRouter routerConfig(List<Sample> allSamples) {
   return GoRouter(

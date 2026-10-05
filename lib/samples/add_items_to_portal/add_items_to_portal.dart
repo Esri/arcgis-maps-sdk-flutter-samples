@@ -17,7 +17,7 @@ import 'dart:convert';
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:arcgis_maps_toolkit/arcgis_maps_toolkit.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 class AddItemsToPortal extends StatefulWidget {
   const AddItemsToPortal({super.key});
