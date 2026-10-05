@@ -23,8 +23,6 @@ import 'package:arcgis_maps_sdk_flutter_samples/models/offline_data.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/models/sample.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/router_config.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_localizations/flutter_localizations.dart'
-  hide GlobalMaterialLocalizations;
 import 'package:material_ui/material_ui.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -74,11 +72,7 @@ void main() async {
   runApp(
     MaterialApp.router(
       routerConfig: router,
-      localizationsDelegates: const [
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
+      localizationsDelegates: GlobalMaterialLocalizations.delegates,
       localeResolutionCallback: (locale, supportedLocales) {
         return locale;
       },
