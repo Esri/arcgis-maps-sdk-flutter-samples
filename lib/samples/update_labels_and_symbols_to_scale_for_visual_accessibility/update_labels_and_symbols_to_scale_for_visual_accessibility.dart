@@ -20,7 +20,8 @@ import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:material_ui/material_ui.dart';
 
-class UpdateLabelsAndSymbolsToScaleForVisualAccessibility extends StatefulWidget {
+class UpdateLabelsAndSymbolsToScaleForVisualAccessibility
+    extends StatefulWidget {
   const UpdateLabelsAndSymbolsToScaleForVisualAccessibility({super.key});
 
   @override
@@ -31,14 +32,21 @@ class UpdateLabelsAndSymbolsToScaleForVisualAccessibility extends StatefulWidget
 class _UpdateLabelsAndSymbolsToScaleForVisualAccessibilityState
     extends State<UpdateLabelsAndSymbolsToScaleForVisualAccessibility>
     with SampleStateSupport {
+  // Set the unscaled restaurant symbol size in device-independent pixels.
   static const _baseSymbolSize = 24.0;
 
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
+
+  // Store the layer and symbol used for restaurant rendering and interaction.
   FeatureLayer? _restaurantLayer;
   MultilayerPointSymbol? _restaurantSymbol;
+
+  // Track the current symbol size and label scaling preference.
   var _symbolSize = _baseSymbolSize;
   var _applyTextScaleToLabels = true;
+
+  // Track the loading and settings panel visibility states.
   var _loading = true;
   var _settingsVisible = false;
 
@@ -46,16 +54,21 @@ class _UpdateLabelsAndSymbolsToScaleForVisualAccessibilityState
   void didChangeDependencies() {
     super.didChangeDependencies();
 
-    // Scale the restaurant symbol whenever the system text scale changes.
-    final symbolSize = MediaQuery.textScalerOf(context).scale(_baseSymbolSize);
+    // Read the current system text scale and calculate the scaled symbol size.
+    final textScale = MediaQuery.textScalerOf(context).scale(1);
+    final symbolSize = _baseSymbolSize * textScale;
+
+    // Avoid updating the symbol when the calculated size has not changed.
     if (symbolSize == _symbolSize) return;
 
+    // Store the size and apply it to the loaded restaurant symbol.
     _symbolSize = symbolSize;
     _restaurantSymbol?.size = symbolSize;
   }
 
   @override
   Widget build(BuildContext context) {
+    // Build the map, accessibility options button, and loading indicator.
     return Scaffold(
       body: SafeArea(
         top: false,
@@ -93,11 +106,12 @@ class _UpdateLabelsAndSymbolsToScaleForVisualAccessibilityState
   }
 
   Widget _buildSettings(BuildContext context) {
-    // Build the legend, controls, and current scaling values.
+    // Get the loaded symbol and calculate values for the scaling summary.
     final symbol = _restaurantSymbol;
     final symbolScale = _symbolSize / _baseSymbolSize;
     final percent = (symbolScale * 100).round();
 
+    // Build the legend, controls, and current scaling values.
     return BottomSheetSettings(
       title: 'Accessibility Options',
       onCloseIconPressed: () => setState(() => _settingsVisible = false),
@@ -110,10 +124,12 @@ class _UpdateLabelsAndSymbolsToScaleForVisualAccessibilityState
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                // Explain how to exercise the sample.
                 const Text(
                   'Change the system text size to scale restaurant labels and symbols, then tap a restaurant to view its name and coordinates.',
                 ),
                 const Divider(height: 24),
+                // Show which mechanism scales labels and symbols.
                 Text(
                   'Scaling source',
                   style: Theme.of(context).textTheme.titleMedium,
@@ -129,15 +145,19 @@ class _UpdateLabelsAndSymbolsToScaleForVisualAccessibilityState
                 if (symbol != null)
                   ListTile(
                     contentPadding: EdgeInsets.zero,
-                    leading: SwatchImage(
-                      key: ValueKey(_symbolSize),
-                      symbol: symbol,
-                      width: _symbolSize,
-                      height: _symbolSize,
+                    leading: SizedBox.square(
+                      dimension: _symbolSize,
+                      child: SwatchImage(
+                        key: ValueKey(_symbolSize),
+                        symbol: symbol,
+                        width: _symbolSize,
+                        height: _symbolSize,
+                      ),
                     ),
                     title: const Text('Symbols: system text size'),
                   ),
                 const Divider(height: 24),
+                // Toggle GeoView system text scaling for feature labels.
                 CheckboxListTile(
                   contentPadding: EdgeInsets.zero,
                   title: const Text('Apply system text size to labels'),
@@ -146,6 +166,7 @@ class _UpdateLabelsAndSymbolsToScaleForVisualAccessibilityState
                     if (value != null) _setLabelTextScale(value);
                   },
                 ),
+                // Open Android accessibility settings or show the iOS path.
                 if (Platform.isAndroid)
                   OutlinedButton.icon(
                     icon: const Icon(Icons.settings_accessibility),
@@ -159,6 +180,7 @@ class _UpdateLabelsAndSymbolsToScaleForVisualAccessibilityState
                     'On iOS, open Settings > Accessibility > Display & Text Size > Larger Text.',
                   ),
                 const Divider(height: 24),
+                // Display the effective text scale and resulting symbol size.
                 Text(
                   'Current values',
                   style: Theme.of(context).textTheme.titleMedium,
@@ -199,34 +221,47 @@ class _UpdateLabelsAndSymbolsToScaleForVisualAccessibilityState
       final symbolStyle = SymbolStyle.withStyleName('Esri2DPointSymbolsStyle');
       final restaurantSymbol =
           await symbolStyle.getSymbol(['restaurant']) as MultilayerPointSymbol;
+
+      // Apply the current system text scale and retain the symbol for updates.
       restaurantSymbol.size = _symbolSize;
       _restaurantSymbol = restaurantSymbol;
 
-      // Create the restaurant feature layer and apply the symbol with a renderer.
+      // Create a feature table from the Redlands restaurants service.
       final featureTable = ServiceFeatureTable.withUri(
         Uri.parse(
           'https://services2.arcgis.com/ZQgQTuoyBrtmoGdP/arcgis/rest/services/redlands_food/FeatureServer/0',
         ),
       );
+
+      // Create the restaurant layer and apply the symbol with a renderer.
       final restaurantLayer = FeatureLayer.withFeatureTable(featureTable)
         ..renderer = SimpleRenderer(symbol: restaurantSymbol);
       _restaurantLayer = restaurantLayer;
+
+      // Add the restaurant layer to the map.
       map.operationalLayers.add(restaurantLayer);
 
-      // Load the layer before adding a label definition for its name field.
+      // Load the layer before configuring its labels.
       await restaurantLayer.load();
-      final textSymbol = TextSymbol(
-        color: const Color.fromARGB(255, 31, 35, 40),
-        size: 12,
-      )
-        ..haloColor = Colors.white
-        ..haloWidth = 2;
-      final labelDefinition = LabelDefinition(
-        labelExpression: SimpleLabelExpression(simpleExpression: '[name]'),
-        textSymbol: textSymbol,
-      )
-        ..deconflictionStrategy = LabelDeconflictionStrategy.none
-        ..placement = LabelingPlacement.pointAboveCenter;
+
+      // Create a text symbol that remains legible over the basemap.
+      final textSymbol =
+          TextSymbol(color: const Color.fromARGB(255, 31, 35, 40), size: 12)
+            ..haloColor = Colors.white
+            ..haloWidth = 2;
+
+      // Label every restaurant with its name above the point symbol.
+      final labelDefinition =
+          LabelDefinition(
+              labelExpression: SimpleLabelExpression(
+                simpleExpression: '[name]',
+              ),
+              textSymbol: textSymbol,
+            )
+            ..deconflictionStrategy = LabelDeconflictionStrategy.none
+            ..placement = LabelingPlacement.pointAboveCenter;
+
+      // Add the label definition and enable restaurant labels.
       restaurantLayer.labelDefinitions.add(labelDefinition);
       restaurantLayer.labelsEnabled = true;
     } on Exception catch (exception) {
@@ -247,6 +282,7 @@ class _UpdateLabelsAndSymbolsToScaleForVisualAccessibilityState
   }
 
   Future<void> _onTap(Offset screenPoint) async {
+    // Stop when the restaurant layer is not ready for identify operations.
     final restaurantLayer = _restaurantLayer;
     if (_loading || restaurantLayer == null) return;
 
@@ -263,6 +299,7 @@ class _UpdateLabelsAndSymbolsToScaleForVisualAccessibilityState
       );
       if (!mounted || identifyResult.error != null) return;
 
+      // Get the first identified restaurant and its point geometry.
       final restaurant = identifyResult.geoElements
           .whereType<ArcGISFeature>()
           .firstOrNull;
@@ -270,15 +307,13 @@ class _UpdateLabelsAndSymbolsToScaleForVisualAccessibilityState
       if (restaurant == null || restaurantLocation is! ArcGISPoint) return;
 
       // Project the restaurant location to WGS 84 for the callout coordinates.
-      final wgs84Location =
-          GeometryEngine.project(
-                restaurantLocation,
-                outputSpatialReference: SpatialReference.wgs84,
-              )
-              as ArcGISPoint;
-      final restaurantName = restaurant.attributes['name']
-          ?.toString()
-          .trim();
+      final wgs84Location = GeometryEngine.project(
+        restaurantLocation,
+        outputSpatialReference: SpatialReference.wgs84,
+      ) as ArcGISPoint;
+
+      // Read the restaurant name and format its WGS 84 coordinates.
+      final restaurantName = restaurant.attributes['name']?.toString().trim();
       final detail =
           'Latitude: ${wgs84Location.y.toStringAsFixed(5)}\n'
           'Longitude: ${wgs84Location.x.toStringAsFixed(5)}';

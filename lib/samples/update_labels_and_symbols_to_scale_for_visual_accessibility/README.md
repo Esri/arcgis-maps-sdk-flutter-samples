@@ -22,7 +22,7 @@ Tap a restaurant to show its name and WGS 84 coordinates in a callout. Tap elsew
 2. Load the `restaurant` symbol from `Esri2DPointSymbolsStyle` and apply it with a `SimpleRenderer`.
 3. Load the feature layer, then add a `LabelDefinition` with a `TextSymbol`.
 4. To scale labels, enable `GeoViewController.useSystemTextScale`.
-5. To scale symbols, read `MediaQuery.textScaler` in `didChangeDependencies()`. Scale `MultilayerPointSymbol.size` with the current system text scale.
+5. To scale symbols, read the current text scale with `MediaQuery.textScalerOf()` in `didChangeDependencies()`. Multiply the base `MultilayerPointSymbol.size` by the system text-scale factor.
 6. Use the checkbox to toggle system text scaling for labels without changing symbol scaling.
 7. Identify a restaurant with `identifyLayer()` and show its name and WGS 84 coordinates in a callout.
 
@@ -38,7 +38,7 @@ The restaurant symbol comes from [Esri's 2D point symbol web style](https://www.
 
 ## Additional information
 
-`GeoViewController.useSystemTextScale` controls system text scaling for feature labels. Flutter's `MediaQuery.textScaler` supplies the current text scaling used to resize the restaurant symbols.
+`GeoViewController.useSystemTextScale` controls system text scaling for feature labels. Flutter's `MediaQuery.textScalerOf()` supplies the current text scaling used to resize the restaurant symbols.
 
 ## Tags
 
