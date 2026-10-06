@@ -64,8 +64,8 @@ class _AnalyzeTerrainSuitabilityWithSlopeAndAspectState
 
   // Store the overlay and analyses used to display the results.
   late final AnalysisOverlay _analysisOverlay;
-  FieldAnalysis? _shelteredSlopesAnalysis;
-  FieldAnalysis? _exposedSlopesAnalysis;
+  late final FieldAnalysis _shelteredSlopesAnalysis;
+  late final FieldAnalysis _exposedSlopesAnalysis;
 
   // Listen for changes to the analyses displayed in the map view.
   StreamSubscription<({Analysis analysis, AnalysisViewState viewState})>?
@@ -167,6 +167,26 @@ class _AnalyzeTerrainSuitabilityWithSlopeAndAspectState
       _analysisOverlay = AnalysisOverlay();
       _mapViewController.analysisOverlays.add(_analysisOverlay);
 
+      // Create both scenario analyses once during initialization.
+      _shelteredSlopesAnalysis = _createScenarioAnalysis(
+        slopeMin: 0,
+        slopeMax: 20,
+        aspectStart: 112.5,
+        aspectEnd: 247.5,
+        elevationMin: 0,
+        elevationMax: 300,
+        color: Colors.green,
+      );
+      _exposedSlopesAnalysis = _createScenarioAnalysis(
+        slopeMin: 20,
+        slopeMax: 80,
+        aspectStart: 202.5,
+        aspectEnd: 67.5,
+        elevationMin: 300,
+        elevationMax: 850,
+        color: Colors.purple,
+      );
+
       // Listen for updates to the active analysis.
       _analysisViewStateSubscription = _mapViewController
           .onAnalysisViewStateChanged
@@ -230,7 +250,7 @@ class _AnalyzeTerrainSuitabilityWithSlopeAndAspectState
   }
 
   // Return the analysis for the selected scenario.
-  FieldAnalysis? get _activeScenarioAnalysis {
+  FieldAnalysis get _activeScenarioAnalysis {
     return switch (_selectedScenario) {
       _SiteScenario.sheltered => _shelteredSlopesAnalysis,
       _SiteScenario.exposed => _exposedSlopesAnalysis,
@@ -248,30 +268,10 @@ class _AnalyzeTerrainSuitabilityWithSlopeAndAspectState
   }
 
   void _applyScenarioVisibility() {
-    // Create both analyses once so later selections only change visibility.
-    _shelteredSlopesAnalysis ??= _createScenarioAnalysis(
-      slopeMin: 0,
-      slopeMax: 20,
-      aspectStart: 112.5,
-      aspectEnd: 247.5,
-      elevationMin: 0,
-      elevationMax: 300,
-      color: Colors.green,
-    );
-    _exposedSlopesAnalysis ??= _createScenarioAnalysis(
-      slopeMin: 20,
-      slopeMax: 80,
-      aspectStart: 202.5,
-      aspectEnd: 67.5,
-      elevationMin: 300,
-      elevationMax: 850,
-      color: Colors.purple,
-    );
-
     // Keep only the selected scenario visible.
-    _shelteredSlopesAnalysis!.isVisible =
+    _shelteredSlopesAnalysis.isVisible =
         _selectedScenario == _SiteScenario.sheltered;
-    _exposedSlopesAnalysis!.isVisible =
+    _exposedSlopesAnalysis.isVisible =
         _selectedScenario == _SiteScenario.exposed;
   }
 
