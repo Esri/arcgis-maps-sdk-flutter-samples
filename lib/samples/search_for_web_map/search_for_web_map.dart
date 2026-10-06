@@ -28,19 +28,32 @@ class SearchForWebMap extends StatefulWidget {
 
 class _SearchForWebMapState extends State<SearchForWebMap>
     with SampleStateSupport {
+  // The portal to search for web maps.
   final _portal = Portal.arcGISOnline();
-  final _searchController = TextEditingController();
-  final _scrollController = ScrollController();
+
+  // The current set of search results.
   final _portalItems = <PortalItem>[];
+
+  // The query parameters for the next page of results.
   PortalQueryParameters? _nextQueryParameters;
+
+  // The current search version, used to discard outdated search results.
   var _searchVersion = 0;
+
+  // Whether results are currently being loaded.
   var _isLoadingMore = false;
+
+  // The controller for the search field.
+  final _searchController = TextEditingController();
+
+  // The controller for the scroll area of results, used to detect when the user scrolls near the end.
+  final _scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
 
-    // Watch the list position so the next page can load as needed.
+    // Watch the list position so the next page can load when the list is scrolled near the end.
     _scrollController.addListener(_loadNextPageWhenNearEnd);
   }
 
@@ -57,7 +70,6 @@ class _SearchForWebMapState extends State<SearchForWebMap>
 
   @override
   Widget build(BuildContext context) {
-    // Build the search field and the portal result list.
     return Scaffold(
       body: SafeArea(
         bottom: false,
@@ -65,6 +77,7 @@ class _SearchForWebMapState extends State<SearchForWebMap>
           children: [
             Padding(
               padding: const EdgeInsets.all(8),
+              // A search field for entering queries.
               child: TextField(
                 controller: _searchController,
                 textInputAction: .search,
@@ -85,7 +98,9 @@ class _SearchForWebMapState extends State<SearchForWebMap>
                 onChanged: _search,
               ),
             ),
+            // An indicator that results are being loaded.
             if (_isLoadingMore) const LinearProgressIndicator(),
+            // The list of search results.
             Expanded(child: _buildResults()),
           ],
         ),
@@ -94,18 +109,19 @@ class _SearchForWebMapState extends State<SearchForWebMap>
   }
 
   Widget _buildResults() {
-    // Show a useful empty state before a search begins.
+    // Show an empty state before a search begins.
     if (_searchController.text.trim().isEmpty) {
       return const Center(child: Text('Search ArcGIS Online for web maps.'));
     }
 
-    // Explain when the current query returns no portal items.
+    // Show a message when the query returns no portal items.
     if (!_isLoadingMore && _portalItems.isEmpty) {
       return const Center(child: Text('No results.'));
     }
 
-    // Build rows and load another page as the list approaches its end.
+    // Build a list of search results.
     return ListView.separated(
+      // The scroll controller is used to detect when the user scrolls near the end of the list.
       controller: _scrollController,
       itemCount: _portalItems.length,
       itemBuilder: (context, index) =>
@@ -115,10 +131,11 @@ class _SearchForWebMapState extends State<SearchForWebMap>
   }
 
   Widget _buildPortalItemRow(BuildContext context, PortalItem item) {
-    // Present the thumbnail, title, update date, and item owner together.
     final thumbnailUri = item.thumbnail?.uri;
 
+    // Present the thumbnail, title, update date, and item owner of a single item.
     return ListTile(
+      // The item thumbnail (if available).
       leading: SizedBox(
         width: 80,
         height: 60,
@@ -130,12 +147,15 @@ class _SearchForWebMapState extends State<SearchForWebMap>
                 errorBuilder: (_, _, _) => const Icon(Icons.broken_image),
               ),
       ),
+      // The item title.
       title: Text(item.title, maxLines: 2, overflow: .ellipsis),
+      // The last-modified date and owner.
       subtitle: Text(
         '${item.modified?.toString().split(' ').first ?? ''} | ${item.owner}',
         maxLines: 1,
         overflow: .ellipsis,
       ),
+      // When the user taps the item, load the web map in a new page.
       onTap: () => Navigator.of(
         context,
       ).push(MaterialPageRoute<void>(builder: (_) => _WebMapPage(item: item))),
@@ -169,6 +189,7 @@ class _SearchForWebMapState extends State<SearchForWebMap>
     // Return if a page is already being loaded.
     if (_isLoadingMore) return;
 
+    // Return if there is no query.
     if (_nextQueryParameters == null) return;
 
     setState(() => _isLoadingMore = true);
