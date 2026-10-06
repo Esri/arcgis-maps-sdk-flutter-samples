@@ -186,7 +186,7 @@ class _UpdateLabelsAndSymbolsToScaleForVisualAccessibilityState
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
                 const SizedBox(height: 8),
-                Text('System text size: $percent%'),
+                Text('Symbol scale: $percent%'),
                 Text(
                   _applyTextScaleToLabels
                       ? 'Labels: scaled by GeoViewController.useSystemTextScale'
