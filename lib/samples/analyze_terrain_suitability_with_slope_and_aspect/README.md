@@ -10,7 +10,7 @@ Terrain suitability analysis is a common way to narrow a larger elevation surfac
 
 ## How to use the sample
 
-When the sample opens, the map shows the results of a preconfigured terrain suitability analysis which finds southward facing lowland slopes on the Isle of Arran, Scotland. The areas matching the criteria are rendered in green, and those not, in white. Open the settings panel to choose another preconfigured scenario, that of a west to north facing slope in upland terrains. Areas matching this criteria are rendered in purple.
+When the sample opens, the map shows the results of a preconfigured terrain suitability analysis which finds southward facing lowland slopes on the Isle of Arran, Scotland. The areas matching the criteria are rendered in green, and those not, in white. Open the settings panel to choose another preconfigured scenario, that of a west to north facing slope in upland terrains. Areas matching these criteria are rendered in purple.
 
 ## How it works
 
