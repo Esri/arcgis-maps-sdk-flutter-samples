@@ -189,7 +189,7 @@ class _UpdateLabelsAndSymbolsToScaleForVisualAccessibilityState
                 Text('System text size: $percent%'),
                 Text(
                   _applyTextScaleToLabels
-                      ? 'Labels: scaled by GeoView.useSystemTextScale'
+                      ? 'Labels: scaled by GeoViewController.useSystemTextScale'
                       : 'Labels: system text scaling is disabled',
                 ),
                 Text(
