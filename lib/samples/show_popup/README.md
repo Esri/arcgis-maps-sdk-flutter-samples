@@ -27,7 +27,7 @@ Tap on the features to prompt a popup that displays information about the featur
 
 ## About the data
 
-This sample uses a [web map](https://www.arcgis.com/home/item.html?id=fb788308ea2e4d8682b9c05ef641f273) that displays reported incidents in San Francisco.
+The [California Peaks layer](https://arcgis.com/home/item.html?id=f7a011555feb423397601a47a56665d8) contains point features for every mountain peak in California with an elevation that exceeds 14,000 feet (4,267.2 meters) above mean sea level. Each feature contains a predefined popup with information about its associated peak, including an image, chart, and feature table data.
 
 ## Tags
 

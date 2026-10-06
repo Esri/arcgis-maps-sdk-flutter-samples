@@ -53,11 +53,11 @@ class _ShowPopupState extends State<ShowPopup> with SampleStateSupport {
   }
 
   Future<void> onMapViewReady() async {
-    // Create a map with the San Francisco incidents web map portal item.
+    // Create a map with the California Peaks web map portal item.
     final map = ArcGISMap.withItem(
       PortalItem.withPortalAndItemId(
         portal: Portal.arcGISOnline(),
-        itemId: 'fb788308ea2e4d8682b9c05ef641f273',
+        itemId: '9f3a674e998f461580006e626611f9ad',
       ),
     );
 
