@@ -43,6 +43,9 @@ class _AnalyzeTerrainSuitabilityWithSlopeAndAspectState
   // A flag for when the map view is ready and controls can be used.
   var _ready = false;
 
+  // Track whether the sample is initializing.
+  var _initializing = true;
+
   // Track whether the active analysis is updating.
   var _showAnalysisSpinner = false;
 
@@ -112,8 +115,8 @@ class _AnalyzeTerrainSuitabilityWithSlopeAndAspectState
                 ),
               ],
             ),
-            // Display a progress indicator and prevent interaction until state is ready.
-            LoadingIndicator(visible: !_ready || _showAnalysisSpinner),
+            // Display a progress indicator while initialization or analysis is in progress.
+            LoadingIndicator(visible: _initializing || _showAnalysisSpinner),
           ],
         ),
       ),
@@ -122,51 +125,65 @@ class _AnalyzeTerrainSuitabilityWithSlopeAndAspectState
   }
 
   Future<void> onMapViewReady() async {
-    // Create a blank map in the conformal UTM30N spatial reference.
-    final utm30N = SpatialReference(wkid: 32630);
-    final map = ArcGISMap(spatialReference: utm30N);
-    _mapViewController.arcGISMap = map;
+    try {
+      // Create a blank map in the conformal UTM30N spatial reference.
+      final utm30N = SpatialReference(wkid: 32630);
+      final map = ArcGISMap(spatialReference: utm30N);
+      _mapViewController.arcGISMap = map;
 
-    // Create a continuous field and project the elevation raster to UTM30N.
-    final elevationField = await ContinuousField.createFromFiles(
-      filePaths: [_elevationFile.uri],
-      band: 0,
-      spatialReference: utm30N,
-    );
+      // Create a continuous field and project the elevation raster to UTM30N.
+      final elevationField = await ContinuousField.createFromFiles(
+        filePaths: [_elevationFile.uri],
+        band: 0,
+        spatialReference: utm30N,
+      );
 
-    // Derive elevation, slope, and aspect field functions from the raster.
-    _elevationFunction = ContinuousFieldFunction.create(elevationField);
-    _slopeFunction = _elevationFunction.slope();
-    _aspectFunction = _elevationFunction.aspect();
+      // Derive elevation, slope, and aspect field functions from the raster.
+      _elevationFunction = ContinuousFieldFunction.create(elevationField);
+      _slopeFunction = _elevationFunction.slope();
+      _aspectFunction = _elevationFunction.aspect();
 
-    // Select only land at or above sea level.
-    _aboveSeaLevelSelection = _elevationFunction.isGreaterThanOrEqualToValue(0);
+      // Select only land at or above sea level.
+      _aboveSeaLevelSelection = _elevationFunction.isGreaterThanOrEqualToValue(
+        0,
+      );
 
-    // Add an analysis overlay to display the scenario results.
-    _analysisOverlay = AnalysisOverlay();
-    _mapViewController.analysisOverlays.add(_analysisOverlay);
+      // Add an analysis overlay to display the scenario results.
+      _analysisOverlay = AnalysisOverlay();
+      _mapViewController.analysisOverlays.add(_analysisOverlay);
 
-    // Listen for updates to the active analysis.
-    _mapViewController.onAnalysisViewStateChanged.listen((event) {
-      if (event.analysis != _activeScenarioAnalysis || !mounted) return;
+      // Listen for updates to the active analysis.
+      _mapViewController.onAnalysisViewStateChanged.listen((event) {
+        if (event.analysis != _activeScenarioAnalysis || !mounted) return;
 
-      setState(() {
-        _showAnalysisSpinner =
-            event.viewState.status == AnalysisViewStatus.updating;
+        setState(() {
+          _showAnalysisSpinner =
+              event.viewState.status == AnalysisViewStatus.updating;
+        });
       });
-    });
 
-    // Build the analyses and show the default scenario.
-    _applyScenarioVisibility();
+      // Build the analyses and show the default scenario.
+      _applyScenarioVisibility();
 
-    // Center the map on the projected elevation data.
-    await _mapViewController.setViewpointCenter(
-      elevationField.extent.center,
-      scale: 200000,
-    );
+      // Center the map on the projected elevation data.
+      await _mapViewController.setViewpointCenter(
+        elevationField.extent.center,
+        scale: 200000,
+      );
 
-    // Set the ready state variable to true to enable the sample UI.
-    if (mounted) setState(() => _ready = true);
+      // Enable the sample UI and dismiss the loading indicator.
+      setState(() {
+        _ready = true;
+        _initializing = false;
+      });
+    } on Exception catch (e) {
+      // Dismiss the loading indicator without enabling controls.
+      setState(() {
+        _initializing = false;
+        _showAnalysisSpinner = false;
+      });
+      showExceptionDialog('Failed to initialize terrain analysis', e);
+    }
   }
 
   // Return the analysis for the selected scenario.
