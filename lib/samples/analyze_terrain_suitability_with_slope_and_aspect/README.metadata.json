@@ -1,6 +1,6 @@
 {
     "category": "Analysis",
-    "description": "Analyze terrain suitability from an elevation raster by deriving slope and aspect.",
+    "description": "Analyze terrain suitability with an elevation raster by deriving slope and aspect.",
     "ignore": false,
     "images": [
         "analyze_terrain_suitability_with_slope_and_aspect.png"
