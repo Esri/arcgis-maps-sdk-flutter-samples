@@ -50,6 +50,9 @@ class _AnalyzeTerrainSuitabilityWithSlopeAndAspectState
   // Track whether the active analysis is updating.
   var _showAnalysisSpinner = false;
 
+  // Track whether the current analysis error has been reported.
+  var _analysisErrorReported = false;
+
   // Store the selected terrain suitability scenario.
   var _selectedScenario = _SiteScenario.sheltered;
 
@@ -170,14 +173,31 @@ class _AnalyzeTerrainSuitabilityWithSlopeAndAspectState
           .listen((event) {
             if (event.analysis != _activeScenarioAnalysis || !mounted) return;
 
-            setState(() {
-              _showAnalysisSpinner =
-                  event.viewState.status == AnalysisViewStatus.updating;
-            });
-          });
+            final status = event.viewState.status;
+            if (status == AnalysisViewStatus.updating) {
+              _analysisErrorReported = false;
+            }
 
-      // Build the analyses and show the default scenario.
-      _applyScenarioVisibility();
+            setState(() {
+              _showAnalysisSpinner = status == AnalysisViewStatus.updating;
+            });
+
+            if (status == AnalysisViewStatus.error && !_analysisErrorReported) {
+              _analysisErrorReported = true;
+              final error = event.viewState.error;
+              if (error != null) {
+                showExceptionDialog(
+                  'Failed to display terrain analysis',
+                  error,
+                );
+              } else {
+                showMessageDialog(
+                  'Failed to display terrain analysis.',
+                  title: 'Error',
+                );
+              }
+            }
+          });
 
       // Center the map on the projected elevation data.
       await _mapViewController.setViewpointCenter(
@@ -185,6 +205,9 @@ class _AnalyzeTerrainSuitabilityWithSlopeAndAspectState
         scale: 200000,
       );
       if (!mounted) return;
+
+      // Build the analyses and show the default scenario at the initial viewpoint.
+      _applyScenarioVisibility();
 
       // Enable the sample UI and dismiss the loading indicator.
       setState(() {
@@ -216,7 +239,10 @@ class _AnalyzeTerrainSuitabilityWithSlopeAndAspectState
 
   void _selectScenario(_SiteScenario scenario) {
     // Update the selected scenario and show its analysis.
-    setState(() => _selectedScenario = scenario);
+    setState(() {
+      _selectedScenario = scenario;
+      _analysisErrorReported = false;
+    });
     _applyScenarioVisibility();
   }
 
