@@ -31,7 +31,7 @@ class _SearchForWebMapState extends State<SearchForWebMap>
   final _portal = Portal.arcGISOnline();
   final _searchController = TextEditingController();
   final _scrollController = ScrollController();
-  final List<PortalItem> _portalItems = [];
+  final _portalItems = <PortalItem>[];
   PortalQueryParameters? _nextQueryParameters;
   var _searchVersion = 0;
   var _isLoadingMore = false;
@@ -64,28 +64,25 @@ class _SearchForWebMapState extends State<SearchForWebMap>
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+              padding: const EdgeInsets.all(8),
               child: TextField(
                 controller: _searchController,
-                textInputAction: TextInputAction.search,
+                textInputAction: .search,
                 autocorrect: false,
                 decoration: InputDecoration(
-                  labelText: 'Search web maps',
-                  prefixIcon: const Icon(Icons.search),
+                  hintText: 'Search web maps...',
                   suffixIcon: _searchController.text.isEmpty
-                      ? null
+                      ? const Icon(Icons.search)
                       : IconButton(
-                          tooltip: 'Clear search',
                           onPressed: () {
                             _searchController.clear();
                             _search('').ignore();
                           },
-                          icon: const Icon(Icons.clear),
+                          icon: const Icon(Icons.cancel),
                         ),
                   border: const OutlineInputBorder(),
                 ),
                 onChanged: _search,
-                onSubmitted: _search,
               ),
             ),
             if (_isLoadingMore) const LinearProgressIndicator(),
@@ -98,7 +95,7 @@ class _SearchForWebMapState extends State<SearchForWebMap>
 
   Widget _buildResults() {
     // Show a useful empty state before a search begins.
-    if (_searchController.text.trim().isEmpty && _portalItems.isEmpty) {
+    if (_searchController.text.trim().isEmpty) {
       return const Center(child: Text('Search ArcGIS Online for web maps.'));
     }
 
@@ -149,20 +146,51 @@ class _SearchForWebMapState extends State<SearchForWebMap>
     // Invalidate older requests.
     ++_searchVersion;
 
-    final searchString = query.trim();
+    // Clear the current search state.
     setState(() {
       _portalItems.clear();
       _nextQueryParameters = null;
       _isLoadingMore = false;
     });
-    if (searchString.isEmpty) return;
 
+    // Prepare the initial query parameters.
+    final searchString = query.trim();
+    if (searchString.isEmpty) return;
     _nextQueryParameters = PortalQueryParameters.forItems(
-      types: const [PortalItemType.webMap],
+      types: const [.webMap],
       searchString: searchString,
     );
 
+    // Load the first page.
     await _loadNextPage();
+  }
+
+  Future<void> _loadNextPage() async {
+    // Return if a page is already being loaded.
+    if (_isLoadingMore) return;
+
+    if (_nextQueryParameters == null) return;
+
+    setState(() => _isLoadingMore = true);
+
+    final requestVersion = _searchVersion;
+    try {
+      final resultSet = await _portal.findItems(
+        parameters: _nextQueryParameters!,
+      );
+      if (!mounted || requestVersion != _searchVersion) return;
+
+      setState(() {
+        _portalItems.addAll(resultSet.results);
+        _nextQueryParameters = resultSet.nextQueryParameters;
+        _isLoadingMore = false;
+      });
+    } on Exception catch (error) {
+      if (!mounted || requestVersion != _searchVersion) return;
+
+      setState(() => _isLoadingMore = false);
+      showExceptionDialog('Error searching for web maps', error);
+    }
   }
 
   void _loadNextPageWhenNearEnd() {
@@ -175,36 +203,6 @@ class _SearchForWebMapState extends State<SearchForWebMap>
     // Fetch another page when the user scrolls close to the final result.
     if (_scrollController.position.extentAfter < 300) {
       _loadNextPage().ignore();
-    }
-  }
-
-  Future<void> _loadNextPage() async {
-    // Return if a page is already being loaded.
-    if (_isLoadingMore) return;
-
-    // Reuse the portal-provided parameters to request the next result page.
-    final queryParameters = _nextQueryParameters;
-    if (queryParameters == null) return;
-
-    final requestVersion = _searchVersion;
-    setState(() => _isLoadingMore = true);
-
-    // Append only results that still belong to the active search.
-    try {
-      final resultSet = await _portal.findItems(parameters: queryParameters);
-      if (!mounted || requestVersion != _searchVersion) return;
-
-      setState(() {
-        _portalItems.addAll(resultSet.results);
-        _nextQueryParameters = resultSet.nextQueryParameters;
-        _isLoadingMore = false;
-      });
-    } on Exception catch (error) {
-      if (!mounted || requestVersion != _searchVersion) return;
-
-      showExceptionDialog('Error searching for web maps', error);
-
-      setState(() => _isLoadingMore = false);
     }
   }
 }
