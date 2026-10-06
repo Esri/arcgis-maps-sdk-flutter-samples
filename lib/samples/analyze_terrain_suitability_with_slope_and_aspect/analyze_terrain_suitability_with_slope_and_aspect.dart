@@ -13,6 +13,7 @@
 // limitations under the License.
 //
 
+import 'dart:async';
 import 'dart:io';
 
 import 'package:arcgis_maps/arcgis_maps.dart';
@@ -63,6 +64,10 @@ class _AnalyzeTerrainSuitabilityWithSlopeAndAspectState
   FieldAnalysis? _shelteredSlopesAnalysis;
   FieldAnalysis? _exposedSlopesAnalysis;
 
+  // Listen for changes to the analyses displayed in the map view.
+  StreamSubscription<({Analysis analysis, AnalysisViewState viewState})>?
+  _analysisViewStateSubscription;
+
   @override
   void initState() {
     // Get the downloaded elevation data provided by the sample route.
@@ -70,6 +75,12 @@ class _AnalyzeTerrainSuitabilityWithSlopeAndAspectState
     _elevationFile = File(filePaths.first);
 
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _analysisViewStateSubscription?.cancel().ignore();
+    super.dispose();
   }
 
   @override
@@ -137,6 +148,7 @@ class _AnalyzeTerrainSuitabilityWithSlopeAndAspectState
         band: 0,
         spatialReference: utm30N,
       );
+      if (!mounted) return;
 
       // Derive elevation, slope, and aspect field functions from the raster.
       _elevationFunction = ContinuousFieldFunction.create(elevationField);
@@ -153,14 +165,16 @@ class _AnalyzeTerrainSuitabilityWithSlopeAndAspectState
       _mapViewController.analysisOverlays.add(_analysisOverlay);
 
       // Listen for updates to the active analysis.
-      _mapViewController.onAnalysisViewStateChanged.listen((event) {
-        if (event.analysis != _activeScenarioAnalysis || !mounted) return;
+      _analysisViewStateSubscription = _mapViewController
+          .onAnalysisViewStateChanged
+          .listen((event) {
+            if (event.analysis != _activeScenarioAnalysis || !mounted) return;
 
-        setState(() {
-          _showAnalysisSpinner =
-              event.viewState.status == AnalysisViewStatus.updating;
-        });
-      });
+            setState(() {
+              _showAnalysisSpinner =
+                  event.viewState.status == AnalysisViewStatus.updating;
+            });
+          });
 
       // Build the analyses and show the default scenario.
       _applyScenarioVisibility();
@@ -170,6 +184,7 @@ class _AnalyzeTerrainSuitabilityWithSlopeAndAspectState
         elevationField.extent.center,
         scale: 200000,
       );
+      if (!mounted) return;
 
       // Enable the sample UI and dismiss the loading indicator.
       setState(() {
@@ -177,6 +192,11 @@ class _AnalyzeTerrainSuitabilityWithSlopeAndAspectState
         _initializing = false;
       });
     } on Exception catch (e) {
+      if (!mounted) return;
+
+      _analysisViewStateSubscription?.cancel().ignore();
+      _analysisViewStateSubscription = null;
+
       // Dismiss the loading indicator without enabling controls.
       setState(() {
         _initializing = false;
