@@ -136,9 +136,8 @@ class _SearchForWebMapState extends State<SearchForWebMap>
     // Present the thumbnail, title, update date, and item owner of a single item.
     return ListTile(
       // The item thumbnail (if available).
-      leading: SizedBox(
-        width: 80,
-        height: 60,
+      leading: SizedBox.square(
+        dimension: 80,
         child: thumbnailUri == null
             ? const Icon(Icons.map_outlined)
             : Image.network(
