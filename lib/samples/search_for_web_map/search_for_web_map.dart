@@ -193,14 +193,15 @@ class _SearchForWebMapState extends State<SearchForWebMap>
     if (_nextQueryParameters == null) return;
 
     setState(() => _isLoadingMore = true);
-
     final requestVersion = _searchVersion;
     try {
+      // Run the query to find matching items in the portal.
       final resultSet = await _portal.findItems(
         parameters: _nextQueryParameters!,
       );
       if (!mounted || requestVersion != _searchVersion) return;
 
+      // Update the UI with the new search results.
       setState(() {
         _portalItems.addAll(resultSet.results);
         _nextQueryParameters = resultSet.nextQueryParameters;
@@ -209,19 +210,21 @@ class _SearchForWebMapState extends State<SearchForWebMap>
     } on Exception catch (error) {
       if (!mounted || requestVersion != _searchVersion) return;
 
+      // An error occurred while performing the search.
       setState(() => _isLoadingMore = false);
       showExceptionDialog('Error searching for web maps', error);
     }
   }
 
   void _loadNextPageWhenNearEnd() {
+    // Check if more results should be loaded based on the scroll position.
     if (!_scrollController.hasClients ||
         _isLoadingMore ||
         _nextQueryParameters == null) {
       return;
     }
 
-    // Fetch another page when the user scrolls close to the final result.
+    // Fetch another page when the user scrolls close to the bottom of the list.
     if (_scrollController.position.extentAfter < 300) {
       _loadNextPage().ignore();
     }
@@ -237,7 +240,9 @@ class _WebMapPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // Show the item title in the app bar.
       appBar: AppBar(title: Text(item.title)),
+      // Load the web map from the selected portal item.
       body: ArcGISMapView(
         controllerProvider: () =>
             ArcGISMapView.createController()
