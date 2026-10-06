@@ -22,7 +22,7 @@ Tap a restaurant to show its name and WGS 84 coordinates in a callout. Tap elsew
 2. Load the `restaurant` symbol from `Esri2DPointSymbolsStyle` and apply it with a `SimpleRenderer`.
 3. Load the feature layer, then add a `LabelDefinition` with a `TextSymbol`.
 4. To scale labels, enable `GeoViewController.useSystemTextScale`.
-5. To scale symbols, read the current text scale with `MediaQuery.textScalerOf()` in `didChangeDependencies()`. Multiply the base `MultilayerPointSymbol.size` by the system text-scale factor.
+5. To scale symbols, read the current text scaler with `MediaQuery.textScalerOf()` in `didChangeDependencies()` and call `scale()` with the base `MultilayerPointSymbol.size`.
 6. Use the checkbox to toggle system text scaling for labels without changing symbol scaling.
 7. Identify a restaurant with `identifyLayer()` and show its name and WGS 84 coordinates in a callout.
 
