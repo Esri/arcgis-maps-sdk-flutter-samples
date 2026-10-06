@@ -241,6 +241,7 @@ class _AnalyzeTerrainSuitabilityWithSlopeAndAspectState
     // Update the selected scenario and show its analysis.
     setState(() {
       _selectedScenario = scenario;
+      _showAnalysisSpinner = false;
       _analysisErrorReported = false;
     });
     _applyScenarioVisibility();
