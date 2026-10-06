@@ -194,14 +194,17 @@ class _AnalyzeTerrainSuitabilityWithSlopeAndAspectState
             if (event.analysis != _activeScenarioAnalysis || !mounted) return;
 
             final status = event.viewState.status;
+            // Allow a new error to be reported when the analysis starts updating.
             if (status == AnalysisViewStatus.updating) {
               _analysisErrorReported = false;
             }
 
+            // Show a busy indicator while the analysis is in progress.
             setState(() {
               _showAnalysisSpinner = status == AnalysisViewStatus.updating;
             });
 
+            // Display a message once if the analysis reports an error.
             if (status == AnalysisViewStatus.error && !_analysisErrorReported) {
               _analysisErrorReported = true;
               final error = event.viewState.error;
