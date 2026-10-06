@@ -37,6 +37,8 @@ dependencies:
   xml: ^7.0.1
 
 dependency_overrides:
+  # analyzer 14.5.0 breaks build_runner 2.16.1, so pin it back to 14.4.0
+  analyzer: 14.4.0
   # simple_html_css 5.0.0 requires xml ^6.5.0, but we can force it to 7
   xml: ^7.0.1
 
