@@ -46,9 +46,6 @@ class _AnalyzeTerrainSuitabilityWithSlopeAndAspectState
   // Track whether the active analysis is updating.
   var _showAnalysisSpinner = false;
 
-  // Store an error encountered while displaying the active analysis.
-  String? _analysisError;
-
   // Store the selected terrain suitability scenario.
   var _selectedScenario = _SiteScenario.sheltered;
 
@@ -153,15 +150,7 @@ class _AnalyzeTerrainSuitabilityWithSlopeAndAspectState
     _mapViewController.onAnalysisViewStateChanged.listen((event) {
       if (event.analysis != _activeScenarioAnalysis || !mounted) return;
 
-      if (event.viewState.error case final error?) {
-        debugPrint('Field analysis error: $error');
-      }
-
       setState(() {
-        _analysisError = event.viewState.error == null
-            ? null
-            : 'Unable to display the terrain analysis. '
-                  'An Analysis extension license is required.';
         _showAnalysisSpinner =
             event.viewState.status == AnalysisViewStatus.updating;
       });
@@ -190,10 +179,7 @@ class _AnalyzeTerrainSuitabilityWithSlopeAndAspectState
 
   void _selectScenario(_SiteScenario scenario) {
     // Update the selected scenario and show its analysis.
-    setState(() {
-      _selectedScenario = scenario;
-      _showAnalysisSpinner = true;
-    });
+    setState(() => _selectedScenario = scenario);
     _applyScenarioVisibility();
   }
 
