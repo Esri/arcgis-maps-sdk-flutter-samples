@@ -55,8 +55,9 @@ class _UpdateLabelsAndSymbolsToScaleForVisualAccessibilityState
     super.didChangeDependencies();
 
     // Read the current system text scale and calculate the scaled symbol size.
-    final textScale = MediaQuery.textScalerOf(context).scale(1);
-    final symbolSize = _baseSymbolSize * textScale;
+    final symbolSize = MediaQuery.textScalerOf(
+      context,
+    ).scale(_baseSymbolSize);
 
     // Avoid updating the symbol when the calculated size has not changed.
     if (symbolSize == _symbolSize) return;
