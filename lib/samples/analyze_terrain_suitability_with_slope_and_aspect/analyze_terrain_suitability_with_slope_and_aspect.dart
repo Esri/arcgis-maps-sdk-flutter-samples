@@ -240,9 +240,6 @@ class _AnalyzeTerrainSuitabilityWithSlopeAndAspectState
     } on Exception catch (e) {
       if (!mounted) return;
 
-      _analysisViewStateSubscription?.cancel().ignore();
-      _analysisViewStateSubscription = null;
-
       // Dismiss the loading indicator without enabling controls.
       setState(() {
         _initializing = false;
