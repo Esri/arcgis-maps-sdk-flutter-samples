@@ -46,8 +46,8 @@ class _UpdateLabelsAndSymbolsToScaleForVisualAccessibilityState
   var _symbolSize = _baseSymbolSize;
   var _applyTextScaleToLabels = true;
 
-  // Track the loading and settings panel visibility states.
-  var _loading = true;
+  // Track when the controls can be used and the loading indicator can be hidden.
+  var _ready = false;
   var _settingsVisible = false;
 
   @override
@@ -55,9 +55,7 @@ class _UpdateLabelsAndSymbolsToScaleForVisualAccessibilityState
     super.didChangeDependencies();
 
     // Read the current system text scale and calculate the scaled symbol size.
-    final symbolSize = MediaQuery.textScalerOf(
-      context,
-    ).scale(_baseSymbolSize);
+    final symbolSize = MediaQuery.textScalerOf(context).scale(_baseSymbolSize);
 
     // Avoid updating the symbol when the calculated size has not changed.
     if (symbolSize == _symbolSize) return;
@@ -89,15 +87,15 @@ class _UpdateLabelsAndSymbolsToScaleForVisualAccessibilityState
                 ),
                 // Open the panel containing the scaling controls and values.
                 ElevatedButton(
-                  onPressed: _loading
-                      ? null
-                      : () => setState(() => _settingsVisible = true),
+                  onPressed: _ready
+                      ? () => setState(() => _settingsVisible = true)
+                      : null,
                   child: const Text('Accessibility Options'),
                 ),
               ],
             ),
             // Display a progress indicator while the layer and symbol load.
-            LoadingIndicator(visible: _loading),
+            LoadingIndicator(visible: !_ready),
           ],
         ),
       ),
@@ -271,8 +269,8 @@ class _UpdateLabelsAndSymbolsToScaleForVisualAccessibilityState
         showExceptionDialog('Error loading restaurant sample', exception);
       }
     } finally {
-      // Hide the loading indicator after initialization completes.
-      if (mounted) setState(() => _loading = false);
+      // Enable interaction and hide the loading indicator.
+      if (mounted) setState(() => _ready = true);
     }
   }
 
@@ -285,7 +283,7 @@ class _UpdateLabelsAndSymbolsToScaleForVisualAccessibilityState
   Future<void> _onTap(Offset screenPoint) async {
     // Stop when the restaurant layer is not ready for identify operations.
     final restaurantLayer = _restaurantLayer;
-    if (_loading || restaurantLayer == null) return;
+    if (!_ready || restaurantLayer == null) return;
 
     // Clear the previous selection and callout before identifying a restaurant.
     restaurantLayer.clearSelection();
