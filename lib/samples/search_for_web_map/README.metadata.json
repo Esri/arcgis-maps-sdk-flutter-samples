@@ -1,0 +1,29 @@
+{
+    "category": "Cloud and Portal",
+    "description": "Find web map portal items by using a search term.",
+    "ignore": false,
+    "images": [
+        "search_for_web_map.png"
+    ],
+    "keywords": [
+        "keyword",
+        "query",
+        "search",
+        "web map",
+        "Portal",
+        "PortalItem",
+        "PortalQueryParameters",
+        "PortalQueryResultSet"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+        "Portal",
+        "PortalItem",
+        "PortalQueryParameters",
+        "PortalQueryResultSet"
+    ],
+    "snippets": [
+        "search_for_web_map.dart"
+    ],
+    "title": "Search for web map"
+}
