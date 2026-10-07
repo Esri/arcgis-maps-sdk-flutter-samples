@@ -1,0 +1,26 @@
+{
+    "category": "Accessibility",
+    "description": "Scale feature labels and symbols according to the system text-size setting.",
+    "ignore": false,
+    "images": [
+        "update_labels_and_symbols_to_scale_for_visual_accessibility.png"
+    ],
+    "keywords": [
+        "accessibility",
+        "label",
+        "readability",
+        "scale",
+        "symbol",
+        "text",
+        "visual impairment",
+        "GeoViewController.useSystemTextScale"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+        "GeoViewController.useSystemTextScale"
+    ],
+    "snippets": [
+        "update_labels_and_symbols_to_scale_for_visual_accessibility.dart"
+    ],
+    "title": "Update labels and symbols to scale for visual accessibility"
+}
