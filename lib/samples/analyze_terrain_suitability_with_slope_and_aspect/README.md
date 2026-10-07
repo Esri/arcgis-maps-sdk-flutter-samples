@@ -2,7 +2,7 @@
 
 Analyze terrain suitability with an elevation raster by deriving slope and aspect.
 
-![Analyze terrain suitability with slope and aspect sample](analyze_terrain_suitability_with_slope_and_aspect.png)
+![Image of analyze terrain suitability with slope and aspect sample](analyze_terrain_suitability_with_slope_and_aspect.png)
 
 ## Use case
 
@@ -35,8 +35,7 @@ When the sample opens, the map shows the results of a preconfigured terrain suit
 
 ## About the data
 
-The sample uses a [10m resolution digital terrain elevation raster of the Isle of Arran, Scotland](https://www.arcgis.com/home/item.html?id=aa97788593e34a32bcaae33947fdc271)
-(Data Copyright Scottish Government and SEPA (2014)).
+The sample uses a [10m resolution digital terrain elevation raster of the Isle of Arran, Scotland](https://www.arcgis.com/home/item.html?id=aa97788593e34a32bcaae33947fdc271) (Data Copyright Scottish Government and SEPA (2014)).
 
 ## Tags
 
