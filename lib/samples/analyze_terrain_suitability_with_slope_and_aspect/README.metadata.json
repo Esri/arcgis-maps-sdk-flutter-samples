@@ -1,0 +1,42 @@
+{
+    "category": "Analysis",
+    "description": "Analyze terrain suitability with an elevation raster by deriving slope and aspect.",
+    "ignore": false,
+    "images": [
+        "analyze_terrain_suitability_with_slope_and_aspect.png"
+    ],
+    "keywords": [
+        "aspect",
+        "elevation",
+        "field analysis",
+        "map algebra",
+        "raster",
+        "slope",
+        "spatial reference",
+        "terrain",
+        "AnalysisOverlay",
+        "BooleanFieldFunction",
+        "Colormap",
+        "ColormapRenderer",
+        "ContinuousField",
+        "ContinuousFieldFunction",
+        "FieldAnalysis"
+    ],
+    "offline_data": [
+        "aa97788593e34a32bcaae33947fdc271"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+        "AnalysisOverlay",
+        "BooleanFieldFunction",
+        "Colormap",
+        "ColormapRenderer",
+        "ContinuousField",
+        "ContinuousFieldFunction",
+        "FieldAnalysis"
+    ],
+    "snippets": [
+        "analyze_terrain_suitability_with_slope_and_aspect.dart"
+    ],
+    "title": "Analyze terrain suitability with slope and aspect"
+}
