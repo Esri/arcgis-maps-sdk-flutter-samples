@@ -49,6 +49,7 @@ class _ApplyPointCloudRendererAndFilterState
   final _selectedClassCodes = <double>{};
   final _selectedReturnTypes = <PointCloudReturnType>{};
   var _scanDirectionFilter = _ScanDirectionFilter.none;
+  var _pointCloudVisible = false;
   var _settingsVisible = false;
 
   // Track when the layer has loaded and the controls can be used.
@@ -72,6 +73,11 @@ class _ApplyPointCloudRendererAndFilterState
                     controllerProvider: () => _sceneViewController,
                     onSceneViewReady: onSceneViewReady,
                   ),
+                ),
+                SwitchListTile(
+                  title: const Text('Point cloud layer visible'),
+                  value: _pointCloudVisible,
+                  onChanged: _ready ? _updatePointCloudVisibility : null,
                 ),
                 // Show the renderer and filter settings.
                 ElevatedButton(
@@ -123,6 +129,8 @@ class _ApplyPointCloudRendererAndFilterState
       ),
     );
     debugPrint('Point cloud probe: after layer construction');
+    _pointCloudLayer.isVisible = false;
+    debugPrint('Point cloud probe: layer visibility set to false');
 
     debugPrint('Point cloud probe: before detached layer load');
     await _pointCloudLayer.load();
@@ -168,6 +176,12 @@ class _ApplyPointCloudRendererAndFilterState
 
     // Enable the sample UI after setup completes.
     setState(() => _ready = true);
+  }
+
+  void _updatePointCloudVisibility(bool visible) {
+    debugPrint('Point cloud probe: setting layer visibility to $visible');
+    _pointCloudLayer.isVisible = visible;
+    setState(() => _pointCloudVisible = visible);
   }
 
   Map<_RendererType, PointCloudRenderer> _createRenderers() {

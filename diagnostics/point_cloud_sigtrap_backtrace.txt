@@ -1,0 +1,87 @@
+PointCloudLayer iOS crash - relevant LLDB backtrace
+
+Command used
+------------
+(lldb) thread backtrace all
+
+SIGTRAP thread
+--------------
+* thread #1, queue = 'com.apple.main-thread', stop reason = signal SIGTRAP
+  * frame #0: Flutter`dart::PageSpace::TryAllocateDataBumpLocked(dart::FreeList*, long)
+    frame #1: Flutter`dart::ScavengerVisitor::VisitPointers(dart::ObjectPtr*, dart::ObjectPtr*) + 248
+    frame #2: Flutter`dart::ApiState::VisitObjectPointersUnlocked(dart::ObjectPointerVisitor*) + 100
+    frame #3: Flutter`dart::IsolateGroup::VisitSharedPointers(dart::ObjectPointerVisitor*) + 252
+    frame #4: Flutter`dart::IsolateGroup::VisitObjectPointers(dart::ObjectPointerVisitor*, dart::ValidationPolicy) + 36
+    frame #5: Flutter`dart::ScavengerVisitor::ProcessRoots() + 296
+    frame #6: Flutter`dart::ScavengerTask::RunEnteredIsolateGroup() + 128
+    frame #7: Flutter`dart::SafepointHandler::RunTasks(dart::IntrusiveDList<dart::SafepointTask, 1>*) + 520
+    frame #8: Flutter`dart::Heap::CollectNewSpaceGarbage(dart::Thread*, dart::GCType, dart::GCReason) + 3732
+    frame #9: Flutter`dart::Heap::NotifyIdle(long long) + 392
+    frame #10: Flutter`flutter::RuntimeController::NotifyIdle(fml::TimeDelta) + 608
+    frame #11: Flutter`flutter::Animator::RequestFrame(bool)::$_0::operator()() + 448
+    frame #12: Flutter`fml::MessageLoopImpl::FlushTasks(fml::FlushType) + 336
+    frame #13: Flutter`fml::MessageLoopDarwin::OnTimerFire(__CFRunLoopTimer*, fml::MessageLoopDarwin*) + 32
+    frame #14: CoreFoundation`__CFRUNLOOP_IS_CALLING_OUT_TO_A_TIMER_CALLBACK_FUNCTION__ + 32
+    frame #15: CoreFoundation`__CFRunLoopDoTimer + 980
+    frame #16: CoreFoundation`__CFRunLoopDoTimers + 280
+    frame #17: CoreFoundation`__CFRunLoopRun + 1816
+    frame #18: CoreFoundation`_CFRunLoopRunSpecificWithOptions + 532
+    frame #19: GraphicsServices`GSEventRunModal + 120
+    frame #20: UIKitCore`-[UIApplication _run] + 796
+    frame #21: UIKitCore`UIApplicationMain + 332
+    frame #25: Runner.debug.dylib`main at <compiler-generated>:0
+    frame #26: dyld`start + 6928
+
+ArcGIS Runtime point-cloud rendering thread
+-------------------------------------------
+thread #50, queue = 'com.esri.GeoView.runtime'
+    frame #0: Runtimecore`std::byte* std::__1::__uninitialized_allocator_copy_impl(...)
+    frame #1: Runtimecore`std::byte* std::__1::__uninitialized_allocator_copy(...)
+    frame #2: Runtimecore`std::__1::vector<unsigned char>::__construct_at_end(...) + 24
+    frame #3: Runtimecore`std::__1::vector<unsigned char>::__init_with_size(...) + 44
+    frame #4: Runtimecore`std::__1::vector<unsigned char>::vector(...) + 28
+    frame #5: Runtimecore`esri::map_renderer_3d::Renderable_factory_impl::build_pointcloud_tile(...) + 624
+    frame #6: Runtimecore`i3slib::lax::PointCloudLayerImpl::cull(...) + 732
+    frame #7: Runtimecore`esri::map_renderer_3d::Point_cloud_layer_3D::cull(...) + 216
+    frame #8: Runtimecore`esri::map_renderer_3d::View3D::pulse(bool&) + 10452
+    frame #9: Runtimecore`esri::map_renderer_3d::Map3D::pulse() + 164
+    frame #10: Runtimecore`esri::geoview::Scene_view_mr::pulse() + 52
+    frame #11: Runtimecore`RT_GeoView_pulse + 44
+    frame #12: Runner.debug.dylib`NativeView.runtimePulse() at NativeView.swift:309:9
+    frame #13: Runner.debug.dylib`closure #1 in NativeView.draw() at NativeView.swift:384:22
+    frame #15: libdispatch.dylib`_dispatch_call_block_and_release + 32
+    frame #16: libdispatch.dylib`_dispatch_client_callout + 16
+    frame #17: libdispatch.dylib`_dispatch_lane_serial_drain + 796
+    frame #18: libdispatch.dylib`_dispatch_lane_invoke + 424
+    frame #19: libdispatch.dylib`_dispatch_root_queue_drain_deferred_wlh + 336
+    frame #20: libdispatch.dylib`_dispatch_workloop_worker_thread + 780
+    frame #21: libsystem_pthread.dylib`_pthread_wqthread + 292
+
+Metal completion thread
+-----------------------
+thread #72, queue = 'com.Metal.CompletionQueueDispatch'
+    frame #0: libBacktraceRecording.dylib`__find_or_create_queue_info_block_invoke + 4
+    frame #1: libBacktraceRecording.dylib`find_or_create_queue_info + 216
+    frame #2: libBacktraceRecording.dylib`gcd_queue_item_enqueue_hook + 460
+    frame #3: libdispatch.dylib`_dispatch_introspection_queue_item_enqueue_hook + 44
+    frame #4: libdispatch.dylib`dispatch_async + 300
+    frame #5: FramePacing`+[FPCAMetalLayerState _updateCommandBufferState:block:] + 160
+    frame #6: FramePacing`+[FPCAMetalLayerState commandBufferScheduled:kernelStartTime:kernelEndTime:] + 160
+    frame #7: Metal`-[_MTLCommandBuffer didScheduleWithStartTime:endTime:error:] + 228
+    frame #8: IOGPU`IOGPUNotificationQueueDispatchAvailableCompletionNotifications + 136
+    frame #9: IOGPU`__IOGPUNotificationQueueSetDispatchQueue_block_invoke + 64
+    frame #10: libdispatch.dylib`_dispatch_client_callout4 + 16
+    frame #11: libdispatch.dylib`_dispatch_mach_msg_invoke + 512
+    frame #12: libdispatch.dylib`_dispatch_lane_serial_drain + 344
+    frame #13: libdispatch.dylib`_dispatch_mach_invoke + 508
+    frame #14: libdispatch.dylib`_dispatch_lane_serial_drain + 344
+    frame #15: libdispatch.dylib`_dispatch_lane_invoke + 480
+    frame #16: libdispatch.dylib`_dispatch_lane_serial_drain + 344
+    frame #17: libdispatch.dylib`_dispatch_lane_invoke + 424
+    frame #18: libdispatch.dylib`_dispatch_root_queue_drain_deferred_wlh + 336
+    frame #19: libdispatch.dylib`_dispatch_workloop_worker_thread + 780
+    frame #20: libsystem_pthread.dylib`_pthread_wqthread + 292
+
+Interpretation
+--------------
+The process stops with SIGTRAP after Metal reports reuse of an already-presented CAMetalLayerDrawable. At the same time, the ArcGIS GeoView runtime queue is building and culling a point-cloud tile from NativeView.draw().
