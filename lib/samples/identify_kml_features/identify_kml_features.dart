@@ -34,7 +34,7 @@ class _IdentifyKmlFeaturesState extends State<IdentifyKmlFeatures>
   final _forecastLayer = KmlLayer(
     KmlDataset(
       Uri.parse(
-        'https://www.wpc.ncep.noaa.gov/kml/noaa_chart/WPC_Day1_SigWx_latest.kml',
+        'https://www.arcgis.com/sharing/rest/content/items/f5e0e5cd088846a5b97b7ed66a8bad5c/data',
       ),
     ),
   );
@@ -154,9 +154,8 @@ class _IdentifyKmlFeaturesState extends State<IdentifyKmlFeatures>
 
     // Create theme-aware styles for the KML balloon's HTML content.
     final colorScheme = Theme.of(context).colorScheme;
-    final defaultTextStyle = DefaultTextStyle.of(
-      context,
-    ).style.copyWith(color: colorScheme.onSurface);
+    final defaultTextStyle = DefaultTextStyle.of(context).style
+        .copyWith(color: colorScheme.onSurface);
     final overrideStyle = {
       for (final tag in const ['body', 'p', 'div', 'span', 'table', 'tr', 'td'])
         tag: TextStyle(color: colorScheme.onSurface),
