@@ -343,7 +343,7 @@ class _AnalyzeTerrainSuitabilityWithSlopeAndAspectState
   Widget _buildSettings(BuildContext context) {
     // Build controls for choosing the visible terrain suitability scenario.
     return BottomSheetSettings(
-      title: 'Terrain suitability',
+      title: 'Sheltered vs Exposed Terrain\nSuitability',
       onCloseIconPressed: () => setState(() => _settingsVisible = false),
       settingsWidgets: (context) => [
         RadioGroup<_SiteScenario>(
