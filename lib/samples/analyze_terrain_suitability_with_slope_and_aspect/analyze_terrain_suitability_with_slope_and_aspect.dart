@@ -18,8 +18,8 @@ import 'dart:io';
 
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
-import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:material_ui/material_ui.dart';
 
 class AnalyzeTerrainSuitabilityWithSlopeAndAspect extends StatefulWidget {
   const AnalyzeTerrainSuitabilityWithSlopeAndAspect({super.key});
@@ -343,7 +343,7 @@ class _AnalyzeTerrainSuitabilityWithSlopeAndAspectState
   Widget _buildSettings(BuildContext context) {
     // Build controls for choosing the visible terrain suitability scenario.
     return BottomSheetSettings(
-      title: 'Terrain suitability',
+      title: 'Sheltered vs Exposed Terrain\nSuitability',
       onCloseIconPressed: () => setState(() => _settingsVisible = false),
       settingsWidgets: (context) => [
         RadioGroup<_SiteScenario>(
