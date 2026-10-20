@@ -41,7 +41,8 @@ class _ApplyPointCloudRendererAndFilterState
 
   // Keep one instance of each renderer so its point size can be updated in
   // place and preserved when switching renderers.
-  late final Map<_RendererType, PointCloudRenderer> _renderers;
+  late final Map<_RendererType, PointCloudRenderer> _renderers =
+      _createRenderers();
 
   // Store the classification value filter when it is active.
   PointCloudValueFilter? _valueFilter;
@@ -106,7 +107,7 @@ class _ApplyPointCloudRendererAndFilterState
                 ),
               ],
             ),
-            // Prevent interaction until the point cloud layer is ready.
+            // Prevent interaction while the point cloud layer is loading.
             LoadingIndicator(visible: !_ready),
           ],
         ),
@@ -138,11 +139,9 @@ class _ApplyPointCloudRendererAndFilterState
   Future<void> onLocalSceneViewReady() async {
     // Ignore duplicate ready callbacks while setup is in progress.
     if (_initializing || _ready) return;
-    _initializing = true;
 
     // Create all renderers before adding the layer so it is first displayed
     // with the custom RGB renderer.
-    _renderers = _createRenderers();
     _pointCloudLayer.renderer = _renderers[_selectedRenderer];
 
     // Create a scene in local viewing mode to allow renderer and filter
@@ -180,10 +179,29 @@ class _ApplyPointCloudRendererAndFilterState
     _localSceneViewController.arcGISScene = scene;
 
     // Load the layer before enabling renderer and filter controls.
-    await _pointCloudLayer.load();
+    await _loadPointCloudLayer();
+  }
 
-    // Enable the sample UI after setup completes.
-    setState(() => _ready = true);
+  Future<void> _loadPointCloudLayer() async {
+    // Ignore duplicate load attempts while one is already in progress.
+    if (_initializing || _ready) return;
+    _initializing = true;
+    setState(() => _ready = false);
+
+    try {
+      // Load the scene service used by the point cloud layer.
+      await _pointCloudLayer.load();
+    } on Exception catch (exception) {
+      // Report the load failure.
+      showExceptionDialog(
+        'Failed to load point cloud layer',
+        exception,
+        showOK: true,
+      );
+    } finally {
+      _initializing = false;
+      setState(() => _ready = true);
+    }
   }
 
   Map<_RendererType, PointCloudRenderer> _createRenderers() {
