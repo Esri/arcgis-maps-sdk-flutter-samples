@@ -32,36 +32,20 @@ class _AddPointCloudLayerFromFileState extends State<AddPointCloudLayerFromFile>
     with SampleStateSupport {
   // Create a controller for the scene view.
   final _sceneViewController = ArcGISSceneView.createController();
-  PointCloudLayer? _pointCloudLayer;
-  var _pointCloudVisible = false;
-  var _ready = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: [
-          Expanded(
-            child: ArcGISSceneView(
-              controllerProvider: () => _sceneViewController,
-              onSceneViewReady: onSceneViewReady,
-            ),
-          ),
-          SwitchListTile(
-            title: const Text('Point cloud layer visible'),
-            value: _pointCloudVisible,
-            onChanged: _ready ? _updatePointCloudVisibility : null,
-          ),
-        ],
+      body: ArcGISSceneView(
+        controllerProvider: () => _sceneViewController,
+        onSceneViewReady: onSceneViewReady,
       ),
     );
   }
 
   Future<void> onSceneViewReady() async {
     // Add the scene to the view controller.
-    debugPrint('Point cloud probe: before scene construction');
     _sceneViewController.arcGISScene = _setupScene();
-    debugPrint('Point cloud probe: after scene assignment');
 
     // Load the point cloud layer.
     await loadCloudPointLayerFromFile();
@@ -98,36 +82,13 @@ class _AddPointCloudLayerFromFileState extends State<AddPointCloudLayerFromFile>
 
   Future<void> loadCloudPointLayerFromFile() async {
     // Download the sample data.
-    debugPrint('Point cloud probe: before reading sample data path');
     final listPaths = GoRouter.of(context).state.extra! as List<String>;
     final sanDiegoPointCloudFile = File(listPaths.first);
-    debugPrint(
-      'Point cloud probe: sample data file exists: '
-      '${sanDiegoPointCloudFile.existsSync()}',
-    );
 
     // Create a Point Cloud Layer from the file URI.
-    debugPrint('Point cloud probe: before layer construction');
     final pointCloudLayer = PointCloudLayer.withUri(sanDiegoPointCloudFile.uri);
-    _pointCloudLayer = pointCloudLayer;
-    debugPrint('Point cloud probe: after layer construction');
-    pointCloudLayer.isVisible = false;
-    debugPrint('Point cloud probe: layer visibility set to false');
-
-    debugPrint('Point cloud probe: before detached layer load');
     await pointCloudLayer.load();
-    debugPrint('Point cloud probe: after detached layer load');
-
     // Add the point cloud layer to the map's operational layers.
-    debugPrint('Point cloud probe: before adding layer to scene');
     _sceneViewController.arcGISScene?.operationalLayers.add(pointCloudLayer);
-    debugPrint('Point cloud probe: after adding layer to scene');
-    setState(() => _ready = true);
-  }
-
-  void _updatePointCloudVisibility(bool visible) {
-    debugPrint('Point cloud probe: setting layer visibility to $visible');
-    _pointCloudLayer?.isVisible = visible;
-    setState(() => _pointCloudVisible = visible);
   }
 }

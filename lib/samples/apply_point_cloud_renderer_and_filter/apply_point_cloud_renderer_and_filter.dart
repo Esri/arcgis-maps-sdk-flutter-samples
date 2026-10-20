@@ -28,32 +28,55 @@ class ApplyPointCloudRendererAndFilter extends StatefulWidget {
 class _ApplyPointCloudRendererAndFilterState
     extends State<ApplyPointCloudRendererAndFilter>
     with SampleStateSupport {
-  // Create a controller for the scene view.
-  final _sceneViewController = ArcGISSceneView.createController();
+  // Use a local scene view because changing point cloud renderers and filters
+  // is only supported in local scenes.
+  final _localSceneViewController = ArcGISLocalSceneView.createController();
 
-  // Store the point cloud layer after the scene view is ready.
-  late final PointCloudLayer _pointCloudLayer;
+  // Create the point cloud layer from the Sonoma Area 1 scene service.
+  final _pointCloudLayer = PointCloudLayer.withUri(
+    Uri.parse(
+      'https://tiles.arcgis.com/tiles/z2tnIkrLQ2BRzr6P/arcgis/rest/services/SONOMA_AREA1_LiDAR_RGB/SceneServer',
+    ),
+  );
 
-  // Store the renderers so their point size can be updated in place.
+  // Keep one instance of each renderer so its point size can be updated in
+  // place and preserved when switching renderers.
   late final Map<_RendererType, PointCloudRenderer> _renderers;
 
-  // Track the filters that have been added to the layer.
+  // Store the classification value filter when it is active.
   PointCloudValueFilter? _valueFilter;
+
+  // Store the lidar return filter when it is active.
   PointCloudReturnFilter? _returnFilter;
+
+  // Store the scan direction bitfield filter when it is active.
   PointCloudBitfieldFilter? _bitfieldFilter;
 
-  // Track the values selected in the settings sheet.
+  // Track the renderer selected in the settings sheet.
   var _selectedRenderer = _RendererType.rgb;
+
+  // Track the point size selected in the settings sheet.
   var _pointSize = 1.0;
+
+  // Track whether selected classification values are included or excluded.
   var _valueFilterMode = PointCloudValueFilterMode.include;
+
+  // Track the selected LAS classification codes.
   final _selectedClassCodes = <double>{};
+
+  // Track the selected lidar return types.
   final _selectedReturnTypes = <PointCloudReturnType>{};
+
+  // Track the selected scan direction condition.
   var _scanDirectionFilter = _ScanDirectionFilter.none;
-  var _pointCloudVisible = false;
+
+  // Track whether the settings sheet is visible.
   var _settingsVisible = false;
 
-  // Track when the layer has loaded and the controls can be used.
+  // Track whether the layer has loaded and the controls can be used.
   var _ready = false;
+
+  // Track whether asynchronous scene setup is underway.
   var _initializing = false;
 
   @override
@@ -68,16 +91,11 @@ class _ApplyPointCloudRendererAndFilterState
             Column(
               children: [
                 Expanded(
-                  // Add a scene view to the widget tree and set a controller.
-                  child: ArcGISSceneView(
-                    controllerProvider: () => _sceneViewController,
-                    onSceneViewReady: onSceneViewReady,
+                  // Add a local scene view and set its controller.
+                  child: ArcGISLocalSceneView(
+                    controllerProvider: () => _localSceneViewController,
+                    onLocalSceneViewReady: onLocalSceneViewReady,
                   ),
-                ),
-                SwitchListTile(
-                  title: const Text('Point cloud layer visible'),
-                  value: _pointCloudVisible,
-                  onChanged: _ready ? _updatePointCloudVisibility : null,
                 ),
                 // Show the renderer and filter settings.
                 ElevatedButton(
@@ -117,71 +135,55 @@ class _ApplyPointCloudRendererAndFilterState
     );
   }
 
-  Future<void> onSceneViewReady() async {
+  Future<void> onLocalSceneViewReady() async {
     // Ignore duplicate ready callbacks while setup is in progress.
     if (_initializing || _ready) return;
     _initializing = true;
 
-    debugPrint('Point cloud probe: before layer construction');
-    _pointCloudLayer = PointCloudLayer.withUri(
-      Uri.parse(
-        'https://tiles.arcgis.com/tiles/z2tnIkrLQ2BRzr6P/arcgis/rest/services/SONOMA_AREA1_LiDAR_RGB/SceneServer',
+    // Create all renderers before adding the layer so it is first displayed
+    // with the custom RGB renderer.
+    _renderers = _createRenderers();
+    _pointCloudLayer.renderer = _renderers[_selectedRenderer];
+
+    // Create a scene in local viewing mode to allow renderer and filter
+    // changes after the point cloud layer is displayed.
+    final scene = ArcGISScene.withViewingModeAndBasemapStyle(
+      viewingMode: SceneViewingMode.local,
+      basemapStyle: BasemapStyle.arcGISImagery,
+    );
+
+    // Position the camera above the Sonoma point cloud data.
+    scene.initialViewpoint = Viewpoint.withPointScaleCamera(
+      center: ArcGISPoint(x: 0, y: 0),
+      scale: 1,
+      camera: Camera.withLatLong(
+        latitude: 38.204,
+        longitude: -122.706,
+        altitude: 8000,
+        heading: 0,
+        pitch: 45,
+        roll: 0,
       ),
     );
-    debugPrint('Point cloud probe: after layer construction');
-    _pointCloudLayer.isVisible = false;
-    debugPrint('Point cloud probe: layer visibility set to false');
 
-    debugPrint('Point cloud probe: before detached layer load');
-    await _pointCloudLayer.load();
-    debugPrint('Point cloud probe: after detached layer load');
-
-    // Create a scene centered on the Sonoma point cloud layer.
-    final scene = ArcGISScene.withBasemapStyle(.arcGISImagery)
-      ..initialViewpoint = Viewpoint.withPointScaleCamera(
-        center: ArcGISPoint(x: 0, y: 0),
-        scale: 1,
-        camera: Camera.withLatLong(
-          latitude: 38.204,
-          longitude: -122.706,
-          altitude: 8000,
-          heading: 0,
-          pitch: 45,
-          roll: 0,
+    // Add world elevation to provide terrain beneath the point cloud.
+    scene.baseSurface.elevationSources.add(
+      ArcGISTiledElevationSource.withUri(
+        Uri.parse(
+          'https://elevation3d.arcgis.com/arcgis/rest/services/WorldElevation3D/Terrain3D/ImageServer',
         ),
-      )
-      ..baseSurface.elevationSources.add(
-        ArcGISTiledElevationSource.withUri(
-          Uri.parse(
-            'https://elevation3d.arcgis.com/arcgis/rest/services/WorldElevation3D/Terrain3D/ImageServer',
-          ),
-        ),
-      );
+      ),
+    );
 
-    debugPrint('Point cloud probe: before adding layer to scene');
+    // Add the point cloud layer and display the scene in the local scene view.
     scene.operationalLayers.add(_pointCloudLayer);
-    debugPrint('Point cloud probe: after adding layer to scene');
+    _localSceneViewController.arcGISScene = scene;
 
-    debugPrint('Point cloud probe: before assigning scene to view');
-    _sceneViewController.arcGISScene = scene;
-    debugPrint('Point cloud probe: after assigning scene to view');
-
-    debugPrint('Point cloud probe: before renderer construction');
-    _renderers = _createRenderers();
-    debugPrint('Point cloud probe: after renderer construction');
-
-    debugPrint('Point cloud probe: before assigning RGB renderer');
-    _pointCloudLayer.renderer = _renderers[_selectedRenderer];
-    debugPrint('Point cloud probe: after assigning RGB renderer');
+    // Load the layer before enabling renderer and filter controls.
+    await _pointCloudLayer.load();
 
     // Enable the sample UI after setup completes.
     setState(() => _ready = true);
-  }
-
-  void _updatePointCloudVisibility(bool visible) {
-    debugPrint('Point cloud probe: setting layer visibility to $visible');
-    _pointCloudLayer.isVisible = visible;
-    setState(() => _pointCloudVisible = visible);
   }
 
   Map<_RendererType, PointCloudRenderer> _createRenderers() {
@@ -208,7 +210,6 @@ class _ApplyPointCloudRendererAndFilterState
     );
 
     // Create a class breaks renderer using elevation ranges.
-
     final classBreaksRenderer = PointCloudClassBreaksRenderer(
       attributeName: 'ELEVATION',
       classBreaks: [
@@ -254,6 +255,7 @@ class _ApplyPointCloudRendererAndFilterState
     final uniqueValueRenderer = PointCloudUniqueValueRenderer(
       attributeName: 'CLASS_CODE',
       uniqueValues: [
+        // LAS classification codes start at 1, while list indices start at 0.
         for (var index = 0; index < classificationColors.length; index++)
           PointCloudColorUniqueValue(
             color: classificationColors[index],
@@ -282,6 +284,8 @@ class _ApplyPointCloudRendererAndFilterState
     // Apply the selected renderer to the point cloud layer.
     setState(() => _selectedRenderer = rendererType);
     final renderer = _renderers[rendererType]!;
+
+    // Synchronize the selected point size before displaying this renderer.
     final sizeAlgorithm = renderer.sizeAlgorithm;
     if (sizeAlgorithm is PointCloudSplatAlgorithm) {
       sizeAlgorithm.scaleFactor = _pointSize;
@@ -312,7 +316,8 @@ class _ApplyPointCloudRendererAndFilterState
           : _selectedClassCodes.remove(classCode);
     });
 
-    // Create the value filter on first use, then update its values in place.
+    // Create the value filter on first use and keep the same native filter
+    // object in the layer's collection for subsequent changes.
     _valueFilter ??= PointCloudValueFilter(
       attributeName: 'CLASS_CODE',
       values: [],
@@ -349,7 +354,8 @@ class _ApplyPointCloudRendererAndFilterState
       return;
     }
 
-    // Create the return filter on first use, then update it in place.
+    // Create the return filter on first use and update its included return
+    // types without replacing the filter.
     _returnFilter ??= PointCloudReturnFilter(
       attributeName: 'RETURNS',
       includedReturns: [],
@@ -378,7 +384,8 @@ class _ApplyPointCloudRendererAndFilterState
       return;
     }
 
-    // Create the bitfield filter on first use.
+    // Create the bitfield filter on first use and retain it for either scan
+    // direction condition.
     _bitfieldFilter ??= PointCloudBitfieldFilter(
       attributeName: 'FLAGS',
       requiredClearBits: [],
@@ -449,21 +456,52 @@ class _PointCloudSettingsSheet extends StatelessWidget {
     required this.onClose,
   });
 
+  // The renderer selected in the settings sheet.
   final _RendererType selectedRenderer;
+
+  // The scale factor used to draw each point.
   final double pointSize;
+
+  // Whether selected classification values are included or excluded.
   final PointCloudValueFilterMode valueFilterMode;
+
+  // The selected LAS classification codes.
   final Set<double> selectedClassCodes;
+
+  // The selected lidar return types.
   final Set<PointCloudReturnType> selectedReturnTypes;
+
+  // The selected scan direction condition.
   final _ScanDirectionFilter scanDirectionFilter;
+
+  // Called when a renderer is selected.
   final ValueChanged<_RendererType> onRendererChanged;
+
+  // Called when the point size changes.
   final ValueChanged<double> onPointSizeChanged;
+
+  // Called when the classification filter mode changes.
   final ValueChanged<PointCloudValueFilterMode> onValueFilterModeChanged;
+
+  // Called when a classification code is selected or cleared.
   final void Function(double, bool) onClassCodeChanged;
+
+  // Called to remove the classification value filter.
   final VoidCallback onClearValueFilter;
+
+  // Called when a lidar return type is selected or cleared.
   final void Function(PointCloudReturnType, bool) onReturnTypeChanged;
+
+  // Called to remove the lidar return filter.
   final VoidCallback onClearReturnFilter;
+
+  // Called when the scan direction condition changes.
   final ValueChanged<_ScanDirectionFilter> onScanDirectionFilterChanged;
+
+  // Called to remove the scan direction bitfield filter.
   final VoidCallback onClearBitfieldFilter;
+
+  // Called to close the settings sheet.
   final VoidCallback onClose;
 
   @override
@@ -553,10 +591,8 @@ class _PointCloudSettingsSheet extends StatelessWidget {
           isExpanded: true,
           items: _ScanDirectionFilter.values
               .map(
-                (filter) => DropdownMenuItem(
-                  value: filter,
-                  child: Text(filter.label),
-                ),
+                (filter) =>
+                    DropdownMenuItem(value: filter, child: Text(filter.label)),
               )
               .toList(),
           onChanged: (filter) {
@@ -589,8 +625,13 @@ class _FilterCheckbox extends StatelessWidget {
     required this.onChanged,
   });
 
+  // The text displayed beside the checkbox.
   final String label;
+
+  // Whether the checkbox is selected.
   final bool value;
+
+  // Called when the checkbox selection changes.
   final ValueChanged<bool> onChanged;
 
   @override
