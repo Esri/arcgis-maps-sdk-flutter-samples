@@ -41,8 +41,7 @@ class _ApplyPointCloudRendererAndFilterState
 
   // Keep one instance of each renderer so its point size can be updated in
   // place and preserved when switching renderers.
-  late final Map<_RendererType, PointCloudRenderer> _renderers =
-      _createRenderers();
+  late final _renderers = _createRenderers();
 
   // Store the classification value filter when it is active.
   PointCloudValueFilter? _valueFilter;
@@ -77,12 +76,6 @@ class _ApplyPointCloudRendererAndFilterState
   // Track whether the layer has loaded and the controls can be used.
   var _ready = false;
 
-  // Track whether the point cloud layer is loading.
-  var _loading = true;
-
-  // Track whether asynchronous scene setup is underway.
-  var _initializing = false;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -101,23 +94,17 @@ class _ApplyPointCloudRendererAndFilterState
                     onLocalSceneViewReady: onLocalSceneViewReady,
                   ),
                 ),
-                // Show the settings or retry after a load failure.
+                // Show the renderer and filter settings.
                 ElevatedButton(
                   onPressed: _ready
                       ? () => setState(() => _settingsVisible = true)
-                      : !_loading
-                      ? () => _loadPointCloudLayer().ignore()
                       : null,
-                  child: Text(
-                    !_ready && !_loading
-                        ? 'Retry'
-                        : 'Renderer and Filter Settings',
-                  ),
+                  child: const Text('Renderer and Filter Settings'),
                 ),
               ],
             ),
             // Prevent interaction while the point cloud layer is loading.
-            LoadingIndicator(visible: _loading),
+            LoadingIndicator(visible: !_ready),
           ],
         ),
       ),
@@ -151,11 +138,7 @@ class _ApplyPointCloudRendererAndFilterState
   }
 
   Future<void> onLocalSceneViewReady() async {
-    // Ignore duplicate ready callbacks while setup is in progress.
-    if (_initializing || _ready) return;
-
-    // Create all renderers before adding the layer so it is first displayed
-    // with the custom RGB renderer.
+    // Apply the custom RGB renderer before adding the layer to the scene.
     _pointCloudLayer.renderer = _renderers[_selectedRenderer];
 
     // Create a scene in local viewing mode to allow renderer and filter
@@ -193,32 +176,8 @@ class _ApplyPointCloudRendererAndFilterState
     _localSceneViewController.arcGISScene = scene;
 
     // Load the layer before enabling renderer and filter controls.
-    await _loadPointCloudLayer();
-  }
-
-  Future<void> _loadPointCloudLayer() async {
-    // Ignore duplicate load attempts while one is already in progress.
-    if (_initializing || _ready) return;
-    _initializing = true;
-    setState(() => _loading = true);
-
-    try {
-      // Load the scene service used by the point cloud layer.
-      await _pointCloudLayer.load();
-
-      // Enable the settings after the layer loads successfully.
-      setState(() => _ready = true);
-    } on Exception catch (exception) {
-      // Report the load failure.
-      showExceptionDialog(
-        'Failed to load point cloud layer',
-        exception,
-        showOK: true,
-      );
-    } finally {
-      _initializing = false;
-      setState(() => _loading = false);
-    }
+    await _pointCloudLayer.load();
+    setState(() => _ready = true);
   }
 
   Map<_RendererType, PointCloudRenderer> _createRenderers() {
@@ -351,14 +310,13 @@ class _ApplyPointCloudRendererAndFilterState
           : _selectedClassCodes.remove(classCode);
     });
 
-    // Create the value filter on first use and keep the same native filter
-    // object in the layer's collection for subsequent changes.
-    _valueFilter ??= PointCloudValueFilter(
-      attributeName: 'CLASS_CODE',
-      values: [],
-      mode: _valueFilterMode,
-    );
-    if (!_pointCloudLayer.filters.contains(_valueFilter)) {
+    // Create and add the value filter on first use.
+    if (_valueFilter == null) {
+      _valueFilter = PointCloudValueFilter(
+        attributeName: 'CLASS_CODE',
+        values: [],
+        mode: _valueFilterMode,
+      );
       _pointCloudLayer.filters.add(_valueFilter!);
     }
     _valueFilter!.values
@@ -389,13 +347,12 @@ class _ApplyPointCloudRendererAndFilterState
       return;
     }
 
-    // Create the return filter on first use and update its included return
-    // types without replacing the filter.
-    _returnFilter ??= PointCloudReturnFilter(
-      attributeName: 'RETURNS',
-      includedReturns: [],
-    );
-    if (!_pointCloudLayer.filters.contains(_returnFilter)) {
+    // Create and add the return filter on first use.
+    if (_returnFilter == null) {
+      _returnFilter = PointCloudReturnFilter(
+        attributeName: 'RETURNS',
+        includedReturns: [],
+      );
       _pointCloudLayer.filters.add(_returnFilter!);
     }
     _returnFilter!.includedReturns
@@ -419,14 +376,13 @@ class _ApplyPointCloudRendererAndFilterState
       return;
     }
 
-    // Create the bitfield filter on first use and retain it for either scan
-    // direction condition.
-    _bitfieldFilter ??= PointCloudBitfieldFilter(
-      attributeName: 'FLAGS',
-      requiredClearBits: [],
-      requiredSetBits: [],
-    );
-    if (!_pointCloudLayer.filters.contains(_bitfieldFilter)) {
+    // Create and add the bitfield filter on first use.
+    if (_bitfieldFilter == null) {
+      _bitfieldFilter = PointCloudBitfieldFilter(
+        attributeName: 'FLAGS',
+        requiredClearBits: [],
+        requiredSetBits: [],
+      );
       _pointCloudLayer.filters.add(_bitfieldFilter!);
     }
 
