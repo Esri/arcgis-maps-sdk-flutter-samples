@@ -77,6 +77,9 @@ class _ApplyPointCloudRendererAndFilterState
   // Track whether the layer has loaded and the controls can be used.
   var _ready = false;
 
+  // Track whether the point cloud layer is loading.
+  var _loading = true;
+
   // Track whether asynchronous scene setup is underway.
   var _initializing = false;
 
@@ -98,17 +101,23 @@ class _ApplyPointCloudRendererAndFilterState
                     onLocalSceneViewReady: onLocalSceneViewReady,
                   ),
                 ),
-                // Show the renderer and filter settings.
+                // Show the settings or retry after a load failure.
                 ElevatedButton(
                   onPressed: _ready
                       ? () => setState(() => _settingsVisible = true)
+                      : !_loading
+                      ? () => _loadPointCloudLayer().ignore()
                       : null,
-                  child: const Text('Renderer and Filter Settings'),
+                  child: Text(
+                    !_ready && !_loading
+                        ? 'Retry'
+                        : 'Renderer and Filter Settings',
+                  ),
                 ),
               ],
             ),
             // Prevent interaction while the point cloud layer is loading.
-            LoadingIndicator(visible: !_ready),
+            LoadingIndicator(visible: _loading),
           ],
         ),
       ),
@@ -191,11 +200,14 @@ class _ApplyPointCloudRendererAndFilterState
     // Ignore duplicate load attempts while one is already in progress.
     if (_initializing || _ready) return;
     _initializing = true;
-    setState(() => _ready = false);
+    setState(() => _loading = true);
 
     try {
       // Load the scene service used by the point cloud layer.
       await _pointCloudLayer.load();
+
+      // Enable the settings after the layer loads successfully.
+      setState(() => _ready = true);
     } on Exception catch (exception) {
       // Report the load failure.
       showExceptionDialog(
@@ -205,7 +217,7 @@ class _ApplyPointCloudRendererAndFilterState
       );
     } finally {
       _initializing = false;
-      setState(() => _ready = true);
+      setState(() => _loading = false);
     }
   }
 
