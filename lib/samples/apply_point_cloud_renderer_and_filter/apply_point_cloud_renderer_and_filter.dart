@@ -116,7 +116,7 @@ class _ApplyPointCloudRendererAndFilterState
       bottomSheet: _settingsVisible
           ? ConstrainedBox(
               constraints: BoxConstraints(
-                maxHeight: MediaQuery.sizeOf(context).height * 0.5,
+                maxHeight: MediaQuery.sizeOf(context).height * 0.8,
               ),
               child: _PointCloudSettingsSheet(
                 selectedRenderer: _selectedRenderer,
