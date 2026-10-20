@@ -114,23 +114,28 @@ class _ApplyPointCloudRendererAndFilterState
       ),
       // Display the renderer and filter controls in a settings sheet.
       bottomSheet: _settingsVisible
-          ? _PointCloudSettingsSheet(
-              selectedRenderer: _selectedRenderer,
-              pointSize: _pointSize,
-              valueFilterMode: _valueFilterMode,
-              selectedClassCodes: _selectedClassCodes,
-              selectedReturnTypes: _selectedReturnTypes,
-              scanDirectionFilter: _scanDirectionFilter,
-              onRendererChanged: _updateRenderer,
-              onPointSizeChanged: _updatePointSize,
-              onValueFilterModeChanged: _updateValueFilterMode,
-              onClassCodeChanged: _updateClassCodeFilter,
-              onClearValueFilter: _clearValueFilter,
-              onReturnTypeChanged: _updateReturnFilter,
-              onClearReturnFilter: _clearReturnFilter,
-              onScanDirectionFilterChanged: _updateBitfieldFilter,
-              onClearBitfieldFilter: _clearBitfieldFilter,
-              onClose: () => setState(() => _settingsVisible = false),
+          ? ConstrainedBox(
+              constraints: BoxConstraints(
+                maxHeight: MediaQuery.sizeOf(context).height * 0.5,
+              ),
+              child: _PointCloudSettingsSheet(
+                selectedRenderer: _selectedRenderer,
+                pointSize: _pointSize,
+                valueFilterMode: _valueFilterMode,
+                selectedClassCodes: _selectedClassCodes,
+                selectedReturnTypes: _selectedReturnTypes,
+                scanDirectionFilter: _scanDirectionFilter,
+                onRendererChanged: _updateRenderer,
+                onPointSizeChanged: _updatePointSize,
+                onValueFilterModeChanged: _updateValueFilterMode,
+                onClassCodeChanged: _updateClassCodeFilter,
+                onClearValueFilter: _clearValueFilter,
+                onReturnTypeChanged: _updateReturnFilter,
+                onClearReturnFilter: _clearReturnFilter,
+                onScanDirectionFilterChanged: _updateBitfieldFilter,
+                onClearBitfieldFilter: _clearBitfieldFilter,
+                onClose: () => setState(() => _settingsVisible = false),
+              ),
             )
           : null,
     );
