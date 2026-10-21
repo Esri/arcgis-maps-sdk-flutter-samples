@@ -290,7 +290,10 @@ class _AddFeaturesWithSharedTemplateState
 
   // Save the edits locally.
   Future<void> _saveEdits() async {
-    setState(() => _statusText = 'Creating feature...');
+    setState(() {
+      _statusText = 'Creating feature...';
+      _selectedTemplate = null;
+    });
 
     // Stop the geometry editor and hold onto the returned geometry so it can be saved.
     final geometry = _geometryEditor.stop();
@@ -309,17 +312,15 @@ class _AddFeaturesWithSharedTemplateState
         featureCreationSet: featureCreationSet,
       );
       // Reset the UI if the edit succeeds.
-      setState(() {
-        _selectedTemplate = null;
-        _statusText = 'Features saved. Open Shared Templates and select a template to create features.';
-      });
+      setState(
+        () => _statusText = 'Features saved. Open Shared Templates and select a template to create features.',
+      );
     } on ArcGISException catch (e) {
       // If the edits fail to meet the requirements of the template, update the UI.
-      setState(() {
-        _selectedTemplate = null;
-        _statusText =
-            'Unable to create feature. Error details: ${e.additionalMessage}. \n Open Shared Templates and select a template to create features.';
-      });
+      setState(
+        () => _statusText =
+            'Unable to create feature. Error details: ${e.additionalMessage}. \n Open Shared Templates and select a template to create features.',
+      );
     }
   }
 }
