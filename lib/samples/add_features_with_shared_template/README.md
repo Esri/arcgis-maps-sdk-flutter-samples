@@ -10,7 +10,7 @@ Preset and group shared templates support guided, repeatable, high-quality editi
 
 ## How to use the sample
 
-Open the shared template picker and select a template. Tap on the map to place the geometry. Choose "Complete" to create and add the features locally, or "Cancel" to discard the sketch.
+Open the shared template picker and select a template. Tap on the map to place the geometry. Tap "Save" to create and add the features locally, or "Cancel" to discard the sketch.
 
 ## How it works
 
