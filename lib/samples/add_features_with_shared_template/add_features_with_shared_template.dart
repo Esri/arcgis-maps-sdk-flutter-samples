@@ -256,7 +256,7 @@ class _AddFeaturesWithSharedTemplateState
   // Start a point or line sketch using the selected template's default geometry.
   void _startEditingUsingTemplate(_TemplateItem templateItem) {
     setState(() {
-      _statusText = 'Place a point, then tap Save or Cancel.';
+      _statusText = 'Draw a geometry, then tap Save or Cancel.';
       _selectedTemplate = templateItem;
       _settingsVisible = false;
     });
