@@ -37,20 +37,17 @@ class _AddFeaturesWithSharedTemplateState
   // Create a geometry editor to draw geometries.
   final _geometryEditor = GeometryEditor();
 
-  // The template items available in the UI to select templates for editing.
+  // A list holding the template items available for editing.
   final _templateItems = <_TemplateItem>[];
 
-  // The active template item being used to edit.
-  _TemplateItem? _activeTemplateItem;
+  // The selected template being used to edit.
+  _TemplateItem? _selectedTemplate;
 
   // Status text to display in a banner.
   var _statusText = 'Loading map and shared templates';
 
-  // A flag to control the visibility of the settings.
+  // A flag to control the visibility of the settings bottom sheet.
   var _settingsVisible = false;
-
-  // A flag to control visibility of editing UI.
-  var _isEditing = false;
 
   // A flag for when the map view is ready and controls can be used.
   var _ready = false;
@@ -67,14 +64,16 @@ class _AddFeaturesWithSharedTemplateState
             Column(
               children: [
                 Expanded(
+                  // Add a map view to the widget tree and set a controller.
                   child: ArcGISMapView(
                     controllerProvider: () => _mapViewController,
                     onMapViewReady: onMapViewReady,
                   ),
                 ),
-                // A button to open the template picker. Only visible if editing is not in progress.
+                // A button to open the template picker.
+                // Only visible if editing with a template is not already in progress.
                 Visibility(
-                  visible: !_isEditing,
+                  visible: _selectedTemplate == null,
                   child: ElevatedButton(
                     onPressed: _ready
                         ? () => setState(() => _settingsVisible = true)
@@ -82,17 +81,20 @@ class _AddFeaturesWithSharedTemplateState
                     child: const Text('Select Template'),
                   ),
                 ),
-                // Buttons for editing. Only visible if editing is in progress.
+                // Buttons for editing.
+                // Only visible if there is a selected template to use in editing.
                 Visibility(
-                  visible: _isEditing,
+                  visible: _selectedTemplate != null,
                   child: Row(
                     spacing: 10,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
+                      // A button to save edits to the local geodatabase.
                       ElevatedButton(
                         onPressed: _saveEdits,
                         child: const Text('Save'),
                       ),
+                      // A button to cancel and discard edits.
                       ElevatedButton(
                         onPressed: _discardEdits,
                         child: const Text('Cancel'),
@@ -102,13 +104,15 @@ class _AddFeaturesWithSharedTemplateState
                 ),
               ],
             ),
-            // Display a progress indicator and prevent interaction until state is ready.
-            LoadingIndicator(visible: !_ready),
             // Display the current status in a banner.
             MapBanner(text: _statusText),
+            // Display a progress indicator and prevent interaction until state is ready.
+            LoadingIndicator(visible: !_ready),
           ],
         ),
       ),
+      // A bottom sheet containing the template picker.
+      // Visibility is toggled by the settings button.
       bottomSheet: _settingsVisible ? _buildBottomSheet(context) : null,
     );
   }
@@ -129,16 +133,16 @@ class _AddFeaturesWithSharedTemplateState
         (featureLayer.featureTable! as ServiceFeatureTable).serviceGeodatabase!;
     // Get the shared templates from the service geodatabase.
     final sharedTemplates = await serviceGeodatabase.querySharedTemplates();
-    // Create items to use in the UI based on the templates.
+    // Create items to use in the UI based on the available templates.
     await createTemplateItems(sharedTemplates);
 
-    // Set the geometry editor to the map view.
+    // Set the geometry editor to the map view ready for editing.
     _mapViewController.geometryEditor = _geometryEditor;
 
     // Set the map to the map view controller.
     _mapViewController.arcGISMap = map;
 
-    // Set the ready state variable to true to enable the UI.
+    // Set the ready state variable to true to enable the UI and update the status text.
     setState(() {
       _ready = true;
       _statusText =
@@ -146,6 +150,7 @@ class _AddFeaturesWithSharedTemplateState
     });
   }
 
+  // A helper method to build out the bottom sheet settings for selecting a template.
   Widget _buildBottomSheet(BuildContext context) {
     return BottomSheetSettings(
       title: 'Select a shared template',
@@ -157,6 +162,7 @@ class _AddFeaturesWithSharedTemplateState
             child: Column(
               spacing: 10,
               children: [
+                // Loop through the template items and create a button that starts editing using the template.
                 for (final templateItem in _templateItems) ...[
                   ElevatedButton(
                     onPressed: () => _startEditingUsingTemplate(templateItem),
@@ -166,6 +172,8 @@ class _AddFeaturesWithSharedTemplateState
                         spacing: 20,
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
+                          // If a swatch is available for the template display it.
+                          // Otherwise use a default image/icon.
                           if (templateItem.swatch != null)
                             Image.memory(
                               templateItem.swatch!.getEncodedBuffer(),
@@ -175,6 +183,7 @@ class _AddFeaturesWithSharedTemplateState
                           Column(
                             spacing: 10,
                             children: [
+                              // Display the name and type of the template.
                               Text(templateItem.template.name),
                               Text(
                                 'Template type: ${templateItem.template.type.name}',
@@ -195,7 +204,8 @@ class _AddFeaturesWithSharedTemplateState
     );
   }
 
-  // Query the shared templates to get the first Preset and first Group template to create items to use in the template picker.
+  // Query the shared templates to get the first preset and first group template.
+  // Create items for these templates to use in the template picker.
   Future<void> createTemplateItems(
     Map<int, List<SharedTemplate>> sharedTemplates,
   ) async {
@@ -204,7 +214,8 @@ class _AddFeaturesWithSharedTemplateState
     final sortedEntries = sharedTemplates.entries.toList()
       ..sort((left, right) => left.key.compareTo(right.key));
 
-    // Loop through the shared templates and get the first preset and first group templates.
+    // Loop through the sorted templates and get the first preset and first group templates.
+    // This sample is only using 2 templates as an example.
     for (final entry in sortedEntries) {
       final layerId = entry.key;
       final templates = entry.value;
@@ -221,12 +232,14 @@ class _AddFeaturesWithSharedTemplateState
         // Get a swatch, if there is one.
         try {
           final swatch = await template.createSwatch(layerId: layerId);
-          // Create a template item with the swatch to display in the UI and add to the list of template items.
+          // Create a template item with the swatch to display in the UI.
+          // Add to the list of template items.
           _templateItems.add(
             _TemplateItem(template: template, layerId: layerId, swatch: swatch),
           );
         } on ArcGISException catch (_) {
-          // Create a template without a swatch if it doesn't exost to display in the UI and add to the list of template items.
+          // Create a template without a swatch if there isn't one.
+          // Add to the list of template items.
           _templateItems.add(
             _TemplateItem(template: template, layerId: layerId),
           );
@@ -244,19 +257,18 @@ class _AddFeaturesWithSharedTemplateState
   void _startEditingUsingTemplate(_TemplateItem templateItem) {
     setState(() {
       _statusText = 'Place a point, then tap Save or Cancel.';
-      _activeTemplateItem = templateItem;
-      _isEditing = true;
+      _selectedTemplate = templateItem;
       _settingsVisible = false;
     });
 
     // Use the vertex tool.
     _geometryEditor.tool = VertexTool();
 
-    // Get the default construction tool from the template to define the geometry
+    // Get the default construction tool from the template to define the geometry.
     final geometryConstructionTool = templateItem.template
         .getDefaultConstructionTool(layerId: templateItem.layerId)!;
 
-    // Start editing with an appropriate geometry type.
+    // Start editing with an appropriate geometry type based on the construction tool.
     if (geometryConstructionTool.toolType ==
         GeometryConstructionToolType.point) {
       _geometryEditor.startWithGeometryType(GeometryType.point);
@@ -271,8 +283,7 @@ class _AddFeaturesWithSharedTemplateState
     _geometryEditor.stop();
 
     setState(() {
-      _activeTemplateItem = null;
-      _isEditing = false;
+      _selectedTemplate = null;
       _statusText = 'Edit canceled. Open Shared Templates and select a template to create features.';
     });
   }
@@ -281,33 +292,31 @@ class _AddFeaturesWithSharedTemplateState
   Future<void> _saveEdits() async {
     setState(() => _statusText = 'Creating feature...');
 
-    // Stop the geometry editor and hold onto the returned geometry.
+    // Stop the geometry editor and hold onto the returned geometry so it can be saved.
     final geometry = _geometryEditor.stop();
 
     try {
       // Create features locally using the template attributes and geometry created with the geometry editor.
-      final sharedTemplateSource = _activeTemplateItem!.template.templateSource;
+      final sharedTemplateSource = _selectedTemplate!.template.templateSource;
       final featureCreationSet = await sharedTemplateSource.createFeatures(
-        sharedTemplate: _activeTemplateItem!.template,
+        sharedTemplate: _selectedTemplate!.template,
         geometry: geometry,
       );
 
       // Save the created features to the local geodatabase.
-      // Note that this does not apply the changes to the service. Call applyEdits to apply to the server.
+      // Note that this does not apply the changes to the service. Call applyEdits to apply to the server, if required.
       await sharedTemplateSource.addFeatures(
         featureCreationSet: featureCreationSet,
       );
       // Reset the UI if the edit succeeds.
       setState(() {
-        _activeTemplateItem = null;
-        _isEditing = false;
+        _selectedTemplate = null;
         _statusText = 'Features saved. Open Shared Templates and select a template to create features.';
       });
     } on ArcGISException catch (e) {
       // If the edits fail to meet the requirements of the template, update the UI.
       setState(() {
-        _activeTemplateItem = null;
-        _isEditing = false;
+        _selectedTemplate = null;
         _statusText =
             'Unable to create feature. Error details: ${e.additionalMessage}. \n Open Shared Templates and select a template to create features.';
       });
@@ -315,7 +324,7 @@ class _AddFeaturesWithSharedTemplateState
   }
 }
 
-// A class to define a template item used in the UI.
+// A helper class to define a template item used in the UI.
 class _TemplateItem {
   const _TemplateItem({
     required this.template,
