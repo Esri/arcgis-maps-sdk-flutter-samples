@@ -1,0 +1,40 @@
+{
+    "category": "Edit and Manage Data",
+    "description": "Create features from preset and group shared templates.",
+    "ignore": false,
+    "images": [
+        "add_features_with_shared_template.png"
+    ],
+    "keywords": [
+        "edit",
+        "feature",
+        "group",
+        "preset",
+        "shared template",
+        "shared template source",
+        "template",
+        "FeatureLayer",
+        "GeometryConstructionToolType",
+        "GeometryEditor",
+        "ServiceFeatureTable",
+        "ServiceGeodatabase",
+        "SharedTemplate",
+        "SharedTemplateFeatureCreationSet",
+        "SharedTemplateSource"
+    ],
+    "redirect_from": [],
+    "relevant_apis": [
+        "FeatureLayer",
+        "GeometryConstructionToolType",
+        "GeometryEditor",
+        "ServiceFeatureTable",
+        "ServiceGeodatabase",
+        "SharedTemplate",
+        "SharedTemplateFeatureCreationSet",
+        "SharedTemplateSource"
+    ],
+    "snippets": [
+        "add_features_with_shared_template.dart"
+    ],
+    "title": "Add features with shared template"
+}
