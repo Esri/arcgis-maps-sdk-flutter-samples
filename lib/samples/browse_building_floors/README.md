@@ -2,7 +2,7 @@
 
 Display and browse through building floors from a floor-aware web map.
 
-![BrowseBuildingFloorsApp](browse_building_floors.png)
+![Image of browse building floors](browse_building_floors.png)
 
 ## Use case
 
@@ -10,7 +10,7 @@ Having map data to aid indoor navigation in buildings with multiple floors such 
 
 ## How to use the sample
 
-Use the spinner to browse different floor levels in the facility. Only the selected floor will be displayed.
+Use the dropdown to browse different floor levels in the facility. Only the selected floor will be displayed.
 
 ## How it works
 

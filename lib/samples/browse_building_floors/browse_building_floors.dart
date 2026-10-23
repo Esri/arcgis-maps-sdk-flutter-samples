@@ -20,7 +20,6 @@ import 'package:material_ui/material_ui.dart';
 class BrowseBuildingFloors extends StatefulWidget {
   const BrowseBuildingFloors({super.key});
 
-  // Create the state that manages the map and selected floor.
   @override
   State<BrowseBuildingFloors> createState() => _BrowseBuildingFloorsState();
 }
@@ -30,16 +29,15 @@ class _BrowseBuildingFloorsState extends State<BrowseBuildingFloors>
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
 
-  // Store the levels exposed by the floor-aware web map.
-  List<FloorLevel> _floorLevels = [];
+  // Store the levels defined in the floor-aware web map.
+  var _floorLevels = <FloorLevel>[];
 
   // Track the floor currently displayed on the map.
   FloorLevel? _selectedFloor;
 
-  // Enable the floor selector after the map and floor manager finish loading.
+  // A flag for when the map view is ready and controls can be used.
   var _ready = false;
 
-  // Build the map, floor selector, and loading indicator.
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -52,36 +50,31 @@ class _BrowseBuildingFloorsState extends State<BrowseBuildingFloors>
             Column(
               children: [
                 Expanded(
-                  // Display the floor-aware web map in the map view.
+                  // Add a map view to the widget tree and set a controller.
                   child: ArcGISMapView(
                     controllerProvider: () => _mapViewController,
                     onMapViewReady: onMapViewReady,
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(8),
-                  // Let users choose which building floor is visible.
-                  child: DropdownButton<FloorLevel>(
-                    value: _selectedFloor,
-                    hint: const Text('Select a floor'),
-                    items: _floorLevels
-                        .map(
-                          (floor) => DropdownMenuItem(
-                            value: floor,
-                            child: Text(floor.longName),
-                          ),
-                        )
-                        .toList(),
-                    onChanged: _ready
-                        ? (floor) {
-                            if (floor != null) _selectFloor(floor);
-                          }
-                        : null,
-                  ),
+                // A dropdown menu to select the visible building floor.
+                DropdownButton(
+                  value: _selectedFloor,
+                  hint: const Text('Select a floor'),
+                  items: _floorLevels
+                      .map(
+                        (floor) => DropdownMenuItem(
+                          value: floor,
+                          child: Text(floor.longName),
+                        ),
+                      )
+                      .toList(),
+                  onChanged: (floor) {
+                    if (floor != null) _selectFloor(floor);
+                  },
                 ),
               ],
             ),
-            // Prevent interaction while the map and floor levels are loading.
+            // Display a progress indicator and prevent interaction until state is ready.
             LoadingIndicator(visible: !_ready),
           ],
         ),
@@ -89,7 +82,6 @@ class _BrowseBuildingFloorsState extends State<BrowseBuildingFloors>
     );
   }
 
-  // Load the web map and initialize its ground floor.
   Future<void> onMapViewReady() async {
     try {
       // Create a map from the public Building L web map.
@@ -100,50 +92,45 @@ class _BrowseBuildingFloorsState extends State<BrowseBuildingFloors>
       final map = ArcGISMap.withItem(portalItem);
       _mapViewController.arcGISMap = map;
 
-      // Load the map before accessing its floor manager.
+      // Load the map before accessing the floor manager.
       await map.load();
-      final floorManager = map.floorManager;
-      if (floorManager == null) {
-        throw Exception('The web map is not floor-aware.');
+      if (map.floorManager == null) {
+        throw Exception('The map is not floor-aware.');
       }
+      final floorManager = map.floorManager!;
 
-      // Load the floor manager before reading its floor levels.
+      // Load the floor manager.
       await floorManager.load();
-      final levels = floorManager.levels;
-      if (levels.isEmpty) {
-        throw Exception('The web map does not contain any floor levels.');
-      }
+
       if (!mounted) return;
 
-      // Select the ground floor, or the first available floor if none has order zero.
-      _floorLevels = levels;
-      final initialFloor = levels.firstWhere(
-        (floor) => floor.verticalOrder == 0,
-        orElse: () => levels.first,
-      );
-      _selectFloor(initialFloor);
+      // Store the floor levels to populate the dropdown menu.
+      setState(() => _floorLevels = floorManager.levels);
+
+      // Select the ground floor (verticalOrder of 0).
+      final initialFloor = _floorLevels
+          .where((floor) => floor.verticalOrder == 0)
+          .firstOrNull;
+      if (initialFloor != null) {
+        _selectFloor(initialFloor);
+      }
+
+      // Enable the UI once the map and floor levels are ready.
       setState(() => _ready = true);
     } on Exception catch (exception) {
-      // Show loading errors and leave the map visible when possible.
       if (!mounted) return;
-      setState(() => _ready = true);
+
       showExceptionDialog('Failed to load the floor-aware web map', exception);
     }
   }
 
-  // Display only the selected floor level.
   void _selectFloor(FloorLevel selectedFloor) {
-    try {
-      // Hide every level before showing the requested floor.
-      for (final floor in _floorLevels) {
-        floor.isVisible = identical(floor, selectedFloor);
-      }
-
-      // Update the dropdown to match the visible floor.
-      setState(() => _selectedFloor = selectedFloor);
-    } on Exception catch (exception) {
-      // Report errors that occur while changing floor visibility.
-      showExceptionDialog('Failed to display the selected floor', exception);
+    // Update floor visibility to show only the selected floor.
+    for (final floor in _floorLevels) {
+      floor.isVisible = floor.verticalOrder == selectedFloor.verticalOrder;
     }
+
+    // Update the dropdown to match the visible floor.
+    setState(() => _selectedFloor = selectedFloor);
   }
 }
