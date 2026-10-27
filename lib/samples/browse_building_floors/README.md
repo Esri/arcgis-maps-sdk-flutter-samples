@@ -10,15 +10,16 @@ Having map data to aid indoor navigation in buildings with multiple floors such 
 
 ## How to use the sample
 
-Use the dropdown to browse different floor levels in the facility. Only the selected floor will be displayed.
+Use the FloorFilter widget to browse different floor levels in the facility. Only the selected floor will be displayed.
 
 ## How it works
 
 1. Create and load a floor-aware web map using the identifier of a `PortalItem`.
-2. Load the map and retrieve the map's `floorManager` property. Check that the map has a `floorManager` or `floorDefinition` property to ensure the map is floor-aware.
-3. Load the floor manager and retrieve the floor-aware data.
-4. Set the current visible floor to the first floor by finding it with `verticalOrder` equals zero.
-5. When a `FloorLevel` is selected, set only the selected floor level to visible using the `isVisible` property.
+2. Call `refresh()` on the `FloorFilterController` to load the map and its floor information.
+3. Check that the map has a `floorManager` property to ensure that the map is floor-aware.
+4. Find the first site in `floorManager.sites`.
+5. Find the first facility in that site's `site.facilities`.
+6. Set `selectedSiteId` and `selectedFacilityId` on the `FloorFilterController` to select that facility, which automatically selects the first floor of the facility.
 
 ## Relevant API
 

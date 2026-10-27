@@ -89,9 +89,11 @@ class _BrowseBuildingFloorsState extends State<BrowseBuildingFloors>
       final floorManager = map.floorManager!;
 
       // Get the first facility from the first site, if available.
-      final facility = floorManager.sites.firstOrNull?.facilities.firstOrNull;
-      if (facility != null) {
-        // Set the selected facility, which will also select the first floor of that facility.
+      final site = floorManager.sites.firstOrNull;
+      final facility = site?.facilities.firstOrNull;
+      if (site != null && facility != null) {
+        // Set the selected site and facility, which will also select the first floor of that facility.
+        _floorFilterController.selectedSiteId = site.siteId;
         _floorFilterController.selectedFacilityId = facility.facilityId;
       }
 
