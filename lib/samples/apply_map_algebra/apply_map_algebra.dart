@@ -136,9 +136,8 @@ class _ApplyMapAlgebraState extends State<ApplyMapAlgebra>
                 const SizedBox(height: 10),
                 Text(
                   'Raster data Copyright Scottish Government and SEPA (2014)',
-                  style: Theme.of(
-                    context,
-                  ).textTheme.bodySmall?.copyWith(color: Colors.grey),
+                  style: Theme.of(context).textTheme.bodySmall
+                      ?.copyWith(color: Colors.grey),
                 ),
               ],
             ),
@@ -211,9 +210,7 @@ class _ApplyMapAlgebraState extends State<ApplyMapAlgebra>
     );
 
     // Create a continuous field function from the elevation field.
-    final continuousFieldFunction = ContinuousFieldFunction.create(
-      elevationField,
-    );
+    final continuousFieldFunction = ContinuousFieldSupplier(elevationField);
 
     // Mask out values below sea level to categorize only land.
     final elevationFieldFunction = continuousFieldFunction.mask(

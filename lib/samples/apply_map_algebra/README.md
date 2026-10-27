@@ -15,14 +15,14 @@ When the sample opens, it displays the source elevation raster. Tap the Categori
 ## How it works
 
 1. Create a `ContinuousField` from a raster file.
-2. Create a `ContinuousFieldFunction` from the continuous field and mask values below sea level.
+2. Create a `ContinuousFieldFunction` from the continuous field, using `ContinuousFieldSupplier`, and mask values below sea level.
 3. Round elevation values down to the lowest 10-meter interval with map algebra operators
     `((continuousFieldFunction / 10).floor() * 10)`, and then convert the result to a `DiscreteFieldFunction` with
      `.toDiscreteFieldFunction`.
 4. Create `BooleanFieldFunction`s for each category by defining a range with map algebra operators such as
     `isGreaterThanOrEqualTo`, `logicalAnd`, and `isLessThan`.
 5. Create a new `DiscreteField` by chaining `replaceIf` operations into discrete category values and evaluating the
-   the result with `evaluate`.
+   result with `evaluate`.
 6. Export the discrete field to files with `exportToFiles` and create a `Raster` with the result. Use it to create
     a `RasterLayer`.
 7. Apply a `ColormapRenderer` to the raster and display it in the map view.
@@ -35,6 +35,7 @@ When the sample opens, it displays the source elevation raster. Tap the Categori
 * ColorRamp
 * ContinuousField
 * ContinuousFieldFunction
+* ContinuousFieldSupplier
 * DiscreteField
 * DiscreteFieldFunction
 * Raster

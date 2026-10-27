@@ -154,7 +154,7 @@ class _AnalyzeTerrainSuitabilityWithSlopeAndAspectState
       if (!mounted) return;
 
       // Derive elevation, slope, and aspect field functions from the raster.
-      _elevationFunction = ContinuousFieldFunction.create(elevationField);
+      _elevationFunction = ContinuousFieldSupplier(elevationField);
       _slopeFunction = _elevationFunction.slope();
       _aspectFunction = _elevationFunction.aspect();
 
