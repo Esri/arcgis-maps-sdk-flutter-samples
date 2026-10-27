@@ -127,27 +127,39 @@ class _AddFeaturesWithSharedTemplateState
     // Load the map to access the shared templates.
     await map.load();
 
-    // Get the first service geodatabase from the feature layers.
-    final featureLayer = map.operationalLayers.whereType<FeatureLayer>().first;
-    final serviceGeodatabase =
-        (featureLayer.featureTable! as ServiceFeatureTable).serviceGeodatabase!;
-    // Get the shared templates from the service geodatabase.
-    final sharedTemplates = await serviceGeodatabase.querySharedTemplates();
-    // Create items to use in the UI based on the available templates.
-    await createTemplateItems(sharedTemplates);
+    // Get the first shared template source from the map.
+    final sharedTemplateSource = map.operationalLayers
+        .whereType<FeatureLayer>()
+        .map((layer) => layer.featureTable)
+        .whereType<ServiceFeatureTable>()
+        .map((table) => table.serviceGeodatabase)
+        .whereType<SharedTemplateSource>()
+        .firstOrNull;
 
-    // Set the geometry editor to the map view ready for editing.
-    _mapViewController.geometryEditor = _geometryEditor;
+    if (sharedTemplateSource != null) {
+      // Get the shared templates from the shared template source.
+      final sharedTemplates = await sharedTemplateSource.querySharedTemplates(
+        null,
+      );
+      // Create items to use in the UI based on the available templates.
+      await createTemplateItems(sharedTemplates);
 
-    // Set the map to the map view controller.
-    _mapViewController.arcGISMap = map;
+      // Set the geometry editor to the map view ready for editing.
+      _mapViewController.geometryEditor = _geometryEditor;
 
-    // Set the ready state variable to true to enable the UI and update the status text.
-    setState(() {
-      _ready = true;
-      _statusText =
-          'Open the template picker and select a template to create features.';
-    });
+      // Set the map to the map view controller.
+      _mapViewController.arcGISMap = map;
+
+      // Set the ready state variable to true to enable the UI and update the status text.
+      setState(() {
+        _ready = true;
+        _statusText = 'Open the template picker and select a template to create features.';
+      });
+    } else {
+      setState(
+        () => _statusText = 'Unable to load sample. The map does not contain a shared template source.',
+      );
+    }
   }
 
   // A helper method to build out the bottom sheet settings for selecting a template.
