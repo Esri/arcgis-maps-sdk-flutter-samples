@@ -15,6 +15,7 @@
 
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
+import 'package:arcgis_maps_toolkit/arcgis_maps_toolkit.dart';
 import 'package:material_ui/material_ui.dart';
 
 class BrowseBuildingFloors extends StatefulWidget {
@@ -29,11 +30,10 @@ class _BrowseBuildingFloorsState extends State<BrowseBuildingFloors>
   // Create a controller for the map view.
   final _mapViewController = ArcGISMapView.createController();
 
-  // Store the levels defined in the floor-aware web map.
-  var _floorLevels = <FloorLevel>[];
-
-  // Track the floor currently displayed on the map.
-  FloorLevel? _selectedFloor;
+  // Create a controller for the FloorFilter widget.
+  late final _floorFilterController = FloorFilter.createController(
+    _mapViewController,
+  );
 
   // A flag for when the map view is ready and controls can be used.
   var _ready = false;
@@ -41,43 +41,29 @@ class _BrowseBuildingFloorsState extends State<BrowseBuildingFloors>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        top: false,
-        left: false,
-        right: false,
-        child: Stack(
-          children: [
-            Column(
-              children: [
-                Expanded(
-                  // Add a map view to the widget tree and set a controller.
-                  child: ArcGISMapView(
-                    controllerProvider: () => _mapViewController,
-                    onMapViewReady: onMapViewReady,
+      body: Stack(
+        children: [
+          ArcGISMapView(
+            controllerProvider: () => _mapViewController,
+            onMapViewReady: onMapViewReady,
+          ),
+          // Create a floor filter and display on top of the map in the bottom left.
+          Positioned.fill(
+            child: SafeArea(
+              child: Align(
+                alignment: .bottomLeft,
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 20, bottom: 40),
+                  child: FloorFilter(
+                    floorFilterController: _floorFilterController,
                   ),
                 ),
-                // A dropdown menu to select the visible building floor.
-                DropdownButton(
-                  value: _selectedFloor,
-                  hint: const Text('Select a floor'),
-                  items: _floorLevels
-                      .map(
-                        (floor) => DropdownMenuItem(
-                          value: floor,
-                          child: Text(floor.longName),
-                        ),
-                      )
-                      .toList(),
-                  onChanged: (floor) {
-                    if (floor != null) _selectFloor(floor);
-                  },
-                ),
-              ],
+              ),
             ),
-            // Display a progress indicator and prevent interaction until state is ready.
-            LoadingIndicator(visible: !_ready),
-          ],
-        ),
+          ),
+          // Display a progress indicator and prevent interaction until state is ready.
+          LoadingIndicator(visible: !_ready),
+        ],
       ),
     );
   }
@@ -92,27 +78,21 @@ class _BrowseBuildingFloorsState extends State<BrowseBuildingFloors>
       final map = ArcGISMap.withItem(portalItem);
       _mapViewController.arcGISMap = map;
 
-      // Load the map before accessing the floor manager.
-      await map.load();
+      // Initialize the floor filter with the current map's floor information.
+      await _floorFilterController.refresh();
+      if (!mounted) return;
+
+      // Ensure the map has a floor manager before proceeding.
       if (map.floorManager == null) {
         throw Exception('The map is not floor-aware.');
       }
       final floorManager = map.floorManager!;
 
-      // Load the floor manager.
-      await floorManager.load();
-
-      if (!mounted) return;
-
-      // Store the floor levels to populate the dropdown menu.
-      setState(() => _floorLevels = floorManager.levels);
-
-      // Select the ground floor (verticalOrder of 0).
-      final initialFloor = _floorLevels
-          .where((floor) => floor.verticalOrder == 0)
-          .firstOrNull;
-      if (initialFloor != null) {
-        _selectFloor(initialFloor);
+      // Get the first facility from the first site, if available.
+      final facility = floorManager.sites.firstOrNull?.facilities.firstOrNull;
+      if (facility != null) {
+        // Set the selected facility, which will also select the first floor of that facility.
+        _floorFilterController.selectedFacilityId = facility.facilityId;
       }
 
       // Enable the UI once the map and floor levels are ready.
@@ -122,15 +102,5 @@ class _BrowseBuildingFloorsState extends State<BrowseBuildingFloors>
 
       showExceptionDialog('Failed to load the floor-aware web map', exception);
     }
-  }
-
-  void _selectFloor(FloorLevel selectedFloor) {
-    // Update floor visibility to show only the selected floor.
-    for (final floor in _floorLevels) {
-      floor.isVisible = floor.verticalOrder == selectedFloor.verticalOrder;
-    }
-
-    // Update the dropdown to match the visible floor.
-    setState(() => _selectedFloor = selectedFloor);
   }
 }
