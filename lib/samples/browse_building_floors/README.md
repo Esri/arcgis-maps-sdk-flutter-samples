@@ -23,6 +23,8 @@ Use the FloorFilter widget to browse different floor levels in the facility. Onl
 
 ## Relevant API
 
+* FloorFilter
+* FloorFilterController
 * FloorManager
 
 ## About the data

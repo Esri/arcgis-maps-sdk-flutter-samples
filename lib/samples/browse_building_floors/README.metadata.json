@@ -16,10 +16,14 @@
         "level",
         "site",
         "story",
+        "FloorFilter",
+        "FloorFilterController",
         "FloorManager"
     ],
     "redirect_from": [],
     "relevant_apis": [
+        "FloorFilter",
+        "FloorFilterController",
         "FloorManager"
     ],
     "snippets": [
