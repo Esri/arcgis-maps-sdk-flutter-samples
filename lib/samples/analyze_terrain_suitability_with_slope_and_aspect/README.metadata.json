@@ -20,6 +20,7 @@
         "ColormapRenderer",
         "ContinuousField",
         "ContinuousFieldFunction",
+        "ContinuousFieldSupplier",
         "FieldAnalysis"
     ],
     "offline_data": [
@@ -33,6 +34,7 @@
         "ColormapRenderer",
         "ContinuousField",
         "ContinuousFieldFunction",
+        "ContinuousFieldSupplier",
         "FieldAnalysis"
     ],
     "snippets": [

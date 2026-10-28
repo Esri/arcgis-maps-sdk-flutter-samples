@@ -113,9 +113,8 @@ class _ShowInteractiveViewshedWithAnalysisOverlayState
                 const SizedBox(height: 10),
                 Text(
                   'Raster data Copyright Scottish Government and SEPA (2014)',
-                  style: Theme.of(
-                    context,
-                  ).textTheme.bodySmall?.copyWith(color: Colors.grey),
+                  style: Theme.of(context).textTheme.bodySmall
+                      ?.copyWith(color: Colors.grey),
                 ),
               ],
             ),
@@ -151,9 +150,7 @@ class _ShowInteractiveViewshedWithAnalysisOverlayState
     );
 
     // Create the continuous field function for the viewshed analysis from the continuous field.
-    final continuousFieldFunction = ContinuousFieldFunction.create(
-      continuousField,
-    );
+    final continuousFieldFunction = ContinuousFieldSupplier(continuousField);
 
     // Initialize the viewshed parameters.
     _viewshedParameters = ViewshedParameters()
