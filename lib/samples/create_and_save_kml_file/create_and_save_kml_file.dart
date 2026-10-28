@@ -344,8 +344,6 @@ class _CreateAndSaveKmlFileState extends State<CreateAndSaveKmlFile>
       await FilePicker.saveFile(
         dialogTitle: 'Save KMZ file',
         fileName: 'Untitled.kmz',
-        type: FileType.custom,
-        allowedExtensions: ['kmz'],
         bytes: await temporaryFile.readAsBytes(),
       );
     } on Exception catch (exception) {
