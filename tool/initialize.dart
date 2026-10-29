@@ -27,7 +27,6 @@ void main(List<String> arguments) async {
     'run',
     'build_runner',
     'build',
-    '--delete-conflicting-outputs',
   ]);
   await runDart(['format', 'lib/models/samples_widget_list.dart']);
   print('> Initialization complete.');
