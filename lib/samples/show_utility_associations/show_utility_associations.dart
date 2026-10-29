@@ -117,9 +117,8 @@ class _ShowUtilityAssociationsState extends State<ShowUtilityAssociations>
                     children: [
                       Text(
                         'Utility association types',
-                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                          fontWeight: FontWeight.w600,
-                        ),
+                        style: Theme.of(context).textTheme.titleSmall
+                            ?.copyWith(fontWeight: FontWeight.w600),
                       ),
                       Container(
                         decoration: BoxDecoration(

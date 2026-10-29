@@ -96,9 +96,8 @@ class _ShowLineOfSightAnalysisInMapState
                 ),
                 Text(
                   'Raster data Copyright Scottish Government and SEPA (2014)',
-                  style: Theme.of(
-                    context,
-                  ).textTheme.bodySmall?.copyWith(color: Colors.grey),
+                  style: Theme.of(context).textTheme.bodySmall
+                      ?.copyWith(color: Colors.grey),
                 ),
               ],
             ),

@@ -221,12 +221,10 @@ class _AddFeaturesWithContingentValuesState
     }
 
     // Create a draft feature (not inserted into the table yet).
-    final draft =
-        _birdNestsTable.createFeature(
-              attributes: <String, dynamic>{},
-              geometry: mapPoint,
-            )
-            as ArcGISFeature;
+    final draft = _birdNestsTable.createFeature(
+      attributes: <String, dynamic>{},
+      geometry: mapPoint,
+    ) as ArcGISFeature;
 
     // Reset all editor state and show bottom sheet.
     _startDraftEditing(draft);
@@ -508,9 +506,8 @@ class _AddFeaturesWithContingentValuesState
       _endDraftEditing(dismissSheet: true);
     } on Exception catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Failed to save feature: $e')));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Failed to save feature: $e')));
     }
   }
 

@@ -275,13 +275,10 @@ class _CreateBuffersAroundPointsState extends State<CreateBuffersAroundPoints>
     final boundaryGeometry = polygonBuilder.toGeometry();
 
     // Project the boundary geometry to the spatial reference used by the sample.
-    final boundaryPolygon =
-        GeometryEngine.project(
-              boundaryGeometry,
-              outputSpatialReference:
-                  _statePlaneNorthCentralTexasSpatialReference,
-            )
-            as Polygon;
+    final boundaryPolygon = GeometryEngine.project(
+      boundaryGeometry,
+      outputSpatialReference: _statePlaneNorthCentralTexasSpatialReference,
+    ) as Polygon;
 
     return boundaryPolygon;
   }

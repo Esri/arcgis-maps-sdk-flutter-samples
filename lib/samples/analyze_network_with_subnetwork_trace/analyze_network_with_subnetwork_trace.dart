@@ -199,9 +199,9 @@ class _AnalyzeNetworkWithSubnetworkTraceState
                                         value: attribute,
                                         child: Text(
                                           attribute.name,
-                                          style: Theme.of(
-                                            context,
-                                          ).textTheme.bodyMedium,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyMedium,
                                         ),
                                       ),
                                 )
@@ -232,9 +232,9 @@ class _AnalyzeNetworkWithSubnetworkTraceState
                                     value: op,
                                     child: Text(
                                       _operatorLabel(op),
-                                      style: Theme.of(
-                                        context,
-                                      ).textTheme.bodyMedium,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium,
                                     ),
                                   ),
                                 )
@@ -262,9 +262,9 @@ class _AnalyzeNetworkWithSubnetworkTraceState
                                   value: cv.code,
                                   child: Text(
                                     cv.name,
-                                    style: Theme.of(
-                                      context,
-                                    ).textTheme.bodyMedium,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyMedium,
                                   ),
                                 ),
                               )

@@ -540,8 +540,7 @@ class _RunValveIsolationTraceState extends State<RunValveIsolationTrace>
     _traceParameters.filterBarriers.clear();
     _graphicsOverlayBarriers.graphics.clear();
     setState(() {
-      _statusMessage =
-          'Tap on the map to add filter barriers, or run the trace directly without filter barriers.';
+      _statusMessage = 'Tap on the map to add filter barriers, or run the trace directly without filter barriers.';
       _resetEnabled = false;
     });
   }

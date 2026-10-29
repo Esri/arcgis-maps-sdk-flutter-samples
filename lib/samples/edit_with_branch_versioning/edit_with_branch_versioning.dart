@@ -383,9 +383,9 @@ class _EditWithBranchVersioningState extends State<EditWithBranchVersioning>
                                               ),
                                               actions: [
                                                 TextButton(
-                                                  onPressed: () => Navigator.of(
-                                                    context,
-                                                  ).pop(),
+                                                  onPressed: () =>
+                                                      Navigator.of(context)
+                                                          .pop(),
                                                   child: const Text('OK'),
                                                 ),
                                               ],

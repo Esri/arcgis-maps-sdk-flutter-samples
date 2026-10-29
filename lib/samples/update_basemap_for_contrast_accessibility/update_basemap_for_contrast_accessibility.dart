@@ -147,9 +147,8 @@ class _UpdateBasemapForContrastAccessibilityState
   }
 
   Widget _buildContrastSettings(BuildContext context) {
-    final sectionTitleStyle = Theme.of(
-      context,
-    ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600);
+    final sectionTitleStyle = Theme.of(context).textTheme.titleMedium
+        ?.copyWith(fontWeight: FontWeight.w600);
 
     return BottomSheetSettings(
       title: 'Contrast Options',

@@ -295,11 +295,9 @@ class _SublayerSelector extends StatefulWidget {
 class _SublayerSelectorState extends State<_SublayerSelector> {
   @override
   Widget build(BuildContext context) {
-    final fullModelSublayer =
-        widget.buildingSceneLayer.sublayers.firstWhere(
-              (sublayer) => sublayer.name == 'Full Model',
-            )
-            as BuildingGroupSublayer;
+    final fullModelSublayer = widget.buildingSceneLayer.sublayers.firstWhere(
+      (sublayer) => sublayer.name == 'Full Model',
+    ) as BuildingGroupSublayer;
     final categorySublayers = fullModelSublayer.sublayers;
     return SizedBox(
       height: 200,
