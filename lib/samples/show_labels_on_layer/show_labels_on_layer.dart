@@ -107,8 +107,7 @@ class _ShowLabelsOnLayerState extends State<ShowLabelsOnLayer>
 
     // Create a label definition with an Arcade expression script.
     final arcadeLabelExpression = ArcadeLabelExpression(
-      arcadeString:
-          r'$feature.NAME + " (" + left($feature.PARTY,1) + ")\nDistrict " + $feature.CDFIPS',
+      arcadeString: r'$feature.NAME + " (" + left($feature.PARTY,1) + ")\nDistrict " + $feature.CDFIPS',
     );
 
     // Create the label definition.

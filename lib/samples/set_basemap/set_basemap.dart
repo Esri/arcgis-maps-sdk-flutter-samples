@@ -83,9 +83,8 @@ class _SetBasemapState extends State<SetBasemap> with SampleStateSupport {
                       child: Theme(
                         data: Theme.of(context).copyWith(
                           textTheme: Theme.of(context).textTheme.copyWith(
-                            bodySmall: Theme.of(
-                              context,
-                            ).textTheme.bodySmall?.copyWith(fontSize: 11),
+                            bodySmall: Theme.of(context).textTheme.bodySmall
+                                ?.copyWith(fontSize: 11),
                           ),
                         ),
                         child: BasemapGallery(

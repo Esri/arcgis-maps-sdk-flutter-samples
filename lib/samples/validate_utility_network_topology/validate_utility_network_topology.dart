@@ -267,8 +267,7 @@ class _ValidateUtilityNetworkTopologyState
     setState(() {
       _ready = true;
       _statusTitle = 'Utility Network loaded';
-      _statusDetail =
-          "Tap on a feature to edit.\nTap 'Get State' to check if validating is necessary or if tracing is available.\nTap 'Trace' to run a trace.";
+      _statusDetail = "Tap on a feature to edit.\nTap 'Get State' to check if validating is necessary or if tracing is available.\nTap 'Trace' to run a trace.";
     });
   }
 

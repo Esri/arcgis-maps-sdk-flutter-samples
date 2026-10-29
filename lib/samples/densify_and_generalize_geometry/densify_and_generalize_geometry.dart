@@ -292,23 +292,19 @@ class _DensifyAndGeneralizeGeometryState
 
     // Generalize the polyline with the specified max deviation.
     if (_generalize) {
-      resultPolyline =
-          GeometryEngine.generalize(
-                geometry: resultPolyline,
-                maxDeviation: _maxDeviation,
-                removeDegenerateParts: true,
-              )
-              as Polyline;
+      resultPolyline = GeometryEngine.generalize(
+        geometry: resultPolyline,
+        maxDeviation: _maxDeviation,
+        removeDegenerateParts: true,
+      ) as Polyline;
     }
 
     // Densify the points of the polyline with the specified max segment length.
     if (_densify) {
-      resultPolyline =
-          GeometryEngine.densify(
-                geometry: resultPolyline,
-                maxSegmentLength: _maxSegmentLength,
-              )
-              as Polyline;
+      resultPolyline = GeometryEngine.densify(
+        geometry: resultPolyline,
+        maxSegmentLength: _maxSegmentLength,
+      ) as Polyline;
     }
 
     // Update the result graphics with the calculated geometries.

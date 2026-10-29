@@ -222,9 +222,8 @@ class _DownloadableResourcesPageState extends State<DownloadableResourcesPage> {
           message = 'Cancelled';
         }
 
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(message)));
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(message)));
       }
 
       widget.offlineData.cleanupFiles();
