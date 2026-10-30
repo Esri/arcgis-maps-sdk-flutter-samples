@@ -23,11 +23,7 @@ void main(List<String> arguments) async {
   await runDart(['pub', 'upgrade']);
   await runDart(['run', 'arcgis_maps', 'install']);
   await runDart(['run', 'build_runner', 'clean']);
-  await runDart([
-    'run',
-    'build_runner',
-    'build',
-  ]);
+  await runDart(['run', 'build_runner', 'build']);
   await runDart(['format', 'lib/models/samples_widget_list.dart']);
   print('> Initialization complete.');
 }
