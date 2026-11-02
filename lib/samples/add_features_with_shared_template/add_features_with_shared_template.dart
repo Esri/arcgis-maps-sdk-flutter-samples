@@ -138,9 +138,7 @@ class _AddFeaturesWithSharedTemplateState
 
     if (sharedTemplateSource != null) {
       // Get the shared templates from the shared template source.
-      final sharedTemplates = await sharedTemplateSource.querySharedTemplates(
-        null,
-      );
+      final sharedTemplates = await sharedTemplateSource.querySharedTemplates();
       // Create items to use in the UI based on the available templates.
       await createTemplateItems(sharedTemplates);
 
