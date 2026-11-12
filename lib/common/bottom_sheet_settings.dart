@@ -20,7 +20,8 @@ import 'package:material_ui/material_ui.dart';
 
 ///
 /// The widget has a column layout with a title and a close icon button on the top.
-/// The rest of area will be filled with the widgets returned by the [settingsWidgets] function.
+/// The title and close button remain fixed while the widgets returned by
+/// [settingsWidgets] scroll in the remaining space.
 ///  - [onCloseIconPressed] is called when the close icon is pressed.
 ///  - [settingsWidgets] is a list of widgets to display in the container.
 ///  - optional [padding] can be provided to customize the padding of the container.
@@ -43,8 +44,8 @@ class BottomSheetSettings extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: padding ?? bottomSheetPadding(context),
-      child: ListView(
-        shrinkWrap: true,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
           Row(
             children: [
@@ -59,8 +60,12 @@ class BottomSheetSettings extends StatelessWidget {
               ),
             ],
           ),
-          // Display the setting widgets.
-          ...settingsWidgets(context),
+          Flexible(
+            child: ListView(
+              shrinkWrap: true,
+              children: settingsWidgets(context),
+            ),
+          ),
         ],
       ),
     );
