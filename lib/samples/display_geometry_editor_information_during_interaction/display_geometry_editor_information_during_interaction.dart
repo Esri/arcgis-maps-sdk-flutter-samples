@@ -326,6 +326,8 @@ class _DisplayGeometryEditorInformationDuringInteractionState
   Widget buildEditingPanel(BuildContext context) {
     // Build a compact panel for editing actions and interaction feedback.
     return Card(
+      color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.5),
+      surfaceTintColor: Colors.transparent,
       child: Padding(
         padding: const EdgeInsets.all(12),
         child: ConstrainedBox(
