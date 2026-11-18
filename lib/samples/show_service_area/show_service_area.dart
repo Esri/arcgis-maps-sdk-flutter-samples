@@ -86,10 +86,12 @@ class _ShowServiceAreaState extends State<ShowServiceArea>
                     onTap: onTap,
                   ),
                 ),
-                SizedBox(
-                  height: 60,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  child: Wrap(
+                    alignment: WrapAlignment.spaceEvenly,
+                    spacing: 8,
+                    runSpacing: 8,
                     children: [
                       // Create segmented buttons for toggling adding a facility or barrier to the map.
                       SegmentedButton(
