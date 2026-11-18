@@ -280,150 +280,153 @@ class _EditWithBranchVersioningState extends State<EditWithBranchVersioning>
       builder: (context) {
         return StatefulBuilder(
           builder: (context, setModalState) {
-            return Padding(
-              padding: EdgeInsets.only(
-                bottom: MediaQuery.viewInsetsOf(context).bottom,
-              ),
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Column(
-                        children: [
-                          TextField(
-                            controller: nameController,
-                            decoration: const InputDecoration(
-                              labelText: 'Name',
-                            ),
-                          ),
-                          TextField(
-                            controller: descriptionController,
-                            decoration: const InputDecoration(
-                              labelText: 'Description',
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8),
-                            child: DropdownMenu(
-                              initialSelection: selectedAccess,
-                              onSelected: (newValue) {
-                                if (newValue != null) {
-                                  setModalState(() {
-                                    // Update the selected access value when a new value is selected from the dropdown menu.
-                                    selectedAccess = newValue;
-                                  });
-                                }
-                              },
-                              // Display the version access values in a dropdown.
-                              dropdownMenuEntries: VersionAccess.values.map((
-                                value,
-                              ) {
-                                return DropdownMenuEntry(
-                                  value: value,
-                                  label: value.name,
-                                );
-                              }).toList(),
-                            ),
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              ElevatedButton(
-                                onPressed: () => Navigator.of(context).pop(),
-                                child: const Text('Cancel'),
+            return SafeArea(
+              child: Padding(
+                padding: EdgeInsets.only(
+                  bottom: MediaQuery.viewInsetsOf(context).bottom,
+                ),
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Column(
+                          children: [
+                            TextField(
+                              controller: nameController,
+                              decoration: const InputDecoration(
+                                labelText: 'Name',
                               ),
-                              ElevatedButton(
-                                onPressed: () async {
-                                  // Create a new version by defining service version parameters from the user input.
-                                  if (nameController.text.isNotEmpty) {
-                                    final parameters =
-                                        ServiceVersionParameters()
-                                          ..name = nameController.text
-                                          ..description =
-                                              descriptionController.text
-                                          ..access = selectedAccess;
-
-                                    try {
-                                      await model.createVersion(parameters);
-                                      setState(() {
-                                        model.isVersionCreated = true;
-                                      });
-                                      if (context.mounted) {
-                                        Navigator.of(context).pop();
-                                      }
-                                    } on ArcGISException catch (e) {
-                                      if (context.mounted) {
-                                        Navigator.of(context).pop();
-                                        // Show an error message if an exception occurs.
-                                        await showDialog<void>(
-                                          context: context,
-                                          builder: (context) {
-                                            var errorMessageStrings = e
-                                                .additionalMessage
-                                                .split(RegExp(r'\s+'));
-
-                                            if (errorMessageStrings.contains(
-                                              'Extended',
-                                            )) {
-                                              errorMessageStrings =
-                                                  errorMessageStrings.sublist(
-                                                    0,
-                                                    errorMessageStrings.length -
-                                                        4,
-                                                  );
-                                            }
-                                            final cleanedMessage =
-                                                errorMessageStrings.join(' ');
-                                            return AlertDialog(
-                                              title: const Text('Error'),
-                                              content: Text(
-                                                'Error: $cleanedMessage',
-                                              ),
-                                              actions: [
-                                                TextButton(
-                                                  onPressed: () =>
-                                                      Navigator.of(context)
-                                                          .pop(),
-                                                  child: const Text('OK'),
-                                                ),
-                                              ],
-                                            );
-                                          },
-                                        );
-                                      }
-                                    }
-                                  } else {
-                                    // Show an error message if the fields are empty.
-                                    await showDialog<void>(
-                                      context: context,
-                                      builder: (context) {
-                                        return AlertDialog(
-                                          title: const Text('Error'),
-                                          content: const Text(
-                                            'Name cannot be empty',
-                                          ),
-                                          actions: [
-                                            TextButton(
-                                              onPressed: () =>
-                                                  Navigator.of(context).pop(),
-                                              child: const Text('OK'),
-                                            ),
-                                          ],
-                                        );
-                                      },
-                                    );
+                            ),
+                            TextField(
+                              controller: descriptionController,
+                              decoration: const InputDecoration(
+                                labelText: 'Description',
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8),
+                              child: DropdownMenu(
+                                initialSelection: selectedAccess,
+                                onSelected: (newValue) {
+                                  if (newValue != null) {
+                                    setModalState(() {
+                                      // Update the selected access value when a new value is selected from the dropdown menu.
+                                      selectedAccess = newValue;
+                                    });
                                   }
                                 },
-                                child: const Text('Create'),
+                                // Display the version access values in a dropdown.
+                                dropdownMenuEntries: VersionAccess.values.map((
+                                  value,
+                                ) {
+                                  return DropdownMenuEntry(
+                                    value: value,
+                                    label: value.name,
+                                  );
+                                }).toList(),
                               ),
-                            ],
-                          ),
-                        ],
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                ElevatedButton(
+                                  onPressed: () => Navigator.of(context).pop(),
+                                  child: const Text('Cancel'),
+                                ),
+                                ElevatedButton(
+                                  onPressed: () async {
+                                    // Create a new version by defining service version parameters from the user input.
+                                    if (nameController.text.isNotEmpty) {
+                                      final parameters =
+                                          ServiceVersionParameters()
+                                            ..name = nameController.text
+                                            ..description =
+                                                descriptionController.text
+                                            ..access = selectedAccess;
+
+                                      try {
+                                        await model.createVersion(parameters);
+                                        setState(() {
+                                          model.isVersionCreated = true;
+                                        });
+                                        if (context.mounted) {
+                                          Navigator.of(context).pop();
+                                        }
+                                      } on ArcGISException catch (e) {
+                                        if (context.mounted) {
+                                          Navigator.of(context).pop();
+                                          // Show an error message if an exception occurs.
+                                          await showDialog<void>(
+                                            context: context,
+                                            builder: (context) {
+                                              var errorMessageStrings = e
+                                                  .additionalMessage
+                                                  .split(RegExp(r'\s+'));
+
+                                              if (errorMessageStrings.contains(
+                                                'Extended',
+                                              )) {
+                                                errorMessageStrings =
+                                                    errorMessageStrings.sublist(
+                                                      0,
+                                                      errorMessageStrings
+                                                              .length -
+                                                          4,
+                                                    );
+                                              }
+                                              final cleanedMessage =
+                                                  errorMessageStrings.join(' ');
+                                              return AlertDialog(
+                                                title: const Text('Error'),
+                                                content: Text(
+                                                  'Error: $cleanedMessage',
+                                                ),
+                                                actions: [
+                                                  TextButton(
+                                                    onPressed: () =>
+                                                        Navigator.of(context)
+                                                            .pop(),
+                                                    child: const Text('OK'),
+                                                  ),
+                                                ],
+                                              );
+                                            },
+                                          );
+                                        }
+                                      }
+                                    } else {
+                                      // Show an error message if the fields are empty.
+                                      await showDialog<void>(
+                                        context: context,
+                                        builder: (context) {
+                                          return AlertDialog(
+                                            title: const Text('Error'),
+                                            content: const Text(
+                                              'Name cannot be empty',
+                                            ),
+                                            actions: [
+                                              TextButton(
+                                                onPressed: () =>
+                                                    Navigator.of(context).pop(),
+                                                child: const Text('OK'),
+                                              ),
+                                            ],
+                                          );
+                                        },
+                                      );
+                                    }
+                                  },
+                                  child: const Text('Create'),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             );
