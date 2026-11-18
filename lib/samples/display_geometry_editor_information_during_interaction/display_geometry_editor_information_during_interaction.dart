@@ -328,6 +328,7 @@ class _DisplayGeometryEditorInformationDuringInteractionState
     return Card(
       color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.5),
       surfaceTintColor: Colors.transparent,
+      elevation: 0,
       child: Padding(
         padding: const EdgeInsets.all(12),
         child: ConstrainedBox(
