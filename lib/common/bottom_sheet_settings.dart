@@ -50,13 +50,9 @@ class BottomSheetSettings extends StatelessWidget {
           Row(
             children: [
               Expanded(
-                child: FittedBox(
-                  fit: BoxFit.scaleDown,
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    title ?? 'Settings',
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
+                child: Text(
+                  title ?? 'Settings',
+                  style: Theme.of(context).textTheme.titleLarge,
                 ),
               ),
               IconButton(
