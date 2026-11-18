@@ -283,14 +283,9 @@ class _AddDynamicEntityLayerState extends State<AddDynamicEntityLayer>
 
   Widget _buildDynamicEntitySettings(BuildContext context) {
     return BottomSheetSettings(
+      title: 'Dynamic Entity Settings',
       onCloseIconPressed: () => setState(() => _settingsVisible = false),
       settingsWidgets: (context) => [
-        Text(
-          'Dynamic Entity Settings',
-          style: Theme.of(context).textTheme.titleLarge,
-        ),
-        const SizedBox(height: 12),
-
         // Track Lines
         SwitchListTile(
           title: const Text('Track Lines'),
