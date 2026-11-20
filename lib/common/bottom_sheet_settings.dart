@@ -49,11 +49,12 @@ class BottomSheetSettings extends StatelessWidget {
         children: [
           Row(
             children: [
-              Text(
-                title ?? 'Settings',
-                style: Theme.of(context).textTheme.titleLarge,
+              Expanded(
+                child: Text(
+                  title ?? 'Settings',
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
               ),
-              const Spacer(),
               IconButton(
                 icon: const Icon(Icons.close),
                 onPressed: onCloseIconPressed,

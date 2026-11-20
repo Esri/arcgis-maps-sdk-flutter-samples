@@ -31,7 +31,7 @@ Tap on the map to add points. Tap the "Settings" button to adjust the buffer rad
 
 The properties of the underlying projection determine the accuracy of buffer polygons in a given area. Planar buffers work well when analyzing distances around features that are concentrated in a relatively small area in a projected coordinate system. Inaccurate buffers could still be created by buffering points inside the spatial reference's envelope with distances that move it outside the envelope. On the other hand, geodesic buffers consider the curved shape of the Earth's surface and provide more accurate buffer offsets for features that are more dispersed (i.e., cover multiple UTM zones, large regions, or even the whole globe). See the "Create Planar and Geodetic Buffers" sample for an example of a geodesic buffer.
 
-For more information about using buffer analysis, see the topic [How Buffer (Analysis) works](https://pro.arcgis.com/en/pro-app/tool-reference/analysis/how-buffer-analysis-works.htm) in the *ArcGIS Pro* documentation.
+For more information about using buffer analysis, see the topic [How Buffer (Analysis) works](https://doc.esri.com/en/arcgis-pro/latest/tool-reference/analysis/how-buffer-analysis-works.html) in the *ArcGIS Pro* documentation.
 
 ## Tags
 
