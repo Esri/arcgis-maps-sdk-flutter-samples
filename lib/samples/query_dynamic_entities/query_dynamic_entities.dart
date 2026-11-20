@@ -59,6 +59,8 @@ class _QueryDynamicEntitiesState extends State<QueryDynamicEntities>
   @override
   void dispose() {
     unawaited(_dataSource?.disconnect());
+    _dataSource?.dispose();
+    _dataSource = null;
     super.dispose();
   }
 
