@@ -138,7 +138,7 @@ class _SetSurfacePlacementModeState extends State<SetSurfacePlacementMode>
     );
   }
 
-  Future<void> onSceneViewReady() async {
+  void onSceneViewReady() {
     // Create a scene with an imagery basemap.
     final scene = ArcGISScene.withBasemapStyle(BasemapStyle.arcGISImagery);
 

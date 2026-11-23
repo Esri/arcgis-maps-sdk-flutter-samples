@@ -45,19 +45,23 @@ class _IdentifyKmlFeaturesState extends State<IdentifyKmlFeatures>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: [
-          // Add a map view to the widget tree and set a controller.
-          ArcGISMapView(
-            controllerProvider: () => _mapViewController,
-            onMapViewReady: _onMapViewReady,
-            onTap: _onTap,
-          ),
-          // Prompt the user to identify a KML feature.
-          const MapBanner(text: 'Tap a weather feature to view its details.'),
-          // Display a progress indicator and prevent interaction until the layer is ready.
-          LoadingIndicator(visible: !_ready),
-        ],
+      body: SafeArea(
+        left: false,
+        right: false,
+        child: Stack(
+          children: [
+            // Add a map view to the widget tree and set a controller.
+            ArcGISMapView(
+              controllerProvider: () => _mapViewController,
+              onMapViewReady: _onMapViewReady,
+              onTap: _onTap,
+            ),
+            // Prompt the user to identify a KML feature.
+            const MapBanner(text: 'Tap a weather feature to view its details.'),
+            // Display a progress indicator and prevent interaction until the layer is ready.
+            LoadingIndicator(visible: !_ready),
+          ],
+        ),
       ),
     );
   }
