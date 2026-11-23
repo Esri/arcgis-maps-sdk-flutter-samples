@@ -358,63 +358,39 @@ class _EditWithBranchVersioningState extends State<EditWithBranchVersioning>
                                         if (context.mounted) {
                                           Navigator.of(context).pop();
                                           // Show an error message if an exception occurs.
-                                          await showDialog<void>(
-                                            context: context,
-                                            builder: (context) {
-                                              var errorMessageStrings = e
-                                                  .additionalMessage
-                                                  .split(RegExp(r'\s+'));
+                                          var errorMessageStrings = e
+                                              .additionalMessage
+                                              .split(RegExp(r'\s+'));
 
-                                              if (errorMessageStrings.contains(
-                                                'Extended',
-                                              )) {
-                                                errorMessageStrings =
-                                                    errorMessageStrings.sublist(
-                                                      0,
-                                                      errorMessageStrings
-                                                              .length -
-                                                          4,
-                                                    );
-                                              }
-                                              final cleanedMessage =
-                                                  errorMessageStrings.join(' ');
-                                              return AlertDialog(
-                                                title: const Text('Error'),
-                                                content: Text(
-                                                  'Error: $cleanedMessage',
-                                                ),
-                                                actions: [
-                                                  TextButton(
-                                                    onPressed: () =>
-                                                        Navigator.of(context)
-                                                            .pop(),
-                                                    child: const Text('OK'),
-                                                  ),
-                                                ],
-                                              );
-                                            },
+                                          if (errorMessageStrings.contains(
+                                            'Extended',
+                                          )) {
+                                            errorMessageStrings =
+                                                errorMessageStrings.sublist(
+                                                  0,
+                                                  errorMessageStrings.length -
+                                                      4,
+                                                );
+                                          }
+                                          final details = errorMessageStrings
+                                              .join(' ')
+                                              .trim();
+                                          final cleanedMessage = details.isEmpty
+                                              ? e.message
+                                              : '${e.message}\n\n$details';
+                                          showMessageDialog(
+                                            cleanedMessage,
+                                            title: 'Error',
+                                            showOK: true,
                                           );
                                         }
                                       }
                                     } else {
                                       // Show an error message if the fields are empty.
-                                      await showDialog<void>(
-                                        context: context,
-                                        builder: (context) {
-                                          return AlertDialog(
-                                            title: const Text('Error'),
-                                            content: const Text(
-                                              'Name cannot be empty',
-                                            ),
-                                            actions: [
-                                              TextButton(
-                                                onPressed: () =>
-                                                    Navigator.of(context).pop(),
-                                                child: const Text('OK'),
-                                              ),
-                                            ],
-                                          );
-                                        },
+                                      showMessageDialog(
+                                        'Name cannot be empty',
+                                        title: 'Error',
+                                        showOK: true,
                                       );
                                     }
                                   },
@@ -458,23 +434,11 @@ class _EditWithBranchVersioningState extends State<EditWithBranchVersioning>
                     // ignore: avoid_catches_without_on_clauses
                   } catch (e) {
                     // Show an error message if an exception occurs.
-                    if (context.mounted) {
-                      await showDialog<void>(
-                        context: context,
-                        builder: (context) {
-                          return AlertDialog(
-                            title: const Text('Error'),
-                            content: Text('Error: $e'),
-                            actions: [
-                              TextButton(
-                                onPressed: () => Navigator.of(context).pop(),
-                                child: const Text('OK'),
-                              ),
-                            ],
-                          );
-                        },
-                      );
-                    }
+                    showMessageDialog(
+                      e.toString(),
+                      title: 'Error',
+                      showOK: true,
+                    );
                   }
                 },
               );
