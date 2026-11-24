@@ -18,8 +18,8 @@ import 'dart:io';
 
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/models/downloadable_resource.dart';
+import 'package:archive/archive_io.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_archive/flutter_archive.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 
@@ -156,10 +156,9 @@ class OfflineData {
 
       if (destinationFile.path.toLowerCase().endsWith('.zip')) {
         // Zip files: extract to the downloaded directory and delete the temporary.
-        await ZipFile.extractToDirectory(
-          zipFile: destinationFile,
-          destinationDir: downloadedDir,
-        );
+        final inputStream = InputFileStream(destinationFile.path);
+        final archive = ZipDecoder().decodeStream(inputStream);
+        await extractArchiveToDisk(archive, downloadedDir.path);
         downloadingDir.deleteSync(recursive: true);
       } else {
         // Non-zip files: rename the temporary directory to the final downloaded directory.
