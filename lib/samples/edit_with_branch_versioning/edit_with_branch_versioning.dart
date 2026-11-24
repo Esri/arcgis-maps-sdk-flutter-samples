@@ -274,7 +274,7 @@ class _EditWithBranchVersioningState extends State<EditWithBranchVersioning>
     final descriptionController = TextEditingController();
     var selectedAccess = VersionAccess.public;
 
-    return showModalBottomSheet<void>(
+    return await showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
       builder: (context) {
@@ -416,7 +416,7 @@ class _EditWithBranchVersioningState extends State<EditWithBranchVersioning>
     BuildContext context,
     EditWithBranchVersioningModel model,
   ) async {
-    return showDialog<void>(
+    return await showDialog<void>(
       context: context,
       builder: (context) {
         return AlertDialog(

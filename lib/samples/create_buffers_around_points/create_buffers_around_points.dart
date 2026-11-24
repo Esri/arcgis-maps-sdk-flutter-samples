@@ -333,14 +333,10 @@ class _CreateBuffersAroundPointsState extends State<CreateBuffersAroundPoints>
   }
 }
 
-enum Status {
+enum Status(final String label) {
   addPoints('Tap on the map to add buffers.'),
   bufferCreated('Buffer created.'),
   outOfBoundsTap('Tap within the boundary to add buffer.'),
   invalidInput('Enter a value between 0 and 300 to create a buffer.'),
-  noPoints('Add a point to draw the buffers.');
-
-  const Status(this.label);
-
-  final String label;
+  noPoints('Add a point to draw the buffers.'),
 }

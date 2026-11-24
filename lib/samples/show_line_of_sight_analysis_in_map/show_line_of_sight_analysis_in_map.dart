@@ -272,7 +272,12 @@ class _ShowLineOfSightAnalysisInMapState
 }
 
 // An enum capturing the different observers.
-enum Observer {
+enum Observer({
+  required final String name,
+  required final Color color,
+  required final double x,
+  required final double y,
+}) {
   greenObserver(
     name: 'Green Observer',
     color: Colors.green,
@@ -309,18 +314,6 @@ enum Observer {
     x: -571683.896,
     y: 7492017.864,
   );
-
-  const Observer({
-    required this.name,
-    required this.color,
-    required this.x,
-    required this.y,
-  });
-
-  final String name;
-  final Color color;
-  final double x;
-  final double y;
 
   // The position of the observer.
   ArcGISPoint get position =>

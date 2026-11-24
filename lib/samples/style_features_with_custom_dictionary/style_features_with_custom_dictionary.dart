@@ -136,11 +136,7 @@ class _StyleFeaturesWithCustomDictionaryState
 }
 
 // An enum to represent the different renderer style options.
-enum _RendererStyle {
+enum _RendererStyle(final String label) {
   styleFile('Style File'),
-  webStyle('Web Style');
-
-  const _RendererStyle(this.label);
-
-  final String label;
+  webStyle('Web Style'),
 }

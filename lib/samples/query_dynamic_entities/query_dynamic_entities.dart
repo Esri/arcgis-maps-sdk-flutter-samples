@@ -251,7 +251,7 @@ class _QueryDynamicEntitiesState extends State<QueryDynamicEntities>
   // Prompt the user to enter a flight number for the track ID query.
   Future<String?> _promptForFlightNumber() async {
     final controller = TextEditingController();
-    return showDialog<String>(
+    return await showDialog<String>(
       context: context,
       builder: (context) {
         return AlertDialog(

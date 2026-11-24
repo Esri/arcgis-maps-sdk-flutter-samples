@@ -416,7 +416,7 @@ class _CreateAndSaveKmlFileState extends State<CreateAndSaveKmlFile>
 }
 
 // Define the point icon styles available for new KML placemarks.
-enum _PointStyle {
+enum _PointStyle(final String label, final String url) {
   star(
     'Star',
     'https://static.arcgis.com/images/Symbols/Shapes/BlueStarLargeB.png',
@@ -440,10 +440,5 @@ enum _PointStyle {
   squarePin(
     'Square pin',
     'https://static.arcgis.com/images/Symbols/Shapes/BluePin2LargeB.png',
-  );
-
-  const _PointStyle(this.label, this.url);
-
-  final String label;
-  final String url;
+  ),
 }

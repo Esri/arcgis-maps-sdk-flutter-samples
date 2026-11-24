@@ -200,7 +200,7 @@ class OfflineData {
   /// For ZIP resources, returns the path to the resource inside the extracted directory.
   /// For non-ZIP resources, returns the direct file path.
   Future<List<String>> downloadedFilePaths() async {
-    return Future.wait(
+    return await Future.wait(
       _downloadableResources.map((r) async {
         final portalItem = await r.cachedPortalItem();
         final downloadedDir = r.downloadedDirectory();

@@ -229,7 +229,7 @@ class _EditGeodatabaseWithTransactionsState
 
   Future<({GeodatabaseFeatureTable table, FeatureType type})?>
   _showCreateFutureSheet() async {
-    return showModalBottomSheet(
+    return await showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       builder: (context) {

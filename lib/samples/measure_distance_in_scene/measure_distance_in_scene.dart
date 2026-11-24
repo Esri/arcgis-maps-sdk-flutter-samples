@@ -209,13 +209,9 @@ class _MeasureDistanceInSceneState extends State<MeasureDistanceInScene>
 }
 
 // An enum to track the state of the long-press-and-drag measurement sequence.
-enum MeasurementState {
+enum MeasurementState({required final String instructions}) {
   setStartLocation(instructions: 'Tap and hold to set the start location.'),
-  setEndLocation(instructions: 'While holding, drag to set the end location.');
-
-  const MeasurementState({required this.instructions});
-
-  final String instructions;
+  setEndLocation(instructions: 'While holding, drag to set the end location.'),
 }
 
 extension on Distance {

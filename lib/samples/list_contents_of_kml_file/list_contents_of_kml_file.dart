@@ -230,10 +230,10 @@ class _ListContentsOfKmlFileState extends State<ListContentsOfKmlFile>
     final kmlViewpoint = kmlNode.viewpoint;
     if (kmlViewpoint != null) {
       // The node has a KML viewpoint. Get an ArcGIS Viewpoint from the KML viewpoint.
-      return _createViewpointWithKmlViewpoint(kmlViewpoint, surface);
+      return await _createViewpointWithKmlViewpoint(kmlViewpoint, surface);
     } else if (kmlNode.extent != null) {
       // The node does not have a KML viewpoint. Build an ArcGIS Viewpoint based on the extent.
-      return _createViewpointWithExtent(kmlNode.extent, surface);
+      return await _createViewpointWithExtent(kmlNode.extent, surface);
     } else {
       return null;
     }

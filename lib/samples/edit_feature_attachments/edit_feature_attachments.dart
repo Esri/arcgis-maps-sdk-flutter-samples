@@ -113,7 +113,7 @@ class _EditFeatureAttachmentsState extends State<EditFeatureAttachments>
     } on ArcGISException catch (e) {
       showExceptionDialog('Failed to apply edits', e, showOK: true);
     }
-    return Future.value();
+    return await Future.value();
   }
 }
 
