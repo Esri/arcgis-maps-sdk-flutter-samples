@@ -728,31 +728,21 @@ class TelemetryData {
 }
 
 // An enum of the different mission selections available in this sample.
-enum Mission {
+// [label] - The human-readable label of the mission.
+// [itemId] - The ArcGIS Online item ID for the mission CSV file.
+enum Mission(final String label, final String itemId) {
   grandCanyon('Grand Canyon', '290f0c571c394461a8b58b6775d0bd63'),
   hawaii('Hawaii', 'e87c154fb9c2487f999143df5b08e9b1'),
   pyrenees('Pyrenees', '5a9b60cee9ba41e79640a06bcdf8084d'),
-  snowdon('Snowdon', '12509ffdc684437f8f2656b0129d2c13');
-
-  const Mission(this.label, this.itemId);
-
-  // A human-readable label of the mission name.
-  final String label;
-
-  // The ArcGIS Online item ID for the mission CSV file.
-  final String itemId;
+  snowdon('Snowdon', '12509ffdc684437f8f2656b0129d2c13'),
 }
 
 // An enum representing the speed of the animation.
-enum AnimationSpeed {
+// [frameStep] - The number of frames to advance per tick.
+enum AnimationSpeed(final int frameStep) {
   slow(1),
   medium(2),
   fast(4);
-
-  const AnimationSpeed(this.frameStep);
-
-  // The number of frames to advance per tick.
-  final int frameStep;
 
   // A label for the speed.
   String get label => name[0].toUpperCase() + name.substring(1);

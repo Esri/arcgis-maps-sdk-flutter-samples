@@ -57,7 +57,7 @@ class SampleCatalogBuilder implements Builder {
       buildStep.inputId.package,
       'assets/generated_samples_list.json',
     );
-    return buildStep.writeAsString(output, createCatalog(metadataFiles));
+    return await buildStep.writeAsString(output, createCatalog(metadataFiles));
   }
 
   String createCatalog(List<String> metadataFiles) {
@@ -101,7 +101,7 @@ class SampleWidgetsBuilder implements Builder {
       buildStep.inputId.package,
       'lib/models/samples_widget_list.dart',
     );
-    return buildStep.writeAsString(output, await createSource(samples));
+    return await buildStep.writeAsString(output, await createSource(samples));
   }
 
   Future<String> createSource(List<String> samples) async {

@@ -226,14 +226,10 @@ class _FilterFeaturesInSceneState extends State<FilterFeaturesInScene>
 }
 
 // The different states for filtering features in the sample workflow.
-enum SceneFilterAction {
+enum SceneFilterAction(final String label) {
   show('Show detailed buildings'),
   filter('Filter'),
   reset('Reset scene');
-
-  const SceneFilterAction(this.label);
-
-  final String label;
 
   // The next action to apply to the scene.
   SceneFilterAction next() {

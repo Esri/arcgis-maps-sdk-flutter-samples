@@ -195,7 +195,7 @@ class _ShowGridState extends State<ShowGrid> with SampleStateSupport {
 
   /// Show the grid options dialog.
   Future<void> _showGridOptions() async {
-    return showDialog(
+    return await showDialog(
       context: context,
       barrierColor: Colors.transparent,
       builder: (context) {
@@ -490,7 +490,7 @@ class MapViewGrids {
 }
 
 // An enum of grid label positions.
-enum GridLabelPositionType {
+enum GridLabelPositionType(final String name, final GridLabelPosition value) {
   allSides('AllSides', GridLabelPosition.allSides),
   center('Center', GridLabelPosition.center),
   bottomLeft('BottomLeft', GridLabelPosition.bottomLeft),
@@ -499,33 +499,26 @@ enum GridLabelPositionType {
   topRight('TopRight', GridLabelPosition.topRight),
   geographic('Geographic', GridLabelPosition.geographic);
 
-  const GridLabelPositionType(this.name, this.value);
-
-  final String name;
-  final GridLabelPosition value;
-
   @override
   String toString() => name;
 }
 
 // An enum of grid colors.
-enum GridColorType {
+enum GridColorType(final String name, final Color value) {
   red('Red', Colors.red),
   blue('Blue', Colors.blue),
   green('Green', Colors.green),
   yellow('Yellow', Colors.yellow);
-
-  const GridColorType(this.name, this.value);
-
-  final String name;
-  final Color value;
 
   @override
   String toString() => name;
 }
 
 // An enum of label format types.
-enum LatLongLabelFormatType {
+enum LatLongLabelFormatType(
+  final String name,
+  final LatitudeLongitudeGridLabelFormat value,
+) {
   decimalDegrees(
     'Decimal Degrees',
     LatitudeLongitudeGridLabelFormat.decimalDegrees,
@@ -535,25 +528,16 @@ enum LatLongLabelFormatType {
     LatitudeLongitudeGridLabelFormat.degreesMinutesSeconds,
   );
 
-  const LatLongLabelFormatType(this.name, this.value);
-
-  final String name;
-  final LatitudeLongitudeGridLabelFormat value;
-
   @override
   String toString() => name;
 }
 
 // An enum of grid types.
-enum GridType {
+enum GridType(final String name) {
   latitudeLongitude('Latitude & Longitude'),
   mgrs('MGRS'),
   utm('UTM'),
   usng('USNG');
-
-  const GridType(this.name);
-
-  final String name;
 
   Grid get value {
     switch (this) {

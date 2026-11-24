@@ -20,7 +20,7 @@ import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_sdk_flutter_samples/common/common.dart';
 import 'package:material_ui/material_ui.dart';
 
-enum MosaicMethodEnum {
+enum MosaicMethodEnum(final String value, final String description) {
   objectID('Object ID', 'Orders rasters based on the order (ObjectID).'),
   northwest(
     'North West',
@@ -37,11 +37,7 @@ enum MosaicMethodEnum {
   lockRaster(
     'Lock Raster',
     'Displays only the selected rasters specified in [MosaicRule.lockRasterIds].',
-  );
-
-  const MosaicMethodEnum(this.value, this.description);
-  final String value;
-  final String description;
+  ),
 }
 
 class ApplyMosaicRuleToRasters extends StatefulWidget {

@@ -157,7 +157,10 @@ class _ShowExtrudedFeaturesState extends State<ShowExtrudedFeatures>
 }
 
 // An enum representing different types of population statistics filters.
-enum FilterType {
+enum FilterType({
+  required final String name,
+  required final String extrusionExpression,
+}) {
   totalPopulation(
     name: 'Total Population',
     extrusionExpression: '[POP2007] / 10',
@@ -166,10 +169,5 @@ enum FilterType {
   populationDensity(
     name: 'Population Density',
     extrusionExpression: '[POP07_SQMI] * 5000 + 100000',
-  );
-
-  const FilterType({required this.name, required this.extrusionExpression});
-
-  final String name;
-  final String extrusionExpression;
+  ),
 }

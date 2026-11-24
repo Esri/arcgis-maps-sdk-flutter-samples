@@ -223,7 +223,7 @@ class _ShowDeviceLocationWithNmeaDataSourcesState
     final nmeaFile = File(path.join(listPaths.first, 'Redlands.nmea'));
 
     // Read and return the file as a list of String lines.
-    return nmeaFile.readAsLines();
+    return await nmeaFile.readAsLines();
   }
 }
 

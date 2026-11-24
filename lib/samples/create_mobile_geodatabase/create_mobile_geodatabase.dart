@@ -147,7 +147,7 @@ class _CreateMobileGeodatabaseState extends State<CreateMobileGeodatabase>
     } on Exception catch (e) {
       showExceptionDialog('Failed to create mobile geodatabase', e);
     }
-    return Future.value();
+    return await Future.value();
   }
 
   // Create a feature table to store location history.
@@ -174,7 +174,7 @@ class _CreateMobileGeodatabaseState extends State<CreateMobileGeodatabase>
     } on ArcGISException catch (e) {
       showExceptionDialog('Failed to create feature table', e);
     }
-    return Future.value();
+    return await Future.value();
   }
 
   // Add a feature to the feature table.

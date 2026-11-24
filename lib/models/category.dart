@@ -16,7 +16,11 @@
 
 import 'package:material_ui/material_ui.dart';
 
-enum SampleCategory {
+enum SampleCategory(
+  final String title,
+  final IconData icon,
+  final String backgroundImage,
+) {
   all('All', Icons.apps, 'assets/category_images/all_background.webp'),
   favorites(
     'Favorites',
@@ -77,10 +81,5 @@ enum SampleCategory {
     'Visualization',
     Icons.visibility,
     'assets/category_images/visualization_background.webp',
-  );
-
-  const SampleCategory(this.title, this.icon, this.backgroundImage);
-  final String title;
-  final IconData icon;
-  final String backgroundImage;
+  ),
 }

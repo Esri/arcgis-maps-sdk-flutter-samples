@@ -406,25 +406,17 @@ class _ApplyPointCloudRendererAndFilterState
   }
 }
 
-enum _RendererType {
+enum _RendererType(final String label) {
   rgb('RGB'),
   stretch('Stretch'),
   classBreaks('Class breaks'),
-  uniqueValue('Unique value');
-
-  const _RendererType(this.label);
-
-  final String label;
+  uniqueValue('Unique value'),
 }
 
-enum _ScanDirectionFilter {
+enum _ScanDirectionFilter(final String label) {
   none('None'),
   set('Required set'),
-  clear('Required clear');
-
-  const _ScanDirectionFilter(this.label);
-
-  final String label;
+  clear('Required clear'),
 }
 
 class _PointCloudSettingsSheet extends StatelessWidget {

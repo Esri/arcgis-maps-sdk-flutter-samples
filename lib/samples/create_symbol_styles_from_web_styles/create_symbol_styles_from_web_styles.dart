@@ -236,7 +236,10 @@ final class _LegendItem {
 }
 
 // The symbol categories represented in the points of interest dataset.
-enum _SymbolType {
+enum _SymbolType({
+  required final String symbolName,
+  required final List<String> categoryNames,
+}) {
   atm(symbolName: 'atm', categoryNames: ['Banking and Finance']),
   beach(symbolName: 'beach', categoryNames: ['Beaches and Marinas']),
   campground(symbolName: 'campground', categoryNames: ['Campgrounds']),
@@ -272,10 +275,5 @@ enum _SymbolType {
       'Private and Charter Schools',
     ],
   ),
-  trail(symbolName: 'trail', categoryNames: ['Trails']);
-
-  const _SymbolType({required this.symbolName, required this.categoryNames});
-
-  final String symbolName;
-  final List<String> categoryNames;
+  trail(symbolName: 'trail', categoryNames: ['Trails']),
 }
